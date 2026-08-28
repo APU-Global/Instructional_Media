@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>De-Escalation Countdown — Coach Alvarez</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f7f4ed;
+      color: #1c1917;
+    }
+    .font-serif-story {
+      font-family: 'Fraunces', serif;
+    }
+    .font-mono-digits {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Hana Feels-inspired subtle grain and soft ambient gradients */
+    .bg-grain {
+      background-color: #f6f3eb;
+      background-image: radial-gradient(at 15% 15%, rgba(254, 243, 199, 0.6) 0px, transparent 50%),
+                        radial-gradient(at 85% 20%, rgba(254, 205, 211, 0.45) 0px, transparent 55%),
+                        radial-gradient(at 50% 85%, rgba(224, 231, 255, 0.5) 0px, transparent 60%);
+    }
+
+    .card-canvas {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(214, 207, 196, 0.9);
+      box-shadow: 0 10px 30px -8px rgba(120, 113, 108, 0.1), 0 4px 12px -2px rgba(120, 113, 108, 0.05);
+    }
+
+    .card-canvas-soft {
+      background: rgba(254, 252, 248, 0.98);
+      border: 1.5px solid rgba(220, 213, 200, 0.9);
+    }
+
+    @keyframes gentle-float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    .float-subtle {
+      animation: gentle-float 4s ease-in-out infinite;
+    }
+
+    @keyframes warm-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.88; transform: scale(1.05); }
+    }
+    .pulse-urgent {
+      animation: warm-pulse 0.7s infinite ease-in-out;
+    }
+
+    .option-card {
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .option-card:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: #d97706;
+      background-color: #ffffff;
+      box-shadow: 0 12px 24px -6px rgba(217, 119, 6, 0.14);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1ede4;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c7beaf;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a89f8f;
+    }
+  </style>
+</head>
+<body class="bg-grain min-h-screen flex flex-col justify-between selection:bg-amber-200 selection:text-amber-950">
+
+  <!-- Top Global Header -->
+  <header class="w-full border-b border-stone-300/80 bg-white/85 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-600 shadow-sm shadow-amber-600/40"></span>
+        <div class="font-serif-story font-bold text-base tracking-tight text-stone-950">
+          De-Escalation Countdown
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <button id="soundToggleBtn" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 transition cursor-pointer shadow-sm">
+          <span id="soundIcon">🌿</span>
+          <span id="soundStatusText">Sound On</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Viewport -->
+  <main class="max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 flex-grow flex flex-col justify-center">
+
+    <!-- SCREEN 1: TITLE & INTRO SCREEN -->
+    <section id="screen-start" class="w-full max-w-2xl mx-auto text-center space-y-6 sm:space-y-8 py-2 sm:py-4">
+      
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-950 text-xs font-bold uppercase tracking-wider">
+        <span>✨</span>
+        <span>Interactive Branching Simulation</span>
+      </div>
+
+      <!-- TITLE BANNER IMAGE -->
+      <div class="w-full rounded-3xl overflow-hidden card-canvas relative shadow-md group border border-stone-300">
+        <img 
+          id="titleBannerImg"
+          src="https://elearning.lapu.edu/course_files/_MAOL/CoachandAssistantPrincipal.jpeg" 
+          alt="Coach Alvarez and Assistant Principal in office conversation" 
+          class="w-full h-48 sm:h-64 md:h-72 object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+          onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-48 bg-stone-100 flex flex-col items-center justify-center p-6 text-stone-700 text-sm font-semibold border-2 border-dashed border-stone-300 rounded-3xl\'><span class=\'text-2xl mb-1\'>🖼️</span><span>Coach Alvarez & Assistant Principal</span></div>';"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/40 via-transparent to-transparent pointer-events-none"></div>
+      </div>
+      
+      <div class="space-y-3 sm:space-y-4">
+        <h1 class="font-serif-story text-4xl sm:text-6xl font-bold tracking-tight text-stone-950 leading-[1.1]">
+          When tension is high,<br/>
+          <span class="italic font-normal text-amber-800">every second matters.</span>
+        </h1>
+        <p class="text-base sm:text-lg text-stone-800 font-medium max-w-lg mx-auto leading-relaxed">
+          You are placed inside an emotional professional confrontation. Every decision changes the temperature of the room. <span class="text-stone-950 font-bold">Choose fast — choose with empathy.</span>
+        </p>
+      </div>
+
+      <!-- Feature Badges -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left max-w-xl mx-auto">
+        <div class="card-canvas p-4 rounded-2xl border border-stone-300/90">
+          <div class="text-amber-800 text-lg font-serif-story font-bold mb-0.5">15 Seconds</div>
+          <div class="text-sm text-stone-700 font-semibold leading-snug">Intuitive responses under pressure</div>
+        </div>
+        <div class="card-canvas p-4 rounded-2xl border border-stone-300/90">
+          <div class="text-amber-800 text-lg font-serif-story font-bold mb-0.5">Tension Meter</div>
+          <div class="text-sm text-stone-700 font-semibold leading-snug">Live emotional barometer (0–100)</div>
+        </div>
+        <div class="card-canvas p-4 rounded-2xl border border-stone-300/90">
+          <div class="text-amber-800 text-lg font-serif-story font-bold mb-0.5">Learner Paced</div>
+          <div class="text-sm text-stone-700 font-semibold leading-snug">Step back & reconsider anytime</div>
+        </div>
+      </div>
+
+      <div class="space-y-4 pt-2">
+        <button id="btnStartGame" class="w-full sm:w-auto px-10 py-4 bg-stone-950 hover:bg-stone-800 text-amber-50 font-extrabold text-base rounded-2xl shadow-xl shadow-stone-900/15 transform hover:-translate-y-0.5 active:translate-y-0 transition cursor-pointer">
+          Begin Encounter →
+        </button>
+        <p class="text-sm text-stone-700 max-w-lg mx-auto leading-normal italic font-medium">
+          This is a fictional pedagogical scenario designed for leadership reflection and emotional de-escalation practice.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- SCREEN 2: SCENARIO BRIEFING -->
+    <section id="screen-intro" class="w-full max-w-3xl mx-auto hidden space-y-6">
+      <div class="card-canvas rounded-3xl p-6 sm:p-9 shadow-xl space-y-6 border border-stone-300/90">
+        
+        <div class="border-b border-stone-300 pb-4">
+          <span class="text-xs font-mono-digits font-bold text-amber-800 uppercase tracking-wider">Scenario File #01</span>
+          <h2 class="font-serif-story text-2xl sm:text-3xl font-bold text-stone-950 mt-0.5">The Gym Schedule</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          
+          <!-- GRAPHIC: ASSISTANT PRINCIPAL OFFICE SCENE -->
+          <div class="md:col-span-4 flex flex-col items-center justify-center p-3.5 sm:p-4 bg-[#faf8f4] rounded-3xl border border-stone-300 shadow-sm text-center relative group transition-all">
+            <div class="w-full aspect-square max-w-[200px] rounded-2xl overflow-hidden shadow-inner border border-stone-300 bg-stone-100 relative">
+              <img 
+                id="introGraphicImg"
+                src="https://elearning.lapu.edu/course_files/_MAOL/AssistantPrincipal.jpeg" 
+                alt="Assistant Principal Office Meeting" 
+                class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                onerror="this.onerror=null; this.src='https://elearning.lapu.edu/course_files/_MAOL/CoachandAssistantPrincipal.jpeg';"
+              />
+            </div>
+            
+            <div class="mt-3">
+              <div class="font-serif-story font-bold text-stone-950 text-base">Ms. Morris</div>
+              <div class="text-sm font-semibold text-stone-700">New Assistant Principal</div>
+            </div>
+          </div>
+
+          <!-- Narrative Context -->
+          <div class="md:col-span-8 space-y-4">
+            <p class="text-stone-900 text-base sm:text-lg leading-relaxed font-normal">
+              You are the <strong class="text-stone-950 font-bold">new Assistant Principal</strong>. You just posted a revised gym schedule, cutting Coach Alvarez’s varsity basketball practice slot in half to accommodate a new district after-school initiative.
+            </p>
+            
+            <div class="p-4 bg-amber-50/90 border-l-4 border-amber-600 rounded-r-xl text-stone-950 text-sm sm:text-base italic leading-relaxed font-medium">
+              &ldquo;He storms into your office without knocking. The heavy wooden door is still swinging on its hinges behind him.&rdquo;
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-1 text-sm">
+              <div class="bg-stone-200/80 px-3.5 py-1.5 rounded-full border border-stone-300 text-stone-900 font-medium">
+                <span class="font-bold text-stone-950">Starting Tension:</span> 50 / 100
+              </div>
+              <div class="bg-stone-200/80 px-3.5 py-1.5 rounded-full border border-stone-300 text-stone-900 font-medium">
+                <span class="font-bold text-stone-950">Decision Clock:</span> 15s per prompt
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="border-t border-stone-300 pt-5 flex items-center justify-between gap-3">
+          <button id="btnIntroBack" class="px-5 py-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-sm font-bold border border-stone-300 transition flex items-center gap-1.5 cursor-pointer shadow-sm">
+            <span>←</span>
+            <span>Back to Title</span>
+          </button>
+
+          <button id="btnEnterConversation" class="px-8 py-3.5 bg-stone-950 hover:bg-stone-800 text-amber-50 font-extrabold text-sm sm:text-base rounded-2xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>Enter Conversation</span>
+            <span>💬</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- SCREEN 3: ACTIVE GAMEPLAY ENGINE -->
+    <section id="screen-gameplay" class="w-full max-w-3xl mx-auto hidden space-y-5">
+      
+      <!-- PERSISTENT HUD: EMOTIONAL BAROMETER & COUNTDOWN -->
+      <div class="card-canvas rounded-2xl p-4 sm:p-5 shadow-lg border border-stone-300/90">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          
+          <!-- Tension Meter Bar -->
+          <div class="flex-1 space-y-2">
+            <div class="flex justify-between items-baseline">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold tracking-wide uppercase text-stone-700">Emotional Tension</span>
+                <span id="tensionBadge" class="text-xs font-bold px-3 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300">
+                  Elevated
+                </span>
+              </div>
+              <div class="font-mono-digits text-sm font-extrabold text-stone-800">
+                <span id="tensionNumber" class="text-2xl text-stone-950 font-black font-serif-story">50</span>
+                <span class="text-stone-600 font-bold"> / 100</span>
+              </div>
+            </div>
+
+            <!-- Meter Track -->
+            <div class="w-full bg-stone-300/80 h-3.5 rounded-full overflow-hidden p-0.5 border border-stone-400/60 relative">
+              <div id="tensionMeterBar" class="h-full rounded-full transition-all duration-500 ease-out bg-amber-500" style="width: 50%;"></div>
+            </div>
+          </div>
+
+          <!-- Soft Round Timer & Status -->
+          <div class="sm:border-l sm:border-stone-300 sm:pl-5 flex items-center justify-between sm:justify-center gap-3">
+            <div class="text-left sm:text-right">
+              <span class="text-xs uppercase font-bold text-stone-700 block">Time Left</span>
+              <span id="timerSubtext" class="text-xs text-stone-700 font-medium">Thinking clock</span>
+            </div>
+            
+            <div id="timerContainer" class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-stone-100 border-2 border-stone-400 flex items-center justify-center text-2xl font-black font-mono-digits text-stone-950 shadow-inner">
+              <span id="timerValue">15</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CONVERSATION THEATER: AVATAR + INTERACTION -->
+      <div class="card-canvas rounded-3xl p-5 sm:p-8 shadow-xl relative overflow-hidden space-y-6 border border-stone-300/90">
+        
+        <!-- Impact Delta Badge Floating Alert -->
+        <div id="impactNotice" class="hidden absolute top-4 right-4 px-3.5 py-1 rounded-full text-xs font-black font-mono-digits shadow-md z-20 transition-all">
+          +0
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6">
+          
+          <!-- Character Portrait Frame -->
+          <div class="flex-shrink-0 flex flex-col items-center">
+            <div class="p-1.5 rounded-3xl bg-[#faf7f2] border-2 border-dashed border-amber-400/90 shadow-sm relative group flex flex-col items-center">
+              <div id="gameplayAvatarContainer" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden flex items-center justify-center relative bg-stone-100">
+                <!-- Rendered Dynamic Character Image (Angry/Frustrated/Listening/Calm) -->
+              </div>
+              <div class="text-xs font-mono-digits text-stone-700 font-bold mt-1 tracking-tight">
+                Coach Alvarez
+              </div>
+            </div>
+            
+            <div class="mt-2 text-center">
+              <div class="font-serif-story font-bold text-base text-stone-950">Coach Alvarez</div>
+              <div id="avatarEmotionTag" class="text-xs font-bold px-3 py-0.5 rounded-full mt-1 inline-block bg-rose-100 text-rose-900 border border-rose-300">
+                Agitated
+              </div>
+            </div>
+          </div>
+
+          <!-- Dialogue Bubble & Choices -->
+          <div class="flex-grow w-full space-y-4">
+            
+            <!-- Character Speech Card -->
+            <div class="relative card-canvas-soft rounded-2xl p-4 sm:p-5 shadow-sm border border-stone-300">
+              <span class="text-xs uppercase tracking-wider font-bold text-stone-700 block mb-1">
+                Coach Alvarez says:
+              </span>
+              <p id="characterDialogue" class="font-serif-story text-base sm:text-lg text-stone-950 italic leading-relaxed font-normal">
+                &ldquo;You cut my kids' practice time in HALF and didn't even give me a heads up? Fifteen years I've built this program and you people just erase it with an email?&rdquo;
+              </p>
+            </div>
+
+            <!-- Intermediary Character Feedback Card (Paced by Learner) -->
+            <div id="reactionBubbleContainer" class="hidden bg-amber-50/90 border border-amber-300 rounded-2xl p-4 sm:p-5 space-y-3 transition-all shadow-sm">
+              <div class="flex items-center justify-between border-b border-amber-200/80 pb-2">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-amber-950">
+                  Coach's Reaction:
+                </span>
+                <span id="reactionShiftBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono-digits font-bold bg-amber-200 text-amber-950 border border-amber-300">
+                  Tension Shift
+                </span>
+              </div>
+              
+              <p id="characterReactionText" class="font-serif-story text-base sm:text-lg text-stone-950 italic leading-relaxed font-medium">
+                &ldquo;...Okay. Fine.&rdquo;
+              </p>
+
+              <!-- Learner Pacing & Revision Action Buttons -->
+              <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+                <button id="btnRechoose" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white hover:bg-stone-100 text-stone-800 font-bold text-xs sm:text-sm border border-stone-300 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+                  <span>↺</span>
+                  <span>Change Choice</span>
+                </button>
+
+                <button id="btnNextDecision" class="w-full sm:w-auto px-6 py-2.5 bg-stone-950 hover:bg-stone-800 text-amber-50 font-extrabold text-xs sm:text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                  <span id="nextDecisionBtnText">Continue to Next Decision</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt Title Bar with Contextual Back Navigation -->
+            <div class="flex items-center justify-between pt-1">
+              <div class="flex items-center gap-2.5">
+                <button id="btnGameplayBack" class="px-3 py-1 rounded-lg bg-stone-200 hover:bg-stone-300 text-stone-800 hover:text-stone-950 text-xs sm:text-sm font-bold border border-stone-300 transition flex items-center gap-1 cursor-pointer shadow-sm" title="Go back to previous step">
+                  <span>←</span>
+                  <span id="gameplayBackLabel">Back</span>
+                </button>
+                <h3 id="decisionTitle" class="text-sm sm:text-base font-extrabold uppercase tracking-wider text-stone-900">
+                  How do you respond?
+                </h3>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <span id="decisionStepIndicator" class="text-xs text-stone-700 font-mono-digits font-bold">(1 / 4)</span>
+                <span id="timesUpAlert" class="hidden text-xs font-bold text-rose-800 bg-rose-100 px-2.5 py-0.5 rounded-full border border-rose-300">
+                  ⏳ Time's up
+                </span>
+              </div>
+            </div>
+
+            <!-- Response Options Container -->
+            <div id="optionsContainer" class="grid grid-cols-1 gap-2.5 pt-1">
+              <!-- Dynamic Options Generated via JS -->
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- SCREEN 4: FINAL EXPERT-PATH REVEAL & DEBRIEF -->
+    <section id="screen-results" class="w-full max-w-3xl mx-auto hidden space-y-6">
+      <div class="card-canvas rounded-3xl p-6 sm:p-9 shadow-xl space-y-7 border border-stone-300/90">
+        
+        <div class="text-center space-y-2 border-b border-stone-300 pb-6">
+          <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-950 text-xs font-bold uppercase tracking-wide">
+            <span>🌱</span>
+            <span>Simulation Completed</span>
+          </div>
+          <h2 class="font-serif-story text-3xl sm:text-4xl font-bold text-stone-950">Your De-Escalation Trajectory</h2>
+          <p class="text-stone-800 text-base max-w-lg mx-auto font-medium">
+            Review how your choices shaped the emotional temperature of the conversation.
+          </p>
+        </div>
+
+        <!-- OUTCOME PROFILE CARD: COACH ALVAREZ STATE -->
+        <div class="card-canvas-soft rounded-2xl p-4 sm:p-5 border-2 border-dashed border-amber-400/90 flex flex-col sm:flex-row items-center gap-4 relative">
+          <div class="absolute top-2.5 right-2.5 bg-stone-200/90 text-stone-800 text-xs font-mono-digits font-bold px-2.5 py-0.5 rounded-full border border-stone-300">
+            Resolved Demeanor
+          </div>
+          <div id="finalAvatarContainer" class="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 relative overflow-hidden rounded-2xl border border-stone-300 bg-stone-100 shadow-sm">
+            <!-- Dynamic final emotional portrait rendered here -->
+          </div>
+          <div class="space-y-1 text-center sm:text-left">
+            <div class="flex items-center justify-center sm:justify-start gap-2">
+              <span class="font-serif-story font-bold text-stone-950 text-base sm:text-lg">Coach Alvarez — Outcome</span>
+              <span id="finalDemeanorBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300">
+                Reconnected
+              </span>
+            </div>
+            <p id="finalDemeanorText" class="text-sm text-stone-800 leading-relaxed font-medium">
+              Coach Alvarez leaves the conversation with preserved trust and a collaborative appointment scheduled for the morning.
+            </p>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="card-canvas-soft p-3.5 rounded-2xl text-center border border-stone-300">
+            <span class="text-xs uppercase font-bold text-stone-700 block mb-0.5">Starting</span>
+            <span class="font-serif-story text-2xl font-bold text-stone-950">50</span>
+          </div>
+          <div class="card-canvas-soft p-3.5 rounded-2xl text-center border border-stone-300">
+            <span class="text-xs uppercase font-bold text-stone-700 block mb-0.5">Final Tension</span>
+            <span id="finalEndingTension" class="font-serif-story text-2xl font-black text-emerald-800">0</span>
+          </div>
+          <div class="card-canvas-soft p-3.5 rounded-2xl text-center border border-stone-300">
+            <span class="text-xs uppercase font-bold text-stone-700 block mb-0.5">Peak</span>
+            <span id="finalPeakTension" class="font-serif-story text-2xl font-black text-rose-800">50</span>
+          </div>
+          <div class="card-canvas-soft p-3.5 rounded-2xl text-center border border-stone-300">
+            <span class="text-xs uppercase font-bold text-stone-700 block mb-0.5">Lowest</span>
+            <span id="finalLowestTension" class="font-serif-story text-2xl font-black text-teal-800">0</span>
+          </div>
+        </div>
+
+        <!-- SVG Trajectory Visual Graph -->
+        <div class="card-canvas-soft p-4 sm:p-5 rounded-2xl space-y-3 border border-stone-300">
+          <div class="flex items-center justify-between">
+            <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-800">Tension Curve Over 4 Decisions</span>
+            <div class="flex items-center gap-3 text-xs font-mono-digits text-stone-700 font-bold">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Your Path</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Reconnected (&lt;40)</span>
+            </div>
+          </div>
+          
+          <div class="w-full h-44 relative pt-1">
+            <svg id="tensionGraphSvg" class="w-full h-full overflow-visible" viewBox="0 0 500 150" preserveAspectRatio="none">
+              <!-- Dynamic SVG graph injected via JS -->
+            </svg>
+          </div>
+        </div>
+
+        <!-- Path Comparison Matrix -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="card-canvas-soft p-4 rounded-2xl space-y-2 border border-stone-300">
+            <span class="text-xs font-bold uppercase text-stone-700 tracking-wider">Your Response Sequence</span>
+            <div id="userChoicesList" class="font-mono-digits text-lg font-black text-stone-950">
+              <!-- C -> D -> A -> C -->
+            </div>
+            <div id="userChoicesDetails" class="text-sm text-stone-800 space-y-2 pt-1">
+              <!-- Details list -->
+            </div>
+          </div>
+
+          <div class="bg-emerald-50 border border-emerald-300 p-4 rounded-2xl space-y-2 shadow-sm">
+            <span class="text-xs font-bold uppercase text-emerald-950 tracking-wider">Expert De-Escalation Path</span>
+            <div class="font-mono-digits text-lg font-black text-emerald-900">
+              C → D → A / B → C
+            </div>
+            <p class="text-sm text-emerald-950 leading-relaxed pt-1 font-medium">
+              Combines steady empathy with practical accountability. Validates Coach Alvarez's 15-year commitment (C), acknowledges the process omission without excuses (D), offers collaborative joint scheduling (A/B), and reinforces relationship trust with clear next steps (C).
+            </p>
+          </div>
+        </div>
+
+        <!-- 3 Insight Cards -->
+        <div class="space-y-4 pt-4 border-t border-stone-300">
+          <h3 class="font-serif-story text-xl sm:text-2xl font-bold text-stone-950 text-center">Why This Path Works</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            
+            <div class="card-canvas-soft p-4 rounded-2xl space-y-2 border border-stone-300">
+              <div class="w-7 h-7 rounded-full bg-amber-200 text-amber-950 font-serif-story font-bold flex items-center justify-center text-xs">
+                1
+              </div>
+              <h4 class="font-bold text-stone-950 text-sm uppercase tracking-wide">Name the Emotion</h4>
+              <p class="text-sm text-stone-800 leading-relaxed font-normal">
+                Acknowledge frustration and personal dedication without matching their defensive volume or tone.
+              </p>
+            </div>
+
+            <div class="card-canvas-soft p-4 rounded-2xl space-y-2 border border-stone-300">
+              <div class="w-7 h-7 rounded-full bg-amber-200 text-amber-950 font-serif-story font-bold flex items-center justify-center text-xs">
+                2
+              </div>
+              <h4 class="font-bold text-stone-950 text-sm uppercase tracking-wide">Own the Real Problem</h4>
+              <p class="text-sm text-stone-800 leading-relaxed font-normal">
+                If a procedural oversight occurred (omitting consultation), own it candidly instead of hiding behind policy.
+              </p>
+            </div>
+
+            <div class="card-canvas-soft p-4 rounded-2xl space-y-2 border border-stone-300">
+              <div class="w-7 h-7 rounded-full bg-amber-200 text-amber-950 font-serif-story font-bold flex items-center justify-center text-xs">
+                3
+              </div>
+              <h4 class="font-bold text-stone-950 text-sm uppercase tracking-wide">Create a Next Step</h4>
+              <p class="text-sm text-stone-800 leading-relaxed font-normal">
+                Move swiftly from past friction toward a concrete, collaborative scheduling session.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Philosophical / Reflection Quote -->
+        <div class="card-canvas-soft p-5 rounded-2xl text-center space-y-1.5 border border-stone-300">
+          <div class="font-serif-story text-base sm:text-lg font-medium text-stone-950 italic">
+            &ldquo;Truth and love do not have to compete.&rdquo;
+          </div>
+          <div class="text-sm font-bold text-amber-900 font-mono-digits">
+            EPHESIANS 4:15 — <span class="font-medium italic text-stone-700">&ldquo;Speaking the truth in love...&rdquo;</span>
+          </div>
+        </div>
+
+        <!-- Restart & Back to Review Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <button id="btnResultsBack" class="w-full sm:w-auto px-6 py-3.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-sm rounded-2xl border border-stone-300 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm">
+            <span>←</span>
+            <span>Review Decision 4</span>
+          </button>
+
+          <button id="btnRestartSimulation" class="w-full sm:w-auto px-9 py-3.5 bg-stone-950 hover:bg-stone-800 text-amber-50 font-extrabold text-sm rounded-2xl shadow-xl transition cursor-pointer flex items-center justify-center gap-2">
+            <span>🔄</span>
+            <span>Restart Simulation</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="w-full border-t border-stone-300/80 bg-white/70 py-4 text-center text-xs sm:text-sm font-semibold text-stone-700">
+    <div class="max-w-4xl mx-auto px-4 flex items-center justify-center">
+      <div>De-Escalation Countdown</div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT: GAME STATE ENGINE & SOFT AUDIO SYNTHESIS -->
+  <script>
+    /* =========================================================
+       1. GAME DATA SPECIFICATION (COACH ALVAREZ)
+       Updated Letter Distribution for Varied Best Answers:
+       Decision 1: Best = C (-15)
+       Decision 2: Best = D (-20), Second = B (-15)
+       Decision 3: Best = A (-25) / B (-20)
+       Decision 4: Best = C (-15), Second = B (-5)
+       ========================================================= */
+    const COACH_AVATARS = {
+      angry: 'https://elearning.lapu.edu/course_files/_MAOL/Angry.jpeg',
+      frustrated: 'https://elearning.lapu.edu/course_files/_MAOL/Frustrated.jpeg',
+      listening: 'https://elearning.lapu.edu/course_files/_MAOL/Listening.jpeg',
+      calm: 'https://elearning.lapu.edu/course_files/_MAOL/Calm.jpeg',
+      positive: 'https://elearning.lapu.edu/course_files/_MAOL/Calm.jpeg'
+    };
+
+    const GAME_SCENARIO = {
+      title: "THE GYM SCHEDULE",
+      characterName: "Coach Alvarez",
+      characterRole: "Head Varsity Basketball Coach",
+      initialTension: 50,
+      initialDialogue: "You cut my kids' practice time in HALF and didn't even give me a heads up? Fifteen years I've built this program and you people just erase it with an email?",
+      decisions: [
+        {
+          id: 1,
+          title: "HOW DO YOU RESPOND TO HIS OPENING?",
+          openingDialogue: "You cut my kids' practice time in HALF and didn't even give me a heads up? Fifteen years I've built this program and you people just erase it with an email?",
+          options: [
+            {
+              letter: "A",
+              text: "The decision's already made. I'd encourage you to review the district equity guidelines before reacting.",
+              impact: 20,
+              reaction: "Don't lecture me about equity — I built the most diverse team in this district!",
+              nextAvatarEmotion: "angry"
+            },
+            {
+              letter: "B",
+              text: "Let's just go back to the old schedule, no big deal.",
+              impact: -5,
+              reaction: "Wait — so this whole thing was pointless? Then why post it in the first place?",
+              nextAvatarEmotion: "frustrated"
+            },
+            {
+              letter: "C",
+              text: "I hear that this feels disrespectful after everything you've built — that wasn't the intent, and I want to fix this with you.",
+              impact: -15,
+              reaction: "...Okay. Fine. But you still need to explain why nobody talked to me first.",
+              nextAvatarEmotion: "listening"
+            },
+            {
+              letter: "D",
+              text: "Say nothing. Wait for him to finish venting.",
+              impact: -5,
+              reaction: "You gonna say something, or just sit there?",
+              nextAvatarEmotion: "frustrated"
+            }
+          ]
+        },
+        {
+          id: 2,
+          title: "WHAT IS YOUR NEXT MOVE?",
+          openingDialogue: "You need to explain how this happened. We had a county championship run planned, and now you're throwing our prep in the trash.",
+          options: [
+            {
+              letter: "A",
+              text: "I don't make the final call on this, that's above my pay grade.",
+              impact: 15,
+              reaction: "Then why did you put your signature on the memo? Stop dodging accountability!",
+              nextAvatarEmotion: "angry"
+            },
+            {
+              letter: "B",
+              text: "What would a fair compromise look like to you?",
+              impact: -15,
+              reaction: "I just need 90 uninterrupted minutes before 5 PM so my kids don't miss family dinners or bus routes.",
+              nextAvatarEmotion: "listening"
+            },
+            {
+              letter: "C",
+              text: "I understand you're upset, but I need you to lower your voice.",
+              impact: 10,
+              reaction: "My voice is normal for someone who just had 15 years of trust disregarded!",
+              nextAvatarEmotion: "angry"
+            },
+            {
+              letter: "D",
+              text: "You're right that you should've been consulted first — that's on us. Can you walk me through what the practice time actually protects for your team?",
+              impact: -20,
+              reaction: "Look... we share court drills with JV from 3 to 4:30. If you take that 4:00 slot, half the seniors lose college scout film sessions.",
+              nextAvatarEmotion: "listening"
+            }
+          ]
+        },
+        {
+          id: 3,
+          title: "HOW DO YOU MOVE THIS FORWARD?",
+          openingDialogue: "I want to solve this, but I'm not going to have my team get pushed out into the auxiliary gym with broken hoops.",
+          options: [
+            {
+              letter: "A",
+              text: "I was wrong to roll this out without you. I'm reversing it until we meet properly.",
+              impact: -25,
+              reaction: "I appreciate that. Let's sit down and figure out how to fit that new program in without gutting ours.",
+              nextAvatarEmotion: "calm"
+            },
+            {
+              letter: "B",
+              text: "Let's set a time this week — just us — to look at the full gym calendar and find a real solution together.",
+              impact: -20,
+              reaction: "Alright. Tomorrow at 7:30 AM before first period. Bring the master schedule.",
+              nextAvatarEmotion: "calm"
+            },
+            {
+              letter: "C",
+              text: "I'll think about it and get back to you.",
+              impact: 10,
+              reaction: "'Get back to me'? That usually means nothing gets done and the memo stays.",
+              nextAvatarEmotion: "frustrated"
+            },
+            {
+              letter: "D",
+              text: "This is final. I've made the call and I need you to respect it.",
+              impact: 25,
+              reaction: "Then we're going straight to the superintendent's board meeting tonight. See you there.",
+              nextAvatarEmotion: "angry"
+            }
+          ]
+        },
+        {
+          id: 4,
+          title: "HOW DO YOU CLOSE THE CONVERSATION?",
+          openingDialogue: "I've got third-period PE in five minutes. How are we leaving this?",
+          options: [
+            {
+              letter: "A",
+              text: "Let's just move on from this.",
+              impact: 5,
+              reaction: "We're not 'moving on' until tomorrow's revised grid is signed.",
+              nextAvatarEmotion: "frustrated"
+            },
+            {
+              letter: "B",
+              text: "I'll send a follow-up email confirming our meeting and next steps.",
+              impact: -5,
+              reaction: "Good. Put it in writing so we are on the same page.",
+              nextAvatarEmotion: "calm"
+            },
+            {
+              letter: "C",
+              text: "Thanks for telling me straight instead of just going along with it — that matters to me.",
+              impact: -15,
+              reaction: "Appreciate you hearing me out. I'll see you tomorrow morning to review the numbers.",
+              nextAvatarEmotion: "calm"
+            }
+          ]
+        }
+      ]
+    };
+
+    /* =========================================================
+       2. WARM SYNTHESIZED SOUND ENGINE (Web Audio API)
+       ========================================================= */
+    class SoftSoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+      }
+
+      playTick() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.03);
+          gain.gain.setValueAtTime(0.025, this.ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.0001, this.ctx.currentTime + 0.03);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.03);
+        } catch (e) {}
+      }
+
+      playWarning() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(160, now + 0.22);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(now + 0.25);
+        } catch (e) {}
+      }
+
+      playChime() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          [329.63, 415.30, 493.88, 659.25].forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + (idx * 0.06));
+            gain.gain.setValueAtTime(0.05, now + (idx * 0.06));
+            gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.06) + 0.45);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + (idx * 0.06));
+            osc.stop(now + (idx * 0.06) + 0.45);
+          });
+        } catch (e) {}
+      }
+
+      playTransition() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(392.00, now);
+          osc.frequency.exponentialRampToValueAtTime(523.25, now + 0.16);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.16);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(now + 0.16);
+        } catch (e) {}
+      }
+
+      playFinalReveal() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          [392.00, 493.88, 587.33, 783.99].forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + (idx * 0.08));
+            gain.gain.setValueAtTime(0.06, now + (idx * 0.08));
+            gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.08) + 0.6);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + (idx * 0.08));
+            osc.stop(now + (idx * 0.08) + 0.6);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const sound = new SoftSoundEngine();
+
+    /* =========================================================
+       3. COACH ALVAREZ DYNAMIC IMAGE GENERATOR WITH FALLBACK
+       ========================================================= */
+    function getCoachAvatarHtml(emotion = 'angry') {
+      const key = emotion.toLowerCase();
+      const url = COACH_AVATARS[key] || COACH_AVATARS.calm;
+      return `
+        <img 
+          src="${url}" 
+          alt="Coach Alvarez - ${emotion}" 
+          class="w-full h-full object-cover object-center rounded-2xl transition-transform duration-300 group-hover:scale-105"
+          onerror="this.onerror=null; this.src='https://elearning.lapu.edu/course_files/_MAOL/CoachandAssistantPrincipal.jpeg';"
+        />
+      `;
+    }
+
+    /* =========================================================
+       4. GAME ENGINE CONTROLLER & STATE MACHINE
+       ========================================================= */
+    class GameEngine {
+      constructor() {
+        this.currentDecisionIndex = 0;
+        this.currentTension = 50;
+        this.timer = 15;
+        this.timerInterval = null;
+        this.learnerChoices = [];
+        this.tensionHistory = [50];
+        this.isProcessingChoice = false;
+        this.pendingNextDecisionIndex = null;
+        
+        this.dom = {
+          screenStart: document.getElementById('screen-start'),
+          screenIntro: document.getElementById('screen-intro'),
+          screenGameplay: document.getElementById('screen-gameplay'),
+          screenResults: document.getElementById('screen-results'),
+          
+          btnStartGame: document.getElementById('btnStartGame'),
+          btnEnterConversation: document.getElementById('btnEnterConversation'),
+          btnIntroBack: document.getElementById('btnIntroBack'),
+          btnGameplayBack: document.getElementById('btnGameplayBack'),
+          gameplayBackLabel: document.getElementById('gameplayBackLabel'),
+          btnRechoose: document.getElementById('btnRechoose'),
+          btnNextDecision: document.getElementById('btnNextDecision'),
+          btnResultsBack: document.getElementById('btnResultsBack'),
+          btnRestartSimulation: document.getElementById('btnRestartSimulation'),
+          nextDecisionBtnText: document.getElementById('nextDecisionBtnText'),
+          soundToggleBtn: document.getElementById('soundToggleBtn'),
+          soundStatusText: document.getElementById('soundStatusText'),
+          soundIcon: document.getElementById('soundIcon'),
+          
+          gameplayAvatarContainer: document.getElementById('gameplayAvatarContainer'),
+          finalAvatarContainer: document.getElementById('finalAvatarContainer'),
+          finalDemeanorBadge: document.getElementById('finalDemeanorBadge'),
+          finalDemeanorText: document.getElementById('finalDemeanorText'),
+          avatarEmotionTag: document.getElementById('avatarEmotionTag'),
+          
+          tensionNumber: document.getElementById('tensionNumber'),
+          tensionMeterBar: document.getElementById('tensionMeterBar'),
+          tensionBadge: document.getElementById('tensionBadge'),
+          impactNotice: document.getElementById('impactNotice'),
+          
+          timerValue: document.getElementById('timerValue'),
+          timerContainer: document.getElementById('timerContainer'),
+          timerSubtext: document.getElementById('timerSubtext'),
+          timesUpAlert: document.getElementById('timesUpAlert'),
+          
+          characterDialogue: document.getElementById('characterDialogue'),
+          decisionTitle: document.getElementById('decisionTitle'),
+          decisionStepIndicator: document.getElementById('decisionStepIndicator'),
+          optionsContainer: document.getElementById('optionsContainer'),
+          reactionBubbleContainer: document.getElementById('reactionBubbleContainer'),
+          characterReactionText: document.getElementById('characterReactionText'),
+          reactionShiftBadge: document.getElementById('reactionShiftBadge'),
+          
+          finalEndingTension: document.getElementById('finalEndingTension'),
+          finalPeakTension: document.getElementById('finalPeakTension'),
+          finalLowestTension: document.getElementById('finalLowestTension'),
+          tensionGraphSvg: document.getElementById('tensionGraphSvg'),
+          userChoicesList: document.getElementById('userChoicesList'),
+          userChoicesDetails: document.getElementById('userChoicesDetails')
+        };
+
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        this.dom.btnStartGame.addEventListener('click', () => this.showScenarioIntro());
+        this.dom.btnEnterConversation.addEventListener('click', () => this.startSimulation());
+        this.dom.btnRestartSimulation.addEventListener('click', () => this.restartGame());
+
+        // Back Buttons
+        this.dom.btnIntroBack.addEventListener('click', () => {
+          sound.playTransition();
+          this.switchScreen(this.dom.screenStart);
+        });
+
+        this.dom.btnGameplayBack.addEventListener('click', () => this.handleGameplayBack());
+
+        this.dom.btnRechoose.addEventListener('click', () => {
+          sound.playTransition();
+          this.handleRechooseCurrentDecision();
+        });
+
+        this.dom.btnResultsBack.addEventListener('click', () => {
+          sound.playTransition();
+          this.handleBackFromResults();
+        });
+        
+        this.dom.btnNextDecision.addEventListener('click', () => {
+          sound.playTransition();
+          if (this.pendingNextDecisionIndex !== null) {
+            this.loadDecision(this.pendingNextDecisionIndex);
+          }
+        });
+        
+        this.dom.soundToggleBtn.addEventListener('click', () => {
+          const isEnabled = sound.toggle();
+          this.dom.soundStatusText.textContent = isEnabled ? 'Sound On' : 'Muted';
+          this.dom.soundIcon.textContent = isEnabled ? '🌿' : '🔇';
+          if (isEnabled) sound.playTick();
+        });
+      }
+
+      switchScreen(targetScreen) {
+        [
+          this.dom.screenStart,
+          this.dom.screenIntro,
+          this.dom.screenGameplay,
+          this.dom.screenResults
+        ].forEach(screen => screen.classList.add('hidden'));
+
+        targetScreen.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      showScenarioIntro() {
+        sound.playTransition();
+        this.switchScreen(this.dom.screenIntro);
+      }
+
+      startSimulation() {
+        this.currentDecisionIndex = 0;
+        this.currentTension = 50;
+        this.learnerChoices = [];
+        this.tensionHistory = [50];
+        this.isProcessingChoice = false;
+        this.pendingNextDecisionIndex = null;
+
+        this.updateTensionHUD(50, 0);
+        this.switchScreen(this.dom.screenGameplay);
+        this.loadDecision(0);
+      }
+
+      loadDecision(decisionIndex) {
+        const decisionData = GAME_SCENARIO.decisions[decisionIndex];
+        if (!decisionData) {
+          this.showFinalReveal();
+          return;
+        }
+
+        this.currentDecisionIndex = decisionIndex;
+        this.isProcessingChoice = false;
+        this.pendingNextDecisionIndex = null;
+        this.dom.timesUpAlert.classList.add('hidden');
+        this.dom.reactionBubbleContainer.classList.add('hidden');
+
+        // Configure Back button label
+        if (decisionIndex === 0) {
+          this.dom.gameplayBackLabel.textContent = "Briefing";
+        } else {
+          this.dom.gameplayBackLabel.textContent = `D${decisionIndex}`;
+        }
+
+        // Update Avatar & dialogue
+        const defaultEmotion = decisionIndex === 0 ? 'angry' : (this.currentTension > 60 ? 'angry' : (this.currentTension < 30 ? 'calm' : 'frustrated'));
+        this.updateAvatar(defaultEmotion);
+
+        this.dom.characterDialogue.textContent = `"${decisionData.openingDialogue}"`;
+        this.dom.decisionTitle.innerHTML = `<span>${decisionData.title}</span>`;
+        this.dom.decisionStepIndicator.textContent = `(${decisionIndex + 1} / 4)`;
+
+        // Render Buttons
+        this.dom.optionsContainer.innerHTML = '';
+        decisionData.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = `option-card group text-left w-full p-4 sm:p-4.5 rounded-2xl border border-stone-300 bg-white hover:bg-stone-50 transition-all flex items-start gap-3.5 shadow-sm active:scale-[0.99] cursor-pointer`;
+          btn.innerHTML = `
+            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-stone-200 group-hover:bg-amber-100 group-hover:text-amber-950 text-stone-900 font-mono-digits font-extrabold flex items-center justify-center flex-shrink-0 text-xs sm:text-sm transition-colors border border-stone-300">
+              ${opt.letter}
+            </span>
+            <span class="text-sm sm:text-base text-stone-950 group-hover:text-black font-semibold leading-relaxed">
+              "${opt.text}"
+            </span>
+          `;
+          btn.addEventListener('click', () => {
+            if (!this.isProcessingChoice) {
+              this.makeChoice(decisionIndex, opt);
+            }
+          });
+          this.dom.optionsContainer.appendChild(btn);
+        });
+
+        // Start 15s Countdown
+        this.startTimer(decisionIndex);
+      }
+
+      startTimer(decisionIndex) {
+        clearInterval(this.timerInterval);
+        this.timer = 15;
+        this.updateTimerDisplay();
+
+        this.timerInterval = setInterval(() => {
+          this.timer--;
+          this.updateTimerDisplay();
+          sound.playTick();
+
+          if (this.timer <= 0) {
+            clearInterval(this.timerInterval);
+            this.handleTimeout(decisionIndex);
+          }
+        }, 1000);
+      }
+
+      updateTimerDisplay() {
+        this.dom.timerValue.textContent = this.timer;
+        
+        if (this.timer <= 5) {
+          this.dom.timerContainer.className = "w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-rose-100 border-2 border-rose-500 flex items-center justify-center text-2xl font-black font-mono-digits text-rose-950 shadow-inner pulse-urgent";
+          this.dom.timerSubtext.textContent = "Time running out!";
+          this.dom.timerSubtext.className = "text-xs text-rose-800 font-bold";
+        } else {
+          this.dom.timerContainer.className = "w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-stone-100 border-2 border-stone-400 flex items-center justify-center text-2xl font-black font-mono-digits text-stone-950 shadow-inner";
+          this.dom.timerSubtext.textContent = "Thinking clock";
+          this.dom.timerSubtext.className = "text-xs text-stone-700 font-medium";
+        }
+      }
+
+      handleTimeout(decisionIndex) {
+        if (this.isProcessingChoice) return;
+        this.dom.timesUpAlert.classList.remove('hidden');
+        sound.playWarning();
+
+        // Pick neutral or mildest fallback response on timeout
+        const currentDecision = GAME_SCENARIO.decisions[decisionIndex];
+        const fallbackOption = currentDecision.options.find(o => o.impact === -5) || currentDecision.options[currentDecision.options.length - 1];
+        
+        this.makeChoice(decisionIndex, fallbackOption, true);
+      }
+
+      makeChoice(decisionIndex, chosenOption, isTimeout = false) {
+        if (this.isProcessingChoice) return;
+        this.isProcessingChoice = true;
+        clearInterval(this.timerInterval);
+
+        this.learnerChoices.push({
+          decisionIndex,
+          letter: chosenOption.letter,
+          text: chosenOption.text,
+          impact: chosenOption.impact,
+          reaction: chosenOption.reaction,
+          isTimeout
+        });
+
+        const oldTension = this.currentTension;
+        const newTension = Math.max(0, Math.min(100, oldTension + chosenOption.impact));
+        const delta = newTension - oldTension;
+        this.currentTension = newTension;
+        this.tensionHistory.push(newTension);
+
+        if (chosenOption.impact > 0) {
+          sound.playWarning();
+        } else if (chosenOption.impact < 0) {
+          sound.playChime();
+        }
+
+        this.updateTensionHUD(newTension, chosenOption.impact);
+        this.updateAvatar(chosenOption.nextAvatarEmotion || 'frustrated');
+        this.showReactionBeat(chosenOption, delta, decisionIndex);
+
+        this.dom.timerSubtext.textContent = "Response recorded";
+        this.dom.timerSubtext.className = "text-xs text-stone-700 font-semibold";
+
+        const buttons = this.dom.optionsContainer.querySelectorAll('button');
+        buttons.forEach(btn => {
+          btn.disabled = true;
+          btn.classList.add('opacity-45', 'cursor-not-allowed');
+          if (btn.querySelector('.font-mono-digits').textContent.trim() === chosenOption.letter) {
+            btn.classList.remove('opacity-45');
+            btn.classList.add('ring-2', 'ring-amber-500', 'bg-amber-50');
+          }
+        });
+
+        this.pendingNextDecisionIndex = decisionIndex + 1;
+      }
+
+      handleGameplayBack() {
+        sound.playTransition();
+        clearInterval(this.timerInterval);
+
+        // If user already picked an option for the current decision, rewind that pick
+        if (this.isProcessingChoice || this.pendingNextDecisionIndex !== null) {
+          this.handleRechooseCurrentDecision();
+          return;
+        }
+
+        // If on Decision 1 (index 0) and hasn't chosen yet -> return to Scenario Briefing
+        if (this.currentDecisionIndex === 0) {
+          this.switchScreen(this.dom.screenIntro);
+          return;
+        }
+
+        // If on Decision 2, 3, or 4 -> roll back the PREVIOUS decision's choice and reload it
+        const targetDecisionIndex = this.currentDecisionIndex - 1;
+        this.learnerChoices.pop();
+        this.tensionHistory.pop();
+        this.currentTension = this.tensionHistory[this.tensionHistory.length - 1];
+        
+        this.updateTensionHUD(this.currentTension, 0);
+        this.loadDecision(targetDecisionIndex);
+      }
+
+      handleRechooseCurrentDecision() {
+        // Roll back the latest choice recorded on current decision
+        if (this.learnerChoices.length > 0 && this.learnerChoices[this.learnerChoices.length - 1].decisionIndex === this.currentDecisionIndex) {
+          this.learnerChoices.pop();
+          this.tensionHistory.pop();
+          this.currentTension = this.tensionHistory[this.tensionHistory.length - 1];
+        }
+
+        this.updateTensionHUD(this.currentTension, 0);
+        this.loadDecision(this.currentDecisionIndex);
+      }
+
+      handleBackFromResults() {
+        // Roll back Decision 4 so learner can review and re-try from the final decision point
+        const lastDecisionIndex = GAME_SCENARIO.decisions.length - 1;
+        if (this.learnerChoices.length === GAME_SCENARIO.decisions.length) {
+          this.learnerChoices.pop();
+          this.tensionHistory.pop();
+          this.currentTension = this.tensionHistory[this.tensionHistory.length - 1];
+        }
+
+        this.updateTensionHUD(this.currentTension, 0);
+        this.switchScreen(this.dom.screenGameplay);
+        this.loadDecision(lastDecisionIndex);
+      }
+
+      updateAvatar(emotion) {
+        this.dom.gameplayAvatarContainer.innerHTML = getCoachAvatarHtml(emotion);
+        this.dom.avatarEmotionTag.textContent = emotion;
+        
+        this.dom.avatarEmotionTag.className = "text-xs font-bold px-3 py-0.5 rounded-full mt-1 inline-block capitalize ";
+        if (emotion === 'angry') {
+          this.dom.avatarEmotionTag.classList.add('text-rose-950', 'bg-rose-100', 'border', 'border-rose-300');
+        } else if (emotion === 'frustrated') {
+          this.dom.avatarEmotionTag.classList.add('text-amber-950', 'bg-amber-100', 'border', 'border-amber-300');
+        } else if (emotion === 'listening') {
+          this.dom.avatarEmotionTag.classList.add('text-sky-950', 'bg-sky-100', 'border', 'border-sky-300');
+        } else if (emotion === 'calm' || emotion === 'positive') {
+          this.dom.avatarEmotionTag.classList.add('text-emerald-950', 'bg-emerald-100', 'border', 'border-emerald-300');
+        }
+      }
+
+      showReactionBeat(option, delta, decisionIndex) {
+        this.dom.reactionBubbleContainer.classList.remove('hidden');
+        this.dom.characterReactionText.textContent = `"${option.reaction}"`;
+        
+        if (delta > 0) {
+          this.dom.reactionShiftBadge.textContent = `Tension +${delta}`;
+          this.dom.reactionShiftBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono-digits font-bold bg-rose-100 text-rose-950 border border-rose-300';
+        } else if (delta < 0) {
+          this.dom.reactionShiftBadge.textContent = `Tension ${delta}`;
+          this.dom.reactionShiftBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono-digits font-bold bg-emerald-100 text-emerald-950 border border-emerald-300';
+        } else {
+          this.dom.reactionShiftBadge.textContent = `Tension unchanged`;
+          this.dom.reactionShiftBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-mono-digits font-bold bg-stone-200 text-stone-800 border border-stone-300';
+        }
+
+        const isLastDecision = decisionIndex === GAME_SCENARIO.decisions.length - 1;
+        this.dom.nextDecisionBtnText.textContent = isLastDecision ? "View Final Trajectory" : "Continue to Next Decision";
+      }
+
+      updateTensionHUD(score, delta) {
+        this.dom.tensionNumber.textContent = score;
+        this.dom.tensionMeterBar.style.width = `${score}%`;
+
+        if (score >= 70) {
+          this.dom.tensionMeterBar.className = "h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-amber-500 to-rose-600";
+          this.dom.tensionBadge.textContent = "High Agitation";
+          this.dom.tensionBadge.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-rose-100 text-rose-950 border border-rose-300";
+        } else if (score >= 40) {
+          this.dom.tensionMeterBar.className = "h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-amber-400 to-amber-600";
+          this.dom.tensionBadge.textContent = "Elevated Tension";
+          this.dom.tensionBadge.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300";
+        } else {
+          this.dom.tensionMeterBar.className = "h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-teal-400 to-emerald-600";
+          this.dom.tensionBadge.textContent = "De-escalated & Receptive";
+          this.dom.tensionBadge.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300";
+        }
+
+        if (delta !== 0) {
+          this.dom.impactNotice.classList.remove('hidden');
+          if (delta > 0) {
+            this.dom.impactNotice.textContent = `TENSION +${delta}`;
+            this.dom.impactNotice.className = "absolute top-4 right-4 px-3.5 py-1 rounded-full text-xs font-black font-mono-digits shadow-md z-20 bg-rose-600 text-white animate-bounce";
+          } else {
+            this.dom.impactNotice.textContent = `TENSION ${delta}`;
+            this.dom.impactNotice.className = "absolute top-4 right-4 px-3.5 py-1 rounded-full text-xs font-black font-mono-digits shadow-md z-20 bg-emerald-600 text-white animate-pulse";
+          }
+          setTimeout(() => {
+            this.dom.impactNotice.classList.add('hidden');
+          }, 1800);
+        }
+      }
+
+      showFinalReveal() {
+        sound.playFinalReveal();
+        clearInterval(this.timerInterval);
+
+        const endingTension = this.currentTension;
+        const peakTension = Math.max(...this.tensionHistory);
+        const lowestTension = Math.min(...this.tensionHistory);
+
+        this.dom.finalEndingTension.textContent = endingTension;
+        this.dom.finalPeakTension.textContent = peakTension;
+        this.dom.finalLowestTension.textContent = lowestTension;
+
+        // Render outcome portrait and demeanor badge in Screen 4
+        let finalEmotion = 'calm';
+        let demeanorBadgeText = 'Reconnected & Calm';
+        let demeanorBadgeClass = 'text-xs font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300';
+        let demeanorDesc = 'Coach Alvarez leaves the office with trust restored, feeling heard and validated with a solid morning follow-up planned.';
+
+        if (endingTension >= 65) {
+          finalEmotion = 'angry';
+          demeanorBadgeText = 'Deeply Agitated';
+          demeanorBadgeClass = 'text-xs font-bold px-3 py-0.5 rounded-full bg-rose-100 text-rose-950 border border-rose-300';
+          demeanorDesc = 'Coach Alvarez leaves feeling dismissed and disrespected. The dispute has escalated toward higher district administration.';
+        } else if (endingTension >= 35) {
+          finalEmotion = 'frustrated';
+          demeanorBadgeText = 'Cautious / Guarded';
+          demeanorBadgeClass = 'text-xs font-bold px-3 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300';
+          demeanorDesc = 'Coach Alvarez agrees to hold off immediate reaction, but remains wary about follow-through until revised grids are in writing.';
+        } else {
+          finalEmotion = 'calm';
+          demeanorBadgeText = 'Reconnected & Calm';
+          demeanorBadgeClass = 'text-xs font-bold px-3 py-0.5 rounded-full bg-teal-100 text-teal-950 border border-teal-300';
+          demeanorDesc = 'The conversation transformed into a cooperative partnership. Coach Alvarez is ready to co-design the schedule with you.';
+        }
+
+        this.dom.finalAvatarContainer.innerHTML = getCoachAvatarHtml(finalEmotion);
+        this.dom.finalDemeanorBadge.textContent = demeanorBadgeText;
+        this.dom.finalDemeanorBadge.className = demeanorBadgeClass;
+        this.dom.finalDemeanorText.textContent = demeanorDesc;
+
+        const sequenceStr = this.learnerChoices.map(c => c.letter).join(' → ');
+        this.dom.userChoicesList.textContent = sequenceStr;
+
+        this.dom.userChoicesDetails.innerHTML = '';
+        this.learnerChoices.forEach((c, idx) => {
+          const item = document.createElement('div');
+          item.className = "flex items-start justify-between py-2 border-b border-stone-300 gap-2";
+          item.innerHTML = `
+            <div>
+              <strong class="text-stone-950 font-mono-digits font-bold">D${idx+1} (${c.letter}):</strong> 
+              <span class="text-stone-900 font-medium italic">"${c.text.substring(0, 60)}..."</span>
+            </div>
+            <span class="font-mono-digits text-xs font-extrabold ${c.impact > 0 ? 'text-rose-800' : 'text-emerald-800'}">
+              ${c.impact > 0 ? `+${c.impact}` : c.impact}
+            </span>
+          `;
+          this.dom.userChoicesDetails.appendChild(item);
+        });
+
+        this.renderTensionGraph();
+        this.switchScreen(this.dom.screenResults);
+      }
+
+      renderTensionGraph() {
+        const svg = this.dom.tensionGraphSvg;
+        svg.innerHTML = '';
+
+        const width = 500;
+        const height = 150;
+        const padX = 40;
+        const padY = 20;
+
+        // Safe zone band
+        const safeZoneY = height - padY - (40 / 100 * (height - 2 * padY));
+        const safeRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        safeRect.setAttribute('x', padX);
+        safeRect.setAttribute('y', safeZoneY);
+        safeRect.setAttribute('width', width - 2 * padX);
+        safeRect.setAttribute('height', height - padY - safeZoneY);
+        safeRect.setAttribute('fill', '#10b981');
+        safeRect.setAttribute('opacity', '0.15');
+        safeRect.setAttribute('rx', '6');
+        svg.appendChild(safeRect);
+
+        // Grid lines
+        [0, 25, 50, 75, 100].forEach(val => {
+          const y = height - padY - (val / 100 * (height - 2 * padY));
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', padX);
+          line.setAttribute('y1', y);
+          line.setAttribute('x2', width - padX);
+          line.setAttribute('y2', y);
+          line.setAttribute('stroke', '#d6cfc4');
+          line.setAttribute('stroke-width', '1.25');
+          line.setAttribute('stroke-dasharray', val === 50 ? '0' : '3,3');
+          svg.appendChild(line);
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', padX - 8);
+          text.setAttribute('y', y + 3.5);
+          text.setAttribute('fill', '#57534e');
+          text.setAttribute('font-size', '11');
+          text.setAttribute('font-weight', '700');
+          text.setAttribute('font-family', 'JetBrains Mono');
+          text.setAttribute('text-anchor', 'end');
+          text.textContent = val;
+          svg.appendChild(text);
+        });
+
+        // Data nodes
+        const points = this.tensionHistory.map((val, idx) => {
+          const x = padX + (idx / 4) * (width - 2 * padX);
+          const y = height - padY - (val / 100 * (height - 2 * padY));
+          return { x, y, val, idx };
+        });
+
+        // Connecting stroke
+        let pathD = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 1; i < points.length; i++) {
+          pathD += ` L ${points[i].x} ${points[i].y}`;
+        }
+
+        const pathElem = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathElem.setAttribute('d', pathD);
+        pathElem.setAttribute('fill', 'none');
+        pathElem.setAttribute('stroke', '#d97706');
+        pathElem.setAttribute('stroke-width', '3.5');
+        pathElem.setAttribute('stroke-linecap', 'round');
+        pathElem.setAttribute('stroke-linejoin', 'round');
+        svg.appendChild(pathElem);
+
+        // Nodes
+        points.forEach((pt) => {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', pt.x);
+          circle.setAttribute('cy', pt.y);
+          circle.setAttribute('r', '5.5');
+          circle.setAttribute('fill', pt.val > 60 ? '#e11d48' : (pt.val < 35 ? '#059669' : '#d97706'));
+          circle.setAttribute('stroke', '#ffffff');
+          circle.setAttribute('stroke-width', '2');
+          svg.appendChild(circle);
+
+          const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          lbl.setAttribute('x', pt.x);
+          lbl.setAttribute('y', pt.y - 8);
+          lbl.setAttribute('fill', '#1c1917');
+          lbl.setAttribute('font-size', '11');
+          lbl.setAttribute('font-weight', '800');
+          lbl.setAttribute('font-family', 'JetBrains Mono');
+          lbl.setAttribute('text-anchor', 'middle');
+          lbl.textContent = pt.val;
+          svg.appendChild(lbl);
+
+          const bottomTag = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          bottomTag.setAttribute('x', pt.x);
+          bottomTag.setAttribute('y', height - 2);
+          bottomTag.setAttribute('fill', '#44403c');
+          bottomTag.setAttribute('font-size', '11');
+          bottomTag.setAttribute('font-weight', '800');
+          bottomTag.setAttribute('font-family', 'JetBrains Mono');
+          bottomTag.setAttribute('text-anchor', 'middle');
+          bottomTag.textContent = pt.idx === 0 ? 'START' : `D${pt.idx}`;
+          svg.appendChild(bottomTag);
+        });
+      }
+
+      restartGame() {
+        sound.playTransition();
+        clearInterval(this.timerInterval);
+        this.currentDecisionIndex = 0;
+        this.currentTension = 50;
+        this.learnerChoices = [];
+        this.tensionHistory = [50];
+        this.pendingNextDecisionIndex = null;
+        this.switchScreen(this.dom.screenStart);
+      }
+    }
+
+    // Launch Game on Ready
+    window.addEventListener('DOMContentLoaded', () => {
+      window.gameEngine = new GameEngine();
+    });
+  </script>
+</body>
+</html>
