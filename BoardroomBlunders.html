@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boardroom Blunders: The Case File Room</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Typewriter (Special Elite), Handwritten (Caveat, Kalam), and Sans-serif (Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Kalam:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            parchment: '#F4F1EA',
+            parchmentDark: '#E8E2D5',
+            navyAccent: '#1B2A4A',
+            navyLight: '#2C3E66',
+            rustAccent: '#C1622D',
+            rustDark: '#9C4B1E',
+            claraTeal: '#3A8891',
+            claraTealLight: '#E8F3F4',
+            breakdownGreen: '#237048',
+            breakdownGreenLight: '#EBF5EE',
+            breakdownRed: '#A83232',
+            stickyYellow: '#FEF9C3',
+            stickyYellowBorder: '#FDE047',
+            manila: '#EADBB6',
+            manilaDark: '#D8C496'
+          },
+          fontFamily: {
+            typewriter: ['"Special Elite"', 'Courier', 'monospace'],
+            handwritten: ['"Caveat"', '"Kalam"', 'cursive'],
+            kalam: ['"Kalam"', 'cursive'],
+            sans: ['"Inter"', 'sans-serif']
+          },
+          boxShadow: {
+            dossier: '0 12px 30px -5px rgba(27, 42, 74, 0.18), 0 8px 16px -6px rgba(0, 0, 0, 0.12)',
+            sticky: '3px 4px 15px rgba(0,0,0,0.12), -1px 2px 4px rgba(0,0,0,0.06)',
+            stamp: 'inset 0 0 0 2px #C1622D, 0 2px 4px rgba(0,0,0,0.15)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Desk wood/parchment background textures */
+    body {
+      background-color: #F4F1EA;
+      background-image: 
+        radial-gradient(#1B2A4A 0.45px, transparent 0.45px), 
+        radial-gradient(#C1622D 0.45px, #F4F1EA 0.45px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+      color: #1B2A4A;
+      min-height: 100vh;
+    }
+
+    /* 3D Card Flip styles */
+    .perspective-1000 {
+      perspective: 1200px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    .flip-card-inner {
+      transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+
+    /* Stamp graphic animation & styling */
+    .stamp-badge {
+      display: inline-block;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      border: 3.5px dashed #A83232;
+      color: #A83232;
+      mask-image: radial-gradient(circle, rgba(0,0,0,1) 75%, rgba(0,0,0,0.65) 100%);
+      transform: rotate(-4deg);
+    }
+    .stamp-classified {
+      border: 2.5px solid #C1622D;
+      color: #C1622D;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      transform: rotate(2deg);
+    }
+    
+    .rubber-stamp-btn {
+      border: 3px solid #1B2A4A;
+      box-shadow: 4px 4px 0px #1B2A4A;
+      transition: all 0.15s ease-in-out;
+    }
+    .rubber-stamp-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px #1B2A4A;
+    }
+    .rubber-stamp-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #1B2A4A;
+    }
+
+    .rubber-stamp-rust {
+      border: 3px solid #C1622D;
+      color: #C1622D;
+      box-shadow: 4px 4px 0px #C1622D;
+    }
+    .rubber-stamp-rust:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px #C1622D;
+    }
+    .rubber-stamp-rust:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #C1622D;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D8C496;
+      border-radius: 4px;
+    }
+
+    /* Paper clip ornament */
+    .paperclip {
+      position: absolute;
+      top: -14px;
+      left: 38px;
+      width: 16px;
+      height: 48px;
+      border: 3px solid #717F94;
+      border-radius: 12px 12px 0 0;
+      z-index: 30;
+      box-shadow: -1px 2px 3px rgba(0,0,0,0.25);
+    }
+    .paperclip::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 2px;
+      width: 6px;
+      height: 32px;
+      border: 2.5px solid #717F94;
+      border-radius: 6px 6px 0 0;
+    }
+
+    /* Sticky tape effect */
+    .tape-strip {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-1deg);
+      width: 100px;
+      height: 24px;
+      background: rgba(243, 237, 218, 0.7);
+      border-left: 2px dashed rgba(180,170,140,0.5);
+      border-right: 2px dashed rgba(180,170,140,0.5);
+      backdrop-filter: blur(1px);
+      z-index: 20;
+    }
+
+    @keyframes stampDrop {
+      0% { transform: scale(2.2) rotate(15deg); opacity: 0; }
+      70% { transform: scale(0.92) rotate(-5deg); opacity: 1; }
+      100% { transform: scale(1) rotate(-4deg); opacity: 1; }
+    }
+    .animate-stamp {
+      animation: stampDrop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideNoteIn {
+      0% { transform: translateY(20px) rotate(2deg); opacity: 0; }
+      100% { transform: translateY(0) rotate(0.8deg); opacity: 1; }
+    }
+    .animate-sticky {
+      animation: slideNoteIn 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 md:p-6 flex flex-col items-center justify-start min-h-screen text-navyAccent font-sans selection:bg-rustAccent selection:text-white">
+
+  <!-- TOP HEADER / DESK BAR -->
+  <header class="w-full max-w-5xl mx-auto mb-4 flex flex-wrap items-center justify-between gap-4 border-b-2 border-navyAccent/20 pb-3 px-2">
+    <div class="flex items-center space-x-3 cursor-pointer" id="btnHeaderBrand" title="Click to return to Main Desk Briefing">
+      <div class="w-10 h-10 rounded-lg bg-navyAccent text-parchment flex items-center justify-center font-typewriter text-xl font-bold shadow-md hover:bg-rustAccent transition">
+        🗂️
+      </div>
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-rustAccent">Case File Room</span>
+        <h1 class="text-lg sm:text-2xl font-extrabold tracking-tight font-typewriter text-navyAccent leading-none">
+          BOARDROOM BLUNDERS
+        </h1>
+      </div>
+    </div>
+    
+    <!-- Progress Indicator & Header Controls -->
+    <div class="flex items-center gap-2.5">
+      <!-- Audio Mute/Unmute Toggle Button -->
+      <button id="btnSoundToggle" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-navyAccent/20 bg-parchmentDark text-navyAccent hover:bg-navyAccent hover:text-parchment text-xs font-typewriter font-bold transition shadow-sm" title="Toggle Sound Effects">
+        <span id="soundIcon">🔊</span> <span id="soundText" class="hidden sm:inline">Sound ON</span>
+      </button>
+
+      <!-- Single Unified Instructions button (Header) -->
+      <button id="btnHeaderDesk" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-navyAccent/20 bg-parchmentDark text-navyAccent hover:bg-navyAccent hover:text-parchment text-xs font-typewriter font-bold transition shadow-sm" title="View Instructions Protocol">
+        📋 Instructions
+      </button>
+
+      <!-- Progress Tracker Tabs -->
+      <div id="progressTracker" class="hidden flex-wrap items-center gap-2 bg-parchmentDark px-3 py-1.5 rounded-lg border border-navyAccent/20">
+        <span class="text-xs font-semibold uppercase tracking-wider text-navyAccent/70 mr-1 font-typewriter">Dossiers:</span>
+        <div id="fileTabs" class="flex gap-1.5">
+          <!-- 6 miniature dossier indicators -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN INTERACTIVE CONTAINER -->
+  <main class="w-full max-w-5xl mx-auto flex-1 flex flex-col justify-center items-center relative min-h-[640px]">
+    
+    <!-- SCREEN 1: LANDING SCREEN -->
+    <section id="screenLanding" class="w-full flex flex-col items-center justify-center py-6 px-3">
+      <div class="relative w-full max-w-3xl bg-manila p-6 sm:p-10 rounded-xl shadow-dossier border-2 border-manilaDark/80">
+        <div class="paperclip"></div>
+        
+        <!-- Folder Tab Header -->
+        <div class="absolute -top-7 right-8 bg-manila px-6 py-1.5 rounded-t-lg border-t-2 border-x-2 border-manilaDark text-xs font-typewriter font-bold tracking-wider text-navyAccent uppercase">
+          CONFIDENTIAL DOSSIER #00
+        </div>
+
+        <div class="text-center mb-6 mt-2">
+          <!-- Single Unified Stamp Badge -->
+          <div class="inline-block stamp-classified px-5 py-2.5 sm:px-7 sm:py-3 mb-4 shadow-sm bg-parchment/40">
+            <div class="text-xs sm:text-sm font-typewriter font-extrabold tracking-widest text-rustAccent">
+              INVESTIGATIVE RECONSTRUCTION
+            </div>
+            <div class="text-xs sm:text-sm font-typewriter font-bold tracking-wider text-rustDark mt-1.5 border-t border-rustAccent/30 pt-1.5">
+              Critical Thinking &amp; Group Problem Solving
+            </div>
+          </div>
+
+          <h2 class="text-2xl sm:text-4xl font-extrabold font-typewriter tracking-tight text-navyAccent uppercase">
+            REAL DECISIONS GONE WRONG
+          </h2>
+          <p class="text-sm sm:text-base text-navyAccent/80 max-w-lg mx-auto mt-2 font-medium">
+            Explore 6 high-stakes historical case studies where seasoned teams encountered catastrophic process breakdowns.
+          </p>
+        </div>
+
+        <!-- Clara Floating Intro Sticky Note -->
+        <div class="bg-stickyYellow p-5 sm:p-6 rounded-lg shadow-sticky border-l-4 border-claraTeal relative transform rotate-[-0.5deg] mb-8">
+          <div class="flex items-start gap-4">
+            <!-- Clara Flat-Art Avatar (Enlarged) -->
+            <div class="flex-shrink-0">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-claraTeal flex items-center justify-center border-2 border-navyAccent shadow-sm overflow-hidden select-none" title="Clara - Case Analyst">
+                <span class="text-4xl sm:text-[42px] leading-none transform translate-y-0.5 scale-110">👩🏻‍💼</span>
+              </div>
+              <div class="text-[10px] text-center font-bold text-claraTeal uppercase tracking-wider mt-1.5 font-typewriter">
+                Clara (Analyst)
+              </div>
+            </div>
+            <!-- Speech Content -->
+            <div class="flex-1">
+              <div class="text-xs font-bold uppercase tracking-wider text-claraTeal mb-1 font-typewriter flex items-center gap-1.5">
+                <span>💬 Analyst Briefing</span>
+              </div>
+              <p class="font-handwritten text-xl sm:text-2xl text-navyAccent leading-snug">
+                "Hey there. Before you dive in — every failed decision has a story. And usually, a moment where the process quietly broke down."
+              </p>
+              <p class="font-sans text-xs sm:text-sm text-navyAccent/90 mt-2.5 leading-relaxed">
+                I've pulled <strong>six real, documented cases</strong> where smart, experienced people made decisions that went badly wrong. For each one, you'll make a prediction: at which stage of a structured problem-solving process did things go off track?
+              </p>
+              <p class="font-sans text-xs sm:text-sm text-navyAccent/80 mt-1 italic">
+                No points for "getting it right" — this is about sharpening your diagnostic thinking.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary CTA Button (Centered, clean) -->
+        <div class="flex justify-center">
+          <button id="btnStartCaseFiles" class="rubber-stamp-btn bg-rustAccent hover:bg-rustDark text-white font-typewriter text-lg sm:text-xl font-bold py-3.5 px-10 rounded-lg uppercase tracking-wider transition">
+            Let's Go ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTRUCTIONS MODAL / POP-UP -->
+    <div id="instructionsModal" class="fixed inset-0 bg-navyAccent/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="relative w-full max-w-lg bg-stickyYellow p-6 sm:p-8 rounded-xl shadow-2xl border-2 border-stickyYellowBorder transform rotate-[0.8deg] animate-sticky">
+        <div class="tape-strip"></div>
+        
+        <div class="flex items-start gap-4 mb-4">
+          <!-- Clara Avatar in Modal (Enlarged) -->
+          <div class="w-12 h-12 rounded-full bg-claraTeal flex items-center justify-center shadow-md border-2 border-navyAccent overflow-hidden select-none flex-shrink-0">
+            <span class="text-3xl sm:text-[34px] leading-none transform translate-y-0.5 scale-110">👩🏻‍💼</span>
+          </div>
+          <div>
+            <span class="text-xs uppercase font-typewriter font-bold text-claraTeal tracking-wider">Protocol Guidance</span>
+            <h3 class="font-handwritten text-2xl sm:text-3xl text-navyAccent font-bold leading-tight">
+              Here's how this works:
+            </h3>
+          </div>
+        </div>
+
+        <ol class="space-y-3 font-sans text-sm sm:text-base text-navyAccent/90 font-medium pl-2 mb-6">
+          <li class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-navyAccent text-white font-typewriter text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span><strong>Read</strong> the short historical case file.</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-rustAccent text-white font-typewriter text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span><strong>Predict</strong> which structured stage broke down.</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-claraTeal text-white font-typewriter text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span><strong>Tap reveal</strong> to see what analysts & historians concluded.</span>
+          </li>
+        </ol>
+
+        <p class="font-handwritten text-xl text-claraTeal font-bold mb-6 text-center">
+          "Ready? Let's start with a classic."
+        </p>
+
+        <div class="flex items-center justify-between gap-3">
+          <button id="btnInstructionsBackToLanding" class="text-xs font-typewriter font-bold text-navyAccent/70 hover:text-navyAccent underline">
+            Back to Cover Desk
+          </button>
+          
+          <button id="btnCloseInstructions" class="rubber-stamp-btn bg-navyAccent text-parchment font-typewriter font-bold py-2.5 px-6 rounded text-sm uppercase tracking-wider">
+            Open Case File 🗃️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: ACTIVE CASE FILE CARD (Predict -> Reveal) -->
+    <section id="screenCaseGallery" class="w-full hidden flex-col items-center">
+      
+      <!-- Top Navigation Bar (Case Navigator) -->
+      <div class="w-full max-w-4xl flex items-center justify-between mb-3 px-2 text-xs font-typewriter font-bold">
+        <button id="btnPrevCase" class="px-2.5 py-1 rounded text-navyAccent hover:text-rustAccent disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 transition">
+          ◀ Prev File
+        </button>
+        <span id="caseFileIndicator" class="text-rustAccent bg-parchmentDark px-3 py-1 rounded border border-navyAccent/20">
+          DOSSIER 1 OF 6
+        </span>
+        <button id="btnNextCase" class="px-2.5 py-1 rounded text-navyAccent hover:text-rustAccent disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 transition">
+          Next File ▶
+        </button>
+      </div>
+
+      <!-- 3D FLIP CONTAINER -->
+      <div class="w-full max-w-4xl min-h-[580px] sm:min-h-[520px] perspective-1000 relative">
+        <div id="cardFlipper" class="flip-card-inner transform-style-3d relative w-full h-full min-h-[580px] sm:min-h-[520px]">
+          
+          <!-- ================= FRONT: PREDICTION CASE FILE ================= -->
+          <div class="backface-hidden absolute inset-0 w-full h-full bg-manila rounded-xl border-2 border-manilaDark p-5 sm:p-8 shadow-dossier flex flex-col justify-between">
+            <div class="paperclip"></div>
+
+            <!-- Card Header Stamped -->
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-navyAccent/20 pb-3 mb-4">
+                <div class="flex items-center gap-3">
+                  <span id="cardCaseNumber" class="font-typewriter font-bold text-sm tracking-widest text-navyAccent uppercase">
+                    CASE FILE 01
+                  </span>
+                  <span id="classifiedStamp" class="stamp-classified text-xs px-2.5 py-0.5 rounded font-bold font-typewriter">
+                    CLASSIFIED
+                  </span>
+                </div>
+                <div id="caseYearTag" class="text-xs font-typewriter text-navyAccent/70 font-semibold">
+                  RECORDED: 1961
+                </div>
+              </div>
+
+              <h3 id="caseTitle" class="text-xl sm:text-2xl font-bold font-typewriter text-navyAccent mb-3 leading-snug">
+                The Bay of Pigs Invasion
+              </h3>
+
+              <!-- Briefing Text Box -->
+              <div class="bg-parchment/70 p-4 sm:p-5 rounded-lg border border-navyAccent/20 font-sans text-sm sm:text-base text-navyAccent leading-relaxed relative mb-5 shadow-inner">
+                <span class="text-xs uppercase font-bold text-navyAccent block mb-1.5 tracking-wider">INCIDENT BRIEFING:</span>
+                <p id="caseDescription" class="text-navyAccent/90 leading-relaxed">
+                  In 1961, senior U.S. government advisors approved a covert plan to invade Cuba using a small exile force, expecting it to trigger a popular uprising. Despite serious doubts privately held by some officials, the group moved forward largely in agreement. The invasion collapsed within days.
+                </p>
+              </div>
+            </div>
+
+            <!-- Prediction Section -->
+            <div class="bg-parchmentDark/60 p-4 rounded-lg border border-navyAccent/20">
+              <div class="flex items-center gap-2 mb-2.5">
+                <span class="text-rustAccent font-bold text-base font-typewriter">?</span>
+                <p class="font-sans font-bold text-xs sm:text-sm uppercase tracking-wide text-navyAccent">
+                  Diagnostic Prediction: At which stage did this decision-making process break down?
+                </p>
+              </div>
+
+              <!-- 5 Stage Option Buttons -->
+              <div id="stageOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                <!-- Buttons injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Flip Action Footer -->
+            <div class="flex items-center justify-between pt-3 mt-3 border-t border-navyAccent/20">
+              <div class="flex items-center gap-2 text-xs text-navyAccent/70 font-sans italic">
+                <span>Select your hypothesis above, then flip to inspect the evidence.</span>
+              </div>
+              <button id="btnRevealAnalysis" disabled class="rubber-stamp-btn bg-navyAccent disabled:opacity-40 disabled:cursor-not-allowed text-parchment font-typewriter text-xs sm:text-sm font-bold py-2.5 px-5 rounded uppercase tracking-wider flex items-center gap-2">
+                <span>Inspect Breakdown</span> 🔍
+              </button>
+            </div>
+          </div>
+
+
+          <!-- ================= BACK: REVEAL & CLARA ANALYSIS ================= -->
+          <div class="backface-hidden rotate-y-180 absolute inset-0 w-full h-full bg-[#FAF8F5] rounded-xl border-2 border-navyAccent/30 p-5 sm:p-8 shadow-dossier flex flex-col justify-between overflow-y-auto">
+            
+            <!-- Back Header -->
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-navyAccent/15 pb-3 mb-4">
+                <div>
+                  <span id="backCaseNumber" class="text-xs font-typewriter font-bold tracking-wider text-navyAccent/70 uppercase">
+                    POST-MORTEM DEBRIEF // CASE FILE 01
+                  </span>
+                  <h3 id="backCaseTitle" class="text-lg sm:text-xl font-bold font-typewriter text-navyAccent">
+                    The Bay of Pigs Invasion (1961)
+                  </h3>
+                </div>
+
+                <!-- Red Breakdown Stamp Effect -->
+                <div id="stampBreakdown" class="stamp-badge px-3 py-1 text-xs sm:text-sm font-typewriter font-extrabold animate-stamp">
+                  BREAKDOWN IDENTIFIED
+                </div>
+              </div>
+
+              <!-- Result Stage Banner (Green accent) -->
+              <div class="flex flex-wrap items-center gap-2 bg-breakdownGreenLight border-l-4 border-breakdownGreen px-3.5 py-2.5 rounded-r-md mb-4">
+                <span class="text-xs font-bold font-sans uppercase tracking-wider text-breakdownGreen">Identified Breakdown Stage:</span>
+                <span id="correctStageName" class="text-sm font-extrabold font-typewriter text-breakdownGreen">
+                  Evaluating Options
+                </span>
+                <span id="userPredictionBadge" class="text-[11px] font-medium font-sans ml-auto px-2 py-0.5 rounded">
+                  <!-- User choice match tag -->
+                </span>
+              </div>
+
+              <!-- Clara's Handwritten Sticky Note (With Enlarged Avatar) -->
+              <div class="bg-stickyYellow p-4 sm:p-5 rounded-lg shadow-sticky border-l-4 border-claraTeal relative mb-4 transform rotate-[0.4deg]">
+                <div class="tape-strip"></div>
+                <div class="flex items-start gap-3">
+                  <div class="w-12 h-12 rounded-full bg-claraTeal flex items-center justify-center shadow-sm flex-shrink-0 border-2 border-navyAccent overflow-hidden select-none">
+                    <span class="text-3xl leading-none transform translate-y-0.5 scale-110">👩🏻‍💼</span>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold uppercase tracking-wider text-claraTeal font-typewriter">Clara's Case Notes:</span>
+                    </div>
+                    <p id="claraCommentary" class="font-handwritten text-xl sm:text-2xl text-navyAccent font-semibold leading-snug mt-1">
+                      Analysts — including psychologist Irving Janis, who coined the term "groupthink" partly from this case — point to a breakdown in Evaluating Options. Dissenting concerns were minimized to preserve group harmony, and risks weren't seriously stress-tested.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Thought Prompt Box -->
+              <div class="bg-claraTealLight p-3.5 sm:p-4 rounded-lg border border-claraTeal/30 flex items-start gap-3">
+                <div class="text-claraTeal text-xl flex-shrink-0 mt-0.5">💭</div>
+                <div>
+                  <span class="text-[11px] font-extrabold uppercase font-sans tracking-wide text-claraTeal block">
+                    Diagnostic Reflection Prompt:
+                  </span>
+                  <p id="quickThoughtText" class="font-sans text-xs sm:text-sm font-semibold text-navyAccent italic">
+                    What makes people stay quiet in a group, even when they have doubts?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Flip Back / Forward Controls -->
+            <div class="flex items-center justify-between pt-4 mt-4 border-t border-navyAccent/20">
+              <button id="btnFlipBack" class="rubber-stamp-btn bg-parchmentDark text-navyAccent font-typewriter text-xs sm:text-sm font-bold py-2.5 px-4 rounded uppercase tracking-wider flex items-center gap-1.5 hover:bg-parchment">
+                ↺ Flip Back to Case
+              </button>
+
+              <button id="btnNextFromBack" class="rubber-stamp-btn bg-rustAccent hover:bg-rustDark text-white font-typewriter text-xs sm:text-sm font-bold py-2.5 px-6 rounded uppercase tracking-wider flex items-center gap-2">
+                <span>Next Case File</span> ➔
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SCREEN 3: CLOSING SUMMARY & FAITH INTEGRATION -->
+    <section id="screenClosing" class="w-full hidden flex-col items-center justify-center py-6 px-3">
+      <div class="relative w-full max-w-3xl bg-manila p-6 sm:p-10 rounded-xl shadow-dossier border-2 border-manilaDark">
+        <div class="paperclip"></div>
+
+        <!-- Stamped Header -->
+        <div class="text-center mb-6">
+          <div class="inline-block stamp-classified px-4 py-1 text-xs sm:text-sm font-typewriter font-bold mb-2">
+            ALL 6 DOSSIERS COMPLETED
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold font-typewriter tracking-tight text-navyAccent uppercase">
+            CASE FILE ROOM: EXECUTIVE DEBRIEF
+          </h2>
+        </div>
+
+        <!-- Stack Representation of 6 Cases -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-6 text-xs font-typewriter">
+          <div class="bg-parchment p-2.5 rounded border border-navyAccent/20 shadow-sm flex flex-col justify-between">
+            <span class="font-bold text-navyAccent">01. Bay of Pigs</span>
+            <span class="text-[10px] text-breakdownGreen font-bold">Evaluating Options</span>
+          </div>
+          <div class="bg-parchment p-2.5 rounded border border-navyAccent/20 shadow-sm flex flex-col justify-between">
+            <span class="font-bold text-navyAccent">02. Kodak Digital</span>
+            <span class="text-[10px] text-breakdownGreen font-bold">Defining the Problem</span>
+          </div>
+          <div class="bg-parchment p-2.5 rounded border border-navyAccent/20 shadow-sm flex flex-col justify-between">
+            <span class="font-bold text-navyAccent">03. New Coke</span>
+            <span class="text-[10px] text-breakdownGreen font-bold">Generating Alternatives</span>
+          </div>
+          <div class="bg-parchment p-2.5 rounded border border-navyAccent/20 shadow-sm flex flex-col justify-between">
+            <span class="font-bold text-navyAccent">04. Challenger Launch</span>
+            <span class="text-[10px] text-breakdownGreen font-bold">Evaluating Options</span>
+          </div>
+          <div class="bg-parchment p-2.5 rounded border border-navyAccent/20 shadow-sm flex flex-col justify-between">
+            <span class="font-bold text-navyAccent">05. Blockbuster</span>
+            <span class="text-[10px] text-breakdownGreen font-bold">Choosing a Solution</span>
+          </div>
+          <div class="bg-parchment p-2.5 rounded border border-navyAccent/20 shadow-sm flex flex-col justify-between">
+            <span class="font-bold text-navyAccent">06. Deepwater Horizon</span>
+            <span class="text-[10px] text-breakdownGreen font-bold">Implementing & Evaluating</span>
+          </div>
+        </div>
+
+        <!-- Clara Wrap-up Sticky (With Enlarged Avatar) -->
+        <div class="bg-stickyYellow p-5 rounded-lg shadow-sticky border-l-4 border-claraTeal mb-6 transform rotate-[-0.6deg]">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-claraTeal flex items-center justify-center border-2 border-navyAccent shadow-sm flex-shrink-0 overflow-hidden select-none">
+              <span class="text-4xl sm:text-[42px] leading-none transform translate-y-0.5 scale-110">👩🏻‍💼</span>
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase font-typewriter text-claraTeal">Clara's Core Takeaway</span>
+              <p class="font-handwritten text-xl sm:text-2xl text-navyAccent font-semibold leading-snug mt-1">
+                "Six situations. Six different breakdowns. But one thread runs through all of them: a structured process only works if every stage gets taken seriously — especially the uncomfortable ones, like raising doubts or challenging the group's momentum."
+              </p>
+              <p class="font-sans text-xs sm:text-sm text-navyAccent/90 mt-3 leading-relaxed">
+                As you move into your own <strong>Signature Assignment</strong> this week, you won't have hindsight like we just did. But you can build in something a lot of these teams were missing: a pause to ask, <em>"Which stage are we actually in right now — and are we doing it well?"</em>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Faith Integration Card -->
+        <div class="bg-white/80 p-5 rounded-lg border-2 border-dashed border-rustAccent/50 relative mb-6 shadow-sm">
+          <div class="flex items-start gap-3">
+            <span class="text-rustAccent text-2xl font-bold">📜</span>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold font-typewriter uppercase tracking-wider text-rustAccent">Faith & Reflection Integration</span>
+                <span class="text-[10px] bg-rustAccent/10 text-rustAccent px-2 py-0.5 rounded font-bold font-sans">James 1:5</span>
+              </div>
+              <p class="font-handwritten text-xl sm:text-2xl text-navyAccent font-semibold mt-1">
+                "If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault."
+              </p>
+              <p class="font-sans text-xs sm:text-sm text-navyAccent/80 mt-2">
+                As you define your own real-world challenge this week, consider where reflection — even prayerful reflection — might sharpen how you evaluate your options.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Return / Reset Action Buttons -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <button id="btnReturnToLandingFromClosing" class="rubber-stamp-btn bg-parchmentDark hover:bg-parchment text-navyAccent font-typewriter font-bold py-3 px-6 rounded uppercase tracking-wider text-xs sm:text-sm flex items-center gap-2">
+            🏠 Cover Desk
+          </button>
+          <button id="btnReviewAll" class="rubber-stamp-btn bg-rustAccent hover:bg-rustDark text-white font-typewriter font-bold py-3 px-6 rounded uppercase tracking-wider text-xs sm:text-sm flex items-center gap-2">
+            🗂️ Re-examine Dossiers ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC & CASE DATA -->
+  <script>
+    // Synthesized Sound FX Manager (Zero external asset dependencies)
+    const SoundManager = {
+      muted: false,
+      ctx: null,
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            this.ctx = new AudioCtx();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+
+      playClick() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(180, this.ctx.currentTime + 0.05);
+
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      },
+
+      playSelect() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(750, this.ctx.currentTime + 0.04);
+
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      },
+
+      playFlip() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(480, this.ctx.currentTime + 0.16);
+
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.18);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.18);
+      },
+
+      playStamp() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(35, this.ctx.currentTime + 0.14);
+
+        gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.15);
+      },
+
+      playCompletion() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const notes = [392, 523.25, 659.25, 783.99];
+        notes.forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.09);
+
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime + i * 0.09);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.09 + 0.28);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(this.ctx.currentTime + i * 0.09);
+          osc.stop(this.ctx.currentTime + i * 0.09 + 0.28);
+        });
+      }
+    };
+
+    // Problem Solving Structured Stages
+    const PROBLEM_SOLVING_STAGES = [
+      "Defining the Problem",
+      "Generating Alternatives",
+      "Evaluating Options",
+      "Choosing a Solution",
+      "Implementing & Evaluating Outcomes"
+    ];
+
+    // Case File Dataset
+    const CASE_FILES = [
+      {
+        id: 1,
+        code: "CASE FILE 01",
+        year: "1961",
+        title: "The Bay of Pigs Invasion",
+        stamp: "TOP SECRET",
+        description: "In 1961, senior U.S. government advisors approved a covert plan to invade Cuba using a small exile force, expecting it to trigger a popular uprising. Despite serious doubts privately held by some officials, the group moved forward largely in agreement. The invasion collapsed within days.",
+        correctStage: "Evaluating Options",
+        claraCommentary: "Analysts — including psychologist Irving Janis, who coined the term \"groupthink\" partly from this case — point to a breakdown in Evaluating Options. Dissenting concerns were minimized to preserve group harmony, and risks weren't seriously stress-tested.",
+        quickThought: "What makes people stay quiet in a group, even when they have doubts?"
+      },
+      {
+        id: 2,
+        code: "CASE FILE 02",
+        year: "1975–1990s",
+        title: "Kodak and the Digital Camera",
+        stamp: "COMMERCIAL MEMO",
+        description: "Kodak engineers built one of the first digital camera prototypes in the mid-1970s. Leadership, however, kept framing the business around film sales for decades, treating digital photography as a side threat rather than a fundamental shift.",
+        correctStage: "Defining the Problem",
+        claraCommentary: "This one's a textbook failure in Defining the Problem. Leadership asked, \"How do we protect film revenue?\" instead of \"How do we lead in a changing industry?\" That narrow framing shaped every bad decision after it.",
+        quickThought: "Why is defining the problem often the most skipped step?"
+      },
+      {
+        id: 3,
+        code: "CASE FILE 03",
+        year: "1985",
+        title: "New Coke",
+        stamp: "BRAND AUDIT",
+        description: "Facing competitive pressure, Coca-Cola reformulated its flagship drink after taste tests suggested consumers preferred a sweeter flavor. The original formula was pulled entirely. Public backlash was immediate and intense.",
+        correctStage: "Generating Alternatives",
+        claraCommentary: "This is usually flagged as a failure in Generating Alternatives. The team leaned hard on taste-test data but never seriously explored other options — like launching a new product alongside the original instead of replacing it.",
+        quickThought: "What gets lost when a team jumps from data straight to a decision?"
+      },
+      {
+        id: 4,
+        code: "CASE FILE 04",
+        year: "1986",
+        title: "The Challenger Space Shuttle Disaster",
+        stamp: "MISSION SAFETY",
+        description: "The night before launch, engineers raised concerns that cold temperatures could cause a critical component to fail. After discussion, the launch proceeded as scheduled. The shuttle broke apart shortly after liftoff.",
+        correctStage: "Evaluating Options",
+        claraCommentary: "Most analysts point to Evaluating Options. The risk was raised and discussed — but schedule pressure led the team to downplay it instead of weighing it seriously against delaying the launch.",
+        quickThought: "How does time pressure distort how seriously a team evaluates risk?"
+      },
+      {
+        id: 5,
+        code: "CASE FILE 05",
+        year: "2000",
+        title: "Blockbuster and Netflix",
+        stamp: "EXECUTIVE ACQUISITION",
+        description: "In 2000, Netflix leadership proposed a partnership where they'd run Blockbuster's online brand. Blockbuster declined, choosing to stay focused on its retail rental model.",
+        correctStage: "Choosing a Solution",
+        claraCommentary: "This one's usually traced to Choosing a Solution. The option was on the table and considered — but leadership picked the status quo without weighing the long-term shift already happening around them.",
+        quickThought: "Why is it so hard to choose change over the status quo, even with warning signs?"
+      },
+      {
+        id: 6,
+        code: "CASE FILE 06",
+        year: "2010",
+        title: "The Deepwater Horizon Oil Spill",
+        stamp: "OPERATIONAL LOG",
+        description: "Before a major drilling operation, a safety test produced results some engineers saw as a warning sign. The crew proceeded anyway. Shortly after, an explosion caused a large-scale oil spill.",
+        correctStage: "Implementing & Evaluating Outcomes",
+        claraCommentary: "This is typically traced to Implementing & Evaluating Outcomes. A decision-making process had happened — but warning signs during implementation were dismissed, with no real checkpoint to pause and reassess.",
+        quickThought: "Why is it important to keep evaluating a decision even after it's already been made?"
+      }
+    ];
+
+    // State Variables
+    let currentCaseIndex = 0;
+    let userPredictions = {};
+    let hasViewedReveal = {};
+    let isFlipped = false;
+
+    // DOM Elements
+    const screenLanding = document.getElementById('screenLanding');
+    const screenCaseGallery = document.getElementById('screenCaseGallery');
+    const screenClosing = document.getElementById('screenClosing');
+    const instructionsModal = document.getElementById('instructionsModal');
+    const progressTracker = document.getElementById('progressTracker');
+    const fileTabs = document.getElementById('fileTabs');
+
+    const cardFlipper = document.getElementById('cardFlipper');
+    const cardCaseNumber = document.getElementById('cardCaseNumber');
+    const classifiedStamp = document.getElementById('classifiedStamp');
+    const caseYearTag = document.getElementById('caseYearTag');
+    const caseTitle = document.getElementById('caseTitle');
+    const caseDescription = document.getElementById('caseDescription');
+    const stageOptionsGrid = document.getElementById('stageOptionsGrid');
+    const btnRevealAnalysis = document.getElementById('btnRevealAnalysis');
+
+    const backCaseNumber = document.getElementById('backCaseNumber');
+    const backCaseTitle = document.getElementById('backCaseTitle');
+    const stampBreakdown = document.getElementById('stampBreakdown');
+    const correctStageName = document.getElementById('correctStageName');
+    const userPredictionBadge = document.getElementById('userPredictionBadge');
+    const claraCommentary = document.getElementById('claraCommentary');
+    const quickThoughtText = document.getElementById('quickThoughtText');
+
+    const btnPrevCase = document.getElementById('btnPrevCase');
+    const btnNextCase = document.getElementById('btnNextCase');
+    const btnFlipBack = document.getElementById('btnFlipBack');
+    const btnNextFromBack = document.getElementById('btnNextFromBack');
+    const caseFileIndicator = document.getElementById('caseFileIndicator');
+
+    // Navigation Triggers
+    const btnStartCaseFiles = document.getElementById('btnStartCaseFiles');
+    const btnCloseInstructions = document.getElementById('btnCloseInstructions');
+    const btnInstructionsBackToLanding = document.getElementById('btnInstructionsBackToLanding');
+    const btnHeaderBrand = document.getElementById('btnHeaderBrand');
+    const btnHeaderDesk = document.getElementById('btnHeaderDesk');
+    const btnReturnToLandingFromClosing = document.getElementById('btnReturnToLandingFromClosing');
+    const btnReviewAll = document.getElementById('btnReviewAll');
+
+    // Initialize Progress Indicator Tabs
+    function initProgressTabs() {
+      fileTabs.innerHTML = '';
+      CASE_FILES.forEach((c, idx) => {
+        const tab = document.createElement('button');
+        tab.id = `tab-file-${idx}`;
+        tab.className = `w-7 h-7 rounded text-xs font-typewriter font-bold flex items-center justify-center transition border ${
+          idx === currentCaseIndex 
+            ? 'bg-rustAccent text-white border-rustDark shadow-sm' 
+            : 'bg-parchment text-navyAccent/70 border-navyAccent/20 hover:bg-parchmentDark'
+        }`;
+        tab.innerText = `0${idx + 1}`;
+        tab.title = c.title;
+        tab.addEventListener('click', () => {
+          if (idx !== currentCaseIndex) {
+            goToCase(idx);
+          }
+        });
+        fileTabs.appendChild(tab);
+      });
+    }
+
+    function updateProgressTabs() {
+      CASE_FILES.forEach((_, idx) => {
+        const tab = document.getElementById(`tab-file-${idx}`);
+        if (!tab) return;
+        
+        const isCurrent = idx === currentCaseIndex;
+        const isAnswered = hasViewedReveal[idx];
+
+        if (isCurrent) {
+          tab.className = 'w-7 h-7 rounded text-xs font-typewriter font-bold flex items-center justify-center transition border-2 border-navyAccent bg-rustAccent text-white shadow-sm ring-2 ring-rustAccent/30';
+        } else if (isAnswered) {
+          tab.className = 'w-7 h-7 rounded text-xs font-typewriter font-bold flex items-center justify-center transition border border-claraTeal bg-claraTealLight text-claraTeal';
+        } else {
+          tab.className = 'w-7 h-7 rounded text-xs font-typewriter font-bold flex items-center justify-center transition border border-navyAccent/20 bg-parchment text-navyAccent/70 hover:bg-parchmentDark';
+        }
+      });
+    }
+
+    // Render Current Case Card
+    function renderCaseCard(index) {
+      const data = CASE_FILES[index];
+      
+      // Reset card flip if currently flipped
+      cardFlipper.classList.remove('rotate-y-180');
+      isFlipped = false;
+
+      // Update Front Data
+      cardCaseNumber.innerText = data.code;
+      classifiedStamp.innerText = data.stamp;
+      caseYearTag.innerText = `RECORDED: ${data.year}`;
+      caseTitle.innerText = data.title;
+      caseDescription.innerText = data.description;
+      caseFileIndicator.innerText = `DOSSIER ${index + 1} OF ${CASE_FILES.length}`;
+
+      // Build Option Buttons
+      stageOptionsGrid.innerHTML = '';
+      const selectedPrediction = userPredictions[index];
+
+      PROBLEM_SOLVING_STAGES.forEach(stage => {
+        const btn = document.createElement('button');
+        const isSelected = selectedPrediction === stage;
+        
+        btn.className = `p-2.5 sm:p-3 text-left rounded-md border text-xs sm:text-xs font-sans font-semibold transition flex items-center justify-between ${
+          isSelected
+            ? 'bg-navyAccent text-parchment border-navyAccent shadow-sm ring-2 ring-rustAccent'
+            : 'bg-parchment hover:bg-parchmentDark text-navyAccent border-navyAccent/30 hover:border-navyAccent'
+        }`;
+        
+        btn.innerHTML = `
+          <span>${stage}</span>
+          <span class="w-4 h-4 rounded-full border ${isSelected ? 'border-rustAccent bg-rustAccent' : 'border-navyAccent/40'} flex items-center justify-center text-[10px] text-white">
+            ${isSelected ? '✓' : ''}
+          </span>
+        `;
+
+        btn.addEventListener('click', () => {
+          SoundManager.playSelect();
+          userPredictions[index] = stage;
+          renderCaseCard(index);
+        });
+
+        stageOptionsGrid.appendChild(btn);
+      });
+
+      // Enable/disable reveal button based on prediction selection
+      btnRevealAnalysis.disabled = !userPredictions[index];
+      if (userPredictions[index]) {
+        btnRevealAnalysis.classList.remove('opacity-40', 'cursor-not-allowed');
+      } else {
+        btnRevealAnalysis.classList.add('opacity-40', 'cursor-not-allowed');
+      }
+
+      // Update Back Data
+      backCaseNumber.innerText = `POST-MORTEM DEBRIEF // ${data.code}`;
+      backCaseTitle.innerText = `${data.title} (${data.year})`;
+      correctStageName.innerText = data.correctStage;
+      claraCommentary.innerText = data.claraCommentary;
+      quickThoughtText.innerText = data.quickThought;
+
+      // Prediction match feedback tag
+      if (selectedPrediction) {
+        if (selectedPrediction === data.correctStage) {
+          userPredictionBadge.className = 'text-[11px] font-medium font-sans ml-auto px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold';
+          userPredictionBadge.innerText = '🎯 Matched your hypothesis';
+        } else {
+          userPredictionBadge.className = 'text-[11px] font-medium font-sans ml-auto px-2.5 py-1 rounded bg-amber-100 text-amber-900 border border-amber-300 font-medium';
+          userPredictionBadge.innerText = `Your hypothesis: "${selectedPrediction}"`;
+        }
+      }
+
+      // Update Prev / Next state
+      btnPrevCase.disabled = index === 0;
+      btnNextCase.disabled = index === CASE_FILES.length - 1;
+      
+      // Update Next on Back button text
+      if (index === CASE_FILES.length - 1) {
+        btnNextFromBack.innerHTML = `<span>View Final Debrief</span> ➔`;
+      } else {
+        btnNextFromBack.innerHTML = `<span>Next Case File</span> ➔`;
+      }
+
+      updateProgressTabs();
+    }
+
+    function flipCardToBack() {
+      SoundManager.playFlip();
+      cardFlipper.classList.add('rotate-y-180');
+      isFlipped = true;
+      hasViewedReveal[currentCaseIndex] = true;
+      updateProgressTabs();
+
+      // Trigger stamp animation re-flow & sound effect
+      stampBreakdown.classList.remove('animate-stamp');
+      void stampBreakdown.offsetWidth;
+      stampBreakdown.classList.add('animate-stamp');
+      
+      setTimeout(() => {
+        SoundManager.playStamp();
+      }, 200);
+    }
+
+    function flipCardToFront() {
+      SoundManager.playFlip();
+      cardFlipper.classList.remove('rotate-y-180');
+      isFlipped = false;
+    }
+
+    function goToCase(index) {
+      if (index >= 0 && index < CASE_FILES.length) {
+        currentCaseIndex = index;
+        renderCaseCard(currentCaseIndex);
+      } else if (index >= CASE_FILES.length) {
+        showScreen('closing');
+      }
+    }
+
+    function showScreen(screen) {
+      screenLanding.classList.add('hidden');
+      screenCaseGallery.classList.add('hidden');
+      screenClosing.classList.add('hidden');
+      progressTracker.classList.add('hidden');
+      btnHeaderDesk.classList.add('hidden');
+
+      if (screen === 'landing') {
+        screenLanding.classList.remove('hidden');
+      } else if (screen === 'gallery') {
+        screenCaseGallery.classList.remove('hidden');
+        progressTracker.classList.remove('hidden');
+        btnHeaderDesk.classList.remove('hidden');
+        renderCaseCard(currentCaseIndex);
+      } else if (screen === 'closing') {
+        screenClosing.classList.remove('hidden');
+        progressTracker.classList.remove('hidden');
+        btnHeaderDesk.classList.remove('hidden');
+        SoundManager.playCompletion();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Sound Toggle Controller
+    const btnSoundToggle = document.getElementById('btnSoundToggle');
+    const soundIcon = document.getElementById('soundIcon');
+    const soundText = document.getElementById('soundText');
+
+    btnSoundToggle?.addEventListener('click', () => {
+      SoundManager.muted = !SoundManager.muted;
+      if (SoundManager.muted) {
+        soundIcon.innerText = '🔇';
+        soundText.innerText = 'Sound OFF';
+        btnSoundToggle.classList.add('opacity-70');
+      } else {
+        soundIcon.innerText = '🔊';
+        soundText.innerText = 'Sound ON';
+        btnSoundToggle.classList.remove('opacity-70');
+        SoundManager.playClick();
+      }
+    });
+
+    // Event Listeners
+    btnStartCaseFiles?.addEventListener('click', () => {
+      SoundManager.playClick();
+      instructionsModal.classList.remove('hidden');
+    });
+
+    btnInstructionsBackToLanding?.addEventListener('click', () => {
+      SoundManager.playClick();
+      instructionsModal.classList.add('hidden');
+      showScreen('landing');
+    });
+
+    btnCloseInstructions?.addEventListener('click', () => {
+      SoundManager.playClick();
+      instructionsModal.classList.add('hidden');
+      initProgressTabs();
+      showScreen('gallery');
+    });
+
+    btnHeaderDesk?.addEventListener('click', () => {
+      SoundManager.playClick();
+      instructionsModal.classList.remove('hidden');
+    });
+
+    btnHeaderBrand?.addEventListener('click', () => {
+      SoundManager.playClick();
+      showScreen('landing');
+    });
+
+    btnReturnToLandingFromClosing?.addEventListener('click', () => {
+      SoundManager.playClick();
+      showScreen('landing');
+    });
+
+    btnRevealAnalysis?.addEventListener('click', () => {
+      if (!btnRevealAnalysis.disabled) {
+        flipCardToBack();
+      }
+    });
+
+    btnFlipBack?.addEventListener('click', flipCardToFront);
+
+    btnNextFromBack?.addEventListener('click', () => {
+      SoundManager.playClick();
+      if (currentCaseIndex < CASE_FILES.length - 1) {
+        goToCase(currentCaseIndex + 1);
+      } else {
+        showScreen('closing');
+      }
+    });
+
+    btnPrevCase?.addEventListener('click', () => {
+      SoundManager.playClick();
+      if (currentCaseIndex > 0) {
+        goToCase(currentCaseIndex - 1);
+      }
+    });
+
+    btnNextCase?.addEventListener('click', () => {
+      SoundManager.playClick();
+      if (currentCaseIndex < CASE_FILES.length - 1) {
+        goToCase(currentCaseIndex + 1);
+      }
+    });
+
+    btnReviewAll?.addEventListener('click', () => {
+      SoundManager.playClick();
+      userPredictions = {};
+      hasViewedReveal = {};
+      currentCaseIndex = 0;
+      showScreen('gallery');
+    });
+  </script>
+</body>
+</html>
