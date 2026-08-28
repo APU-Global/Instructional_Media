@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leadership Gallery — Contemporary Leadership Collection</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Space Grotesk (Architectural Display), Syne (Contemporary Art), Plus Jakarta Sans, Inter, Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <!-- Tone.js for interactive audio feedback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'Plus Jakarta Sans', 'sans-serif'],
+            syne: ['Syne', 'sans-serif'],
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+          },
+          colors: {
+            broad: {
+              wall: '#ffffff',       /* Pristine gallery white */
+              canvas: '#f8fafc',     /* Clean slate gallery floor */
+              veil: '#e2e8f0',       /* Honeycomb lattice grey */
+              black: '#09090b',      /* Deep architectural shadow */
+              yellow: '#eab308',     /* Broad Pop Yellow Accent */
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Broad Museum Light Glass Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+      border: 2px solid #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #09090b;
+    }
+
+    /* Architectural White Honeycomb "Veil" Pattern inspired by The Broad DTLA */
+    .broad-veil-light {
+      background-color: #fafafa;
+      background-image: 
+        radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 0),
+        linear-gradient(60deg, rgba(0, 0, 0, 0.02) 25%, transparent 25.5%, transparent 75%, rgba(0, 0, 0, 0.02) 75%),
+        linear-gradient(120deg, rgba(0, 0, 0, 0.02) 25%, transparent 25.5%, transparent 75%, rgba(0, 0, 0, 0.02) 75%);
+      background-size: 32px 32px, 40px 68px, 40px 68px;
+    }
+
+    /* Modern Clean White Card Frame */
+    .broad-card-light {
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    }
+
+    .broad-card-hover {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .broad-card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.12), 0 8px 15px -5px rgba(0, 0, 0, 0.06);
+    }
+
+    .metaphor-svg {
+      transition: all 0.4s ease;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
+    }
+
+    .broad-title-gradient {
+      background: linear-gradient(135deg, #09090b 0%, #27272a 60%, #52525b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="broad-veil-light text-zinc-900 min-h-screen font-sans antialiased selection:bg-zinc-900 selection:text-white pb-16 relative">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-zinc-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between py-3">
+      <div class="flex items-center gap-3.5 cursor-pointer" onclick="switchView('gallery')">
+        <!-- Geometric Emblem -->
+        <div class="w-11 h-11 rounded-lg bg-zinc-900 flex items-center justify-center border-2 border-zinc-900 font-syne font-black text-xl text-yellow-400 shadow-md tracking-tighter">
+          L
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-syne font-extrabold text-lg sm:text-xl tracking-tight text-zinc-900 block leading-none">LEADERSHIP STYLES GALLERY</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Actions -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <nav class="flex items-center p-1 bg-zinc-100 rounded-xl border border-zinc-200 text-xs sm:text-sm font-medium">
+          <button id="nav-btn-gallery" onclick="switchView('gallery')" class="px-3.5 py-1.5 rounded-lg transition-all text-white font-bold bg-zinc-900 shadow">
+            Gallery
+          </button>
+          <button id="nav-btn-compare" onclick="switchView('compare')" class="px-3.5 py-1.5 rounded-lg transition-all text-zinc-600 hover:text-zinc-900">
+            Curator's Matrix
+          </button>
+          <button id="nav-btn-matcher" onclick="switchView('matcher')" class="px-3.5 py-1.5 rounded-lg transition-all text-zinc-600 hover:text-zinc-900">
+            Scenario Testing
+          </button>
+        </nav>
+
+        <!-- Audio Guide Toggle -->
+        <button id="audio-toggle" onclick="toggleAudio()" title="Toggle Ambient Audio Guide" class="p-2 text-zinc-700 hover:text-zinc-900 bg-white hover:bg-zinc-100 border border-zinc-200 rounded-xl transition flex items-center gap-1.5 text-xs font-mono shadow-sm">
+          <svg id="audio-icon-on" class="w-4 h-4 hidden text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+          </svg>
+          <svg id="audio-icon-off" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+          </svg>
+          <span class="hidden md:inline text-[11px] font-semibold">Acoustic Guide</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="hero-section" class="relative overflow-hidden pt-6 pb-6 px-4 sm:px-6 lg:px-8 border-b border-zinc-200 bg-white shadow-sm">
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2 text-xs sm:text-sm text-zinc-800 bg-zinc-50 px-4 py-2.5 rounded-xl border border-zinc-200 shadow-sm font-medium text-balance max-w-3xl">
+        <span class="text-amber-500">🔍</span>
+        <span>Explore eight common leadership styles to see how each approach works, where it can be most effective, and where it may create distinct operational or cultural challenges.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+    <!-- VIEW 1: GALLERY VIEW -->
+    <div id="view-gallery" class="space-y-8">
+      
+      <!-- Filter Bar -->
+      <div class="flex items-center justify-start bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+        <!-- Filter Pills -->
+        <div class="flex flex-wrap items-center gap-2" id="filter-pills">
+          <button onclick="filterStyles('all')" class="filter-pill active px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-zinc-900 text-white shadow border border-zinc-800" data-filter="all">
+            All 8 Styles
+          </button>
+          <button onclick="filterStyles('centralized')" class="filter-pill px-3.5 py-1.5 rounded-lg text-xs font-mono transition bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border border-zinc-300" data-filter="centralized">
+            Centralized Command
+          </button>
+          <button onclick="filterStyles('collaborative')" class="filter-pill px-3.5 py-1.5 rounded-lg text-xs font-mono transition bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border border-zinc-300" data-filter="collaborative">
+            Collaborative & Servant
+          </button>
+          <button onclick="filterStyles('vision')" class="filter-pill px-3.5 py-1.5 rounded-lg text-xs font-mono transition bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border border-zinc-300" data-filter="vision">
+            Visionary & Catalyst
+          </button>
+          <button onclick="filterStyles('autonomous')" class="filter-pill px-3.5 py-1.5 rounded-lg text-xs font-mono transition bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border border-zinc-300" data-filter="autonomous">
+            Autonomous Empowerer
+          </button>
+        </div>
+      </div>
+
+      <!-- 8 Leadership Style Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="cards-grid">
+        <!-- Javascript dynamically injects cards here -->
+      </div>
+    </div>
+
+    <!-- VIEW 2: COMPARE AT A GLANCE MATRIX -->
+    <div id="view-compare" class="hidden space-y-8">
+      <div class="bg-white rounded-2xl border border-zinc-200 p-6 shadow-md">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <span class="text-xs font-mono font-bold text-zinc-500 uppercase tracking-widest block">CURATOR'S RECORD</span>
+            <h2 class="text-xl sm:text-2xl font-display font-bold text-zinc-900 mt-1">Leadership Styles at a Glance</h2>
+            <p class="text-xs sm:text-sm font-sans text-zinc-600 mt-1">Side-by-side comparative matrix across all 8 leadership styles</p>
+          </div>
+        </div>
+
+        <!-- Matrix Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 text-zinc-900 font-display font-semibold bg-zinc-100">
+                <th class="p-3.5">Style</th>
+                <th class="p-3.5">Archetype</th>
+                <th class="p-3.5">Core Approach</th>
+                <th class="p-3.5">Key Strength</th>
+                <th class="p-3.5">Key Challenge</th>
+                <th class="p-3.5">Best Fit</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-body" class="divide-y divide-zinc-200">
+              <!-- Dynamically populated matrix rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: SCENARIO MATCHER INTERACTIVE TOOL -->
+    <div id="view-matcher" class="hidden space-y-8">
+      <div class="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8 max-w-4xl mx-auto shadow-md">
+        <div class="text-center mb-8">
+          <span class="px-3.5 py-1 rounded-full text-xs font-mono font-bold bg-zinc-100 text-zinc-800 border border-zinc-300 uppercase tracking-wider">
+            INTERACTIVE KIOSK
+          </span>
+          <h2 class="text-xl sm:text-2xl font-display font-bold text-zinc-900 mt-3">Which Leadership Style Fits Your Educational Scenario?</h2>
+          <p class="text-xs sm:text-sm font-sans text-zinc-600 max-w-xl mx-auto mt-2">
+            No single style works in every academic situation. Select your current educational context to examine recommended leadership approaches.
+          </p>
+        </div>
+
+        <!-- Scenario Selector Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mb-8" id="scenario-selector-grid">
+          <!-- Dynamically populated scenario choices -->
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SCENARIO RESULT POP-UP MODAL -->
+  <div id="scenario-result-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-zinc-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity" onclick="if(event.target === this) closeScenarioModal()">
+    <div class="bg-white border border-zinc-300 rounded-2xl w-full max-w-xl shadow-2xl relative p-6 sm:p-8 my-auto text-zinc-900 flex flex-col" onclick="event.stopPropagation()">
+      <!-- Close Button -->
+      <button onclick="closeScenarioModal()" class="absolute top-4 right-4 p-2 rounded-xl text-zinc-500 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 transition shadow-sm" title="Close Recommendation">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <div class="flex items-start gap-4 pr-8">
+        <div id="scenario-result-icon" class="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-900 border border-zinc-200 flex items-center justify-center shrink-0 text-2xl font-bold shadow-sm">
+          ⚡
+        </div>
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-zinc-500 font-bold" id="scenario-result-label">Recommended Approach</span>
+          <h3 class="text-lg sm:text-xl font-display font-bold text-zinc-900 mt-1" id="scenario-result-title">Style Name</h3>
+        </div>
+      </div>
+
+      <p class="text-xs sm:text-sm font-sans text-zinc-800 mt-4 leading-relaxed" id="scenario-result-desc">Description of why this style fits.</p>
+      
+      <div class="mt-4 p-4 rounded-xl bg-zinc-50 border border-zinc-200 shadow-sm">
+        <span class="text-xs font-mono font-bold text-zinc-900 block mb-1">CURATOR'S ACTION PLAN:</span>
+        <p class="text-xs sm:text-sm text-zinc-800 font-sans leading-relaxed" id="scenario-result-action"></p>
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-zinc-200">
+        <button onclick="closeScenarioModal()" class="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-xs font-mono text-zinc-700 font-semibold border border-zinc-300 transition">
+          Close Window
+        </button>
+        <button id="scenario-explore-btn" onclick="" class="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-mono font-bold transition flex items-center gap-1.5 shadow">
+          <span>Review Full Leadership Style</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Closing Takeaway Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+    <div class="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 rounded-3xl p-8 sm:p-12 border border-zinc-800 text-center relative overflow-hidden shadow-2xl text-white">
+      <div class="max-w-3xl mx-auto relative z-10">
+        <span class="text-xs font-mono font-bold uppercase tracking-widest text-yellow-400 mb-2 block">GALLERY SUMMARY</span>
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-display font-bold text-white mb-3">
+          LEADERSHIP ISN'T ONE-SIZE-FITS-ALL
+        </h2>
+        <p class="text-xs sm:text-base font-sans text-zinc-200 leading-relaxed mb-6 font-normal">
+          Each leadership style offers different strengths and presents different challenges. Effective leaders learn to recognize what a situation requires and adapt their approach accordingly.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button onclick="switchView('gallery'); window.scrollTo({top: 0, behavior: 'smooth'});" class="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-mono font-bold rounded-xl text-xs sm:text-sm transition shadow-lg border border-yellow-300">
+            Return to Gallery ↑
+          </button>
+          <button onclick="switchView('matcher')" class="px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-mono rounded-xl text-xs sm:text-sm border border-zinc-700 transition">
+            Test Your Scenario →
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STYLE DETAIL MODAL / DOSSIER DRAWER -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-zinc-900/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 md:p-6 transition-opacity" onclick="if(event.target === this) closeModal()">
+    <div class="bg-white border border-zinc-300 rounded-2xl w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col my-auto text-zinc-900" onclick="event.stopPropagation()">
+      
+      <!-- Modal Header -->
+      <div class="sticky top-0 z-20 bg-white/95 backdrop-blur-md p-4 sm:p-6 border-b border-zinc-200 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span id="modal-number" class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-zinc-900 text-white border border-zinc-800">STYLE 01</span>
+          <div>
+            <h2 id="modal-title" class="text-lg sm:text-xl font-display font-bold text-zinc-900">Style Title</h2>
+            <p id="modal-archetype" class="text-xs sm:text-sm font-mono uppercase tracking-wider font-bold" style="color: var(--modal-accent-color, #09090b);">The Archetype</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="p-2 rounded-xl text-zinc-500 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-4 sm:p-6 space-y-8">
+
+        <!-- Top Section: Visual Metaphor, Combined Core Idea, Figure & In Action -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center bg-zinc-50 p-5 rounded-2xl border border-zinc-200">
+          <div class="lg:col-span-4 flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-zinc-200 min-h-[180px] shadow-sm" id="modal-metaphor-container">
+            <!-- Animated SVG Metaphor render -->
+          </div>
+          <div class="lg:col-span-8 space-y-4">
+            <div>
+              <span class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500">CORE IDEA</span>
+              <p id="modal-core-idea" class="text-sm sm:text-base font-sans text-zinc-900 leading-relaxed mt-1 font-medium"></p>
+            </div>
+
+            <!-- Simplified Combined Figure & In Action Snapshot -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-zinc-200">
+              <div class="bg-white p-3.5 rounded-xl border border-zinc-200 shadow-sm min-w-0">
+                <span class="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest block">HISTORICAL FIGURE</span>
+                <h4 id="modal-figure-name" class="text-xs font-display font-bold text-zinc-900 mt-0.5">Leader Name</h4>
+                <p id="modal-figure-desc" class="text-xs font-sans text-zinc-700 leading-relaxed mt-1"></p>
+              </div>
+
+              <div class="bg-white p-3.5 rounded-xl border border-zinc-200 shadow-sm min-w-0">
+                <span class="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest block">IN ACTION</span>
+                <h4 id="modal-action-title" class="text-xs font-display font-bold text-zinc-900 mt-0.5">Case Study</h4>
+                <p id="modal-action-text" class="text-xs font-sans text-zinc-700 leading-relaxed mt-1"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- What It Looks Like -->
+        <div>
+          <h3 class="text-base sm:text-lg font-display font-bold text-zinc-900 mb-3 flex items-center gap-2">
+            <span>📜</span> What It Looks Like
+          </h3>
+          <ul id="modal-looks-like" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+            <!-- Bullet items inserted by JS -->
+          </ul>
+        </div>
+
+        <!-- PROS vs CONS Side by Side -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Strengths -->
+          <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-5">
+            <h4 class="text-sm font-mono font-bold text-emerald-800 mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              PROS | Strengths
+            </h4>
+            <div id="modal-pros" class="space-y-3"></div>
+          </div>
+
+          <!-- Challenges -->
+          <div class="bg-rose-50/60 border border-rose-200 rounded-xl p-5">
+            <h4 class="text-sm font-mono font-bold text-rose-800 mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              CONS | Challenges
+            </h4>
+            <div id="modal-cons" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- Where It Can Work -->
+        <div>
+          <h3 class="text-base font-display font-bold text-zinc-900 mb-3 flex items-center gap-2">
+            <span>📍</span> Where It Can Work
+          </h3>
+          <div id="modal-where-work" class="flex flex-wrap gap-2"></div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer Nav -->
+      <div class="sticky bottom-0 bg-white/95 backdrop-blur-md p-4 border-t border-zinc-200 flex items-center justify-between">
+        <button id="modal-prev-btn" onclick="" class="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-xs font-mono text-zinc-800 transition border border-zinc-300 font-semibold">
+          ← Previous Style
+        </button>
+        <span class="text-xs font-mono text-zinc-500">Style Navigation</span>
+        <button id="modal-next-btn" onclick="" class="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-xs font-mono text-zinc-800 transition border border-zinc-300 font-semibold">
+          Next Style →
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* Leadership Gallery Data Source with Curated Contemporary Palette */
+    const LEADERSHIP_STYLES = [
+      {
+        id: '01',
+        slug: 'autocratic',
+        icon: '⚡',
+        title: 'AUTOCRATIC LEADERSHIP',
+        archetype: 'The Decider',
+        category: 'centralized',
+        badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
+        accentColor: '#e11d48',
+        borderColor: 'border-rose-200 hover:border-rose-500',
+        coreIdea: 'Autocratic leaders make decisions with little input from the people they lead. Authority is concentrated with the leader, who typically determines what needs to happen and how it will be done.',
+        looksLike: [
+          'The leader makes most major decisions.',
+          'Expectations and instructions are clearly defined.',
+          'Employees have limited influence over decisions.',
+          'Communication often flows from the leader to the team.',
+          'Decisions can be made quickly.'
+        ],
+        pros: [
+          { title: 'Quick decisions', desc: 'The leader can act without waiting for group consensus.' },
+          { title: 'Clear direction', desc: 'Team members typically know who is responsible for the final decision.' },
+          { title: 'Strong control', desc: 'The approach can provide consistency when procedures need to be followed closely.' },
+          { title: 'Useful in urgent situations', desc: 'Centralized decision-making can be valuable when there is little time for discussion.' }
+        ],
+        cons: [
+          { title: 'Limited employee input', desc: 'Team members may feel their ideas and expertise are overlooked.' },
+          { title: 'Lower engagement', desc: 'Employees may become less invested when they have little voice in decisions.' },
+          { title: 'Reduced creativity', desc: 'Fewer perspectives can mean fewer alternative solutions.' },
+          { title: 'Overdependence on the leader', desc: 'The team may struggle to act independently.' }
+        ],
+        whereItWorks: [
+          'Emergency situations',
+          'High-risk environments',
+          'Time-sensitive decisions',
+          'Teams requiring strong direction',
+          'Situations where the leader has specialized expertise'
+        ],
+        inAction: {
+          title: 'Emergency Response Team',
+          text: 'During a rapidly developing emergency, a response coordinator assigns specific responsibilities, establishes priorities, and makes immediate decisions without holding a team meeting. Once the situation is stabilized, the coordinator invites team members to provide feedback and identify improvements for future responses.'
+        },
+        figure: {
+          name: 'Steve Jobs',
+          initials: 'SJ',
+          text: 'Jobs is often characterized as an autocratic or highly directive leader because of his strong personal influence over product decisions and his willingness to make final calls. His approach demonstrates both the potential for decisive leadership and the challenges of concentrating decision-making authority.'
+        },
+        visualDescription: 'Steve Jobs portrait — Autocratic Leadership',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/steve.jpeg" alt="Steve Jobs - Autocratic Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-rose-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/e11d48?text=Steve+Jobs';">
+        `
+      },
+      {
+        id: '02',
+        slug: 'bureaucratic',
+        icon: '📋',
+        title: 'BUREAUCRATIC LEADERSHIP',
+        archetype: 'The Rule Keeper',
+        category: 'centralized',
+        badgeBg: 'bg-blue-100 text-blue-800 border-blue-300',
+        accentColor: '#2563eb',
+        borderColor: 'border-blue-200 hover:border-blue-500',
+        coreIdea: 'Bureaucratic leaders emphasize established procedures, policies, rules, and clearly defined responsibilities. The focus is on consistency, compliance, and following established systems.',
+        looksLike: [
+          'Policies guide decisions.',
+          'Roles and responsibilities are clearly defined.',
+          'Established procedures are followed.',
+          'Documentation and accountability are important.',
+          'Changes may require formal approval.'
+        ],
+        pros: [
+          { title: 'Consistency', desc: 'Similar situations can be handled using established procedures.' },
+          { title: 'Clear expectations', desc: 'Employees understand the rules and responsibilities associated with their roles.' },
+          { title: 'Accountability', desc: 'Documentation and formal processes make responsibilities easier to track.' },
+          { title: 'Risk management', desc: 'Following established standards can reduce errors and compliance problems.' }
+        ],
+        cons: [
+          { title: 'Can be inflexible', desc: 'Rules may make it difficult to respond quickly to unusual circumstances.' },
+          { title: 'Slower decision-making', desc: 'Multiple approvals can delay action.' },
+          { title: 'Less innovation', desc: 'Strict procedures can discourage experimentation.' },
+          { title: 'Process can overshadow people', desc: 'Employees may become focused on following the process rather than solving the underlying problem.' }
+        ],
+        whereItWorks: [
+          'Government agencies',
+          'Healthcare',
+          'Financial institutions',
+          'Public safety',
+          'Highly regulated industries'
+        ],
+        inAction: {
+          title: 'Hospital Administration',
+          text: 'A hospital administrator introduces a new procedure for handling patient information. Rather than allowing each department to create its own process, the administrator establishes standardized steps, documentation requirements, and approval procedures to ensure the organization consistently meets privacy and regulatory expectations.'
+        },
+        figure: {
+          name: 'Winston Churchill',
+          initials: 'WC',
+          text: 'Churchill is often studied for his reliance on formal war cabinet structures, structured governance procedures, and meticulous directive management, illustrating how disciplined systems and clear protocol coordinate complex wartime operations.'
+        },
+        visualDescription: 'Winston Churchill — Bureaucratic Governance & War Cabinet System',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/winstonchurchill.jpeg" alt="Winston Churchill - Bureaucratic Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-blue-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/2563eb?text=Winston+Churchill';">
+        `
+      },
+      {
+        id: '03',
+        slug: 'charismatic',
+        icon: '🌟',
+        title: 'CHARISMATIC LEADERSHIP',
+        archetype: 'The Influencer',
+        category: 'vision',
+        badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
+        accentColor: '#d97706',
+        borderColor: 'border-amber-200 hover:border-amber-500',
+        coreIdea: 'Charismatic leaders use personal presence, communication, confidence, and an engaging vision to inspire people to follow them.',
+        looksLike: [
+          'The leader communicates an engaging vision.',
+          'Emotion and storytelling are used to motivate others.',
+          'The leader builds strong personal connections.',
+          'Confidence and enthusiasm are highly visible.',
+          'People may become strongly identified with the leader\'s message.'
+        ],
+        pros: [
+          { title: 'Inspiration', desc: 'A compelling leader can energize people around a shared goal.' },
+          { title: 'Strong communication', desc: 'Stories and emotional appeals can make ideas memorable.' },
+          { title: 'Team enthusiasm', desc: 'Charismatic leaders can generate excitement and momentum.' },
+          { title: 'Ability to rally people', desc: 'The approach can be particularly powerful during periods of uncertainty or change.' }
+        ],
+        cons: [
+          { title: 'Leader dependence', desc: 'The team may become overly reliant on the leader\'s personality.' },
+          { title: 'Potential for overpromising', desc: 'Strong persuasion does not always guarantee realistic plans.' },
+          { title: 'Less critical feedback', desc: 'Followers may hesitate to challenge someone they strongly admire.' },
+          { title: 'Personality can overshadow the mission', desc: 'The leader can become more important than the underlying purpose.' }
+        ],
+        whereItWorks: [
+          'Public advocacy',
+          'Organizational change',
+          'Entrepreneurship',
+          'Motivational leadership',
+          'Movements built around a compelling vision'
+        ],
+        inAction: {
+          title: 'Nonprofit Campaign',
+          text: 'A nonprofit director launches a community campaign around a clear vision for improving access to local services. Through compelling stories, public presentations, and personal conversations, the director attracts volunteers and donors who become energized by the mission.'
+        },
+        figure: {
+          name: 'Oprah Winfrey',
+          initials: 'OW',
+          text: 'Winfrey is often discussed as a charismatic leader because of her communication ability, personal connection with audiences, and capacity to inspire people around ideas and causes.'
+        },
+        visualDescription: 'Oprah Winfrey — Charismatic Influence & Spotlight Metaphor',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/oprah.jpeg" alt="Oprah Winfrey - Charismatic Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-amber-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/d97706?text=Oprah+Winfrey';">
+        `
+      },
+      {
+        id: '04',
+        slug: 'democratic',
+        icon: '🤝',
+        title: 'DEMOCRATIC LEADERSHIP',
+        archetype: 'The Collaborator',
+        category: 'collaborative',
+        badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+        accentColor: '#059669',
+        borderColor: 'border-emerald-200 hover:border-emerald-500',
+        coreIdea: 'Democratic leaders actively involve team members in decision-making. The leader remains responsible for guiding the team but values participation, discussion, and shared perspectives.',
+        looksLike: [
+          'Team members are invited to contribute ideas.',
+          'Leaders actively listen to different perspectives.',
+          'Decisions may involve group discussion or voting.',
+          'Collaboration is encouraged.',
+          'The leader facilitates rather than simply directs.'
+        ],
+        pros: [
+          { title: 'Employee engagement', desc: 'People are more likely to feel ownership when their voices are included.' },
+          { title: 'More perspectives', desc: 'Group input can produce a broader range of ideas.' },
+          { title: 'Collaboration', desc: 'The approach encourages communication and teamwork.' },
+          { title: 'Stronger buy-in', desc: 'People may be more willing to support decisions they helped shape.' }
+        ],
+        cons: [
+          { title: 'Slower decisions', desc: 'Discussion and consensus can take time.' },
+          { title: 'Conflict can emerge', desc: 'Different perspectives may make agreement difficult.' },
+          { title: 'Not ideal for every situation', desc: 'Urgent decisions may require more centralized leadership.' },
+          { title: 'Participation does not guarantee quality', desc: 'More voices can help, but the group still needs effective leadership and expertise.' }
+        ],
+        whereItWorks: [
+          'Collaborative teams',
+          'Strategic planning',
+          'Creative problem-solving',
+          'Educational settings',
+          'Organizations that value employee participation'
+        ],
+        inAction: {
+          title: 'University Department',
+          text: 'A department chair is considering changes to the student advising process. Instead of immediately selecting a solution, the chair gathers faculty and staff perspectives, reviews student feedback, discusses several options, and works with the team to develop a shared recommendation.'
+        },
+        figure: {
+          name: 'Dwight D. Eisenhower',
+          initials: 'DE',
+          text: 'Eisenhower exemplified collaborative and democratic leadership through his coalition-building as Supreme Allied Commander, seeking consensus among diverse allied leaders, actively consulting commanders, and uniting international partners around shared goals.'
+        },
+        visualDescription: 'Dwight D. Eisenhower — Democratic Leadership',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/Dwight.jpeg" alt="Dwight D. Eisenhower - Democratic Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-emerald-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/059669?text=Dwight+Eisenhower';">
+        `
+      },
+      {
+        id: '05',
+        slug: 'laissez-faire',
+        icon: '🕊️',
+        title: 'LAISSEZ-FAIRE LEADERSHIP',
+        archetype: 'The Empowerer',
+        category: 'autonomous',
+        badgeBg: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+        accentColor: '#4f46e5',
+        borderColor: 'border-indigo-200 hover:border-indigo-500',
+        coreIdea: 'Laissez-faire leaders give capable team members substantial independence. Rather than directing every task, the leader provides resources and allows employees to determine how to accomplish their work.',
+        looksLike: [
+          'Employees have significant autonomy.',
+          'The leader provides broad direction rather than constant supervision.',
+          'Team members make many day-to-day decisions.',
+          'Expertise and initiative are trusted.',
+          'The leader remains available when support is needed.'
+        ],
+        pros: [
+          { title: 'Autonomy', desc: 'Skilled employees have freedom to determine how they work.' },
+          { title: 'Creativity', desc: 'People can experiment with different approaches.' },
+          { title: 'Employee development', desc: 'Autonomy can encourage decision-making and ownership.' },
+          { title: 'Efficient for experienced teams', desc: 'Highly capable professionals may not need close supervision.' }
+        ],
+        cons: [
+          { title: 'Lack of direction', desc: 'Some employees may need more structure.' },
+          { title: 'Accountability can become unclear', desc: 'Without clear expectations, responsibility may become difficult to track.' },
+          { title: 'Inconsistent results', desc: 'Different employees may approach the same work very differently.' },
+          { title: 'Not ideal for inexperienced teams', desc: 'New employees may need more coaching and guidance.' }
+        ],
+        whereItWorks: [
+          'Experienced professional teams',
+          'Research environments',
+          'Creative organizations',
+          'Highly skilled technical teams',
+          'Independent project work'
+        ],
+        inAction: {
+          title: 'Design Team',
+          text: 'A creative director gives an experienced design team the project\'s goals, deadline, and required standards but does not dictate how each person should complete the work. Team members choose their own methods, collaborate independently, and bring their completed concepts back for review.'
+        },
+        figure: {
+          name: 'Warren Buffett',
+          initials: 'WB',
+          text: 'Buffett is frequently discussed as a leader who gives considerable autonomy to managers within Berkshire Hathaway\'s decentralized structure. His approach illustrates how leaders can provide broad direction while allowing experienced people significant independence.'
+        },
+        visualDescription: 'Warren Buffett — Laissez-Faire Leadership',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/warren.jpeg" alt="Warren Buffett - Laissez-Faire Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-indigo-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/4f46e5?text=Warren+Buffett';">
+        `
+      },
+      {
+        id: '06',
+        slug: 'servant',
+        icon: '🤲',
+        title: 'SERVANT LEADERSHIP',
+        archetype: 'The People-First Leader',
+        category: 'collaborative',
+        badgeBg: 'bg-teal-100 text-teal-800 border-teal-300',
+        accentColor: '#0d9488',
+        borderColor: 'border-teal-200 hover:border-teal-500',
+        coreIdea: 'Servant leaders focus on supporting the growth, well-being, and development of the people they lead. Rather than placing their own authority at the center, they prioritize serving the team and organization.',
+        looksLike: [
+          'The leader listens actively.',
+          'Employee development is prioritized.',
+          'The leader removes obstacles for the team.',
+          'Relationships and trust matter.',
+          'Success is measured partly by the growth of others.'
+        ],
+        pros: [
+          { title: 'Trust', desc: 'People may feel valued and supported.' },
+          { title: 'Employee development', desc: 'The approach emphasizes helping others grow.' },
+          { title: 'Strong relationships', desc: 'Listening and empathy can strengthen team connections.' },
+          { title: 'Employee commitment', desc: 'People may become more invested when they feel genuinely supported.' }
+        ],
+        cons: [
+          { title: 'Decision-making can take longer', desc: 'A strong emphasis on listening and consultation may slow some decisions.' },
+          { title: 'Boundaries can become unclear', desc: 'Leaders must balance serving employees with organizational responsibilities.' },
+          { title: 'May be misunderstood as passive', desc: 'Servant leadership still requires accountability, direction, and difficult decisions.' },
+          { title: 'Requires significant relational investment', desc: 'Building trust takes time.' }
+        ],
+        whereItWorks: [
+          'Nonprofit organizations',
+          'Education',
+          'Healthcare',
+          'Community organizations',
+          'Mission-driven workplaces'
+        ],
+        inAction: {
+          title: 'Community Organization',
+          text: 'A nonprofit director notices that staff members are struggling with competing demands. Instead of simply telling them to work harder, the director meets with the team, identifies barriers, reallocates resources, and creates development opportunities that help employees succeed.'
+        },
+        figure: {
+          name: 'Nelson Mandela',
+          initials: 'NM',
+          text: 'Mandela is frequently discussed as an example of servant-oriented leadership because of his emphasis on reconciliation, collective well-being, and empowering others rather than using leadership solely as a means of personal power.'
+        },
+        visualDescription: 'Nelson Mandela — Servant Leadership',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/Nelson.jpeg" alt="Nelson Mandela - Servant Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-teal-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/0d9488?text=Nelson+Mandela';">
+        `
+      },
+      {
+        id: '07',
+        slug: 'transactional',
+        icon: '⚖️',
+        title: 'TRANSACTIONAL LEADERSHIP',
+        archetype: 'The Performance Driver',
+        category: 'centralized',
+        badgeBg: 'bg-violet-100 text-violet-800 border-violet-300',
+        accentColor: '#7c3aed',
+        borderColor: 'border-violet-200 hover:border-violet-500',
+        coreIdea: 'Transactional leaders emphasize clear expectations, performance standards, rewards, and consequences. The relationship between leader and follower is often structured around agreed-upon responsibilities and results.',
+        looksLike: [
+          'Goals and expectations are clearly established.',
+          'Performance is monitored.',
+          'Rewards may be tied to achievement.',
+          'Problems may result in corrective action.',
+          'Structure and accountability are emphasized.'
+        ],
+        pros: [
+          { title: 'Clear expectations', desc: 'Employees understand what successful performance looks like.' },
+          { title: 'Accountability', desc: 'Performance can be measured against established standards.' },
+          { title: 'Predictability', desc: 'Consistent systems help employees understand what happens when goals are met or missed.' },
+          { title: 'Useful for measurable goals', desc: 'The approach can work well when performance can be clearly defined.' }
+        ],
+        cons: [
+          { title: 'Can limit creativity', desc: 'Employees may focus on meeting requirements rather than finding new approaches.' },
+          { title: 'Extrinsic motivation', desc: 'People may become focused primarily on rewards or avoiding consequences.' },
+          { title: 'Short-term focus', desc: 'The approach may emphasize immediate performance over long-term development.' },
+          { title: 'Less emphasis on relationships', desc: 'The system can become overly focused on results.' }
+        ],
+        whereItWorks: [
+          'Sales organizations',
+          'Production environments',
+          'Performance-driven teams',
+          'Structured operations',
+          'Jobs with clearly measurable outcomes'
+        ],
+        inAction: {
+          title: 'Sales Department',
+          text: 'A sales manager establishes quarterly targets and clearly explains how performance will be evaluated. Employees who meet or exceed their targets receive established incentives, while employees who consistently fall short receive coaching and a performance improvement plan.'
+        },
+        figure: {
+          name: 'Bill Gates',
+          initials: 'BG',
+          text: 'Gates is sometimes discussed in relation to highly performance-focused and results-oriented leadership, particularly during Microsoft\'s early growth. His example can illustrate the value—and potential intensity—of emphasizing high standards and measurable outcomes.'
+        },
+        visualDescription: 'Bill Gates — Transactional Leadership',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/BillGates.jpeg" alt="Bill Gates - Transactional Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-violet-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/7c3aed?text=Bill+Gates';">
+        `
+      },
+      {
+        id: '08',
+        slug: 'transformational',
+        icon: '🚀',
+        title: 'TRANSFORMATIONAL LEADERSHIP',
+        archetype: 'The Change Catalyst',
+        category: 'vision',
+        badgeBg: 'bg-yellow-100 text-yellow-900 border-yellow-400',
+        accentColor: '#ca8a04',
+        borderColor: 'border-yellow-300 hover:border-yellow-500',
+        coreIdea: 'Transformational leaders inspire people to move beyond the status quo by creating a compelling vision, encouraging innovation, and motivating people to pursue meaningful change.',
+        looksLike: [
+          'The leader communicates a compelling vision.',
+          'Innovation and new ideas are encouraged.',
+          'Employees are challenged to grow.',
+          'The leader connects individual work to a larger purpose.',
+          'Change is viewed as an opportunity rather than simply a disruption.'
+        ],
+        pros: [
+          { title: 'Inspiration', desc: 'People can become energized by a meaningful shared vision.' },
+          { title: 'Innovation', desc: 'Employees are encouraged to question existing approaches.' },
+          { title: 'Employee development', desc: 'The approach emphasizes growth and potential.' },
+          { title: 'Organizational change', desc: 'Transformational leaders can help people move toward a new direction.' }
+        ],
+        cons: [
+          { title: 'Change fatigue', desc: 'Constantly pushing for improvement can exhaust employees.' },
+          { title: 'Vision may outpace execution', desc: 'An inspiring idea still requires practical planning.' },
+          { title: 'Can create unrealistic expectations', desc: 'Ambitious goals need realistic resources and timelines.' },
+          { title: 'Strong vision can become leader-dependent', desc: 'The organization needs systems that sustain change beyond one person.' }
+        ],
+        whereItWorks: [
+          'Organizational change',
+          'Innovation',
+          'Mission-driven organizations',
+          'Growth periods',
+          'Organizations needing a new direction'
+        ],
+        inAction: {
+          title: 'Technology Company',
+          text: 'A company has relied on the same product for years and is losing market share. The CEO communicates a new vision, invites employees to challenge existing assumptions, invests in new capabilities, and gives teams opportunities to experiment with new solutions.'
+        },
+        figure: {
+          name: 'Martin Luther King Jr.',
+          initials: 'MLK',
+          text: 'King is frequently discussed as a transformational leader because he articulated a powerful vision of social change and inspired collective action around that vision. His example demonstrates how leadership can motivate people to pursue change beyond immediate organizational goals.'
+        },
+        visualDescription: 'Martin Luther King Jr. — Transformational Leadership',
+        metaphorSvg: `
+          <img src="https://elearning.lapu.edu/course_files/_MAOL/MLK.jpeg" alt="Martin Luther King Jr. - Transformational Leadership" class="w-32 h-32 object-cover rounded-2xl border-2 border-yellow-500 shadow-md metaphor-svg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/ffffff/ca8a04?text=MLK';">
+        `
+      }
+    ];
+
+    /* Scenario Matcher Database */
+    const SCENARIOS = [
+      {
+        id: 'campus-crisis',
+        icon: '🚨',
+        title: 'Campus Emergency / Safety Protocol',
+        context: 'Rapidly evolving emergency or lockdown on campus requiring immediate compliance and clear direction.',
+        recommendedId: '01',
+        actionPlan: 'Establish a central command, issue immediate safety directives, and defer open discussions until campus security and student safety are fully restored.'
+      },
+      {
+        id: 'accreditation',
+        icon: '📋',
+        title: 'Accreditation & State Compliance',
+        context: 'Navigating district policy audits, state testing standards, or accreditation reviews requiring strict adherence to guidelines.',
+        recommendedId: '02',
+        actionPlan: 'Standardize documentation across departments, enforce strict alignment with state learning standards, and conduct systematic compliance checks.'
+      },
+      {
+        id: 'school-culture',
+        icon: '🌟',
+        title: 'Community Vision & Culture Shift',
+        context: 'Rallying students, faculty, and parents around a bold new school vision, bond initiative, or cultural revitalisation.',
+        recommendedId: '03',
+        actionPlan: 'Deliver inspiring presentations, highlight student achievement stories, and cultivate enthusiastic community partnerships.'
+      },
+      {
+        id: 'curriculum-design',
+        icon: '🤝',
+        title: 'Curriculum & Grading Policy Reform',
+        context: 'Developing multidisciplinary learning programs that require broad consensus among faculty, chairs, and administrators.',
+        recommendedId: '04',
+        actionPlan: 'Establish committee working groups, facilitate open faculty forums, gather teacher feedback, and build shared ownership over instructional changes.'
+      },
+      {
+        id: 'specialized-faculty',
+        icon: '🔬',
+        title: 'Veteran Research & AP/IB Faculty',
+        context: 'Guiding experienced master teachers, lab researchers, or specialized educators who thrive with minimal direct supervision.',
+        recommendedId: '05',
+        actionPlan: 'Define high-level learning outcomes and grant master educators the autonomy to design their own creative pedagogical strategies.'
+      },
+      {
+        id: 'teacher-support',
+        icon: '🌱',
+        title: 'Educator Well-Being & Student Services',
+        context: 'Addressing teacher burnout while expanding holistic wraparound support services for at-risk students.',
+        recommendedId: '06',
+        actionPlan: 'Focus on removing administrative burdens, actively listen to faculty concerns, reallocate classroom resources, and prioritize educator growth.'
+      },
+      {
+        id: 'performance-goals',
+        icon: '📊',
+        title: 'Literacy Benchmarks & CTE Targets',
+        context: 'Driving measurable progress in standardized literacy goals, attendance metrics, or CTE completion rates.',
+        recommendedId: '07',
+        actionPlan: 'Establish clear quarterly benchmark targets, track student achievement data transparently, and reward exemplary instructional outcomes.'
+      },
+      {
+        id: 'stem-innovation',
+        icon: '🚀',
+        title: 'Digital Learning & STEM Transformation',
+        context: 'Modernizing legacy teaching models into innovative, project-based STEM learning environments for future readiness.',
+        recommendedId: '08',
+        actionPlan: 'Communicate an inspiring vision for modern learning, encourage teachers to experiment with new technology, and champion innovative pilot programs.'
+      }
+    ];
+
+    // Audio sound generator using Tone.js (Modern glass chimes)
+    let audioEnabled = false;
+    let synth = null;
+
+    function initAudio() {
+      if (!synth && window.Tone) {
+        synth = new Tone.Synth({
+          oscillator: { type: 'sine' },
+          envelope: { attack: 0.005, decay: 0.2, sustain: 0, release: 0.3 }
+        }).toDestination();
+        synth.volume.value = -18;
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('audio-icon-on').classList.toggle('hidden', !audioEnabled);
+      document.getElementById('audio-icon-off').classList.toggle('hidden', audioEnabled);
+      if (audioEnabled) {
+        Tone.start();
+        initAudio();
+        playClickSound(523.25); // C5 Glass tap
+      }
+    }
+
+    function playClickSound(freq = 523.25) {
+      if (audioEnabled && synth) {
+        try {
+          synth.triggerAttackRelease(freq, "16n");
+        } catch (e) {}
+      }
+    }
+
+    // Current State Variables
+    let activeFilter = 'all';
+    let currentModalIndex = 0;
+
+    /* Modal Handlers */
+    function openModalBySlug(slug) {
+      const index = LEADERSHIP_STYLES.findIndex(s => s.slug === slug);
+      if (index !== -1) {
+        currentModalIndex = index;
+        renderModalContent();
+        const modal = document.getElementById('detail-modal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          playClickSound(659.25);
+        }
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detail-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        playClickSound(440);
+      }
+    }
+
+    /* Filter Handlers */
+    function filterStyles(category) {
+      activeFilter = category;
+      playClickSound(523.25);
+      
+      const pills = document.querySelectorAll('.filter-pill');
+      pills.forEach(pill => {
+        if (pill.getAttribute('data-filter') === category) {
+          pill.className = "filter-pill active px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-zinc-900 text-white shadow border border-zinc-800";
+        } else {
+          pill.className = "filter-pill px-3.5 py-1.5 rounded-lg text-xs font-mono transition bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border border-zinc-300";
+        }
+      });
+
+      renderCards();
+    }
+
+    // View Switching
+    function switchView(viewName) {
+      playClickSound(587.33);
+      document.getElementById('view-gallery').classList.toggle('hidden', viewName !== 'gallery');
+      document.getElementById('view-compare').classList.toggle('hidden', viewName !== 'compare');
+      document.getElementById('view-matcher').classList.toggle('hidden', viewName !== 'matcher');
+
+      // Update Nav Buttons
+      const navGallery = document.getElementById('nav-btn-gallery');
+      const navCompare = document.getElementById('nav-btn-compare');
+      const navMatcher = document.getElementById('nav-btn-matcher');
+
+      const activeClass = "px-3.5 py-1.5 rounded-lg transition-all text-white font-bold bg-zinc-900 shadow";
+      const inactiveClass = "px-3.5 py-1.5 rounded-lg transition-all text-zinc-600 hover:text-zinc-900";
+
+      navGallery.className = viewName === 'gallery' ? activeClass : inactiveClass;
+      navCompare.className = viewName === 'compare' ? activeClass : inactiveClass;
+      navMatcher.className = viewName === 'matcher' ? activeClass : inactiveClass;
+    }
+
+    /* Render Cards Grid */
+    function renderCards() {
+      const grid = document.getElementById('cards-grid');
+      grid.innerHTML = '';
+
+      const filtered = LEADERSHIP_STYLES.filter(style => {
+        return activeFilter === 'all' || style.category === activeFilter;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-zinc-600 font-sans">
+            <p class="text-sm sm:text-base font-medium">No leadership styles match your search criteria.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((style) => {
+        const card = document.createElement('div');
+        card.className = `broad-card-light broad-card-hover rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden group cursor-pointer border ${style.borderColor}`;
+        card.onclick = () => openModalBySlug(style.slug);
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] font-mono font-bold px-2.5 py-1 rounded-md bg-zinc-900 text-white shadow-sm">
+                STYLE ${style.id}
+              </span>
+              <span class="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full ${style.badgeBg}">
+                ${style.archetype}
+              </span>
+            </div>
+
+            <div class="my-4 flex justify-center py-2 group-hover:scale-105 transition-transform duration-300">
+              ${style.metaphorSvg}
+            </div>
+
+            <h3 class="text-base font-display font-bold text-zinc-900 tracking-tight leading-snug mb-2 group-hover:text-blue-600 transition-colors">
+              ${style.title}
+            </h3>
+
+            <p class="text-xs sm:text-sm font-sans text-zinc-700 line-clamp-3 leading-relaxed mb-4 font-normal">
+              ${style.coreIdea}
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-zinc-200 flex flex-col gap-1.5 mt-auto">
+            <div class="text-xs text-zinc-600">
+              <span>Figure: <strong class="text-zinc-900 font-display">${style.figure.name}</strong></span>
+            </div>
+            <div class="flex items-center justify-end pt-0.5">
+              <span class="text-xs font-mono font-bold text-zinc-900 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Review →
+              </span>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* Modal Controller */
+    function renderModalContent() {
+      const style = LEADERSHIP_STYLES[currentModalIndex];
+
+      document.getElementById('modal-number').innerText = `LEADERSHIP STYLE ${style.id}`;
+      document.getElementById('modal-title').innerText = style.title;
+      document.getElementById('modal-archetype').innerText = `${style.archetype} — ${style.visualDescription}`;
+      document.getElementById('modal-archetype').style.color = style.accentColor;
+      document.getElementById('modal-metaphor-container').innerHTML = style.metaphorSvg;
+      document.getElementById('modal-core-idea').innerText = style.coreIdea;
+
+      // Render What It Looks Like
+      const looksList = document.getElementById('modal-looks-like');
+      looksList.innerHTML = style.looksLike.map(item => `
+        <li class="flex items-start gap-2 bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
+          <span class="shrink-0 mt-0.5" style="color: ${style.accentColor}">✦</span>
+          <span class="text-zinc-800 font-sans text-xs sm:text-sm font-medium leading-relaxed">${item}</span>
+        </li>
+      `).join('');
+
+      // Render Pros
+      const prosContainer = document.getElementById('modal-pros');
+      prosContainer.innerHTML = style.pros.map(p => `
+        <div class="bg-white p-3 rounded-xl border border-emerald-200 shadow-sm">
+          <h5 class="text-xs font-mono font-bold text-emerald-800 mb-0.5">${p.title}</h5>
+          <p class="text-xs sm:text-sm font-sans text-zinc-800 leading-relaxed">${p.desc}</p>
+        </div>
+      `).join('');
+
+      // Render Cons
+      const consContainer = document.getElementById('modal-cons');
+      consContainer.innerHTML = style.cons.map(c => `
+        <div class="bg-white p-3 rounded-xl border border-rose-200 shadow-sm">
+          <h5 class="text-xs font-mono font-bold text-rose-800 mb-0.5">${c.title}</h5>
+          <p class="text-xs sm:text-sm font-sans text-zinc-800 leading-relaxed">${c.desc}</p>
+        </div>
+      `).join('');
+
+      // Render Where it works
+      const whereWorkContainer = document.getElementById('modal-where-work');
+      whereWorkContainer.innerHTML = style.whereItWorks.map(item => `
+        <span class="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-mono font-semibold ${style.badgeBg}">
+          📍 ${item}
+        </span>
+      `).join('');
+
+      // Render Case Action & Figure
+      document.getElementById('modal-action-title').innerText = style.inAction.title;
+      document.getElementById('modal-action-text').innerText = style.inAction.text;
+
+      document.getElementById('modal-figure-name').innerText = style.figure.name;
+      document.getElementById('modal-figure-desc').innerText = style.figure.text;
+
+      // Update Prev / Next Buttons
+      const prevBtn = document.getElementById('modal-prev-btn');
+      const nextBtn = document.getElementById('modal-next-btn');
+
+      const prevIdx = (currentModalIndex - 1 + LEADERSHIP_STYLES.length) % LEADERSHIP_STYLES.length;
+      const nextIdx = (currentModalIndex + 1) % LEADERSHIP_STYLES.length;
+
+      prevBtn.onclick = () => {
+        currentModalIndex = prevIdx;
+        renderModalContent();
+        playClickSound(523.25);
+      };
+
+      nextBtn.onclick = () => {
+        currentModalIndex = nextIdx;
+        renderModalContent();
+        playClickSound(659.25);
+      };
+    }
+
+    /* Render Matrix Table */
+    function renderMatrix() {
+      const tbody = document.getElementById('matrix-body');
+      tbody.innerHTML = '';
+
+      LEADERSHIP_STYLES.forEach((style) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-zinc-50 transition font-sans";
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold text-zinc-900">
+            <div class="flex flex-col items-center justify-center text-center gap-2">
+              <div class="flex items-center gap-2 justify-center">
+                <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-white font-bold">${style.id}</span>
+                <span class="font-display text-xs sm:text-sm font-bold text-zinc-900">${style.title.replace(' LEADERSHIP', '')}</span>
+              </div>
+              <span class="w-16 h-16 rounded-2xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-3xl shadow-sm mt-1">${style.icon}</span>
+            </div>
+          </td>
+          <td class="p-3.5 font-mono text-xs sm:text-sm font-bold" style="color: ${style.accentColor}">${style.archetype}</td>
+          <td class="p-3.5 text-zinc-800 max-w-xs text-xs sm:text-sm leading-snug">${style.coreIdea.substring(0, 95)}...</td>
+          <td class="p-3.5 text-emerald-800 font-semibold text-xs sm:text-sm">${style.pros[0].title}</td>
+          <td class="p-3.5 text-rose-800 font-semibold text-xs sm:text-sm">${style.cons[0].title}</td>
+          <td class="p-3.5 text-zinc-800 text-xs sm:text-sm">${style.whereItWorks[0]}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    /* Render Scenario Matcher */
+    let selectedScenarioId = null;
+
+    function renderScenarioMatcher() {
+      const grid = document.getElementById('scenario-selector-grid');
+      grid.innerHTML = '';
+
+      SCENARIOS.forEach((s) => {
+        const btn = document.createElement('button');
+        const isSelected = s.id === selectedScenarioId;
+        
+        btn.className = `p-4 rounded-2xl text-left transition-all duration-200 focus:outline-none flex flex-col justify-between ${
+          isSelected 
+            ? 'bg-zinc-900 text-white border-2 border-zinc-900 shadow-lg ring-2 ring-zinc-900/20' 
+            : 'bg-white text-zinc-900 border border-zinc-200 hover:border-zinc-400 hover:shadow-sm'
+        }`;
+        btn.onclick = () => selectScenario(s);
+
+        btn.innerHTML = `
+          <div>
+            <div class="text-2xl mb-2">${s.icon}</div>
+            <h4 class="font-display font-bold text-sm sm:text-base mb-1 ${isSelected ? 'text-white' : 'text-zinc-900'}">${s.title}</h4>
+            <p class="text-xs sm:text-sm font-sans leading-normal ${isSelected ? 'text-zinc-300' : 'text-zinc-700'}">${s.context}</p>
+          </div>
+          <span class="text-xs font-mono font-bold mt-3 block ${isSelected ? 'text-yellow-400' : 'text-zinc-900'}">
+            ${isSelected ? '✓ Selected Approach' : 'Match Approach →'}
+          </span>
+        `;
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectScenario(scenario) {
+      selectedScenarioId = scenario.id;
+      renderScenarioMatcher();
+
+      playClickSound(783.99); // G5
+      const style = LEADERSHIP_STYLES.find(st => st.id === scenario.recommendedId);
+      if (!style) return;
+
+      const modal = document.getElementById('scenario-result-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+
+      document.getElementById('scenario-result-icon').innerText = scenario.icon;
+      document.getElementById('scenario-result-label').innerText = `Best Match: ${scenario.title}`;
+      document.getElementById('scenario-result-title').innerText = `${style.title} (${style.archetype})`;
+      document.getElementById('scenario-result-desc').innerText = `${style.coreIdea} In this situation, this style provides the required dynamic balancing speed, control, or trust.`;
+      document.getElementById('scenario-result-action').innerText = scenario.actionPlan;
+
+      const exploreBtn = document.getElementById('scenario-explore-btn');
+      exploreBtn.onclick = () => {
+        closeScenarioModal();
+        openModalBySlug(style.slug);
+      };
+    }
+
+    function closeScenarioModal() {
+      const modal = document.getElementById('scenario-result-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        const detailModal = document.getElementById('detail-modal');
+        if (!detailModal || detailModal.classList.contains('hidden')) {
+          document.body.style.overflow = '';
+        }
+        playClickSound(440);
+      }
+    }
+
+    /* Close modal on ESC key */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        closeScenarioModal();
+      }
+    });
+
+    /* Initial Load */
+    window.onload = function() {
+      renderCards();
+      renderMatrix();
+      renderScenarioMatcher();
+    };
+  </script>
+</body>
+</html>
