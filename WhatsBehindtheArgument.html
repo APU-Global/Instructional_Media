@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crack The Case</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #e7e5e4;
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-slide-in { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-scale-in { animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-shake { animation: shake 0.4s ease-in-out; }
+        .animate-bounce-slight { animation: bounceSlight 2s infinite ease-in-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes bounceSlight { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f5f5f4; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const IconWrapper = ({ size = 24, className = "", strokeWidth = 2, children }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const Search = (props) => <IconWrapper {...props}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></IconWrapper>;
+        const ChevronRight = (props) => <IconWrapper {...props}><polyline points="9 18 15 12 9 6"/></IconWrapper>;
+        const Lock = (props) => <IconWrapper {...props}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></IconWrapper>;
+        const Eye = (props) => <IconWrapper {...props}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></IconWrapper>;
+        const CheckCircle2 = (props) => <IconWrapper {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></IconWrapper>;
+        const AlertCircle = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></IconWrapper>;
+        const BookOpen = (props) => <IconWrapper {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></IconWrapper>;
+        const ArrowLeft = (props) => <IconWrapper {...props}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></IconWrapper>;
+        const GridIcon = (props) => <IconWrapper {...props}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></IconWrapper>;
+
+        const GRID_SIZE = 9;
+
+        const CASES = [
+            {
+                id: 1,
+                title: "PARENTAL CHOICE",
+                argument: "“Parents should have the final say in what their children learn.”",
+                clues: ["The speaker emphasizes that families should have meaningful control over decisions affecting their children."],
+                expectedAnswer: "AUTONOMY",
+                revealExplanation: "The argument emphasizes the right of individuals—in this case, parents—to have meaningful control over decisions affecting themselves and their children.",
+                revealNuance: "Why the clues matter:\nThe emphasis on choice, control, and independence points toward autonomy.",
+                word: "AUTONOMY",
+                scrambled: ["O", "U", "A", "T", "M", "O", "N", "Y"],
+                startX: 0, startY: 1, direction: "DOWN", gridNumber: 4
+            },
+            {
+                id: 2,
+                title: "EQUAL OPPORTUNITY",
+                argument: "“Every student should have access to the same educational opportunities, regardless of where they live or how much their family earns.”",
+                clues: ["The speaker is concerned about differences in educational opportunities between students."],
+                expectedAnswer: "EQUITY",
+                revealExplanation: "The argument emphasizes fairness in access to educational opportunities and concern about barriers that may prevent some students from receiving comparable opportunities.",
+                revealNuance: "Why the clues matter:\nThe focus is not simply that everyone receives the exact same thing. It is about addressing differences in circumstances so students have meaningful access to opportunity.",
+                word: "EQUITY",
+                scrambled: ["I", "Q", "U", "E", "T", "Y"],
+                startX: 4, startY: 0, direction: "DOWN", gridNumber: 2
+            },
+            {
+                id: 3,
+                title: "PROTECTING LEARNERS",
+                argument: "“Schools should restrict activities or materials that could place students at serious risk of harm.”",
+                clues: ["The speaker is particularly concerned about protecting students from potential harm."],
+                expectedAnswer: "SAFETY",
+                revealExplanation: "The argument prioritizes protecting students from significant physical or emotional harm.",
+                revealNuance: "Why the clues matter:\nThe central concern is risk reduction and protection, even when that may require placing limits on individual choices.",
+                word: "SAFETY",
+                scrambled: ["A", "F", "Y", "S", "T", "E"],
+                startX: 1, startY: 0, direction: "ACROSS", gridNumber: 1
+            },
+            {
+                id: 4,
+                title: "PRESERVING HERITAGE",
+                argument: "“Schools should continue teaching the customs and practices that have shaped our communities.”",
+                clues: ["The speaker is concerned that important cultural practices are disappearing."],
+                expectedAnswer: "TRADITION",
+                revealExplanation: "The argument emphasizes preserving practices, beliefs, and cultural traditions across generations.",
+                revealNuance: "Why the clues matter:\nThe focus on continuity, heritage, and passing practices from one generation to another points toward tradition.",
+                word: "TRADITION",
+                scrambled: ["I", "R", "O", "T", "D", "N", "A", "I", "T"],
+                startX: 0, startY: 3, direction: "ACROSS", gridNumber: 5
+            },
+            {
+                id: 5,
+                title: "THE CHALLENGE CASE",
+                argument: "“Schools should give students a greater voice in decisions that affect their learning.”",
+                clues: ["The speaker argues that students are directly affected by many educational decisions."],
+                expectedAnswer: "AUTONOMY",
+                revealExplanation: "The argument emphasizes students having voice, choice, and meaningful influence over decisions affecting them.",
+                revealNuance: "Think deeper:\nThis argument could also connect to other values, such as participation or equity. The strongest underlying value, however, is autonomy because the central concern is giving individuals greater control and voice.",
+                word: "AUTONOMY",
+                scrambled: ["U", "M", "O", "T", "Y", "O", "N", "A"],
+                startX: 7, startY: 0, direction: "DOWN", gridNumber: 3
+            }
+        ];
+
+        function App() {
+            const [appState, setAppState] = useState('intro');
+            const [solvedCases, setSolvedCases] = useState([]);
+            const [activeCaseId, setActiveCaseId] = useState(null);
+            const [caseSubState, setCaseSubState] = useState('investigating');
+            
+            const [revealedCluesCount, setRevealedCluesCount] = useState(0);
+            const [userGuess, setUserGuess] = useState('');
+            const [guessFeedback, setGuessFeedback] = useState(null);
+            const [revealedVowels, setRevealedVowels] = useState([]);
+
+            const generateGrid = () => {
+                const grid = Array.from({ length: GRID_SIZE }, () => 
+                    Array(GRID_SIZE).fill(null).map(() => ({
+                        isActive: false,
+                        number: null,
+                        letter: '',
+                        isSolved: false,
+                        caseIds: []
+                    }))
+                );
+
+                CASES.forEach(c => {
+                    let currentX = c.startX;
+                    let currentY = c.startY;
+
+                    grid[currentY][currentX].number = c.gridNumber;
+
+                    for (let i = 0; i < c.word.length; i++) {
+                        const cell = grid[currentY][currentX];
+                        cell.isActive = true;
+                        cell.caseIds.push(c.id);
+                        
+                        if (solvedCases.includes(c.id)) {
+                            cell.letter = c.word[i];
+                            cell.isSolved = true;
+                        }
+
+                        if (c.direction === 'ACROSS') currentX++;
+                        if (c.direction === 'DOWN') currentY++;
+                    }
+                });
+
+                return grid;
+            };
+
+            const crosswordGrid = generateGrid();
+
+            const handleStart = () => {
+                setAppState('dashboard');
+            };
+
+            const openCase = (id) => {
+                setActiveCaseId(id);
+                setCaseSubState(solvedCases.includes(id) ? 'revealed' : 'investigating');
+                setRevealedCluesCount(0);
+                setUserGuess('');
+                setGuessFeedback(null);
+                setRevealedVowels([]);
+            };
+
+            const closeCase = () => {
+                setActiveCaseId(null);
+                if (solvedCases.length === CASES.length) {
+                    setTimeout(() => setAppState('complete'), 600);
+                }
+            };
+
+            const revealNextClue = () => {
+                if (revealedCluesCount < 1) {
+                    setRevealedCluesCount(prev => prev + 1);
+                }
+            };
+
+            const submitGuess = () => {
+                if (!userGuess.trim()) return;
+
+                const activeCase = CASES.find(c => c.id === activeCaseId);
+                const normalizedUser = userGuess.trim().toLowerCase();
+                const normalizedExpected = activeCase.expectedAnswer.toLowerCase();
+
+                if (normalizedUser.includes(normalizedExpected)) {
+                    setGuessFeedback('correct');
+                    setSolvedCases(prev => [...prev, activeCase.id]);
+                    setCaseSubState('revealed');
+                } else {
+                    setGuessFeedback('incorrect');
+                    setTimeout(() => setGuessFeedback(null), 2500);
+                }
+            };
+
+            const renderIntro = () => (
+                <div className="flex flex-col items-center min-h-screen p-4 md:p-8 animate-fade-in bg-[#f4f1ea] text-black font-serif">
+                    <div className="w-full max-w-4xl mt-4 md:mt-10">
+                        <div className="flex justify-between items-end border-b-4 border-black pb-3 text-xs md:text-sm font-sans font-bold uppercase tracking-widest mb-6">
+                            <span className="hidden md:inline-block">Vol. XCIII — No. 24</span>
+                            <span>Thursday, September 3, 2026</span>
+                            <span>Special Edition</span>
+                        </div>
+
+                        <div className="text-center mb-10">
+                            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase mb-4 text-black" style={{ fontFamily: 'Georgia, Times, serif', lineHeight: '0.9' }}>
+                                Crack The Case
+                            </h1>
+                            <h2 className="text-xl md:text-3xl font-bold italic border-y-4 border-black py-4 mt-6">
+                                What's Really Behind the Argument?
+                            </h2>
+                        </div>
+
+                        <div className="grid md:grid-cols-12 gap-10 mb-12">
+                            <div className="md:col-span-7 space-y-4 text-lg leading-relaxed text-justify">
+                                <p>
+                                    <span className="text-6xl font-black float-left mr-3 mt-2 leading-none text-black">E</span>ducation debates are rarely just about what people say. When stakeholders take to the podium to debate curriculum, policies, or funding, their arguments often reflect much deeper, underlying values.
+                                </p>
+                                <p>
+                                    If we only listen to the surface of the argument, we miss the driving force behind it. By identifying the core value, we can better understand why people may reach profoundly different conclusions about the exact same educational issue.
+                                </p>
+                            </div>
+
+                            <div className="md:col-span-5 bg-black text-white p-7 rounded-sm shadow-2xl border-4 border-stone-800 transform rotate-1">
+                                <div className="flex items-center justify-center mb-6 border-b border-stone-700 pb-4">
+                                    <Search size={28} className="mr-3" />
+                                    <h3 className="font-sans text-xl font-bold uppercase tracking-widest">Your Assignment</h3>
+                                </div>
+                                <ul className="text-sm space-y-5 font-sans font-medium tracking-wide">
+                                    <li className="flex items-start"><CheckCircle2 size={20} className="mr-3 mt-0.5 shrink-0 text-stone-400"/> Select a case file from the investigation board.</li>
+                                    <li className="flex items-start"><CheckCircle2 size={20} className="mr-3 mt-0.5 shrink-0 text-stone-400"/> Examine the argument and reveal the evidence clue.</li>
+                                    <li className="flex items-start"><CheckCircle2 size={20} className="mr-3 mt-0.5 shrink-0 text-stone-400"/> Deduce the underlying value (use the Vowel Scanner if you get stuck).</li>
+                                    <li className="flex items-start"><CheckCircle2 size={20} className="mr-3 mt-0.5 shrink-0 text-stone-400"/> Fill the crossword to reveal the bigger picture.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div className="text-center pb-16 pt-8 border-t-2 border-black border-dashed">
+                            <button 
+                                onClick={handleStart}
+                                className="group relative inline-flex items-center justify-center px-10 py-5 text-lg font-sans font-black text-white bg-black border-4 border-black hover:bg-[#f4f1ea] hover:text-black transition-all uppercase tracking-widest shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px]"
+                            >
+                                Turn to the Investigation Board <ChevronRight className="ml-3 group-hover:translate-x-1 transition-transform" size={24} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const renderCompleted = () => (
+                <div className="flex flex-col items-center justify-center min-h-screen p-6 animate-fade-in bg-stone-100 text-stone-900">
+                    <div className="max-w-3xl text-center">
+                        <div className="mb-6 p-5 bg-stone-900 rounded-full inline-block text-white shadow-xl animate-bounce-slight">
+                            <BookOpen size={56} strokeWidth={1.5} />
+                        </div>
+                        
+                        <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-2 font-serif uppercase">
+                            Case File Complete
+                        </h2>
+                        <p className="text-xl text-stone-500 font-semibold tracking-widest uppercase mb-12">
+                            Investigation Dossier Sealed
+                        </p>
+
+                        <div className="w-full bg-white p-10 rounded shadow-md border border-stone-200 mb-12">
+                            <h3 className="text-sm font-bold tracking-widest text-stone-400 uppercase mb-8 text-center border-b pb-4">
+                                Values Uncovered
+                            </h3>
+                            <div className="flex flex-wrap justify-center gap-4">
+                                {CASES.map(c => (
+                                    <span key={c.id} className="px-5 py-3 bg-stone-50 border border-stone-300 rounded font-serif font-bold tracking-wider text-stone-800 shadow-sm text-lg uppercase">
+                                        {c.expectedAnswer}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="w-full text-center space-y-6 mb-12">
+                            <h3 className="text-3xl font-bold text-stone-900 font-serif uppercase tracking-wider">The Bigger Picture</h3>
+                            <p className="text-xl text-stone-600 leading-relaxed max-w-2xl mx-auto">
+                                Arguments often communicate more than their surface message. When we identify the values underneath an argument, we can better understand why people may reach different conclusions about the same educational issue.
+                            </p>
+                            
+                            <div className="py-10 bg-stone-900 text-white rounded-lg px-8 shadow-2xl mt-8 transform transition-transform hover:scale-[1.02] duration-500">
+                                <h4 className="text-3xl md:text-4xl font-serif italic mb-6">"Look beneath the argument."</h4>
+                                <p className="text-stone-300 text-lg md:text-xl max-w-xl mx-auto leading-relaxed font-light">
+                                    Strong dialogue begins with understanding what matters to the people involved—not simply what they are arguing about.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button 
+                            onClick={() => setAppState('dashboard')}
+                            className="flex items-center justify-center mx-auto px-8 py-4 bg-white border-2 border-stone-900 text-stone-900 font-bold tracking-widest uppercase rounded hover:bg-stone-900 hover:text-white transition-colors"
+                        >
+                            <GridIcon size={20} className="mr-3" /> Review Crossword Board
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const renderDashboard = () => (
+                <div className="min-h-screen bg-stone-200 p-4 md:p-8 flex flex-col font-sans text-stone-900 selection:bg-stone-400">
+                    <header className="mb-8 flex items-center justify-between bg-stone-900 text-white p-4 md:px-8 md:py-6 rounded shadow-lg gap-4">
+                        <div className="flex items-center gap-4 md:gap-6">
+                            <button 
+                                onClick={() => setAppState('intro')}
+                                className="flex items-center justify-center p-2 md:p-3 bg-stone-800 border border-stone-700 text-stone-300 hover:text-white hover:bg-stone-700 rounded transition-all group"
+                                title="Back to Front Page"
+                            >
+                                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                            </button>
+                            <div>
+                                <h1 className="text-xl md:text-2xl font-serif font-bold uppercase tracking-widest">Investigation Board</h1>
+                                <p className="text-stone-400 text-xs md:text-sm tracking-widest uppercase mt-1">Status: {solvedCases.length} of 5 Cases Solved</p>
+                            </div>
+                        </div>
+                        {solvedCases.length === 5 && !activeCaseId && (
+                            <button 
+                                onClick={() => setAppState('complete')}
+                                className="px-4 py-2 md:px-6 md:py-3 bg-stone-100 text-stone-900 font-bold tracking-wider uppercase rounded hover:bg-white animate-pulse text-xs md:text-sm whitespace-nowrap"
+                            >
+                                Final Report
+                            </button>
+                        )}
+                    </header>
+
+                    <div className="flex-grow flex flex-col lg:flex-row gap-8">
+                        {}
+                        <div className="lg:w-1/2 flex items-center justify-center bg-stone-300/50 p-6 rounded shadow-inner border-2 border-stone-300">
+                            <div 
+                                className="grid gap-1 md:gap-2 bg-stone-900 p-2 md:p-3 rounded shadow-2xl" 
+                                style={{ 
+                                    gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
+                                    maxWidth: '600px',
+                                    width: '100%'
+                                }}
+                            >
+                                {crosswordGrid.map((row, y) => (
+                                    row.map((cell, x) => (
+                                        <div 
+                                            key={`${x}-${y}`} 
+                                            className={`
+                                                relative aspect-square flex items-center justify-center font-serif font-bold text-xl md:text-3xl transition-all duration-500
+                                                ${cell.isActive ? 'bg-white text-stone-900 shadow-sm border border-stone-200' : 'bg-transparent'}
+                                                ${cell.isSolved ? 'bg-stone-50 text-stone-900' : ''}
+                                                ${activeCaseId && cell.caseIds.includes(activeCaseId) ? 'ring-4 ring-stone-500 bg-stone-200 scale-105 z-10' : ''}
+                                            `}
+                                        >
+                                            {cell.number && (
+                                                <span className="absolute top-0.5 left-1 md:top-1 md:left-1.5 text-[0.5rem] md:text-xs font-sans text-stone-500">
+                                                    {cell.number}
+                                                </span>
+                                            )}
+                                            <span className="animate-fade-in">
+                                                {cell.isSolved ? cell.letter : ''}
+                                            </span>
+                                        </div>
+                                    ))
+                                ))}
+                            </div>
+                        </div>
+
+                        {}
+                        <div className="lg:w-1/2 flex flex-col h-full bg-white rounded shadow-xl border border-stone-200 overflow-hidden relative">
+                            {!activeCaseId ? (
+                                <div className="p-8 h-full flex flex-col animate-fade-in">
+                                    <h2 className="text-xl font-bold uppercase tracking-widest text-stone-800 border-b-2 border-stone-200 pb-4 mb-6">Open Files</h2>
+                                    <div className="space-y-4 flex-grow overflow-y-auto pr-2 custom-scrollbar">
+                                        {CASES.map(c => {
+                                            const isSolved = solvedCases.includes(c.id);
+                                            return (
+                                                <button
+                                                    key={c.id}
+                                                    onClick={() => openCase(c.id)}
+                                                    className={`
+                                                        w-full text-left p-6 rounded border-2 transition-all group flex items-center justify-between
+                                                        ${isSolved 
+                                                            ? 'bg-stone-50 border-stone-200 hover:border-stone-400' 
+                                                            : 'bg-white border-stone-300 shadow-sm hover:border-stone-900 hover:shadow-md'}
+                                                    `}
+                                                >
+                                                    <div>
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <span className="text-xs font-bold px-2 py-1 bg-stone-200 text-stone-600 rounded tracking-widest uppercase">
+                                                                {c.gridNumber} {c.direction}
+                                                            </span>
+                                                            {isSolved && (
+                                                                <span className="flex items-center text-xs font-bold text-stone-500 uppercase tracking-widest">
+                                                                    <CheckCircle2 size={14} className="mr-1"/> Solved
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <h3 className={`text-lg font-serif italic leading-snug pr-4 ${isSolved ? 'text-stone-500 line-through decoration-stone-300' : 'text-stone-900'}`}>
+                                                            {c.argument}
+                                                        </h3>
+                                                    </div>
+                                                    <div className={`p-3 rounded-full shrink-0 ${isSolved ? 'bg-stone-100 text-stone-400' : 'bg-stone-900 text-white group-hover:scale-110 transition-transform'}`}>
+                                                        <ChevronRight size={20} />
+                                                    </div>
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col h-full bg-stone-50 animate-slide-in">
+                                    <div className="bg-stone-900 p-4 flex items-center shadow-md z-10">
+                                        <button 
+                                            onClick={closeCase}
+                                            className="flex items-center text-stone-300 hover:text-white transition-colors uppercase tracking-widest text-sm font-bold"
+                                        >
+                                            <ArrowLeft size={16} className="mr-2" /> Back to Board
+                                        </button>
+                                        <div className="ml-auto flex items-center">
+                                            <span className="text-xs font-bold bg-stone-700 text-stone-200 px-3 py-1 rounded tracking-widest uppercase">
+                                                CASE {activeCaseId}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6 md:p-8 flex-grow overflow-y-auto custom-scrollbar">
+                                        {caseSubState === 'investigating' ? (
+                                            <div className="space-y-8 animate-fade-in">
+                                                <div className="bg-white p-6 md:p-8 border-l-4 border-stone-900 shadow-sm rounded-r">
+                                                    <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">Exhibit A: The Argument</h4>
+                                                    <p className="text-2xl font-serif text-stone-900 leading-relaxed italic">
+                                                        {CASES.find(c => c.id === activeCaseId).argument}
+                                                    </p>
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+                                                        <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest">Investigation Clue</h4>
+                                                        <span className="text-xs font-bold bg-stone-200 text-stone-600 px-2 py-1 rounded">Revealed: {revealedCluesCount}/1</span>
+                                                    </div>
+                                                    
+                                                    {[0].map(idx => (
+                                                        <div key={idx} className="relative">
+                                                            {idx < revealedCluesCount ? (
+                                                                <div className="p-5 bg-stone-200/50 border border-stone-300 rounded text-stone-800 animate-fade-in flex items-start shadow-inner">
+                                                                    <Search className="mr-3 text-stone-500 mt-0.5 shrink-0" size={18} />
+                                                                    <p className="leading-relaxed">{CASES.find(c => c.id === activeCaseId).clues[idx]}</p>
+                                                                </div>
+                                                            ) : (
+                                                                idx === revealedCluesCount ? (
+                                                                    <button 
+                                                                        onClick={revealNextClue}
+                                                                        className="w-full p-5 border-2 border-dashed border-stone-400 rounded text-stone-600 hover:text-stone-900 hover:border-stone-900 hover:bg-stone-200/50 transition-all flex items-center justify-center font-bold tracking-widest uppercase text-sm shadow-sm"
+                                                                    >
+                                                                        <Eye className="mr-3" size={18} /> Reveal Clue
+                                                                    </button>
+                                                                ) : (
+                                                                    <div className="w-full p-5 border border-stone-200 rounded text-stone-400 bg-stone-100 flex items-center justify-center opacity-70 pointer-events-none font-bold tracking-widest uppercase text-sm">
+                                                                        <Lock className="mr-3" size={16} /> Clue Locked
+                                                                    </div>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <div className="bg-stone-900 p-6 rounded shadow-lg mt-8">
+                                                    <div className="mb-8 p-6 bg-stone-800/50 rounded border border-stone-700">
+                                                        <label className="block text-center text-xs font-bold text-stone-400 tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
+                                                            <Search size={14} /> Decrypt Word Pattern
+                                                        </label>
+                                                        
+                                                        <div className="flex flex-wrap justify-center gap-2 mb-6">
+                                                            {CASES.find(c => c.id === activeCaseId).expectedAnswer.split('').map((letter, i) => (
+                                                                <span key={i} className="w-8 h-10 md:w-10 md:h-12 flex items-center justify-center bg-stone-900 border-b-2 border-stone-600 text-stone-200 font-mono text-xl md:text-2xl font-bold rounded shadow-inner uppercase">
+                                                                    {revealedVowels.includes(letter) ? letter : ''}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+
+                                                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                                                            <span className="text-xs font-bold text-stone-500 uppercase tracking-widest">Scan Vowels:</span>
+                                                            <div className="flex gap-2">
+                                                                {['A', 'E', 'I', 'O', 'U'].map(vowel => {
+                                                                    const isRevealed = revealedVowels.includes(vowel);
+                                                                    return (
+                                                                        <button
+                                                                            key={vowel}
+                                                                            onClick={() => setRevealedVowels(prev => [...prev, vowel])}
+                                                                            disabled={isRevealed}
+                                                                            className={`w-8 h-8 md:w-10 md:h-10 rounded font-bold transition-all flex items-center justify-center
+                                                                                ${isRevealed 
+                                                                                    ? 'bg-stone-900 text-stone-700 border border-stone-800 cursor-not-allowed' 
+                                                                                    : 'bg-stone-200 text-stone-900 hover:bg-white hover:scale-110 shadow-sm'}`}
+                                                                        >
+                                                                            {vowel}
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <label className="block text-center text-sm font-bold text-stone-300 tracking-widest uppercase mb-4">
+                                                        Deduce the underlying value
+                                                    </label>
+                                                    <div className="flex flex-col sm:flex-row gap-3">
+                                                        <input 
+                                                            type="text" 
+                                                            value={userGuess}
+                                                            onChange={(e) => {setUserGuess(e.target.value); setGuessFeedback(null);}}
+                                                            onKeyDown={(e) => e.key === 'Enter' && submitGuess()}
+                                                            placeholder="Enter your deduction..."
+                                                            className="flex-grow bg-stone-800 border-2 border-stone-700 text-white p-4 rounded focus:outline-none focus:border-stone-400 text-lg uppercase tracking-wider font-bold placeholder-stone-600 transition-colors"
+                                                            autoComplete="off"
+                                                        />
+                                                        <button 
+                                                            onClick={submitGuess}
+                                                            disabled={!userGuess.trim()}
+                                                            className="px-8 py-4 bg-white text-stone-900 font-bold uppercase tracking-widest rounded hover:bg-stone-200 disabled:opacity-50 transition-colors flex items-center justify-center"
+                                                        >
+                                                            Lock In
+                                                        </button>
+                                                    </div>
+                                                    {guessFeedback === 'incorrect' && (
+                                                        <div className="mt-4 p-3 bg-red-900/50 border border-red-700 text-red-200 rounded text-sm font-bold tracking-wide uppercase flex items-center justify-center animate-shake">
+                                                            <AlertCircle size={16} className="mr-2" /> Deduction Incorrect. Review the evidence.
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center h-full animate-scale-in text-center py-10">
+                                                <div className="w-20 h-20 bg-stone-900 text-white rounded-full flex items-center justify-center mb-6 shadow-xl">
+                                                    <CheckCircle2 size={40} />
+                                                </div>
+                                                <h2 className="text-sm font-bold tracking-widest text-stone-500 uppercase mb-2">Case Solved</h2>
+                                                <h3 className="text-4xl font-serif font-bold text-stone-900 mb-8 uppercase tracking-wider border-b-4 border-stone-900 pb-4 inline-block">
+                                                    {CASES.find(c => c.id === activeCaseId).expectedAnswer}
+                                                </h3>
+                                                
+                                                <div className="text-left bg-white p-8 rounded shadow-md border border-stone-200 w-full mb-8">
+                                                    <p className="text-lg text-stone-800 leading-relaxed mb-6 font-serif">
+                                                        {CASES.find(c => c.id === activeCaseId).revealExplanation}
+                                                    </p>
+                                                    <div className="bg-stone-100 p-5 rounded border border-stone-200">
+                                                        <p className="text-stone-600 leading-relaxed whitespace-pre-line text-sm">
+                                                            <strong className="text-stone-900 block mb-2 uppercase tracking-widest text-xs">Analysis:</strong>
+                                                            {CASES.find(c => c.id === activeCaseId).revealNuance}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <button 
+                                                    onClick={closeCase}
+                                                    className="px-8 py-4 bg-stone-900 text-white font-bold tracking-widest uppercase rounded hover:bg-stone-800 transition-colors shadow-lg flex items-center"
+                                                >
+                                                    Return to Board <ArrowLeft className="ml-3 rotate-180" size={18}/>
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen font-sans">
+                    {appState === 'intro' && renderIntro()}
+                    {appState === 'dashboard' && renderDashboard()}
+                    {appState === 'complete' && renderCompleted()}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
