@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Sleuth: Keep, Question, Discard</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.4s ease-out',
+                        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        #root { height: 100%; }
+        /* Custom scrollbar for the desk area */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Icons ---
+        const SearchIcon = ({ className = "w-6 h-6" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        );
+        const BookOpenIcon = ({ className = "w-6 h-6" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        );
+        const FileQuestionIcon = ({ className = "w-6 h-6" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10.4 12.6a2 2 0 1 1 3 3L12 17"/><path d="M12 21h.01"/></svg>
+        );
+        const TrashIcon = ({ className = "w-6 h-6" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+        );
+
+        const DeskBackground = ({ children }) => (
+            <div className="min-h-screen bg-[#d3a068] relative overflow-hidden flex flex-col font-sans shadow-[inset_0_0_40px_rgba(0,0,0,0.2)]">
+                {/* Desk wood planks effect */}
+                <div 
+                    className="absolute inset-0 opacity-20 pointer-events-none"
+                    style={{
+                        backgroundImage: `repeating-linear-gradient(to right, transparent, transparent 150px, rgba(0,0,0,0.1) 150px, rgba(0,0,0,0.1) 152px)`
+                    }}
+                ></div>
+
+                {/* Procedural Wood grain pattern via inline SVG noise */}
+                <div 
+                    className="absolute inset-0 opacity-[0.15] pointer-events-none mix-blend-multiply"
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01 0.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                        backgroundSize: 'cover'
+                    }}
+                ></div>
+                
+                {/* Desk mat edge for visual depth anchoring the table */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-24 bg-slate-900/5 border-t-[6px] border-slate-900/10 rounded-t-[2rem] pointer-events-none blur-[1px]"></div>
+
+                {/* Softer desk lighting effect */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.15)_0%,rgba(0,0,0,0.15)_100%)] pointer-events-none"></div>
+                
+                {/* Content Container */}
+                <div className="relative z-10 flex flex-col flex-1 h-full min-h-screen overflow-y-auto">
+                    {children}
+                </div>
+            </div>
+        );
+
+        const Button = ({ children, onClick, variant = 'primary', className = '', disabled = false }) => {
+            const baseStyle = "px-6 py-3 font-bold rounded shadow-md transition-all flex items-center justify-center gap-2";
+            const variants = {
+                primary: "bg-slate-800 text-white hover:bg-slate-700 active:scale-95",
+                success: "bg-green-700 text-white hover:bg-green-600 active:scale-95",
+                warning: "bg-amber-600 text-white hover:bg-amber-500 active:scale-95",
+                danger: "bg-red-700 text-white hover:bg-red-600 active:scale-95",
+                outline: "border-2 border-slate-800 text-slate-800 hover:bg-slate-100 active:scale-95"
+            };
+            const disabledStyle = disabled ? "opacity-50 cursor-not-allowed transform-none hover:bg-slate-800 active:scale-100" : "";
+            
+            return (
+                <button 
+                    onClick={onClick} 
+                    disabled={disabled}
+                    className={`${baseStyle} ${variants[variant]} ${disabledStyle} ${className}`}
+                >
+                    {children}
+                </button>
+            );
+        };
+
+        const SOURCES = [
+            {
+                id: 1,
+                title: "Teacher Burnout and Organizational Support: A Multi-Site Study",
+                author: "Jennifer Martinez, PhD & Robert Chen, PhD",
+                publication: "Journal of Educational Psychology",
+                year: "2024",
+                type: "Quantitative research",
+                sample: "1,842 K–12 teachers across 12 districts",
+                methods: "Survey using validated measures",
+                peerReviewed: "Yes",
+                funding: "University research grant",
+                markers: {
+                    AUTHOR: "PhDs in related fields usually indicate formal training in rigorous research design.",
+                    SOURCE: "Peer review means independent experts vetted the methods and conclusions before publication.",
+                    METHODS: "Transparent methodology allows other researchers to evaluate or replicate the study.",
+                    EVIDENCE: "A sample size of 1,842 provides strong statistical reliability.",
+                    FUNDING: "University funding typically carries fewer conflicts of interest than corporate funding."
+                },
+                correctPile: "keep",
+                feedbackTitle: "✓ KEEP — STRONG EVIDENCE",
+                feedbackText: "This source has multiple indicators of credibility: relevant expertise, peer review, transparent methods, a substantial sample, and disclosed funding.\n\nIt is a strong candidate for supporting claims about teacher burnout and organizational support."
+            },
+            {
+                id: 2,
+                title: "The Teacher Retention Crisis: Why Schools Must Act Now",
+                organization: "National Coalition for Teacher Success",
+                year: "2025",
+                evidence: "National teacher survey + government data",
+                purpose: "Advocate for increased investment in teacher retention programs",
+                methods: "Briefly described",
+                peerReviewed: "No",
+                funding: "Member organizations and education foundations",
+                markers: {
+                    PURPOSE: "Advocacy groups often cherry-pick data that supports their specific policy goals.",
+                    METHODS: "Lacking detailed methods makes it harder to know if the survey questions were leading or biased.",
+                    FUNDING: "Funders with a stake in the outcome can sometimes influence how findings are presented."
+                },
+                prompt: "Does an advocacy purpose automatically make a source unreliable?",
+                correctPile: "question",
+                feedbackTitle: "⚠️ QUESTION — USE WITH CAUTION",
+                feedbackText: "An advocacy report is not automatically unreliable.\n\nIt may contain useful data and help you understand a policy position. However, its purpose, funding, and lack of peer review mean its claims should be evaluated carefully.\n\nWhen possible, check important claims against original data or independent research."
+            },
+            {
+                id: 3,
+                title: "\"Scientists Prove Teachers Are Quitting Because They're Tired of Students\"",
+                publisher: "EducationDailyNow.com",
+                author: "Staff Writer",
+                year: "2025",
+                articleClaim: "\"A recent study shows that teachers are leaving the profession because of student behavior.\"",
+                studyLink: "Not provided",
+                statistics: "Original sources not identified",
+                authorDetails: "No individual author identified",
+                methodsDetails: "Not discussed",
+                markers: {
+                    EVIDENCE: "Without naming the original study, you can't verify if the journalist misinterpreted the data.",
+                    SOURCE: "Dead-end claims are huge red flags. Good research always leaves a verifiable trail."
+                },
+                prompt: "Would you trust this source to support a major research claim?",
+                correctPile: "discard",
+                feedbackTitle: "✕ DISCARD",
+                feedbackText: "The problem is not simply that this is a news article.\n\nThe larger problem is verifiability.\n\nYou cannot identify the underlying study, evaluate its methods, or trace the statistics back to their original sources."
+            },
+            {
+                id: 4,
+                title: "Teacher Workforce Trends, 2015–2025",
+                publisher: "U.S. Department of Education",
+                year: "2025",
+                data: "National administrative and survey data",
+                methods: "Documented",
+                dataSources: "Identified",
+                purpose: "Describe national workforce trends",
+                limitations: "Clearly stated",
+                peerReviewed: "No",
+                markers: {
+                    SOURCE: "Government databases are typically highly reliable for neutral, baseline statistics.",
+                    METHODS: "Clear documentation means you can verify exactly how the data was collected.",
+                    EVIDENCE: "Identified sources allow you to trace the data back to its original origin.",
+                    LIMITATIONS: "Acknowledging flaws and limitations is a hallmark of honest, objective research."
+                },
+                prompt: "Does 'not peer reviewed' automatically mean 'not credible'?",
+                correctPile: "keep",
+                feedbackTitle: "✓ KEEP — STRONG EVIDENCE",
+                feedbackText: "Peer review is one indicator of credibility—not the only one.\n\nThis report provides transparent data sources, documented methodology, and clearly stated limitations.\n\nIt could be strong evidence for describing national teacher workforce trends.",
+                handwrittenNote: "Important: A credible source isn't automatically appropriate for every claim."
+            },
+            {
+                id: 5,
+                title: "What 20 Years of Teaching Taught Me About Burnout",
+                author: "Michael R.",
+                experience: "20-year veteran teacher",
+                publication: "Personal education blog",
+                year: "2026",
+                argument: "\"School administrators are primarily responsible for teacher burnout.\"",
+                research: "No research studies are cited.",
+                markers: {
+                    AUTHOR: "Lived experience provides rich context, but it doesn't represent systemic trends.",
+                    EVIDENCE: "Anecdotes are compelling, but they aren't a substitute for widespread data.",
+                    PURPOSE: "Blogs are typically designed to persuade or share opinions, not to objectively analyze.",
+                    RESEARCH: "Without broader data, this remains one person's perspective."
+                },
+                prompt: "Is firsthand experience valuable evidence?",
+                correctPile: "question",
+                feedbackTitle: "⚠️ QUESTION — USE WITH CAUTION",
+                feedbackText: "Personal experience can provide valuable insight into how people experience a problem.\n\nBut one person's experience cannot establish a broad causal claim about an entire profession.\n\nThis source might help you understand lived experience or generate research questions, but it should not be treated as strong evidence that administrators cause teacher burnout."
+            },
+            {
+                id: 6,
+                title: "The Effects of Classroom Technology on Teacher Stress",
+                author: "Thomas Blake, PhD & Sarah Mills, PhD",
+                publication: "International Journal of Modern Education Research",
+                year: "2025",
+                sample: "38 teachers from one private school",
+                methods: "Online survey",
+                peerReviewed: "Yes",
+                finding: "\"Technology causes teacher stress.\"",
+                funding: "The study was funded by a technology company that sells classroom management software.",
+                conflict: "The authors disclose consulting payments from the company.",
+                markers: {
+                    SAMPLE: "A sample this small and specific cannot be generalized to the entire profession.",
+                    METHODS: "Surveys alone can show correlation, but they rarely prove strict 'A causes B' relationships.",
+                    CLAIM: "Strong claims like 'technology causes stress' require highly rigorous experimental designs.",
+                    FUNDING: "The funder directly profits from the software being studied. This is a major red flag.",
+                    CONFLICT: "Financial ties to the product can unconsciously bias how results are interpreted."
+                },
+                prompt: "Peer reviewed. Published. Written by PhDs. Does that automatically make it strong evidence?",
+                correctPile: "question",
+                feedbackTitle: "⚠️ QUESTION — USE WITH CAUTION",
+                feedbackText: "Peer review is a positive credibility indicator—but it does not erase limitations.\n\nThis study has a small, narrow sample, relies on a survey, makes a strong causal claim, and has disclosed financial conflicts of interest.\n\nThe study may still contain useful information, but its findings should be interpreted cautiously.",
+                handwrittenNote: "Credibility isn't binary."
+            }
+        ];
+
+        const App = () => {
+            const [screen, setScreen] = useState('start'); // start, how, sorting, desk_review, reflection, final, complete
+            const [currentSourceIndex, setCurrentSourceIndex] = useState(0);
+            const [revealedMarkers, setRevealedMarkers] = useState([]);
+            
+            const [piles, setPiles] = useState({ keep: [], question: [], discard: [] });
+            const [animatingPile, setAnimatingPile] = useState(null);
+            const [showFeedback, setShowFeedback] = useState(false);
+            
+            const [reflectionSelections, setReflectionSelections] = useState([]);
+            const [finalChoice, setFinalChoice] = useState(null);
+
+            const currentSource = SOURCES[currentSourceIndex];
+
+            const resetGame = () => {
+                setScreen('start');
+                setCurrentSourceIndex(0);
+                setRevealedMarkers([]);
+                setPiles({ keep: [], question: [], discard: [] });
+                setAnimatingPile(null);
+                setShowFeedback(false);
+                setReflectionSelections([]);
+                setFinalChoice(null);
+            };
+
+            const handleRevealMarker = (markerKey) => {
+                if (!revealedMarkers.includes(markerKey)) {
+                    setRevealedMarkers([...revealedMarkers, markerKey]);
+                }
+            };
+
+            const handleHideMarker = (markerKey) => {
+                setRevealedMarkers(revealedMarkers.filter(k => k !== markerKey));
+            };
+
+            const handleSort = (pileType) => {
+                if (animatingPile || showFeedback) return;
+                setAnimatingPile(pileType);
+                
+                // Simulate physics/animation delay before showing feedback
+                setTimeout(() => {
+                    setPiles(prev => ({ ...prev, [pileType]: [...prev[pileType], currentSource] }));
+                    setShowFeedback(true);
+                }, 600);
+            };
+
+            const handleNextSource = () => {
+                setShowFeedback(false);
+                setAnimatingPile(null);
+                setRevealedMarkers([]);
+                
+                if (currentSourceIndex < SOURCES.length - 1) {
+                    setCurrentSourceIndex(currentSourceIndex + 1);
+                } else {
+                    setScreen('desk_review');
+                }
+            };
+
+            const handleReflectionToggle = (factor) => {
+                if (reflectionSelections.includes(factor)) {
+                    setReflectionSelections(reflectionSelections.filter(f => f !== factor));
+                } else if (reflectionSelections.length < 3) {
+                    setReflectionSelections([...reflectionSelections, factor]);
+                }
+            };
+
+            const handleFinalSelect = (source) => {
+                setFinalChoice(source);
+            };
+
+            if (screen === 'start') {
+                return (
+                    <DeskBackground>
+                        <div className="flex-1 flex items-center justify-center p-6">
+                            <div className="bg-white max-w-2xl w-full p-10 shadow-2xl rounded-sm transform rotate-1 border border-slate-200">
+                                <div className="bg-yellow-200 p-4 absolute -top-6 -right-6 shadow-md transform rotate-3 font-serif italic font-bold text-xl text-slate-800">
+                                    RESEARCH BRIEF — SOURCES TO REVIEW
+                                </div>
+                                
+                                <h1 className="text-4xl font-bold mb-6 text-slate-800 tracking-tight flex flex-col gap-2">
+                                    <span className="text-2xl text-blue-700 tracking-widest uppercase">Source Sleuth:</span>
+                                    <span>KEEP, QUESTION, DISCARD</span>
+                                </h1>
+                                
+                                <div className="text-lg text-slate-700 space-y-4 mb-10 leading-relaxed">
+                                    <p>Your research team collected six sources for an upcoming research brief.</p>
+                                    <p>But not every source belongs in your evidence base.</p>
+                                    <p>Your job is to examine each source and decide:</p>
+                                    <ul className="space-y-4 font-bold mt-6 ml-2">
+                                        <li className="text-green-700 flex items-center gap-3">
+                                            <BookOpenIcon className="w-7 h-7" /> KEEP it.
+                                        </li>
+                                        <li className="text-amber-600 flex items-center gap-3">
+                                            <FileQuestionIcon className="w-7 h-7" /> QUESTION it.
+                                        </li>
+                                        <li className="text-red-700 flex items-center gap-3">
+                                            <TrashIcon className="w-7 h-7" /> Or DISCARD it.
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <Button onClick={() => setScreen('how')} className="w-full text-lg py-4">
+                                    BEGIN SORTING
+                                </Button>
+                            </div>
+                        </div>
+                    </DeskBackground>
+                );
+            }
+
+            if (screen === 'how') {
+                return (
+                    <DeskBackground>
+                        <div className="flex-1 flex items-center justify-center p-6">
+                            <div className="bg-white max-w-3xl w-full p-10 shadow-2xl rounded-sm border border-slate-200 relative">
+                                
+                                <div className="bg-yellow-100 p-4 absolute -left-8 -top-8 shadow-md transform -rotate-3 font-serif italic text-lg text-slate-800 border border-yellow-200">
+                                    "Don't judge a source by its title. Look closer."
+                                </div>
+
+                                <h2 className="text-3xl font-bold mb-10 text-center border-b pb-4">YOUR THREE PILES</h2>
+                                
+                                <div className="grid md:grid-cols-3 gap-8 mb-12">
+                                    <div className="flex flex-col items-center text-center p-4 bg-green-50 rounded border-2 border-green-200">
+                                        <BookOpenIcon className="w-12 h-12 text-green-700 mb-4" />
+                                        <h3 className="font-bold text-xl text-green-800 mb-2">KEEP</h3>
+                                        <p className="font-semibold text-sm mb-2 text-green-700">Strong Evidence</p>
+                                        <p className="text-sm text-slate-600">Reliable enough to support your research.</p>
+                                    </div>
+
+                                    <div className="flex flex-col items-center text-center p-4 bg-amber-50 rounded border-2 border-amber-200">
+                                        <FileQuestionIcon className="w-12 h-12 text-amber-600 mb-4" />
+                                        <h3 className="font-bold text-xl text-amber-700 mb-2">QUESTION</h3>
+                                        <p className="font-semibold text-sm mb-2 text-amber-600">Use With Caution</p>
+                                        <p className="text-sm text-slate-600">Potentially useful, but limitations, bias, methods, or context require closer examination.</p>
+                                    </div>
+
+                                    <div className="flex flex-col items-center text-center p-4 bg-red-50 rounded border-2 border-red-200">
+                                        <TrashIcon className="w-12 h-12 text-red-700 mb-4" />
+                                        <h3 className="font-bold text-xl text-red-800 mb-2">DISCARD</h3>
+                                        <p className="font-semibold text-sm mb-2 text-red-700">Exclude</p>
+                                        <p className="text-sm text-slate-600">Too weak, misleading, unverifiable, or inappropriate for the research purpose.</p>
+                                    </div>
+                                </div>
+
+                                <Button onClick={() => setScreen('sorting')} className="w-full text-lg py-4">
+                                    OPEN FIRST SOURCE
+                                </Button>
+                            </div>
+                        </div>
+                    </DeskBackground>
+                );
+            }
+
+            if (screen === 'sorting') {
+                return (
+                    <DeskBackground>
+                        {/* Progress Bar */}
+                        <div className="absolute top-6 left-1/2 -translate-x-1/2 w-64 bg-white/90 backdrop-blur px-5 py-3 rounded shadow-sm flex flex-col z-10 border border-slate-200">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="font-bold text-xs tracking-widest text-slate-500">REVIEW PROGRESS</span>
+                                <span className="text-xs font-bold text-slate-700">{currentSourceIndex + 1} OF {SOURCES.length}</span>
+                            </div>
+                            <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                <div 
+                                    className="bg-slate-800 h-2 rounded-full transition-all duration-500" 
+                                    style={{ width: `${((currentSourceIndex + 1) / SOURCES.length) * 100}%` }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 flex flex-col p-6 relative">
+                            
+                            <div className="flex-1 relative flex items-center justify-center mt-12 mb-32">
+                                
+                                {/* The Document */}
+                                <div 
+                                    className={`
+                                        bg-white max-w-2xl w-full p-10 shadow-2xl border border-slate-300 relative z-20 min-h-[450px]
+                                        transition-all duration-500 ease-in-out
+                                        ${animatingPile === 'keep' ? 'translate-x-[-150%] translate-y-[50%] scale-50 opacity-0 rotate-[-20deg]' : ''}
+                                        ${animatingPile === 'question' ? 'translate-y-[100%] scale-50 opacity-0 rotate-[5deg]' : ''}
+                                        ${animatingPile === 'discard' ? 'translate-x-[150%] translate-y-[50%] scale-50 opacity-0 rotate-[20deg]' : ''}
+                                        ${showFeedback ? 'invisible' : 'visible'}
+                                    `}
+                                >
+                                    <div className="text-sm font-bold text-slate-400 mb-4 pb-2 border-b uppercase tracking-widest">
+                                        Source #{String(currentSource.id).padStart(2, '0')}
+                                    </div>
+                                    <h2 className="text-2xl font-serif font-bold text-slate-800 mb-6">{currentSource.title}</h2>
+                                    
+                                    <div className="space-y-4 text-slate-700">
+                                        {Object.entries(currentSource).map(([key, value]) => {
+                                            // Exclude structural or meta keys from the main document body
+                                            if (['id', 'title', 'markers', 'correctPile', 'feedbackTitle', 'feedbackText', 'prompt', 'handwrittenNote'].includes(key)) return null;
+                                            return (
+                                                <div key={key} className="flex flex-col sm:flex-row sm:gap-4 border-b border-slate-50 pb-2">
+                                                    <span className="font-bold text-slate-500 capitalize w-32 shrink-0">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
+                                                    <span>{value}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {currentSource.prompt && (
+                                        <div className="mt-8 p-4 bg-slate-50 border-l-4 border-blue-400 font-medium text-slate-800 italic">
+                                            "{currentSource.prompt}"
+                                        </div>
+                                    )}
+
+                                    {/* Investigation Buttons */}
+                                    <div className="absolute -left-4 sm:-left-12 md:-left-16 top-16 md:top-20 flex flex-col gap-3 z-30">
+                                        {Object.keys(currentSource.markers).map(markerKey => (
+                                            <button 
+                                                key={markerKey}
+                                                onClick={() => handleRevealMarker(markerKey)}
+                                                className={`
+                                                    w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg transition-all
+                                                    ${revealedMarkers.includes(markerKey) ? 'bg-slate-200 text-slate-400 cursor-default scale-95' : 'bg-blue-600 text-white hover:bg-blue-500 hover:scale-110'}
+                                                `}
+                                                title={`Investigate ${markerKey}`}
+                                            >
+                                                <SearchIcon className="w-5 h-5 md:w-6 md:h-6" />
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Revealed Sticky Notes */}
+                                    <div className="absolute -right-2 sm:-right-8 md:-right-20 -top-2 md:-top-4 flex flex-col gap-2 md:gap-3 w-48 sm:w-56 md:w-64 z-50 pointer-events-none">
+                                        {Object.entries(currentSource.markers).map(([key, text], idx) => (
+                                            revealedMarkers.includes(key) && (
+                                                <div 
+                                                    key={key} 
+                                                    className={`
+                                                        bg-yellow-200 p-3 shadow-xl text-xs md:text-sm text-slate-800 font-medium 
+                                                        border border-yellow-300 transform transition-all duration-300 animate-fade-in pointer-events-auto
+                                                    `}
+                                                    style={{ 
+                                                        transform: `rotate(${idx % 2 === 0 ? 2 : -2}deg)`,
+                                                        boxShadow: "2px 4px 10px rgba(0,0,0,0.15)"
+                                                    }}
+                                                >
+                                                    <div className="flex justify-between items-start mb-1 border-b border-yellow-300 pb-1">
+                                                        <strong className="tracking-wider">{key}</strong>
+                                                        <button 
+                                                            onClick={() => handleHideMarker(key)}
+                                                            className="text-yellow-600 hover:text-red-600 transition-colors p-1 -mr-2 -mt-2 rounded-full hover:bg-yellow-300/50"
+                                                            title="Close note"
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                    <span className="block leading-snug">{text}</span>
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Sorting Areas (Bottom Desk) */}
+                            {!showFeedback && (
+                                <div className="absolute bottom-10 left-0 w-full flex justify-center gap-6 md:gap-16 px-6 z-30">
+                                    <button 
+                                        onClick={() => handleSort('keep')}
+                                        className="flex-1 max-w-[200px] h-32 bg-green-800/90 hover:bg-green-700 backdrop-blur border-t-8 border-green-500 rounded-t-lg flex flex-col items-center justify-center text-white shadow-2xl transition-transform hover:-translate-y-2"
+                                    >
+                                        <BookOpenIcon className="w-8 h-8 mb-2 opacity-80" />
+                                        <span className="font-bold tracking-wider">KEEP</span>
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => handleSort('question')}
+                                        className="flex-1 max-w-[200px] h-32 bg-amber-600/90 hover:bg-amber-500 backdrop-blur border-t-8 border-amber-400 rounded-t-lg flex flex-col items-center justify-center text-white shadow-2xl transition-transform hover:-translate-y-2"
+                                    >
+                                        <FileQuestionIcon className="w-8 h-8 mb-2 opacity-80" />
+                                        <span className="font-bold tracking-wider">QUESTION</span>
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => handleSort('discard')}
+                                        className="flex-1 max-w-[200px] h-32 bg-red-800/90 hover:bg-red-700 backdrop-blur border-t-8 border-red-500 rounded-t-lg flex flex-col items-center justify-center text-white shadow-2xl transition-transform hover:-translate-y-2"
+                                    >
+                                        <TrashIcon className="w-8 h-8 mb-2 opacity-80" />
+                                        <span className="font-bold tracking-wider">DISCARD</span>
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Feedback Overlay */}
+                            {showFeedback && (
+                                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-fade-in">
+                                    <div className="bg-white max-w-lg w-full p-8 rounded shadow-2xl flex flex-col">
+                                        <h3 className={`text-2xl font-bold mb-4 flex items-center gap-3
+                                            ${currentSource.correctPile === 'keep' ? 'text-green-700' : ''}
+                                            ${currentSource.correctPile === 'question' ? 'text-amber-600' : ''}
+                                            ${currentSource.correctPile === 'discard' ? 'text-red-700' : ''}
+                                        `}>
+                                            {currentSource.feedbackTitle}
+                                        </h3>
+                                        
+                                        <div className="text-slate-700 text-lg leading-relaxed space-y-4 whitespace-pre-line mb-8">
+                                            {currentSource.feedbackText}
+                                        </div>
+
+                                        {currentSource.handwrittenNote && (
+                                            <div className="bg-yellow-100 p-4 mb-6 shadow-sm font-serif italic font-bold text-xl text-slate-800 -rotate-1">
+                                                {currentSource.handwrittenNote}
+                                            </div>
+                                        )}
+
+                                        <div className="flex items-center justify-end pt-6 border-t border-slate-100">
+                                            <Button onClick={handleNextSource}>
+                                                {currentSourceIndex < SOURCES.length - 1 ? 'NEXT SOURCE' : 'REVIEW DESK'}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </DeskBackground>
+                );
+            }
+
+            if (screen === 'desk_review') {
+                return (
+                    <DeskBackground>
+                        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+                            <div className="bg-white/90 backdrop-blur p-10 max-w-2xl w-full shadow-2xl rounded border border-slate-200">
+                                <h2 className="text-3xl font-bold mb-8 text-slate-800 tracking-widest">YOUR EVIDENCE DESK</h2>
+                                
+                                <div className="grid grid-cols-3 gap-6 mb-12">
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-24 h-32 bg-green-100 border-2 border-green-300 shadow-md relative mb-4 flex items-center justify-center">
+                                            <span className="font-bold text-3xl text-green-700">{piles.keep.length}</span>
+                                        </div>
+                                        <span className="font-bold text-green-800">KEEP</span>
+                                    </div>
+                                    
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-24 h-32 bg-amber-100 border-2 border-amber-300 shadow-md relative mb-4 flex items-center justify-center">
+                                            <span className="font-bold text-3xl text-amber-600">{piles.question.length}</span>
+                                        </div>
+                                        <span className="font-bold text-amber-700">QUESTION</span>
+                                    </div>
+                                    
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-24 h-32 bg-red-100 border-2 border-red-300 shadow-md relative mb-4 flex items-center justify-center">
+                                            <span className="font-bold text-3xl text-red-700">{piles.discard.length}</span>
+                                        </div>
+                                        <span className="font-bold text-red-800">DISCARD</span>
+                                    </div>
+                                </div>
+                                
+                                <Button onClick={() => setScreen('reflection')} className="w-full">
+                                    REVIEW
+                                </Button>
+                            </div>
+                        </div>
+                    </DeskBackground>
+                );
+            }
+
+            if (screen === 'reflection') {
+                const factors = [
+                    "Author expertise", "Peer review", "Publication/source", 
+                    "Research methods", "Sample size", "Funding/conflicts of interest",
+                    "Purpose/bias", "Transparency", "Relevance", "Currency"
+                ];
+
+                return (
+                    <DeskBackground>
+                        <div className="flex-1 flex items-center justify-center p-6">
+                            {/* Notebook Visual */}
+                            <div className="bg-amber-50 max-w-3xl w-full p-12 shadow-2xl rounded-r-xl border-l-[16px] border-l-slate-800 relative font-serif">
+                                
+                                {/* Lined paper effect */}
+                                <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(transparent 95%, #cbd5e1 95%)', backgroundSize: '100% 2rem', opacity: 0.5 }}></div>
+
+                                <div className="relative z-10">
+                                    <h2 className="text-3xl font-bold mb-4 text-slate-800 uppercase tracking-widest border-b-2 border-red-400 inline-block">WHAT DID YOU NOTICE?</h2>
+                                    
+                                    <p className="text-xl italic text-slate-700 mb-8 mt-4 leading-relaxed">
+                                        "You weren't simply sorting sources into good and bad. You were evaluating why each source might—or might not—be appropriate for a research purpose."
+                                    </p>
+
+                                    <p className="font-bold text-lg mb-4 text-slate-800">Which factors influenced your decisions? (Select three)</p>
+                                    
+                                    <div className="grid sm:grid-cols-2 gap-4 mb-10">
+                                        {factors.map(factor => (
+                                            <label key={factor} className={`
+                                                flex items-center gap-3 p-3 border rounded cursor-pointer transition-colors bg-white/80
+                                                ${reflectionSelections.includes(factor) ? 'border-blue-500 bg-blue-50 text-blue-900 font-bold shadow-inner' : 'border-slate-300 hover:bg-white'}
+                                            `}>
+                                                <input 
+                                                    type="checkbox" 
+                                                    className="w-5 h-5 accent-blue-600"
+                                                    checked={reflectionSelections.includes(factor)}
+                                                    onChange={() => handleReflectionToggle(factor)}
+                                                    disabled={!reflectionSelections.includes(factor) && reflectionSelections.length >= 3}
+                                                />
+                                                {factor}
+                                            </label>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex justify-end">
+                                        <Button 
+                                            onClick={() => setScreen('final')}
+                                            disabled={reflectionSelections.length < 3}
+                                        >
+                                            CONTINUE
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </DeskBackground>
+                );
+            }
+
+            if (screen === 'final') {
+                return (
+                    <DeskBackground>
+                        <div className="flex-1 flex flex-col justify-between overflow-y-auto">
+                            
+                            <div className="w-full max-w-6xl mx-auto px-4 pt-12 flex justify-center gap-6 md:gap-16">
+                                {['keep', 'question', 'discard'].map(pileType => (
+                                    <div key={pileType} className="flex flex-col items-center w-40 md:w-56 z-10">
+                                        <div className={`
+                                            px-4 py-2 rounded font-bold text-white mb-6 text-sm md:text-base tracking-widest shadow-md
+                                            ${pileType === 'keep' ? 'bg-green-700' : pileType === 'question' ? 'bg-amber-600' : 'bg-red-700'}
+                                        `}>
+                                            {pileType.toUpperCase()}
+                                        </div>
+                                        
+                                        <div className="w-full flex flex-col gap-3 pb-8 items-center relative">
+                                            {piles[pileType].map((source, idx) => {
+                                                const isSelected = finalChoice?.id === source.id;
+                                                const isCorrectChoice = source.id === 4;
+                                                const showReveal = finalChoice !== null;
+                                                
+                                                let cardStyle = "relative bg-white shadow-md border p-3 md:p-4 text-left transition-all duration-300 w-full rounded-sm ";
+                                                
+                                                if (!showReveal) {
+                                                    cardStyle += "border-slate-300 cursor-pointer hover:shadow-xl hover:-translate-y-4 hover:z-30 group ";
+                                                } else {
+                                                    cardStyle += "cursor-default ";
+                                                    if (isSelected && isCorrectChoice) {
+                                                        cardStyle += "border-green-500 ring-4 ring-green-500 bg-green-50 z-20 scale-105 shadow-xl ";
+                                                    } else if (isSelected && !isCorrectChoice) {
+                                                        cardStyle += "border-red-500 ring-4 ring-red-500 bg-red-50 z-20 scale-105 shadow-xl ";
+                                                    } else if (isCorrectChoice) {
+                                                        cardStyle += "border-green-500 ring-4 ring-green-500 bg-green-50 z-20 animate-pulse shadow-xl ";
+                                                    } else {
+                                                        cardStyle += "border-slate-200 opacity-40 grayscale ";
+                                                    }
+                                                }
+
+                                                return (
+                                                    <button
+                                                        key={source.id}
+                                                        onClick={() => !finalChoice && handleFinalSelect(source)}
+                                                        disabled={showReveal}
+                                                        className={cardStyle}
+                                                    >
+                                                        <div className="text-[10px] md:text-xs text-slate-500 font-bold mb-1 uppercase">Source #{source.id}</div>
+                                                        <div className={`text-xs md:text-sm font-serif font-bold leading-snug ${showReveal && (isSelected || isCorrectChoice) ? 'text-slate-900' : 'text-slate-800'}`}>
+                                                            {source.title}
+                                                        </div>
+                                                        {!showReveal && (
+                                                            <div className="hidden group-hover:block absolute bottom-0 left-0 w-full bg-blue-100 text-blue-800 text-[10px] text-center py-1 font-bold">
+                                                                SELECT
+                                                            </div>
+                                                        )}
+                                                    </button>
+                                                )
+                                            })}
+                                            {piles[pileType].length === 0 && (
+                                                <div className="w-full h-32 border-2 border-dashed border-slate-500/60 rounded flex items-center justify-center text-slate-800 font-bold text-lg bg-white/40 backdrop-blur-sm shadow-inner">
+                                                    EMPTY
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Interaction Area (Ensured it stays below the files via normal document flow) */}
+                            <div className="w-full flex justify-center pb-12 px-4 z-20">
+                                {!finalChoice ? (
+                                    <div className="bg-white p-6 md:p-8 max-w-2xl w-full shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-t-8 border-slate-800 rounded">
+                                        <div className="text-sm font-bold text-blue-600 mb-4 tracking-widest border-b-2 border-blue-600 inline-block pb-1 uppercase">Final Challenge</div>
+                                        <div className="text-xs md:text-sm font-bold text-slate-500 mb-2 tracking-widest mt-2">RESEARCH BRIEF: INTRODUCTION</div>
+                                        <h3 className="font-serif italic font-bold text-xl md:text-2xl text-slate-800 mb-6 pb-4 border-b border-slate-200">
+                                            CLAIM: "Teacher turnover is a widespread, national issue that has accelerated over the past decade."
+                                        </h3>
+                                        <p className="text-base md:text-lg text-slate-700 font-medium mb-2">You need to establish this factual baseline before you can argue about causes.</p>
+                                        <p className="text-sm md:text-base text-slate-700">Which source is the <strong className="text-blue-700">most objective and reliable</strong> choice to prove this specific claim? (Click a document from your piles above)</p>
+                                    </div>
+                                ) : (
+                                    <div className={`bg-white p-6 md:p-8 max-w-2xl w-full shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-t-8 rounded animate-fade-in ${finalChoice.id === 4 ? 'border-green-600' : 'border-red-600'}`}>
+                                        <div className="text-sm font-bold text-blue-600 mb-4 tracking-widest border-b-2 border-blue-600 inline-block pb-1 uppercase">Final Challenge</div>
+                                        {finalChoice.id === 4 ? (
+                                            <>
+                                                <h3 className="text-2xl font-bold text-green-700 mb-4 mt-2">✓ CORRECT: STRONGEST MATCH</h3>
+                                                <p className="text-slate-700 text-lg mb-6">
+                                                    You chose <strong>Source #4 (Teacher Workforce Trends)</strong>. This provides documented government data on national trends. 
+                                                    <br/><br/>
+                                                    While Source #2 had a flashier title ("The Teacher Retention Crisis"), it was an advocacy piece. For establishing a factual baseline, objective data is always superior.
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <h3 className="text-2xl font-bold text-red-700 mb-4 mt-2">❌ INCORRECT MATCH</h3>
+                                                <p className="text-slate-700 text-lg mb-6">
+                                                    You selected <strong>Source #{finalChoice.id}</strong>.
+                                                    <br/><br/>
+                                                    The correct answer is <strong>Source #4 (Teacher Workforce Trends)</strong>. To objectively prove a decade-long national trend, neutral government workforce data is the most reliable baseline.
+                                                    <br/><br/>
+                                                    {finalChoice.id === 2 && "Source #2 had a relevant title, but it's an advocacy piece with less objective data."}
+                                                    {finalChoice.id === 1 && "Source #1 is excellent for explaining *why* burnout happens, but it doesn't establish macro-level national workforce trends."}
+                                                </p>
+                                            </>
+                                        )}
+                                        <div className="bg-yellow-100 p-4 shadow-sm font-serif italic font-bold text-lg md:text-xl text-slate-800 -rotate-1 border border-yellow-200 mb-8">
+                                            "A flashy title doesn't equal strong evidence. Match the source type to the claim."
+                                        </div>
+                                        <Button onClick={() => setScreen('complete')} className="w-full py-4">
+                                            FINISH REVIEW
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </DeskBackground>
+                );
+            }
+
+            if (screen === 'complete') {
+                return (
+                    <DeskBackground>
+                        <div className="flex-1 flex items-center justify-center p-6">
+                            <div className="bg-white max-w-3xl w-full p-12 shadow-2xl rounded border border-slate-200 text-center relative overflow-hidden">
+                                
+                                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-500 via-amber-500 to-red-500"></div>
+
+                                <h1 className="text-4xl font-bold mb-2 text-slate-800 tracking-tight uppercase">TRIAGE COMPLETE</h1>
+                                <p className="text-lg text-slate-500 mb-10">You have successfully evaluated the evidence.</p>
+                                
+                                <div className="grid sm:grid-cols-2 gap-6 text-left mb-12 max-w-2xl mx-auto">
+                                    <div className="flex gap-4 items-start">
+                                        <input type="checkbox" checked readOnly className="mt-1 w-5 h-5 accent-slate-800" />
+                                        <div>
+                                            <strong className="block text-slate-800">WHO?</strong>
+                                            <span className="text-sm text-slate-600">Who created it?</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <input type="checkbox" checked readOnly className="mt-1 w-5 h-5 accent-slate-800" />
+                                        <div>
+                                            <strong className="block text-slate-800">WHERE?</strong>
+                                            <span className="text-sm text-slate-600">Where was it published?</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <input type="checkbox" checked readOnly className="mt-1 w-5 h-5 accent-slate-800" />
+                                        <div>
+                                            <strong className="block text-slate-800">HOW?</strong>
+                                            <span className="text-sm text-slate-600">How was the evidence produced?</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <input type="checkbox" checked readOnly className="mt-1 w-5 h-5 accent-slate-800" />
+                                        <div>
+                                            <strong className="block text-slate-800">WHY?</strong>
+                                            <span className="text-sm text-slate-600">Why was it created?</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <input type="checkbox" checked readOnly className="mt-1 w-5 h-5 accent-slate-800" />
+                                        <div>
+                                            <strong className="block text-slate-800">WHAT?</strong>
+                                            <span className="text-sm text-slate-600">What does the evidence actually show?</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <input type="checkbox" checked readOnly className="mt-1 w-5 h-5 accent-slate-800" />
+                                        <div>
+                                            <strong className="block text-slate-800">FIT?</strong>
+                                            <span className="text-sm text-slate-600">Does it actually support your claim?</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-slate-800 text-white p-6 rounded-sm mb-10 shadow-lg transform -rotate-1">
+                                    <h2 className="text-2xl font-bold tracking-widest">GOOD RESEARCHERS DON'T JUST COLLECT SOURCES.</h2>
+                                    <h2 className="text-2xl font-bold text-amber-400">THEY MAKE JUDGMENTS ABOUT EVIDENCE.</h2>
+                                </div>
+
+                                <div className="flex justify-center gap-4">
+                                    <Button onClick={() => setScreen('desk_review')} variant="outline">
+                                        REVIEW MY SOURCES
+                                    </Button>
+                                    <Button onClick={resetGame}>
+                                        START OVER
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </DeskBackground>
+                );
+            }
+
+            return null;
+        };
+
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
+    </script>
+</body>
+</html>
