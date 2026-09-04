@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eli: A Moment Through Multiple Lenses</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        
+        @keyframes bounceIn { 
+          0% { transform: scale(0.3) rotate(-20deg); opacity: 0; } 
+          50% { transform: scale(1.1) rotate(-8deg); opacity: 1; } 
+          100% { transform: scale(1) rotate(-12deg); opacity: 1; } 
+        }
+        .animate-bounce-in { animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .text-stroke {
+            -webkit-text-stroke: 3px white;
+            text-shadow: 4px 6px 0px #1c1917;
+        }
+
+        /* Hide scrollbar for cleaner look if needed */
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-stone-900">
+    <div id="app"></div>
+
+    <script>
+        // --- STATE ---
+        let currentPanel = 0;
+        let showFinalPopup = false;
+        let activeLens = null;
+        let soundEnabled = true;
+        let viewedLenses = [];
+        let audioCtx = null;
+
+        // --- DATA ---
+        const panelsData = [
+            {
+                id: 1,
+                image: 'https://elearning.lapu.edu/course_files/_MAOL/EliPanel1.jpeg',
+                overlays: [
+                    { type: 'caption', text: 'Meet Eli. He is a preschool student who loves building with blocks.', pos: 'top-4 left-4' }
+                ]
+            },
+            {
+                id: 2,
+                image: 'https://elearning.lapu.edu/course_files/_MAOL/EliPanel2.jpeg',
+                overlays: [
+                    { type: 'caption', text: 'Eli has spent about 20 minutes building.', pos: 'top-4 left-4' },
+                    { type: 'caption', text: 'He is highly engaged and proud of what he has created.', pos: 'top-16 left-4' }
+                ]
+            },
+            {
+                id: 3,
+                image: 'https://elearning.lapu.edu/course_files/_MAOL/CleanUp.jpeg',
+                overlays: [
+                    { type: 'speech', speaker: 'Teacher', text: '“Okay everyone, it’s time to clean up. Reading starts in five minutes.”', pos: 'top-4 right-4', tail: 'bottom-left' }
+                ]
+            },
+            {
+                id: 4,
+                image: 'https://elearning.lapu.edu/course_files/_MAOL/TeacherConfronts.jpeg',
+                overlays: [
+                    { type: 'speech', speaker: 'Eli', text: '“No! I’m not finished!”', pos: 'bottom-32 left-4', tail: 'bottom-right', urgent: true },
+                    { type: 'speech', speaker: 'Teacher', text: '“Eli, everyone needs to clean up.”', pos: 'top-4 right-4', tail: 'bottom-left' }
+                ]
+            },
+            {
+                id: 5,
+                image: 'https://elearning.lapu.edu/course_files/_MAOL/EliKnockingTower.jpeg',
+                overlays: [
+                    { type: 'sfx', text: 'CRASH!', pos: 'top-20 left-12 md:top-24 md:left-16' },
+                    { type: 'caption', text: 'A few minutes passed and the teacher began counting down. Suddenly, Eli hits down his tower.', pos: 'bottom-4 left-4' }
+                ]
+            },
+            {
+                id: 6,
+                image: 'https://elearning.lapu.edu/course_files/_MAOL/EliLastPanel.jpeg',
+                overlays: [
+                    { type: 'speech', speaker: 'Eli', text: '“GO AWAY!”', pos: 'top-12 left-8', tail: 'bottom-right', urgent: true },
+                    { type: 'speech', speaker: 'Eli', text: '“I HATE SCHOOL!”', pos: 'top-32 left-16', tail: 'bottom-right', urgent: true }
+                ]
+            }
+        ];
+
+        const finalPanelData = {
+            image: 'https://elearning.lapu.edu/course_files/_MAOL/EliandTeacher.jpeg',
+            overlays: [
+                { type: 'speech', speaker: 'Teacher', text: '“I know you’re upset, Eli. Let’s take a breath, and then we’ll figure out what you need to be ready for reading.”', pos: 'top-8 right-8', tail: 'bottom-left' },
+                { type: 'caption', text: 'One behavior. Many possible ways to understand it. Developmental lenses help us look beyond the behavior to better understand the child.', pos: 'bottom-4 left-4' }
+            ]
+        };
+
+        const lensesData = [
+            {
+                id: 'piaget',
+                name: 'Jean Piaget',
+                title: 'Cognitive Development',
+                icon: 'brain',
+                styles: { text: 'text-sky-400', borderHover: 'hover:border-sky-400', bgHover: 'hover:bg-sky-900/20', gradient: 'from-sky-900/40 to-slate-900', border: 'border-sky-500/30', iconBg: 'bg-sky-500/20' },
+                paragraphs: [
+                    { icon: 'lightbulb', text: 'Eli’s response reflects his developing ability to balance his own immediate perspective with outside rules and expectations.' },
+                    { icon: 'shield', text: 'At age six, there is often a gap between understanding a rule intellectually and managing the emotional frustration of complying with it.' },
+                    { icon: 'layers', text: 'This behavior is not simply "defiance," but part of a child’s growing capacity to navigate complex social situations.' }
+                ],
+                focus: 'How Eli is thinking about the situation.'
+            },
+            {
+                id: 'vygotsky',
+                name: 'Lev Vygotsky',
+                title: 'Sociocultural Development',
+                icon: 'users',
+                styles: { text: 'text-emerald-400', borderHover: 'hover:border-emerald-400', bgHover: 'hover:bg-emerald-900/20', gradient: 'from-emerald-900/40 to-slate-900', border: 'border-emerald-500/30', iconBg: 'bg-emerald-500/20' },
+                paragraphs: [
+                    { icon: 'message-circle', text: 'Development occurs through interactions. The support, language, and strategies available to Eli shape how he manages this transition.' },
+                    { icon: 'users', text: 'Rather than asking what Eli can do independently, this lens asks what he might manage with appropriate adult guidance.' },
+                    { icon: 'layers', text: 'The transition is an opportunity for scaffolding: helping Eli communicate frustration and develop coping strategies.' }
+                ],
+                focus: 'How relationships and support shape Eli\'s development.'
+            },
+            {
+                id: 'bronfenbrenner',
+                name: 'Urie Bronfenbrenner',
+                title: 'Ecological Systems',
+                icon: 'globe',
+                styles: { text: 'text-violet-400', borderHover: 'hover:border-violet-400', bgHover: 'hover:bg-violet-900/20', gradient: 'from-violet-900/40 to-slate-900', border: 'border-violet-500/30', iconBg: 'bg-violet-500/20' },
+                paragraphs: [
+                    { icon: 'globe', text: 'Development is influenced by multiple interacting environments, from the immediate classroom to home life and school expectations.' },
+                    { icon: 'layers', text: 'The immediate classroom interaction matters, but it is only one part of Eli’s larger developmental environment.' },
+                    { icon: 'message-circle', text: 'This lens shifts focus from "What\'s wrong with Eli?" to "What is happening around Eli that influences his behavior?"' }
+                ],
+                focus: 'How Eli\'s environments interact with his development.'
+            },
+            {
+                id: 'erikson',
+                name: 'Erik Erikson',
+                title: 'Psychosocial Development',
+                icon: 'heart',
+                styles: { text: 'text-rose-400', borderHover: 'hover:border-rose-400', bgHover: 'hover:bg-rose-900/20', gradient: 'from-rose-900/40 to-slate-900', border: 'border-rose-500/30', iconBg: 'bg-rose-500/20' },
+                paragraphs: [
+                    { icon: 'star', text: 'Eli is entering the stage of Industry vs. Inferiority, developing a sense of competence through meaningful accomplishments.' },
+                    { icon: 'shield', text: 'His tower represents effort and achievement. When suddenly ended, he may feel his hard work is being dismissed.' },
+                    { icon: 'heart', text: 'His emotional reaction can be considered in relation to his developing sense of confidence and competence.' }
+                ],
+                focus: 'How the experience affects Eli\'s developing sense of competence.'
+            },
+            {
+                id: 'maslow',
+                name: 'Abraham Maslow',
+                title: 'Needs & Motivation',
+                icon: 'star',
+                styles: { text: 'text-amber-400', borderHover: 'hover:border-amber-400', bgHover: 'hover:bg-amber-900/20', gradient: 'from-amber-900/40 to-slate-900', border: 'border-amber-500/30', iconBg: 'bg-amber-500/20' },
+                paragraphs: [
+                    { icon: 'heart', text: 'Behavior is driven by foundational needs. Eli may be experiencing a threatened need for autonomy, competence, or emotional security.' },
+                    { icon: 'lightbulb', text: 'His intense reaction indicates that his emotional needs have temporarily become more immediate than the classroom expectation.' },
+                    { icon: 'users', text: 'This lens encourages us to ask what Eli needs right now to regulate, reconnect, and successfully participate.' }
+                ],
+                focus: 'What Eli may need in order to re-engage.'
+            }
+        ];
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'swipe') {
+                // Neutral, soft tick/tap for pagination (no negative downward pitch)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.05, now + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'progress') {
+                // "Still in progress" - Soft, pleasant two-note upward step (C4 to F4)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(261.63, now); 
+                osc.frequency.setValueAtTime(349.23, now + 0.1); 
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.08, now + 0.05);
+                gainNode.gain.setValueAtTime(0.08, now + 0.15);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'crash') {
+                // Lower frequency 'thud' of the initial impact
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(100, now);
+                osc.frequency.exponentialRampToValueAtTime(10, now + 0.3);
+                
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.4, now + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                
+                osc.start(now);
+                osc.stop(now + 0.4);
+
+                // Add a noise burst for the clattering blocks
+                const bufferSize = Math.floor(audioCtx.sampleRate * 0.4);
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1; // White noise
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                
+                // Filter the noise to sound more like wooden blocks clattering
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(3000, now);
+                filter.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+
+                const noiseGain = audioCtx.createGain();
+                noiseGain.gain.setValueAtTime(0, now);
+                noiseGain.gain.linearRampToValueAtTime(0.5, now + 0.02);
+                noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+                noise.connect(filter);
+                filter.connect(noiseGain);
+                noiseGain.connect(audioCtx.destination);
+                
+                noise.start(now);
+                noise.stop(now + 0.4);
+            } else if (type === 'complete') {
+                // "Complete" - Warm, resolved chime (C4, G4, C5)
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(261.63, now); 
+                osc.frequency.setValueAtTime(392.00, now + 0.1); 
+                osc.frequency.setValueAtTime(523.25, now + 0.2); 
+                
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gainNode.gain.setValueAtTime(0.1, now + 0.3);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+                
+                osc.start(now);
+                osc.stop(now + 1.0);
+            }
+        }
+
+        window.handleNext = function() {
+            if (currentPanel < panelsData.length) {
+                currentPanel++;
+                playSound(currentPanel === 4 ? 'crash' : 'swipe');
+            }
+            render();
+        };
+
+        window.handlePrev = function() {
+            if (currentPanel > 0) {
+                currentPanel--;
+                playSound('swipe');
+                if (currentPanel < panelsData.length) {
+                    activeLens = null;
+                }
+            }
+            render();
+        };
+
+        window.handleLensClick = function(lensId) {
+            const lens = lensesData.find(l => l.id === lensId);
+            activeLens = lens;
+            if (!viewedLenses.includes(lens.id)) {
+                viewedLenses.push(lens.id);
+                if (viewedLenses.length === lensesData.length) {
+                    playSound('complete');
+                } else {
+                    playSound('progress');
+                }
+            } else {
+                playSound('swipe');
+            }
+            render();
+        };
+
+        window.handleBackToLenses = function() {
+            activeLens = null;
+            playSound('swipe');
+            render();
+        };
+
+        window.handleToggleSound = function() {
+            soundEnabled = !soundEnabled;
+            render();
+        };
+
+        window.handleShowFinalPopup = function() {
+            showFinalPopup = true;
+            render();
+        };
+
+        window.handleClosePopup = function() {
+            showFinalPopup = false;
+            render();
+        };
+
+        window.handleRestart = function() {
+            currentPanel = 0;
+            activeLens = null;
+            showFinalPopup = false;
+            viewedLenses = [];
+            playSound('swipe');
+            render();
+        };
+
+        function renderOverlay(overlay) {
+            if (overlay.type === 'speech') {
+                return `
+                    <div class="absolute ${overlay.pos} max-w-[240px] z-20 animate-fade-in">
+                        <div class="relative bg-white border-2 border-stone-800 rounded-2xl p-3 md:p-4 shadow-[3px_3px_0px_rgba(28,25,23,1)] ${overlay.urgent ? 'border-red-600' : ''}">
+                            <span class="block text-[10px] font-black text-stone-600 uppercase tracking-widest mb-1">${overlay.speaker}</span>
+                            <p class="font-bold text-stone-800 ${overlay.urgent ? 'text-red-700 text-lg md:text-xl' : 'text-sm md:text-base'} leading-tight">${overlay.text}</p>
+                            <div class="absolute w-5 h-5 bg-white border-b-2 border-r-2 border-stone-800 transform rotate-45 ${overlay.tail === 'bottom-right' ? 'bottom-[-11px] right-6' : ''} ${overlay.tail === 'bottom-left' ? 'bottom-[-11px] left-6' : ''} ${overlay.urgent ? 'border-red-600' : ''}"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            if (overlay.type === 'caption') {
+                return `
+                    <div class="absolute ${overlay.pos} bg-yellow-50 border-2 border-stone-800 p-3 shadow-[3px_3px_0px_rgba(28,25,23,1)] max-w-[85%] md:max-w-[60%] z-20 animate-fade-in">
+                        <p class="text-sm md:text-base font-bold text-stone-900 leading-snug">${overlay.text}</p>
+                    </div>
+                `;
+            }
+            if (overlay.type === 'sfx') {
+                return `
+                    <div class="absolute ${overlay.pos} z-20 pointer-events-none animate-bounce-in">
+                        <h1 class="text-6xl md:text-8xl font-black text-red-600 italic tracking-tighter transform -rotate-12 select-none text-stroke">${overlay.text}</h1>
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        function render() {
+            const isEndScreen = currentPanel === panelsData.length;
+            const app = document.getElementById('app');
+
+            let html = `
+                <div class="min-h-screen flex flex-col items-center py-6 md:py-10 px-4 transition-colors duration-700 ${isEndScreen ? 'bg-slate-900 selection:bg-slate-700' : 'bg-stone-100 selection:bg-stone-300'}">
+                    
+                    <!-- Header -->
+                    <div class="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center md:items-end mb-6 gap-4">
+                        <div class="text-center md:text-left">
+                            <h1 class="font-black uppercase tracking-widest text-xl md:text-2xl transition-colors duration-700 ${isEndScreen ? 'text-slate-100' : 'text-stone-800'}">
+                                Eli: A Moment Through Multiple Lenses
+                            </h1>
+                            <div class="mt-2 py-2 px-4 rounded-md border-l-4 text-sm font-medium transition-colors duration-700 ${isEndScreen ? 'border-slate-500 bg-slate-800 text-stone-200' : 'border-stone-400 bg-stone-200 text-stone-700'}">
+                                Explore the classroom scenario. Then review the five developmental lenses to see how each perspective offers a different way of understanding Eli's situation.
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4 shrink-0">
+                            <button onclick="handleToggleSound()" class="p-2 rounded-full transition-colors ${isEndScreen ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800' : 'text-stone-500 hover:text-stone-800 hover:bg-stone-200'}">
+                                <i data-lucide="${soundEnabled ? 'volume-2' : 'volume-x'}" class="w-5 h-5"></i>
+                            </button>
+                            ${!isEndScreen ? `
+                                <div class="bg-stone-800 text-stone-100 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest shadow-sm">
+                                    Panel ${currentPanel + 1} / ${panelsData.length}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="w-full max-w-5xl flex flex-col items-center">
+            `;
+
+            if (!isEndScreen) {
+                const panelData = panelsData[currentPanel];
+                html += `
+                        <!-- COMIC PANEL VIEW -->
+                        <div class="w-full max-w-3xl flex flex-col">
+                            <div class="relative w-full aspect-[4/3] bg-white rounded-xl border-4 border-stone-900 shadow-[8px_8px_0px_0px_rgba(28,25,23,1)] overflow-hidden flex flex-col justify-center items-center group">
+                                <img src="${panelData.image}" alt="Panel ${currentPanel + 1}" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-[1.02]" />
+                                <div class="absolute inset-0 z-10 pointer-events-none">
+                                    ${panelData.overlays.map(renderOverlay).join('')}
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between mt-6">
+                                <button onclick="handlePrev()" ${currentPanel === 0 ? 'disabled' : ''} class="flex items-center gap-2 px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-sm transition-all ${currentPanel === 0 ? 'opacity-0 pointer-events-none' : 'bg-white text-stone-700 hover:bg-stone-50 active:scale-95 shadow-sm border border-stone-200'}">
+                                    <i data-lucide="chevron-left" class="w-4 h-4" stroke-width="2.5"></i> Prev
+                                </button>
+                                
+                                <button onclick="handleNext()" class="flex items-center gap-2 px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-sm transition-all bg-stone-900 text-white hover:bg-stone-800 active:scale-95 shadow-md">
+                                    Next <i data-lucide="chevron-right" class="w-4 h-4" stroke-width="2.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                `;
+            } else {
+                html += `
+                        <!-- END SCREEN / LENSES MENU -->
+                        <div class="w-full animate-fade-in relative flex flex-col items-center justify-center p-6 md:p-12 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl overflow-hidden min-h-[50vh]">
+                `;
+
+                if (!activeLens) {
+                    html += `
+                            <div class="flex flex-col items-center w-full animate-fade-in z-10">
+                                <h2 class="text-3xl md:text-4xl font-black tracking-widest mb-4 text-slate-100 text-center uppercase">Pause the Story</h2>
+                                <p class="text-lg font-medium text-slate-300 mb-8 max-w-lg text-center leading-relaxed">
+                                    What might be happening beneath Eli’s behavior?
+                                </p>
+                                
+                                <div class="w-24 h-px bg-slate-600 mb-8"></div>
+                                
+                                <div class="w-full max-w-3xl flex flex-col gap-4">
+                                    <div class="flex flex-wrap justify-center gap-4">
+                                        ${lensesData.slice(0, 3).map(lens => `
+                                            <button onclick="handleLensClick('${lens.id}')" class="relative flex flex-col items-center p-6 w-[200px] bg-slate-800 border-2 border-slate-700 rounded-2xl transition-all duration-300 hover:-translate-y-1 group shadow-lg ${lens.styles.borderHover} ${lens.styles.bgHover}">
+                                                ${viewedLenses.includes(lens.id) ? `
+                                                    <div class="absolute top-3 right-3 ${lens.styles.text} animate-fade-in" title="Reviewed">
+                                                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                                                    </div>
+                                                ` : ''}
+                                                <div class="mb-4 transform group-hover:scale-110 transition-transform duration-300 drop-shadow-md ${lens.styles.text}">
+                                                    <i data-lucide="${lens.icon}" class="w-9 h-9"></i>
+                                                </div>
+                                                <div class="font-bold text-slate-200 text-center mb-1">${lens.name}</div>
+                                                <div class="text-[10px] uppercase tracking-widest text-slate-400 text-center">${lens.title}</div>
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                    <div class="flex flex-wrap justify-center gap-4">
+                                        ${lensesData.slice(3, 5).map(lens => `
+                                            <button onclick="handleLensClick('${lens.id}')" class="relative flex flex-col items-center p-6 w-[200px] bg-slate-800 border-2 border-slate-700 rounded-2xl transition-all duration-300 hover:-translate-y-1 group shadow-lg ${lens.styles.borderHover} ${lens.styles.bgHover}">
+                                                ${viewedLenses.includes(lens.id) ? `
+                                                    <div class="absolute top-3 right-3 ${lens.styles.text} animate-fade-in" title="Reviewed">
+                                                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                                                    </div>
+                                                ` : ''}
+                                                <div class="mb-4 transform group-hover:scale-110 transition-transform duration-300 drop-shadow-md ${lens.styles.text}">
+                                                    <i data-lucide="${lens.icon}" class="w-9 h-9"></i>
+                                                </div>
+                                                <div class="font-bold text-slate-200 text-center mb-1">${lens.name}</div>
+                                                <div class="text-[10px] uppercase tracking-widest text-slate-400 text-center">${lens.title}</div>
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <div class="mt-10 flex flex-col items-center gap-6 w-full max-w-lg border-t border-slate-700 pt-6">
+                                    ${viewedLenses.length < lensesData.length ? `
+                                        <div class="text-slate-400 text-sm font-medium animate-fade-in text-center flex flex-col items-center gap-2">
+                                            <p>Please review all 5 lenses before continuing to the end of the story.</p>
+                                            <span class="bg-slate-800 px-3 py-1 rounded-full text-xs font-bold text-slate-300 border border-slate-700 shadow-inner">
+                                                ${viewedLenses.length} / 5 Reviewed
+                                            </span>
+                                        </div>
+                                    ` : `
+                                        <div class="text-emerald-400 text-sm font-bold animate-fade-in text-center flex items-center gap-2">
+                                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> All lenses reviewed!
+                                        </div>
+                                    `}
+                                    
+                                    <div class="flex flex-col sm:flex-row gap-4 w-full justify-between items-center">
+                                        <button onclick="handlePrev()" class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-sm transition-all bg-slate-700 text-slate-300 hover:bg-slate-600 active:scale-95 w-full sm:w-auto">
+                                            <i data-lucide="chevron-left" class="w-4 h-4" stroke-width="2.5"></i> Prev
+                                        </button>
+                                        
+                                        ${viewedLenses.length === lensesData.length ? `
+                                            <button onclick="handleShowFinalPopup()" class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-sm transition-all bg-white text-slate-900 hover:bg-slate-200 active:scale-95 shadow-lg animate-fade-in w-full sm:w-auto">
+                                                End of Story <i data-lucide="chevron-right" class="w-4 h-4" stroke-width="2.5"></i>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                    `;
+                } else {
+                    html += `
+                            <!-- Active Lens View -->
+                            <div class="flex flex-col items-center w-full max-w-4xl animate-fade-in z-10">
+                                
+                                <button onclick="handleBackToLenses()" class="self-start flex items-center gap-2 text-slate-400 hover:text-white mb-6 font-bold uppercase tracking-widest text-sm transition-colors">
+                                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Different Lenses
+                                </button>
+
+                                <div class="w-full bg-slate-900 border border-slate-600 rounded-2xl overflow-hidden shadow-2xl relative flex flex-col md:flex-row">
+                                    
+                                    <div class="absolute -bottom-10 -right-10 pointer-events-none select-none overflow-hidden opacity-5 ${activeLens.styles.text}">
+                                        <i data-lucide="${activeLens.icon}" style="width: 240px; height: 240px;"></i>
+                                    </div>
+
+                                    <div class="bg-slate-800/80 p-6 md:p-8 md:w-1/3 border-b md:border-b-0 md:border-r border-slate-700 flex flex-col justify-center items-center md:items-start text-center md:text-left z-10 backdrop-blur-sm">
+                                        <div class="p-4 rounded-full mb-4 shadow-inner ${activeLens.styles.iconBg} ${activeLens.styles.text}">
+                                            <i data-lucide="${activeLens.icon}" class="w-9 h-9"></i>
+                                        </div>
+                                        <h3 class="text-2xl font-black text-white tracking-wide mb-1">${activeLens.name}</h3>
+                                        <p class="text-xs uppercase tracking-widest font-bold mb-4 ${activeLens.styles.text}">${activeLens.title}</p>
+                                    </div>
+
+                                    <div class="p-6 md:p-8 md:w-2/3 z-10 flex flex-col justify-center bg-slate-900/90 backdrop-blur-md">
+                                        <div class="space-y-4 mb-6">
+                                            ${activeLens.paragraphs.map((p, i) => `
+                                                <div class="flex gap-3 items-start">
+                                                    <div class="mt-0.5 shrink-0 opacity-80 ${activeLens.styles.text}">
+                                                        <i data-lucide="${p.icon}" class="w-5 h-5"></i>
+                                                    </div>
+                                                    <p class="text-slate-300 leading-relaxed text-sm ${i === 0 ? 'font-medium text-slate-100 text-base' : ''}">
+                                                        ${p.text}
+                                                    </p>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+
+                                        <div class="bg-gradient-to-r ${activeLens.styles.gradient} border ${activeLens.styles.border} rounded-xl p-4 flex items-center gap-4 shadow-inner">
+                                            <div class="p-2 rounded-lg ${activeLens.styles.iconBg} ${activeLens.styles.text}">
+                                                <i data-lucide="eye" class="w-6 h-6"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-[10px] font-bold uppercase tracking-widest mb-1 ${activeLens.styles.text}">What this lens helps us notice</p>
+                                                <p class="text-sm font-medium text-slate-100">${activeLens.focus}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                `;
+            }
+
+            html += `
+                    </div>
+            `;
+
+            if (showFinalPopup) {
+                html += `
+                    <!-- Final Image Popup Modal -->
+                    <div class="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/90 backdrop-blur-sm p-4 md:p-8 animate-fade-in" onclick="handleClosePopup()">
+                        <div class="relative w-full max-w-3xl bg-white p-3 md:p-5 shadow-2xl rounded-xl flex flex-col items-center border-2 border-stone-800 animate-fade-in" onclick="event.stopPropagation()">
+                            
+                            <button onclick="handleClosePopup()" class="absolute -top-4 -right-4 w-10 h-10 bg-stone-900 text-white border-2 border-stone-200 rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg z-20 font-bold" title="Close Image">
+                                <i data-lucide="x" class="w-5 h-5" stroke-width="3"></i>
+                            </button>
+                            
+                            <div class="relative w-full aspect-[4/3] bg-stone-200 flex flex-col items-center justify-center overflow-hidden rounded-xl border-4 border-stone-900 shadow-[8px_8px_0px_0px_rgba(28,25,23,1)] group">
+                                <img src="${finalPanelData.image}" alt="Final Scene: Eli and Teacher" class="absolute inset-0 w-full h-full object-cover z-0" />
+                                <div class="absolute inset-0 z-10 pointer-events-none">
+                                    ${finalPanelData.overlays.map(renderOverlay).join('')}
+                                </div>
+                            </div>
+
+                            <div class="mt-5 flex justify-center w-full">
+                                <button onclick="handleRestart()" class="flex items-center gap-2 px-8 py-3 rounded-lg font-bold uppercase tracking-widest text-sm transition-all bg-stone-900 text-white hover:bg-stone-800 active:scale-95 shadow-md hover:shadow-lg">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4" stroke-width="2.5"></i>
+                                    Restart Story
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `
+                </div>
+            `;
+
+            app.innerHTML = html;
+            
+            // Re-initialize icons after rendering
+            lucide.createIcons();
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
