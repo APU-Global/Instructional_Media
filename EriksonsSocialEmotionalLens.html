@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erikson’s Social-Emotional Lens</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Enforce minimum text size of 12px globally */
+        * {
+            font-size: max(12px, 1em);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        /* Smooth transitions for content changes */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 350ms ease-out, transform 350ms ease-out;
+        }
+        
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #94a3b8;
+        }
+
+        /* Connecting line for timeline */
+        .timeline-line {
+            position: absolute;
+            left: 27px; /* Center of the 56px circle (56/2 - 1 for line width) */
+            top: 30px;
+            bottom: 30px;
+            width: 3px;
+            background: linear-gradient(to bottom, #14b8a6, #06b6d4, #3b82f6, #6366f1, #8b5cf6, #d946ef, #ec4899, #f43f5e);
+            z-index: 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900 bg-slate-50">
+
+    <!-- Cohesive Gradient Header -->
+    <header class="relative bg-gradient-to-br from-indigo-600 via-violet-600 to-blue-500 overflow-hidden shadow-lg rounded-b-[2.5rem] md:rounded-b-[4rem] mb-10 border-b-4 border-indigo-400/30">
+        <!-- Decorative background shapes -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+            <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white blur-3xl"></div>
+            <div class="absolute bottom-0 right-12 w-72 h-72 rounded-full bg-teal-300 blur-3xl"></div>
+        </div>
+
+        <div class="relative z-10 pt-16 pb-24 px-6 max-w-5xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-white tracking-tight drop-shadow-sm">
+                Erikson’s Social-Emotional Lens
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-50 leading-relaxed max-w-3xl mx-auto font-light drop-shadow">
+                Erik Erikson’s theory of psychosocial development proposes that individuals pass through eight distinct stages from infancy to late adulthood. At each stage, a person faces a central psychosocial crisis between two opposing psychological states. Successfully navigating each crisis fosters a core psychological virtue.
+            </p>
+        </div>
+    </header>
+
+    <!-- Interactive Instructions -->
+    <div class="max-w-3xl mx-auto px-4 mb-12 -mt-16 relative z-20">
+        <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-indigo-50 p-5 md:p-6 flex items-center gap-5 transition-transform hover:-translate-y-1 duration-300">
+            <div class="flex-shrink-0 w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-2xl animate-bounce shadow-inner border border-indigo-200">
+                <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
+            </div>
+            <div>
+                <h2 class="text-indigo-900 font-bold text-lg md:text-xl mb-1">How to use this interactive</h2>
+                <p class="text-slate-700 text-sm md:text-base leading-snug">Select any stage on the timeline below to explore the core crisis, the developed virtue, and a real-world example.</p>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 pb-24 relative z-10 flex flex-col md:flex-row gap-8 lg:gap-12 items-start">
+        
+        <!-- Right side (Detail Panel) - Appears on top on mobile, sticky right on desktop -->
+        <section class="w-full md:w-1/2 lg:w-7/12 order-1 md:order-2 sticky top-4 z-40" aria-label="Stage Details">
+            <div id="display-panel" class="bg-white rounded-3xl shadow-[0_12px_40px_rgb(0,0,0,0.08)] border border-slate-100 overflow-hidden transition-all duration-300">
+                
+                <!-- Decorative header bar of the panel -->
+                <div id="panel-header-bar" class="h-4 w-full bg-teal-500 transition-colors duration-500"></div>
+                
+                <div class="p-6 md:p-10" id="panel-content" aria-live="polite" role="region" aria-atomic="true" tabindex="0">
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
+                        <!-- Prominent Icon display -->
+                        <div id="panel-icon-container" class="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-teal-100 text-teal-600 text-3xl shadow-inner transition-colors duration-500" aria-hidden="true">
+                            <i id="panel-icon" class="fa-solid fa-baby-carriage"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-sm font-bold tracking-widest text-slate-500 uppercase">Stage <span id="panel-number">1</span></span>
+                            </div>
+                            <h2 id="panel-title" class="text-3xl md:text-4xl font-extrabold text-slate-900 transition-colors duration-500 leading-tight">Trust vs. Mistrust</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3 mb-8">
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold border border-slate-300">
+                            <i class="fa-regular fa-clock text-slate-700" aria-hidden="true"></i>
+                            <span id="panel-age">Infancy (0–18 months)</span>
+                        </div>
+                        <div id="panel-virtue-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-teal-50 text-teal-800 text-sm font-semibold border border-teal-200 transition-colors duration-500">
+                            <i class="fa-solid fa-star" aria-hidden="true"></i>
+                            Core Virtue: <span id="panel-virtue" class="font-bold">Hope</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="flex items-center gap-2 text-sm font-bold tracking-wider text-slate-600 uppercase mb-3">
+                                <i class="fa-solid fa-bolt text-amber-500" aria-hidden="true"></i> The Crisis
+                            </h3>
+                            <p id="panel-crisis" class="text-slate-800 text-lg leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                Infants must learn whether their basic physical and emotional needs will be met consistently by primary caregivers.
+                            </p>
+                        </div>
+                        
+                        <div id="panel-example-container" class="p-5 md:p-6 rounded-2xl bg-teal-50 border border-teal-100 transition-colors duration-500 shadow-sm">
+                            <h3 id="panel-example-title" class="flex items-center gap-2 text-sm font-bold tracking-wider text-teal-800 uppercase mb-3 transition-colors duration-500">
+                                <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Example
+                            </h3>
+                            <p id="panel-example" class="text-slate-900 leading-relaxed italic text-[1.05rem]">
+                                "An infant whose cries are reliably met with warm feeding and comfort learns to trust the world as a safe place, whereas neglect leads to chronic anxiety and insecurity."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Left side (Timeline) - Appears below on mobile, left on desktop -->
+        <section class="w-full md:w-1/2 lg:w-5/12 relative pb-8 order-2 md:order-1 pt-4 md:pt-0" aria-label="Timeline of Stages">
+            <div class="timeline-line hidden md:block"></div>
+            <!-- Mobile timeline line -->
+            <div class="absolute left-[27px] top-6 bottom-6 w-[3px] bg-gradient-to-b from-teal-500 via-indigo-500 to-rose-500 md:hidden z-0 rounded-full"></div>
+            
+            <div id="timeline-container" class="relative z-10 flex flex-col gap-8 md:gap-10" role="tablist" aria-label="Timeline of Psychosocial Stages">
+                <!-- Timeline items will be injected here by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const stagesData = [
+            {
+                id: 1,
+                title: "Trust vs. Mistrust",
+                age: "Infancy (0–18 months)",
+                virtue: "Hope",
+                crisis: "Infants must learn whether their basic physical and emotional needs will be met consistently by primary caregivers.",
+                example: "An infant whose cries are reliably met with warm feeding and comfort learns to trust the world as a safe place, whereas neglect leads to chronic anxiety and insecurity.",
+                icon: "fa-baby-carriage",
+                colors: {
+                    bgClass: "bg-teal-500",
+                    lightBgClass: "bg-teal-50",
+                    lightBadgeClass: "bg-teal-100",
+                    borderClass: "border-teal-300",
+                    textClass: "text-teal-800",
+                    textHeading: "text-teal-800",
+                    ringClass: "ring-teal-200"
+                }
+            },
+            {
+                id: 2,
+                title: "Autonomy vs. Shame & Doubt",
+                age: "Early Childhood (18 months–3 years)",
+                virtue: "Will",
+                crisis: "Toddlers strive to develop a sense of personal independence and control over physical skills and choices.",
+                example: "A child who is encouraged to pick out their own clothes and tie their shoes gains confidence, while a child who is overly criticized or controlled begins to doubt their abilities.",
+                icon: "fa-child-reaching",
+                colors: {
+                    bgClass: "bg-cyan-500",
+                    lightBgClass: "bg-cyan-50",
+                    lightBadgeClass: "bg-cyan-100",
+                    borderClass: "border-cyan-300",
+                    textClass: "text-cyan-800",
+                    textHeading: "text-cyan-800",
+                    ringClass: "ring-cyan-200"
+                }
+            },
+            {
+                id: 3,
+                title: "Initiative vs. Guilt",
+                age: "Preschool Years (3–5 years)",
+                virtue: "Purpose",
+                crisis: "Children begin asserting power and control over their environment through planning activities, inventing games, and directing social interactions.",
+                example: "A preschooler who organizes a game of 'space exploration' with playmates develops leadership, but if adults dismiss the effort as annoying or messy, the child may feel guilty for taking charge.",
+                icon: "fa-rocket",
+                colors: {
+                    bgClass: "bg-blue-500",
+                    lightBgClass: "bg-blue-50",
+                    lightBadgeClass: "bg-blue-100",
+                    borderClass: "border-blue-300",
+                    textClass: "text-blue-800",
+                    textHeading: "text-blue-800",
+                    ringClass: "ring-blue-200"
+                }
+            },
+            {
+                id: 4,
+                title: "Industry vs. Inferiority",
+                age: "School Age (6–12 years)",
+                virtue: "Competence",
+                crisis: "Children face demands to learn new academic, social, and physical skills, comparing their performance with peers.",
+                example: "A student who receives encouragement for completing math assignments or playing a sport develops a sense of pride in accomplishment, while constant failure or criticism breeds feelings of inadequacy.",
+                icon: "fa-book-open-reader",
+                colors: {
+                    bgClass: "bg-indigo-500",
+                    lightBgClass: "bg-indigo-50",
+                    lightBadgeClass: "bg-indigo-100",
+                    borderClass: "border-indigo-300",
+                    textClass: "text-indigo-800",
+                    textHeading: "text-indigo-800",
+                    ringClass: "ring-indigo-200"
+                }
+            },
+            {
+                id: 5,
+                title: "Identity vs. Role Confusion",
+                age: "Adolescence (12–18 years)",
+                virtue: "Fidelity",
+                crisis: "Teens explore values, beliefs, and goals to construct a personal identity and determine their future direction.",
+                example: "A teenager who experiments with different social groups, hobbies, and career interests emerges with a clear sense of self, whereas pressure to conform to parental expectations without self-exploration leads to confusion about who they are.",
+                icon: "fa-fingerprint",
+                colors: {
+                    bgClass: "bg-violet-500",
+                    lightBgClass: "bg-violet-50",
+                    lightBadgeClass: "bg-violet-100",
+                    borderClass: "border-violet-300",
+                    textClass: "text-violet-800",
+                    textHeading: "text-violet-800",
+                    ringClass: "ring-violet-200"
+                }
+            },
+            {
+                id: 6,
+                title: "Intimacy vs. Isolation",
+                age: "Young Adulthood (19–40 years)",
+                virtue: "Love",
+                crisis: "Young adults learn to build close, reciprocal relationships requiring mutual dependency, openness, and personal sacrifice. Those struggling with fear of rejection or unresolved identity crises risk emotional isolation.",
+                example: "Someone secure in themselves freely shares vulnerability and commits to a partner, while someone fearing rejection keeps others at arm's length and remains isolated.",
+                icon: "fa-hand-holding-heart",
+                colors: {
+                    bgClass: "bg-fuchsia-500",
+                    lightBgClass: "bg-fuchsia-50",
+                    lightBadgeClass: "bg-fuchsia-100",
+                    borderClass: "border-fuchsia-300",
+                    textClass: "text-fuchsia-800",
+                    textHeading: "text-fuchsia-800",
+                    ringClass: "ring-fuchsia-200"
+                }
+            },
+            {
+                id: 7,
+                title: "Generativity vs. Stagnation",
+                age: "Middle Adulthood (40–65 years)",
+                virtue: "Care",
+                crisis: "Adults aim to contribute to future generations through parenting, mentoring, leadership, or creative work. Making a positive impact fosters care for others (generativity), while feeling unproductive leads to self-absorption, lack of growth, and emptiness (stagnation).",
+                example: "A professional thrives by mentoring junior staff and volunteering, whereas someone who disengages becomes self-focused, feeling unfulfilled and stuck.",
+                icon: "fa-seedling",
+                colors: {
+                    bgClass: "bg-pink-500",
+                    lightBgClass: "bg-pink-50",
+                    lightBadgeClass: "bg-pink-100",
+                    borderClass: "border-pink-300",
+                    textClass: "text-pink-800",
+                    textHeading: "text-pink-800",
+                    ringClass: "ring-pink-200"
+                }
+            },
+            {
+                id: 8,
+                title: "Ego Integrity vs. Despair",
+                age: "Late Adulthood (65+ years)",
+                virtue: "Wisdom",
+                crisis: "Older adults look back on their life events and evaluate whether they lived a meaningful, fulfilled existence.",
+                example: "An elderly individual who reflects on their life's achievements, mistakes, and relationships with acceptance feels a sense of completion, whereas focusing on unfulfilled goals and missed opportunities leads to bitterness and despair.",
+                icon: "fa-dove",
+                colors: {
+                    bgClass: "bg-rose-500",
+                    lightBgClass: "bg-rose-50",
+                    lightBadgeClass: "bg-rose-100",
+                    borderClass: "border-rose-300",
+                    textClass: "text-rose-800",
+                    textHeading: "text-rose-800",
+                    ringClass: "ring-rose-200"
+                }
+            }
+        ];
+
+        let activeStageIndex = 0;
+
+        // DOM Elements
+        const timelineContainer = document.getElementById('timeline-container');
+        const panelContent = document.getElementById('panel-content');
+        const pTitle = document.getElementById('panel-title');
+        const pNumber = document.getElementById('panel-number');
+        const pAge = document.getElementById('panel-age');
+        const pVirtue = document.getElementById('panel-virtue');
+        const pVirtueBadge = document.getElementById('panel-virtue-badge');
+        const pCrisis = document.getElementById('panel-crisis');
+        const pExample = document.getElementById('panel-example');
+        const pExampleContainer = document.getElementById('panel-example-container');
+        const pExampleTitle = document.getElementById('panel-example-title');
+        const pHeaderBar = document.getElementById('panel-header-bar');
+        const pIconContainer = document.getElementById('panel-icon-container');
+        const pIcon = document.getElementById('panel-icon');
+
+        // Helper to remove classes matching a pattern
+        function removeClassesWithPrefix(element, prefixes) {
+            const classes = element.className.split(' ').filter(c => {
+                return !prefixes.some(prefix => c.startsWith(prefix));
+            });
+            element.className = classes.join(' ');
+        }
+
+        // Initialize timeline
+        function renderTimeline() {
+            timelineContainer.innerHTML = '';
+            
+            stagesData.forEach((stage, index) => {
+                const isActive = index === activeStageIndex;
+                const item = document.createElement('div');
+                item.className = 'group flex items-start gap-5 cursor-pointer relative focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-400 focus-visible:ring-offset-4 rounded-xl transition-all';
+                
+                // Accessibility attributes
+                item.setAttribute('role', 'tab');
+                item.setAttribute('aria-selected', isActive);
+                item.setAttribute('tabindex', '0');
+                item.setAttribute('aria-controls', 'panel-content');
+                item.setAttribute('id', `tab-${index}`);
+                item.setAttribute('aria-label', `Stage ${stage.id}: ${stage.title}`);
+                
+                // Keyboard accessibility
+                item.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        updatePanel(index);
+                    }
+                });
+                
+                // Add click events
+                item.addEventListener('click', () => {
+                    updatePanel(index);
+                    // On mobile, scroll to top slightly above the panel to ensure it's in view
+                    if (window.innerWidth < 768) {
+                        window.scrollTo({
+                            top: document.getElementById('display-panel').offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+                
+                item.innerHTML = `
+                    <div class="relative z-10 flex-shrink-0 flex items-center justify-center transition-all duration-300">
+                        <div class="w-14 h-14 rounded-full border-[3px] flex items-center justify-center text-xl shadow-md transition-all duration-300
+                            ${isActive ? `${stage.colors.bgClass} text-white border-white ring-4 ${stage.colors.ringClass} scale-110` : `bg-white text-slate-500 border-slate-300 group-hover:border-slate-400 group-hover:text-slate-700 group-hover:shadow-lg`}
+                            " id="timeline-dot-${index}">
+                            <i class="fa-solid ${stage.icon}" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-1.5 pb-2 flex-1 transition-all duration-300 ${isActive ? 'translate-x-2' : 'opacity-90 group-hover:opacity-100 group-hover:translate-x-1'}">
+                        <h3 class="text-xl font-bold transition-colors duration-300 ${isActive ? 'text-slate-900' : 'text-slate-700 group-hover:text-slate-900'}">
+                            <span class="text-sm font-semibold mr-2 opacity-70 block md:inline mb-1 md:mb-0">Stage ${stage.id}</span>
+                            ${stage.title}
+                        </h3>
+                        <p class="text-sm font-medium mt-1 transition-colors duration-300 ${isActive ? stage.colors.textClass : 'text-slate-600'}">${stage.age}</p>
+                    </div>
+                `;
+                
+                timelineContainer.appendChild(item);
+            });
+        }
+
+        // Update the display panel
+        function updatePanel(index) {
+            if (activeStageIndex === index && document.getElementById(`timeline-dot-${index}`)) return; // Don't re-render if it's the same
+            activeStageIndex = index;
+            const stage = stagesData[index];
+
+            // Re-render timeline to update active states visually
+            renderTimeline();
+
+            // Restore focus for keyboard users after DOM is recreated
+            const activeTab = document.getElementById(`tab-${index}`);
+            // Only force focus if the user is actively navigating (not on initial load)
+            if (activeTab && document.activeElement !== document.body) {
+                activeTab.focus();
+            }
+
+            // Animate content out
+            panelContent.classList.remove('fade-enter-active');
+            panelContent.classList.add('fade-enter');
+
+            // Quick timeout to swap content while invisible, then animate in
+            setTimeout(() => {
+                // Update Text
+                pTitle.textContent = stage.title;
+                pNumber.textContent = stage.id;
+                pAge.textContent = stage.age;
+                pVirtue.textContent = stage.virtue;
+                pCrisis.textContent = stage.crisis;
+                pExample.textContent = `"${stage.example}"`;
+
+                // Update Icon
+                pIcon.className = `fa-solid ${stage.icon}`;
+
+                // Update Header Bar Color
+                removeClassesWithPrefix(pHeaderBar, ['bg-']);
+                pHeaderBar.classList.add(stage.colors.bgClass);
+
+                // Update Main Icon Container
+                removeClassesWithPrefix(pIconContainer, ['bg-', 'text-']);
+                pIconContainer.classList.add(stage.colors.lightBadgeClass, stage.colors.textHeading);
+
+                // Update Virtue Badge
+                removeClassesWithPrefix(pVirtueBadge, ['bg-', 'text-', 'border-']);
+                pVirtueBadge.classList.add(stage.colors.lightBgClass, stage.colors.textClass, stage.colors.borderClass);
+
+                // Update Example Container
+                removeClassesWithPrefix(pExampleContainer, ['bg-', 'border-']);
+                pExampleContainer.classList.add(stage.colors.lightBgClass, stage.colors.borderClass);
+
+                // Update Example Title
+                removeClassesWithPrefix(pExampleTitle, ['text-']);
+                pExampleTitle.classList.add(stage.colors.textHeading);
+
+                // Animate content in
+                // Force reflow
+                void panelContent.offsetWidth; 
+                panelContent.classList.remove('fade-enter');
+                panelContent.classList.add('fade-enter-active');
+
+            }, 200);
+        }
+
+        // Initialize application
+        renderTimeline();
+        // Trigger initial state application for DOM elements immediately on load
+        setTimeout(() => {
+           updatePanel(0);
+        }, 50);
+
+    </script>
+</body>
+</html>
