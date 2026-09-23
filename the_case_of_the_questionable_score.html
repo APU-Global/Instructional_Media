@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Case of the Questionable Score</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for in-browser JSX transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Let the React app handle scrolling inside its containers */
+        }
+        #root {
+            width: 100%;
+            height: 100%;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, Fragment } = React;
+
+        const CLUES = [
+          { id: 1, title: "ALIGNMENT", text: "An assessment should match what students are expected to learn and do." },
+          { id: 2, title: "LOOK BENEATH THE AVERAGE", text: "An overall score can hide important patterns in the data." },
+          { id: 3, title: "RELIABILITY", text: "Consistency matters, but consistency alone doesn't prove an assessment measured the right thing." },
+          { id: 4, title: "MULTIPLE SOURCES", text: "Different evidence can answer different questions. Investigate before drawing a conclusion." }
+        ];
+
+        const SCREENS = {
+          INTRO: 'INTRO',
+          BOARD: 'BOARD',
+          CASE1: 'CASE1',
+          CASE2: 'CASE2',
+          CASE3: 'CASE3',
+          CASE4: 'CASE4',
+          CASE5: 'CASE5',
+          FINAL: 'FINAL',
+          END: 'END',
+          FINISHED: 'FINISHED'
+        };
+
+        const SCREEN_ORDER = [
+          SCREENS.INTRO, SCREENS.CASE1, SCREENS.CASE2, 
+          SCREENS.CASE3, SCREENS.CASE4, SCREENS.CASE5, SCREENS.FINAL
+        ];
+
+        const TopNav = ({ currentScreen, unlockedCases, cluesCollected, onRestart }) => {
+          const getScreenLabel = () => {
+            switch (currentScreen) {
+              case SCREENS.INTRO: return "INTRODUCTION";
+              case SCREENS.BOARD: return "CASE BOARD";
+              case SCREENS.CASE1: return "CASE 01: THE MISMATCH";
+              case SCREENS.CASE2: return "CASE 02: THE 58% MYSTERY";
+              case SCREENS.CASE3: return "CASE 03: THE REPEAT TEST";
+              case SCREENS.CASE4: return "CASE 04: SHOW ME WHAT YOU KNOW";
+              case SCREENS.CASE5: return "CASE 05: THE EVIDENCE BOARD";
+              case SCREENS.FINAL: return "FINAL CASE: CASE CLOSED?";
+              case SCREENS.END: return "INVESTIGATION COMPLETE";
+              case SCREENS.FINISHED: return "CASE COMPLETE";
+              default: return "";
+            }
+          };
+
+          return (
+            <div className="w-full bg-slate-900 text-white px-4 pt-8 pb-3 shadow-md flex flex-col md:flex-row justify-between items-center z-50 border-b-4 border-slate-700 flex-shrink-0 gap-2 sm:gap-4">
+              <div className="flex flex-col items-center md:items-start">
+                <h1 className="text-xl sm:text-2xl font-black tracking-wider text-amber-500 text-center uppercase leading-none">The Case of the Questionable Score</h1>
+                <div className="text-xs sm:text-sm font-bold text-slate-300 bg-slate-800 px-3 py-1 rounded-full mt-2 border border-slate-600 inline-block">
+                  {getScreenLabel()}
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4 flex-wrap justify-center mt-2 md:mt-0">
+                <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-slate-400">
+                  {['INTRO', '01', '02', '03', '04', '05', 'FINAL'].map((step, idx) => (
+                    <Fragment key={step}>
+                      <span className={unlockedCases >= idx ? 'text-amber-400 font-bold' : ''}>{step}</span>
+                      {idx < 6 && <span>→</span>}
+                    </Fragment>
+                  ))}
+                </div>
+                <div className="bg-slate-800 border-2 border-slate-600 rounded px-3 py-1 sm:px-4 sm:py-2 flex items-center gap-2">
+                  <span className="text-lg sm:text-xl">🔎</span>
+                  <span className="font-bold font-mono tracking-widest text-amber-400 text-sm sm:text-base">CLUES: {cluesCollected.length}/4</span>
+                </div>
+                <button 
+                  onClick={onRestart}
+                  className="bg-slate-700 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded flex items-center gap-1 transition-colors border border-slate-600 hover:border-red-500"
+                >
+                  ↻ RESTART
+                </button>
+              </div>
+            </div>
+          );
+        };
+
+        const BottomNav = ({ onBack, onBoard, onNext, backDisabled, nextDisabled, showNextPulse, currentScreen }) => {
+          if (currentScreen === SCREENS.FINISHED) return null;
+          
+          return (
+            <div className="w-full bg-slate-900 p-3 sm:p-4 border-t-4 border-slate-700 flex justify-between items-center z-50 h-16 sm:h-20 flex-shrink-0">
+              <button 
+                onClick={onBack} 
+                disabled={backDisabled}
+                className={`px-3 sm:px-6 py-2 rounded font-bold transition-all flex items-center gap-2 text-sm sm:text-base
+                  ${backDisabled ? 'bg-slate-800 text-slate-600 cursor-not-allowed' : 'bg-slate-700 text-white hover:bg-slate-600 active:bg-slate-500'}`}
+              >
+                ← BACK
+              </button>
+
+              <button 
+                onClick={onBoard}
+                disabled={currentScreen === SCREENS.BOARD || currentScreen === SCREENS.INTRO}
+                className={`px-3 sm:px-6 py-2 rounded font-bold transition-all flex items-center gap-2 text-sm sm:text-base
+                  ${(currentScreen === SCREENS.BOARD || currentScreen === SCREENS.INTRO) ? 'bg-slate-800 text-slate-600 cursor-not-allowed' : 'bg-amber-600 text-white hover:bg-amber-500 active:bg-amber-400 shadow-lg'}`}
+              >
+                🗂️ CASE BOARD
+              </button>
+
+              <button 
+                onClick={onNext} 
+                disabled={nextDisabled}
+                className={`px-3 sm:px-6 py-2 rounded font-bold transition-all flex items-center gap-2 border-2 text-sm sm:text-base
+                  ${nextDisabled 
+                    ? 'bg-slate-800 text-slate-600 border-slate-800 cursor-not-allowed' 
+                    : showNextPulse 
+                      ? 'bg-green-600 text-white border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.6)] animate-pulse hover:bg-green-500' 
+                      : 'bg-green-700 text-white border-green-600 hover:bg-green-600'}`}
+              >
+                NEXT →
+              </button>
+            </div>
+          );
+        };
+
+        const ClassroomScene = ({ children }) => (
+          <div className="relative w-full h-full bg-[#E8DCC4] overflow-y-auto overflow-x-hidden flex flex-col items-center">
+            <div className="absolute top-0 w-full h-[65%] bg-[#F2E8D5] pointer-events-none" />
+            <div className="absolute bottom-0 w-full h-[35%] bg-[#6B4423] border-t-[12px] border-[#4A2E15] pointer-events-none" />
+            <div className="absolute bottom-0 w-full h-[33%] bg-[#8B5A2B] opacity-50 pointer-events-none" />
+            <div className="relative z-10 w-full max-w-6xl h-full flex flex-col p-2 sm:p-4">
+              {children}
+            </div>
+          </div>
+        );
+
+        const CorkboardScene = ({ children }) => (
+          <div className="relative w-full h-full bg-[#C19A6B] overflow-y-auto overflow-x-hidden p-2 sm:p-4">
+            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#4A2E15 1px, transparent 1px)', backgroundSize: '10px 10px' }}></div>
+            <div className="absolute inset-4 border-[12px] sm:border-[16px] border-[#5C3A21] shadow-2xl pointer-events-none" />
+            <div className="relative z-10 w-full h-full max-w-6xl mx-auto flex flex-col items-center pt-8 pb-4">
+              {children}
+            </div>
+          </div>
+        );
+
+        const ScreenIntro = ({ onStart }) => (
+          <ClassroomScene>
+            <div className="flex-1 flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-8">
+              <div className="w-full md:w-1/2 flex flex-col items-center text-center">
+                <div className="text-[80px] sm:text-[100px] leading-none mb-2 drop-shadow-xl">👩🏽‍🏫</div>
+                <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-2xl relative border-4 border-amber-200">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-b-[20px] border-b-white"></div>
+                  <p className="text-lg sm:text-xl font-semibold text-slate-800">
+                    "My class scored 58% on the assessment. Does that mean they didn't learn?"
+                  </p>
+                  <p className="mt-2 text-xs sm:text-sm text-slate-500 font-bold uppercase">— Ms. Rivera, 4th Grade Teacher</p>
+                </div>
+              </div>
+              
+              <div className="w-full md:w-1/2 flex flex-col items-center md:items-start space-y-4 sm:space-y-6 mt-4 md:mt-0">
+                <div className="bg-slate-800 text-white p-4 sm:p-6 rounded-xl shadow-2xl border-l-8 border-amber-500 w-full transform rotate-1 hover:rotate-0 transition-transform">
+                  <h2 className="text-xs sm:text-sm font-bold text-amber-500 uppercase tracking-widest mb-1">You are the Assessment Detective</h2>
+                  <h3 className="text-2xl sm:text-3xl font-black mb-3">One score. A lot of questions.</h3>
+                  <p className="text-base sm:text-lg text-slate-300">
+                    Your mission: Follow the evidence. Find the clues. Figure out what the <span className="font-bold text-red-400 bg-red-900/30 px-2 py-1 rounded">58%</span> score really tells you.
+                  </p>
+                </div>
+                
+                <button 
+                  onClick={onStart}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-900 text-lg sm:text-xl font-black px-6 sm:px-8 py-3 sm:py-4 rounded-lg shadow-[0_6px_0_#b45309] active:shadow-[0_0px_0_#b45309] active:translate-y-1 transition-all flex items-center gap-3 w-full justify-center md:w-auto"
+                >
+                  START INVESTIGATION <span>→</span>
+                </button>
+              </div>
+            </div>
+          </ClassroomScene>
+        );
+
+        const ScreenBoard = ({ unlockedCases, onSelectCase, completedCases }) => {
+          const folders = [
+            { id: 1, title: "THE MISMATCH", screen: SCREENS.CASE1 },
+            { id: 2, title: "THE 58% MYSTERY", screen: SCREENS.CASE2 },
+            { id: 3, title: "THE REPEAT TEST", screen: SCREENS.CASE3 },
+            { id: 4, title: "SHOW ME WHAT YOU KNOW", screen: SCREENS.CASE4 },
+            { id: 5, title: "THE EVIDENCE BOARD", screen: SCREENS.CASE5 },
+            { id: 6, title: "CASE CLOSED?", screen: SCREENS.FINAL, isFinal: true }
+          ];
+
+          return (
+            <CorkboardScene>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-5xl">
+                {folders.map((folder, index) => {
+                  const isUnlocked = unlockedCases >= index + 1;
+                  const isCompleted = completedCases.includes(index + 1);
+                  
+                  return (
+                    <button
+                      key={folder.id}
+                      onClick={() => isUnlocked && onSelectCase(folder.screen)}
+                      disabled={!isUnlocked}
+                      className={`relative h-32 sm:h-40 w-full rounded-tr-3xl rounded-bl-md rounded-br-md border-t-8 border-l-2 border-r-2 border-b-2 flex flex-col items-center justify-center p-3 transition-all duration-300
+                        ${isUnlocked 
+                          ? 'bg-[#E3C27C] border-[#B89645] hover:bg-[#F2D696] hover:-translate-y-1 hover:shadow-xl shadow-lg cursor-pointer' 
+                          : 'bg-slate-300 border-slate-400 opacity-60 cursor-not-allowed grayscale'}`}
+                    >
+                      <div className={`absolute -top-4 sm:-top-5 left-0 h-4 sm:h-5 w-1/3 rounded-t-md border-t-2 border-l-2 border-r-2 border-b-0
+                        ${isUnlocked ? 'bg-[#E3C27C] border-[#B89645]' : 'bg-slate-300 border-slate-400'}`}></div>
+                      
+                      {!isUnlocked && (
+                        <div className="absolute top-1 sm:top-2 right-1 sm:right-2 text-2xl">🔒</div>
+                      )}
+                      
+                      <div className="text-center z-10">
+                        <div className="text-xs font-bold text-amber-900/60 tracking-widest mb-1">
+                          CASE 0{folder.id} {folder.isFinal && '(FINAL)'}
+                        </div>
+                        <div className="text-lg sm:text-xl font-black text-[#4A2E15] leading-tight">
+                          {folder.title}
+                        </div>
+                      </div>
+
+                      {isCompleted && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                          <div className="text-red-600 border-4 border-red-600 rounded px-2 sm:px-4 py-1 text-lg sm:text-xl font-black transform -rotate-12 bg-white/90 shadow-md">
+                            CLUE FOUND ✓
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="absolute top-2 right-3 w-8 h-12 bg-white border border-gray-200 -z-10 transform rotate-12 shadow-sm"></div>
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <svg className="absolute inset-0 pointer-events-none w-full h-full hidden lg:block" style={{ zIndex: 0 }}>
+                 <path d="M 300 200 Q 500 150 700 200" stroke="#FF5722" strokeWidth="3" fill="none" opacity="0.6" strokeDasharray="5,5"/>
+                 <path d="M 300 450 Q 500 500 700 450" stroke="#FF5722" strokeWidth="3" fill="none" opacity="0.6" strokeDasharray="5,5"/>
+              </svg>
+            </CorkboardScene>
+          );
+        };
+
+        const ScreenCase1 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choiceId) => {
+            setAnswered(true);
+            if (choiceId === 2) {
+              setCorrect(true);
+              onComplete(CLUES[0]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto space-y-3 pb-4">
+                <div className="w-full bg-white rounded-lg border-[8px] border-gray-300 shadow-md p-4 relative flex-shrink-0">
+                  <div className="absolute bottom-2 right-4 text-2xl hidden sm:block">🖍️</div>
+                  <h3 className="text-blue-800 font-bold uppercase tracking-wider mb-1 text-sm border-b-2 border-blue-200 inline-block">Learning Goal</h3>
+                  <p className="text-lg sm:text-xl text-gray-800 font-medium">
+                    Students will <span className="bg-yellow-200 font-bold px-1 rounded">use evidence</span> from a story to <span className="bg-yellow-200 font-bold px-1 rounded">explain</span> why a character made a decision.
+                  </p>
+                </div>
+
+                <div className="w-full sm:w-2/3 mx-auto bg-[#F9F7F1] shadow-lg border border-gray-200 p-4 transform rotate-1 relative mt-2 flex-shrink-0">
+                  <div className="absolute -top-3 left-1/2 text-xl transform -translate-x-1/2">📌</div>
+                  <div className="border-b-2 border-gray-300 pb-1 mb-3 flex justify-between text-xs sm:text-sm">
+                    <span className="font-mono text-gray-500">Name: _____________</span>
+                    <span className="font-mono text-gray-500">Score: 58%</span>
+                  </div>
+                  <h3 className="text-sm font-bold text-gray-700 uppercase mb-2">Question 1</h3>
+                  <p className="text-base sm:text-lg font-semibold mb-3">
+                    What does the word "<span className="underline decoration-2 decoration-red-400">evidence</span>" mean?
+                  </p>
+                  <ul className="space-y-1 sm:space-y-2 text-sm sm:text-base">
+                    <li className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-gray-400"></div> A. A type of book</li>
+                    <li className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-gray-400"></div> B. Proof or facts</li>
+                    <li className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-gray-400"></div> C. The main character</li>
+                    <li className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-gray-400"></div> D. The end of a story</li>
+                  </ul>
+                </div>
+
+                <div className="flex flex-col items-center justify-center pt-2">
+                  {!answered || !correct ? (
+                    <div className="w-full max-w-3xl flex flex-col items-center">
+                      <h2 className="text-lg sm:text-xl font-black text-slate-800 bg-white/90 px-4 py-1 sm:py-2 rounded-full shadow-sm mb-3 text-center border border-slate-300">
+                        WHY IS THIS ASSESSMENT QUESTION FLAWED?
+                      </h2>
+                      <div className="flex flex-col gap-2 w-full">
+                        <button onClick={() => handleAnswer(1)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                          A. It asks students to write too much.
+                        </button>
+                        <button onClick={() => handleAnswer(2)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                          B. It tests vocabulary memorization instead of the ability to use evidence to explain.
+                        </button>
+                        <button onClick={() => handleAnswer(3)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                          C. The reading passage was likely too difficult.
+                        </button>
+                      </div>
+                      {answered && !correct && (
+                        <div className="text-red-700 bg-red-100 p-2 rounded text-sm sm:text-base font-bold mt-3 border border-red-300 w-full text-center">
+                          Look closely at the Learning Goal vs the Question. The issue isn't about passage difficulty or writing length. Try again.
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="bg-emerald-100 border-2 border-emerald-500 rounded-xl p-4 shadow-md w-full max-w-3xl transform animate-[pulse_0.5s_ease-in-out_1]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl sm:text-4xl">💡</div>
+                        <div>
+                          <h3 className="text-lg font-bold text-emerald-800 mb-1">You got it!</h3>
+                          <p className="text-sm sm:text-base text-emerald-900 mb-3">
+                            "A student could know what evidence means without being able to use evidence to explain a character's decision."
+                          </p>
+                          <div className="bg-white p-3 rounded border-l-4 border-amber-500 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-xs text-amber-600 font-bold uppercase tracking-wider">Clue #1 Discovered</div>
+                              <div className="text-lg font-black text-slate-800">{CLUES[0].title}</div>
+                              <div className="text-sm text-slate-600 hidden sm:block">{CLUES[0].text}</div>
+                            </div>
+                            <div className="text-3xl">📎</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase2 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choiceId) => {
+            setAnswered(true);
+            if (choiceId === 3) {
+              setCorrect(true);
+              onComplete(CLUES[1]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto gap-3 overflow-y-auto pb-4">
+                <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-1 text-center bg-white/80 py-1 sm:py-2 rounded-lg flex-shrink-0 border border-slate-300">ASSESSMENT DATA BREAKDOWN</h2>
+                
+                <div className="bg-slate-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col md:flex-row gap-4 sm:gap-8 items-center text-white relative flex-shrink-0">
+                  <div className="w-full md:w-1/3 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-600 pb-4 md:pb-0">
+                    <div className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">Class Average</div>
+                    <div className="text-6xl sm:text-[80px] leading-none font-black text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                      58%
+                    </div>
+                  </div>
+                  
+                  <div className="w-full md:w-2/3 flex flex-col space-y-3 sm:space-y-4">
+                    <div>
+                      <div className="flex justify-between mb-1 text-sm sm:text-base font-bold">
+                        <span className="text-blue-300">RECALL (Multiple Choice)</span>
+                        <span>82%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-4 sm:h-5">
+                        <div className="bg-blue-500 h-4 sm:h-5 rounded-full" style={{ width: '82%' }}></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-1 text-sm sm:text-base font-bold">
+                        <span className="text-amber-300">USING EVIDENCE (Short Answer)</span>
+                        <span>61%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-4 sm:h-5">
+                        <div className="bg-amber-500 h-4 sm:h-5 rounded-full" style={{ width: '61%' }}></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-1 text-sm sm:text-base font-bold">
+                        <span className="text-red-300">EXPLAINING THINKING (Essay)</span>
+                        <span>39%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-4 sm:h-5">
+                        <div className="bg-red-500 h-4 sm:h-5 rounded-full" style={{ width: '39%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col items-center justify-center mt-2 flex-shrink-0">
+                  {!answered || !correct ? (
+                     <div className="w-full max-w-3xl flex flex-col items-center bg-white/90 p-3 sm:p-4 rounded-xl shadow border border-slate-300">
+                       <h2 className="text-lg sm:text-xl font-black text-slate-800 mb-3 text-center">
+                         WHAT DOES THIS DATA BREAKDOWN REVEAL?
+                       </h2>
+                       <div className="flex flex-col gap-2 w-full">
+                         <button onClick={() => handleAnswer(1)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                           A. The class failed, so the teacher needs to reteach the entire reading unit from the beginning.
+                         </button>
+                         <button onClick={() => handleAnswer(2)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                           B. The assessment is completely unreliable and should be thrown out.
+                         </button>
+                         <button onClick={() => handleAnswer(3)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                           C. The overall score hides the fact that students mastered recall but specifically struggle with explaining their thinking.
+                         </button>
+                       </div>
+                       {answered && !correct && (
+                         <div className="text-red-700 bg-red-100 p-2 rounded text-sm sm:text-base font-bold mt-3 border border-red-300 w-full text-center">
+                           Not quite. Throwing it out or reteaching everything ignores the specific insights hidden in the bar charts. Try again.
+                         </div>
+                       )}
+                     </div>
+                  ) : (
+                     <div className="bg-emerald-100 border-2 border-emerald-500 rounded-xl p-4 shadow-md w-full max-w-3xl animate-[pulse_0.5s_ease-in-out_1]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl sm:text-4xl">📊</div>
+                        <div>
+                          <h3 className="text-lg font-bold text-emerald-800 mb-1">Pattern Discovered!</h3>
+                          <p className="text-sm sm:text-base text-emerald-900 mb-3">
+                            "The overall average tells us something, but it doesn't tell us everything. They are great at recall, but struggling with explanation."
+                          </p>
+                          <div className="bg-white p-3 rounded border-l-4 border-amber-500 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-xs text-amber-600 font-bold uppercase tracking-wider">Clue #2 Discovered</div>
+                              <div className="text-lg font-black text-slate-800">{CLUES[1].title}</div>
+                              <div className="text-sm text-slate-600 hidden sm:block">{CLUES[1].text}</div>
+                            </div>
+                            <div className="text-3xl">📎</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase3 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choiceId) => {
+            setAnswered(true);
+            if (choiceId === 3) {
+              setCorrect(true);
+              onComplete(CLUES[2]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto space-y-4 overflow-y-auto pb-4">
+                <div className="flex items-center gap-4 bg-white/90 p-3 sm:p-4 rounded-xl shadow-sm border border-amber-200">
+                   <div className="text-4xl sm:text-5xl">👩🏽‍🏫</div>
+                   <p className="text-base sm:text-lg font-semibold italic text-slate-800">
+                     "I gave the exact same assessment the next week. The scores are almost the same. Does that mean the assessment is good?"
+                   </p>
+                </div>
+
+                <div className="flex flex-row justify-center gap-4 sm:gap-8 items-center flex-wrap">
+                  <div className="bg-white rounded-lg shadow-md overflow-hidden w-40 sm:w-48 border border-gray-200 transform -rotate-2">
+                    <div className="bg-red-500 text-white text-center py-1 sm:py-2 text-sm font-bold tracking-widest uppercase">Week 1</div>
+                    <div className="p-3 sm:p-4 text-center">
+                      <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">📅</div>
+                      <div className="text-xs font-bold text-gray-500 uppercase leading-tight">Assessment Score</div>
+                      <div className="text-3xl sm:text-4xl font-black text-slate-800 mt-1">58%</div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-2xl sm:text-3xl text-slate-400 font-bold hidden sm:block">→</div>
+
+                  <div className="bg-white rounded-lg shadow-md overflow-hidden w-40 sm:w-48 border border-gray-200 transform rotate-2">
+                    <div className="bg-blue-500 text-white text-center py-1 sm:py-2 text-sm font-bold tracking-widest uppercase">Week 2</div>
+                    <div className="p-3 sm:p-4 text-center">
+                      <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">📅</div>
+                      <div className="text-xs font-bold text-gray-500 uppercase leading-tight">Same Assessment</div>
+                      <div className="text-3xl sm:text-4xl font-black text-slate-800 mt-1">60%</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col items-center justify-center mt-2">
+                  {!answered || !correct ? (
+                     <div className="w-full max-w-3xl flex flex-col items-center bg-white/90 p-3 sm:p-4 rounded-xl shadow border border-slate-300">
+                       <h2 className="text-lg sm:text-xl font-black text-slate-800 mb-3 text-center">
+                         WHAT DOES THE SIMILAR SCORE TELL US?
+                       </h2>
+                       <div className="flex flex-col gap-2 w-full">
+                         <button onClick={() => handleAnswer(1)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                           A. It proves the assessment is perfectly aligned to the learning goals.
+                         </button>
+                         <button onClick={() => handleAnswer(2)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                           B. The slight increase proves the students are definitely mastering the material.
+                         </button>
+                         <button onClick={() => handleAnswer(3)} className="text-left w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold p-3 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-sm sm:text-base">
+                           C. The assessment is consistent, but that doesn't guarantee it's measuring the right thing.
+                         </button>
+                       </div>
+                       {answered && !correct && (
+                         <div className="text-red-700 bg-red-100 p-2 rounded text-sm sm:text-base font-bold mt-3 border border-red-300 w-full text-center">
+                           Think about the difference between consistency and accuracy. A broken scale always gives the same wrong weight. Try again.
+                         </div>
+                       )}
+                     </div>
+                  ) : (
+                    <div className="bg-emerald-100 border-2 border-emerald-500 rounded-xl p-4 shadow-md w-full max-w-3xl animate-[pulse_0.5s_ease-in-out_1]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl sm:text-4xl">🎯</div>
+                        <div>
+                          <h3 className="text-lg font-bold text-emerald-800 mb-1">Consistent, but is it correct?</h3>
+                          <p className="text-sm sm:text-base text-emerald-900 mb-3">
+                            "The results are consistent. But just because a scale gives you the same wrong weight every day doesn't mean it's a good scale."
+                          </p>
+                          <div className="bg-white p-3 rounded border-l-4 border-amber-500 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-xs text-amber-600 font-bold uppercase tracking-wider">Clue #3 Discovered</div>
+                              <div className="text-lg font-black text-slate-800">{CLUES[2].title}</div>
+                              <div className="text-sm text-slate-600 hidden sm:block">{CLUES[2].text}</div>
+                            </div>
+                            <div className="text-3xl">📎</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase4 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choice) => {
+            setAnswered(true);
+            if (choice === 'INVESTIGATE') {
+              setCorrect(true);
+              onComplete(CLUES[3]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto pb-4 overflow-y-auto">
+                <div className="flex items-center gap-3 bg-white/90 p-3 rounded-xl shadow-sm border border-slate-200 mb-4 w-max mx-auto">
+                   <div className="text-2xl sm:text-3xl">👩🏽‍🏫</div>
+                   <p className="text-sm sm:text-base font-medium text-slate-700">
+                     "Interesting. These two pieces of evidence aren't telling exactly the same story."
+                   </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                   <div className="flex-1 bg-white rounded-xl shadow-md p-4 border-t-8 border-red-500 relative transform -rotate-1">
+                     <div className="absolute top-2 right-2 text-2xl opacity-20">📝</div>
+                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Evidence Source A</h3>
+                     <h2 className="text-lg sm:text-xl font-black text-slate-800 mb-2 sm:mb-4">Written Assessment</h2>
+                     <div className="flex items-end gap-2 mb-2 sm:mb-4">
+                        <span className="text-4xl sm:text-5xl font-black text-red-500 leading-none">58%</span>
+                        <span className="text-sm sm:text-base font-bold text-slate-500 pb-1">Average</span>
+                     </div>
+                     <p className="text-slate-600 text-xs sm:text-sm">Formal, timed, multiple-choice and short answer format.</p>
+                   </div>
+                   
+                   <div className="flex items-center justify-center font-black text-2xl text-slate-400">VS</div>
+
+                   <div className="flex-1 bg-white rounded-xl shadow-md p-4 border-t-8 border-green-500 relative transform rotate-1">
+                     <div className="absolute top-2 right-2 text-2xl opacity-20">🗣️</div>
+                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Evidence Source B</h3>
+                     <h2 className="text-lg sm:text-xl font-black text-slate-800 mb-2 sm:mb-4">Classroom Performance</h2>
+                     <div className="flex items-end gap-2 mb-2 sm:mb-4">
+                        <span className="text-4xl sm:text-5xl font-black text-green-500 leading-none">76%</span>
+                        <span className="text-sm sm:text-base font-bold text-slate-500 pb-1">Success Rate</span>
+                     </div>
+                     <p className="text-slate-600 text-xs sm:text-sm">Observed during group discussions, highlighted passages, and peer explanations.</p>
+                   </div>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  {!answered || !correct ? (
+                    <>
+                      <h2 className="text-lg sm:text-xl font-black text-slate-800 mb-3 bg-amber-200/80 px-4 py-1 sm:py-2 rounded-full shadow-sm text-center">
+                        WHAT SHOULD WE DO?
+                      </h2>
+                      <div className="flex flex-col md:flex-row gap-2 sm:gap-4 w-full justify-center">
+                        <button 
+                          onClick={() => handleAnswer('TRUST')}
+                          className="flex-1 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 sm:py-3 px-4 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-xs sm:text-sm"
+                        >
+                          TRUST THE TEST ONLY
+                        </button>
+                        <button 
+                          onClick={() => handleAnswer('IGNORE')}
+                          className="flex-1 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 sm:py-3 px-4 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-xs sm:text-sm"
+                        >
+                          IGNORE THE TEST ENTIRELY
+                        </button>
+                        <button 
+                          onClick={() => handleAnswer('INVESTIGATE')}
+                          className="flex-1 w-full bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 sm:py-3 px-4 rounded-xl shadow-sm border-2 border-slate-300 transition-colors text-xs sm:text-sm"
+                        >
+                          INVESTIGATE THE DIFFERENCE
+                        </button>
+                      </div>
+                      {answered && !correct && (
+                        <div className="text-red-700 bg-red-100 p-2 rounded text-sm sm:text-base font-bold mt-4 border border-red-300 text-center w-full max-w-2xl">
+                          Neither extreme is helpful. We shouldn't blindly trust one over the other. Try again.
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="bg-emerald-100 border-2 border-emerald-500 rounded-xl p-4 shadow-md w-full max-w-3xl mt-2 animate-[pulse_0.5s_ease-in-out_1]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl sm:text-4xl">⚖️</div>
+                        <div>
+                          <h3 className="text-lg font-bold text-emerald-800 mb-1">Correct approach!</h3>
+                          <p className="text-sm sm:text-base text-emerald-900 mb-3">
+                            "Different evidence can answer different questions. When evidence doesn't line up, investigate before drawing a conclusion."
+                          </p>
+                          <div className="bg-white p-3 rounded border-l-4 border-amber-500 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-xs text-amber-600 font-bold uppercase tracking-wider">Clue #4 Discovered</div>
+                              <div className="text-lg font-black text-slate-800">{CLUES[3].title}</div>
+                              <div className="text-sm text-slate-600 hidden sm:block">{CLUES[3].text}</div>
+                            </div>
+                            <div className="text-3xl">📎</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase5 = ({ onComplete }) => {
+          const evidences = [
+            { id: 'E4', text: "Students' reading comprehension scores improved over time." },
+            { id: 'E1', text: "Students said they enjoyed the reading lesson." },
+            { id: 'E3', text: "Students independently used text evidence during later assignments." },
+            { id: 'E2', text: "Students successfully explained a character's decision." }
+          ];
+
+          const destinations = [
+            { id: 'D1', title: "REACTION", desc: "Did learners respond positively?", correctE: 'E1' },
+            { id: 'D2', title: "LEARNING", desc: "Did learners learn?", correctE: 'E2' },
+            { id: 'D3', title: "BEHAVIOR", desc: "Did learners use what they learned?", correctE: 'E3' },
+            { id: 'D4', title: "RESULTS", desc: "Did it produce the intended outcome?", correctE: 'E4' }
+          ];
+
+          const [selectedE, setSelectedE] = useState(null);
+          const [placements, setPlacements] = useState({});
+          const [errorDest, setErrorDest] = useState(null);
+          const [hasCompleted, setHasCompleted] = useState(false);
+
+          const isComplete = Object.keys(placements).length === 4;
+
+          useEffect(() => {
+            if (isComplete && !hasCompleted) {
+              setHasCompleted(true);
+              onComplete();
+            }
+          }, [isComplete, hasCompleted, onComplete]);
+
+          const handleEvidenceClick = (id) => {
+            if (Object.values(placements).includes(id)) return;
+            setSelectedE(id === selectedE ? null : id);
+            setErrorDest(null);
+          };
+
+          const handleDestClick = (destId, correctE) => {
+            if (!selectedE) return;
+            if (placements[destId]) return;
+
+            if (selectedE === correctE) {
+              setPlacements(prev => ({ ...prev, [destId]: selectedE }));
+              setSelectedE(null);
+              setErrorDest(null);
+            } else {
+              setErrorDest(destId);
+              setTimeout(() => setErrorDest(null), 1000);
+            }
+          };
+
+          return (
+            <CorkboardScene>
+              <div className="w-full max-w-5xl bg-[#F4EBE1] p-4 sm:p-6 rounded shadow-xl relative border-4 sm:border-8 border-[#C19A6B]">
+                <div className="absolute -top-4 sm:-top-5 left-1/2 transform -translate-x-1/2 bg-amber-800 text-white font-mono px-4 py-1 shadow-md flex items-center gap-2 text-sm sm:text-base">
+                  <span className="text-lg">📌</span> THE EVIDENCE BOARD
+                </div>
+                
+                <p className="text-center font-medium text-amber-900 mt-2 sm:mt-4 mb-3 sm:mb-4 text-sm sm:text-base leading-tight">
+                  "You've collected four clues. Now organize the evidence."<br/>
+                  <span className="text-xs sm:text-sm font-normal">(Select an evidence card below, then click the correct category box to place it.)</span>
+                </p>
+
+                <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
+                  <div className="w-full md:w-1/3 flex flex-col gap-2">
+                    <h3 className="font-bold text-slate-500 uppercase tracking-wider text-xs border-b-2 border-slate-300 pb-1">Unsorted Evidence</h3>
+                    {evidences.map((ev) => {
+                      const isPlaced = Object.values(placements).includes(ev.id);
+                      const isSelected = selectedE === ev.id;
+                      
+                      if (isPlaced) return null;
+
+                      return (
+                        <button
+                          key={ev.id}
+                          onClick={() => handleEvidenceClick(ev.id)}
+                          className={`text-left p-2 sm:p-3 rounded border-2 shadow-sm relative transition-all
+                            ${isSelected 
+                              ? 'bg-yellow-100 border-yellow-400 shadow-md transform -translate-y-1 scale-[1.02]' 
+                              : 'bg-white border-slate-200 hover:border-yellow-400'}`}
+                        >
+                          <div className="absolute top-1 right-2 opacity-40 text-sm">📝</div>
+                          <div className="text-[10px] font-bold text-slate-400 mb-0.5">EVIDENCE {ev.id.replace('E', '')}</div>
+                          <div className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight">{ev.text}</div>
+                        </button>
+                      );
+                    })}
+                    
+                    {Object.values(placements).length === 4 && (
+                       <div className="bg-green-100 p-2 sm:p-3 rounded text-center border border-green-300 font-bold text-green-800 text-sm">
+                         All evidence organized!
+                       </div>
+                    )}
+                  </div>
+
+                  <div className="w-full md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {destinations.map((dest) => {
+                      const placedEvId = placements[dest.id];
+                      const placedEv = evidences.find(e => e.id === placedEvId);
+                      const isError = errorDest === dest.id;
+
+                      return (
+                        <div 
+                          key={dest.id}
+                          onClick={() => handleDestClick(dest.id, dest.correctE)}
+                          className={`p-3 rounded-xl border-4 flex flex-col min-h-[100px] sm:min-h-[120px] transition-colors
+                            ${placedEv 
+                              ? 'bg-blue-50 border-blue-200' 
+                              : selectedE 
+                                ? isError ? 'bg-red-50 border-red-400 cursor-not-allowed' : 'bg-slate-100 border-dashed border-yellow-400 cursor-pointer hover:bg-yellow-50' 
+                                : 'bg-slate-100 border-dashed border-slate-300'}`}
+                        >
+                          <div className="font-black text-slate-700 tracking-wide text-sm">{dest.title}</div>
+                          <div className="text-[10px] sm:text-xs text-slate-500 mb-1 italic leading-tight">{dest.desc}</div>
+                          
+                          <div className="flex-1 flex items-center justify-center mt-1">
+                            {placedEv ? (
+                              <div className="bg-white p-2 text-xs sm:text-sm border-l-4 border-blue-500 shadow-sm w-full font-medium text-slate-800 animate-[fadeIn_0.3s_ease-out]">
+                                ✓ {placedEv.text}
+                              </div>
+                            ) : (
+                              <div className={`text-xs sm:text-sm ${selectedE ? (isError ? 'text-red-400 font-bold' : 'text-yellow-600 font-bold animate-pulse') : 'text-slate-400'}`}>
+                                {selectedE ? (isError ? 'Mismatch!' : 'Click to place here') : 'Empty'}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {isComplete && (
+                  <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded animate-[fadeIn_0.5s_ease-out]">
+                    <div className="bg-emerald-600 text-white px-6 sm:px-10 py-4 sm:py-6 rounded-2xl shadow-xl text-center transform scale-100 sm:scale-110">
+                      <div className="text-4xl sm:text-5xl mb-2 sm:mb-4">✅</div>
+                      <h2 className="text-xl sm:text-3xl font-black mb-1 sm:mb-2 tracking-widest">INVESTIGATION COMPLETE</h2>
+                      <p className="text-sm sm:text-lg text-emerald-100 font-medium">All evidence successfully categorized.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CorkboardScene>
+          );
+        };
+
+        const ScreenFinal = ({ onComplete }) => {
+          const [selectedChoice, setSelectedChoice] = useState(null);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choice) => {
+            setSelectedChoice(choice);
+            if (choice === 'B') {
+              setCorrect(true);
+              onComplete();
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-4xl mx-auto space-y-4 pb-4 overflow-y-auto">
+                <div className="bg-white p-4 rounded-xl shadow-md flex items-center gap-4 border-l-8 border-amber-500 flex-shrink-0">
+                   <div className="text-4xl sm:text-5xl">👩🏽‍🏫</div>
+                   <p className="text-lg sm:text-xl font-semibold text-slate-800 leading-tight">
+                     "So... after looking at all this evidence, what does the 58% actually tell us?"
+                   </p>
+                </div>
+
+                {!correct ? (
+                  <div className="space-y-3 w-full flex-shrink-0">
+                    <button 
+                      onClick={() => handleAnswer('A')} 
+                      className={`w-full text-left p-3 sm:p-4 border-2 rounded-xl text-sm sm:text-base font-medium shadow-sm transition-colors ${selectedChoice === 'A' ? 'bg-red-100 border-red-400 text-red-900' : 'bg-slate-100 hover:bg-slate-200 border-slate-300'}`}
+                    >
+                      A. It proves my students didn't learn the material.
+                    </button>
+                    <button 
+                      onClick={() => handleAnswer('B')} 
+                      className={`w-full text-left p-3 sm:p-4 border-2 rounded-xl text-sm sm:text-base font-medium shadow-sm transition-colors ${selectedChoice === 'B' ? 'bg-indigo-50 border-indigo-400 text-indigo-900' : 'bg-slate-100 hover:bg-slate-200 border-slate-300'}`}
+                    >
+                      B. It raises a question, but I need more evidence to answer it fully.
+                    </button>
+                    <button 
+                      onClick={() => handleAnswer('C')} 
+                      className={`w-full text-left p-3 sm:p-4 border-2 rounded-xl text-sm sm:text-base font-medium shadow-sm transition-colors ${selectedChoice === 'C' ? 'bg-red-100 border-red-400 text-red-900' : 'bg-slate-100 hover:bg-slate-200 border-slate-300'}`}
+                    >
+                      C. The classroom activity proves the assessment was completely wrong.
+                    </button>
+                    
+                    {selectedChoice && !correct && (
+                      <div className="text-red-700 bg-red-100 p-3 rounded text-sm sm:text-base font-bold text-center border border-red-300 animate-[fadeIn_0.3s_ease-out]">
+                        Not quite. Re-evaluate the clues we found about relying on a single piece of evidence.
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="bg-slate-900 text-white p-4 sm:p-6 rounded-2xl shadow-xl border-4 border-amber-500 animate-[fadeIn_0.5s_ease-out] flex-shrink-0">
+                    <h2 className="text-xl sm:text-2xl font-black text-amber-500 mb-3 sm:mb-4 text-center border-b border-slate-700 pb-2">
+                      CASE CLOSED? NOT SO FAST.
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+                      <div className="bg-slate-800 p-3 rounded border-l-4 border-blue-500">
+                        <h4 className="font-bold text-blue-400 uppercase text-xs sm:text-sm mb-1">1. Check the match</h4>
+                        <p className="text-slate-300 text-xs sm:text-sm">Does the assessment measure what students were expected to learn?</p>
+                      </div>
+                      <div className="bg-slate-800 p-3 rounded border-l-4 border-amber-500">
+                        <h4 className="font-bold text-amber-400 uppercase text-xs sm:text-sm mb-1">2. Look at the data</h4>
+                        <p className="text-slate-300 text-xs sm:text-sm">What patterns are hidden behind the overall score?</p>
+                      </div>
+                      <div className="bg-slate-800 p-3 rounded border-l-4 border-green-500">
+                        <h4 className="font-bold text-green-400 uppercase text-xs sm:text-sm mb-1">3. Check consistency</h4>
+                        <p className="text-slate-300 text-xs sm:text-sm">Are the results reasonably consistent?</p>
+                      </div>
+                      <div className="bg-slate-800 p-3 rounded border-l-4 border-purple-500">
+                        <h4 className="font-bold text-purple-400 uppercase text-xs sm:text-sm mb-1">4. Follow the evidence</h4>
+                        <p className="text-slate-300 text-xs sm:text-sm">What does each piece of evidence actually tell you?</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-amber-100 text-amber-900 p-3 sm:p-4 rounded-xl text-center shadow-inner">
+                      <p className="text-sm sm:text-base font-black uppercase tracking-wide leading-snug">
+                        Before making a judgment from assessment data, investigate what the evidence can — and cannot — actually tell you.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenEnd = ({ clues, onReturnBoard, onFinish }) => (
+          <CorkboardScene>
+            <div className="bg-[#2a2a2a] w-full max-w-4xl p-6 sm:p-8 rounded-lg shadow-2xl border-4 border-[#1a1a1a] text-white flex flex-col items-center">
+              <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">🗂️</div>
+              <h1 className="text-2xl sm:text-4xl font-black text-amber-500 mb-1 sm:mb-2 tracking-widest text-center leading-tight">INVESTIGATION COMPLETE</h1>
+              <h2 className="text-sm sm:text-xl text-slate-400 font-mono mb-6 border-b border-slate-700 pb-3 w-full text-center">CASE 005 — THE QUESTIONABLE SCORE</h2>
+              
+              <div className="bg-slate-800 px-4 sm:px-6 py-1 sm:py-2 rounded-full font-bold text-green-400 mb-6 border border-green-900 shadow-inner text-sm sm:text-base">
+                CLUES COLLECTED: 4/4 ✓
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 w-full mb-8">
+                {clues.map(clue => (
+                  <div key={clue.id} className="bg-slate-700 p-3 sm:p-4 rounded border-l-4 border-amber-500 flex items-start gap-3 shadow-md">
+                     <div className="text-xl sm:text-2xl mt-0.5">🔎</div>
+                     <div>
+                       <div className="font-bold text-amber-400 text-xs sm:text-sm">{clue.title}</div>
+                       <div className="text-slate-300 text-xs sm:text-sm mt-1 leading-tight">{clue.text}</div>
+                     </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <button onClick={onReturnBoard} className="flex-1 bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 sm:py-3 px-6 rounded shadow text-sm sm:text-base">
+                  RETURN TO CASE BOARD
+                </button>
+                <button onClick={onFinish} className="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-2 sm:py-3 px-6 rounded shadow-lg text-sm sm:text-base">
+                  FINISH INVESTIGATION
+                </button>
+              </div>
+            </div>
+          </CorkboardScene>
+        );
+
+        function App() {
+          const [currentScreen, setCurrentScreen] = useState(SCREENS.INTRO);
+          const [history, setHistory] = useState([]);
+          const [unlockedCases, setUnlockedCases] = useState(1);
+          const [completedCases, setCompletedCases] = useState([]);
+          const [cluesCollected, setCluesCollected] = useState([]);
+          const [nextPulseMap, setNextPulseMap] = useState({});
+
+          const goToScreen = (screen) => {
+            setHistory(prev => [...prev, currentScreen]);
+            setCurrentScreen(screen);
+          };
+
+          const goBack = () => {
+            if (history.length === 0) return;
+            const newHistory = [...history];
+            const prev = newHistory.pop();
+            setHistory(newHistory);
+            setCurrentScreen(prev);
+          };
+
+          const handleNext = () => {
+            const currentIndex = SCREEN_ORDER.indexOf(currentScreen);
+            if (currentIndex >= 0 && currentIndex < SCREEN_ORDER.length - 1) {
+              goToScreen(SCREEN_ORDER[currentIndex + 1]);
+            } else if (currentScreen === SCREENS.FINAL) {
+              goToScreen(SCREENS.END);
+            }
+          };
+
+          const handleRestart = () => {
+            setCurrentScreen(SCREENS.INTRO);
+            setHistory([]);
+            setUnlockedCases(1);
+            setCompletedCases([]);
+            setCluesCollected([]);
+            setNextPulseMap({});
+          };
+
+          const completeCase = (caseId, clue = null) => {
+            if (!completedCases.includes(caseId)) {
+              setCompletedCases(prev => [...prev, caseId]);
+              if (unlockedCases < caseId + 1) {
+                setUnlockedCases(caseId + 1);
+              }
+              if (clue && !cluesCollected.find(c => c.id === clue.id)) {
+                setCluesCollected(prev => [...prev, clue]);
+              }
+            }
+            setNextPulseMap(prev => ({ ...prev, [currentScreen]: true }));
+          };
+
+          const isNextDisabled = () => {
+            if (currentScreen === SCREENS.INTRO) return true;
+            if (currentScreen === SCREENS.BOARD) return true;
+            if (currentScreen === SCREENS.END) return true;
+            if (currentScreen === SCREENS.FINISHED) return true;
+
+            const caseIndexMap = {
+              [SCREENS.CASE1]: 1, [SCREENS.CASE2]: 2, [SCREENS.CASE3]: 3,
+              [SCREENS.CASE4]: 4, [SCREENS.CASE5]: 5, [SCREENS.FINAL]: 6
+            };
+            
+            const requiredCaseId = caseIndexMap[currentScreen];
+            return requiredCaseId ? !completedCases.includes(requiredCaseId) : true;
+          };
+
+          return (
+            <div className="flex flex-col h-full w-full bg-slate-900 font-sans overflow-hidden text-base">
+              <TopNav 
+                currentScreen={currentScreen} 
+                unlockedCases={unlockedCases} 
+                cluesCollected={cluesCollected} 
+                onRestart={handleRestart}
+              />
+              
+              <div className="flex-1 relative overflow-hidden bg-black flex flex-col">
+                {currentScreen === SCREENS.INTRO && <ScreenIntro onStart={() => goToScreen(SCREENS.BOARD)} />}
+                
+                {currentScreen === SCREENS.BOARD && (
+                  <ScreenBoard 
+                    unlockedCases={unlockedCases} 
+                    completedCases={completedCases}
+                    onSelectCase={goToScreen} 
+                  />
+                )}
+                
+                {currentScreen === SCREENS.CASE1 && <ScreenCase1 onComplete={(clue) => completeCase(1, clue)} />}
+                {currentScreen === SCREENS.CASE2 && <ScreenCase2 onComplete={(clue) => completeCase(2, clue)} />}
+                {currentScreen === SCREENS.CASE3 && <ScreenCase3 onComplete={(clue) => completeCase(3, clue)} />}
+                {currentScreen === SCREENS.CASE4 && <ScreenCase4 onComplete={(clue) => completeCase(4, clue)} />}
+                {currentScreen === SCREENS.CASE5 && <ScreenCase5 onComplete={() => completeCase(5)} />}
+                {currentScreen === SCREENS.FINAL && <ScreenFinal onComplete={() => completeCase(6)} />}
+                
+                {currentScreen === SCREENS.END && (
+                  <ScreenEnd 
+                    clues={cluesCollected} 
+                    onReturnBoard={() => goToScreen(SCREENS.BOARD)} 
+                    onFinish={() => setCurrentScreen(SCREENS.FINISHED)} 
+                  />
+                )}
+
+                {currentScreen === SCREENS.FINISHED && (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-900 relative">
+                     <div className="text-center animate-[fadeIn_1s_ease-out] z-10 flex flex-col items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-20 h-20 sm:w-24 sm:h-24 text-red-500 mb-4 sm:mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                          <path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.94 49.94 0 0 0-9.902 3.912l-.003.002c-.874.472-1.926.472-2.8 0a50.04 50.04 0 0 0-9.905-3.914.75.75 0 0 1-.231-1.337A60.65 60.65 0 0 1 11.7 2.805Z" />
+                          <path d="M13.06 15.473c-.836.45-1.808.45-2.644 0a49.98 49.98 0 0 1-5.602-2.316.751.751 0 0 0-1.07.69v2.247c0 2.211 4.542 4.152 8.646 4.152 4.104 0 8.646-1.94 8.646-4.152v-2.247a.751.751 0 0 0-1.07-.69c-1.85.814-3.666 1.636-5.602 2.316Z" />
+                        </svg>
+                        <h1 className="text-2xl sm:text-4xl font-black text-green-500 tracking-widest px-4">CASE COMPLETE ✓</h1>
+                        <p className="text-slate-400 mt-2 sm:mt-4 text-base sm:text-lg">Thank you for playing.</p>
+                        <button 
+                          onClick={handleRestart}
+                          className="mt-8 sm:mt-10 bg-slate-700 hover:bg-amber-600 text-white font-bold py-3 sm:py-4 px-6 sm:px-10 rounded-lg shadow-lg transition-colors tracking-wider text-sm sm:text-base"
+                        >
+                          ↻ RESTART INVESTIGATION
+                        </button>
+                     </div>
+                  </div>
+                )}
+              </div>
+
+              <BottomNav 
+                currentScreen={currentScreen}
+                onBack={goBack} 
+                onBoard={() => goToScreen(SCREENS.BOARD)} 
+                onNext={handleNext}
+                backDisabled={history.length === 0 || currentScreen === SCREENS.FINISHED}
+                nextDisabled={isNextDisabled()}
+                showNextPulse={nextPulseMap[currentScreen]}
+              />
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
