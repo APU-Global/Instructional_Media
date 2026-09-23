@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Case of the Questionable Score</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for in-browser JSX transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Let the React app handle scrolling inside its containers */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        #root {
+            width: 100%;
+            height: 100%;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Accessibility utilities */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, Fragment, useRef } = React;
+
+        const CLUES = [
+          { id: 1, title: "ALIGNMENT", text: "An assessment should match what students are expected to learn and do." },
+          { id: 2, title: "LOOK BENEATH THE AVERAGE", text: "An overall score can hide important patterns in the data." },
+          { id: 3, title: "RELIABILITY", text: "Consistency matters, but consistency alone doesn't prove an assessment measured the right thing." },
+          { id: 4, title: "MULTIPLE SOURCES", text: "Different evidence can answer different questions. Investigate before drawing a conclusion." }
+        ];
+
+        const SCREENS = {
+          INTRO: 'INTRO',
+          BOARD: 'BOARD',
+          CASE1: 'CASE1',
+          CASE2: 'CASE2',
+          CASE3: 'CASE3',
+          CASE4: 'CASE4',
+          CASE5: 'CASE5',
+          FINAL: 'FINAL',
+          END: 'END',
+          FINISHED: 'FINISHED'
+        };
+
+        const SCREEN_ORDER = [
+          SCREENS.INTRO, SCREENS.CASE1, SCREENS.CASE2, 
+          SCREENS.CASE3, SCREENS.CASE4, SCREENS.CASE5, SCREENS.FINAL
+        ];
+
+        const AccessibleView = ({ onExit }) => {
+          return (
+            <div className="h-full w-full overflow-y-auto bg-white text-black p-6 sm:p-12">
+              <div className="max-w-4xl mx-auto space-y-12">
+                <div className="flex justify-between items-center border-b-4 border-black pb-4">
+                  <h1 className="text-3xl sm:text-4xl font-black uppercase">The Case of the Questionable Score</h1>
+                  <button 
+                    onClick={onExit}
+                    className="bg-black text-white px-6 py-3 font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-500 hover:bg-gray-800"
+                    aria-label="Exit accessible text-only mode and return to interactive mode"
+                  >
+                    Return to Interactive Mode
+                  </button>
+                </div>
+
+                <section aria-labelledby="intro-heading">
+                  <h2 id="intro-heading" className="text-2xl font-bold mb-4">Introduction</h2>
+                  <p className="text-lg mb-4">Ms. Rivera, a 4th-grade teacher, says: "My class scored 58% on the assessment. Does that mean they didn't learn?"</p>
+                  <p className="text-lg">Your mission as the Assessment Detective: Follow the evidence. Find the clues. Figure out what the score really tells you. One score. A lot of questions.</p>
+                </section>
+
+                <hr className="border-gray-300" />
+
+                <section aria-labelledby="case1-heading">
+                  <h2 id="case1-heading" className="text-2xl font-bold mb-4">Case 01: The Mismatch</h2>
+                  <div className="bg-gray-100 p-6 rounded-lg mb-4">
+                    <h3 className="font-bold text-lg mb-2">Evidence:</h3>
+                    <p><strong>Learning Goal:</strong> Students will use evidence from a story to explain why a character made a decision.</p>
+                    <p><strong>Assessment Question 1:</strong> What does the word "evidence" mean? (Multiple choice options: A type of book, Proof or facts, The main character, The end of a story).</p>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Question: Why is this assessment question flawed?</h3>
+                  <p className="mb-2">A. It asks students to write too much.</p>
+                  <p className="mb-2 font-bold text-green-700 bg-green-50 p-2 border-l-4 border-green-700">B. It tests vocabulary memorization instead of the ability to use evidence to explain. (Correct)</p>
+                  <p className="mb-4">C. The reading passage was likely too difficult.</p>
+                  <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-700">
+                    <h4 className="font-bold uppercase tracking-wider mb-1">Clue #1 Discovered: {CLUES[0].title}</h4>
+                    <p>{CLUES[0].text}</p>
+                  </div>
+                </section>
+
+                <hr className="border-gray-300" />
+
+                <section aria-labelledby="case2-heading">
+                  <h2 id="case2-heading" className="text-2xl font-bold mb-4">Case 02: The 58% Mystery</h2>
+                  <div className="bg-gray-100 p-6 rounded-lg mb-4">
+                    <h3 className="font-bold text-lg mb-2">Evidence (Data Breakdown):</h3>
+                    <ul className="list-disc pl-6 space-y-2">
+                      <li>Overall Class Average: 58%</li>
+                      <li>Recall (Multiple Choice): 82%</li>
+                      <li>Using Evidence (Short Answer): 61%</li>
+                      <li>Explaining Thinking (Essay): 39%</li>
+                    </ul>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Question: What does this data breakdown reveal?</h3>
+                  <p className="mb-2">A. The class failed, so the teacher needs to reteach the entire reading unit from the beginning.</p>
+                  <p className="mb-2">B. The assessment is completely unreliable and should be thrown out.</p>
+                  <p className="mb-4 font-bold text-green-700 bg-green-50 p-2 border-l-4 border-green-700">C. The overall score hides the fact that students mastered recall but specifically struggle with explaining their thinking. (Correct)</p>
+                  <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-700">
+                    <h4 className="font-bold uppercase tracking-wider mb-1">Clue #2 Discovered: {CLUES[1].title}</h4>
+                    <p>{CLUES[1].text}</p>
+                  </div>
+                </section>
+
+                <hr className="border-gray-300" />
+
+                <section aria-labelledby="case3-heading">
+                  <h2 id="case3-heading" className="text-2xl font-bold mb-4">Case 03: The Repeat Test</h2>
+                  <div className="bg-gray-100 p-6 rounded-lg mb-4">
+                    <h3 className="font-bold text-lg mb-2">Evidence:</h3>
+                    <p>Ms. Rivera says: "I gave the exact same assessment the next week. The scores are almost the same (Week 1: 58%, Week 2: 60%). Does that mean the assessment is good?"</p>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Question: What does the similar score tell us?</h3>
+                  <p className="mb-2">A. It proves the assessment is perfectly aligned to the learning goals.</p>
+                  <p className="mb-2">B. The slight increase proves the students are definitely mastering the material.</p>
+                  <p className="mb-4 font-bold text-green-700 bg-green-50 p-2 border-l-4 border-green-700">C. The assessment is consistent, but that doesn't guarantee it's measuring the right thing. (Correct)</p>
+                  <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-700">
+                    <h4 className="font-bold uppercase tracking-wider mb-1">Clue #3 Discovered: {CLUES[2].title}</h4>
+                    <p>{CLUES[2].text}</p>
+                  </div>
+                </section>
+
+                <hr className="border-gray-300" />
+
+                <section aria-labelledby="case4-heading">
+                  <h2 id="case4-heading" className="text-2xl font-bold mb-4">Case 04: Show Me What You Know</h2>
+                  <div className="bg-gray-100 p-6 rounded-lg mb-4">
+                    <h3 className="font-bold text-lg mb-2">Evidence:</h3>
+                    <p><strong>Source A (Written Assessment):</strong> 58% Average. Formal, timed, multiple-choice and short answer format.</p>
+                    <p><strong>Source B (Classroom Performance):</strong> 76% Success Rate. Observed during group discussions, highlighted passages, and peer explanations.</p>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Question: What should we do?</h3>
+                  <p className="mb-2">A. Trust the test only.</p>
+                  <p className="mb-2">B. Ignore the test entirely.</p>
+                  <p className="mb-4 font-bold text-green-700 bg-green-50 p-2 border-l-4 border-green-700">C. Investigate the difference. (Correct)</p>
+                  <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-700">
+                    <h4 className="font-bold uppercase tracking-wider mb-1">Clue #4 Discovered: {CLUES[3].title}</h4>
+                    <p>{CLUES[3].text}</p>
+                  </div>
+                </section>
+
+                <hr className="border-gray-300" />
+
+                <section aria-labelledby="case5-heading">
+                  <h2 id="case5-heading" className="text-2xl font-bold mb-4">Case 05: The Evidence Board</h2>
+                  <p className="mb-4">Task: Organize the evidence into the correct evaluation categories.</p>
+                  <div className="space-y-4">
+                    <div className="bg-gray-100 p-4 rounded border-l-4 border-gray-400">
+                      <strong>Reaction (Did learners respond positively?):</strong> Students said they enjoyed the reading lesson.
+                    </div>
+                    <div className="bg-gray-100 p-4 rounded border-l-4 border-gray-400">
+                      <strong>Learning (Did learners learn?):</strong> Students successfully explained a character's decision.
+                    </div>
+                    <div className="bg-gray-100 p-4 rounded border-l-4 border-gray-400">
+                      <strong>Behavior (Did learners use what they learned?):</strong> Students independently used text evidence during later assignments.
+                    </div>
+                    <div className="bg-gray-100 p-4 rounded border-l-4 border-gray-400">
+                      <strong>Results (Did it produce the intended outcome?):</strong> Students' reading comprehension scores improved over time.
+                    </div>
+                  </div>
+                </section>
+
+                <hr className="border-gray-300" />
+
+                <section aria-labelledby="final-heading">
+                  <h2 id="final-heading" className="text-2xl font-bold mb-4">Final Case: Case Closed?</h2>
+                  <div className="bg-gray-100 p-6 rounded-lg mb-4">
+                    <p>Ms. Rivera asks: "So... after looking at all this evidence, what does the 58% actually tell us?"</p>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Question: Choose the best conclusion.</h3>
+                  <p className="mb-2">A. It proves my students didn't learn the material.</p>
+                  <p className="mb-2 font-bold text-green-700 bg-green-50 p-2 border-l-4 border-green-700">B. It raises a question, but I need more evidence to answer it fully. (Correct)</p>
+                  <p className="mb-4">C. The classroom activity proves the assessment was completely wrong.</p>
+                  
+                  <div className="bg-blue-900 text-white p-6 rounded-lg mt-6">
+                    <h3 className="font-bold text-xl mb-4 text-amber-400">Investigation Principles:</h3>
+                    <ol className="list-decimal pl-6 space-y-2 mb-6">
+                      <li><strong>Check the match:</strong> Does the assessment measure what students were expected to learn?</li>
+                      <li><strong>Look at the data:</strong> What patterns are hidden behind the overall score?</li>
+                      <li><strong>Check consistency:</strong> Are the results reasonably consistent?</li>
+                      <li><strong>Follow the evidence:</strong> What does each piece of evidence actually tell you?</li>
+                    </ol>
+                    <p className="font-black uppercase text-lg text-center bg-white text-blue-900 p-4 rounded">Before making a judgment from assessment data, investigate what the evidence can — and cannot — actually tell you.</p>
+                  </div>
+                </section>
+                
+                <div className="pb-20 text-center">
+                  <button 
+                    onClick={onExit}
+                    className="bg-black text-white px-8 py-4 text-xl font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-500 hover:bg-gray-800"
+                  >
+                    Close Accessible View
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        const TopNav = ({ currentScreen, unlockedCases, cluesCollected, onRestart, onToggleAccessible }) => {
+          const getScreenLabel = () => {
+            switch (currentScreen) {
+              case SCREENS.INTRO: return "INTRODUCTION";
+              case SCREENS.BOARD: return "CASE BOARD";
+              case SCREENS.CASE1: return "CASE 01: THE MISMATCH";
+              case SCREENS.CASE2: return "CASE 02: THE 58% MYSTERY";
+              case SCREENS.CASE3: return "CASE 03: THE REPEAT TEST";
+              case SCREENS.CASE4: return "CASE 04: SHOW ME WHAT YOU KNOW";
+              case SCREENS.CASE5: return "CASE 05: THE EVIDENCE BOARD";
+              case SCREENS.FINAL: return "FINAL CASE: CASE CLOSED?";
+              case SCREENS.END: return "INVESTIGATION COMPLETE";
+              case SCREENS.FINISHED: return "CASE COMPLETE";
+              default: return "";
+            }
+          };
+
+          return (
+            <header className="w-full bg-slate-900 text-white px-3 sm:px-6 py-4 shadow-md flex flex-col md:flex-row justify-between items-center z-50 border-b-4 border-slate-700 flex-shrink-0 gap-3">
+              <div className="flex flex-col items-center md:items-start">
+                <h1 className="text-xl sm:text-2xl font-black tracking-wider text-amber-500 text-center uppercase leading-none">The Case of the Questionable Score</h1>
+                <div className="text-xs font-bold text-slate-100 bg-slate-700 px-3 py-1 rounded-full mt-2 border border-slate-500 inline-block" aria-live="polite">
+                  {getScreenLabel()}
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 flex-wrap justify-center">
+                <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-slate-300" aria-hidden="true">
+                  {['INTRO', '01', '02', '03', '04', '05', 'FINAL'].map((step, idx) => (
+                    <Fragment key={step}>
+                      <span className={unlockedCases >= idx ? 'text-amber-400 font-bold' : ''}>{step}</span>
+                      {idx < 6 && <span>→</span>}
+                    </Fragment>
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={onToggleAccessible}
+                  className="bg-blue-800 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-400 transition-colors border border-blue-600"
+                  aria-label="Switch to accessible text-only mode"
+                >
+                  TEXT ONLY VIEW
+                </button>
+
+                <div className="bg-slate-800 border border-slate-500 rounded px-3 py-1 flex items-center gap-2" aria-live="polite">
+                  <span className="text-lg" aria-hidden="true">🔎</span>
+                  <span className="font-bold font-mono tracking-widest text-amber-400 text-sm">CLUES: {cluesCollected.length}/4</span>
+                </div>
+                
+                <button 
+                  onClick={onRestart}
+                  className="bg-slate-700 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded flex items-center gap-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-red-400 transition-colors border border-slate-500"
+                  aria-label="Restart investigation"
+                >
+                  <span aria-hidden="true">↻</span> RESTART
+                </button>
+              </div>
+            </header>
+          );
+        };
+
+        const BottomNav = ({ onBack, onBoard, onNext, backDisabled, nextDisabled, showNextPulse, currentScreen }) => {
+          if (currentScreen === SCREENS.FINISHED) return null;
+          
+          return (
+            <nav className="w-full bg-slate-900 px-3 sm:px-6 py-3 border-t-4 border-slate-700 flex justify-between items-center z-50 flex-shrink-0" aria-label="Investigation Navigation">
+              <button 
+                onClick={onBack} 
+                disabled={backDisabled}
+                aria-label="Go back to previous screen"
+                className={`px-4 py-2 rounded font-bold transition-all flex items-center gap-2 text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500
+                  ${backDisabled ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-slate-700 text-white hover:bg-slate-600 active:bg-slate-500 border border-slate-500'}`}
+              >
+                <span aria-hidden="true">←</span> BACK
+              </button>
+
+              <button 
+                onClick={onBoard}
+                disabled={currentScreen === SCREENS.BOARD || currentScreen === SCREENS.INTRO}
+                aria-label="Return to Case Board"
+                className={`px-4 py-2 rounded font-bold transition-all flex items-center gap-2 text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-white
+                  ${(currentScreen === SCREENS.BOARD || currentScreen === SCREENS.INTRO) ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-amber-600 text-slate-900 hover:bg-amber-500 shadow-md border border-amber-700'}`}
+              >
+                <span aria-hidden="true">🗂️</span> CASE BOARD
+              </button>
+
+              <button 
+                onClick={onNext} 
+                disabled={nextDisabled}
+                aria-label="Go to next screen"
+                className={`px-4 py-2 rounded font-bold transition-all flex items-center gap-2 border text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500
+                  ${nextDisabled 
+                    ? 'bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed' 
+                    : showNextPulse 
+                      ? 'bg-green-700 text-white border-green-500 shadow-[0_0_10px_rgba(34,197,94,0.6)] animate-pulse hover:bg-green-600' 
+                      : 'bg-green-700 text-white border-green-600 hover:bg-green-600'}`}
+              >
+                NEXT <span aria-hidden="true">→</span>
+              </button>
+            </nav>
+          );
+        };
+
+        const ClassroomScene = ({ children }) => (
+          <main className="relative w-full h-full bg-[#E8DCC4] overflow-y-auto overflow-x-hidden flex flex-col items-center">
+            <div className="absolute top-0 w-full h-[65%] bg-[#F2E8D5] pointer-events-none" aria-hidden="true" />
+            <div className="absolute bottom-0 w-full h-[35%] bg-[#6B4423] border-t-8 border-[#4A2E15] pointer-events-none" aria-hidden="true" />
+            <div className="absolute bottom-0 w-full h-[33%] bg-[#8B5A2B] opacity-50 pointer-events-none" aria-hidden="true" />
+            <div className="relative z-10 w-full max-w-6xl h-full flex flex-col p-3 sm:p-6 justify-center">
+              {children}
+            </div>
+          </main>
+        );
+
+        const CorkboardScene = ({ children }) => (
+          <main className="relative w-full h-full bg-[#C19A6B] overflow-y-auto overflow-x-hidden p-3 sm:p-6">
+            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#4A2E15 1px, transparent 1px)', backgroundSize: '10px 10px' }} aria-hidden="true"></div>
+            <div className="absolute inset-3 sm:inset-4 border-[8px] sm:border-[12px] border-[#5C3A21] shadow-inner pointer-events-none" aria-hidden="true" />
+            <div className="relative z-10 w-full h-full max-w-6xl mx-auto flex flex-col items-center justify-center pt-4 pb-4">
+              {children}
+            </div>
+          </main>
+        );
+
+        const ScreenIntro = ({ onStart }) => (
+          <ClassroomScene>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-8 w-full max-w-5xl mx-auto">
+              <div className="w-full md:w-1/2 flex flex-col items-center text-center flex-shrink-0">
+                <div className="text-[70px] sm:text-[90px] leading-none mb-2 drop-shadow-md" aria-hidden="true">👩🏽‍🏫</div>
+                <div className="bg-white p-4 rounded-xl shadow-xl relative border-2 border-amber-300 w-full max-w-sm mx-auto">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[15px] border-b-white" aria-hidden="true"></div>
+                  <p className="text-base sm:text-lg font-bold text-slate-800">
+                    "My class scored 58% on the assessment. Does that mean they didn't learn?"
+                  </p>
+                  <p className="mt-2 text-xs font-bold text-slate-600 uppercase">— Ms. Rivera, 4th Grade Teacher</p>
+                </div>
+              </div>
+              
+              <div className="w-full md:w-1/2 flex flex-col items-center md:items-start space-y-4">
+                <div className="bg-slate-900 text-white p-5 rounded-xl shadow-xl border-l-8 border-amber-500 w-full transform rotate-1 hover:rotate-0 transition-transform">
+                  <h2 className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">You are the Assessment Detective</h2>
+                  <h3 className="text-xl sm:text-2xl font-black mb-2 leading-tight">One score. A lot of questions.</h3>
+                  <p className="text-sm sm:text-base text-slate-200">
+                    Your mission: Follow the evidence. Find the clues. Figure out what the <span className="font-bold text-red-300 bg-red-900/40 px-1 rounded">58%</span> score really tells you.
+                  </p>
+                </div>
+                
+                <button 
+                  onClick={onStart}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-900 text-lg font-black px-6 py-3 rounded shadow-[0_4px_0_#b45309] active:shadow-[0_0px_0_#b45309] active:translate-y-1 transition-all flex items-center justify-center gap-2 w-full md:w-auto focus:outline-none focus-visible:ring-4 focus-visible:ring-white"
+                >
+                  START INVESTIGATION <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+          </ClassroomScene>
+        );
+
+        const ScreenBoard = ({ unlockedCases, onSelectCase, completedCases }) => {
+          const folders = [
+            { id: 1, title: "THE MISMATCH", screen: SCREENS.CASE1 },
+            { id: 2, title: "THE 58% MYSTERY", screen: SCREENS.CASE2 },
+            { id: 3, title: "THE REPEAT TEST", screen: SCREENS.CASE3 },
+            { id: 4, title: "SHOW ME WHAT YOU KNOW", screen: SCREENS.CASE4 },
+            { id: 5, title: "THE EVIDENCE BOARD", screen: SCREENS.CASE5 },
+            { id: 6, title: "CASE CLOSED?", screen: SCREENS.FINAL, isFinal: true }
+          ];
+
+          return (
+            <CorkboardScene>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-5xl">
+                {folders.map((folder, index) => {
+                  const isUnlocked = unlockedCases >= index + 1;
+                  const isCompleted = completedCases.includes(index + 1);
+                  
+                  return (
+                    <button
+                      key={folder.id}
+                      onClick={() => isUnlocked && onSelectCase(folder.screen)}
+                      disabled={!isUnlocked}
+                      aria-label={folder.title + (isCompleted ? " - Completed" : isUnlocked ? " - Unlocked" : " - Locked")}
+                      className={`relative h-28 sm:h-32 w-full rounded-tr-2xl rounded-bl rounded-br border-t-8 border-l border-r border-b flex flex-col items-center justify-center p-2 transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:z-50
+                        ${isUnlocked 
+                          ? 'bg-[#E3C27C] border-[#B89645] hover:bg-[#F2D696] hover:-translate-y-1 hover:shadow-lg shadow-md cursor-pointer' 
+                          : 'bg-slate-400 border-slate-500 opacity-80 cursor-not-allowed grayscale'}`}
+                    >
+                      <div className={`absolute -top-3 sm:-top-4 left-0 h-3 sm:h-4 w-1/3 rounded-t border-t border-l border-r border-b-0
+                        ${isUnlocked ? 'bg-[#E3C27C] border-[#B89645]' : 'bg-slate-400 border-slate-500'}`} aria-hidden="true"></div>
+                      
+                      {!isUnlocked && (
+                        <div className="absolute top-1 right-1 text-xl" aria-hidden="true">🔒</div>
+                      )}
+                      
+                      <div className="text-center z-10">
+                        <div className="text-[10px] sm:text-xs font-bold text-amber-900 tracking-widest mb-0.5">
+                          CASE 0{folder.id} {folder.isFinal && '(FINAL)'}
+                        </div>
+                        <div className="text-base sm:text-lg font-black text-[#4A2E15] leading-tight">
+                          {folder.title}
+                        </div>
+                      </div>
+
+                      {isCompleted && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                          <div className="text-red-700 border-2 border-red-700 rounded px-2 py-0.5 text-sm sm:text-base font-black transform -rotate-12 bg-white/95 shadow-sm">
+                            CLUE FOUND ✓
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="absolute top-1 right-2 w-6 h-8 bg-white border border-gray-300 -z-10 transform rotate-12 shadow-sm" aria-hidden="true"></div>
+                    </button>
+                  );
+                })}
+              </div>
+            </CorkboardScene>
+          );
+        };
+
+        const ScreenCase1 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choiceId) => {
+            setAnswered(true);
+            if (choiceId === 2) {
+              setCorrect(true);
+              onComplete(CLUES[0]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto gap-3">
+                
+                {/* Evidence area split side-by-side on desktop to save height */}
+                <div className="flex flex-col md:flex-row gap-3 w-full">
+                  <div className="w-full md:w-1/2 bg-white rounded border-[6px] border-gray-300 shadow p-3 relative flex-shrink-0 flex flex-col justify-center">
+                    <h3 className="text-blue-900 font-bold uppercase tracking-wider mb-1 text-xs border-b border-blue-200 inline-block w-max">Learning Goal</h3>
+                    <p className="text-base sm:text-lg text-gray-900 font-medium leading-snug">
+                      Students will <span className="bg-yellow-200 font-bold px-1 rounded">use evidence</span> from a story to <span className="bg-yellow-200 font-bold px-1 rounded">explain</span> why a character made a decision.
+                    </p>
+                  </div>
+
+                  <div className="w-full md:w-1/2 bg-[#F9F7F1] shadow border border-gray-300 p-3 relative flex-shrink-0 flex flex-col justify-center">
+                    <div className="border-b border-gray-300 pb-1 mb-2 flex justify-between text-xs">
+                      <span className="font-mono text-gray-600">Name: _____________</span>
+                      <span className="font-mono text-gray-600 font-bold">Score: 58%</span>
+                    </div>
+                    <h3 className="text-xs font-bold text-gray-800 uppercase mb-1">Question 1</h3>
+                    <p className="text-sm sm:text-base font-bold mb-2 text-gray-900">
+                      What does the word "<span className="underline decoration-2 decoration-red-500">evidence</span>" mean?
+                    </p>
+                    <ul className="space-y-1 text-xs sm:text-sm text-gray-800" aria-hidden="true">
+                      <li>A. A type of book</li>
+                      <li className="font-bold">B. Proof or facts</li>
+                      <li>C. The main character</li>
+                      <li>D. The end of a story</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center w-full max-w-4xl mx-auto flex-1 justify-end pb-2">
+                  {!answered || !correct ? (
+                    <div className="w-full flex flex-col items-center">
+                      <h2 className="text-base sm:text-lg font-black text-slate-900 bg-white/95 px-4 py-1 rounded-full shadow-sm mb-2 text-center border border-slate-300">
+                        WHY IS THIS ASSESSMENT QUESTION FLAWED?
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+                        <button onClick={() => handleAnswer(1)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-semibold p-2 sm:p-3 rounded shadow-sm border border-slate-300 transition-colors text-xs sm:text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-tight">
+                          A. It asks students to write too much.
+                        </button>
+                        <button onClick={() => handleAnswer(2)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-semibold p-2 sm:p-3 rounded shadow-sm border border-slate-300 transition-colors text-xs sm:text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-tight">
+                          B. It tests vocabulary memorization instead of the ability to use evidence to explain.
+                        </button>
+                        <button onClick={() => handleAnswer(3)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-semibold p-2 sm:p-3 rounded shadow-sm border border-slate-300 transition-colors text-xs sm:text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-tight">
+                          C. The reading passage was likely too difficult.
+                        </button>
+                      </div>
+                      
+                      <div aria-live="polite" className="w-full mt-2">
+                        {answered && !correct && (
+                          <div className="text-red-900 bg-red-100 p-2 rounded text-xs sm:text-sm font-bold border border-red-400 text-center shadow-sm">
+                            Look closely at the Learning Goal vs the Question. The issue isn't about passage difficulty or writing length. Try again.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div aria-live="polite" className="bg-emerald-50 border-2 border-emerald-600 rounded p-3 sm:p-4 shadow-md w-full animate-[fadeIn_0.3s_ease-out]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl" aria-hidden="true">💡</div>
+                        <div className="flex-1">
+                          <h3 className="text-base font-bold text-emerald-900 mb-1">You got it!</h3>
+                          <p className="text-xs sm:text-sm text-emerald-900 mb-2 font-medium">
+                            "A student could know what evidence means without being able to use evidence to explain a character's decision."
+                          </p>
+                          <div className="bg-white p-2 rounded border-l-4 border-amber-600 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Clue #1 Discovered</div>
+                              <div className="text-sm font-black text-slate-900">{CLUES[0].title}</div>
+                              <div className="text-xs text-slate-700 font-medium">{CLUES[0].text}</div>
+                            </div>
+                            <div className="text-2xl hidden sm:block" aria-hidden="true">📎</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase2 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choiceId) => {
+            setAnswered(true);
+            if (choiceId === 3) {
+              setCorrect(true);
+              onComplete(CLUES[1]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto gap-2">
+                <h2 className="text-lg sm:text-xl font-black text-slate-900 text-center bg-white/80 py-1 rounded shadow-sm border border-slate-300 w-max mx-auto px-4">ASSESSMENT DATA BREAKDOWN</h2>
+                
+                <div className="bg-slate-900 rounded-lg shadow-md p-3 sm:p-5 flex flex-col md:flex-row gap-4 items-center text-white relative">
+                  <div className="w-full md:w-1/3 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-600 pb-3 md:pb-0">
+                    <div className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-1">Class Average</div>
+                    <div className="text-5xl sm:text-7xl leading-none font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                      58%
+                    </div>
+                  </div>
+                  
+                  <div className="w-full md:w-2/3 flex flex-col space-y-3" aria-label="Score breakdown bar chart">
+                    <div>
+                      <div className="flex justify-between mb-0.5 text-xs sm:text-sm font-bold">
+                        <span className="text-blue-300">RECALL (Multiple Choice)</span>
+                        <span>82%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded h-3 sm:h-4">
+                        <div className="bg-blue-500 h-3 sm:h-4 rounded" style={{ width: '82%' }}></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-0.5 text-xs sm:text-sm font-bold">
+                        <span className="text-amber-300">USING EVIDENCE (Short Answer)</span>
+                        <span>61%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded h-3 sm:h-4">
+                        <div className="bg-amber-500 h-3 sm:h-4 rounded" style={{ width: '61%' }}></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-0.5 text-xs sm:text-sm font-bold">
+                        <span className="text-red-300">EXPLAINING THINKING (Essay)</span>
+                        <span>39%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded h-3 sm:h-4">
+                        <div className="bg-red-500 h-3 sm:h-4 rounded" style={{ width: '39%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col items-center flex-1 justify-end pb-2">
+                  {!answered || !correct ? (
+                     <div className="w-full max-w-4xl flex flex-col items-center bg-white/95 p-3 rounded-lg shadow-sm border border-slate-300">
+                       <h2 className="text-base sm:text-lg font-black text-slate-900 mb-2 text-center leading-tight">
+                         WHAT DOES THIS DATA BREAKDOWN REVEAL?
+                       </h2>
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+                         <button onClick={() => handleAnswer(1)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-medium p-2 rounded shadow-sm border border-slate-300 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-snug">
+                           A. The class failed, so the teacher needs to reteach the entire reading unit from the beginning.
+                         </button>
+                         <button onClick={() => handleAnswer(2)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-medium p-2 rounded shadow-sm border border-slate-300 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-snug">
+                           B. The assessment is completely unreliable and should be thrown out.
+                         </button>
+                         <button onClick={() => handleAnswer(3)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-medium p-2 rounded shadow-sm border border-slate-300 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-snug">
+                           C. The overall score hides the fact that students mastered recall but struggle with explaining their thinking.
+                         </button>
+                       </div>
+                       
+                       <div aria-live="polite" className="w-full mt-2">
+                         {answered && !correct && (
+                           <div className="text-red-900 bg-red-100 p-2 rounded text-xs sm:text-sm font-bold border border-red-400 text-center shadow-sm">
+                             Not quite. Throwing it out or reteaching everything ignores the specific insights hidden in the bar charts. Try again.
+                           </div>
+                         )}
+                       </div>
+                     </div>
+                  ) : (
+                     <div aria-live="polite" className="bg-emerald-50 border-2 border-emerald-600 rounded p-3 sm:p-4 shadow-md w-full max-w-4xl animate-[fadeIn_0.3s_ease-out]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl hidden sm:block" aria-hidden="true">📊</div>
+                        <div className="flex-1">
+                          <h3 className="text-base font-bold text-emerald-900 mb-1">Pattern Discovered!</h3>
+                          <p className="text-xs sm:text-sm text-emerald-900 mb-2 font-medium">
+                            "The overall average tells us something, but it doesn't tell us everything. They are great at recall, but struggling with explanation."
+                          </p>
+                          <div className="bg-white p-2 rounded border-l-4 border-amber-600 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Clue #2 Discovered</div>
+                              <div className="text-sm font-black text-slate-900">{CLUES[1].title}</div>
+                              <div className="text-xs text-slate-700 font-medium">{CLUES[1].text}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase3 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choiceId) => {
+            setAnswered(true);
+            if (choiceId === 3) {
+              setCorrect(true);
+              onComplete(CLUES[2]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto gap-3">
+                <div className="flex items-center gap-3 bg-white/95 p-2 sm:p-3 rounded shadow-sm border border-amber-300 w-max mx-auto">
+                   <div className="text-3xl" aria-hidden="true">👩🏽‍🏫</div>
+                   <p className="text-sm sm:text-base font-medium italic text-slate-900 max-w-lg leading-tight">
+                     "I gave the exact same assessment the next week. The scores are almost the same. Does that mean the assessment is good?"
+                   </p>
+                </div>
+
+                <div className="flex flex-row justify-center gap-4 sm:gap-8 items-center flex-wrap" aria-label="Score comparison: Week 1 58%, Week 2 60%">
+                  <div className="bg-white rounded shadow-md overflow-hidden w-32 sm:w-40 border border-gray-300 transform -rotate-1">
+                    <div className="bg-red-700 text-white text-center py-1 text-xs font-bold tracking-widest uppercase">Week 1</div>
+                    <div className="p-2 text-center">
+                      <div className="text-2xl mb-1" aria-hidden="true">📅</div>
+                      <div className="text-[10px] font-bold text-gray-600 uppercase leading-tight">Assessment Score</div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">58%</div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-xl sm:text-2xl text-slate-600 font-bold hidden sm:block" aria-hidden="true">→</div>
+
+                  <div className="bg-white rounded shadow-md overflow-hidden w-32 sm:w-40 border border-gray-300 transform rotate-1">
+                    <div className="bg-blue-700 text-white text-center py-1 text-xs font-bold tracking-widest uppercase">Week 2</div>
+                    <div className="p-2 text-center">
+                      <div className="text-2xl mb-1" aria-hidden="true">📅</div>
+                      <div className="text-[10px] font-bold text-gray-600 uppercase leading-tight">Same Assessment</div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">60%</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col items-center flex-1 justify-end pb-2">
+                  {!answered || !correct ? (
+                     <div className="w-full max-w-4xl flex flex-col items-center bg-white/95 p-3 rounded-lg shadow-sm border border-slate-300">
+                       <h2 className="text-base sm:text-lg font-black text-slate-900 mb-2 text-center leading-tight">
+                         WHAT DOES THE SIMILAR SCORE TELL US?
+                       </h2>
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+                         <button onClick={() => handleAnswer(1)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-medium p-2 rounded shadow-sm border border-slate-300 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-snug">
+                           A. It proves the assessment is perfectly aligned to the learning goals.
+                         </button>
+                         <button onClick={() => handleAnswer(2)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-medium p-2 rounded shadow-sm border border-slate-300 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-snug">
+                           B. The slight increase proves the students are definitely mastering the material.
+                         </button>
+                         <button onClick={() => handleAnswer(3)} className="text-left bg-slate-50 hover:bg-slate-200 text-slate-900 font-medium p-2 rounded shadow-sm border border-slate-300 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 leading-snug">
+                           C. The assessment is consistent, but that doesn't guarantee it's measuring the right thing.
+                         </button>
+                       </div>
+                       
+                       <div aria-live="polite" className="w-full mt-2">
+                         {answered && !correct && (
+                           <div className="text-red-900 bg-red-100 p-2 rounded text-xs sm:text-sm font-bold border border-red-400 text-center shadow-sm">
+                             Think about the difference between consistency and accuracy. A broken scale always gives the same wrong weight. Try again.
+                           </div>
+                         )}
+                       </div>
+                     </div>
+                  ) : (
+                    <div aria-live="polite" className="bg-emerald-50 border-2 border-emerald-600 rounded p-3 sm:p-4 shadow-md w-full max-w-4xl animate-[fadeIn_0.3s_ease-out]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl hidden sm:block" aria-hidden="true">🎯</div>
+                        <div className="flex-1">
+                          <h3 className="text-base font-bold text-emerald-900 mb-1">Consistent, but is it correct?</h3>
+                          <p className="text-xs sm:text-sm text-emerald-900 mb-2 font-medium">
+                            "The results are consistent. But just because a scale gives you the same wrong weight every day doesn't mean it's a good scale."
+                          </p>
+                          <div className="bg-white p-2 rounded border-l-4 border-amber-600 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Clue #3 Discovered</div>
+                              <div className="text-sm font-black text-slate-900">{CLUES[2].title}</div>
+                              <div className="text-xs text-slate-700 font-medium">{CLUES[2].text}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase4 = ({ onComplete }) => {
+          const [answered, setAnswered] = useState(false);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choice) => {
+            setAnswered(true);
+            if (choice === 'INVESTIGATE') {
+              setCorrect(true);
+              onComplete(CLUES[3]);
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-5xl mx-auto gap-3">
+                <div className="flex items-center gap-2 bg-white/95 p-2 rounded shadow-sm border border-slate-300 w-max mx-auto">
+                   <div className="text-2xl" aria-hidden="true">👩🏽‍🏫</div>
+                   <p className="text-xs sm:text-sm font-medium text-slate-900">
+                     "Interesting. These two pieces of evidence aren't telling exactly the same story."
+                   </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
+                   <div className="bg-white rounded shadow p-3 border-t-4 border-red-700 relative w-full max-w-xs mx-auto">
+                     <h3 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-0.5">Evidence Source A</h3>
+                     <h2 className="text-sm sm:text-base font-black text-slate-900 mb-1">Written Assessment</h2>
+                     <div className="flex items-end gap-2 mb-1">
+                        <span className="text-3xl sm:text-4xl font-black text-red-700 leading-none">58%</span>
+                        <span className="text-xs font-bold text-slate-600 pb-1">Average</span>
+                     </div>
+                     <p className="text-slate-800 text-xs font-medium">Formal, timed, multiple-choice format.</p>
+                   </div>
+                   
+                   <div className="flex items-center justify-center font-black text-lg text-slate-600 hidden sm:flex" aria-hidden="true">VS</div>
+
+                   <div className="bg-white rounded shadow p-3 border-t-4 border-green-700 relative w-full max-w-xs mx-auto">
+                     <h3 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-0.5">Evidence Source B</h3>
+                     <h2 className="text-sm sm:text-base font-black text-slate-900 mb-1">Classroom Performance</h2>
+                     <div className="flex items-end gap-2 mb-1">
+                        <span className="text-3xl sm:text-4xl font-black text-green-700 leading-none">76%</span>
+                        <span className="text-xs font-bold text-slate-600 pb-1">Success Rate</span>
+                     </div>
+                     <p className="text-slate-800 text-xs font-medium">Observed highlighting and peer explanations.</p>
+                   </div>
+                </div>
+
+                <div className="flex flex-col items-center flex-1 justify-end pb-2">
+                  {!answered || !correct ? (
+                    <div className="w-full max-w-3xl bg-white/90 p-3 rounded-lg shadow-sm border border-slate-300">
+                      <h2 className="text-sm sm:text-base font-black text-slate-900 mb-2 text-center">
+                        WHAT SHOULD WE DO?
+                      </h2>
+                      <div className="flex flex-col sm:flex-row gap-2 w-full justify-center">
+                        <button 
+                          onClick={() => handleAnswer('TRUST')}
+                          className="flex-1 w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-2 px-3 rounded shadow-sm border border-slate-400 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500"
+                        >
+                          TRUST THE TEST ONLY
+                        </button>
+                        <button 
+                          onClick={() => handleAnswer('IGNORE')}
+                          className="flex-1 w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-2 px-3 rounded shadow-sm border border-slate-400 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500"
+                        >
+                          IGNORE THE TEST ENTIRELY
+                        </button>
+                        <button 
+                          onClick={() => handleAnswer('INVESTIGATE')}
+                          className="flex-1 w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-2 px-3 rounded shadow-sm border border-slate-400 transition-colors text-xs focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500"
+                        >
+                          INVESTIGATE THE DIFFERENCE
+                        </button>
+                      </div>
+                      
+                      <div aria-live="polite" className="w-full mt-2">
+                        {answered && !correct && (
+                          <div className="text-red-900 bg-red-100 p-2 rounded text-xs sm:text-sm font-bold border border-red-400 text-center shadow-sm">
+                            Neither extreme is helpful. We shouldn't blindly trust one over the other. Try again.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div aria-live="polite" className="bg-emerald-50 border-2 border-emerald-600 rounded p-3 shadow-md w-full max-w-3xl animate-[fadeIn_0.3s_ease-out]">
+                      <div className="flex items-start gap-3">
+                        <div className="text-3xl hidden sm:block" aria-hidden="true">⚖️</div>
+                        <div className="flex-1">
+                          <h3 className="text-base font-bold text-emerald-900 mb-1">Correct approach!</h3>
+                          <p className="text-xs sm:text-sm text-emerald-900 mb-2 font-medium">
+                            "Different evidence can answer different questions. When evidence doesn't line up, investigate before drawing a conclusion."
+                          </p>
+                          <div className="bg-white p-2 rounded border-l-4 border-amber-600 shadow-sm flex items-center justify-between">
+                            <div>
+                              <div className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Clue #4 Discovered</div>
+                              <div className="text-sm font-black text-slate-900">{CLUES[3].title}</div>
+                              <div className="text-xs text-slate-700 font-medium">{CLUES[3].text}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenCase5 = ({ onComplete }) => {
+          const evidences = [
+            { id: 'E4', text: "Students' reading comprehension scores improved over time." },
+            { id: 'E1', text: "Students said they enjoyed the reading lesson." },
+            { id: 'E3', text: "Students independently used text evidence during later assignments." },
+            { id: 'E2', text: "Students successfully explained a character's decision." }
+          ];
+
+          const destinations = [
+            { id: 'D1', title: "REACTION", desc: "Did learners respond positively?", correctE: 'E1' },
+            { id: 'D2', title: "LEARNING", desc: "Did learners learn?", correctE: 'E2' },
+            { id: 'D3', title: "BEHAVIOR", desc: "Did learners use what they learned?", correctE: 'E3' },
+            { id: 'D4', title: "RESULTS", desc: "Did it produce the intended outcome?", correctE: 'E4' }
+          ];
+
+          const [selectedE, setSelectedE] = useState(null);
+          const [placements, setPlacements] = useState({});
+          const [errorDest, setErrorDest] = useState(null);
+          const [hasCompleted, setHasCompleted] = useState(false);
+
+          const isComplete = Object.keys(placements).length === 4;
+
+          useEffect(() => {
+            if (isComplete && !hasCompleted) {
+              setHasCompleted(true);
+              onComplete();
+            }
+          }, [isComplete, hasCompleted, onComplete]);
+
+          const handleEvidenceClick = (id) => {
+            if (Object.values(placements).includes(id)) return;
+            setSelectedE(id === selectedE ? null : id);
+            setErrorDest(null);
+          };
+
+          const handleDestClick = (destId, correctE) => {
+            if (!selectedE) return;
+            if (placements[destId]) return;
+
+            if (selectedE === correctE) {
+              setPlacements(prev => ({ ...prev, [destId]: selectedE }));
+              setSelectedE(null);
+              setErrorDest(null);
+            } else {
+              setErrorDest(destId);
+              setTimeout(() => setErrorDest(null), 1000);
+            }
+          };
+
+          return (
+            <CorkboardScene>
+              <div className="w-full max-w-5xl bg-[#F4EBE1] p-3 sm:p-5 rounded shadow-lg relative border-4 sm:border-8 border-[#C19A6B]">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-amber-900 text-white font-mono px-3 py-1 shadow-md flex items-center gap-1 text-xs sm:text-sm">
+                  <span aria-hidden="true">📌</span> THE EVIDENCE BOARD
+                </div>
+                
+                <p className="text-center font-bold text-amber-900 mt-2 mb-3 text-xs sm:text-sm leading-tight">
+                  Organize the evidence. Select a card, then click the correct category box.<br/>
+                  <span className="sr-only">Interactive drag and drop equivalent via clicks.</span>
+                </p>
+
+                <div className="flex flex-col md:flex-row gap-3">
+                  <div className="w-full md:w-1/3 flex flex-col gap-2" role="region" aria-label="Available Evidence Cards">
+                    {evidences.map((ev) => {
+                      const isPlaced = Object.values(placements).includes(ev.id);
+                      const isSelected = selectedE === ev.id;
+                      
+                      if (isPlaced) return null;
+
+                      return (
+                        <button
+                          key={ev.id}
+                          onClick={() => handleEvidenceClick(ev.id)}
+                          aria-pressed={isSelected}
+                          aria-label={`Evidence card: ${ev.text}`}
+                          className={`text-left p-2 rounded border shadow-sm relative transition-all focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-600
+                            ${isSelected 
+                              ? 'bg-yellow-200 border-yellow-500 shadow-md transform scale-[1.02]' 
+                              : 'bg-white border-slate-300 hover:border-yellow-500 hover:bg-yellow-50 text-slate-900'}`}
+                        >
+                          <div className="text-[10px] font-bold text-slate-600 mb-0.5">EVIDENCE {ev.id.replace('E', '')}</div>
+                          <div className="text-xs sm:text-sm font-semibold text-slate-900 leading-tight">{ev.text}</div>
+                        </button>
+                      );
+                    })}
+                    
+                    {Object.values(placements).length === 4 && (
+                       <div className="bg-green-100 p-2 rounded text-center border border-green-400 font-bold text-green-900 text-sm" aria-live="polite">
+                         All evidence organized!
+                       </div>
+                    )}
+                  </div>
+
+                  <div className="w-full md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-2" role="region" aria-label="Destination Categories">
+                    {destinations.map((dest) => {
+                      const placedEvId = placements[dest.id];
+                      const placedEv = evidences.find(e => e.id === placedEvId);
+                      const isError = errorDest === dest.id;
+
+                      let ariaLabel = `${dest.title} - ${dest.desc}`;
+                      if (placedEv) ariaLabel += `. Contains evidence: ${placedEv.text}`;
+                      else if (selectedE) ariaLabel += `. Click to place selected evidence here.`;
+                      else ariaLabel += `. Empty slot.`;
+
+                      return (
+                        <button 
+                          key={dest.id}
+                          onClick={() => handleDestClick(dest.id, dest.correctE)}
+                          aria-label={ariaLabel}
+                          className={`text-left p-2 sm:p-3 rounded-lg border-2 flex flex-col min-h-[90px] transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-600
+                            ${placedEv 
+                              ? 'bg-blue-50 border-blue-300 text-slate-900' 
+                              : selectedE 
+                                ? isError ? 'bg-red-50 border-red-500 cursor-not-allowed' : 'bg-slate-50 border-dashed border-yellow-500 cursor-pointer hover:bg-yellow-100' 
+                                : 'bg-slate-50 border-dashed border-slate-400 text-slate-900'}`}
+                        >
+                          <div className="font-black text-slate-900 tracking-wide text-xs">{dest.title}</div>
+                          <div className="text-[10px] text-slate-700 mb-1 italic leading-tight">{dest.desc}</div>
+                          
+                          <div className="flex-1 flex items-center justify-center mt-1 w-full" aria-live="assertive">
+                            {placedEv ? (
+                              <div className="bg-white p-1.5 text-[10px] sm:text-xs border-l-2 border-blue-600 shadow-sm w-full font-bold text-slate-900 animate-[fadeIn_0.3s_ease-out]">
+                                ✓ {placedEv.text}
+                              </div>
+                            ) : (
+                              <div className={`text-[10px] sm:text-xs ${selectedE ? (isError ? 'text-red-700 font-bold bg-red-100 px-2 py-1 rounded' : 'text-yellow-800 font-bold animate-pulse') : 'text-slate-500 font-medium'}`}>
+                                {selectedE ? (isError ? 'Mismatch!' : 'Click to place here') : 'Empty'}
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {isComplete && (
+                  <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded animate-[fadeIn_0.3s_ease-out]" aria-live="polite">
+                    <div className="bg-emerald-700 text-white px-6 py-4 rounded-xl shadow-lg text-center transform scale-100">
+                      <div className="text-3xl sm:text-4xl mb-1" aria-hidden="true">✅</div>
+                      <h2 className="text-lg sm:text-xl font-black mb-1 tracking-widest">INVESTIGATION COMPLETE</h2>
+                      <p className="text-xs sm:text-sm font-bold">All evidence categorized.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CorkboardScene>
+          );
+        };
+
+        const ScreenFinal = ({ onComplete }) => {
+          const [selectedChoice, setSelectedChoice] = useState(null);
+          const [correct, setCorrect] = useState(false);
+
+          const handleAnswer = (choice) => {
+            setSelectedChoice(choice);
+            if (choice === 'B') {
+              setCorrect(true);
+              onComplete();
+            } else {
+              setCorrect(false);
+            }
+          };
+
+          return (
+            <ClassroomScene>
+              <div className="flex flex-col h-full w-full max-w-4xl mx-auto gap-3">
+                <div className="bg-white p-3 rounded shadow-sm flex items-center gap-3 border-l-4 border-amber-600 w-max mx-auto px-4">
+                   <div className="text-3xl" aria-hidden="true">👩🏽‍🏫</div>
+                   <p className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+                     "So... after looking at all this evidence, what does the 58% actually tell us?"
+                   </p>
+                </div>
+
+                {!correct ? (
+                  <div className="space-y-2 w-full max-w-2xl mx-auto flex-1 flex flex-col justify-center">
+                    <button 
+                      onClick={() => handleAnswer('A')} 
+                      className={`w-full text-left p-3 border-2 rounded text-xs sm:text-sm font-bold shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 ${selectedChoice === 'A' ? 'bg-red-50 border-red-500 text-red-900' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-900'}`}
+                    >
+                      A. It proves my students didn't learn the material.
+                    </button>
+                    <button 
+                      onClick={() => handleAnswer('B')} 
+                      className={`w-full text-left p-3 border-2 rounded text-xs sm:text-sm font-bold shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 ${selectedChoice === 'B' ? 'bg-blue-50 border-blue-500 text-blue-900' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-900'}`}
+                    >
+                      B. It raises a question, but I need more evidence to answer it fully.
+                    </button>
+                    <button 
+                      onClick={() => handleAnswer('C')} 
+                      className={`w-full text-left p-3 border-2 rounded text-xs sm:text-sm font-bold shadow-sm transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500 ${selectedChoice === 'C' ? 'bg-red-50 border-red-500 text-red-900' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-900'}`}
+                    >
+                      C. The classroom activity proves the assessment was completely wrong.
+                    </button>
+                    
+                    <div aria-live="polite" className="mt-1">
+                      {selectedChoice && !correct && (
+                        <div className="text-red-900 bg-red-100 p-2 rounded text-xs sm:text-sm font-bold text-center border border-red-400 animate-[fadeIn_0.3s_ease-out]">
+                          Not quite. Re-evaluate the clues we found about relying on a single piece of evidence.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-slate-900 text-white p-4 rounded-xl shadow-lg border-2 border-amber-500 animate-[fadeIn_0.5s_ease-out] w-full" aria-live="polite">
+                    <h2 className="text-lg sm:text-xl font-black text-amber-400 mb-3 text-center border-b border-slate-700 pb-2">
+                      CASE CLOSED? NOT SO FAST.
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                      <div className="bg-slate-800 p-2 rounded border-l-4 border-blue-500">
+                        <h4 className="font-bold text-blue-400 uppercase text-xs mb-0.5">1. Check the match</h4>
+                        <p className="text-slate-200 text-[10px] sm:text-xs font-medium">Does the assessment measure what students were expected to learn?</p>
+                      </div>
+                      <div className="bg-slate-800 p-2 rounded border-l-4 border-amber-500">
+                        <h4 className="font-bold text-amber-400 uppercase text-xs mb-0.5">2. Look at the data</h4>
+                        <p className="text-slate-200 text-[10px] sm:text-xs font-medium">What patterns are hidden behind the overall score?</p>
+                      </div>
+                      <div className="bg-slate-800 p-2 rounded border-l-4 border-green-500">
+                        <h4 className="font-bold text-green-400 uppercase text-xs mb-0.5">3. Check consistency</h4>
+                        <p className="text-slate-200 text-[10px] sm:text-xs font-medium">Are the results reasonably consistent?</p>
+                      </div>
+                      <div className="bg-slate-800 p-2 rounded border-l-4 border-purple-500">
+                        <h4 className="font-bold text-purple-400 uppercase text-xs mb-0.5">4. Follow the evidence</h4>
+                        <p className="text-slate-200 text-[10px] sm:text-xs font-medium">What does each piece of evidence actually tell you?</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white text-slate-900 p-2 sm:p-3 rounded text-center shadow-inner">
+                      <p className="text-xs sm:text-sm font-black uppercase tracking-wide leading-snug">
+                        Before making a judgment from assessment data, investigate what the evidence can — and cannot — actually tell you.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ClassroomScene>
+          );
+        };
+
+        const ScreenEnd = ({ clues, onReturnBoard, onFinish }) => (
+          <CorkboardScene>
+            <div className="bg-slate-900 w-full max-w-4xl p-4 sm:p-6 rounded shadow-lg border-2 border-slate-700 text-white flex flex-col items-center" role="alert" aria-live="polite">
+              <div className="text-4xl sm:text-5xl mb-2" aria-hidden="true">🗂️</div>
+              <h1 className="text-xl sm:text-3xl font-black text-amber-400 mb-1 tracking-widest text-center leading-tight">INVESTIGATION COMPLETE</h1>
+              <h2 className="text-xs sm:text-sm text-slate-300 font-mono mb-4 border-b border-slate-700 pb-2 w-full text-center">CASE 005 — THE QUESTIONABLE SCORE</h2>
+              
+              <div className="bg-slate-800 px-4 py-1 rounded-full font-bold text-green-400 mb-4 border border-green-800 shadow-inner text-xs sm:text-sm">
+                CLUES COLLECTED: 4/4 ✓
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full mb-6">
+                {clues.map(clue => (
+                  <div key={clue.id} className="bg-slate-800 p-2 sm:p-3 rounded border-l-2 border-amber-500 flex items-start gap-2 shadow-sm">
+                     <div className="text-lg mt-0.5" aria-hidden="true">🔎</div>
+                     <div>
+                       <div className="font-bold text-amber-400 text-xs sm:text-sm">{clue.title}</div>
+                       <div className="text-slate-200 text-[10px] sm:text-xs mt-0.5 leading-tight font-medium">{clue.text}</div>
+                     </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <button 
+                  onClick={onReturnBoard} 
+                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded border border-slate-500 text-xs sm:text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500"
+                >
+                  RETURN TO CASE BOARD
+                </button>
+                <button 
+                  onClick={onFinish} 
+                  className="flex-1 bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-sm text-xs sm:text-sm border border-green-800 focus:outline-none focus-visible:ring-4 focus-visible:ring-white"
+                >
+                  FINISH INVESTIGATION
+                </button>
+              </div>
+            </div>
+          </CorkboardScene>
+        );
+
+        function App() {
+          const [currentScreen, setCurrentScreen] = useState(SCREENS.INTRO);
+          const [history, setHistory] = useState([]);
+          const [unlockedCases, setUnlockedCases] = useState(1);
+          const [completedCases, setCompletedCases] = useState([]);
+          const [cluesCollected, setCluesCollected] = useState([]);
+          const [nextPulseMap, setNextPulseMap] = useState({});
+          const [isAccessibleMode, setIsAccessibleMode] = useState(false);
+
+          const mainRef = useRef(null);
+
+          const goToScreen = (screen) => {
+            setHistory(prev => [...prev, currentScreen]);
+            setCurrentScreen(screen);
+            // Reset focus to top of container when changing screens
+            if(mainRef.current) mainRef.current.focus();
+          };
+
+          const goBack = () => {
+            if (history.length === 0) return;
+            const newHistory = [...history];
+            const prev = newHistory.pop();
+            setHistory(newHistory);
+            setCurrentScreen(prev);
+          };
+
+          const handleNext = () => {
+            const currentIndex = SCREEN_ORDER.indexOf(currentScreen);
+            if (currentIndex >= 0 && currentIndex < SCREEN_ORDER.length - 1) {
+              goToScreen(SCREEN_ORDER[currentIndex + 1]);
+            } else if (currentScreen === SCREENS.FINAL) {
+              goToScreen(SCREENS.END);
+            }
+          };
+
+          const handleRestart = () => {
+            if(confirm("Are you sure you want to restart the investigation? All progress will be lost.")){
+              setCurrentScreen(SCREENS.INTRO);
+              setHistory([]);
+              setUnlockedCases(1);
+              setCompletedCases([]);
+              setCluesCollected([]);
+              setNextPulseMap({});
+              setIsAccessibleMode(false);
+            }
+          };
+
+          const completeCase = (caseId, clue = null) => {
+            if (!completedCases.includes(caseId)) {
+              setCompletedCases(prev => [...prev, caseId]);
+              if (unlockedCases < caseId + 1) {
+                setUnlockedCases(caseId + 1);
+              }
+              if (clue && !cluesCollected.find(c => c.id === clue.id)) {
+                setCluesCollected(prev => [...prev, clue]);
+              }
+            }
+            setNextPulseMap(prev => ({ ...prev, [currentScreen]: true }));
+          };
+
+          const isNextDisabled = () => {
+            if (currentScreen === SCREENS.INTRO) return true;
+            if (currentScreen === SCREENS.BOARD) return true;
+            if (currentScreen === SCREENS.END) return true;
+            if (currentScreen === SCREENS.FINISHED) return true;
+
+            const caseIndexMap = {
+              [SCREENS.CASE1]: 1, [SCREENS.CASE2]: 2, [SCREENS.CASE3]: 3,
+              [SCREENS.CASE4]: 4, [SCREENS.CASE5]: 5, [SCREENS.FINAL]: 6
+            };
+            
+            const requiredCaseId = caseIndexMap[currentScreen];
+            return requiredCaseId ? !completedCases.includes(requiredCaseId) : true;
+          };
+
+          if (isAccessibleMode) {
+            return <AccessibleView onExit={() => setIsAccessibleMode(false)} />;
+          }
+
+          return (
+            <div className="flex flex-col h-full w-full bg-slate-900 font-sans overflow-hidden text-slate-900">
+              <TopNav 
+                currentScreen={currentScreen} 
+                unlockedCases={unlockedCases} 
+                cluesCollected={cluesCollected} 
+                onRestart={handleRestart}
+                onToggleAccessible={() => setIsAccessibleMode(true)}
+              />
+              
+              <div 
+                ref={mainRef}
+                tabIndex="-1" 
+                className="flex-1 relative overflow-hidden bg-black flex flex-col focus:outline-none"
+                aria-live="polite"
+              >
+                {currentScreen === SCREENS.INTRO && <ScreenIntro onStart={() => goToScreen(SCREENS.BOARD)} />}
+                
+                {currentScreen === SCREENS.BOARD && (
+                  <ScreenBoard 
+                    unlockedCases={unlockedCases} 
+                    completedCases={completedCases}
+                    onSelectCase={goToScreen} 
+                  />
+                )}
+                
+                {currentScreen === SCREENS.CASE1 && <ScreenCase1 onComplete={(clue) => completeCase(1, clue)} />}
+                {currentScreen === SCREENS.CASE2 && <ScreenCase2 onComplete={(clue) => completeCase(2, clue)} />}
+                {currentScreen === SCREENS.CASE3 && <ScreenCase3 onComplete={(clue) => completeCase(3, clue)} />}
+                {currentScreen === SCREENS.CASE4 && <ScreenCase4 onComplete={(clue) => completeCase(4, clue)} />}
+                {currentScreen === SCREENS.CASE5 && <ScreenCase5 onComplete={() => completeCase(5)} />}
+                {currentScreen === SCREENS.FINAL && <ScreenFinal onComplete={() => completeCase(6)} />}
+                
+                {currentScreen === SCREENS.END && (
+                  <ScreenEnd 
+                    clues={cluesCollected} 
+                    onReturnBoard={() => goToScreen(SCREENS.BOARD)} 
+                    onFinish={() => setCurrentScreen(SCREENS.FINISHED)} 
+                  />
+                )}
+
+                {currentScreen === SCREENS.FINISHED && (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-900 relative">
+                     <div className="text-center animate-[fadeIn_1s_ease-out] z-10 flex flex-col items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 sm:w-20 sm:h-20 text-red-500 mb-4 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" aria-hidden="true">
+                          <path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.94 49.94 0 0 0-9.902 3.912l-.003.002c-.874.472-1.926.472-2.8 0a50.04 50.04 0 0 0-9.905-3.914.75.75 0 0 1-.231-1.337A60.65 60.65 0 0 1 11.7 2.805Z" />
+                          <path d="M13.06 15.473c-.836.45-1.808.45-2.644 0a49.98 49.98 0 0 1-5.602-2.316.751.751 0 0 0-1.07.69v2.247c0 2.211 4.542 4.152 8.646 4.152 4.104 0 8.646-1.94 8.646-4.152v-2.247a.751.751 0 0 0-1.07-.69c-1.85.814-3.666 1.636-5.602 2.316Z" />
+                        </svg>
+                        <h1 className="text-2xl sm:text-3xl font-black text-green-500 tracking-widest px-4">CASE COMPLETE ✓</h1>
+                        <p className="text-slate-300 mt-2 text-sm sm:text-base font-bold">Thank you for playing.</p>
+                        <button 
+                          onClick={() => window.location.reload()}
+                          className="mt-6 bg-slate-700 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded shadow border border-slate-500 transition-colors tracking-wider text-xs sm:text-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500"
+                        >
+                          ↻ RESTART INVESTIGATION
+                        </button>
+                     </div>
+                  </div>
+                )}
+              </div>
+
+              <BottomNav 
+                currentScreen={currentScreen}
+                onBack={goBack} 
+                onBoard={() => goToScreen(SCREENS.BOARD)} 
+                onNext={handleNext}
+                backDisabled={history.length === 0 || currentScreen === SCREENS.FINISHED}
+                nextDisabled={isNextDisabled()}
+                showNextPulse={nextPulseMap[currentScreen]}
+              />
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
