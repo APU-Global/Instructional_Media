@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scarborough's Reading Rope Sorting Activity</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Soft, Canva-like pastel background */
+            background: linear-gradient(135deg, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+            background-attachment: fixed;
+            color: #1e293b;
+        }
+
+        h1, h2, h3, .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Drag and Drop Card Styles */
+        .draggable-card {
+            cursor: grab;
+            transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.3s;
+            user-select: none;
+            background: white;
+            touch-action: none;
+        }
+        .draggable-card:active {
+            cursor: grabbing;
+            transform: scale(0.98);
+        }
+        .draggable-card.dragging {
+            opacity: 0.6;
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15);
+            transform: scale(1.02);
+            z-index: 50;
+        }
+
+        /* Drop Zone Styles */
+        .drop-zone {
+            transition: all 0.3s ease;
+            min-height: 90px;
+        }
+        .drop-zone.drag-over {
+            background-color: #f8fafc;
+            border-color: #6366f1;
+            box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Validation State Colors */
+        .card-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            border-width: 2px !important;
+        }
+        .card-incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            border-width: 2px !important;
+        }
+
+        /* Decoder Inputs */
+        .decoder-input {
+            text-transform: uppercase;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .decoder-input:focus {
+            outline: none;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
+            border-color: #6366f1;
+        }
+
+        /* Custom Animations */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+
+    <header class="w-full max-w-7xl bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-white p-8 mb-8 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400"></div>
+        <h1 class="text-4xl md:text-5xl font-bold text-slate-800 tracking-tight font-heading mb-4">Scarborough's Reading Rope</h1>
+        <p class="text-slate-600 text-lg max-w-3xl mx-auto leading-relaxed">Analyze the primary deficits of each student and drag their symptom card to the correct Rope Strand. Once sorted, use the placements to unlock the secret password!</p>
+        <div class="mt-8">
+            <button id="check-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-8 rounded-full shadow-lg shadow-indigo-200 transition-transform active:scale-95 flex items-center gap-3 mx-auto text-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Check Placements
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-7xl flex flex-col gap-8">
+
+        <section class="bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-6">
+            <div class="flex items-center gap-3 mb-5 ml-2">
+                <svg class="w-7 h-7 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <h2 class="text-2xl font-heading font-bold text-slate-700">Student Case Files</h2>
+            </div>
+            
+            <!-- Flex-wrap Container for Cards (No scrolling) -->
+            <div class="card-bank-container drop-zone flex flex-wrap justify-center gap-5 pb-6 min-h-[160px]" data-zone="bank" id="card-bank">
+                
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-leo" data-target="verbal-reasoning">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Leo)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Effortlessly decodes but struggles to summarize, misses main ideas, and fails inference questions.</p>
+                </div>
+
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-maya" data-target="decoding">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Maya)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Extensive vocabulary verbally, but stumbles over simple letter-sounds and relies on guessing from pictures.</p>
+                </div>
+
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-marcus" data-target="matthew-effect">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Marcus)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Early struggle with phonics led to avoiding reading; now vocabulary and background knowledge are stagnating.</p>
+                </div>
+
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-sofia" data-target="language-structures">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Sofia)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Reads fluently but misinterprets text because she misses how complex grammar and dependent clauses link ideas.</p>
+                </div>
+
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-student1" data-target="phonological-awareness">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Student 1)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Has trouble identifying individual sounds in spoken words and cannot rhyme or manipulate syllables.</p>
+                </div>
+
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-student2" data-target="sight-recognition">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Student 2)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Sounds out the same high-frequency words letter-by-letter every time, never storing them for instant retrieval.</p>
+                </div>
+
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-student3" data-target="background-knowledge">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Student 3)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Can decode and understand sentence grammar, but lacks the domain-specific facts needed to understand specialized texts.</p>
+                </div>
+
+                <div class="draggable-card border border-slate-200 rounded-2xl p-5 min-w-[280px] w-[280px] flex-shrink-0 shadow-sm flex flex-col" draggable="true" id="card-student4" data-target="vocabulary">
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                        <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
+                        <span class="text-sm font-bold text-slate-800 uppercase tracking-wide">Primary Deficit (Student 4)</span>
+                    </div>
+                    <p class="text-sm text-slate-600 flex-grow leading-relaxed font-medium">Struggles to understand texts because he doesn't know the meaning of many academic words used in the passages.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Pillar A: Word Recognition -->
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col">
+                <div class="bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-6">
+                    <h2 class="text-2xl font-heading font-bold text-white tracking-wide">Pillar A: Word Recognition</h2>
+                    <p class="text-blue-50 mt-1 font-medium italic">Becoming Strategic</p>
+                </div>
+                <div class="p-8 flex flex-col gap-6 bg-slate-50/50 flex-grow">
+                    
+                    <div class="drop-zone border-2 border-dashed border-blue-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="phonological-awareness">
+                        <span class="text-blue-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Phonological Awareness</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                    <div class="drop-zone border-2 border-dashed border-blue-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="decoding">
+                        <span class="text-blue-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Decoding</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                    <div class="drop-zone border-2 border-dashed border-blue-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="sight-recognition">
+                        <span class="text-blue-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Sight Recognition</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Pillar B: Language Comprehension -->
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-6">
+                    <h2 class="text-2xl font-heading font-bold text-white tracking-wide">Pillar B: Language Comprehension</h2>
+                    <p class="text-purple-50 mt-1 font-medium italic">Becoming Increasingly Strategic</p>
+                </div>
+                <div class="p-8 flex flex-col gap-6 bg-slate-50/50 flex-grow">
+                    
+                    <div class="drop-zone border-2 border-dashed border-purple-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="background-knowledge">
+                        <span class="text-purple-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Background Knowledge</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                    <div class="drop-zone border-2 border-dashed border-purple-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="vocabulary">
+                        <span class="text-purple-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Vocabulary</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                    <div class="drop-zone border-2 border-dashed border-purple-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="language-structures">
+                        <span class="text-purple-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Language Structures</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                    <div class="drop-zone border-2 border-dashed border-purple-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="verbal-reasoning">
+                        <span class="text-purple-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Verbal Reasoning</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                    <div class="drop-zone border-2 border-dashed border-purple-200 rounded-2xl p-5 bg-white relative flex flex-col" data-zone="literacy-knowledge">
+                        <span class="text-purple-800 font-semibold mb-3 block w-full border-b border-slate-100 pb-2 font-heading text-lg">Rope Strand: Literacy Knowledge</span>
+                        <div class="zone-content flex-grow flex flex-col gap-3 min-h-[60px]"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-xl border border-amber-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-5">
+                <h2 class="text-2xl font-heading font-bold text-white tracking-wide">Spanning Phenomenon</h2>
+            </div>
+            <div class="p-8 bg-amber-50/40">
+                <div class="drop-zone border-2 border-dashed border-amber-300 rounded-2xl p-6 bg-white relative flex flex-col min-h-[140px]" data-zone="matthew-effect">
+                    <span class="text-amber-800 font-bold mb-3 block w-full border-b border-amber-100 pb-2 font-heading text-xl">Rope Strand: Matthew Effect</span>
+                    <div class="zone-content flex-grow flex flex-col gap-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-2xl border-4 border-indigo-50 overflow-hidden relative mt-2 mb-10">
+            
+            <!-- Victory Overlay -->
+            <div id="victory-overlay" class="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 z-10 hidden flex-col items-center justify-center text-white pop-in">
+                <div class="bg-white/20 p-5 rounded-full mb-6 backdrop-blur-sm">
+                    <svg class="w-20 h-20 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <h2 class="text-5xl font-heading font-black mb-3 tracking-tight">Code Unlocked!</h2>
+                <p class="text-2xl text-indigo-100 mb-8">Password: <span class="font-mono font-bold text-yellow-300 ml-2 tracking-widest">RCTN</span></p>
+                <button id="reset-btn" class="px-8 py-3 bg-white text-indigo-700 font-bold rounded-full shadow-lg hover:bg-indigo-50 hover:scale-105 transition-all text-lg">Reset Activity</button>
+            </div>
+
+            <div class="p-8 md:p-12 flex flex-col lg:flex-row items-center gap-10 bg-slate-50/50">
+                <div class="flex-1 text-center lg:text-left">
+                    <div class="inline-flex items-center justify-center p-4 bg-indigo-100 rounded-full mb-5 text-indigo-600 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-heading font-extrabold text-slate-800 mb-4">Secret Password Decoder</h2>
+                    <p class="text-slate-600 leading-relaxed text-lg bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        Take the <strong>3rd letter</strong> of the correctly matched rope strand for Leo's primary deficit, Maya's primary deficit, Marcus's core phenomenon, and Sofia's structural barrier to reveal your 4-letter password!
+                    </p>
+                </div>
+                
+                <div class="flex flex-col items-center gap-6 w-full lg:w-auto bg-white p-8 rounded-3xl shadow-md border border-slate-100">
+                    <div class="flex gap-4 md:gap-6" id="decoder-container">
+                        <div class="flex flex-col items-center gap-2">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Leo</label>
+                            <input type="text" maxlength="1" class="decoder-input w-16 h-20 text-4xl font-black text-indigo-600 bg-slate-50 border-2 border-indigo-100 rounded-2xl shadow-inner text-center">
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Maya</label>
+                            <input type="text" maxlength="1" class="decoder-input w-16 h-20 text-4xl font-black text-indigo-600 bg-slate-50 border-2 border-indigo-100 rounded-2xl shadow-inner text-center">
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Marcus</label>
+                            <input type="text" maxlength="1" class="decoder-input w-16 h-20 text-4xl font-black text-indigo-600 bg-slate-50 border-2 border-indigo-100 rounded-2xl shadow-inner text-center">
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Sofia</label>
+                            <input type="text" maxlength="1" class="decoder-input w-16 h-20 text-4xl font-black text-indigo-600 bg-slate-50 border-2 border-indigo-100 rounded-2xl shadow-inner text-center">
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col items-center w-full mt-3">
+                        <button id="submit-decoder-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-indigo-200 transition-transform active:scale-95 flex items-center justify-center gap-2 text-lg">
+                            Submit Password
+                        </button>
+                        <p id="decoder-msg" class="text-sm font-bold mt-4 text-rose-500 h-5 opacity-0 transition-opacity">Incorrect Password. Try again!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const draggables = document.querySelectorAll('.draggable-card');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const checkBtn = document.getElementById('check-btn');
+            
+            // --- Drag and Drop Logic ---
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', (e) => {
+                    draggable.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', draggable.id);
+                    e.dataTransfer.effectAllowed = 'move';
+                    // Clear correctness styling when a card is moved again
+                    draggable.classList.remove('card-correct', 'card-incorrect');
+                });
+
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // Necessary to allow dropping
+                    e.dataTransfer.dropEffect = 'move';
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    const id = e.dataTransfer.getData('text/plain');
+                    const draggableElement = document.getElementById(id);
+                    
+                    if (draggableElement) {
+                        draggableElement.classList.remove('card-correct', 'card-incorrect');
+                        
+                        if (zone.id === 'card-bank') {
+                            zone.appendChild(draggableElement);
+                        } else {
+                            const contentArea = zone.querySelector('.zone-content');
+                            if (contentArea) {
+                                // Adjust card layout for vertical stacking inside pillars
+                                draggableElement.classList.remove('min-w-[280px]', 'w-[280px]');
+                                draggableElement.classList.add('w-full');
+                                contentArea.appendChild(draggableElement);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Re-apply explicit widths when cards go back to the wrapping bank
+            const cardBank = document.getElementById('card-bank');
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.addedNodes) {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.classList && node.classList.contains('draggable-card')) {
+                                node.classList.add('min-w-[280px]', 'w-[280px]');
+                                node.classList.remove('w-full');
+                            }
+                        });
+                    }
+                });
+            });
+            observer.observe(cardBank, { childList: true });
+
+            // --- Check Placements Logic ---
+            checkBtn.addEventListener('click', () => {
+                draggables.forEach(card => {
+                    const targetZone = card.getAttribute('data-target');
+                    const currentContainer = card.closest('.drop-zone');
+                    
+                    // Ignore cards still in the bank
+                    if (!currentContainer || currentContainer.id === 'card-bank') {
+                        card.classList.remove('card-correct', 'card-incorrect');
+                        return;
+                    }
+                    
+                    const currentZone = currentContainer.getAttribute('data-zone');
+                    
+                    // Validate Placement
+                    if (currentZone === targetZone) {
+                        card.classList.remove('card-incorrect');
+                        card.classList.add('card-correct');
+                    } else {
+                        card.classList.remove('card-correct');
+                        card.classList.add('card-incorrect');
+                    }
+                });
+                
+                // Button click feedback animation
+                checkBtn.classList.add('scale-105');
+                setTimeout(() => checkBtn.classList.remove('scale-105'), 200);
+            });
+
+            // --- Decoder Logic ---
+            const inputs = document.querySelectorAll('.decoder-input');
+            const submitDecoder = document.getElementById('submit-decoder-btn');
+            const decoderMsg = document.getElementById('decoder-msg');
+            const decoderContainer = document.getElementById('decoder-container');
+            const victoryOverlay = document.getElementById('victory-overlay');
+            const resetBtn = document.getElementById('reset-btn');
+
+            // Handle Input UX (Auto-advance, Letters only)
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', () => {
+                    input.value = input.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+                    if (input.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    // Backspace to previous input
+                    if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                    // Enter to submit
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+            });
+
+            function checkPassword() {
+                const password = Array.from(inputs).map(i => i.value).join('');
+                if (password.length < 4) {
+                    showError("Please enter all 4 letters.");
+                    return;
+                }
+
+                // Correct Password: RCTN
+                if (password === 'RCTN') {
+                    victoryOverlay.classList.remove('hidden');
+                    victoryOverlay.classList.add('flex');
+                } else {
+                    showError("Incorrect Password. Try again!");
+                }
+            }
+
+            function showError(msg) {
+                decoderMsg.textContent = msg;
+                decoderMsg.classList.remove('opacity-0');
+                
+                // Shake animation for container
+                decoderContainer.classList.remove('shake');
+                void decoderContainer.offsetWidth; // Trigger DOM reflow
+                decoderContainer.classList.add('shake');
+
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    decoderMsg.classList.add('opacity-0');
+                }, 3000);
+            }
+
+            submitDecoder.addEventListener('click', checkPassword);
+            
+            // --- Reset Logic ---
+            resetBtn.addEventListener('click', () => {
+                victoryOverlay.classList.remove('flex');
+                victoryOverlay.classList.add('hidden');
+                inputs.forEach(input => input.value = '');
+                inputs[0].focus();
+                
+                // Move all cards back to bank and clear validation classes
+                draggables.forEach(card => {
+                    card.classList.remove('card-correct', 'card-incorrect');
+                    cardBank.appendChild(card);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
