@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primary Source Mystery Dossier Library</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Inter:wght@400;500;600&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            typewriter: ['"Courier Prime"', 'Courier', 'monospace'],
+            stamp: ['"Special Elite"', '"Courier Prime"', 'monospace'],
+            heading: ['Cinzel', 'serif'],
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            manila: {
+              100: '#faf6eb',
+              200: '#f4ebd0',
+              300: '#eddcb5',
+              400: '#e2cb98',
+              500: '#d5b97d',
+              600: '#be9e5f',
+              700: '#9b7e45',
+              800: '#755d32',
+              900: '#4d3d20',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Desk background texture */
+    body {
+      background-color: #171614;
+      background-image: 
+        radial-gradient(circle at 50% 15%, rgba(45, 38, 30, 0.45) 0%, transparent 75%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    /* Manila Folder Paper Texture */
+    .manila-folder {
+      background: linear-gradient(135deg, #dfcaa0 0%, #d8bf91 50%, #cfb381 100%);
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.8),
+        0 4px 12px rgba(0, 0, 0, 0.5),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Typewriter Document Sheet */
+    .case-paper {
+      background-color: #fbf8f0;
+      background-image: radial-gradient(#dcd5c0 0.75px, transparent 0.75px);
+      background-size: 20px 20px;
+      box-shadow: 
+        0 4px 14px rgba(0, 0, 0, 0.25),
+        0 1px 3px rgba(0, 0, 0, 0.15),
+        inset 0 0 40px rgba(180, 155, 110, 0.15);
+    }
+
+    /* Rubber Stamps */
+    .stamp-classified {
+      border: 3px dashed #991b1b; /* WCAG AAA compliant deep red */
+      color: #991b1b;
+      text-transform: uppercase;
+      font-family: 'Special Elite', monospace;
+      letter-spacing: 0.18em;
+      transform: rotate(-6deg);
+      display: inline-block;
+    }
+
+    .stamp-verified {
+      border: 2px solid #1e3a8a;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      font-family: 'Special Elite', monospace;
+      letter-spacing: 0.12em;
+      transform: rotate(3deg);
+      display: inline-block;
+    }
+
+    /* Paperclip Visual */
+    .paperclip {
+      position: absolute;
+      top: -12px;
+      right: 36px;
+      width: 22px;
+      height: 60px;
+      border: 3px solid #71717a;
+      border-radius: 12px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.35);
+      z-index: 25;
+      background: transparent;
+      pointer-events: none;
+    }
+    .paperclip::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 2px;
+      width: 12px;
+      height: 38px;
+      border: 3px solid #71717a;
+      border-radius: 8px;
+      border-top: none;
+    }
+
+    /* Folder Tab Styles */
+    .folder-tab {
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      clip-path: polygon(6% 0%, 94% 0%, 100% 100%, 0% 100%);
+    }
+    .folder-tab.active {
+      background: linear-gradient(to top, #d8bf91 0%, #ead7b0 100%);
+      color: #271c0b; /* High-contrast deep tone */
+      font-weight: 700;
+      transform: translateY(-4px);
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.4);
+      z-index: 20;
+    }
+    .folder-tab.inactive {
+      background: linear-gradient(to top, #9e8557 0%, #bca172 100%);
+      color: #2b1f0d; /* High-contrast text on tan */
+      opacity: 0.95;
+    }
+    .folder-tab.inactive:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(to top, #b19664 0%, #ceb485 100%);
+    }
+
+    /* High Legibility Accessibility Mode */
+    body.accessible-font-mode .font-typewriter,
+    body.accessible-font-mode #card-excerpt,
+    body.accessible-font-mode #card-title {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+      letter-spacing: 0.02em;
+      line-height: 1.75;
+    }
+
+    /* Respect reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .folder-tab.active {
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="text-stone-900 min-h-screen font-sans selection:bg-amber-900 selection:text-amber-100 flex flex-col p-3 sm:p-6 lg:p-8">
+
+  <!-- Skip Link for Keyboard / Screen Reader Navigation -->
+  <a href="#dossier-panel" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-amber-400 focus:text-stone-950 focus:font-bold focus:rounded-md focus:shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-900">
+    Skip to Dossier Content
+  </a>
+
+  <!-- ARIA Live Announcer for Screen Readers -->
+  <div id="a11y-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Investigator Desk Header Bar -->
+  <header class="max-w-5xl mx-auto w-full mb-6" role="banner">
+    <div class="bg-stone-900/90 border border-stone-700 rounded-xl px-4 py-3.5 sm:px-6 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur">
+      <div class="flex items-center gap-3">
+        <div role="img" aria-label="Dossier folder icon" class="w-10 h-10 rounded-lg bg-amber-950/80 border border-amber-500/40 flex items-center justify-center text-amber-300 font-stamp text-lg shadow-inner select-none">
+          📁
+        </div>
+        <div>
+          <h1 class="font-heading text-sm sm:text-base tracking-wider text-amber-100 uppercase font-bold">
+            Primary Source Mystery Dossier Library
+          </h1>
+          <p class="text-xs font-typewriter text-amber-300 mt-0.5">(8 Historical Artifacts)</p>
+        </div>
+      </div>
+
+      <!-- Quick Assignment Selector Dropdown & Accessibility Controls -->
+      <div class="w-full md:w-auto flex flex-wrap items-center gap-2.5">
+        <div class="flex items-center gap-2 bg-stone-950 px-3 py-2 rounded-lg border border-stone-700 flex-1 md:flex-none">
+          <label for="dossier-select" class="text-xs font-typewriter text-amber-200 font-bold whitespace-nowrap">
+            OPEN ASSIGNED FILE:
+          </label>
+          <select id="dossier-select" onchange="selectDossier(parseInt(this.value))" aria-label="Select Assigned Dossier File" class="w-full md:w-auto bg-stone-900 border border-stone-600 text-amber-100 text-xs rounded px-2.5 py-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 font-typewriter cursor-pointer">
+            <option value="1">Dossier 1: Ancient Mesopotamia (c. 1750 BCE)</option>
+            <option value="2">Dossier 2: Ancient Rome (c. 79 CE)</option>
+            <option value="3">Dossier 3: Medieval Europe (1215 CE)</option>
+            <option value="4">Dossier 4: Age of Exploration & Colonization (1492 CE)</option>
+            <option value="5">Dossier 5: American Civil War Era (1852 CE)</option>
+            <option value="6">Dossier 6: Industrial Revolution (1906 CE)</option>
+            <option value="7">Dossier 7: Civil Rights Movement (1963 CE)</option>
+            <option value="8">Dossier 8: Information Age & Space Race (1969 CE)</option>
+          </select>
+        </div>
+
+        <!-- High Legibility Font Toggle for Diverse Learners / Dyslexia -->
+        <button id="font-toggle-btn" onclick="toggleAccessibleFont()" aria-pressed="false" class="px-3 py-2 rounded-lg bg-stone-800 hover:bg-stone-700 border border-stone-600 text-amber-200 text-xs font-typewriter focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 flex items-center gap-1.5 cursor-pointer">
+          <span role="img" aria-label="Font style symbol">Aa</span>
+          <span id="font-toggle-label">Clean Font</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="max-w-5xl mx-auto w-full flex-1 space-y-6" role="main">
+
+    <!-- Overview Memo Box styled as an Official Case Instruction Slip pinned to desk -->
+    <section aria-labelledby="briefing-memo-title" class="relative bg-amber-50 border-l-4 border-l-red-800 border-y border-r border-amber-300 rounded-r-lg p-5 sm:p-6 shadow-xl">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-amber-200/80 font-typewriter text-xs text-stone-700">
+        <h2 id="briefing-memo-title" class="font-bold text-red-950 uppercase tracking-wider flex items-center gap-1.5 text-xs sm:text-sm">
+          <span class="w-2 h-2 rounded-full bg-red-700" role="img" aria-label="Priority memo bullet"></span> OFFICIAL BRIEFING MEMORANDUM
+        </h2>
+        <span class="text-stone-700 font-mono font-semibold">CONFIDENTIAL ARCHIVE</span>
+      </div>
+      <p class="text-stone-900 text-xs sm:text-sm leading-relaxed font-typewriter">
+        This comprehensive library contains eight distinct "encrypted" historical primary source dossiers spanning diverse eras. Each dossier is designed for graduate candidates in elementary literacy and humanities to practice forensic comprehension analysis, identify vocabulary/syntactic traps, uncover authorial bias, and formulate explicit teacher think-aloud scaffolds for diverse learners and students with dyslexia.
+      </p>
+    </section>
+
+    <!-- Physical Detective Manila Folder Assembly -->
+    <section aria-labelledby="card-title" class="relative pt-6">
+
+      <!-- Realistic Manila File Folder Index Tabs with WAI-ARIA tablist semantics -->
+      <div role="tablist" aria-label="Historical Dossier Selection" class="grid grid-cols-8 gap-1 sm:gap-1.5 px-1 sm:px-3 z-10 relative items-end w-full">
+        <button role="tab" aria-selected="true" aria-controls="dossier-panel" id="tab-1" tabindex="0" onclick="selectDossier(1)" aria-label="Dossier 1: Ancient Mesopotamia (c. 1750 BCE)" class="folder-tab active py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>01
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="dossier-panel" id="tab-2" tabindex="-1" onclick="selectDossier(2)" aria-label="Dossier 2: Ancient Rome (c. 79 CE)" class="folder-tab inactive py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>02
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="dossier-panel" id="tab-3" tabindex="-1" onclick="selectDossier(3)" aria-label="Dossier 3: Medieval Europe (1215 CE)" class="folder-tab inactive py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>03
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="dossier-panel" id="tab-4" tabindex="-1" onclick="selectDossier(4)" aria-label="Dossier 4: Age of Exploration & Colonization (1492 CE)" class="folder-tab inactive py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>04
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="dossier-panel" id="tab-5" tabindex="-1" onclick="selectDossier(5)" aria-label="Dossier 5: American Civil War Era (1852 CE)" class="folder-tab inactive py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>05
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="dossier-panel" id="tab-6" tabindex="-1" onclick="selectDossier(6)" aria-label="Dossier 6: Industrial Revolution (1906 CE)" class="folder-tab inactive py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>06
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="dossier-panel" id="tab-7" tabindex="-1" onclick="selectDossier(7)" aria-label="Dossier 7: Civil Rights Movement (1963 CE)" class="folder-tab inactive py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>07
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="dossier-panel" id="tab-8" tabindex="-1" onclick="selectDossier(8)" aria-label="Dossier 8: Information Age & Space Race (1969 CE)" class="folder-tab inactive py-2 sm:py-2.5 px-0.5 sm:px-2 text-center font-typewriter text-[10px] sm:text-xs tracking-normal sm:tracking-wider cursor-pointer whitespace-nowrap overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+          <span class="hidden md:inline">DOSSIER </span><span class="hidden sm:inline md:hidden">FILE </span>08
+        </button>
+      </div>
+
+      <!-- Manila File Jacket Outer Body -->
+      <article role="tabpanel" id="dossier-panel" aria-labelledby="tab-1" tabindex="0" class="manila-folder rounded-b-2xl rounded-tr-2xl p-4 sm:p-8 border border-amber-700/60 relative focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-400">
+        
+        <!-- Folder Spine Score Line / Decorative Emboss -->
+        <div class="absolute left-6 right-6 top-2 h-[1px] bg-amber-950/30" aria-hidden="true"></div>
+
+        <!-- The White/Aged Investigation Document Paper Inside The Folder -->
+        <div class="case-paper border border-stone-300 rounded-lg p-6 sm:p-10 relative overflow-hidden">
+          
+          <!-- Metal Paperclip Visual Hook (Marked decorative for a11y) -->
+          <div class="paperclip" aria-hidden="true"></div>
+
+          <!-- Document Header with Classification Stamps -->
+          <div class="border-b-2 border-stone-800 pb-5 mb-6 flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-stamp text-xs text-stone-700 font-bold tracking-widest uppercase">EVIDENCE RECORD ID:</span>
+                <span id="case-code" class="font-typewriter text-xs font-bold text-stone-900 tracking-wider">SEC-HIST-01</span>
+              </div>
+              <h2 id="card-title" class="font-typewriter font-bold text-xl sm:text-2xl text-stone-950 tracking-tight">
+                Dossier 1: Ancient Mesopotamia (c. 1750 BCE)
+              </h2>
+              <div class="mt-2 text-xs sm:text-sm font-typewriter text-stone-800 flex flex-wrap items-center gap-1.5">
+                <span class="font-bold text-stone-950 uppercase">Historical Era:</span>
+                <span id="card-era" class="bg-amber-100 px-2 py-0.5 rounded border border-amber-300 text-stone-900 font-medium">
+                  Ancient Mesopotamia / Code of Hammurabi
+                </span>
+              </div>
+            </div>
+
+            <!-- Rubber Stamps on Paper with short descriptive text alternatives -->
+            <div class="flex items-center gap-3 self-start mt-1">
+              <div role="img" aria-label="Stamp: CONFIDENTIAL" class="stamp-classified px-3 py-1 text-xs font-bold select-none">
+                CONFIDENTIAL
+              </div>
+              <div role="img" aria-label="Stamp: FILE VERIFIED" class="stamp-verified hidden sm:block px-2.5 py-0.5 text-[11px] font-bold select-none">
+                FILE VERIFIED
+              </div>
+            </div>
+          </div>
+
+          <!-- Artifact Excerpt Paper Section -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 id="excerpt-heading" class="font-stamp text-xs font-bold tracking-widest uppercase text-stone-800">
+                Primary Source Excerpt:
+              </h3>
+              <span class="font-typewriter text-xs text-stone-700 italic">Transcribed verbatim</span>
+            </div>
+
+            <!-- Authentic Typewritten Excerpt Box -->
+            <blockquote aria-labelledby="excerpt-heading" class="bg-white border-2 border-dashed border-stone-500 rounded-md p-6 sm:p-8 shadow-inner m-0">
+              <p id="card-excerpt" class="font-typewriter text-base sm:text-lg leading-relaxed text-stone-950 font-normal">
+                "If a builder build a house for a man, and do not make its construction firm, and the house which he has built collapse and cause the death of the owner of the house, that builder shall be put to death." (Law 229)
+              </p>
+            </blockquote>
+          </div>
+
+          <!-- Investigator Document Footer & Dossier Pagination Controls -->
+          <div class="mt-8 pt-6 border-t border-stone-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+              <button id="prev-btn" onclick="stepDossier(-1)" aria-label="Go to previous dossier" class="px-4 py-2 rounded bg-stone-200 border border-stone-500 font-typewriter text-xs font-bold text-stone-900 hover:bg-stone-300 hover:border-stone-600 transition shadow-sm active:translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-800 cursor-pointer disabled:cursor-not-allowed">
+                ← PREVIOUS FILE
+              </button>
+              <button id="next-btn" onclick="stepDossier(1)" aria-label="Go to next dossier" class="px-4 py-2 rounded bg-stone-200 border border-stone-500 font-typewriter text-xs font-bold text-stone-900 hover:bg-stone-300 hover:border-stone-600 transition shadow-sm active:translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-800 cursor-pointer disabled:cursor-not-allowed">
+                NEXT FILE →
+              </button>
+            </div>
+
+            <div class="font-typewriter text-xs text-stone-700 text-center sm:text-right font-medium">
+              CURRENT RECORD: <span id="indicator-page" class="font-bold text-stone-950">DOSSIER 1 OF 8</span>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <footer class="max-w-5xl mx-auto w-full text-center py-5 mt-4 text-stone-400 font-typewriter text-xs">
+    PRIMARY SOURCE MYSTERY DOSSIER LIBRARY • FORENSIC ARCHIVAL CASE SYSTEM
+  </footer>
+
+  <script>
+    /* Pure dataset consisting only of the provided content */
+    const DOSSIERS = [
+      {
+        id: 1,
+        code: "SEC-HIST-01",
+        title: "Dossier 1: Ancient Mesopotamia (c. 1750 BCE)",
+        era: "Ancient Mesopotamia / Code of Hammurabi",
+        excerpt: '"If a builder build a house for a man, and do not make its construction firm, and the house which he has built collapse and cause the death of the owner of the house, that builder shall be put to death." (Law 229)'
+      },
+      {
+        id: 2,
+        code: "SEC-HIST-02",
+        title: "Dossier 2: Ancient Rome (c. 79 CE)",
+        era: "Roman Empire / Eruption of Mount Vesuvius",
+        excerpt: 'From the letters of Pliny the Younger: "A dense black cloud was coming up behind us, spreading over the earth like a flood... You could hear the shrieks of women, the wailing of infants, and the shouting of men; some were calling their parents, others their children or their wives..."'
+      },
+      {
+        id: 3,
+        code: "SEC-HIST-03",
+        title: "Dossier 3: Medieval Europe (1215 CE)",
+        era: "High Middle Ages / Magna Carta",
+        excerpt: '"No freeman shall be seized or imprisoned... except by the lawful judgment of his equals or by the law of the land. To no one will we sell, to no one deny or delay right or justice." (Clause 39-40)'
+      },
+      {
+        id: 4,
+        code: "SEC-HIST-04",
+        title: "Dossier 4: Age of Exploration & Colonization (1492 CE)",
+        era: "First Encounters / Christopher Columbus's Log",
+        excerpt: 'From Columbus\'s Journal: "They brought us parrots and balls of cotton and spears and many other things, which they exchanged for the glass beads and hawks\' bells... They should be good servants and intelligent, for I observe that they quickly repeat everything that is said to them..."'
+      },
+      {
+        id: 5,
+        code: "SEC-HIST-05",
+        title: "Dossier 5: American Civil War Era (1852 CE)",
+        era: "Antebellum America / Abolitionist Literature",
+        excerpt: 'From Frederick Douglass\'s Speech: "What, to the American slave, is your 4th of July? I answer; a day that reveals to him, more than all other days in the year, the gross injustice and cruelty to which he is the constant victim."'
+      },
+      {
+        id: 6,
+        code: "SEC-HIST-06",
+        title: "Dossier 6: Industrial Revolution (1906 CE)",
+        era: "Progressive Era / Industrial Labor",
+        excerpt: 'From Upton Sinclair\'s The Jungle: "The meat would be shoveled into carts, and the man who did the shoveling would not trouble to lift out a rat even when he saw one... there were things that went into the sausage in comparison with which a poisoned rat was a tidbit."'
+      },
+      {
+        id: 7,
+        code: "SEC-HIST-07",
+        title: "Dossier 7: Civil Rights Movement (1963 CE)",
+        era: "20th Century Civil Rights / Letter from Birmingham Jail",
+        excerpt: 'From Martin Luther King Jr.: "Injustice anywhere is a threat to justice everywhere. We are caught in an inescapable network of mutuality, tied in a single garment of destiny. Whatever affects one directly, affects all indirectly."'
+      },
+      {
+        id: 8,
+        code: "SEC-HIST-08",
+        title: "Dossier 8: Information Age & Space Race (1969 CE)",
+        era: "Cold War / Apollo 11 Moon Landing",
+        excerpt: 'From Walter Cronkite\'s Broadcast Transcript: "Oh, boy! Look at that... Whew! Boy, you can see the- oh, golly! Look at those rocks, will you! It\'s incredible! It\'s un- it\'s unbelievable... Wait a minute... unbelievable!"'
+      }
+    ];
+
+    let currentDossierId = 1;
+
+    /* Updates the dossier sheet, ARIA attributes, and folder tabs */
+    function selectDossier(id, setFocusToTab = false) {
+      if (id < 1 || id > 8) return;
+      currentDossierId = id;
+
+      const dossier = DOSSIERS.find(d => d.id === id);
+      if (!dossier) return;
+
+      // Populate file sheet elements
+      document.getElementById('card-title').innerText = dossier.title;
+      document.getElementById('card-era').innerText = dossier.era;
+      document.getElementById('card-excerpt').innerText = dossier.excerpt;
+      document.getElementById('case-code').innerText = dossier.code;
+      document.getElementById('indicator-page').innerText = `DOSSIER ${dossier.id} OF 8`;
+
+      // Update sync selector
+      const selectElem = document.getElementById('dossier-select');
+      if (selectElem) selectElem.value = String(id);
+
+      // Update tabpanel aria-labelledby link
+      const panel = document.getElementById('dossier-panel');
+      if (panel) {
+        panel.setAttribute('aria-labelledby', `tab-${id}`);
+      }
+
+      // Update folder tabs ARIA and visual states
+      for (let i = 1; i <= 8; i++) {
+        const tab = document.getElementById(`tab-${i}`);
+        if (tab) {
+          const isSelected = (i === id);
+          tab.classList.toggle('active', isSelected);
+          tab.classList.toggle('inactive', !isSelected);
+          tab.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+          tab.setAttribute('tabindex', isSelected ? '0' : '-1');
+
+          if (isSelected && setFocusToTab) {
+            tab.focus();
+          }
+        }
+      }
+
+      // Update button disabled states
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const isFirst = (id === 1);
+      const isLast = (id === 8);
+
+      if (prevBtn) {
+        // If the button that currently has focus is about to become disabled, shift focus to nextBtn to prevent focus loss
+        if (isFirst && document.activeElement === prevBtn && nextBtn) {
+          nextBtn.focus();
+        }
+        prevBtn.disabled = isFirst;
+        prevBtn.classList.toggle('opacity-40', isFirst);
+        prevBtn.setAttribute('aria-disabled', isFirst ? 'true' : 'false');
+      }
+
+      if (nextBtn) {
+        // If next button has focus and becomes disabled, shift focus back to prevBtn
+        if (isLast && document.activeElement === nextBtn && prevBtn) {
+          prevBtn.focus();
+        }
+        nextBtn.disabled = isLast;
+        nextBtn.classList.toggle('opacity-40', isLast);
+        nextBtn.setAttribute('aria-disabled', isLast ? 'true' : 'false');
+      }
+
+      // Announce update to screen reader users
+      const announcer = document.getElementById('a11y-announcer');
+      if (announcer) {
+        announcer.innerText = `Viewing ${dossier.title}, Historical era: ${dossier.era}`;
+      }
+    }
+
+    function stepDossier(delta) {
+      selectDossier(currentDossierId + delta);
+    }
+
+    /* Accessibility feature: Toggle clean font for enhanced legibility */
+    function toggleAccessibleFont() {
+      const body = document.body;
+      const isClean = body.classList.toggle('accessible-font-mode');
+      const toggleBtn = document.getElementById('font-toggle-btn');
+      const toggleLabel = document.getElementById('font-toggle-label');
+      
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', isClean ? 'true' : 'false');
+      }
+      if (toggleLabel) {
+        toggleLabel.innerText = isClean ? 'Typewriter Font' : 'Clean Font';
+      }
+
+      const announcer = document.getElementById('a11y-announcer');
+      if (announcer) {
+        announcer.innerText = isClean 
+          ? 'High-legibility sans-serif reading font enabled.' 
+          : 'Vintage typewriter font restored.';
+      }
+    }
+
+    /* WAI-ARIA Keyboard navigation for tablist (Arrow keys, Home, End) */
+    function setupKeyboardTabs() {
+      const tablist = document.querySelector('[role="tablist"]');
+      if (!tablist) return;
+
+      tablist.addEventListener('keydown', (e) => {
+        let targetId = null;
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          targetId = (currentDossierId % 8) + 1;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          targetId = currentDossierId === 1 ? 8 : currentDossierId - 1;
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          targetId = 1;
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          targetId = 8;
+        }
+
+        if (targetId !== null) {
+          selectDossier(targetId, true);
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      selectDossier(1);
+      setupKeyboardTabs();
+    });
+  </script>
+</body>
+</html>
