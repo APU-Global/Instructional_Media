@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intervention Tycoon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Roboto Slab', 'serif'],
+                    },
+                    colors: {
+                        tycoon: {
+                            navy: '#0b1120',
+                            panel: '#1e293b',
+                            gold: '#fbbf24',
+                        }
+                    },
+                    animation: {
+                        'stamp': 'stampIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                    },
+                    keyframes: {
+                        stampIn: {
+                            '0%': { transform: 'scale(2) rotate(-15deg)', opacity: '0' },
+                            '100%': { transform: 'scale(1) rotate(-5deg)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #050810; }
+        .wood-texture {
+            background-color: #5c3a21;
+            background-image: 
+                linear-gradient(45deg, #4a2f1d 25%, transparent 25%, transparent 75%, #4a2f1d 75%, #4a2f1d),
+                linear-gradient(45deg, #4a2f1d 25%, transparent 25%, transparent 75%, #4a2f1d 75%, #4a2f1d);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            border: 4px solid #8b5a2b;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.6);
+        }
+        .card-inner {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; border: 1px solid #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #fbbf24; }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen flex flex-col font-sans">
+
+    <div id="welcome-screen" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[100] flex justify-center items-center p-4 md:p-8 transition-opacity duration-500">
+        <div class="wood-texture max-w-3xl w-full max-h-full rounded-3xl p-2 shadow-[0_0_50px_rgba(251,191,36,0.3)] flex flex-col">
+            <div class="bg-gradient-to-br from-tycoon-navy to-slate-900 rounded-2xl p-6 md:p-10 border border-slate-700 flex-grow overflow-y-auto custom-scrollbar flex flex-col items-center text-center">
+                
+                <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-tycoon-gold to-amber-600 mb-6 drop-shadow-md shrink-0">Welcome to the Literacy Shark Tank! 🦈</h1>
+    <main class="flex-grow p-3 md:p-5 relative z-10">
+        
+        <!-- GALLERY VIEW -->
+        <div id="gallery-view" class="max-w-7xl mx-auto block">
+            <div class="flex justify-between items-end mb-4 border-b border-slate-700 pb-2">
+                <h2 class="text-lg md:text-xl font-black text-slate-200 uppercase tracking-widest">Gallery of Cases</h2>
+            </div>
+
+                    <div>
+                        <h2 class="text-lg md:text-xl font-bold text-amber-500 uppercase tracking-widest mb-2 border-b border-slate-700 pb-1 flex items-center gap-2"><span>🚀</span> Form Your Team</h2>
+                        <p class="font-serif text-sm md:text-base">You’ll be randomly assigned to an Entrepreneurial Pod in a Zoom breakout room, with a collaborative pitch deck template.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-lg md:text-xl font-bold text-amber-500 uppercase tracking-widest mb-2 border-b border-slate-700 pb-1 flex items-center gap-2"><span>📊</span> Analyze the Case</h2>
+                        <p class="font-serif mb-2 text-sm md:text-base">Your team will receive a student case featuring:</p>
+                        <ul class="list-disc list-inside font-serif space-y-1 ml-2 text-sm md:text-base">
+                            <li>Assessment data</li>
+                            <li>English Learner language needs</li>
+                            <li>Dyslexia/SPED support indicators</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 class="text-lg md:text-xl font-bold text-amber-500 uppercase tracking-widest mb-2 border-b border-slate-700 pb-1 flex items-center gap-2"><span>⏱️</span> The Challenge</h2>
+                        <p class="font-serif text-sm md:text-base">You have 30 minutes to analyze the case, design your targeted instructional intervention, and prepare your Shark Tank-style pitch.</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 md:mt-10 flex flex-col items-center shrink-0">
+                    <p class="text-lg font-bold text-white mb-4 italic">Ready to make your case? Let’s innovate! 🦈</p>
+                    <button onclick="enterTank()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-black text-lg md:text-xl uppercase tracking-widest py-3 px-8 md:py-4 md:px-10 rounded-full transition transform hover:scale-105 shadow-[0_0_20px_rgba(251,191,36,0.5)] border-2 border-amber-300">
+                        Enter the Tank
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="bg-gradient-to-b from-tycoon-navy to-slate-900 border-b-4 border-tycoon-gold p-4 md:p-6 shadow-[0_4px_20px_rgba(251,191,36,0.15)] relative z-20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-tycoon-gold text-slate-900 p-2 rounded-lg font-black text-2xl shadow-[0_0_15px_rgba(251,191,36,0.5)]">IT</div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 uppercase tracking-widest drop-shadow-sm">Intervention Tycoon</h1>
+                    <p class="text-slate-400 text-xs md:text-sm font-bold tracking-widest uppercase">TK-8 Case File Library</p>
+                </div>
+            </div>
+
+            <!-- NAVIGATION TABS -->
+            <div class="flex gap-2 bg-slate-900 p-1 rounded-xl border border-slate-700 shadow-inner overflow-x-auto max-w-full">
+                <button onclick="showHome()" class="bg-transparent text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-600 font-bold uppercase tracking-widest py-2 px-3 md:px-4 rounded-lg transition-all whitespace-nowrap flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span class="hidden md:block">Home</span>
+                </button>
+                <button onclick="switchTab('gallery')" id="tab-gallery" class="bg-amber-500 text-slate-900 font-black uppercase tracking-widest py-2 px-4 md:px-6 rounded-lg shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all whitespace-nowrap">Case Files</button>
+                <button onclick="switchTab('pitch')" id="tab-pitch" class="bg-transparent text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-600 font-bold uppercase tracking-widest py-2 px-4 md:px-6 rounded-lg transition-all whitespace-nowrap">Pitch Builder</button>
+                <button onclick="switchTab('deliver')" id="tab-deliver" class="bg-transparent text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-600 font-bold uppercase tracking-widest py-2 px-4 md:px-6 rounded-lg transition-all whitespace-nowrap">Deliver Pitch</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-8 relative z-10">
+        
+        <!-- GALLERY VIEW -->
+        <div id="gallery-view" class="max-w-7xl mx-auto block">
+            <div class="flex justify-between items-end mb-6 border-b border-slate-700 pb-2">
+                <h2 class="text-xl md:text-2xl font-black text-slate-200 uppercase tracking-widest">Gallery of Cases</h2>
+            </div>
+            
+            <div id="gallery-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Cards injected here -->
+            </div>
+            
+            <div class="mt-6 border-t border-slate-700 pt-4 flex justify-end">
+                <button onclick="switchTab('pitch')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-black text-xs md:text-sm uppercase tracking-widest py-2 px-6 rounded-full transition transform hover:scale-105 shadow-[0_0_15px_rgba(251,191,36,0.4)] border border-amber-300 flex items-center gap-2">
+                    Next: Build Pitch <span>→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- PITCH BUILDER VIEW -->
+        <div id="pitch-guide-view" class="max-w-7xl mx-auto hidden animate-fadeIn">
+            <div class="flex justify-between items-end mb-4 border-b border-slate-700 pb-2">
+                <h2 class="text-lg md:text-xl font-black text-slate-200 uppercase tracking-widest">Build Your Pitch</h2>
+            </div>
+
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-amber-500/30 p-4 md:p-6 rounded-2xl mb-5 shadow-[0_0_20px_rgba(251,191,36,0.1)] relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 text-7xl -mt-2 -mr-2 pointer-events-none">⏱️</div>
+                <h3 class="text-amber-400 font-black text-lg md:text-xl mb-1 relative z-10 uppercase tracking-wide">30 Minutes to Turn Student Data into an Inclusive Intervention</h3>
+                <p class="text-slate-300 font-serif text-sm md:text-base relative z-10 max-w-4xl leading-relaxed">Your team will work through four design challenges. Use the student case file, assessment data, and course resources to build an intervention that is specific, research-backed, differentiated, and inclusive.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                <!-- Step 1 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-xl transform transition-transform hover:scale-[1.01]">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-3">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="text-2xl md:text-3xl drop-shadow-md">🔍</span>
+                            <h3 class="text-white font-black text-base md:text-lg uppercase tracking-wide">Step 1: Audit Assessment Data</h3>
+                            <span class="ml-auto text-amber-900 bg-amber-500 font-black px-2 py-1 rounded shadow-inner text-xs">8 MIN</span>
+                        </div>
+                        <div class="bg-amber-900/40 border border-amber-700/60 p-2 rounded-lg text-amber-400 font-bold text-xs md:text-sm flex gap-2">
+                            <span class="text-amber-500">Ask:</span> What is really going on with this student?
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed">Review the student’s screening and assessment data. Look beyond the overall score to identify the specific literacy needs. Look for:</p>
+                        <ul class="list-disc list-inside text-slate-400 font-serif text-xs md:text-sm space-y-0.5 ml-2">
+                            <li>Decoding vs. comprehension gaps</li>
+                            <li>RAN/fluency bottlenecks</li>
+                            <li>Vocabulary or language needs</li>
+                            <li>Patterns across different assessments</li>
+                        </ul>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mt-1">
+                            <span class="text-amber-500 font-bold text-xs uppercase tracking-wider block mb-1">Your task:</span>
+                            <span class="text-white font-serif text-xs md:text-sm">Decide what additional diagnostic information or tools you would need to establish a clear baseline and target instruction.</span>
+                        </div>
+                        <p class="text-slate-500 text-[10px] md:text-xs font-black mt-auto pt-2 tracking-widest uppercase text-right border-t border-slate-800">Connection: TPE U7.10 • Fisher Modules 8–9</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-xl transform transition-transform hover:scale-[1.01]">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-3">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="text-2xl md:text-3xl drop-shadow-md">🌎</span>
+                            <h3 class="text-white font-black text-base md:text-lg uppercase tracking-wide">Step 2: Language & Morphology</h3>
+                            <span class="ml-auto text-amber-900 bg-amber-500 font-black px-2 py-1 rounded shadow-inner text-xs">8 MIN</span>
+                        </div>
+                        <div class="bg-amber-900/40 border border-amber-700/60 p-2 rounded-lg text-amber-400 font-bold text-xs md:text-sm flex gap-2">
+                            <span class="text-amber-500">Ask:</span> How will we help access the language of the content?
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed">Plan vocabulary instruction using morphology and etymology (Greek/Latin roots, prefixes, suffixes). For English Learners, consider how the home language becomes an asset.</p>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mt-1">
+                            <span class="text-amber-500 font-bold text-xs uppercase tracking-wider block mb-1">Your task:</span>
+                            <ul class="list-disc list-inside text-white font-serif text-xs md:text-sm space-y-0.5 mt-1 ml-2">
+                                <li>Select key academic/content vocabulary.</li>
+                                <li>Identify useful roots, prefixes, or suffixes.</li>
+                                <li>Add ELD scaffolds and language supports.</li>
+                                <li>Incorporate translanguaging/home-language connections.</li>
+                            </ul>
+                        </div>
+                        <p class="text-slate-500 text-[10px] md:text-xs font-black mt-auto pt-2 tracking-widest uppercase text-right border-t border-slate-800">Connection: TPE U7.11 • TPE U7.5d</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-xl transform transition-transform hover:scale-[1.01]">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-3">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="text-2xl md:text-3xl drop-shadow-md">🧩</span>
+                            <h3 class="text-white font-black text-base md:text-lg uppercase tracking-wide">Step 3: Dyslexia & SPED Access</h3>
+                            <span class="ml-auto text-amber-900 bg-amber-500 font-black px-2 py-1 rounded shadow-inner text-xs">8 MIN</span>
+                        </div>
+                        <div class="bg-amber-900/40 border border-amber-700/60 p-2 rounded-lg text-amber-400 font-bold text-xs md:text-sm flex gap-2">
+                            <span class="text-amber-500">Ask:</span> What gives access without lowering the bar?
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed">Design targeted supports for reading and writing that address the student’s specific needs while keeping them engaged with grade-level content and expectations.</p>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mt-1">
+                            <span class="text-amber-500 font-bold text-xs uppercase tracking-wider block mb-1">Your task:</span>
+                            <ul class="list-disc list-inside text-white font-serif text-xs md:text-sm space-y-0.5 mt-1 ml-2">
+                                <li>Choose specific multisensory strategies.</li>
+                                <li>Identify appropriate reading/writing accommodations.</li>
+                                <li>Consider how you will collaborate with SPED providers.</li>
+                                <li>Avoid overwhelming or unnecessary supports.</li>
+                            </ul>
+                        </div>
+                        <p class="text-amber-500/90 italic text-[10px] md:text-xs font-bold text-center mt-1">Remember: Access ≠ reduced rigor.</p>
+                        <p class="text-slate-500 text-[10px] md:text-xs font-black mt-auto pt-2 tracking-widest uppercase text-right border-t border-slate-800">Connection: U2.3 • U3.5 • TPE MM 7.1, 7.3</p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-xl transform transition-transform hover:scale-[1.01]">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-3">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="text-2xl md:text-3xl drop-shadow-md">❤️</span>
+                            <h3 class="text-white font-black text-base md:text-lg uppercase tracking-wide">Step 4: Inclusion & Faith</h3>
+                            <span class="ml-auto text-amber-900 bg-amber-500 font-black px-2 py-1 rounded shadow-inner text-xs">6 MIN</span>
+                        </div>
+                        <div class="bg-amber-900/40 border border-amber-700/60 p-2 rounded-lg text-amber-400 font-bold text-xs md:text-sm flex gap-2">
+                            <span class="text-amber-500">Ask:</span> Why does this matter beyond academics?
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed">Create the closing value proposition for your pitch. Explain how your intervention communicates that every student is created with dignity, purpose, and value.</p>
+                        <p class="text-slate-400 font-serif text-xs md:text-sm leading-relaxed">Connect your instructional decisions to a theology of radical inclusion and Imago Dei.</p>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mt-1">
+                            <span class="text-amber-500 font-bold text-xs uppercase tracking-wider block mb-1">Your task:</span>
+                            <span class="text-white font-serif text-xs md:text-sm block">Show how your intervention helps the student not only access learning, but belong, participate, and thrive.</span>
+                        </div>
+                        <p class="text-slate-500 text-[10px] md:text-xs font-black mt-auto pt-2 tracking-widest uppercase text-right border-t border-slate-800">Connection: Core Mission</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Pitch Banner -->
+            <div class="bg-gradient-to-br from-tycoon-navy via-slate-800 to-tycoon-navy border-2 border-tycoon-gold p-5 md:p-8 rounded-2xl flex flex-col items-center text-center shadow-[0_0_40px_rgba(251,191,36,0.2)] relative overflow-hidden">
+                <div class="absolute inset-0 bg-tycoon-gold/5 pointer-events-none"></div>
+                <div class="text-4xl md:text-5xl mb-3 relative z-10 drop-shadow-lg">🎤</div>
+                <h3 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 uppercase tracking-widest mb-3 relative z-10">Your Final Pitch</h3>
+                <p class="text-slate-300 font-serif text-sm md:text-base mb-5 max-w-2xl relative z-10">By the end of 30 minutes, your team should be ready to confidently answer:</p>
+                
+                <div class="flex flex-col md:flex-row gap-3 justify-center items-stretch w-full max-w-5xl mb-5 relative z-10">
+                    <div class="bg-slate-900/80 border border-slate-600 p-4 rounded-xl flex-1 flex flex-col items-center justify-center shadow-lg">
+                        <span class="text-amber-500 font-black text-xl mb-1">1</span>
+                        <span class="text-white font-bold tracking-wide text-center text-sm md:text-base">What does this<br>student need?</span>
+                    </div>
+                    <div class="hidden md:flex items-center text-amber-500 font-black text-2xl">→</div>
+                    <div class="bg-slate-900/80 border border-slate-600 p-4 rounded-xl flex-1 flex flex-col items-center justify-center shadow-lg">
+                        <span class="text-amber-500 font-black text-xl mb-1">2</span>
+                        <span class="text-white font-bold tracking-wide text-center text-sm md:text-base">What will<br>we do?</span>
+                    </div>
+                    <div class="hidden md:flex items-center text-amber-500 font-black text-2xl">→</div>
+                    <div class="bg-slate-900/80 border border-slate-600 p-4 rounded-xl flex-1 flex flex-col items-center justify-center shadow-lg">
+                        <span class="text-amber-500 font-black text-xl mb-1">3</span>
+                        <span class="text-white font-bold tracking-wide text-center text-sm md:text-base">Why will<br>it work?</span>
+                    </div>
+                    <div class="hidden md:flex items-center text-amber-500 font-black text-2xl">→</div>
+                    <div class="bg-slate-900/80 border border-slate-600 p-4 rounded-xl flex-1 flex flex-col items-center justify-center shadow-lg">
+                        <span class="text-amber-500 font-black text-xl mb-1">4</span>
+                        <span class="text-white font-bold tracking-wide text-center text-sm md:text-base">How will they<br>belong & thrive?</span>
+                    </div>
+                </div>
+                
+                <div class="bg-amber-500 border-2 border-amber-300 px-6 py-4 rounded-xl shadow-[0_0_30px_rgba(251,191,36,0.4)] relative z-10 transform hover:scale-105 transition-transform cursor-default">
+                    <h4 class="text-slate-900 font-black uppercase tracking-widest text-base md:text-lg mb-1 flex items-center justify-center gap-2"><span>🦈</span> Your Challenge <span>🦈</span></h4>
+                    <p class="text-slate-800 font-black tracking-widest text-xs md:text-sm">ANALYZE → DESIGN → DIFFERENTIATE → INCLUDE → PITCH</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 border-t border-slate-700 pt-4 flex flex-col md:flex-row justify-between items-center gap-3">
+                <button onclick="switchTab('gallery')" class="bg-transparent border border-slate-600 text-slate-400 hover:text-white hover:bg-slate-800 font-bold uppercase tracking-widest py-2 px-6 rounded-full transition-all flex items-center gap-2 w-full md:w-auto justify-center text-xs md:text-sm">
+                    <span>←</span> Back to Cases
+                </button>
+                <button onclick="switchTab('deliver')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-black text-xs md:text-sm uppercase tracking-widest py-2 px-6 rounded-full transition transform hover:scale-105 shadow-[0_0_15px_rgba(251,191,36,0.4)] border border-amber-300 flex items-center gap-2 w-full md:w-auto justify-center">
+                    Next: Deliver Pitch <span>→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- DELIVER PITCH VIEW -->
+        <div id="deliver-pitch-view" class="max-w-7xl mx-auto hidden animate-fadeIn">
+            <div class="flex justify-between items-end mb-4 border-b border-slate-700 pb-2">
+                <h2 class="text-lg md:text-xl font-black text-slate-200 uppercase tracking-widest">Deliver The Pitch</h2>
+            </div>
+
+            <div class="bg-gradient-to-r from-red-900/50 to-tycoon-navy border border-red-500/30 p-4 md:p-6 rounded-2xl mb-5 shadow-[0_0_20px_rgba(239,68,68,0.1)] relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 text-7xl -mt-2 -mr-2 pointer-events-none">🎥</div>
+                <h3 class="text-red-400 font-black text-lg md:text-xl mb-2 relative z-10 uppercase tracking-wide flex flex-wrap items-center gap-2">
+                    <span class="bg-red-500/20 px-2 py-0.5 rounded border border-red-500/50 text-sm md:text-base">15 Minutes</span> 
+                    <span class="hidden md:inline text-slate-500">•</span> 
+                    <span class="text-sm md:text-base">90 Seconds to Make Your Case</span>
+                </h3>
+                <p class="text-slate-300 font-serif text-sm md:text-base relative z-10 max-w-4xl leading-relaxed">Your team has designed an intervention. Now it’s time to sell your solution! Work together to record a high-energy 90-second Shark Tank-style pitch that convinces your audience that your literacy intervention is the right fit for your student.</p>
+            </div>
+
+            <h3 class="text-lg md:text-xl font-black text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2 drop-shadow-md"><span>🎤</span> Your 90-Second Pitch Should Include:</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+                <!-- Point 1 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-lg transform transition-transform hover:-translate-y-1">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-2">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="bg-amber-500 text-tycoon-navy font-black text-xl w-8 h-8 flex justify-center items-center rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] shrink-0">1</span>
+                            <h4 class="text-white font-black text-sm md:text-base uppercase tracking-wide">Meet the Student</h4>
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed mt-1">Briefly introduce the student’s key literacy needs and the most important data that informed your decisions.</p>
+                    </div>
+                </div>
+
+                <!-- Point 2 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-lg transform transition-transform hover:-translate-y-1">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-2">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="bg-amber-500 text-tycoon-navy font-black text-xl w-8 h-8 flex justify-center items-center rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] shrink-0">2</span>
+                            <h4 class="text-white font-black text-sm md:text-base uppercase tracking-wide">Reveal Your Product</h4>
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed mt-1">Name and describe your targeted literacy intervention. What will you do, and what specific skills will you address?</p>
+                    </div>
+                </div>
+
+                <!-- Point 3 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-lg transform transition-transform hover:-translate-y-1">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-2">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="bg-amber-500 text-tycoon-navy font-black text-xl w-8 h-8 flex justify-center items-center rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] shrink-0">3</span>
+                            <h4 class="text-white font-black text-sm md:text-base uppercase tracking-wide">Show the Difference</h4>
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed mt-1">Highlight your most important instructional strategies, language supports, and SPED/dyslexia accommodations. Explain how your plan maintains grade-level rigor.</p>
+                    </div>
+                </div>
+
+                <!-- Point 4 -->
+                <div class="wood-texture rounded-2xl p-2 shadow-lg transform transition-transform hover:-translate-y-1">
+                    <div class="card-inner rounded-xl h-full p-4 flex flex-col gap-2">
+                        <div class="flex items-center gap-3 border-b border-slate-700 pb-2">
+                            <span class="bg-amber-500 text-tycoon-navy font-black text-xl w-8 h-8 flex justify-center items-center rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] shrink-0">4</span>
+                            <h4 class="text-white font-black text-sm md:text-base uppercase tracking-wide">Make Your Case</h4>
+                        </div>
+                        <p class="text-slate-300 font-serif text-xs md:text-sm leading-relaxed mt-1">End with your value proposition: Why is this intervention inclusive, research-backed, and designed to help this student belong, access, and thrive?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
+                <!-- Tips -->
+                <div class="bg-slate-900/80 border-2 border-slate-700 p-4 md:p-6 rounded-2xl shadow-xl">
+                    <h3 class="text-white font-black text-base md:text-lg uppercase tracking-widest mb-3 flex items-center gap-2"><span>⚡</span> Pitch Like a Shark Tank Team</h3>
+                    <ul class="space-y-1">
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-500 mt-0.5 text-sm">✓</span>
+                            <span class="text-slate-300 font-serif text-sm">Keep it focused and persuasive.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-500 mt-0.5 text-sm">✓</span>
+                            <span class="text-slate-300 font-serif text-sm">Make sure every team member has a role.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-500 mt-0.5 text-sm">✓</span>
+                            <span class="text-slate-300 font-serif text-sm">Use your pitch deck to support your presentation.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-500 mt-0.5 text-sm">✓</span>
+                            <span class="text-slate-300 font-serif text-sm">Be confident—you're the experts!</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-500 mt-0.5 text-sm">✓</span>
+                            <span class="text-slate-300 font-serif text-sm">Stay within the 90-second limit.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Submit -->
+                <div class="bg-gradient-to-br from-amber-600 to-amber-700 border-2 border-amber-400 p-4 md:p-6 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.2)] flex flex-col justify-center items-center text-center">
+                    <div class="text-4xl mb-2 drop-shadow-md">📤</div>
+                    <h3 class="text-slate-900 font-black text-lg md:text-xl uppercase tracking-widest mb-1">Submit Your Pitch</h3>
+                    <p class="text-slate-900/90 font-serif font-bold text-sm max-w-sm leading-relaxed">Record your team's 90-second pitch and submit the recording to Canvas.</p>
+                </div>
+            </div>
+
+            <!-- Final Goal Banner -->
+            <div class="wood-texture p-2 md:p-3 rounded-2xl shadow-2xl mb-6 text-center transform hover:scale-[1.01] transition-transform">
+                <div class="bg-slate-900 py-4 px-4 rounded-xl border border-slate-800">
+                    <h4 class="text-amber-500 font-black uppercase tracking-widest text-base md:text-lg mb-1 flex items-center justify-center gap-2"><span>🦈</span> The Goal <span>🦈</span></h4>
+                    <p class="text-white font-black tracking-wider text-lg md:text-2xl drop-shadow-lg">Make us believe in your intervention!</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 border-t border-slate-700 pt-4 flex justify-start">
+                <button onclick="switchTab('pitch')" class="bg-transparent border border-slate-600 text-slate-400 hover:text-white hover:bg-slate-800 font-bold uppercase tracking-widest py-2 px-6 rounded-full transition-all flex items-center gap-2 w-full md:w-auto justify-center text-xs md:text-sm">
+                    <span>←</span> Back to Pitch Builder
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="case-modal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-40 hidden flex justify-center items-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-tycoon-panel border-2 border-slate-600 rounded-2xl max-w-4xl w-full max-h-[90vh] shadow-[0_0_40px_rgba(0,0,0,0.8)] transform scale-95 transition-transform duration-300 flex flex-col" id="case-modal-content">
+            
+            <div class="bg-slate-800 p-4 md:p-6 border-b-4 border-tycoon-gold rounded-t-xl flex justify-between items-start shrink-0 relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 text-9xl -mt-4 -mr-4 pointer-events-none" id="dossier-emoji-bg"></div>
+                <div>
+                    <h2 class="text-amber-500 font-black text-xs md:text-sm uppercase tracking-widest mb-1" id="dossier-title">Case File</h2>
+                    <h3 class="text-2xl md:text-3xl font-black text-white uppercase tracking-wide flex items-center gap-3">
+                        <span id="dossier-emoji" class="text-3xl drop-shadow-md"></span>
+                        <span id="dossier-name"></span>
+                    </h3>
+                    <p class="text-slate-400 font-bold text-sm mt-1" id="dossier-subtitle"></p>
+                </div>
+                <button onclick="closeCaseModal()" class="text-slate-400 hover:text-white transition-colors p-2 z-10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-grow bg-slate-900/50">
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <h4 class="text-amber-400 font-black uppercase text-sm mb-2 flex items-center gap-2"><span class="text-lg">📋</span> Demographics & Profile</h4>
+                        <p id="dossier-demo" class="text-slate-300 font-serif text-sm leading-relaxed"></p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <h4 class="text-amber-400 font-black uppercase text-sm mb-2 flex items-center gap-2"><span class="text-lg">📊</span> Standardized Screening Data</h4>
+                        <div id="dossier-data" class="text-slate-300 font-serif text-sm leading-relaxed space-y-2 pl-4 border-l-2 border-amber-600/50"></div>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <h4 class="text-amber-400 font-black uppercase text-sm mb-2 flex items-center gap-2"><span class="text-lg">🧩</span> Decoding vs. Comprehension Gaps</h4>
+                        <p id="dossier-gaps" class="text-slate-300 font-serif text-sm leading-relaxed"></p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <h4 class="text-amber-400 font-black uppercase text-sm mb-2 flex items-center gap-2"><span class="text-lg">🎯</span> SPED & English Learner Support Indicators</h4>
+                        <p id="dossier-sped" class="text-slate-300 font-serif text-sm leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function enterTank() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            welcomeScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                welcomeScreen.classList.add('hidden');
+            }, 500); // Matches the duration-500 tailwind class
+        }
+
+        function showHome() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            welcomeScreen.classList.remove('hidden');
+            // Small delay to ensure the display change registers before fading in
+            setTimeout(() => {
+                welcomeScreen.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        const casesData = [
+            {
+                id: "case1", name: "Mateo", grade: "Transitional Kindergarten (TK)", age: 4, emoji: "👦🏽",
+                demo: "Age 4; dual-language learner (Home Language: Spanish, English proficiency: Emerging / PLTW Level 1).",
+                data: [
+                    "Phonological Awareness: Rhyming (Below Benchmark: 2/5), Initial Sound Identification (At Benchmark: 4/5), Syllable Segmentation (Emerging: recognized compound words, struggled with 3-syllable word chunks).",
+                    "Rapid Automatized Naming (RAN): Object RAN time is in the 25th percentile (mild latency when retrieving object names in English, significantly faster in Spanish)."
+                ],
+                gaps: "Pre-alphabetic phase; relies entirely on environmental print and visual cues. Strong listening comprehension in Spanish, but receptive vocabulary in English creates a temporary bottleneck for story retell tasks.",
+                sped: "Speech-language support monitor for expressive phoneme production (/th/ and /v/ substitutions). Requires bilingual visual supports, total physical response (TPR), and structured oral language scaffolding (Sentence starters: El oso ve... / The bear sees...).",
+                options: [
+                    { text: "A) Intensive English-only phonics drills to force English acquisition.", isCorrect: false },
+                    { text: "B) Bilingual visual supports, TPR, and structured oral language scaffolding.", isCorrect: true },
+                    { text: "C) Independent silent reading time with picture books.", isCorrect: false }
+                ],
+                explanation: "Mateo is a dual-language learner in the pre-alphabetic phase. English-only drills ignore his native language assets, and silent reading lacks the oral structure he needs. Total Physical Response (TPR) and bilingual visual supports bridge his comprehension and expressive gaps."
+            },
+            {
+                id: "case2", name: "Chloe", grade: "Grade 1", age: 6, emoji: "👧🏼",
+                demo: "Age 6; second-semester first-grader, IEP for mild speech articulation and suspected phonological processing disorder.",
+                data: [
+                    "Letter Naming Fluency (LNF): 52 lpm (Low Average).",
+                    "First Sound Fluency (FSF): 28 correct sounds/min (At Benchmark).",
+                    "Phoneme Segmentation Fluency (PSF): 24 cps (Below Benchmark - target is 35+).",
+                    "Nonsense Word Fluency (NWF - Correct Letter Sounds): 32 CLS (Below Benchmark); Whole Words Read (WWR): 3."
+                ],
+                gaps: "Severe decoding deficit driven by phonemic blending breakdowns. Chloe can isolate individual phonemes but struggles to slide them together into closed-syllable words (e.g., reading m-a-t as /m/ /a/ /t/ but saying \"map\" or \"mat?\"). Listening comprehension is above grade level (hears and discusses complex read-alouds with deep vocabulary recall).",
+                sped: "Qualifies for Tier 2/3 structured literacy intervention emphasizing Orton-Gillingham multisensory blending boards, tactile phoneme chips, and explicit phonics instruction targeting short vowel families and continuous consonants.",
+                options: [
+                    { text: "A) Advanced reading comprehension worksheets.", isCorrect: false },
+                    { text: "B) Multisensory blending boards and tactile phoneme chips.", isCorrect: true },
+                    { text: "C) Repeated timed reading fluency speed drills.", isCorrect: false }
+                ],
+                explanation: "Chloe has a specific deficit in blending phonemes, not comprehension. Comprehension sheets miss the target entirely, and speed drills will frustrate a student who can't decode closed syllables yet. Multisensory boards give her a physical way to map sounds together."
+            },
+            {
+                id: "case3", name: "Jayden", grade: "Grade 2", age: 7, emoji: "👦🏾",
+                demo: "Age 7; second grader, English Only, family history of reading difficulties.",
+                data: [
+                    "Oral Reading Fluency (ORF): 42 WCPM with 8 errors (Grade 2 Winter Benchmark is 72 WCPM). Accuracy rate: 81% (Frustrational level).",
+                    "RAN Alphanumeric Grid: Completed in 74 seconds (Significantly slower than normative range of 35-50s; distinct serial retrieval bottleneck).",
+                    "Decoding Inventory: Strong mastery of basic consonant digraphs (sh, ch), but frequent transposition errors on multisyllabic VCCV and VCV words (e.g., reading bandit as badnit, plastic as palsic)."
+                ],
+                gaps: "Primary bottleneck is phonological working memory and orthographic mapping speed (RAN deficit). Because cognitive energy is trapped decoding individual multisyllabic words, reading comprehension scores drop on timed silent reading assessments, whereas listening comprehension and verbal reasoning scores are in the 75th percentile.",
+                sped: "Evaluated for dyslexia characteristics. Requires pacing boards, syllable-division chunking routines, enlarged text spacing, and untimed assessments with audio support options to bypass serial retrieval fatigue.",
+                options: [
+                    { text: "A) Working memory bypass tools (syllable chunking, untimed assessments).", isCorrect: true },
+                    { text: "B) Demotion to Kindergarten-level texts to build confidence.", isCorrect: false },
+                    { text: "C) Expressive Speech Therapy for articulation.", isCorrect: false }
+                ],
+                explanation: "Jayden's cognitive energy is trapped by slow retrieval (RAN deficit). Demoting him ignores his high listening comprehension (75th percentile). He doesn't have an articulation issue. Untimed assessments and chunking routines bypass his working memory bottleneck so his comprehension can shine."
+            },
+            {
+                id: "case4", name: "Fatima", grade: "Grade 3", age: 8, emoji: "🧕🏽",
+                demo: "Age 8; third grader, newcomer Multilingual Learner (Home Language: Arabic, arrived in U.S. 8 months ago, ELPAC Level 2 - Early Intermediate).",
+                data: [
+                    "Decoding Subtest: 95% accuracy on closed and open single-syllable English words; 45% accuracy on vowel teams and R-controlled syllables (confuses Arabic phonology with English vowel digraphs like ea and oo).",
+                    "Vocabulary & Comprehension: Lexile level 320L (Approaching basic comprehension). Strong decoding of unfamiliar words via phonics, but literal and inferential comprehension are hindered by unfamiliar idiomatic expressions and Tier 2 academic vocabulary gaps."
+                ],
+                gaps: "Minimal decoding deficit for phonetic structures; primary barrier is semantic and lexical comprehension rooted in second-language acquisition. Can decode words fluently without knowing their meanings.",
+                sped: "Designated and Integrated ELD support required. Needs explicit semantic mapping, pictorial glossaries, cognate bridges where applicable, and sentence frames that connect text themes to background schema before independent reading.",
+                options: [
+                    { text: "A) Back-to-basics intensive phonics intervention.", isCorrect: false },
+                    { text: "B) Explicit semantic mapping, pictorial glossaries, and cognate bridges.", isCorrect: true },
+                    { text: "C) Silent sustained reading with a standard dictionary.", isCorrect: false }
+                ],
+                explanation: "Fatima can decode fluently (95% accuracy on single syllables); her barrier is semantic meaning rooted in second-language acquisition. More phonics is useless, and a dictionary is too passive. Semantic mapping directly builds the background schema she needs."
+            },
+            {
+                id: "case5", name: "Liam", grade: "Grade 4", age: 9, emoji: "👦🏻",
+                demo: "Age 9; fourth grader, identified with Specific Learning Disability (SLD) in Reading Comprehension and Working Memory.",
+                data: [
+                    "Overall Placement: Early Grade 2 level.",
+                    "Phonics & Word Recognition: Grade 3 level (can decode complex multisyllabic words accurately when prompted).",
+                    "Vocabulary: Grade 2.5 level.",
+                    "Comprehension (Overall): Grade 1.9 level."
+                ],
+                gaps: "Classic hyperlexia / comprehension dissociation. Liam reads aloud with fluid decoding and impressive surface prosody, but retains less than 30% of the text's core argument or sequence of events. Struggling with active metacognitive monitoring, working memory capacity, and generating mental models during reading.",
+                sped: "IEP mandates graphic organizers, reciprocal teaching strategies (Predict, Clarify, Question, Summarize), audio-text simultaneous pairing, and breaking complex informational texts into manageable \"chunked\" reading intervals with stopping points.",
+                options: [
+                    { text: "A) Repeated fluency drills to increase words-per-minute.", isCorrect: false },
+                    { text: "B) Graphic organizers and reciprocal teaching strategies (Predict, Clarify, Question, Summarize).", isCorrect: true },
+                    { text: "C) Copying textbook passages by hand to build stamina.", isCorrect: false }
+                ],
+                explanation: "Liam exhibits classic hyperlexia—great surface decoding, but retains less than 30% of the meaning. Reading faster (fluency drills) or copying text won't help. He needs active metacognitive structures like reciprocal teaching to consciously build mental models."
+            },
+            {
+                id: "case6", name: "Keisha", grade: "Grade 5", age: 10, emoji: "👧🏾",
+                demo: "Age 10; fifth grader, dual-exceptionality profile (Gifted and Talented Education / Twice-Exceptional [2e] with mild developmental dyslexia).",
+                data: [
+                    "Listening Comprehension & Verbal Reasoning: 95th percentile (advanced conceptual grasp of history, social science, and abstract scientific phenomena).",
+                    "Silent Reading Fluency & Spelling: 35th percentile. Frequent phonetic reversals on Latin-derived roots (e.g., writing government as govemnt, misreading environment as entertainment during rapid skimming)."
+                ],
+                gaps: "High-level conceptual comprehension masked by orthographic processing fatigue in complex multi-syllabic text. Can analyze complex historical arguments when read aloud or via text-to-speech, but struggles with independent written output and stamina on dense informational articles.",
+                sped: "504 Plan accommodations. Access to speech-to-text tools for written expression, text-to-speech screen readers for long-form social studies articles, and explicit etymological morphology study (breaking down Greek/Latin roots to anchor spelling and vocabulary retention).",
+                options: [
+                    { text: "A) Rote spelling drills of 100 common sight words.", isCorrect: false },
+                    { text: "B) Demotion to lower-level, simplified social studies texts.", isCorrect: false },
+                    { text: "C) Speech-to-text tools and explicit etymological morphology (Greek/Latin roots).", isCorrect: true }
+                ],
+                explanation: "Keisha is 2e (Gifted + Dyslexic). Demoting her reading level starves her 95th-percentile intellect, and rote spelling ignores her dyslexia. Assistive tech (speech-to-text) bypasses the barrier, while studying morphology anchors meaning to spelling."
+            },
+            {
+                id: "case7", name: "Marcus", grade: "Grade 6", age: 11, emoji: "🧑🏽",
+                demo: "Age 11; sixth grader entering middle school, English Only, chronic attendance gaps in upper elementary resulting in cumulative skill deficits.",
+                data: [
+                    "Oral Reading Rate: 98 WCPM (Grade 4 benchmark; trailing middle school expectations of 140+ WCPM).",
+                    "Vocabulary Screener: Tier 2 academic vocabulary score falls in the 20th percentile.",
+                    "RAN Alphanumeric Grid: Normal completion time (42 seconds), indicating no primary serial retrieval or phonological bottleneck."
+                ],
+                gaps: "Decoding is functional for basic text, but fluency flattens out when encountering domain-specific academic vocabulary in history and science (e.g., words like industrialization, topography, interdependence). Comprehension collapses due to vocabulary starvation and lack of background schema.",
+                sped: "Tier 2 MTSS literacy intervention. Requires intensive root-word and prefix/suffix instruction, structured semantic feature analysis charts, and pre-teaching of content-area vocabulary before launching history and science inquiry units.",
+                options: [
+                    { text: "A) Basic alphabet and phonemic awareness training.", isCorrect: false },
+                    { text: "B) Intensive root-word/prefix instruction and pre-teaching content vocabulary.", isCorrect: true },
+                    { text: "C) Round-robin reading aloud to the class daily.", isCorrect: false }
+                ],
+                explanation: "Marcus has functional decoding (normal RAN) but lacks domain-specific vocabulary due to missed schooling. Phonemic awareness is far too basic. Pre-teaching vocabulary directly addresses his content-area roadblocks before they cause his comprehension to collapse."
+            },
+            {
+                id: "case8", name: "Sofia", grade: "Grade 8", age: 13, emoji: "👩🏻",
+                demo: "Age 13; eighth grader, Long-Term Multilingual Learner (LTML; Home Language: Spanish, enrolled in US schools since TK, PLTW Level 4 - Expanding/Bridging).",
+                data: [
+                    "Decoding & Word Recognition: Grade-level mastery (100% accuracy on multisyllabic technical terms).",
+                    "Reading Comprehension Lexile: 850L (Eighth-grade stretch target is 1180L).",
+                    "Syntactic Complexity Analysis: Struggles significantly with complex, embedded passive-voice sentences and academic discourse markers in 8th-grade primary source historical documents."
+                ],
+                gaps: "Fluent decoding and conversational English mask a deep syntactic and academic register gap. Sofia can read the words on the page of a Federalist Paper, but misses the conditional logic, dependent clauses, and subtle persuasive tone.",
+                sped: "Designated ELD support integrated with humanities instruction. Requires syntactic parsing exercises, sentence deconstruction protocols (unpacking long academic sentences into core subject-verb-object building blocks), and structured academic discourse routines (e.g., Two Mic / Think-Pair-Share with language frames).",
+                options: [
+                    { text: "A) Syntactic parsing exercises and sentence deconstruction protocols.", isCorrect: true },
+                    { text: "B) Advanced multisyllabic phonics rules.", isCorrect: false },
+                    { text: "C) Listening to audiobooks without following the text.", isCorrect: false }
+                ],
+                explanation: "Sofia's decoding is perfect (100% accuracy); her barrier is the complex, passive-voice syntax of academic English. Audiobooks won't clarify syntax. Unpacking long academic sentences into core subject-verb-object blocks is exactly what a Long-Term Multilingual Learner needs."
+            }
+        ];
+
+        let currentOpenCaseId = null;
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+
+            casesData.forEach((c) => {
+                const cardHtml = `
+                    <div class="wood-texture rounded-2xl p-2 h-full flex flex-col relative shadow-2xl transition-transform duration-300 hover:-translate-y-2 cursor-pointer group" onclick="openCaseModal('${c.id}')">
+                        
+                        <div class="card-inner rounded-xl h-full flex flex-col border border-slate-600/50 overflow-hidden relative">
+                            <!-- Overlay on hover -->
+                            <div class="absolute inset-0 bg-tycoon-gold/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+                            
+                            <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-900/50">
+                                <div>
+                                    <h3 class="text-white font-black text-xl tracking-wide uppercase group-hover:text-amber-400 transition-colors">${c.name}</h3>
+                                    <p class="text-amber-500 font-bold text-[10px] tracking-widest">${c.grade}</p>
+                                </div>
+                                <div class="text-3xl drop-shadow-lg">${c.emoji}</div>
+                            </div>
+                            
+                            <div class="p-4 flex-grow flex flex-col gap-3">
+                                <p class="text-slate-300 text-xs font-serif line-clamp-3">${c.demo}</p>
+                                <div class="mt-auto pt-4">
+                                    <button class="w-full bg-slate-800 border-2 border-slate-600 group-hover:border-amber-500 text-slate-300 group-hover:text-white group-hover:bg-slate-700 font-black uppercase tracking-widest py-2 rounded-lg text-xs transition-all flex items-center justify-center gap-2 shadow-md z-20 relative">
+                                        <span>Review Case File</span>
+                                        <span class="text-amber-500">▶</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function openCaseModal(caseId) {
+            currentOpenCaseId = caseId;
+            const caseData = casesData.find(c => c.id === caseId);
+
+            // Populate Dossier
+            document.getElementById('dossier-title').innerText = `Case File: ${caseData.name}`;
+            document.getElementById('dossier-emoji').innerText = caseData.emoji;
+            document.getElementById('dossier-name').innerText = caseData.name;
+            document.getElementById('dossier-subtitle').innerText = `${caseData.grade} • Age ${caseData.age}`;
+            
+            document.getElementById('dossier-demo').innerText = caseData.demo;
+            
+            const dataList = caseData.data.map(d => `<li class="mb-2 list-disc ml-4">${d}</li>`).join('');
+            document.getElementById('dossier-data').innerHTML = `<ul>${dataList}</ul>`;
+            
+            document.getElementById('dossier-gaps').innerText = caseData.gaps;
+            document.getElementById('dossier-sped').innerText = caseData.sped;
+
+            // Show Modal
+            const modal = document.getElementById('case-modal');
+            const content = document.getElementById('case-modal-content');
+            
+            modal.classList.remove('hidden');
+            void modal.offsetWidth; // Trigger reflow
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeCaseModal() {
+            const modal = document.getElementById('case-modal');
+            const content = document.getElementById('case-modal-content');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                currentOpenCaseId = null;
+            }, 300);
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            const views = {
+                'gallery': document.getElementById('gallery-view'),
+                'pitch': document.getElementById('pitch-guide-view'),
+                'deliver': document.getElementById('deliver-pitch-view')
+            };
+            
+            const tabs = {
+                'gallery': document.getElementById('tab-gallery'),
+                'pitch': document.getElementById('tab-pitch'),
+                'deliver': document.getElementById('tab-deliver')
+            };
+
+            const activeTabStyle = "bg-amber-500 text-slate-900 font-black uppercase tracking-widest py-2 px-4 md:px-6 rounded-lg shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all whitespace-nowrap";
+            const inactiveTabStyle = "bg-transparent text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-600 font-bold uppercase tracking-widest py-2 px-4 md:px-6 rounded-lg transition-all whitespace-nowrap";
+
+            for (const key in views) {
+                if (key === tabId) {
+                    views[key].classList.remove('hidden');
+                    views[key].classList.add('block');
+                    tabs[key].className = activeTabStyle;
+                } else {
+                    views[key].classList.remove('block');
+                    views[key].classList.add('hidden');
+                    tabs[key].className = inactiveTabStyle;
+                }
+            }
+        }
+
+        window.onload = renderGallery;
+    </script>
+</body>
+</html>
