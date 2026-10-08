@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Amazing Race: Linguistic Pit Stops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            /* Dynamic split background mimicking the poster (Orange/Yellow to Ice Blue/Navy) */
+            background: linear-gradient(110deg, #ff7e00 0%, #ffcc00 35%, #0077b6 65%, #00b4d8 100%);
+            color: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        .glass-panel {
+            /* Darker frosted glass to ensure text legibility over the bright background */
+            background: rgba(15, 23, 42, 0.90);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        .nav-btn {
+            transition: all 0.2s ease-in-out;
+            border-left: 4px solid transparent;
+        }
+        .nav-btn.active {
+            background-color: #FFFF00; /* Signature bright yellow */
+            color: #0f172a;
+            font-weight: bold;
+            border-left: 4px solid #ff7e00; /* Orange accent */
+        }
+        .section-content { display: none; }
+        .section-content.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        textarea, input, select {
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            color: #f8fafc;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #FFFF00;
+            box-shadow: 0 0 0 2px rgba(255, 255, 0, 0.2);
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-action-btn {
+            background-color: rgba(30, 41, 59, 0.8);
+            color: #f1f5f9;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid #475569;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-action-btn:hover {
+            background-color: #334155;
+            border-color: #FFFF00;
+            color: white;
+        }
+        .nav-action-btn.next-btn {
+            background-color: #2563eb;
+            border-color: #1d4ed8;
+        }
+        .nav-action-btn.next-btn:hover {
+            background-color: #1d4ed8;
+            border-color: #FFFF00;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <aside class="w-full md:w-72 glass-panel flex flex-col h-auto md:h-full z-10">
+        <div class="p-6 border-b border-slate-700/50 flex flex-col items-center text-center">
+            <!-- Poster Style Title Logo -->
+            <h1 class="text-xl text-white font-medium uppercase tracking-widest mb-0 leading-none">The</h1>
+            <h1 class="text-4xl text-white font-black uppercase tracking-tighter leading-none mb-0">Amazing</h1>
+            <h1 class="text-6xl font-black uppercase tracking-tighter leading-none mb-2" style="color: #FFFF00;">Race</h1>
+            <p class="text-xs text-white mt-2 font-bold uppercase tracking-widest bg-black/50 px-3 py-1 rounded w-full">Linguistic Pit Stops</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-4">
+            <button onclick="showSection('start')" id="nav-start" class="nav-btn active text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>🏁</span> Starting Line
+            </button>
+            <button onclick="showSection('ps1')" id="nav-ps1" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 1
+            </button>
+            <button onclick="showSection('ps2')" id="nav-ps2" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 2
+            </button>
+            <button onclick="showSection('ps3')" id="nav-ps3" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 3
+            </button>
+            <button onclick="showSection('ps4')" id="nav-ps4" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 4
+            </button>
+            <button onclick="showSection('finish')" id="nav-finish" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3 mt-auto">
+                <span>🏆</span> Finish Line
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- STARTING LINE -->
+            <section id="start" class="section-content active glass-panel p-8 rounded-xl">
+                
+                <!-- Audio Player -->
+                <div class="bg-slate-900 border-2 border-[#FFFF00] rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between mb-8 shadow-lg gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">✈️</span>
+                        <div>
+                            <h3 class="text-[#FFFF00] font-bold text-md uppercase tracking-wider">Official Race Soundtrack</h3>
+                            <p class="text-gray-300 text-sm">Upbeat Travel Adventure Theme</p>
+                        </div>
+                    </div>
+                    <audio id="race-theme" loop>
+                        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
+                    </audio>
+                    <button onclick="toggleAudio()" id="audio-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors duration-200">
+                        ▶ Play Theme
+                    </button>
+                </div>
+
+                <h2 class="text-4xl font-black text-white mb-6 uppercase border-b-4 border-[#ff7e00] pb-2 inline-block">Welcome to the Starting Line</h2>
+                
+                <div class="bg-slate-800/80 p-6 rounded-lg border border-slate-600 mb-6 text-slate-200 space-y-4 text-lg">
+                    <p><strong style="color: #FFFF00;">Welcome Travelers!</strong> You are about to embark on a global expedition across international "linguistic check-points." This high-stakes race will test your mastery of foundational literacy mechanics, executive speed, and inclusive instructional design.</p>
+                    <p><strong class="text-blue-400">The Route:</strong> You have exactly 30 minutes to navigate four rigorous Pit Stop Challenges. At each stop, you will solve pedagogical puzzles and secure digital stamps in your team's passport.</p>
+                </div>
+
+                <div class="bg-slate-900/80 p-6 rounded-lg border border-slate-700">
+                    <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2"><span>🚁</span> Team Despatch</h3>
+                    <p class="text-slate-300 mb-6">Select your assigned Travel Team below to enter your collaborative Zoom Breakout Room and begin the race.</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <a href="https://zoom.us/placeholder-link-alpha" target="_blank" class="bg-blue-600 hover:bg-blue-500 text-center py-4 px-2 rounded-lg font-semibold text-white shadow transition flex flex-col items-center group">
+                            <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🐺</span> 
+                            <span class="tracking-wider uppercase text-sm">Team Alpha</span>
+                            <span class="text-xs text-blue-200 mt-1 font-normal">Join Room 👉</span>
+                        </a>
+                        <a href="https://zoom.us/placeholder-link-bravo" target="_blank" class="bg-green-700 hover:bg-green-600 text-center py-4 px-2 rounded-lg font-semibold text-white shadow transition flex flex-col items-center group">
+                            <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🦅</span> 
+                            <span class="tracking-wider uppercase text-sm">Team Bravo</span>
+                            <span class="text-xs text-green-200 mt-1 font-normal">Join Room 👉</span>
+                        </a>
+                        <a href="https://zoom.us/placeholder-link-charlie" target="_blank" class="bg-purple-600 hover:bg-purple-500 text-center py-4 px-2 rounded-lg font-semibold text-white shadow transition flex flex-col items-center group">
+                            <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🦁</span> 
+                            <span class="tracking-wider uppercase text-sm">Team Charlie</span>
+                            <span class="text-xs text-purple-200 mt-1 font-normal">Join Room 👉</span>
+                        </a>
+                        <a href="https://zoom.us/placeholder-link-delta" target="_blank" class="bg-orange-600 hover:bg-orange-500 text-center py-4 px-2 rounded-lg font-semibold text-white shadow transition flex flex-col items-center group">
+                            <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🐻</span> 
+                            <span class="tracking-wider uppercase text-sm">Team Delta</span>
+                            <span class="text-xs text-orange-200 mt-1 font-normal">Join Room 👉</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bottom-nav justify-end">
+                    <button onclick="showSection('ps1')" class="nav-action-btn next-btn">
+                        Start Race <span>🏁</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- PIT STOP 1 -->
+            <section id="ps1" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 1: The Rapid Naming & Fluency Sprint</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 7 Minutes</span>
+                </div>
+                
+                <div class="mb-6 bg-slate-800/80 p-5 rounded-lg border border-slate-600">
+                    <p class="text-blue-300 font-bold mb-2">Focus: <span class="font-normal text-slate-300">Fluency (TPE U7.5e), Rapid Automatized Naming (RAN) & Dyslexia (D3.I), Oral Language for English Learners (U1.6).</span></p>
+                    <h4 class="font-bold text-white mb-2 border-b border-slate-700 pb-1">Detailed Instructions:</h4>
+                    <ol class="list-decimal list-inside text-slate-300 space-y-2 text-sm">
+                        <li>Examine the provided Rapid Automatized Naming (RAN) grid alongside a 2nd-grade student fluency reading sample.</li>
+                        <li><strong>Diagnose the underlying processing barrier:</strong> Differentiate between a decoding failure and a rapid retrieval bottleneck (RAN deficit), noting how slow serial naming speed impacts working memory.</li>
+                        <li><strong>Design a 60-second oral language rehearsal strategy</strong> (e.g., echo reading) that lowers cognitive load for English Learners while building automaticity.</li>
+                    </ol>
+                </div>
+                
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 mb-6">
+                    <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-600 pb-1">Resource A: The RAN Grid</h4>
+                    <p class="text-sm text-slate-400 mb-3">Target: Under 95 seconds for 50 items. Note high frequency of hesitation pauses and visual confusions (particularly between alphanumeric symbols and color/object categories).</p>
+                    <div class="bg-slate-200 text-slate-900 p-4 rounded text-center text-xl tracking-widest font-mono shadow-inner grid grid-cols-5 gap-2 mb-4">
+                        <span>🌸</span><span>blue</span><span>5</span><span>3</span><span>bed</span>
+                        <span>b</span><span>9</span><span>green</span><span>6</span><span>d</span>
+                        <span>three</span><span>dog</span><span>🔵</span><span>s</span><span>g</span>
+                        <span>m</span><span>🧦</span><span>yellow</span><span>w</span><span>ball</span>
+                        <span>doll</span><span>r</span><span>f</span><span>b</span><span>9</span>
+                        <span>blue</span><span>six</span><span>d</span><span>g</span><span>🌳</span>
+                        <span>3</span><span>🟡</span><span>s</span><span>m</span><span>five</span>
+                        <span>yellow</span><span>w</span><span>🎈</span><span>doll</span><span>r</span>
+                        <span>f</span><span>b</span><span>9</span><span>blue</span><span>6</span>
+                        <span>d</span><span>g</span><span>🛏️</span><span>🟢</span><span>5</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 mb-6">
+                    <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-600 pb-1">Resource B: Oral Reading Sample (2nd Grade, Dyslexia)</h4>
+                    <blockquote class="italic text-yellow-200 text-lg mb-4">"The big brown dog ran across the yard and jump over the fens."</blockquote>
+                    
+                    <div class="bg-slate-700/50 p-4 rounded mt-4">
+                        <h5 class="font-bold text-orange-400 mb-1">Diagnostic & Pedagogical Key:</h5>
+                        <ul class="list-disc list-inside text-sm text-slate-300 space-y-1">
+                            <li><strong>RAN Deficit Indicator:</strong> Slow serial retrieval speed across alternating alphanumeric symbols signals working memory bottlenecks, causing stuttered pacing.</li>
+                            <li><strong>Fluency Accommodation:</strong> Pair the student with a recorded model for echo reading while tapping a steady rhythm to anchor phonological pacing.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-slate-200">1. Diagnose the Barrier:</label>
+                        <textarea id="ps1-diagnosis" rows="3" placeholder="Differentiate between a decoding failure and a rapid retrieval bottleneck..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200">2. Design Rehearsal Strategy:</label>
+                        <textarea id="ps1-strategy" rows="3" placeholder="Design a 60-second oral language strategy to lower cognitive load for ELs..."></textarea>
+                    </div>
+                </div>
+
+                <div class="bottom-nav">
+                    <button onclick="showSection('start')" class="nav-action-btn">
+                        <span>⬅️</span> Back
+                    </button>
+                    <button onclick="showSection('ps2')" class="nav-action-btn next-btn">
+                        Next Pit Stop <span>➡️</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- PIT STOP 2 -->
+            <section id="ps2" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 2: The Syllabication Detour</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 7 Minutes</span>
+                </div>
+
+                <div class="mb-6 bg-slate-800/80 p-5 rounded-lg border border-slate-600">
+                    <p class="text-blue-300 font-bold mb-2">Focus: <span class="font-normal text-slate-300">Syllabication, Background Knowledge, and Fisher Modules 5-7.</span></p>
+                    <h4 class="font-bold text-white mb-2 border-b border-slate-700 pb-1">Detailed Instructions:</h4>
+                    <ol class="list-decimal list-inside text-slate-300 space-y-2 text-sm">
+                        <li>Review your assigned stack of complex, multisyllabic content-area vocabulary terms.</li>
+                        <li><strong>Apply explicit syllable-division rules</strong> (VCCV and VCV patterns) to chunk each word (e.g., e/co/sys/tem).</li>
+                        <li><strong>Formulate a 30-second background knowledge schema hook</strong> (visual, real-world connection, analogy) to anchor meaning.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 mb-6 text-sm">
+                    <h5 class="font-bold text-orange-400 mb-2">Example: Ecosystem</h5>
+                    <p class="text-slate-300 mb-1"><strong>Chunks:</strong> e/co/sys/tem (Closed / Open mix)</p>
+                    <p class="text-slate-300"><strong>Hook:</strong> Show a visual of an aquarium. Ask how water, plants, and animals rely on each other.</p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="font-bold text-slate-200 block mb-2">Select Your Vocabulary Stack to view terms:</label>
+                    <select id="ps2-stack" class="bg-slate-800 border-slate-600 mb-4" onchange="updateStackDisplay()">
+                        <option value="stack1">Stack 1: Earth Science & Ecosystems</option>
+                        <option value="stack2">Stack 2: U.S. History & Government</option>
+                        <option value="stack3">Stack 3: Westward Expansion & Geography</option>
+                        <option value="stack4">Stack 4: Industrial Revolution & Technology</option>
+                    </select>
+
+                    <!-- Dynamic Content for Stacks -->
+                    <div id="stack-details" class="bg-slate-900 p-4 rounded border border-slate-700 text-sm text-slate-300">
+                        <!-- Content populated by JS -->
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-slate-200">1. Apply Syllable-Division Rules (Chunking):</label>
+                        <textarea id="ps2-chunks" rows="3" placeholder="Use slash marks to chunk your selected words (e.g., e/co/sys/tem)..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200">2. Background Knowledge Schema Hook:</label>
+                        <textarea id="ps2-hook" rows="3" placeholder="Formulate a quick, 30-second visual or real-world hook for one of the terms..."></textarea>
+                    </div>
+                </div>
+
+                <div class="bottom-nav">
+                    <button onclick="showSection('ps1')" class="nav-action-btn">
+                        <span>⬅️</span> Back
+                    </button>
+                    <button onclick="showSection('ps3')" class="nav-action-btn next-btn">
+                        Next Pit Stop <span>➡️</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- PIT STOP 3 -->
+            <section id="ps3" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 3: The Vocabulary Knowledge Roadblock</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 8 Minutes</span>
+                </div>
+
+                <div class="mb-6 bg-slate-800/80 p-5 rounded-lg border border-slate-600">
+                    <p class="text-blue-300 font-bold mb-2">Focus: <span class="font-normal text-slate-300">Vocabulary Knowledge (TPE U7.7), IRIS Module 2 (Meaning Making & Foundational Skills).</span></p>
+                    <h4 class="font-bold text-white mb-2 border-b border-slate-700 pb-1">Detailed Instructions:</h4>
+                    <ol class="list-decimal list-inside text-slate-300 space-y-2 text-sm">
+                        <li>Select one Tier-Two or Tier-Three academic word from your team's thematic unit context.</li>
+                        <li><strong>Construct an interactive semantic word web</strong> below including definition, visual anchor, sentence frame, and translanguaging assets.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 mb-6 text-sm">
+                    <h5 class="font-bold text-orange-400 mb-2">Example: "Migration"</h5>
+                    <ul class="list-disc list-inside text-slate-300 space-y-1">
+                        <li><strong>Definition:</strong> Moving from one home region or country to another to live or find better food/weather.</li>
+                        <li><strong>Visual Anchor:</strong> A flock of geese flying in a V-formation or a dotted map line crossing borders.</li>
+                        <li><strong>Frame:</strong> "Many animals and people experience ______________ during changing seasons or times of hardship."</li>
+                        <li><strong>Translanguaging Asset:</strong> Migración (Spanish Cognate) - explicitly connect the root word to honor Spanish-speaking English Learners' linguistic capital.</li>
+                    </ul>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="font-bold text-slate-200">Target Academic Word:</label>
+                        <input type="text" id="ps3-word" placeholder="Enter word here...">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Student-Friendly Definition:</label>
+                        <textarea id="ps3-def" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Visual Symbol Anchor (Describe it):</label>
+                        <textarea id="ps3-visual" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Contextual Sentence Frame:</label>
+                        <textarea id="ps3-frame" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Translanguaging Asset (e.g., Cognate):</label>
+                        <textarea id="ps3-trans" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="bottom-nav">
+                    <button onclick="showSection('ps2')" class="nav-action-btn">
+                        <span>⬅️</span> Back
+                    </button>
+                    <button onclick="showSection('ps4')" class="nav-action-btn next-btn">
+                        Next Pit Stop <span>➡️</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- PIT STOP 4 -->
+            <section id="ps4" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 4: The Early Writing & Peer-Editing Pit Stop</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 8 Minutes</span>
+                </div>
+
+                <div class="mb-6 bg-slate-800/80 p-5 rounded-lg border border-slate-600">
+                    <p class="text-blue-300 font-bold mb-2">Focus: <span class="font-normal text-slate-300">Writer's Workshop (TPE 7.8), Peer Editing Feedback, Faith Integration & Critical Literacy (U4.4, 6.1, 6.2).</span></p>
+                    <h4 class="font-bold text-white mb-2 border-b border-slate-700 pb-1">Detailed Instructions:</h4>
+                    <ol class="list-decimal list-inside text-slate-300 space-y-2 text-sm">
+                        <li>Review an authentic early writing sample containing developmental spelling errors, simple syntax, and an emerging student voice.</li>
+                        <li><strong>Apply a structured, gracious peer-editing feedback protocol</strong> (e.g., "Warm Glow, Constructive Grow, and Voice Elevation").</li>
+                        <li><strong>Apply a Critical Literacy lens infused with Christian faith integration:</strong> Answer the prompt—How does this writing prompt empower student agency, and how does our feedback reflect a Christian ethic of restorative grace and human dignity rather than punitive red-ink correction?</li>
+                    </ol>
+                </div>
+
+                <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 mb-6 text-sm">
+                    <h5 class="font-bold text-orange-400 mb-2">Example:</h5>
+                    <p class="text-slate-300 mb-1"><strong>Sample:</strong> "When George Washington crosses the river, he was very brave because the water was cold and dark."</p>
+                    <ul class="list-disc list-inside text-slate-300 space-y-1">
+                        <li><strong>Warm Glow:</strong> Praise the student's historical imagination and strong narrative voice.</li>
+                        <li><strong>Constructive Grow:</strong> Gently look at verb tense consistency (crosses vs. was).</li>
+                        <li><strong>Reflection:</strong> Instead of marking the paper with red ink, our feedback honors the student's voice (Imago Dei) by asking guiding questions...</li>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <label class="font-bold text-slate-200 block mb-2">Select Authentic Writing Sample Reviewed:</label>
+                    <select id="ps4-sample" class="bg-slate-800 border-slate-600 mb-4" onchange="updateSampleDisplay()">
+                        <option value="sampleA">Sample A: The Emerging Historian (Late 1st / Early 2nd Grade)</option>
+                        <option value="sampleB">Sample B: The Multilingual Narrator (Second Grade / EL Profile)</option>
+                        <option value="sampleC">Sample C: The Dyslexic Storyteller (Third Grade / Phonological Profile)</option>
+                    </select>
+
+                    <!-- Dynamic Content for Samples -->
+                    <div id="sample-details" class="bg-slate-900 p-4 rounded border border-slate-700 text-sm text-slate-300">
+                        <!-- Content populated by JS -->
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-slate-200">1. Warm Glow & Constructive Grow Feedback:</label>
+                        <textarea id="ps4-feedback" rows="3" placeholder="Provide restorative peer feedback..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200">2. Critical Literacy & Faith Integration Reflection:</label>
+                        <textarea id="ps4-reflection" rows="3" placeholder="How does this reflect a Christian ethic of dignity over punitive correction?..."></textarea>
+                    </div>
+                </div>
+
+                <div class="bottom-nav">
+                    <button onclick="showSection('ps3')" class="nav-action-btn">
+                        <span>⬅️</span> Back
+                    </button>
+                    <button onclick="showSection('finish')" class="nav-action-btn next-btn bg-[#ff7e00] hover:bg-[#ff9d3d] border-none">
+                        To Finish Line <span>🏆</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- FINISH LINE -->
+            <section id="finish" class="section-content glass-panel p-8 rounded-xl text-center">
+                <div class="text-6xl mb-6">🏆</div>
+                <h2 class="text-4xl font-black uppercase mb-4" style="color: #FFFF00;">The Finish Line</h2>
+                <p class="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">You have successfully navigated all linguistic check-points! Ensure your team has finalized all responses.</p>
+                
+                <div class="bg-slate-900 p-8 rounded-xl border border-slate-700 inline-block shadow-2xl">
+                    <h3 class="text-2xl font-bold text-white mb-4 border-b border-slate-700 pb-2">Submit Your Digital Passport</h3>
+                    <p class="text-slate-400 mb-6 text-sm max-w-md">Click the button below to bundle all your responses from Pit Stops 1-4 into a downloadable text file that you can upload to the course portal.</p>
+                    
+                    <button onclick="downloadPassport()" class="bg-[#ff7e00] hover:bg-[#ff9d3d] text-white font-black text-xl py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-3 mx-auto">
+                        <span>📥</span> Download Completed Passport
+                    </button>
+                    
+                    <p id="download-success" class="text-green-400 font-bold mt-4 hidden">✅ Passport generated successfully! Upload this to the portal.</p>
+                </div>
+
+                <div class="bottom-nav justify-start">
+                    <button onclick="showSection('ps4')" class="nav-action-btn">
+                        <span>⬅️</span> Back to Edit
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // Navigation Logic
+        function showSection(sectionId) {
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            const navBtn = document.getElementById('nav-' + sectionId);
+            if (navBtn) {
+                navBtn.classList.add('active');
+            }
+            
+            // Scroll to the top of the main container when switching sections
+            document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const stacksData = {
+            stack1: `<strong>Content-Area Focus:</strong> Earth Science, Biomes, and Natural Systems<br><br>
+                     <strong>The Vocabulary Stack:</strong><br>
+                     - <em>Photosynthesis</em> (photosynthesis) — Closed, open, and closed syllable combinations with Greek roots (photo + synthesis).<br>
+                     - <em>Biodiversity</em> (biodiversity) — Open and closed syllables featuring multiple affixes.<br>
+                     - <em>Atmosphere</em> (atmosphere) — Closed, closed, and vowel-consonant-e syllable chunks.<br>
+                     - <em>Precipitation</em> (precipitation) — Latin-derived root with a multisyllabic nominal suffix (-tion).<br><br>
+                     <strong>Background Knowledge Schema Hook:</strong><br>
+                     For "Biodiversity": Show a side-by-side picture of a barren parking lot versus a vibrant rainforest canopy. Ask candidates to count how many different types of plants and animals they spot to anchor the concept of biological variety before breaking down the word parts.`,
+            stack2: `<strong>Content-Area Focus:</strong> Civics, American Revolution, and Constitution<br><br>
+                     <strong>The Vocabulary Stack:</strong><br>
+                     - <em>Government</em> (government) — Closed syllables with an embedded base word and nominal suffix.<br>
+                     - <em>Independence</em> (independence) — Complex prefix, closed base, and abstract suffix (-ence).<br>
+                     - <em>Constitution</em> (constitution) — Latin root structure with open and closed alternating syllable patterns.<br>
+                     - <em>Amendment</em> (amendment) — Open prefix followed by a closed base and suffix.<br><br>
+                     <strong>Background Knowledge Schema Hook:</strong><br>
+                     For "Amendment": Display a torn sticky note with a rule crossed out and rewritten better. Ask teams: "Why do rules or games sometimes need a permanent change or patch as we grow?" to bridge into the historical concept of constitutional changes.`,
+            stack3: `<strong>Content-Area Focus:</strong> American Expansion, Migration, and Topography<br><br>
+                     <strong>The Vocabulary Stack:</strong><br>
+                     - <em>Expedition</em> (expedition) — Multi-syllable Latinate structure with an assimilated prefix (ex-).<br>
+                     - <em>Territory</em> (territory) — R-controlled closed syllables paired with an open final syllable.<br>
+                     - <em>Environment</em> (environment) — Nasal blend structures and closed syllable frames.<br>
+                     - <em>Topography</em> (topography) — Greek combining forms (topo + graphy) mapping physical land features.<br><br>
+                     <strong>Background Knowledge Schema Hook:</strong><br>
+                     For "Expedition": Flash a quick image of a backpacker looking at a physical compass and a blank paper map. Ask candidates to describe the feeling of stepping into entirely uncharted territory before decoding the word syllables.`,
+            stack4: `<strong>Content-Area Focus:</strong> Innovation, Economics, and Mechanization<br><br>
+                     <strong>The Vocabulary Stack:</strong><br>
+                     - <em>Industrialization</em> (industrialization) — A massive multisyllabic word combining multiple derivational suffixes.<br>
+                     - <em>Mechanization</em> (mechanization) — Greek-derived root (mech) paired with modern process suffixes.<br>
+                     - <em>Urbanization</em> (urbanization) — Latin root (urbs, city) tracing the shift of populations from farms to cities.<br>
+                     - <em>Transportation</em> (transportation) — Latin prefix (trans-, across) combined with root and suffix units.<br><br>
+                     <strong>Background Knowledge Schema Hook:</strong><br>
+                     For "Urbanization": Show an old black-and-white photograph of a quiet horse-and-buggy dirt road transitioning into a bustling modern city skyline with streetcars, prompting teams to discuss how a landscape fills up with people and factories.`
+        };
+
+        function updateStackDisplay() {
+            const val = document.getElementById('ps2-stack').value;
+            const container = document.getElementById('stack-details');
+            if (container) {
+                container.innerHTML = stacksData[val];
+            }
+        }
+
+        const samplesData = {
+            sampleA: `<strong class="text-yellow-200 text-lg italic">"Harriet Tubman was very bratt. She help pepol escape on the undrground rord."</strong><br>
+                      <span class="text-slate-400 text-xs">(Harriet Tubman was very brave. She helped people escape on the underground railroad.)</span><br><br>
+                      <strong>Diagnostic & Pedagogical Profile:</strong><br>
+                      <ul class="list-disc list-inside text-slate-300 space-y-1 mt-1 mb-3">
+                          <li><strong>Orthographic & Mechanical Features:</strong> Demonstrates strong initial and final consonant salience, but struggles with short vowel confusion (<em>bratt</em> for brave via early vowel-name miscue or spelling sound strategy), omitted silent markers, and compound word boundary spacing (<em>undrground rord</em>).</li>
+                          <li><strong>Critical Literacy & Voice:</strong> Exhibits powerful historical empathy and deep admiration for courage, making it an ideal candidate for a "Warm Glow, Constructive Grow" feedback cycle that preserves the child's bold historical perspective while gently guiding phonological spelling patterns.</li>
+                      </ul>`,
+            sampleB: `<strong class="text-yellow-200 text-lg italic">"In the moxrn, the family go to the market for buy fresh fruit. It was very happy day."</strong><br>
+                      <span class="text-slate-400 text-xs">(In the morning, the family went to the market to buy fresh fruit. It was a very happy day.)</span><br><br>
+                      <strong>Diagnostic & Pedagogical Profile:</strong><br>
+                      <ul class="list-disc list-inside text-slate-300 space-y-1 mt-1 mb-3">
+                          <li><strong>Orthographic & Mechanical Features:</strong> Shows interference from home-language phonology or direct translation patterns in verb tense consistency (<em>go</em> instead of went, missing articles like <em>a</em> before very happy day), alongside inventive phonetic spelling for complex consonant blends (<em>moxrn</em> for morning).</li>
+                          <li><strong>Critical Literacy & Voice:</strong> Captures vibrant community life and cultural traditions of open-air markets. The feedback protocol must leverage translanguaging assets, honoring the student's rich descriptive imagery while supporting English syntax acquisition without punitive correction.</li>
+                      </ul>`,
+            sampleC: `<strong class="text-yellow-200 text-lg italic">"The brave soljer protmected his friends when the storm hit the camp."</strong><br>
+                      <span class="text-slate-400 text-xs">(The brave soldier protected his friends when the storm hit the camp.)</span><br><br>
+                      <strong>Diagnostic & Pedagogical Profile:</strong><br>
+                      <ul class="list-disc list-inside text-slate-300 space-y-1 mt-1 mb-3">
+                          <li><strong>Orthographic & Mechanical Features:</strong> Displays classic phonological transposition and sequencing errors typical of dyslexia profiles (writing <em>soljer</em> for soldier and <em>protmected</em> for protected, transposing medial nasal/stop clusters). However, high-frequency sight words (when, the, camp) and base verb structures are accurately retrieved.</li>
+                          <li><strong>Critical Literacy & Voice:</strong> Demonstrates strong thematic comprehension of loyalty and protection during hardship. Feedback must use multisensory cueing strategies and focus heavily on affirming the student's narrative arc and moral clarity before addressing phonological sequencing traps.</li>
+                      </ul>`
+        };
+
+        function updateSampleDisplay() {
+            const val = document.getElementById('ps4-sample').value;
+            const container = document.getElementById('sample-details');
+            if (container) {
+                container.innerHTML = samplesData[val];
+            }
+        }
+
+        // Initialize dynamic content on load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateStackDisplay();
+            updateSampleDisplay();
+        });
+
+        // Audio Logic
+        function toggleAudio() {
+            const audio = document.getElementById("race-theme");
+            const btn = document.getElementById("audio-btn");
+            
+            if (audio.paused) {
+                audio.volume = 0.3; 
+                audio.play();
+                btn.innerHTML = "⏸ Pause Theme";
+                btn.classList.replace("bg-blue-600", "bg-[#ff7e00]");
+                btn.classList.replace("hover:bg-blue-500", "hover:bg-[#ff9d3d]");
+            } else {
+                audio.pause();
+                btn.innerHTML = "▶ Play Theme";
+                btn.classList.replace("bg-[#ff7e00]", "bg-blue-600");
+                btn.classList.replace("hover:bg-[#ff9d3d]", "hover:bg-blue-500");
+            }
+        }
+
+        function downloadPassport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            let yPos = 20;
+            const margin = 20;
+            const maxLineWidth = doc.internal.pageSize.width - (margin * 2);
+            const pageHeight = doc.internal.pageSize.height;
+
+            // Helper function to add text, handle line breaks, and page boundaries
+            function addLine(text, fontSize = 12, isBold = false) {
+                if (!text || text.trim() === "") text = "[No response entered]";
+                
+                doc.setFontSize(fontSize);
+                doc.setFont("helvetica", isBold ? "bold" : "normal");
+                
+                // Wrap text to fit the page width
+                const lines = doc.splitTextToSize(text, maxLineWidth);
+                
+                for (let i = 0; i < lines.length; i++) {
+                    // Check if we need a new page
+                    if (yPos > pageHeight - margin) {
+                        doc.addPage();
+                        yPos = margin;
+                    }
+                    doc.text(lines[i], margin, yPos);
+                    yPos += (fontSize * 0.35) + 3; // Advance Y position for the next line
+                }
+                yPos += 4; // Add a little extra spacing after a block
+            }
+
+            // Cover / Title
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18);
+            doc.text("THE AMAZING RACE: LINGUISTIC PIT STOPS", doc.internal.pageSize.width / 2, yPos, { align: "center" });
+            yPos += 10;
+            doc.setFontSize(14);
+            doc.text("TEAM PASSPORT SUBMISSION", doc.internal.pageSize.width / 2, yPos, { align: "center" });
+            yPos += 20;
+
+            // --- PIT STOP 1 ---
+            addLine("--- PIT STOP 1: Rapid Naming & Fluency Sprint ---", 14, true);
+            addLine("Diagnosis:", 12, true);
+            addLine(document.getElementById('ps1-diagnosis').value);
+            addLine("Strategy:", 12, true);
+            addLine(document.getElementById('ps1-strategy').value);
+            yPos += 10;
+
+            // --- PIT STOP 2 ---
+            addLine("--- PIT STOP 2: The Syllabication Detour ---", 14, true);
+            const stackSelect = document.getElementById('ps2-stack');
+            addLine("Vocabulary Stack: " + stackSelect.options[stackSelect.selectedIndex].text, 12, true);
+            addLine("Syllable Chunks:", 12, true);
+            addLine(document.getElementById('ps2-chunks').value);
+            addLine("Schema Hook:", 12, true);
+            addLine(document.getElementById('ps2-hook').value);
+            yPos += 10;
+
+            // --- PIT STOP 3 ---
+            addLine("--- PIT STOP 3: Vocabulary Knowledge Roadblock ---", 14, true);
+            addLine("Target Word: " + document.getElementById('ps3-word').value, 12, true);
+            addLine("Definition:", 12, true);
+            addLine(document.getElementById('ps3-def').value);
+            addLine("Visual Anchor:", 12, true);
+            addLine(document.getElementById('ps3-visual').value);
+            addLine("Sentence Frame:", 12, true);
+            addLine(document.getElementById('ps3-frame').value);
+            addLine("Translanguaging Asset:", 12, true);
+            addLine(document.getElementById('ps3-trans').value);
+            yPos += 10;
+
+            // --- PIT STOP 4 ---
+            addLine("--- PIT STOP 4: Early Writing & Peer-Editing ---", 14, true);
+            const sampleSelect = document.getElementById('ps4-sample');
+            addLine("Selected Sample: " + sampleSelect.options[sampleSelect.selectedIndex].text, 12, true);
+            addLine("Warm Glow / Constructive Grow Feedback:", 12, true);
+            addLine(document.getElementById('ps4-feedback').value);
+            addLine("Reflection:", 12, true);
+            addLine(document.getElementById('ps4-reflection').value);
+
+            // Save the PDF
+            doc.save('Amazing_Race_Team_Passport.pdf');
+            
+            const successMsg = document.getElementById('download-success');
+            successMsg.classList.remove('hidden');
+            setTimeout(() => { successMsg.classList.add('hidden'); }, 4000);
+        }
+    </script>
+</body>
+</html>
