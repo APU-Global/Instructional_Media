@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Amazing Race: Linguistic Pit Stops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            /* Dynamic split background mimicking the poster (Orange/Yellow to Ice Blue/Navy) */
+            background: linear-gradient(110deg, #ff7e00 0%, #ffcc00 35%, #0077b6 65%, #00b4d8 100%);
+            color: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-attachment: fixed;
+        }
+        .glass-panel {
+            /* Darker frosted glass to ensure text legibility */
+            background: rgba(15, 23, 42, 0.90);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        .nav-btn {
+            transition: all 0.2s ease-in-out;
+            border-left: 4px solid transparent;
+        }
+        .nav-btn.active {
+            background-color: #FFFF00; 
+            color: #0f172a;
+            font-weight: bold;
+            border-left: 4px solid #ff7e00; 
+        }
+        .section-content { display: none; }
+        .section-content.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        textarea, input, select {
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            color: #f8fafc;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #FFFF00;
+            box-shadow: 0 0 0 2px rgba(255, 255, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-72 glass-panel flex flex-col h-auto md:h-full z-10">
+        <div class="p-6 border-b border-slate-700/50 flex flex-col items-center text-center">
+            <h1 class="text-xl text-white font-medium uppercase tracking-widest mb-0 leading-none">The</h1>
+            <h1 class="text-4xl text-white font-black uppercase tracking-tighter leading-none mb-0">Amazing</h1>
+            <h1 class="text-6xl font-black uppercase tracking-tighter leading-none mb-2" style="color: #FFFF00;">Race</h1>
+            <p class="text-xs text-white mt-2 font-bold uppercase tracking-widest bg-black/50 px-3 py-1 rounded w-full">Linguistic Pit Stops</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-4">
+            <button onclick="showSection('start')" id="nav-start" class="nav-btn active text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>🏁</span> Starting Line
+            </button>
+            <button onclick="showSection('ps1')" id="nav-ps1" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 1
+            </button>
+            <button onclick="showSection('ps2')" id="nav-ps2" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 2
+            </button>
+            <button onclick="showSection('ps3')" id="nav-ps3" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 3
+            </button>
+            <button onclick="showSection('ps4')" id="nav-ps4" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3">
+                <span>📍</span> Pit Stop 4
+            </button>
+            <button onclick="showSection('finish')" id="nav-finish" class="nav-btn text-left px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3 mt-auto">
+                <span>🏆</span> Finish Line
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- STARTING LINE -->
+            <section id="start" class="section-content active glass-panel p-8 rounded-xl">
+                <div class="bg-slate-900 border-2 border-[#FFFF00] rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between mb-8 shadow-lg gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">✈️</span>
+                        <div>
+                            <h3 class="text-[#FFFF00] font-bold text-md uppercase tracking-wider">Official Race Soundtrack</h3>
+                            <p class="text-gray-300 text-sm">Upbeat Travel Adventure Theme</p>
+                        </div>
+                    </div>
+                    <audio id="race-theme" loop>
+                        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
+                    </audio>
+                    <button onclick="toggleAudio()" id="audio-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors duration-200">
+                        ▶ Play Theme
+                    </button>
+                </div>
+
+                <h2 class="text-4xl font-black text-white mb-6 uppercase border-b-4 border-[#ff7e00] pb-2 inline-block">Welcome to the Starting Line</h2>
+                
+                <div class="bg-slate-800/80 p-6 rounded-lg border border-slate-600 mb-6 text-slate-200 space-y-4 text-lg">
+                    <p><strong style="color: #FFFF00;">Welcome Travelers!</strong> You are about to embark on a global expedition across international "linguistic check-points." This high-stakes race will test your mastery of foundational literacy mechanics, executive speed, and inclusive instructional design.</p>
+                    <p><strong class="text-blue-400">The Route:</strong> You have exactly 30 minutes to navigate four rigorous Pit Stop Challenges with your team. At each stop, you will solve pedagogical puzzles and secure digital stamps in your passport.</p>
+                </div>
+            </section>
+
+            <!-- PIT STOP 1 -->
+            <section id="ps1" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 1</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 7 Minutes</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">The Rapid Naming & Fluency Sprint</h3>
+                
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 mb-6">
+                    <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-600 pb-1">Resource A: The RAN Grid</h4>
+                    <p class="text-sm text-slate-400 mb-3">Target: Under 95 seconds. Note visual confusions between alphanumeric and color/object categories.</p>
+                    <div class="bg-slate-200 text-slate-900 p-4 rounded text-center text-xl tracking-widest font-mono shadow-inner grid grid-cols-5 gap-2">
+                        <span>🌸</span><span>blue</span><span>5</span><span>3</span><span>bed</span>
+                        <span>b</span><span>9</span><span>green</span><span>6</span><span>d</span>
+                        <span>three</span><span>dog</span><span>🔵</span><span>s</span><span>g</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 p-5 rounded-lg border border-slate-600 mb-6">
+                    <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-600 pb-1">Resource B: Oral Reading Sample (2nd Grade, Dyslexia)</h4>
+                    <blockquote class="italic text-yellow-200 text-lg">"The big brown dog ran across the yard and jump over the fens."</blockquote>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-slate-200">1. Diagnose the Barrier:</label>
+                        <textarea id="ps1-diagnosis" rows="3" placeholder="Differentiate between a decoding failure and a rapid retrieval bottleneck..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200">2. Design Rehearsal Strategy:</label>
+                        <textarea id="ps1-strategy" rows="3" placeholder="Design a 60-second oral language strategy to lower cognitive load for ELs..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PIT STOP 2 -->
+            <section id="ps2" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 2</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 7 Minutes</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-4">The Syllabication Detour</h3>
+                
+                <div class="mb-6">
+                    <label class="font-bold text-slate-200 block mb-2">Select Your Vocabulary Stack:</label>
+                    <select id="ps2-stack" class="bg-slate-800 border-slate-600">
+                        <option value="Stack 1: Earth Science">Stack 1: Earth Science & Ecosystems</option>
+                        <option value="Stack 2: US History">Stack 2: U.S. History & Government</option>
+                        <option value="Stack 3: Westward Expansion">Stack 3: Westward Expansion & Geography</option>
+                        <option value="Stack 4: Industrial Rev">Stack 4: Industrial Revolution & Technology</option>
+                    </select>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-slate-200">1. Apply Syllable-Division Rules (Chunking):</label>
+                        <textarea id="ps2-chunks" rows="3" placeholder="Use slash marks to chunk your selected words (e.g., e/co/sys/tem)..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200">2. Background Knowledge Schema Hook:</label>
+                        <textarea id="ps2-hook" rows="3" placeholder="Formulate a quick, 30-second visual or real-world hook for one of the terms..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PIT STOP 3 -->
+            <section id="ps3" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 3</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 8 Minutes</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-4">The Vocabulary Knowledge Roadblock</h3>
+
+                <p class="text-slate-300 mb-6">Select ONE Tier-Two or Tier-Three word from your Stack in Pit Stop 2 and build a semantic web.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="font-bold text-slate-200">Target Academic Word:</label>
+                        <input type="text" id="ps3-word" placeholder="Enter word here...">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Student-Friendly Definition:</label>
+                        <textarea id="ps3-def" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Visual Symbol Anchor (Describe it):</label>
+                        <textarea id="ps3-visual" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Contextual Sentence Frame:</label>
+                        <textarea id="ps3-frame" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200 text-sm">Translanguaging Asset (e.g., Cognate):</label>
+                        <textarea id="ps3-trans" rows="2"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PIT STOP 4 -->
+            <section id="ps4" class="section-content glass-panel p-8 rounded-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-black uppercase" style="color: #FFFF00;">📍 Pit Stop 4</h2>
+                    <span class="bg-blue-600 px-3 py-1 rounded text-sm font-bold text-white">⏱ 8 Minutes</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-4">Early Writing & Peer-Editing</h3>
+
+                <div class="mb-6">
+                    <label class="font-bold text-slate-200 block mb-2">Select Writing Sample Reviewed:</label>
+                    <select id="ps4-sample" class="bg-slate-800 border-slate-600">
+                        <option value="Sample A: Emerging Historian">Sample A: "Harriet Tubman was very bratt..."</option>
+                        <option value="Sample B: Multilingual Narrator">Sample B: "In the moxrn, the family go..."</option>
+                        <option value="Sample C: Dyslexic Storyteller">Sample C: "The brave soljer protmected..."</option>
+                    </select>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-slate-200">1. Warm Glow & Constructive Grow Feedback:</label>
+                        <textarea id="ps4-feedback" rows="3" placeholder="Provide restorative peer feedback..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-200">2. Critical Literacy & Faith Integration Reflection:</label>
+                        <textarea id="ps4-reflection" rows="3" placeholder="How does this reflect a Christian ethic of dignity over punitive correction?..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FINISH LINE -->
+            <section id="finish" class="section-content glass-panel p-8 rounded-xl text-center">
+                <div class="text-6xl mb-6">🏆</div>
+                <h2 class="text-4xl font-black uppercase mb-4" style="color: #FFFF00;">The Finish Line</h2>
+                <p class="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">You have successfully navigated all linguistic check-points! Ensure your team has finalized all responses.</p>
+                
+                <div class="bg-slate-900 p-8 rounded-xl border border-slate-700 inline-block shadow-2xl">
+                    <h3 class="text-2xl font-bold text-white mb-4 border-b border-slate-700 pb-2">Submit Your Digital Passport</h3>
+                    <p class="text-slate-400 mb-6 text-sm max-w-md">Click the button below to bundle all your responses from Pit Stops 1-4 into a downloadable text file that you can upload to the course portal.</p>
+                    
+                    <button onclick="downloadPassport()" class="bg-[#ff7e00] hover:bg-[#ff9d3d] text-white font-black text-xl py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-3 mx-auto">
+                        <span>📥</span> Download Completed Passport
+                    </button>
+                    
+                    <p id="download-success" class="text-green-400 font-bold mt-4 hidden">✅ Passport generated successfully! Upload this to the portal.</p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // Navigation Logic
+        function showSection(sectionId) {
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            document.getElementById('nav-' + sectionId).classList.add('active');
+        }
+
+        // Audio Logic
+        function toggleAudio() {
+            const audio = document.getElementById("race-theme");
+            const btn = document.getElementById("audio-btn");
+            
+            if (audio.paused) {
+                audio.volume = 0.3; 
+                audio.play();
+                btn.innerHTML = "⏸ Pause Theme";
+                btn.classList.replace("bg-blue-600", "bg-[#ff7e00]");
+                btn.classList.replace("hover:bg-blue-500", "hover:bg-[#ff9d3d]");
+            } else {
+                audio.pause();
+                btn.innerHTML = "▶ Play Theme";
+                btn.classList.replace("bg-[#ff7e00]", "bg-blue-600");
+                btn.classList.replace("hover:bg-[#ff9d3d]", "hover:bg-blue-500");
+            }
+        }
+
+        // Download Logic
+        function downloadPassport() {
+            let content = "=================================================\n";
+            content += " THE AMAZING RACE: LINGUISTIC PIT STOPS\n";
+            content += " TEAM PASSPORT SUBMISSION\n";
+            content += "=================================================\n\n";
+
+            content += "--- PIT STOP 1: Rapid Naming & Fluency Sprint ---\n";
+            content += "Diagnosis:\n" + (document.getElementById('ps1-diagnosis').value || "[No response]") + "\n\n";
+            content += "Strategy:\n" + (document.getElementById('ps1-strategy').value || "[No response]") + "\n\n";
+
+            content += "--- PIT STOP 2: The Syllabication Detour ---\n";
+            content += "Vocabulary Stack: " + document.getElementById('ps2-stack').value + "\n\n";
+            content += "Syllable Chunks:\n" + (document.getElementById('ps2-chunks').value || "[No response]") + "\n\n";
+            content += "Schema Hook:\n" + (document.getElementById('ps2-hook').value || "[No response]") + "\n\n";
+
+            content += "--- PIT STOP 3: Vocabulary Knowledge Roadblock ---\n";
+            content += "Target Word: " + (document.getElementById('ps3-word').value || "[No response]") + "\n\n";
+            content += "Definition:\n" + (document.getElementById('ps3-def').value || "[No response]") + "\n\n";
+            content += "Visual Anchor:\n" + (document.getElementById('ps3-visual').value || "[No response]") + "\n\n";
+            content += "Sentence Frame:\n" + (document.getElementById('ps3-frame').value || "[No response]") + "\n\n";
+            content += "Translanguaging Asset:\n" + (document.getElementById('ps3-trans').value || "[No response]") + "\n\n";
+
+            content += "--- PIT STOP 4: Early Writing & Peer-Editing ---\n";
+            content += "Selected Sample: " + document.getElementById('ps4-sample').value + "\n\n";
+            content += "Warm Glow / Constructive Grow Feedback:\n" + (document.getElementById('ps4-feedback').value || "[No response]") + "\n\n";
+            content += "Reflection:\n" + (document.getElementById('ps4-reflection').value || "[No response]") + "\n\n";
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Amazing_Race_Team_Passport.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            const successMsg = document.getElementById('download-success');
+            successMsg.classList.remove('hidden');
+            setTimeout(() => { successMsg.classList.add('hidden'); }, 4000);
+        }
+    </script>
+</body>
+</html>
