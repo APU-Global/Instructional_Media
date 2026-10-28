@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 Interactive | Weighing Consequences: The Utility Scale</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.scale{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+#beam{transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.grp{border:2px solid #eee;border-radius:16px;padding:14px 16px;margin-bottom:10px;background:#fff}
+.grp.off{opacity:.45}
+.gh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.gh label{font-weight:700}
+.ppl{font-size:.85rem;color:var(--mut)}
+.val{font-weight:800;min-width:3.6em;text-align:right}
+.val.pos{color:var(--ok)}.val.neg{color:var(--bad)}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+@media(max-width:560px){.sum{grid-template-columns:1fr}}
+.sum div{background:var(--warm);border-radius:14px;padding:12px}.sum b{display:block;font:700 1.6rem Georgia,serif}
+.pc{height:10px;background:var(--warm);border-radius:6px;position:relative;margin-top:6px}
+.pc i{position:absolute;top:0;height:100%;border-radius:6px}
+.tog{display:flex;gap:8px;margin-bottom:12px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a large crowd of small figures on one pan of a balance and a single figure on the other">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(560 0) rotate(-6 0 70)" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><path d="M-230 70H230"/><path d="M-230 70l-40 80h80zM230 70l-40 80h80z" stroke-width="3"/></g>
+<path d="M560 70V200M500 205h120" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+<g fill="#f7dcdd"><g id="mini"></g></g>
+<g fill="#f6c453"><circle cx="840" cy="160" r="9"/><path d="M825 190q0-24 15-24t15 24z"/></g>
+<script>(function(){var g=document.getElementById("mini");var ns="http://www.w3.org/2000/svg";for(var r=0;r<3;r++)for(var c=0;c<8;c++){var x=300+c*22+(r%2)*8,y=150-r*24;var a=document.createElementNS(ns,"circle");a.setAttribute("cx",x);a.setAttribute("cy",y);a.setAttribute("r",6);g.appendChild(a);var b=document.createElementNS(ns,"path");b.setAttribute("d","M"+(x-9)+" "+(y+26)+"q0-18 9-18t9 18z");g.appendChild(b)}})()</script>
+</svg>
+<div class="txt"><div class="kick">PHIL 210 · Week 6 Interactive</div><h1>The Utility Scale</h1><p>The ethical action is the one that achieves the greatest good for the greatest number. Weigh a real policy decision, then find the problem hiding in the arithmetic.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>The case</h2>
+<p>A county health board is deciding whether to <strong>close a rural clinic</strong> and use the savings to <strong>expand an urban clinic</strong> and lower taxes. For each group, set how much a typical member would be affected (from −10, seriously harmed, to +10, greatly helped). Every affected person counts.</p>
+<div class="tog" role="group" aria-label="Utilitarian version"><button class="btn" id="m1" aria-pressed="true">Act utilitarian view</button><button class="btn" id="m2" aria-pressed="false">Rule utilitarian view</button></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Weigh the consequences</h2>
+<svg class="scale" id="sc" viewBox="0 0 700 300" role="img" aria-label="Balance scale comparing total benefits and total harms" aria-describedby="scd"></svg>
+<p class="sr" id="scd"></p>
+<div class="sum" aria-live="polite"><div><b id="tb">0</b>Total benefits</div><div><b id="th">0</b>Total harms</div><div><b id="tn">0</b>Net good</div></div>
+<div id="groups" style="margin-top:16px"></div>
+<div class="row"><button class="btn" id="stress">Stress-test: benefits overestimated by 50%</button><button class="btn" id="rst">Reset</button></div>
+<p class="live" id="stxt" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Check the minority</h2>
+<div id="verdict"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Consequences in Rae's model</h2>
+<div class="note">Step 6 of Rae's model asks you to weigh consequences for everyone affected. That is the contribution utilitarian thinking makes. Integrate a Christian ethical framework when you present your moral priorities.</div>
+</section>
+</div>
+<p class="foot">Source: PHIL 210 Week 6 Deep Dive. Mill (2001), <em>Utilitarianism</em>; Bentham (1907), <em>An Introduction to the Principles of Morals and Legislation</em>; Rae (2018), <em>Moral Choices</em>. Figures are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var G=[
+{n:"Urban families",c:3000,d:2,col:"#1f6f78",t:"gain easier access to expanded care"},
+{n:"Taxpayers countywide",c:8000,d:0.5,col:"#e0a526",t:"see a small tax reduction"},
+{n:"Rural patients",c:600,d:-6,col:"#d34147",t:"lose nearby care and face a long drive"},
+{n:"Clinic staff",c:40,d:-4,col:"#7d2429",t:"lose or must relocate their jobs"}];
+var st=G.map(function(g){return{on:true,v:g.d}}),stress=false,mode=1;
+var sc=document.getElementById("sc");
+el("path",{d:"M350 285V120M290 288h120",stroke:"#5b5557","stroke-width":8,"stroke-linecap":"round"},sc);
+var beam=el("g",{id:"beam"},sc);
+el("path",{d:"M110 120H590",stroke:"#231f20","stroke-width":8,"stroke-linecap":"round"},beam);
+el("circle",{cx:350,cy:120,r:11,fill:"#d34147"},sc);
+function pan(x,label,col){var g=el("g",{},beam);var inner=el("g",{},g);
+ el("path",{d:"M"+x+" 120L"+(x-60)+" 195M"+x+" 120L"+(x+60)+" 195",stroke:"#5b5557","stroke-width":3},inner);
+ el("path",{d:"M"+(x-70)+" 195h140q0 34-70 34t-70-34z",fill:col},inner);
+ var t=el("text",{x:x,y:216,"text-anchor":"middle","font-size":"14","font-weight":"700",fill:"#fff"},inner);t.textContent=label;
+ var blocks=el("g",{},inner);return{g:g,inner:inner,blocks:blocks,x:x}}
+var L=pan(110,"Benefits","#1f6f78"),R=pan(590,"Harms","#b3261e");
+function fill(p,n,col){p.blocks.innerHTML="";for(var i=0;i<n;i++){var c=i%5,r=Math.floor(i/5);el("rect",{x:p.x-34+c*14,y:186-r*14,width:12,height:12,rx:2,fill:col},p.blocks)}}
+function fmt(n){return Math.round(n).toLocaleString()}
+var host=document.getElementById("groups");
+G.forEach(function(g,i){
+ var d=document.createElement("div");d.className="grp";d.id="g"+i;
+ d.innerHTML='<div class="gh"><label><input type="checkbox" id="c'+i+'" checked> '+g.n+'</label><span class="ppl">'+fmt(g.c)+' people</span><span class="val" id="v'+i+'"></span></div>'+
+ '<label class="sr" for="s'+i+'">Per-person impact for '+g.n+'</label><input type="range" id="s'+i+'" min="-10" max="10" step="0.5" value="'+g.d+'"><div class="ppl">Typical member will '+g.t+'.</div><div class="pc"><i id="p'+i+'"></i></div>';
+ host.appendChild(d);
+ d.querySelector("#c"+i).onchange=function(){st[i].on=this.checked;upd()};
+ d.querySelector("#s"+i).oninput=function(){st[i].v=+this.value;upd()};
+});
+function upd(){
+ var B=0,H=0;
+ G.forEach(function(g,i){
+  var v=st[i].v,pos=v>0&&stress?v*.5:v,tot=st[i].on?g.c*pos:0;
+  if(tot>0)B+=tot;else H+=-tot;
+  var e=document.getElementById("v"+i);e.textContent=(pos>0?"+":"")+(Math.round(pos*10)/10);e.className="val "+(pos>0?"pos":pos<0?"neg":"");
+  document.getElementById("g"+i).classList.toggle("off",!st[i].on);
+  var pc=document.getElementById("p"+i);pc.style.left=pos<0?(50+pos*5)+"%":"50%";pc.style.width=Math.abs(pos)*5+"%";pc.style.background=pos<0?"#b3261e":"#1f6f78";
+ });
+ var net=B-H,tot=B+H||1,ang=Math.max(-18,Math.min(18,(net/tot)*18));
+ beam.setAttribute("transform","rotate("+(-ang)+" 350 120)");
+ [L,R].forEach(function(p){p.inner.setAttribute("transform","rotate("+ang+" "+p.x+" 120)")});
+ fill(L,Math.min(40,Math.round(B/Math.max(B,H,1)*20)),"#9fd8dc");fill(R,Math.min(40,Math.round(H/Math.max(B,H,1)*20)),"#f2b1ac");
+ document.getElementById("tb").textContent=fmt(B);document.getElementById("th").textContent=fmt(H);
+ var n=document.getElementById("tn");n.textContent=(net>0?"+":"")+fmt(net);n.style.color=net>0?"#2d7a4b":net<0?"#b3261e":"";
+ document.getElementById("scd").textContent="Benefits "+fmt(B)+", harms "+fmt(H)+", net "+fmt(net);
+ verdict(net);
+}
+function verdict(net){
+ var v=document.getElementById("verdict"),flags=[];
+ G.forEach(function(g,i){var pos=st[i].v>0&&stress?st[i].v*.5:st[i].v;if(st[i].on&&pos<=-4&&g.c/ G.reduce(function(a,x,k){return a+(st[k].on?x.c:0)},0)<.2)flags.push(g.n+" ("+fmt(g.c)+" people, "+pos+" each)")});
+ var h='<p><strong>The principle of utility says:</strong> '+(net>0?"the policy produces more good than harm, so it is right.":net<0?"the policy produces more harm than good, so it is wrong.":"benefits and harms balance, so the principle alone does not decide.")+'</p>';
+ if(net>0&&flags.length)h+='<div class="badbox"><strong>The problem of the minority.</strong> The total is positive, yet serious harm falls on: '+flags.join("; ")+'. Utilitarianism can appear to justify serious harm to a minority for the benefit of the majority.</div><p style="margin-top:10px">Decide what criteria you would use to judge when suffering is too great. How would a framework built on duty, or a Christian commitment to care for the vulnerable, respond?</p>';
+ else if(flags.length)h+='<div class="note gold">A small group still bears heavy harm: '+flags.join("; ")+'.</div>';
+ else h+='<div class="good">No small group is bearing serious harm in this setup. Try un-checking a group, or turn the sliders, to see how sensitive the result is.</div>';
+ h+=mode===1?'<div class="note teal"><strong>Act view:</strong> judge this single decision by its own consequences. The total above settles it.</div>':'<div class="note teal"><strong>Rule view:</strong> ask what happens if “close small clinics whenever the totals favor it” became the policy. Rural communities everywhere would live under a standing threat, and trust in public care could fall. A good rule may differ from a good single act, which is how rule utilitarianism borrows some stability from rule-based ethics.</div>';
+ v.innerHTML=h;
+}
+document.getElementById("stress").onclick=function(){stress=!stress;this.setAttribute("aria-pressed",stress);this.textContent=stress?"Stress-test ON: benefits halved (click to undo)":"Stress-test: benefits overestimated by 50%";document.getElementById("stxt").textContent=stress?"Outcomes are uncertain and hard to compare. See whether the result survives a less rosy estimate.":"";upd()};
+document.getElementById("rst").onclick=function(){G.forEach(function(g,i){st[i]={on:true,v:g.d};document.getElementById("c"+i).checked=true;document.getElementById("s"+i).value=g.d});stress=false;var b=document.getElementById("stress");b.setAttribute("aria-pressed","false");b.textContent="Stress-test: benefits overestimated by 50%";document.getElementById("stxt").textContent="";upd()};
+["m1","m2"].forEach(function(id,k){document.getElementById(id).onclick=function(){mode=k+1;document.getElementById("m1").setAttribute("aria-pressed",k===0);document.getElementById("m2").setAttribute("aria-pressed",k===1);upd()}});
+upd();
+</script></body></html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive | Duty and Rules: The Categorical Imperative Lab</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:720px){.acts{grid-template-columns:1fr}}
+.act{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:14px;cursor:pointer}
+.act:hover{border-color:var(--red)} .act[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.crowd{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.p{transition:fill .5s,opacity .5s} .stamp{font:800 22px Georgia,serif}
+.step{opacity:.4;pointer-events:none;transition:.3s}.step.on{opacity:1;pointer-events:auto}
+.verdict{text-align:center;padding:18px;border-radius:16px;font-weight:700}
+.verdict.ok{background:var(--ok-l);color:#14502c}.verdict.no{background:var(--bad-l);color:#7a1812}
+.duty{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}@media(max-width:720px){.duty{grid-template-columns:1fr}}
+.duty button{font:inherit;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:14px;cursor:pointer;text-align:left}
+.duty button:hover{border-color:var(--red)}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a balanced scale of justice beside a stone tablet of rules, on a deep red background">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(700 20)" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"><path d="M0 190h80M40 190V30M-40 50h160"/><path d="M-40 50l-28 70h56zM120 50l-28 70h56z" stroke-width="3"/><path d="M-68 120q28 28 56 0M92 120q28 28 56 0" fill="#f6c453" stroke="#fff"/><circle cx="40" cy="26" r="9" fill="#f6c453"/></g>
+<g transform="translate(160 36)"><path d="M0 170V40Q0 0 50 0T100 40V170Z" fill="#f7dcdd"/><g stroke="#a8353a" stroke-width="4" stroke-linecap="round"><path d="M22 60h56M22 84h56M22 108h40"/></g></g>
+<g fill="#f6c453" opacity=".85"><circle cx="400" cy="40" r="4"/><circle cx="520" cy="90" r="3"/><circle cx="880" cy="60" r="3"/></g>
+</svg>
+<div class="txt"><div class="kick">PHIL 210 · Week 5 Interactive</div><h1>The Categorical Imperative Lab</h1><p>Some actions are right or wrong by nature, whatever their consequences. Put four proposed actions through Kant's two tests, then face a case where two duties collide.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Choose an action to test</h2>
+<div class="acts" id="acts"></div>
+</section>
+
+<section class="card step" id="s1"><div class="bar"></div>
+<h2>Test 1 · Could everyone do this?</h2>
+<p class="lead">Imagine the rule behind your action becoming a universal law. Press the button and watch the crowd.</p>
+<svg class="crowd" id="crowd" viewBox="0 0 700 170" role="img" aria-label="Row of ten people"></svg>
+<div class="row" style="margin-top:10px"><button class="btn pri" id="uni">Everyone acts this way</button></div>
+<p class="live" id="uniTxt" aria-live="polite"></p>
+</section>
+
+<section class="card step" id="s2"><div class="bar"></div>
+<h2>Test 2 · Does it respect the person?</h2>
+<p class="lead">Kant also asks whether you treat people as ends in themselves, never merely as means.</p>
+<svg class="crowd" id="pair" viewBox="0 0 700 170" role="img" aria-label="Two people connected by an arrow"></svg>
+<div class="row" style="margin-top:10px"><button class="btn pri" id="hum">Look at the person affected</button></div>
+<p class="live" id="humTxt" aria-live="polite"></p>
+</section>
+
+<section class="card step" id="s3"><div class="bar"></div>
+<h2>Verdict</h2>
+<div id="verdict" class="verdict" aria-live="polite"></div>
+<p style="margin-top:12px"><strong>Notice:</strong> the verdict never asked whether the outcome would turn out well. Duty creates rules that uphold moral actions regardless of consequences.</p>
+<div class="row"><button class="btn" id="again">Test another action</button></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · When duties collide</h2>
+<p class="lead">Rules bring clarity and protect persons, but they can conflict. You promised a friend to keep a secret. The secret turns out to be a plan to seriously harm someone else. Which duty will you honor?</p>
+<div class="duty" id="duty">
+<button data-k="a"><strong>Keep the promise</strong><br><span class="lead">Duty of fidelity</span></button>
+<button data-k="b"><strong>Warn the person at risk</strong><br><span class="lead">Duty to protect others</span></button>
+<button data-k="c"><strong>Persuade my friend to stop, and warn if refused</strong><br><span class="lead">Try to honor both</span></button>
+</div>
+<div class="note teal live" id="dres" aria-live="polite" style="display:none"></div>
+</section>
+</div>
+<p class="foot">Source: PHIL 210 Week 5 Deep Dive. Kant, I. (2012), <em>Groundwork of the Metaphysics of Morals</em>; Rae (2018), <em>Moral Choices</em>. Scenarios are simplified for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var A=[
+{n:"Lie on a loan application to get an apartment",u:false,ut:"If everyone lied on applications, lenders would stop trusting any application and the practice of lending on a statement would collapse. The lie only works if most people tell the truth, so it cannot be universal.",h:false,ht:"The lender is being used as a tool to get what you want. They are deceived into a decision they would never freely make."},
+{n:"Return a lost wallet with the cash still inside",u:true,ut:"If everyone returned lost property, nothing breaks. Trust would grow. The rule can be willed universally.",h:true,ht:"The owner is treated as a person with their own needs and rights, not as a chance for gain."},
+{n:"Break a promise to a friend because a better party came up",u:false,ut:"If everyone broke promises whenever something nicer appeared, promising would mean nothing. The rule destroys itself.",h:false,ht:"Your friend's plans and trust are treated as a convenience, a means to your own better evening."},
+{n:"Report a safety violation even though it costs your team a bonus",u:true,ut:"If everyone reported genuine safety violations, workplaces would be safer. This rule can be universal.",h:true,ht:"The people who could be hurt are respected as persons whose safety matters in itself, not as acceptable losses."}];
+var cur=null,acts=document.getElementById("acts");
+A.forEach(function(a,i){var b=document.createElement("button");b.className="act";b.setAttribute("aria-pressed","false");b.textContent=a.n;b.onclick=function(){choose(i)};acts.appendChild(b)});
+function person(g,x,y,c){var p=el("g",{"class":"p",transform:"translate("+x+" "+y+")"},g);el("circle",{cx:0,cy:0,r:11,fill:c},p);el("path",{d:"M-15 40q0-26 15-26t15 26z",fill:c},p);return p}
+var crowd=document.getElementById("crowd"),ppl=[];
+function drawCrowd(){crowd.innerHTML="";ppl=[];for(var i=0;i<10;i++){var p=person(crowd,45+i*68,55,"#8a8286");ppl.push(p)}}
+var pair=document.getElementById("pair");
+function drawPair(){pair.innerHTML="";
+ el("rect",{x:80,y:50,width:0,height:0},pair);
+ var l=person(pair,170,60,"#d34147"),r=person(pair,530,60,"#1f6f78");
+ var t=el("text",{x:170,y:140,"text-anchor":"middle","font-size":"14",fill:"#5b5557"},pair);t.textContent="You";
+ var t2=el("text",{x:530,y:140,"text-anchor":"middle","font-size":"14",fill:"#5b5557"},pair);t2.textContent="Person affected";
+ el("path",{d:"M215 60H485M470 50l15 10-15 10",stroke:"#8a8286","stroke-width":4,fill:"none","stroke-linecap":"round"},pair);
+ return {l:l,r:r}}
+var P;
+function show(id,on){document.getElementById(id).classList.toggle("on",on)}
+function choose(i){
+ cur=A[i];
+ [].forEach.call(acts.children,function(b,k){b.setAttribute("aria-pressed",k===i?"true":"false")});
+ drawCrowd();P=drawPair();
+ document.getElementById("uniTxt").textContent="";document.getElementById("humTxt").textContent="";
+ document.getElementById("uni").disabled=false;document.getElementById("hum").disabled=false;
+ show("s1",true);show("s2",false);show("s3",false);
+ document.getElementById("s1").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+document.getElementById("uni").onclick=function(){
+ this.disabled=true;
+ ppl.forEach(function(p,i){setTimeout(function(){p.firstChild.setAttribute("fill",cur.u?"#2d7a4b":"#b3261e");p.lastChild.setAttribute("fill",cur.u?"#2d7a4b":"#b3261e")},i*120)});
+ setTimeout(function(){
+  if(cur.u){for(var i=0;i<9;i++)el("path",{d:"M"+(79+i*68)+" 40h22",stroke:"#2d7a4b","stroke-width":4,"stroke-linecap":"round"},crowd)}
+  else{for(var i=0;i<9;i++){var x=79+i*68;el("path",{d:"M"+x+" 40l8 0M"+(x+14)+" 40l8 0",stroke:"#b3261e","stroke-width":4,"stroke-linecap":"round"},crowd);}
+   var s=el("text",{x:350,y:128,"text-anchor":"middle","class":"stamp",fill:"#b3261e"},crowd);s.textContent="THE PRACTICE COLLAPSES"}
+  document.getElementById("uniTxt").innerHTML='<span class="'+(cur.u?"good":"badbox")+'">'+(cur.u?"✓ Passes. ":"✗ Fails. ")+cur.ut+'</span>';
+  show("s2",true);
+ },1400);
+};
+document.getElementById("hum").onclick=function(){
+ this.disabled=true;
+ if(cur.h){el("path",{d:"M350 30l7 14 15 2-11 11 3 15-14-8-14 8 3-15-11-11 15-2z",fill:"#e0a526"},pair);var s=el("text",{x:350,y:120,"text-anchor":"middle","class":"stamp",fill:"#2d7a4b"},pair);s.textContent="END IN HIMSELF"}
+ else{el("path",{d:"M525 20l16-8 6 12-12 6 18 22-12 12-18-22",stroke:"#b3261e","stroke-width":4,fill:"none","stroke-linecap":"round"},pair);var s2=el("text",{x:350,y:120,"text-anchor":"middle","class":"stamp",fill:"#b3261e"},pair);s2.textContent="USED AS A MERE MEANS"}
+ document.getElementById("humTxt").innerHTML='<span class="'+(cur.h?"good":"badbox")+'">'+(cur.h?"✓ Passes. ":"✗ Fails. ")+cur.ht+'</span>';
+ var ok=cur.u&&cur.h,v=document.getElementById("verdict");
+ v.className="verdict "+(ok?"ok":"no");
+ v.textContent=ok?"Consistent with duty: this action upholds a moral rule.":"Contrary to duty: this action cannot be justified as a moral rule.";
+ show("s3",true);
+};
+document.getElementById("again").onclick=function(){
+ [].forEach.call(acts.children,function(b){b.setAttribute("aria-pressed","false")});
+ show("s1",false);show("s2",false);show("s3",false);acts.scrollIntoView({behavior:"smooth",block:"start"});
+};
+var D={a:"Keeping the promise honors fidelity and gives clear, predictable rules. But applied strictly, it can produce serious harm. This is the rigidity limitation of rule-based ethics.",
+b:"Protecting a person from serious harm is a weighty duty. But now the promise, which the rule said was binding, has been broken. The framework alone does not tell you why one duty ranks higher; you have to bring further moral reasoning.",
+c:"This honors both duties as far as possible and respects your friend as a person who can choose better. It is often wise, but notice it was not produced by the rule alone. When two duties collide, deontology needs judgment to say which prevails."};
+[].forEach.call(document.querySelectorAll("#duty button"),function(b){b.onclick=function(){var r=document.getElementById("dres");r.style.display="block";r.textContent=D[b.dataset.k]}});
+</script></body></html>
