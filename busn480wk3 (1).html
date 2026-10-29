@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Interactive | Inside-Out Strategy Lab</title>
+<style>:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--paper:#edebe8;--card:#fff;--line:#d9d4cc;--teal:#2a7f86;--gold:#e0a93b;--green:#3f8f5b;--muted:#5c5852}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;font-size:16px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.2;margin:0 0 .5em}
+h2{font-size:1.6rem}h3{font-size:1.2rem}
+p{margin:0 0 .8em}
+.hero{position:relative;color:#fff;min-height:290px;display:flex;align-items:center;overflow:hidden;background:#1b1b1d}
+.hero>svg{position:absolute;inset:0;width:100%;height:100%}
+.hero .inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 24px;width:100%}
+.hero .inner>*{max-width:560px}
+.badge{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:99px;margin-bottom:12px}
+.hero h1{font-size:2.3rem;margin-bottom:.3em;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+.hero p{font-size:1.05rem;opacity:.95;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+main{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+.card{background:var(--card);border-radius:16px;padding:24px;margin-bottom:24px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--line)}
+.card.accent{border-left:6px solid var(--red)}
+.quote{border-left:4px solid var(--gold);background:#faf5e8;padding:12px 16px;border-radius:0 10px 10px 0;font-family:Georgia,serif;font-style:italic;margin:0 0 16px}
+.quote small{display:block;font-family:system-ui,sans-serif;font-style:normal;color:var(--muted);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}.hero h1{font-size:1.8rem}.hero .inner>*{max-width:100%}}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;border-bottom:2px solid var(--line);padding-bottom:10px}
+.tab{border:2px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:99px;font-weight:700;cursor:pointer;font-size:.95rem;font-family:inherit}
+.tab[aria-selected=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.tab:focus-visible,.btn:focus-visible,.opt:focus-visible,.chip:focus-visible,.venn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.panel[hidden]{display:none}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:1rem;font-family:inherit}
+.btn:hover{background:var(--red-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:#fff}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer;font-size:1rem;font-family:inherit;color:var(--ink);transition:all .15s}
+.opt:hover:not([disabled]){border-color:var(--red);background:#fdf3f3}
+.opt[disabled]{cursor:default}
+.opt.chosen{border-color:var(--ink);background:#f4f1ec}
+.tag{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;color:#fff}
+.t-good{background:var(--green)}.t-mid{background:#b98617}.t-bad{background:#c0392b}.t-ink{background:var(--ink)}
+.feedback{border-radius:12px;padding:14px 16px;margin:12px 0;background:#f4f1ec;border-left:5px solid var(--ink)}
+.feedback.good{border-color:var(--green);background:#eaf5ee}.feedback.mid{border-color:#b98617;background:#fbf4e2}.feedback.bad{border-color:#c0392b;background:#fbeceb}
+.meta{display:grid;gap:6px;background:#f7f5f1;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:.95rem}
+.meta b{color:var(--red-d)}
+.bar{height:14px;background:#e6e2db;border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--red);border-radius:99px;transition:width .5s}
+.steps{display:flex;gap:6px;margin-bottom:14px}
+.steps span{flex:1;height:8px;border-radius:99px;background:#e0dcd5;transition:background .3s}
+.steps span.on{background:var(--red)}.steps span.good{background:var(--green)}.steps span.mid{background:#d8a62b}.steps span.bad{background:#c0392b}
+.chip{border:2px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.9rem}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--red)}
+textarea,select,input[type=text]{width:100%;border:2px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.takeaways{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.takeaways{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.takeaways{grid-template-columns:1fr}}
+.take{background:#fff;border-radius:14px;padding:16px;border-top:5px solid var(--red);border:1px solid var(--line);border-top:5px solid var(--red)}
+.take h3{font-size:1rem;margin-bottom:.3em}.take p{font-size:.9rem;margin:0;color:var(--muted)}
+footer{max-width:1100px;margin:0 auto;padding:0 20px 40px;color:var(--muted);font-size:.85rem}
+.venn{cursor:pointer;transition:transform .2s,opacity .2s;transform-box:fill-box;transform-origin:center}
+.venn:hover{transform:scale(1.04)}
+.icon{width:44px;height:44px;color:var(--red-d);flex:none}
+.sr{position:absolute;left:-9999px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.shake{animation:shake .3s}
+.venn-wrap,.ffwrap,.hubwrap,.ringwrap,.gauge-wrap{width:100%}
+svg{max-width:100%}
+
+.rcards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:820px){.rcards{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.rcards{grid-template-columns:1fr}}
+.rc{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;font:inherit;color:inherit}
+.rc:hover{border-color:var(--red)}.rc[aria-pressed=true]{border-color:var(--ink);background:#f4f1ec;box-shadow:0 0 0 3px rgba(34,34,34,.12)}
+.rc b{font-size:.9rem;display:block;line-height:1.25}.rc small{color:var(--muted)}
+.rc .done{margin-left:auto;font-size:1.1rem}
+.vq{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0;flex-wrap:wrap}
+.vq span{flex:1;min-width:220px}
+.yn{display:flex;gap:6px}
+.yn .chip.on.y{background:var(--green);border-color:var(--green)}.yn .chip.on.n{background:#c0392b;border-color:#c0392b}
+.item{border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
+.item.ok{border-color:var(--green);background:#eef7f1}
+.ch{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ch .chip.right{background:var(--green);border-color:var(--green);color:#fff}
+.hint{color:#a8353a;font-size:.88rem;font-weight:600;margin-top:6px;min-height:1.2em}
+.ringwrap{max-width:360px;margin:0 auto}
+</style></head><body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs><symbol id="i-data" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="10" rx="14" ry="5"/><path d="M10 10v12c0 3 6 5 14 5s14-2 14-5V10M10 22v12c0 3 6 5 14 5s14-2 14-5V22"/></symbol><symbol id="i-ehr" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="6" width="32" height="36" rx="4"/><path d="M16 16h16M16 24h16M16 32h9"/></symbol><symbol id="i-culture" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="6"/><circle cx="34" cy="18" r="5"/><path d="M5 38c0-7 5-12 11-12s11 5 11 12M28 38c0-5 3-9 7-9s8 3 8 9"/></symbol><symbol id="i-app" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="4" width="20" height="40" rx="5"/><path d="M21 38h6"/><path d="M19 20l4 4 7-8"/></symbol><symbol id="i-paper" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4h18l8 8v32H12z"/><path d="M30 4v8h8M18 22h14M18 30h14M18 38h8"/><path d="M6 36l8-8" stroke="#d34147"/></symbol><symbol id="i-handshake" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22l10-9 8 3 8-3 14 9-12 14-6 2-6-4-4 2-8-8z"/><path d="M22 16l-6 8 8 6"/></symbol><symbol id="i-check" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="M15 25l7 7 12-14"/></symbol></defs></svg>
+<header class="hero"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Interlocking gears and a continuous improvement cycle">
+<defs><linearGradient id="w3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b1b1d"/><stop offset="1" stop-color="#3a1b20"/></linearGradient></defs>
+<rect width="1200" height="320" fill="url(#w3bg)"/>
+<g fill="#d34147" opacity=".95"><path d="M977.6 157.8 L976.3 166.4 L990.9 173.9 L986.9 185.9 L970.7 183.0 L966.5 190.7 L961.6 197.9 L971.5 211.0 L962.7 220.0 L949.4 210.4 L942.3 215.5 L934.7 219.9 L938.0 236.0 L926.1 240.3 L918.3 225.8 L909.7 227.4 L901.0 228.0 L896.9 243.9 L884.3 242.7 L883.6 226.3 L875.1 223.9 L867.0 220.7 L856.5 233.3 L845.7 226.7 L852.1 211.6 L845.5 205.8 L839.6 199.4 L824.6 206.2 L817.8 195.6 L830.1 184.7 L826.7 176.7 L824.2 168.3 L807.7 167.9 L806.2 155.4 L822.0 151.0 L822.4 142.2 L823.7 133.6 L809.1 126.1 L813.1 114.1 L829.3 117.0 L833.5 109.3 L838.4 102.1 L828.5 89.0 L837.3 80.0 L850.6 89.6 L857.7 84.5 L865.3 80.1 L862.0 64.0 L873.9 59.7 L881.7 74.2 L890.3 72.6 L899.0 72.0 L903.1 56.1 L915.7 57.3 L916.4 73.7 L924.9 76.1 L933.0 79.3 L943.5 66.7 L954.3 73.3 L947.9 88.4 L954.5 94.2 L960.4 100.6 L975.4 93.8 L982.2 104.4 L969.9 115.3 L973.3 123.3 L975.8 131.7 L992.3 132.1 L993.8 144.6 L978.0 149.0Z" fill-rule="evenodd"/><circle cx="900" cy="150" r="27.3" fill="#1b1b1d"/></g>
+<g fill="#e0a93b" opacity=".95"><path d="M1085.9 249.2 L1083.1 256.2 L1092.1 264.8 L1085.6 274.0 L1074.4 268.5 L1068.8 273.4 L1062.4 277.5 L1064.6 289.7 L1053.9 293.4 L1048.2 282.3 L1040.7 283.0 L1033.2 282.5 L1027.7 293.7 L1017.0 290.4 L1018.8 278.1 L1012.3 274.2 L1006.5 269.4 L995.6 275.3 L988.8 266.3 L997.5 257.4 L994.6 250.5 L992.7 243.2 L980.4 241.5 L980.2 230.2 L992.5 228.2 L994.1 220.8 L996.9 213.8 L987.9 205.2 L994.4 196.0 L1005.6 201.5 L1011.2 196.6 L1017.6 192.5 L1015.4 180.3 L1026.1 176.6 L1031.8 187.7 L1039.3 187.0 L1046.8 187.5 L1052.3 176.3 L1063.0 179.6 L1061.2 191.9 L1067.7 195.8 L1073.5 200.6 L1084.4 194.7 L1091.2 203.7 L1082.5 212.6 L1085.4 219.5 L1087.3 226.8 L1099.6 228.5 L1099.8 239.8 L1087.5 241.8Z" fill-rule="evenodd"/><circle cx="1040" cy="235" r="16.8" fill="#1b1b1d"/></g>
+<g fill="#7fd1d6" opacity=".9"><path d="M820.0 262.0 L819.4 268.9 L829.5 274.3 L825.8 284.4 L814.6 282.0 L810.6 287.7 L805.7 292.6 L810.0 303.3 L800.7 308.6 L793.7 299.6 L786.9 301.4 L780.0 302.0 L776.4 312.9 L765.9 311.0 L766.3 299.6 L760.0 296.6 L754.3 292.6 L744.6 298.7 L737.7 290.5 L745.4 282.0 L742.4 275.7 L740.6 268.9 L729.3 267.3 L729.3 256.7 L740.6 255.1 L742.4 248.3 L745.4 242.0 L737.7 233.5 L744.6 225.3 L754.3 231.4 L760.0 227.4 L766.3 224.4 L765.9 213.0 L776.4 211.1 L780.0 222.0 L786.9 222.6 L793.7 224.4 L800.7 215.4 L810.0 220.7 L805.7 231.4 L810.6 236.3 L814.6 242.0 L825.8 239.6 L829.5 249.7 L819.4 255.1Z" fill-rule="evenodd"/><circle cx="780" cy="262" r="14.0" fill="#1b1b1d"/></g>
+<g fill="#f1e6d8" opacity=".9"><path d="M1123.3 86.8 L1121.4 93.1 L1129.1 100.1 L1123.4 108.7 L1114.0 104.1 L1108.8 108.3 L1102.9 111.5 L1103.4 121.9 L1093.3 123.9 L1089.9 114.0 L1083.2 113.3 L1076.9 111.4 L1069.9 119.1 L1061.3 113.4 L1065.9 104.0 L1061.7 98.8 L1058.5 92.9 L1048.1 93.4 L1046.1 83.3 L1056.0 79.9 L1056.7 73.2 L1058.6 66.9 L1050.9 59.9 L1056.6 51.3 L1066.0 55.9 L1071.2 51.7 L1077.1 48.5 L1076.6 38.1 L1086.7 36.1 L1090.1 46.0 L1096.8 46.7 L1103.1 48.6 L1110.1 40.9 L1118.7 46.6 L1114.1 56.0 L1118.3 61.2 L1121.5 67.1 L1131.9 66.6 L1133.9 76.7 L1124.0 80.1Z" fill-rule="evenodd"/><circle cx="1090" cy="80" r="11.9" fill="#1b1b1d"/></g>
+<g fill="none" stroke="#f1e6d8" stroke-opacity=".35" stroke-width="2" stroke-dasharray="3 9"><circle cx="900" cy="150" r="130"/></g>
+
+</svg><div class="inner"><span class="badge">BUSN 480 · Week 3</span><h1>Inside-Out Strategy Lab</h1><p>Strategy only works if the organization can deliver it. Test resources with VRIO, spot Lean wastes, and run DMAIC.</p></div></header>
+<main>
+<section class="card accent">
+<div class="quote">“But everything should be done in a fitting and orderly way.”<small>1 Corinthians 14:40 (NIV, 2011)</small></div>
+<p>An organization with a strong plan but weak processes, resources, or capabilities will struggle to deliver. In this lab you will evaluate Veritas Health Group <b>from the inside</b>, then connect those diagnostics to operational stewardship.</p>
+</section>
+
+<div class="tabs" role="tablist">
+<button class="tab" role="tab" aria-selected="true" data-p="p1">1 · VRIO Resource Tester</button>
+<button class="tab" role="tab" aria-selected="false" data-p="p2">2 · Eight Wastes Sort</button>
+<button class="tab" role="tab" aria-selected="false" data-p="p3">3 · DMAIC Builder</button>
+</div>
+
+<section id="p1" class="panel">
+<div class="card">
+<h2>Which resources create lasting advantage?</h2>
+<p>Select a Veritas resource, then answer the four VRIO questions. The gates light up as you go. Advantage lasts only when others find it hard to copy.</p>
+<div class="rcards" id="rcards"></div>
+<div class="grid2" style="grid-template-columns:1fr 1.2fr">
+<div id="vq"></div>
+<div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" aria-label="VRIO gates">
+<g id="gate-V"><rect class="gate" x="20" y="40" width="140" height="100" rx="16" fill="#e6e2db" stroke="#999" stroke-width="2"/><text x="90" y="88" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#222">V</text><text x="90" y="118" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#333">Valuable?</text></g><path d="M162 90 L191 90" stroke="#888" stroke-width="3"/><path d="M184 82 L193 90 L184 98Z" fill="#888"/><g id="gate-R"><rect class="gate" x="195" y="40" width="140" height="100" rx="16" fill="#e6e2db" stroke="#999" stroke-width="2"/><text x="265" y="88" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#222">R</text><text x="265" y="118" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#333">Rare?</text></g><path d="M337 90 L366 90" stroke="#888" stroke-width="3"/><path d="M359 82 L368 90 L359 98Z" fill="#888"/><g id="gate-I"><rect class="gate" x="370" y="40" width="140" height="100" rx="16" fill="#e6e2db" stroke="#999" stroke-width="2"/><text x="440" y="88" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#222">I</text><text x="440" y="118" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#333">Costly to imitate?</text></g><path d="M512 90 L541 90" stroke="#888" stroke-width="3"/><path d="M534 82 L543 90 L534 98Z" fill="#888"/><g id="gate-O"><rect class="gate" x="545" y="40" width="140" height="100" rx="16" fill="#e6e2db" stroke="#999" stroke-width="2"/><text x="615" y="88" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#222">O</text><text x="615" y="118" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#333">Organized?</text></g>
+<rect id="vrio-pill" x="20" y="165" width="680" height="46" rx="23" fill="#e6e2db" stroke="#999" stroke-width="2"/>
+<text id="vrio-pilltext" x="360" y="194" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="700" fill="#555">Answer the gates to see the competitive outcome</text>
+</svg>
+<div id="vout" class="feedback" aria-live="polite"><b>Pick a resource to begin.</b></div></div>
+</div></div>
+</section>
+
+<section id="p2" class="panel" hidden>
+<div class="card">
+<h2>Find the waste</h2>
+<p>Lean removes activity that consumes resources without creating value. Waste is found by <b>observing the work</b>, not guessing. Classify each observation from a Veritas hospital walk-through.</p>
+<div class="bar" style="margin-bottom:14px"><i id="wbar" style="width:0"></i></div>
+<div id="wlist"></div>
+<div id="wdone" class="feedback good" hidden><b>Walk-through complete.</b> Eliminating waste frees resources for higher-value work. Each fix here returns time to patient care.</div>
+</div>
+</section>
+
+<section id="p3" class="panel" hidden>
+<div class="card">
+<h2>Fix the discharge delay with DMAIC</h2>
+<p><b>Problem:</b> In the emergency department, the median time from discharge order to patient exit is <b>4.8 hours</b>, and complaints are up 30%. Assign each action to the DMAIC phase where it belongs. Analyze root causes before choosing a fix.</p>
+<div class="grid2" style="grid-template-columns:1.2fr 1fr">
+<div id="dlist"></div>
+<div class="ringwrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" role="img" aria-label="DMAIC improvement cycle ring">
+<g id="seg-D"><path class="seg" d="M187.9 30.2 A150 150 0 0 1 320.0 126.2 L268.7 146.0 A95 95 0 0 0 185.0 85.1Z" fill="#e6e2db" stroke="#aaa" stroke-width="2" style="transition:fill .5s"/><text x="251.7" y="79.3" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#222">D</text><text x="251.7" y="97.3" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#333">Define</text></g><g id="seg-M"><path class="seg" d="M324.9 141.2 A150 150 0 0 1 274.4 296.6 L239.8 253.8 A95 95 0 0 0 271.8 155.4Z" fill="#e6e2db" stroke="#aaa" stroke-width="2" style="transition:fill .5s"/><text x="296.0" y="215.7" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#222">M</text><text x="296.0" y="233.7" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#333">Measure</text></g><g id="seg-A"><path class="seg" d="M261.7 305.8 A150 150 0 0 1 98.3 305.8 L128.3 259.7 A95 95 0 0 0 231.7 259.7Z" fill="#e6e2db" stroke="#aaa" stroke-width="2" style="transition:fill .5s"/><text x="180.0" y="300.0" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#222">A</text><text x="180.0" y="318.0" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#333">Analyze</text></g><g id="seg-I"><path class="seg" d="M85.6 296.6 A150 150 0 0 1 35.1 141.2 L88.2 155.4 A95 95 0 0 0 120.2 253.8Z" fill="#e6e2db" stroke="#aaa" stroke-width="2" style="transition:fill .5s"/><text x="64.0" y="215.7" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#222">I</text><text x="64.0" y="233.7" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#333">Improve</text></g><g id="seg-C"><path class="seg" d="M40.0 126.2 A150 150 0 0 1 172.1 30.2 L175.0 85.1 A95 95 0 0 0 91.3 146.0Z" fill="#e6e2db" stroke="#aaa" stroke-width="2" style="transition:fill .5s"/><text x="108.3" y="79.3" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#222">C</text><text x="108.3" y="97.3" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#333">Control</text></g>
+<circle cx="180" cy="180" r="80" fill="#fff" stroke="#ddd"/>
+<text id="dmaic-center" x="180" y="176" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#222">DMAIC</text>
+<text id="dmaic-count" x="180" y="198" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#666">0 of 5 phases</text>
+</svg>
+<div id="ddone" class="feedback good" hidden><b>Process improved and controlled.</b> The gain lasts because a process owner, standard work, and a control chart now protect it.</div></div>
+</div></div>
+</section>
+
+<section class="card"><h2>Takeaways</h2><div class="takeaways">
+<div class="take"><h3>Look inward</h3><p>Internal analysis shows whether an organization can deliver its strategy.</p></div>
+<div class="take"><h3>Advantage must last</h3><p>VRIO tests value, rarity, imitation cost, and organization.</p></div>
+<div class="take"><h3>Find root causes</h3><p>DMAIC prevents quick fixes that treat symptoms.</p></div>
+<div class="take"><h3>Operations support strategy</h3><p>Process discipline is stewardship that sustains direction.</p></div></div></section>
+</main>
+<footer>Based on the BUSN 480 Week 3 Deep Dive | Quality Improvement &amp; Lean Six Sigma. Veritas data is fictional.</footer>
+<script>
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==t.dataset.p);});
+/* ---- VRIO ---- */
+const R=[
+{ic:'i-data',n:'Ten-year patient outcomes dataset',s:'Consented, linked records',a:[1,1,1,0],ev:'The data is valuable, unique, and takes a decade to rebuild, but it sits in three separate systems with no shared governance or analytics team.',res:'unused'},
+{ic:'i-ehr',n:'Standard EHR software license',s:'Same vendor as most rivals',a:[1,0,0,0],ev:'It supports core operations, but nearly every competitor licenses the same system.',res:'parity'},
+{ic:'i-culture',n:'Nurse care-coordinator culture',s:'Trust built over 15 years',a:[1,1,1,1],ev:'Patients choose Veritas for it, few competitors have it, it grew over years, and onboarding, pay, and leadership all reinforce it.',res:'sustained'},
+{ic:'i-app',n:'Patient mobile app',s:'Built on a vendor platform',a:[1,1,0,0],ev:'Veritas launched first in the region, but any competitor can license the same platform within months.',res:'temp'},
+{ic:'i-paper',n:'Paper-based referral process',s:'Fax and phone follow-up',a:[0,0,0,0],ev:'It slows care, loses referrals, and neutralizes no threat. It consumes resources without creating value.',res:'dis'},
+{ic:'i-handshake',n:'Partnerships with 40 churches and nonprofits',s:'Referral and support network',a:[1,1,1,1],ev:'These relationships are trust-based and slow to copy, and Veritas has a dedicated team that maintains them.',res:'sustained'}];
+const OUT={dis:['Competitive disadvantage','#c0392b'],parity:['Competitive parity','#b98617'],temp:['Temporary competitive advantage','#d8a62b'],unused:['Unused competitive advantage','#2a7f86'],sustained:['Sustained competitive advantage','#3f8f5b']};
+function outcome(a){ if(!a[0])return'dis'; if(!a[1])return'parity'; if(!a[2])return'temp'; if(!a[3])return'unused'; return'sustained'; }
+const Q=['Valuable: does it help exploit opportunities or neutralize threats?','Rare: do few competitors have it?','Costly to imitate: is it hard for others to copy?','Organized: is Veritas set up to capture its value?'];
+const L=['V','R','I','O'];
+let cur=null;const ans=R.map(()=>[null,null,null,null]);
+const rc=document.getElementById('rcards');
+R.forEach((r,n)=>{const b=document.createElement('button');b.className='rc';b.setAttribute('aria-pressed','false');b.innerHTML='<svg class="icon"><use href="#'+r.ic+'"/></svg><span><b>'+r.n+'</b><small>'+r.s+'</small></span><span class="done" id="rd'+n+'"></span>';b.onclick=()=>{cur=n;[...rc.children].forEach((x,k)=>x.setAttribute('aria-pressed',k===n));renderQ();};rc.appendChild(b);});
+function renderQ(){
+ const a=ans[cur],box=document.getElementById('vq');
+ box.innerHTML='<h3>'+R[cur].n+'</h3>'+Q.map((q,k)=>'<div class="vq"><span><b>'+L[k]+'</b> · '+q.split(': ')[1]+'</span><div class="yn"><button class="chip y'+(a[k]===1?' on':'')+'" data-k="'+k+'" data-v="1">Yes</button><button class="chip n'+(a[k]===0?' on':'')+'" data-k="'+k+'" data-v="0">No</button></div></div>').join('')+'<button class="btn ghost" id="reveal" style="margin-top:12px">Check against the case evidence</button>';
+ box.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{a[+c.dataset.k]=+c.dataset.v;renderQ();});
+ document.getElementById('reveal').onclick=reveal;
+ gates(false);
+}
+function gates(rev){
+ const a=ans[cur];let stop=false;
+ L.forEach((l,k)=>{const g=document.querySelector('#gate-'+l+' .gate');let fill='#e6e2db',stroke='#999';
+  if(!stop&&a[k]!==null){if(a[k]){fill='#cfe8d8';stroke='#3f8f5b';}else{fill='#f2c9c5';stroke='#c0392b';stop=true;}}
+  else if(stop){fill='#f1efeb';stroke='#ccc';}
+  g.setAttribute('fill',fill);g.setAttribute('stroke',stroke);});
+ const complete=a.every(v=>v!==null)||(a.indexOf(0)>-1&&a.slice(0,a.indexOf(0)+1).every(v=>v!==null));
+ const pill=document.getElementById('vrio-pill'),pt=document.getElementById('vrio-pilltext'),out=document.getElementById('vout');
+ if(complete){const key=outcome(a.map(v=>v===null?0:v)),o=OUT[key];pill.setAttribute('fill',o[1]);pill.setAttribute('stroke',o[1]);pt.setAttribute('fill','#fff');pt.textContent=o[0];
+  out.innerHTML='<b>Your read: '+o[0]+'</b>';}
+ else{pill.setAttribute('fill','#e6e2db');pill.setAttribute('stroke','#999');pt.setAttribute('fill','#555');pt.textContent='Answer the gates to see the competitive outcome';out.innerHTML='<b>Answer each question for this resource.</b>';}
+}
+function reveal(){
+ const a=ans[cur],r=R[cur],out=document.getElementById('vout');
+ const mine=a.every(v=>v!==null)?outcome(a):(a.indexOf(0)>-1?outcome(a.map(v=>v===null?0:v)):null);
+ if(!mine){out.className='feedback';out.innerHTML='<b>Answer the questions first.</b> Then compare with the evidence.';return;}
+ const ok=mine===r.res;out.className='feedback '+(ok?'good':'mid');
+ out.innerHTML='<b>'+(ok?'Matches the evidence: ':'Evidence points to: ')+OUT[r.res][0]+'</b><p style="margin:6px 0 0">'+r.ev+'</p>';
+ document.getElementById('rd'+cur).textContent=ok?'✓':'';
+}
+/* ---- Wastes ---- */
+const WC=['Defects','Overproduction','Waiting','Unused talent'];
+const W=[
+['Patients wait two hours for pharmacy sign-off before leaving.',2],
+['Medication lists are entered incorrectly and must be redone.',0],
+['Staff order 40 routine lab tests “to be safe” that clinicians never review.',1],
+['Nurses’ ideas for improving the unit are never collected.',3],
+['Imaging reports are re-read after errors in patient identifiers.',0],
+['Beds sit empty and cleaned while discharge paperwork waits for signatures.',2],
+['Printed packets are prepared for all patients even though most use the portal.',1],
+['Bilingual staff are assigned to tasks that do not use their language skills.',3]];
+const wl=document.getElementById('wlist');let wd=0;
+W.forEach((w,n)=>{const d=document.createElement('div');d.className='item';d.innerHTML='<div>'+w[0]+'</div><div class="ch">'+WC.map((c,k)=>'<button class="chip" data-k="'+k+'">'+c+'</button>').join('')+'</div><div class="hint"></div>';
+ d.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{if(d.classList.contains('ok'))return;const k=+b.dataset.k;
+  if(k===w[1]){b.classList.add('right');d.classList.add('ok');d.querySelectorAll('.chip').forEach(x=>x.disabled=true);d.querySelector('.hint').style.color='var(--green)';d.querySelector('.hint').textContent='Correct: '+WC[k];wd++;document.getElementById('wbar').style.width=(wd/W.length*100)+'%';if(wd===W.length)document.getElementById('wdone').hidden=false;}
+  else{d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');d.querySelector('.hint').textContent='Not quite. What kind of non-value activity is happening here?';}});
+ wl.appendChild(d);});
+/* ---- DMAIC ---- */
+const PH=['D','M','A','I','C'],PN=['Define','Measure','Analyze','Improve','Control'];
+const COL=['#d34147','#e0a93b','#2a7f86','#6a4c93','#3f8f5b'];
+const A=[
+['Add a weekly control chart, write standard work, and name a process owner.',4],
+['Time-stamp every step of 200 recent discharges.',1],
+['Pilot a pharmacist-in-ED reconciliation step and a discharge lounge.',3],
+['Write the problem statement and target: under 3 hours.',0],
+['Run a fishbone and 5 Whys, then find that pharmacy reconciliation adds 2.1 hours.',2]];
+const dl=document.getElementById('dlist');let dd=0;
+A.forEach((a,n)=>{const d=document.createElement('div');d.className='item';d.innerHTML='<div>'+a[0]+'</div><div class="ch">'+PH.map((p,k)=>'<button class="chip" data-k="'+k+'" title="'+PN[k]+'">'+p+' · '+PN[k]+'</button>').join('')+'</div><div class="hint"></div>';
+ d.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{if(d.classList.contains('ok'))return;const k=+b.dataset.k;
+  if(k===a[1]){b.classList.add('right');d.classList.add('ok');d.querySelectorAll('.chip').forEach(x=>x.disabled=true);d.querySelector('.hint').style.color='var(--green)';d.querySelector('.hint').textContent='Correct: '+PN[k];
+   document.querySelector('#seg-'+PH[k]+' .seg').setAttribute('fill',COL[k]);dd++;document.getElementById('dmaic-count').textContent=dd+' of 5 phases';if(dd===5){document.getElementById('dmaic-center').textContent='Done';document.getElementById('ddone').hidden=false;}}
+  else{d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');d.querySelector('.hint').textContent='Not yet. Ask: are we still describing the problem, collecting data, finding causes, fixing, or sustaining?';}});
+ dl.appendChild(d);});
+</script></body></html>
