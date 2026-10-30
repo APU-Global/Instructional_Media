@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Culture Compass | BUSN 450 Week 3</title>
+<style>
+:root{
+  --ink:#241c26;--muted:#5b4d5a;--line:#e0d4d8;--panel:#f8f2f4;
+  --accent:#a8301f;--accent-soft:#f8e3de;--hero-bg:#2b1a24;--hero-sub:#e8c98a;
+  --good:#1b6b3d;--good-soft:#e1f3e8;--bad:#a8231b;--bad-soft:#fbe6e3;--warn-soft:#fff2d3;
+  --me:#3a2430;--them:#b7352a;--gold:#e7b94a;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.skip{position:absolute;left:-9999px;top:0;background:#fff;color:#000;padding:8px 12px;z-index:1000}
+.skip:focus{left:8px;top:8px}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--serif);line-height:1.15;letter-spacing:-.005em}
+h2{font-size:1.6rem;margin:0 0 8px}
+h3{font-size:1.15rem;margin:0 0 6px}
+p{margin:0 0 12px}
+.lead{font-size:1.06rem;max-width:68ch;color:var(--ink)}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero */
+.hero{background:var(--hero-bg);color:#fff}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:32px;align-items:center;padding-top:36px;padding-bottom:36px}
+.hero h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.05;margin:0 0 14px;font-weight:700}
+.hero p{max-width:50ch;font-size:1.06rem;margin:0 0 10px;color:#eaf1f4}
+.hero .where{font-size:.92rem;color:var(--hero-sub);margin-top:16px}
+.hero figure{margin:0}
+.hero figure svg{display:block;width:100%;height:auto;max-height:400px}
+@media(max-width:780px){.hero .wrap{grid-template-columns:1fr;gap:18px}.hero figure{order:-1;max-width:360px;margin:0 auto;width:100%}}
+
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin:26px 0 0;overflow-x:auto}
+.tab{appearance:none;background:none;border:0;padding:12px 16px;font:600 .98rem var(--sans);color:var(--muted);cursor:pointer;border-bottom:4px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+.panel{padding:26px 0 48px}
+.panel[hidden]{display:none}
+
+/* layout helpers */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.two.wide-right{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+@media(max-width:820px){.two,.two.wide-right{grid-template-columns:1fr}}
+.box{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:#fff}
+.box.soft{background:var(--panel);border-color:transparent}
+.stack>*+*{margin-top:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* buttons */
+.btn{appearance:none;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font:600 .95rem var(--sans);padding:9px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--accent-soft)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.small{padding:6px 12px;font-size:.88rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* sliders */
+.slider{margin:0 0 14px}
+.slider .top{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.slider .val{font-variant-numeric:tabular-nums;color:var(--accent);min-width:2ch;text-align:right}
+.slider .hint{display:block;font-size:.86rem;color:var(--muted);margin-top:0}
+.slider .ends{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;margin:2px 0}
+input[type=text],input[type=number],select{font:inherit;padding:8px 10px;border:1.5px solid #9aa9b3;border-radius:8px;background:#fff;color:var(--ink);width:100%}
+label.field{display:block;font-weight:600;margin-bottom:12px}
+label.field span.hint{display:block;font-weight:400;font-size:.86rem;color:var(--muted)}
+
+/* segmented */
+.seg{display:inline-flex;border:1.5px solid var(--accent);border-radius:9px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:8px 16px;font-weight:600;cursor:pointer;color:var(--accent);background:#fff}
+.seg input:checked+label{background:var(--accent);color:#fff}
+.seg input:focus-visible+label{outline:3px solid #1d4ed8;outline-offset:-3px}
+
+/* choice buttons */
+.choices{display:grid;gap:10px;margin:14px 0}
+.choice{appearance:none;text-align:left;font:inherit;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;color:var(--ink)}
+.choice:hover:not([disabled]){border-color:var(--accent);background:var(--accent-soft)}
+.choice[disabled]{cursor:default}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.choice.dim{opacity:.6}
+.choice .tag{display:inline-block;font-weight:700;margin-right:6px}
+.feedback{border-left:5px solid var(--accent);background:var(--panel);padding:12px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+.feedback.good{border-color:var(--good);background:var(--good-soft)}
+.feedback.bad{border-color:var(--bad);background:var(--bad-soft)}
+.feedback.warn{border-color:#b7791f;background:var(--warn-soft)}
+.feedback strong:first-child{display:block}
+
+.progress{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 14px}
+.progress>i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.82rem;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.score{font:700 2.4rem/1 var(--serif);color:var(--accent)}
+
+.note{font-size:.88rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:22px}
+footer{border-top:1px solid var(--line);padding:18px 0 34px;font-size:.88rem;color:var(--muted)}
+.chart{width:100%;height:auto;display:block}
+.chart text{font-family:var(--sans)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.pick{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:end;margin:18px 0 8px}
+.pick .arrow{font:700 1.6rem var(--serif);color:var(--accent);padding-bottom:6px}
+@media(max-width:600px){.pick{grid-template-columns:1fr}.pick .arrow{display:none}}
+.who{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:4px}
+.dot-a,.dot-b{display:inline-block;width:16px;height:16px}
+.dot-a{background:var(--me);border-radius:50%}
+.dot-b{background:var(--them);border-radius:4px}
+.ladder{border:1px solid var(--line);border-radius:14px;padding:6px 18px;background:#fff}
+.grow{display:grid;grid-template-columns:230px minmax(0,1fr) 120px;gap:18px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.grow:last-child{border-bottom:0}
+.gl b{display:block;font-size:1rem}
+.gl span{font-size:.82rem;color:var(--muted);line-height:1.3;display:block}
+.track{position:relative;height:56px}
+.track::before{content:"";position:absolute;left:0;right:0;top:27px;height:4px;border-radius:2px;background:#cdbcc3}
+.track .gap{position:absolute;top:22px;height:14px;border-radius:7px;background:var(--gold);opacity:.75}
+.mk{position:absolute;width:30px;height:30px;margin-left:-15px;display:flex;align-items:center;justify-content:center;color:#fff;font:700 .8rem var(--sans);font-style:normal;border:2px solid #fff;box-shadow:0 0 0 1.5px currentColor}
+.mk.a{top:0;background:var(--me);color:var(--me);border-radius:50%}
+.mk.b{top:26px;background:var(--them);color:var(--them);border-radius:7px}
+.mk span{color:#fff}
+.gv{font-size:.9rem;line-height:1.4}.gv span{display:block}
+.gv b{display:inline-block;margin-top:3px;padding:1px 9px;border-radius:999px;font-size:.8rem}
+.gp.big{background:var(--bad-soft);color:var(--bad)}.gp.mid{background:var(--warn-soft);color:#7a4b00}.gp.low{background:var(--good-soft);color:var(--good)}
+.tends{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:-2px}
+@media(max-width:760px){.grow{grid-template-columns:1fr;gap:6px}.gv{display:flex;gap:14px;flex-wrap:wrap;align-items:center}.gv span{display:inline}}
+.adv{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:12px}
+.adv .box{border-left:6px solid var(--accent)}
+.adv .box h3{font-size:1.05rem}
+.q{font:600 1.15rem/1.45 var(--serif);margin:8px 0 6px}
+.ctx{display:inline-block;font-size:.82rem;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.snip{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;font-style:italic}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:640px){.pair{grid-template-columns:1fr}}
+.pair .choice{font-style:italic;height:100%}
+.pair .choice .tag{font-style:normal}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <h1>Culture Compass</h1>
+    <p>Pick two cultures and see exactly where their business values line up and where they pull apart. Then practice what to do about it in a meeting room and in an email.</p>
+    <p class="where">Week 3 Deep Dive companion: Cultural and Social Environments</p>
+  </div>
+  <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 420" role="img" aria-label="Two business people with speech bubbles above six comparison tracks showing the gap between two cultures">
+<rect width="480" height="420" rx="26" fill="#3a2430"/>
+<circle cx="105" cy="132" r="21" fill="#f3d6bd"/><path d="M71 190 Q105 150 139 190 Z" fill="#e7b94a"/>
+<circle cx="375" cy="132" r="21" fill="#c68e68"/><path d="M341 190 Q375 150 409 190 Z" fill="#ff7a63"/>
+<path d="M42 28 h150 a14 14 0 0 1 14 14 v50 a14 14 0 0 1 -14 14 h-62 l-18 18 l-4 -18 h-66 a14 14 0 0 1 -14 -14 v-50 a14 14 0 0 1 14 -14z" fill="#fff"/>
+<g stroke="#b7352a" stroke-width="6" stroke-linecap="round"><line x1="62" y1="52" x2="168" y2="52"/><line x1="62" y1="72" x2="140" y2="72"/></g><path d="M150 72 l12 -0" stroke="#b7352a" stroke-width="6" stroke-linecap="round"/>
+<path d="M288 28 h150 a14 14 0 0 1 14 14 v50 a14 14 0 0 1 -14 14 h-66 l-4 18 l-18 -18 h-62 a14 14 0 0 1 -14 -14 v-50 a14 14 0 0 1 14 -14z" fill="#fff"/>
+<g fill="none" stroke="#c9962b" stroke-width="4"><circle cx="363" cy="67" r="9"/><circle cx="363" cy="67" r="19" stroke-dasharray="3 6"/><circle cx="363" cy="67" r="29" stroke-dasharray="2 8" stroke-opacity=".8"/></g>
+<text x="22" y="236" font-size="12" font-weight="600" fill="#e9d7dd" font-family="'Segoe UI',system-ui,Arial,sans-serif">PDI</text>
+<line x1="78" y1="232" x2="440" y2="232" stroke="#8a6676" stroke-width="3" stroke-linecap="round"/>
+<line x1="186.6" y1="232" x2="288.0" y2="232" stroke="#ffd98a" stroke-opacity=".55" stroke-width="8" stroke-linecap="round"/>
+<circle cx="186.6" cy="232" r="8" fill="#e7b94a" stroke="#3a2430" stroke-width="2.5"/>
+<path d="M288.0 232 l9 9 l-9 9 l-9 -9z" transform="translate(0,-9)" fill="#ff7a63" stroke="#3a2430" stroke-width="2.5"/>
+<text x="22" y="264" font-size="12" font-weight="600" fill="#e9d7dd" font-family="'Segoe UI',system-ui,Arial,sans-serif">IDV</text>
+<line x1="78" y1="260" x2="440" y2="260" stroke="#8a6676" stroke-width="3" stroke-linecap="round"/>
+<line x1="411.0" y1="260" x2="237.3" y2="260" stroke="#ffd98a" stroke-opacity=".55" stroke-width="8" stroke-linecap="round"/>
+<circle cx="411.0" cy="260" r="8" fill="#e7b94a" stroke="#3a2430" stroke-width="2.5"/>
+<path d="M237.3 260 l9 9 l-9 9 l-9 -9z" transform="translate(0,-9)" fill="#ff7a63" stroke="#3a2430" stroke-width="2.5"/>
+<text x="22" y="292" font-size="12" font-weight="600" fill="#e9d7dd" font-family="'Segoe UI',system-ui,Arial,sans-serif">MAS</text>
+<line x1="78" y1="288" x2="440" y2="288" stroke="#8a6676" stroke-width="3" stroke-linecap="round"/>
+<line x1="302.4" y1="288" x2="418.3" y2="288" stroke="#ffd98a" stroke-opacity=".55" stroke-width="8" stroke-linecap="round"/>
+<circle cx="302.4" cy="288" r="8" fill="#e7b94a" stroke="#3a2430" stroke-width="2.5"/>
+<path d="M418.3 288 l9 9 l-9 9 l-9 -9z" transform="translate(0,-9)" fill="#ff7a63" stroke="#3a2430" stroke-width="2.5"/>
+<text x="22" y="320" font-size="12" font-weight="600" fill="#e9d7dd" font-family="'Segoe UI',system-ui,Arial,sans-serif">UAI</text>
+<line x1="78" y1="316" x2="440" y2="316" stroke="#8a6676" stroke-width="3" stroke-linecap="round"/>
+<line x1="240.9" y1="316" x2="403.8" y2="316" stroke="#ffd98a" stroke-opacity=".55" stroke-width="8" stroke-linecap="round"/>
+<circle cx="240.9" cy="316" r="8" fill="#e7b94a" stroke="#3a2430" stroke-width="2.5"/>
+<path d="M403.8 316 l9 9 l-9 9 l-9 -9z" transform="translate(0,-9)" fill="#ff7a63" stroke="#3a2430" stroke-width="2.5"/>
+<text x="22" y="348" font-size="12" font-weight="600" fill="#e9d7dd" font-family="'Segoe UI',system-ui,Arial,sans-serif">LTO</text>
+<line x1="78" y1="344" x2="440" y2="344" stroke="#8a6676" stroke-width="3" stroke-linecap="round"/>
+<line x1="172.1" y1="344" x2="396.6" y2="344" stroke="#ffd98a" stroke-opacity=".55" stroke-width="8" stroke-linecap="round"/>
+<circle cx="172.1" cy="344" r="8" fill="#e7b94a" stroke="#3a2430" stroke-width="2.5"/>
+<path d="M396.6 344 l9 9 l-9 9 l-9 -9z" transform="translate(0,-9)" fill="#ff7a63" stroke="#3a2430" stroke-width="2.5"/>
+<text x="22" y="376" font-size="12" font-weight="600" fill="#e9d7dd" font-family="'Segoe UI',system-ui,Arial,sans-serif">IVR</text>
+<line x1="78" y1="372" x2="440" y2="372" stroke="#8a6676" stroke-width="3" stroke-linecap="round"/>
+<line x1="324.2" y1="372" x2="222.8" y2="372" stroke="#ffd98a" stroke-opacity=".55" stroke-width="8" stroke-linecap="round"/>
+<circle cx="324.2" cy="372" r="8" fill="#e7b94a" stroke="#3a2430" stroke-width="2.5"/>
+<path d="M222.8 372 l9 9 l-9 9 l-9 -9z" transform="translate(0,-9)" fill="#ff7a63" stroke="#3a2430" stroke-width="2.5"/>
+</svg></figure>
+</div></header>
+
+<main id="main" class="wrap">
+<div class="tabs" role="tablist" aria-label="Week 3 activities">
+  <button class="tab" role="tab" id="t-cmp" aria-controls="p-cmp">Compare two cultures</button>
+  <button class="tab" role="tab" id="t-scn" aria-controls="p-scn">Meeting scenarios</button>
+  <button class="tab" role="tab" id="t-eml" aria-controls="p-eml">Email warm-up: Japan</button>
+</div>
+
+<!-- ======== TAB 1 ======== -->
+<section class="panel" id="p-cmp" role="tabpanel" aria-labelledby="t-cmp">
+  <h2>Where do two cultures differ?</h2>
+  <p class="lead">Hofstede's model scores national cultures from 0 to 100 on six dimensions. Choose your own culture and the one you are doing business with. The longer the gold bar, the more adjustment you need.</p>
+  <div class="pick">
+    <div><div class="who"><i class="dot-a"></i><label for="sel-a">Your culture</label></div><select id="sel-a"></select></div>
+    <div class="arrow" aria-hidden="true">&rarr;</div>
+    <div><div class="who"><i class="dot-b"></i><label for="sel-b">Their culture</label></div><select id="sel-b"></select></div>
+  </div>
+  <div class="ladder" id="ladder" aria-live="polite"></div>
+  <div id="summary" class="feedback" style="margin-top:16px" aria-live="polite"></div>
+  <h2 style="margin-top:28px">What to adjust in practice</h2>
+  <div class="adv" id="adv" aria-live="polite"></div>
+  <p class="note">Scores are national averages and approximate values drawn from Hofstede's published country data. Check the current figures on Hofstede Insights before you cite them. Real people vary widely, so treat these as a starting hypothesis to test, never a stereotype to apply.</p>
+</section>
+
+<!-- ======== TAB 2 ======== -->
+<section class="panel" id="p-scn" role="tabpanel" aria-labelledby="t-scn" hidden>
+  <h2>Meeting scenarios</h2>
+  <p class="lead">Five cross-cultural moments. Pick the response that best bridges the gap.</p>
+  <div class="box" style="max-width:780px">
+    <div class="row" style="justify-content:space-between"><span class="pill" id="sc-count">Scenario 1 of 5</span><span id="sc-score" class="muted">Score: 0</span></div>
+    <div class="progress"><i id="sc-bar" style="width:0"></i></div>
+    <div id="sc-body"></div>
+  </div>
+</section>
+
+<!-- ======== TAB 3 ======== -->
+<section class="panel" id="p-eml" role="tabpanel" aria-labelledby="t-eml" hidden>
+  <h2>Email warm-up: writing to a Japanese company</h2>
+  <p class="lead">Before you draft your email for Discussion 3, test your instincts. In each pair, choose the line that is more likely to land well in a first message to a Japanese company you have not worked with.</p>
+  <div class="box" style="max-width:900px">
+    <div class="row" style="justify-content:space-between"><span class="pill" id="em-count">Pair 1 of 5</span><span id="em-score" class="muted">Score: 0</span></div>
+    <div class="progress"><i id="em-bar" style="width:0"></i></div>
+    <div id="em-body"></div>
+  </div>
+  <p class="note">This warm-up does not replace the discussion. You still need to write your own email, send it to the Global Business Communication Coach, and reflect on the feedback.</p>
+</section>
+</main>
+<footer><div class="wrap">Practice tool for BUSN 450, Week 3. Not graded. Nothing you enter is saved.</div></footer>
+
+<script>
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+(function(){
+  var tabs=$$('[role=tab]');
+  function show(t,focus){
+    tabs.forEach(function(x){
+      var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+      $('#'+x.getAttribute('aria-controls')).hidden=!on;
+    });
+    if(focus)t.focus();
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){show(t)});
+    t.addEventListener('keydown',function(e){
+      var k=e.key,n=null;
+      if(k==='ArrowRight')n=tabs[(i+1)%tabs.length];
+      else if(k==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+      else if(k==='Home')n=tabs[0];else if(k==='End')n=tabs[tabs.length-1];
+      if(n){e.preventDefault();show(n,true)}
+    });
+  });
+  if(tabs.length)show(tabs[0]);
+})();
+
+var DIM=[
+ {k:'pdi',n:'Power distance',p:'Flat \u2194 Hierarchical',lo:'Flat',hi:'Hierarchical',
+  up:'Expect formal titles, clear hierarchy, and decisions made at the top. Address the most senior person first, do not skip levels, and expect junior colleagues to defer in meetings.',
+  dn:'Expect first names, flatter teams, and open disagreement with managers. Invite input from every level and do not mistake informality for disrespect.'},
+ {k:'idv',n:'Individualism',p:'Group first \u2194 Individual first',lo:'Group first',hi:'Individual first',
+  up:'Expect people to speak for themselves, value personal credit, and say what they think directly. Recognize individual contributions and be explicit about who is responsible for what.',
+  dn:'Expect group-based decisions, strong loyalty to the team, and harmony that is protected. Praise the team, allow time for consultation, and invest in the relationship before pushing for a deal.'},
+ {k:'mas',n:'Masculinity (achievement vs. care)',p:'Care and consensus \u2194 Competition and results',lo:'Care and consensus',hi:'Competition and results',
+  up:'Expect a competitive, results-driven tone. Targets, titles, and achievements matter, and assertive pitches are normal.',
+  dn:'Expect an emphasis on cooperation, consensus, and quality of life. Avoid hard-sell boasting and lead with fairness and partnership.'},
+ {k:'uai',n:'Uncertainty avoidance',p:'Comfortable with ambiguity \u2194 Needs rules and detail',lo:'Comfortable with ambiguity',hi:'Needs rules and detail',
+  up:'Expect a need for detail, written procedures, and thorough planning. Provide documentation, timelines, and contingency plans, and allow extra time for review.',
+  dn:'Expect comfort with ambiguity and improvisation. Heavy rules can feel bureaucratic, so keep agreements flexible and be ready to adapt as you go.'},
+ {k:'lto',n:'Long-term orientation',p:'Tradition and quick results \u2194 Perseverance and future focus',lo:'Tradition, quick results',hi:'Perseverance, future focus',
+  up:'Expect patience, thrift, and investment in the future. Talk about long-term commitment, steady growth, and reputation, not just quarterly wins.',
+  dn:'Expect respect for tradition and a focus on faster, visible results. Show near-term wins and honor established customs.'},
+ {k:'ivr',n:'Indulgence vs. restraint',p:'Restraint \u2194 Indulgence',lo:'Restraint',hi:'Indulgence',
+  up:'Expect a more relaxed, optimistic tone, with room for leisure and enjoyment around work events.',
+  dn:'Expect more restraint and formality about enjoyment and spending. Keep social events modest and be careful with humor and displays of enthusiasm.'}
+];
+/* Approximate national scores [pdi, idv, mas, uai, lto, ivr], based on Hofstede's published country data */
+var C={
+ 'Australia':[38,90,61,51,21,71],'Brazil':[69,38,49,76,44,59],'China':[80,20,66,30,87,24],'Germany':[35,67,66,65,83,40],
+ 'India':[77,48,56,40,51,26],'Japan':[54,46,95,92,88,42],'Mexico':[81,30,69,82,24,97],'Nigeria':[80,30,60,55,13,84],
+ 'South Korea':[60,18,39,85,100,29],'Sweden':[31,71,5,29,53,78],'United Kingdom':[35,89,66,35,51,69],'United States':[40,91,62,46,26,68]
+};
+var names=Object.keys(C);
+function fillSel(id,def){var s=$(id);s.innerHTML=names.map(function(n){return '<option'+(n===def?' selected':'')+'>'+n+'</option>'}).join('')}
+fillSel('#sel-a','United States');fillSel('#sel-b','Japan');
+function compare(){
+  var a=$('#sel-a').value,b=$('#sel-b').value,A=C[a],B=C[b],h='',adv='';
+  var gaps=[];
+  DIM.forEach(function(d,i){
+    var x=A[i],y=B[i],g=Math.abs(x-y),lo=Math.min(x,y),cls=g>=30?'big':g>=15?'mid':'low',lab=g>=30?'Large gap':g>=15?'Moderate':'Similar';
+    gaps.push({d:d,g:g,i:i,x:x,y:y});
+    h+='<div class="grow"><div class="gl"><b>'+d.n+'</b><span>'+d.p+'</span></div>'+
+       '<div><div class="track" role="img" aria-label="'+d.n+': '+esc(a)+' scores '+x+', '+esc(b)+' scores '+y+'. Gap of '+g+' points."><span class="gap" style="left:'+lo+'%;width:'+g+'%"></span><i class="mk a" style="left:'+x+'%"><span>'+x+'</span></i><i class="mk b" style="left:'+y+'%"><span>'+y+'</span></i></div><div class="tends"><span>0 &middot; '+d.lo+'</span><span>'+d.hi+' &middot; 100</span></div></div>'+
+       '<div class="gv"><span>'+esc(a)+': <b style="padding:0;background:none;font-size:inherit">'+x+'</b></span> <span>'+esc(b)+': <b style="padding:0;background:none;font-size:inherit">'+y+'</b></span><b class="gp '+cls+'">'+lab+' ('+g+')</b></div></div>';
+    if(g>=20){
+      var dir=y>x?'up':'dn';
+      adv+='<div class="box"><h3>'+d.n+'</h3><p class="muted" style="font-size:.9rem">'+esc(b)+' scores '+(y>x?'higher':'lower')+' than '+esc(a)+' by '+g+' points.</p><p>'+d[dir]+'</p></div>';
+    }
+  });
+  $('#ladder').innerHTML=h;
+  if(a===b){$('#summary').innerHTML='<strong>Same culture selected.</strong>Choose a different culture on the right to see the gaps.';}
+  else{
+    var s=gaps.slice().sort(function(p,q){return q.g-p.g});
+    var n=gaps.filter(function(x){return x.g>=30}).length;
+    $('#summary').innerHTML='<strong>Biggest gap: '+s[0].d.n+' ('+s[0].g+' points).</strong>'+(n?n+' of 6 dimensions show a large gap (30+ points). ':'No dimension shows a large gap. ')+'Smallest gap: '+s[5].d.n+' ('+s[5].g+').';
+  }
+  $('#adv').innerHTML=adv||'<div class="box"><p>No dimension differs by 20 points or more, so expect relatively little adjustment. Still ask questions and stay curious about individual differences.</p></div>';
+}
+$('#sel-a').addEventListener('change',compare);$('#sel-b').addEventListener('change',compare);compare();
+
+/* ---------- generic quiz runner ---------- */
+function runQuiz(cfg){
+  var q=shuffle(cfg.items),i=0,score=0,done=false;
+  function render(){
+    if(i>=q.length){
+      $(cfg.body).innerHTML='<div class="score">'+score+' / '+q.length+'</div><p style="margin-top:8px">'+cfg.end(score,q.length)+'</p><button class="btn primary" id="'+cfg.id+'-again">Try again</button>';
+      $(cfg.bar).style.width='100%';$(cfg.count).textContent='Finished';
+      $('#'+cfg.id+'-again').addEventListener('click',function(){q=shuffle(cfg.items);i=0;score=0;render()});return}
+    var it=q[i],opts=shuffle(it.o);done=false;
+    $(cfg.count).textContent=cfg.label+' '+(i+1)+' of '+q.length;$(cfg.score).textContent='Score: '+score;$(cfg.bar).style.width=(i/q.length*100)+'%';
+    $(cfg.body).innerHTML=cfg.head(it)+'<div class="'+cfg.cls+'" role="group" aria-label="Answer choices">'+opts.map(function(o,k){return '<button class="choice" data-k="'+k+'"><span class="tag">'+'ABC'[k]+'.</span>'+o.t+'</button>'}).join('')+'</div><div id="'+cfg.id+'-fb" aria-live="polite"></div>';
+    $$(cfg.body+' .choice').forEach(function(b){b.addEventListener('click',function(){
+      if(done)return;done=true;var o=opts[+b.dataset.k];if(o.r)score++;
+      $$(cfg.body+' .choice').forEach(function(x,k){x.disabled=true;if(opts[k].r)x.classList.add('right');else if(x===b)x.classList.add('wrong');else x.classList.add('dim')});
+      $('#'+cfg.id+'-fb').innerHTML='<div class="feedback '+(o.r?'good':'bad')+'"><strong>'+(o.r?'Strong choice.':'Not the best fit.')+'</strong>'+o.f+(o.r?'':'<br><br><b>Best answer ('+'ABC'[opts.findIndex(function(z){return z.r})]+'):</b> '+opts.filter(function(z){return z.r})[0].f)+'</div><button class="btn primary" id="'+cfg.id+'-next">'+(i===q.length-1?'See score':'Next')+'</button>';
+      $(cfg.score).textContent='Score: '+score;$('#'+cfg.id+'-next').focus();
+      $('#'+cfg.id+'-next').addEventListener('click',function(){i++;render();var f=$(cfg.body+' .choice,'+cfg.body+' .btn');if(f)f.focus()});
+    })});
+  }
+  render();
+}
+
+runQuiz({id:'sc',body:'#sc-body',bar:'#sc-bar',count:'#sc-count',score:'#sc-score',label:'Scenario',cls:'choices',
+ head:function(it){return '<span class="ctx">'+it.dim+'</span><p class="q">'+it.q+'</p>'},
+ end:function(s,n){return s===n?'Perfect. You are reading the cultural signals well.':s>=3?'Good instincts. Revisit the scenarios you missed and match each to its Hofstede dimension.':'Use the Compare tab to study the dimensions, then try again.'},
+ items:[
+ {dim:'Power distance',q:'You lead a U.S. team visiting a Mexican supplier. The company owner sits quietly at the end of the table while a junior engineer answers every technical question. Who do you direct your proposal to?',o:[
+  {t:'The engineer, since he clearly knows the details.',f:'Helpful technically, but in a high power-distance setting skipping the senior person can read as disrespect, and the engineer is unlikely to be the decision-maker.'},
+  {t:'The owner first, while openly acknowledging the engineer\u2019s expertise.',r:1,f:'This honors the hierarchy and still credits expertise. Mexico scores 81 on power distance.'},
+  {t:'Everyone equally, on a first-name basis, to keep things relaxed.',f:'Casual equality works in low power-distance cultures. Here it can undercut status and formality.'}]},
+ {dim:'Individualism vs. collectivism',q:'Your team in South Korea just landed a major client. You want to reward the success. What is the most effective approach?',o:[
+  {t:'Publicly name one star performer and give them a large bonus.',f:'Singling out one person can embarrass them and strain team harmony in a strongly collectivist culture (South Korea scores 18).'},
+  {t:'Recognize the whole team publicly and acknowledge individual contributions in private.',r:1,f:'Team recognition protects harmony, while private acknowledgment still values individuals.'},
+  {t:'Say nothing, since doing the job is its own reward.',f:'Silence wastes a chance to build loyalty. Recognition matters, but the form of it should fit the culture.'}]},
+ {dim:'Uncertainty avoidance',q:'A Japanese partner wants a detailed contract covering contingencies and a long internal review. You prefer a short term sheet and \u201cfiguring out the rest later.\u201d What do you do?',o:[
+  {t:'Send a five-page term sheet and promise to work out the details as you go.',f:'In a high uncertainty-avoidance culture (Japan scores 92), vague terms create anxiety and can signal unreliability.'},
+  {t:'Prepare a thorough agreement with contingencies and agree on a realistic review timeline.',r:1,f:'Detail, documentation, and time to review build trust where uncertainty avoidance is high.'},
+  {t:'Press for a same-day signature to show confidence.',f:'Pressure to decide quickly clashes with a need for careful review and group consultation.'}]},
+ {dim:'Long-term orientation',q:'A Chinese distributor keeps asking about your plans for the next ten years, while you came to discuss this quarter\u2019s targets. What is your best move?',o:[
+  {t:'Stay focused on this quarter\u2019s numbers. That is what you came for.',f:'You risk looking short-sighted. China scores 87 on long-term orientation.'},
+  {t:'Share your long-term roadmap and commitment, then tie it to concrete milestones.',r:1,f:'Signaling patience and long-term commitment builds the relationship, and milestones keep it practical.'},
+  {t:'Explain that the future is too unpredictable to plan for.',f:'Honest about uncertainty, perhaps, but it undermines confidence in a long-term partnership.'}]},
+ {dim:'Masculinity (achievement vs. care)',q:'You are pitching to a Swedish company. Your usual deck says, \u201cWe are number one and we will crush the competition.\u201d What should you do?',o:[
+  {t:'Keep it. Confidence sells everywhere.',f:'Boasting can backfire where cooperation and modesty are valued. Sweden scores 5 on this dimension.'},
+  {t:'Reframe around collaboration, quality, and shared benefits, with modest claims.',r:1,f:'A consensus-oriented culture responds to fairness, partnership, and substance over bravado.'},
+  {t:'Add more superlatives and competitor comparisons.',f:'This doubles down on the style least likely to resonate.'}]}
+ ]});
+
+runQuiz({id:'em',body:'#em-body',bar:'#em-bar',count:'#em-count',score:'#em-score',label:'Pair',cls:'pair',
+ head:function(it){return '<span class="ctx">'+it.ctx+'</span><p class="q">'+it.q+'</p>'},
+ end:function(s,n){return (s===n?'Excellent instincts. ':'Review the explanations above. ')+'Now write your own email. Remember to weave in honesty, humility, and respect, and let the Global Business Communication Coach test your draft.'},
+ items:[
+ {ctx:'Greeting and opening',q:'Which opening suits a first email to a Japanese company?',o:[
+  {t:'\u201cHi Tanaka, quick question about your prices. Call me when you can.\u201d',f:'Too casual and direct for a first contact. It skips formality and any show of respect.'},
+  {t:'\u201cDear Tanaka-san, thank you for taking the time to read this message. I am writing on behalf of Northwind Supply to respectfully ask for your guidance.\u201d',r:1,f:'Formal address with an honorific, gratitude, and humility signal respect for hierarchy and relationship.'}]},
+ {ctx:'Making a request',q:'Which handles timing better?',o:[
+  {t:'\u201cPlease reply by Friday or we will move on to another supplier.\u201d',f:'An ultimatum pressures the reader and can damage trust before the relationship begins.'},
+  {t:'\u201cIf it is convenient for your team, we would be grateful for a reply when your review is complete. We are happy to adjust to your schedule.\u201d',r:1,f:'Indirect, patient, and relationship-minded. It leaves room for internal review.'}]},
+ {ctx:'Who decides',q:'Which line respects how decisions are often made?',o:[
+  {t:'\u201cI need your personal decision on this today.\u201d',f:'Assumes one individual can decide alone and fast, which clashes with group consultation.'},
+  {t:'\u201cWe understand your team may wish to consult colleagues, and we welcome any questions they raise.\u201d',r:1,f:'Acknowledges group consensus and invites questions, which is a collectivist, consultative approach.'}]},
+ {ctx:'Level of detail',q:'Which supports a culture with high uncertainty avoidance?',o:[
+  {t:'\u201cWe will sort out the details later. Let us just get started.\u201d',f:'Leaves too much unspecified and can feel risky.'},
+  {t:'\u201cAttached are our company profile, product specifications, and references so your team can review everything in detail.\u201d',r:1,f:'Thorough documentation reduces uncertainty and gives the team material to evaluate.'}]},
+ {ctx:'Presenting yourself',q:'Which fits honesty and humility together?',o:[
+  {t:'\u201cWe are the best supplier in the industry, and you will not find better.\u201d',f:'Bold superlatives can feel boastful, and they are hard to substantiate honestly.'},
+  {t:'\u201cWe are a small but dedicated team, and we would value the chance to earn your trust over time. We are glad to share references.\u201d',r:1,f:'Modest and honest, and it offers proof. Humility works best when it never understates or overstates your real capabilities.'}]}
+ ]});
+</script>
+</body>
+</html>

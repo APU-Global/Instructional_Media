@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The $5,000 Question | BUSN 450 Week 4</title>
+<style>
+:root{
+  --ink:#16251d;--muted:#46594e;--line:#d2ded6;--panel:#eef4f0;
+  --accent:#1f5a42;--accent-soft:#dcece3;--hero-bg:#163a2b;--hero-sub:#e3cd8b;
+  --good:#17703f;--good-soft:#e0f3e8;--bad:#a8231b;--bad-soft:#fbe6e3;--warn-soft:#fff2d3;
+  --brass:#b08a2e;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.skip{position:absolute;left:-9999px;top:0;background:#fff;color:#000;padding:8px 12px;z-index:1000}
+.skip:focus{left:8px;top:8px}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--serif);line-height:1.15;letter-spacing:-.005em}
+h2{font-size:1.6rem;margin:0 0 8px}
+h3{font-size:1.15rem;margin:0 0 6px}
+p{margin:0 0 12px}
+.lead{font-size:1.06rem;max-width:68ch;color:var(--ink)}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero */
+.hero{background:var(--hero-bg);color:#fff}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:32px;align-items:center;padding-top:36px;padding-bottom:36px}
+.hero h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.05;margin:0 0 14px;font-weight:700}
+.hero p{max-width:50ch;font-size:1.06rem;margin:0 0 10px;color:#eaf1f4}
+.hero .where{font-size:.92rem;color:var(--hero-sub);margin-top:16px}
+.hero figure{margin:0}
+.hero figure svg{display:block;width:100%;height:auto;max-height:400px}
+@media(max-width:780px){.hero .wrap{grid-template-columns:1fr;gap:18px}.hero figure{order:-1;max-width:360px;margin:0 auto;width:100%}}
+
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin:26px 0 0;overflow-x:auto}
+.tab{appearance:none;background:none;border:0;padding:12px 16px;font:600 .98rem var(--sans);color:var(--muted);cursor:pointer;border-bottom:4px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+.panel{padding:26px 0 48px}
+.panel[hidden]{display:none}
+
+/* layout helpers */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.two.wide-right{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+@media(max-width:820px){.two,.two.wide-right{grid-template-columns:1fr}}
+.box{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:#fff}
+.box.soft{background:var(--panel);border-color:transparent}
+.stack>*+*{margin-top:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* buttons */
+.btn{appearance:none;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font:600 .95rem var(--sans);padding:9px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--accent-soft)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.small{padding:6px 12px;font-size:.88rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* sliders */
+.slider{margin:0 0 14px}
+.slider .top{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.slider .val{font-variant-numeric:tabular-nums;color:var(--accent);min-width:2ch;text-align:right}
+.slider .hint{display:block;font-size:.86rem;color:var(--muted);margin-top:0}
+.slider .ends{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;margin:2px 0}
+input[type=text],input[type=number],select{font:inherit;padding:8px 10px;border:1.5px solid #9aa9b3;border-radius:8px;background:#fff;color:var(--ink);width:100%}
+label.field{display:block;font-weight:600;margin-bottom:12px}
+label.field span.hint{display:block;font-weight:400;font-size:.86rem;color:var(--muted)}
+
+/* segmented */
+.seg{display:inline-flex;border:1.5px solid var(--accent);border-radius:9px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:8px 16px;font-weight:600;cursor:pointer;color:var(--accent);background:#fff}
+.seg input:checked+label{background:var(--accent);color:#fff}
+.seg input:focus-visible+label{outline:3px solid #1d4ed8;outline-offset:-3px}
+
+/* choice buttons */
+.choices{display:grid;gap:10px;margin:14px 0}
+.choice{appearance:none;text-align:left;font:inherit;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;color:var(--ink)}
+.choice:hover:not([disabled]){border-color:var(--accent);background:var(--accent-soft)}
+.choice[disabled]{cursor:default}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.choice.dim{opacity:.6}
+.choice .tag{display:inline-block;font-weight:700;margin-right:6px}
+.feedback{border-left:5px solid var(--accent);background:var(--panel);padding:12px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+.feedback.good{border-color:var(--good);background:var(--good-soft)}
+.feedback.bad{border-color:var(--bad);background:var(--bad-soft)}
+.feedback.warn{border-color:#b7791f;background:var(--warn-soft)}
+.feedback strong:first-child{display:block}
+
+.progress{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 14px}
+.progress>i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.82rem;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.score{font:700 2.4rem/1 var(--serif);color:var(--accent)}
+
+.note{font-size:.88rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:22px}
+footer{border-top:1px solid var(--line);padding:18px 0 34px;font-size:.88rem;color:var(--muted)}
+.chart{width:100%;height:auto;display:block}
+.chart text{font-family:var(--sans)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+#scalesSvg #beam,#scalesSvg #panL,#scalesSvg #panR{transition:transform .9s cubic-bezier(.3,.1,.2,1)}
+#scalesSvg #beam{transform-origin:240px 104px}
+.meter{margin:0 0 14px}
+.meter .top{display:flex;justify-content:space-between;font-weight:600;font-size:.94rem;margin-bottom:3px}
+.meter .bar{height:14px;background:#dde7e1;border-radius:7px;overflow:hidden}
+.meter .bar i{display:block;height:100%;border-radius:7px;transition:width .7s,background .7s}
+.meter small{color:var(--muted)}
+.sticky{position:sticky;top:12px}.deskgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:28px;align-items:start}@media(max-width:820px){.deskgrid{grid-template-columns:1fr}}
+.scn{font:500 1.18rem/1.55 var(--serif);margin:0 0 6px}
+.badge{display:inline-block;font-weight:700;font-size:.85rem;padding:3px 12px;border-radius:999px}
+.badge.good{background:var(--good-soft);color:var(--good)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.warn{background:var(--warn-soft);color:#7a4b00}
+.law{border:1.5px dashed var(--brass);border-radius:10px;padding:12px 14px;background:#fffdf5;margin:12px 0}
+.law b{color:#6b5110}
+.trail{list-style:none;padding:0;margin:0;font-size:.9rem}
+.trail li{padding:6px 0 6px 18px;border-left:3px solid var(--accent);margin-left:6px;position:relative}
+.trail li::before{content:"";position:absolute;left:-8px;top:12px;width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.dots{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent);background:#fff}
+.dots i.on{background:var(--accent)}
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.roles .box{border-top:6px solid var(--accent)}
+.roles ul{margin:6px 0 10px;padding-left:20px}
+.roles li{margin:5px 0}
+.roles .peer{border-top:1px solid var(--line);padding-top:8px;font-size:.93rem}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+@media(max-width:700px){.cmp{grid-template-columns:1fr}}
+.cmp .box h3{display:flex;align-items:center;gap:10px}
+.cmp svg{flex:none}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+@media(max-width:640px){.trio{grid-template-columns:1fr}}
+.trio .choice{font-weight:600;text-align:center}
+.trio .choice small{display:block;font-weight:400;color:var(--muted)}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.duo .choice{font-weight:600;text-align:center}
+.verse{font:italic 1rem/1.5 var(--serif);color:#2b4a3a}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <h1>The $5,000 Question</h1>
+    <p>A government official offers to speed up your license for a “facilitation fee.” Make the call, watch the scale move, and see how the Foreign Corrupt Practices Act (FCPA) treats each choice.</p>
+    <p class="where">Week 4 Deep Dive companion: Political and Legal Environments. Prepare for the Harkness roundtable on GlobalTech.</p>
+  </div>
+  <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 420" role="img" id="scalesSvg" aria-label="A balance scale weighing speed and gain against integrity and trust">
+<defs><linearGradient id="h4bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#245c46"/><stop offset="1" stop-color="#1a4533"/></linearGradient></defs>
+<rect width="480" height="420" rx="26" fill="url(#h4bg)"/>
+<rect x="233" y="104" width="14" height="248" rx="4" fill="#d9b85a"/>
+<path d="M170 372 Q240 332 310 372 L318 392 H162 Z" fill="#b08a2e"/>
+<circle cx="240" cy="104" r="14" fill="#f0d27a" stroke="#b08a2e" stroke-width="3"/>
+<g id="beam" transform="rotate(0 240 104)"><rect x="96" y="98" width="288" height="12" rx="6" fill="#f0d27a" stroke="#b08a2e" stroke-width="2"/><circle cx="96" cy="104" r="7" fill="#b08a2e"/><circle cx="384" cy="104" r="7" fill="#b08a2e"/></g>
+<g id="panL" transform="translate(96.0 104.0)">
+<line x1="0" y1="0" x2="-62" y2="118" stroke="#f0d27a" stroke-width="2.5"/><line x1="0" y1="0" x2="62" y2="118" stroke="#f0d27a" stroke-width="2.5"/>
+<path d="M-76 118 H76 Q70 154 0 154 Q-70 154 -76 118Z" fill="#d9b85a" stroke="#b08a2e" stroke-width="2.5"/>
+<g transform="translate(-34 70)"><rect width="68" height="46" rx="5" fill="#fff"/><path d="M0 4 L34 28 L68 4" fill="none" stroke="#b3261e" stroke-width="3.5"/><text x="34" y="43" text-anchor="middle" font-size="11" font-weight="700" fill="#b3261e" font-family="'Segoe UI',system-ui,Arial,sans-serif">$5,000</text></g>
+<text x="0" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff" font-family="'Segoe UI',system-ui,Arial,sans-serif">Speed and gain</text></g>
+<g id="panR" transform="translate(384.0 104.0)">
+<line x1="0" y1="0" x2="-62" y2="118" stroke="#f0d27a" stroke-width="2.5"/><line x1="0" y1="0" x2="62" y2="118" stroke="#f0d27a" stroke-width="2.5"/>
+<path d="M-76 118 H76 Q70 154 0 154 Q-70 154 -76 118Z" fill="#d9b85a" stroke="#b08a2e" stroke-width="2.5"/>
+<g transform="translate(-24 64)"><path d="M24 0 L48 9 V30 Q48 50 24 58 Q0 50 0 30 V9Z" fill="#ffffff"/><path d="M13 29 l8 8 l15 -17" fill="none" stroke="#1b7a46" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="0" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff" font-family="'Segoe UI',system-ui,Arial,sans-serif">Integrity and trust</text></g>
+</svg></figure>
+</div></header>
+
+<main id="main" class="wrap">
+<div class="tabs" role="tablist" aria-label="Week 4 activities">
+  <button class="tab" role="tab" id="t-desk" aria-controls="p-desk">Decision desk</button>
+  <button class="tab" role="tab" id="t-cls" aria-controls="p-cls">Classify the payment</button>
+  <button class="tab" role="tab" id="t-rol" aria-controls="p-rol">Role lenses</button>
+  <button class="tab" role="tab" id="t-law" aria-controls="p-law">Common vs. civil law</button>
+</div>
+
+<!-- ======== DECISION DESK ======== -->
+<section class="panel" id="p-desk" role="tabpanel" aria-labelledby="t-desk">
+  <div class="deskgrid">
+    <div>
+      <h2>You are leading GlobalTech’s Mexico launch</h2>
+      <div id="desk" aria-live="polite"></div>
+    </div>
+    <aside class="stack sticky" aria-label="Scoreboard">
+      <div class="box">
+        <h3>Scoreboard</h3>
+        <div id="meters"></div>
+        <p class="muted" style="font-size:.85rem;margin:0">The scale tilts toward whichever side your choices have loaded: speed and gain, or integrity and trust.</p>
+      </div>
+      <div class="box">
+        <h3>Endings found: <span id="endcount">0</span> of 11</h3>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <p class="muted" style="font-size:.85rem;margin:0">Explore every path before you write your Harkness post.</p>
+      </div>
+      <div class="box" id="trailbox" hidden><h3>Your path</h3><ol class="trail" id="trail"></ol></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ======== CLASSIFY ======== -->
+<section class="panel" id="p-cls" role="tabpanel" aria-labelledby="t-cls" hidden>
+  <h2>Classify the payment</h2>
+  <p class="lead">Compliance officers sort payments every day. Decide whether each one is likely prohibited, a gray zone that needs counsel, or generally permissible.</p>
+  <div class="box" style="max-width:820px">
+    <div class="row" style="justify-content:space-between"><span class="pill" id="cl-count">Case 1 of 7</span><span id="cl-score" class="muted">Score: 0</span></div>
+    <div class="progress"><i id="cl-bar" style="width:0"></i></div>
+    <div id="cl-body"></div>
+  </div>
+  <p class="note">This is a learning exercise, not legal advice. Real cases turn on specific facts, intent, and local law. When in doubt, ask counsel before acting.</p>
+</section>
+
+<!-- ======== ROLES ======== -->
+<section class="panel" id="p-rol" role="tabpanel" aria-labelledby="t-rol" hidden>
+  <h2>Role lenses for the Harkness roundtable</h2>
+  <p class="lead">Each role sees the GlobalTech dilemma differently. These cards give you questions to think with, not answers. Choose a role different from most of your peers, form your own recommendation, and then press on other roles’ assumptions.</p>
+  <div class="roles" id="roles"></div>
+  <div class="box soft" style="margin-top:18px"><h3>Questions that deepen a Harkness dialogue</h3>
+    <ul style="margin:6px 0 0;padding-left:20px"><li>What assumption is this perspective making?</li><li>What happens if this priority fails?</li><li>Which value should take precedence here, and why?</li><li>How would your recommendation change under different conditions?</li></ul></div>
+</section>
+
+<!-- ======== LAW ======== -->
+<section class="panel" id="p-law" role="tabpanel" aria-labelledby="t-law" hidden>
+  <h2>Common law vs. civil law</h2>
+  <p class="lead">Legal systems shape how contracts are written, how disputes are settled, and where you look for the rules. Mexico, where GlobalTech is headed, has a civil-law tradition. The U.S. is a common-law system.</p>
+  <div class="cmp">
+    <div class="box"><h3><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><rect x="5" y="9" width="10" height="28" rx="2" fill="#1f5a42"/><rect x="17" y="5" width="10" height="32" rx="2" fill="#4f8a6e"/><rect x="29" y="11" width="10" height="26" rx="2" fill="#b08a2e"/><rect x="3" y="37" width="38" height="3" rx="1.5" fill="#16251d"/></svg>Common law</h3>
+      <ul style="margin:0;padding-left:20px"><li>Judicial decisions and precedent are a major source of law.</li><li>Adversarial process: lawyers argue opposing sides before a neutral judge or jury.</li><li>Examples: United States (most states), United Kingdom, India.</li><li>Tendency: long, explicit contracts, because courts interpret the contract’s words.</li></ul></div>
+    <div class="box"><h3><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><rect x="8" y="4" width="28" height="36" rx="3" fill="#1f5a42"/><rect x="12" y="4" width="3" height="36" fill="#16251d" opacity=".35"/><g stroke="#fff" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="14" x2="31" y2="14"/><line x1="19" y1="21" x2="31" y2="21"/><line x1="19" y1="28" x2="27" y2="28"/></g></svg>Civil law</h3>
+      <ul style="margin:0;padding-left:20px"><li>Comprehensive written codes are the primary source of law.</li><li>Judges apply the code and often play a more investigative role.</li><li>Examples: Mexico, Germany, France, Japan.</li><li>Tendency: contracts can rely on the code to fill gaps, so know the code and use local counsel.</li></ul></div>
+  </div>
+  <h3>Quick sort</h3>
+  <div class="box" style="max-width:820px">
+    <div class="row" style="justify-content:space-between"><span class="pill" id="lw-count">Statement 1 of 6</span><span id="lw-score" class="muted">Score: 0</span></div>
+    <div class="progress"><i id="lw-bar" style="width:0"></i></div>
+    <div id="lw-body"></div>
+  </div>
+  <p class="note">The contrasts above are general tendencies. Every country blends traditions, and real legal practice varies.</p>
+</section>
+</main>
+<footer><div class="wrap">Practice tool for BUSN 450, Week 4. Not graded and not legal advice. Nothing you choose is saved.</div></footer>
+
+<script>
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+(function(){
+  var tabs=$$('[role=tab]');
+  function show(t,focus){
+    tabs.forEach(function(x){
+      var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+      $('#'+x.getAttribute('aria-controls')).hidden=!on;
+    });
+    if(focus)t.focus();
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){show(t)});
+    t.addEventListener('keydown',function(e){
+      var k=e.key,n=null;
+      if(k==='ArrowRight')n=tabs[(i+1)%tabs.length];
+      else if(k==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+      else if(k==='Home')n=tabs[0];else if(k==='End')n=tabs[tabs.length-1];
+      if(n){e.preventDefault();show(n,true)}
+    });
+  });
+  if(tabs.length)show(tabs[0]);
+})();
+
+/* ================== SCALES (hero) ================== */
+var M={l:50,i:50,s:50,r:50};
+function tilt(){
+  var side=(M.l+M.i)/2, th=clamp((side-M.s)*0.3,-16,16), rad=th*Math.PI/180, hl=144;
+  $('#beam').style.transform='rotate('+th+'deg)';
+  $('#panL').style.transform='translate('+(240-hl*Math.cos(rad))+'px,'+(104-hl*Math.sin(rad))+'px)';
+  $('#panR').style.transform='translate('+(240+hl*Math.cos(rad))+'px,'+(104+hl*Math.sin(rad))+'px)';
+  var txt=th>2?'The scale leans toward integrity and trust.':th<-2?'The scale leans toward speed and gain.':'The scale is balanced.';
+  $('#scalesSvg').setAttribute('aria-label','Balance scale weighing speed and gain against integrity and trust. '+txt);
+}
+var MET=[{k:'l',n:'Legal safety'},{k:'i',n:'Integrity'},{k:'s',n:'Speed to market'},{k:'r',n:'Reputation'}];
+function meters(){
+  $('#meters').innerHTML=MET.map(function(m){var v=M[m.k],c=m.k==='s'?'#b08a2e':(v<35?'#b3261e':v<65?'#d99a1f':'#1b7a46');
+    return '<div class="meter"><div class="top"><span>'+m.n+'</span><span>'+v+'</span></div><div class="bar" role="img" aria-label="'+m.n+' '+v+' out of 100"><i style="width:'+v+'%;background:'+c+'"></i></div></div>'}).join('');
+  tilt();
+}
+function apply(d){M.l=clamp(M.l+(d.l||0),0,100);M.i=clamp(M.i+(d.i||0),0,100);M.s=clamp(M.s+(d.s||0),0,100);M.r=clamp(M.r+(d.r||0),0,100);meters()}
+
+/* ================== DECISION DESK ================== */
+var N={
+ start:{t:'GlobalTech Solutions, a mid-sized U.S. technology company, is expanding into Mexico. During licensing, a government official suggests that approval could be \u201cexpedited\u201d with a $5,000 \u201cfacilitation fee.\u201d Your board wants to launch next quarter. What do you do?',
+  c:[{t:'Pay the $5,000 in cash to keep the launch on schedule.',to:'pay',d:{l:-35,i:-35,s:30,r:-10},w:'The license is approved quickly, but you have handed something of value to a foreign official in connection with a licensing decision.'},
+     {t:'Ask what the fee covers and request an official receipt.',to:'ask',d:{l:10,i:10,s:-5,r:5},w:'A sensible first step. Legitimate government fees come with published schedules and receipts.'},
+     {t:'Decline and withdraw from the Mexican market.',to:'walk',d:{l:15,i:15,s:-35},w:'You are safe from the request, but you have also given up the market, at least for now.'},
+     {t:'Hire a local consultant to \u201chandle licensing\u201d for a $6,000 retainer, no questions asked.',to:'fixer',d:{l:-25,i:-25,s:20,r:-5},w:'It feels one step removed, which is exactly why regulators watch third parties so closely.'}]},
+ pay:{t:'The license arrives in nine days. Eight months later, an internal accountant flags a $5,000 cash entry labeled \u201cmiscellaneous,\u201d with no receipt. What do you do?',
+  c:[{t:'Quietly relabel it as \u201cconsulting fees.\u201d',to:'end_cover',d:{l:-25,i:-25,r:-20},w:'You have hidden the entry, not the problem.'},
+     {t:'Report it to compliance counsel and cooperate with an internal review.',to:'end_report',d:{l:20,i:25,s:-10,r:10},w:'Hard, but it is the step that gives you the most control over what happens next.'},
+     {t:'Leave it alone. It is only $5,000.',to:'end_ignore',d:{l:-10,i:-15,r:-10},w:'You have chosen not to know.'}]},
+ ask:{t:'The official shrugs: \u201cNo receipt. That is just how things work here.\u201d Your local advisor says competitors quietly pay. What next?',
+  c:[{t:'Politely decline, document the request, and escalate to counsel and the proper channels.',to:'end_formal',d:{l:15,i:20,s:-15,r:15},w:'Slower, but clean.'},
+     {t:'Pay it, but have the official sign a note acknowledging receipt.',to:'end_note',d:{l:-25,i:-20,s:15,r:-5},w:'You are trying to make the payment look respectable.'},
+     {t:'Offer a paid \u201ctraining trip\u201d for the official\u2019s family instead.',to:'end_trip',d:{l:-30,i:-30,s:10,r:-5},w:'The form changed. The purpose did not.'}]},
+ walk:{t:'Six months later a competitor opens in Mexico. Your board asks whether walking away was the only ethical option. What now?',
+  c:[{t:'Re-enter through official channels with local counsel and a realistic timeline.',to:'end_reenter',d:{l:10,i:10,s:-5,r:10},w:'You are going back in on lawful terms.'},
+     {t:'Stay out of Mexico for good.',to:'end_out',d:{s:-15},w:'You are protected, but you may be stuck.'},
+     {t:'Acquire a local firm that already holds the licenses.',to:'end_acquire',d:{l:-5,s:25},w:'Fast and legitimate on its face, but you are buying a history.'}]},
+ fixer:{t:'Licenses arrive in three weeks. Then you learn the consultant\u2019s brother-in-law works at the licensing agency, and the invoices say only \u201cgovernment relations.\u201d What do you do?',
+  c:[{t:'Suspend payments, audit the consultant\u2019s work, and consult counsel.',to:'end_audit',d:{l:15,i:20,s:-15,r:5},w:'You are treating the red flags as red flags.'},
+     {t:'Keep going. You never asked how it was done.',to:'end_blind',d:{l:-30,i:-25,r:-15},w:'Not asking is a choice.'}]},
+ end_cover:{tone:'bad',b:'Falsified records',t:'Relabeling the payment hides it but creates a second problem: false books and records. If an audit or a whistleblower surfaces it, you face both the original payment and the cover-up.',law:'The FCPA\u2019s accounting provisions require accurate books and records and adequate internal controls for publicly listed (\u201cissuer\u201d) companies. Misdescribing a payment can be a separate violation.'},
+ end_report:{tone:'warn',b:'Self-reporting',t:'The payment still happened, and consequences are possible. But prompt disclosure, cooperation, and fixing the control gap are the strongest steps you can take, and they show employees that integrity is real.',law:'U.S. enforcement guidance has long treated voluntary self-disclosure, cooperation, and remediation as factors that can reduce penalties.'},
+ end_ignore:{tone:'bad',b:'Looking away',t:'Small amounts still count. Unrecorded cash is exactly what auditors and whistleblowers find, and nobody has fixed the weakness that let it happen.',law:'The anti-bribery provisions have no minimum dollar threshold. The issue is paying or offering anything of value to influence an official act.'},
+ end_formal:{tone:'good',b:'The slow, clean path',t:'The license takes months longer than the board wanted. But you owe no one, your records are clean, and you have shown the market you cannot be pressured. The request is documented in case it happens again.',law:'Compliance programs commonly require employees to refuse, document, and escalate improper requests.'},
+ end_note:{tone:'bad',b:'A signed note is not a defense',t:'A signature does not turn a bribe into a fee. If anything, you have created written evidence of the payment.',law:'Paying to influence a discretionary decision stays prohibited however it is documented. Bribing an official is also a crime under Mexican law.'},
+ end_trip:{tone:'bad',b:'Anything of value',t:'Changing the form of the benefit does not change its purpose. A paid trip for an official\u2019s family is still a benefit offered in connection with an official decision.',law:'The FCPA covers \u201canything of value,\u201d not only cash. Travel, gifts, and entertainment can qualify when given to influence an official act.'},
+ end_reenter:{tone:'good',b:'A second chance, done right',t:'You return with local counsel and a realistic plan. You lost time, but you built the market on solid ground, and your earlier decision showed the board that integrity can be a strategy, not just a cost.',law:'Early engagement with formal channels and local counsel are standard ways to enter regulated markets lawfully.'},
+ end_out:{tone:'warn',b:'Safe, but costly',t:'You avoided legal exposure and also a market that was reachable by lawful routes. Ethical leadership does not require leaving. It requires choosing lawful means. Was there a compliant path you did not explore?',law:'Reputation and law are protected by how you enter, not only by whether you enter.'},
+ end_acquire:{tone:'warn',b:'Buying the licenses',t:'Acquisition is fast and can be legitimate, but you inherit the target\u2019s history. If its licenses were obtained through bribes, that liability can follow you.',law:'Anti-corruption due diligence before an acquisition is critical because liability can pass to the acquirer.'},
+ end_audit:{tone:'good',b:'Cutting the thread',t:'Stopping payments and investigating shows you took the warning signs seriously. You may uncover problems, but you stop them from growing.',law:'Relatives of officials and vague \u201cgovernment relations\u201d invoices are classic red flags that third-party due diligence should catch.'},
+ end_blind:{tone:'bad',b:'Willful blindness',t:'\u201cI never asked\u201d is not a defense. The more obvious the warning signs, the harder it is to claim you did not know.',law:'The FCPA reaches payments made through third parties when a company knows, or is aware of a high probability, that some of the money will reach an official. Deliberately ignoring red flags can count as knowledge.'}
+};
+var ENDS=Object.keys(N).filter(function(k){return k.indexOf('end_')===0});
+var found={},path=[],cur='start';
+function dots(){$('#dots').innerHTML=ENDS.map(function(e){return '<i class="'+(found[e]?'on':'')+'"></i>'}).join('');$('#endcount').textContent=Object.keys(found).length}
+function showNode(k,fb){
+  cur=k;var n=N[k],h='';
+  if(n.tone){
+    var tl={good:'Strong outcome',warn:'Mixed outcome',bad:'Serious problem'}[n.tone];
+    h+='<span class="badge '+n.tone+'">'+tl+'</span><h2 style="margin-top:10px">'+n.b+'</h2>'+(fb?'<div class="feedback"><strong>Your last move</strong>'+fb+'</div>':'')+'<p class="scn">'+n.t+'</p>';
+    h+='<div class="law"><b>What the law says.</b> '+n.law+' <span class="muted">(Enforcement priorities can shift, but the statute stays on the books and exposure can last for years.)</span></div>';
+    h+='<p class="verse">\u201cIf any of you lacks wisdom, you should ask God, who gives generously to all without finding fault, and it will be given to you\u201d (James 1:5, NIV 2011).</p><p>Where in this scenario did you pause to seek wisdom, from God, counsel, or colleagues, before you acted?</p>';
+    h+='<div class="row"><button class="btn primary" id="restart">Try another path</button><button class="btn" id="to-roles">Open the role lenses</button></div>';
+    found[k]=1;dots();
+  }else{
+    if(fb)h+='<div class="feedback"><strong>Consequence</strong>'+fb+'</div>';
+    h+='<p class="scn">'+n.t+'</p><div class="choices" role="group" aria-label="Your options">'+n.c.map(function(c,i){return '<button class="choice" data-i="'+i+'">'+c.t+'</button>'}).join('')+'</div>';
+  }
+  $('#desk').innerHTML=h;
+  $$('#desk .choice').forEach(function(b){b.addEventListener('click',function(){var c=N[cur].c[+b.dataset.i];path.push(c.t);apply(c.d);trail();showNode(c.to,c.w);$('#desk').scrollIntoView({block:'nearest'});var f=$('#desk .scn');if(f){f.setAttribute('tabindex','-1');f.focus({preventScroll:true})}})});
+  if($('#restart'))$('#restart').addEventListener('click',reset);
+  if($('#to-roles'))$('#to-roles').addEventListener('click',function(){$('#t-rol').click();$('#t-rol').focus()});
+}
+function trail(){$('#trailbox').hidden=!path.length;$('#trail').innerHTML=path.map(function(p){return '<li>'+p+'</li>'}).join('')}
+function reset(){M={l:50,i:50,s:50,r:50};path=[];meters();trail();showNode('start')}
+dots();meters();showNode('start');
+
+/* ================== quiz runner ================== */
+function runQuiz(cfg){
+  var q=shuffle(cfg.items),i=0,score=0,done=false;
+  function render(){
+    if(i>=q.length){
+      $(cfg.body).innerHTML='<div class="score">'+score+' / '+q.length+'</div><p style="margin-top:8px">'+cfg.end(score,q.length)+'</p><button class="btn primary" id="'+cfg.id+'-again">Play again</button>';
+      $(cfg.bar).style.width='100%';$(cfg.count).textContent='Finished';
+      $('#'+cfg.id+'-again').addEventListener('click',function(){q=shuffle(cfg.items);i=0;score=0;render()});return}
+    var it=q[i];done=false;
+    $(cfg.count).textContent=cfg.label+' '+(i+1)+' of '+q.length;$(cfg.score).textContent='Score: '+score;$(cfg.bar).style.width=(i/q.length*100)+'%';
+    $(cfg.body).innerHTML=cfg.head(it)+'<div class="'+cfg.cls+'" role="group" aria-label="Answer choices">'+cfg.cats.map(function(c,k){return '<button class="choice" data-k="'+k+'">'+c.n+(c.s?'<small>'+c.s+'</small>':'')+'</button>'}).join('')+'</div><div id="'+cfg.id+'-fb" aria-live="polite"></div>';
+    $$(cfg.body+' .choice').forEach(function(b){b.addEventListener('click',function(){
+      if(done)return;done=true;var ok=(+b.dataset.k===it.a);if(ok)score++;
+      $$(cfg.body+' .choice').forEach(function(x,k){x.disabled=true;if(k===it.a)x.classList.add('right');else if(x===b)x.classList.add('wrong');else x.classList.add('dim')});
+      $('#'+cfg.id+'-fb').innerHTML='<div class="feedback '+(ok?'good':'bad')+'"><strong>'+(ok?'Correct.':'Not quite. Best answer: '+cfg.cats[it.a].n+'.')+'</strong>'+it.e+'</div><button class="btn primary" id="'+cfg.id+'-next">'+(i===q.length-1?'See score':'Next')+'</button>';
+      $(cfg.score).textContent='Score: '+score;$('#'+cfg.id+'-next').focus();
+      $('#'+cfg.id+'-next').addEventListener('click',function(){i++;render();var f=$(cfg.body+' .choice,'+cfg.body+' .btn');if(f)f.focus()});
+    })});
+  }
+  render();
+}
+runQuiz({id:'cl',body:'#cl-body',bar:'#cl-bar',count:'#cl-count',score:'#cl-score',label:'Case',cls:'trio',
+ cats:[{n:'Likely prohibited'},{n:'Gray zone',s:'Escalate to counsel'},{n:'Generally permissible'}],
+ head:function(it){return '<p class="scn">'+it.q+'</p>'},
+ end:function(s,n){return s>=6?'Sharp compliance instincts.':s>=4?'Good start. Reread the explanations for the cases you missed.':'Review this week\u2019s FCPA material, then try again.'},
+ items:[
+ {q:'An executive hands an official $5,000 in cash so a business license is approved faster.',a:0,e:'Giving something of value to a foreign official to influence an approval is the core conduct the anti-bribery provisions prohibit.'},
+ {q:'The company pays a published government filing fee at a bank and gets an official receipt.',a:2,e:'The fee is published, paid to the government itself, and documented. That is a legitimate cost of doing business.'},
+ {q:'The company pays for an official\u2019s family vacation, described in the books as \u201ca training seminar.\u201d',a:0,e:'Travel and entertainment count as \u201canything of value.\u201d Calling it training does not change its purpose, and the false label adds a books-and-records problem.'},
+ {q:'A trade-show booth gives every visitor, including officials, a $4 branded notebook.',a:2,e:'Low-value promotional items, given openly to everyone and consistent with company policy and local gift rules, are generally acceptable.'},
+ {q:'A \u201cconsultant\u201d with no relevant expertise, who is the licensing director\u2019s brother, is retained at $6,000 a month.',a:0,e:'Relationship to an official, no real expertise, and a vague scope are classic red flags that the arrangement is a channel for improper payments.'},
+ {q:'A small payment to a clerk to speed up a routine, non-discretionary filing (a \u201cfacilitation payment\u201d).',a:1,e:'The FCPA has a narrow exception for facilitating payments for routine government actions, and it does not cover decisions to award or continue business. Such payments can still be illegal under local law and other countries\u2019 laws (the UK Bribery Act has no such exception), and many company policies ban them. Ask counsel first.'},
+ {q:'A company pays reasonable travel and lodging for officials to inspect its factory, under a written agreement and with approval from the officials\u2019 agency.',a:1,e:'Genuine, transparent hospitality tied to a legitimate business purpose can be acceptable, but scope, cost, and approvals matter. Have counsel review it.'}
+ ]});
+
+runQuiz({id:'lw',body:'#lw-body',bar:'#lw-bar',count:'#lw-count',score:'#lw-score',label:'Statement',cls:'duo',
+ cats:[{n:'Common law'},{n:'Civil law'}],
+ head:function(it){return '<p class="scn">'+it.q+'</p>'},
+ end:function(s,n){return s===n?'Perfect. You can tell the two systems apart.':'Review the two cards above and try again.'},
+ items:[
+ {q:'Earlier court decisions (precedent) are a major source of law.',a:0,e:'Precedent is the hallmark of common-law systems.'},
+ {q:'A comprehensive written code is the primary source of law.',a:1,e:'Civil-law systems are built around codes that judges apply and interpret.'},
+ {q:'Examples include the United States (most states), the United Kingdom, and India.',a:0,e:'These are common-law systems, with the U.S. state of Louisiana as a notable civil-law exception.'},
+ {q:'Examples include Mexico, Germany, France, and Japan.',a:1,e:'These countries follow civil-law traditions.'},
+ {q:'Judges often take a more active, investigative role in proceedings.',a:1,e:'Civil-law courts lean toward an inquisitorial approach.'},
+ {q:'Opposing lawyers argue their sides before a neutral judge or jury.',a:0,e:'The adversarial process is characteristic of common-law courts.'}
+ ]});
+
+/* ================== ROLES ================== */
+var R=[
+ {n:'Legal Officer',f:'Legal compliance, FCPA implications, regulatory risk.',q:['Which laws apply here: the FCPA, Mexican law, others?','Does any exception actually fit these facts, and what would it require?','What would the record show if this payment were ever examined?'],p:'To the Strategy Officer: what is the cost of delay compared with the cost of an investigation?'},
+ {n:'Ethics Officer',f:'Integrity, Christian worldview, ethical responsibility.',q:['What does honesty require here, even if others pay?','Whose interests are affected: employees, customers, the community, the official?','Which principle or passage from this week speaks to the choice, such as James 1:5 on asking for wisdom?'],p:'To the Local Market Advisor: where does respect for local norms end and complicity begin?'},
+ {n:'Strategy Officer',f:'Competitive positioning, timing, and market entry strategy.',q:['Which lawful routes could shorten the timeline?','What does the market look like if we enter six months later?','How does a reputation for refusing improper payments help or hurt over ten years?'],p:'To the Risk Analyst: which risk grows fastest if we delay?'},
+ {n:'Risk Analyst',f:'Short- and long-term risks, uncertainties, and consequences.',q:['What is the worst realistic outcome if the payment is discovered in one, three, or five years?','Who could discover it: employees, auditors, competitors, the official?','Which risks of refusing are real, and which are assumed?'],p:'To the Legal Officer: which exposure is hardest to reverse?'},
+ {n:'Local Market Advisor',f:'Cultural norms, local business practices, and contextual realities.',q:['Is this request widespread practice or one official\u2019s habit? How would we know?','What does local law actually say about payments like this, and how is it enforced?','What trusted local channels exist to refuse or escalate respectfully?'],p:'To the Ethics Officer: how can we decline without insulting the other party?'}
+];
+$('#roles').innerHTML=R.map(function(r){return '<div class="box"><h3>'+r.n+'</h3><p class="muted" style="font-size:.92rem">Focus: '+r.f+'</p><b>Ask yourself</b><ul>'+r.q.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul><div class="peer"><b>A question to bring to a peer</b><br>'+r.p+'</div></div>'}).join('');
+</script>
+</body>
+</html>
