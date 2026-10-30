@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 4 Interactive | Linear Regression for Business Decisions</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#1c1c1c;--sand:#edebe8;--bg:#f7f6f4;--card:#fff;--mute:#5d5a56;--ok:#2f7d4f;--warn:#b7791f;--line:#d9d5cf;--blue:#2d6a8f;--gray:#b9b5af}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;line-height:1.55;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:#111;color:#fff;border-radius:20px;display:grid;grid-template-columns:1.1fr 1fr;gap:10px;overflow:hidden;align-items:center;margin-bottom:22px}
+.hero .txt{padding:34px 8px 34px 34px}
+.hero .bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin-bottom:14px}
+.hero .wk{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 12px;border-radius:99px;margin-bottom:10px}
+.hero h1{margin:0 0 10px;font-size:clamp(24px,4vw,34px);line-height:1.15}
+.hero p{margin:0;color:#ddd;font-size:16px}
+.hero svg{width:100%;height:auto;display:block}
+.card{background:var(--card);border-radius:20px;padding:26px 28px;margin-bottom:22px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.card.sand{background:var(--sand)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-size:15px;margin-right:10px;vertical-align:2px}
+.card .sub{color:var(--mute);margin:0 0 16px}
+.callout{background:var(--sand);border-left:5px solid var(--red);border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15px}
+.callout b{color:var(--red-d)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:10px 0 14px}
+label{font-size:14px;font-weight:600}
+select,input[type=number]{font:inherit;padding:6px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+input[type=range]{accent-color:var(--red);width:100%}
+input[type=checkbox],input[type=radio]{accent-color:var(--red);width:17px;height:17px;vertical-align:-3px;margin-right:6px}
+.btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;border-radius:12px;padding:9px 18px;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.alt:hover{background:var(--sand)}
+:focus-visible{outline:3px solid #1c6fd6;outline-offset:2px}
+.chart{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:14px}
+.chart svg{display:block;width:100%;height:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.scroll{overflow-x:auto}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;color:#fff}
+.badge.ok{background:var(--ok)}.badge.no{background:#8a8580}.badge.red{background:var(--red)}
+.stat{background:var(--sand);border-radius:14px;padding:12px 14px}
+.stat .k{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);font-weight:700}
+.stat .v{font-size:26px;font-weight:800;line-height:1.2}
+.stat .d{font-size:13px;color:var(--mute)}
+.fb{margin-top:8px;font-size:14.5px;min-height:22px}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--red-d)}
+.opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.opt{display:flex;align-items:center;gap:8px;font:inherit;font-weight:600;background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 12px 6px 8px;cursor:pointer}
+.opt:hover{border-color:var(--ink)}
+.opt.right{border-color:var(--ok);background:#eaf5ee}.opt.wrong{border-color:var(--red);background:#fbeaea}
+.opt svg{width:44px;height:32px}
+.q{border-top:1px solid var(--line);padding:14px 0}.q:first-of-type{border-top:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mute);margin:8px 2px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:3px;margin-right:6px}
+.foot{text-align:center;color:var(--mute);font-size:13px;margin-top:10px}
+.sr{position:absolute;left:-9999px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero .txt{padding:26px 22px 0}.grid2,.grid3{grid-template-columns:1fr}.card{padding:20px 16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+.var-row{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;border-top:1px solid var(--line);padding:10px 0}
+.var-row:first-child{border-top:0}
+.var-row .nm{font-weight:700}.var-row .ds{font-size:13.5px;color:var(--mute);font-weight:400}
+.sig-row td{background:#f3faf5}
+.gauge{display:grid;place-items:center}
+.pick{display:flex;flex-wrap:wrap;gap:8px 18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="txt">
+    <div class="bar"></div>
+    <span class="wk">Week 4</span>
+    <h1>Linear Regression for Business Decisions</h1>
+    <p>Build a model for employee productivity, read the equation, test significance with p-values, and explain how well the model fits.</p>
+  </div>
+  <svg viewBox="0 0 440 300" role="img" aria-label="Illustration of a scatter plot with a regression line, a moon for sleep, and a clock for overtime">
+    <rect width="440" height="300" fill="#111"/>
+    <circle cx="90" cy="250" r="120" fill="#d34147" opacity=".15"/>
+    <rect x="30" y="34" width="290" height="226" rx="14" fill="#fff"/>
+    <line x1="56" y1="232" x2="300" y2="232" stroke="#888" stroke-width="2"/><line x1="56" y1="56" x2="56" y2="232" stroke="#888" stroke-width="2"/>
+    <g fill="#2d6a8f"><circle cx="80" cy="208" r="6"/><circle cx="100" cy="196" r="6"/><circle cx="116" cy="210" r="6"/><circle cx="136" cy="176" r="6"/><circle cx="156" cy="168" r="6"/><circle cx="170" cy="184" r="6"/><circle cx="192" cy="140" r="6"/><circle cx="212" cy="150" r="6"/><circle cx="232" cy="112" r="6"/><circle cx="250" cy="124" r="6"/><circle cx="270" cy="84" r="6"/><circle cx="288" cy="94" r="6"/></g>
+    <line x1="64" y1="214" x2="296" y2="80" stroke="#d34147" stroke-width="5" stroke-linecap="round"/>
+    <g stroke="#d34147" stroke-width="1.5" stroke-dasharray="3 3"><line x1="136" y1="176" x2="136" y2="168"/><line x1="192" y1="140" x2="192" y2="132"/><line x1="232" y1="112" x2="232" y2="108"/></g>
+    <text x="68" y="52" font-size="15" font-weight="700" fill="#1c1c1c" font-family="Segoe UI,Arial">ŷ = b₀ + b₁x₁ + b₂x₂</text>
+    <g transform="translate(362,70)"><circle r="40" fill="#f2e4a8"/><circle cx="16" cy="-8" r="34" fill="#111"/></g>
+    <g transform="translate(362,190)"><circle r="42" fill="#fff" stroke="#d34147" stroke-width="7"/><line x1="0" y1="0" x2="0" y2="-26" stroke="#111" stroke-width="5" stroke-linecap="round"/><line x1="0" y1="0" x2="20" y2="10" stroke="#111" stroke-width="5" stroke-linecap="round"/><circle r="4" fill="#111"/></g>
+    <text x="362" y="262" text-anchor="middle" font-size="13" fill="#ddd" font-family="Segoe UI,Arial">sleep · overtime</text>
+  </svg>
+</header>
+
+<section class="card" aria-labelledby="a1">
+  <h2 id="a1"><span class="n">1</span>Name the variables</h2>
+  <p class="sub">You are an HR analyst predicting <b>Productivity Score</b>. For each variable, decide its role in the regression model.</p>
+  <div id="roles"></div>
+  <div class="callout" id="roleMsg" aria-live="polite"><b>Tip:</b> the dependent variable is the outcome you want to predict. Independent variables are the factors used to explain it.</div>
+</section>
+
+<section class="card" aria-labelledby="a2">
+  <h2 id="a2"><span class="n">2</span>Build the model</h2>
+  <p class="sub">Choose which independent variables to include. The model re-runs on the same 25 employees each time.</p>
+  <div class="pick" role="group" aria-label="Independent variables to include" id="picks"></div>
+  <div class="callout"><b>Regression equation</b><br><span id="eq" style="font-size:17px;font-weight:700;overflow-wrap:anywhere"></span></div>
+
+  <div class="grid2" style="align-items:start">
+    <div>
+      <div class="scroll"><table id="coefTable"></table></div>
+      <p style="font-size:13px;color:var(--mute);margin:6px 0 0">Green rows have p &lt; 0.05. The intercept is the predicted score when every included variable equals zero.</p>
+    </div>
+    <div class="gauge">
+      <div id="donut" style="width:210px"></div>
+      <div id="fitMsg" style="font-size:14.5px;margin-top:4px" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <h3 style="margin:22px 0 6px;font-size:17px">Actual vs. predicted productivity</h3>
+  <p class="sub" style="margin-bottom:8px">The closer the dots sit to the diagonal, the better the model fits. Dot color shows the size of the miss.</p>
+  <div class="chart" id="avp"></div>
+  <div class="callout" id="readMsg" aria-live="polite"></div>
+</section>
+
+<section class="card sand" aria-labelledby="a3">
+  <h2 id="a3"><span class="n">3</span>Predict with the model</h2>
+  <p class="sub">Move the sliders to describe a hypothetical employee. The prediction uses the model you built above.</p>
+  <div class="grid2">
+    <div id="whatif"></div>
+    <div class="stat" style="display:grid;place-items:center;text-align:center;min-height:170px">
+      <div><div class="k">Predicted productivity score</div><div class="v" id="pred" style="font-size:54px;color:var(--red)">–</div><div class="d" id="predNote">out of 100</div></div>
+    </div>
+  </div>
+  <div class="callout"><b>Association is not causation.</b> A significant coefficient shows a statistical relationship in this data. It does not prove that changing one factor will cause productivity to change, and predictions far outside the data range are unreliable.</div>
+</section>
+
+<section class="card" aria-labelledby="a4">
+  <h2 id="a4"><span class="n">4</span>Quick check</h2>
+  <div id="quiz"></div>
+</section>
+
+<p class="foot">Illustrative data generated for this activity (25 employees). Use your course data file for the assignment.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gen(seed){var r=mulberry(seed),n=function(){var u=r()||1e-9,v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+ var rows=[];for(var i=0;i<25;i++){var sleep=Math.min(9,Math.max(4.5,6.9+0.9*n())),ex=Math.round(Math.min(75,Math.max(0,32+18*n()))),ot=Math.round(Math.min(18,Math.max(0,7+4.5*n()))),sat=Math.round(Math.min(10,Math.max(2,6.5+1.8*n())));
+ var p=26+4.6*sleep+0.14*ex-1.05*ot+0.5*sat+4.5*n();rows.push([Math.round(sleep*10)/10,ex,ot,sat,Math.round(Math.max(30,Math.min(100,p)))])}return rows}
+function betacf(a,b,x){var m,m2,aa,c=1,d=1-(a+b)*x/(a+1),del,h;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;h=d;for(m=1;m<=200;m++){m2=2*m;aa=m*(b-m)*x/((a+m2-1)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;aa=-(a+m)*(a+b+m)*x/((a+m2)*(a+m2+1));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break}return h}
+function lg(x){var c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5],y=x,t=x+5.5,s=1.000000000190015;t-=(x+.5)*Math.log(t);for(var j=0;j<6;j++)s+=c[j]/++y;return -t+Math.log(2.5066282746310005*s/x)}
+function ib(x,a,b){if(x<=0)return 0;if(x>=1)return 1;var bt=Math.exp(lg(a+b)-lg(a)-lg(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b}
+function pval(t,df){return ib(df/(df+t*t),df/2,.5)}
+function inv(A){var n=A.length,M=A.map(function(r,i){return r.concat(A.map(function(_,j){return i===j?1:0}))});for(var i=0;i<n;i++){var p=i;for(var r=i+1;r<n;r++)if(Math.abs(M[r][i])>Math.abs(M[p][i]))p=r;var t=M[i];M[i]=M[p];M[p]=t;var d=M[i][i];for(var j=0;j<2*n;j++)M[i][j]/=d;for(var r=0;r<n;r++)if(r!==i){var f=M[r][i];for(var j=0;j<2*n;j++)M[r][j]-=f*M[i][j]}}return M.map(function(r){return r.slice(n)})}
+function ols(rows,cols){var n=rows.length,X=rows.map(function(r){return [1].concat(cols.map(function(c){return r[c]}))}),y=rows.map(function(r){return r[4]}),k=X[0].length;
+ var XtX=[],Xty=[];for(var i=0;i<k;i++){XtX.push([]);for(var j=0;j<k;j++){var s=0;for(var m=0;m<n;m++)s+=X[m][i]*X[m][j];XtX[i].push(s)}var s2=0;for(var m=0;m<n;m++)s2+=X[m][i]*y[m];Xty.push(s2)}
+ var iv=inv(XtX),b=iv.map(function(r){return r.reduce(function(s,v,j){return s+v*Xty[j]},0)});
+ var my=y.reduce(function(a,c){return a+c},0)/n,sse=0,sst=0;for(var m=0;m<n;m++){var f=X[m].reduce(function(s,v,j){return s+v*b[j]},0);sse+=Math.pow(y[m]-f,2);sst+=Math.pow(y[m]-my,2)}
+ var df=n-k,s2=sse/df,se=iv.map(function(r,i){return Math.sqrt(s2*r[i])}),t=b.map(function(v,i){return v/se[i]}),p=t.map(function(v){return pval(v,df)});
+ return {b:b,se:se,t:t,p:p,r2:1-sse/sst,adj:1-(sse/df)/(sst/(n-1)),df:df,s:Math.sqrt(s2)}}
+
+var NS="http://www.w3.org/2000/svg";
+function $(id){return document.getElementById(id)}
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e}
+var V=[
+ {key:"sleep",label:"Hours of Sleep per Night",short:"Sleep (hrs)",unit:"hour",min:4.5,max:9,step:.1,def:7},
+ {key:"ex",label:"Daily Exercise (minutes)",short:"Exercise (min)",unit:"minute",min:0,max:75,step:1,def:30},
+ {key:"ot",label:"Weekly Overtime Hours",short:"Overtime (hrs)",unit:"hour",min:0,max:18,step:1,def:7},
+ {key:"sat",label:"Job Satisfaction (1–10)",short:"Satisfaction",unit:"point",min:1,max:10,step:1,def:6}
+];
+var DATA=gen(25);
+var on=[true,true,true,true];
+
+/* Section 1 */
+(function(){
+ var rows=[{n:"Productivity Score (1–100)",a:"dep"},{n:"Hours of Sleep per Night",a:"ind"},{n:"Daily Exercise (minutes)",a:"ind"},{n:"Weekly Overtime Hours",a:"ind"},{n:"Job Satisfaction Score (1–10)",a:"ind"}];
+ var ok=0,fin=0,host=$("roles");
+ rows.forEach(function(r){
+  var d=document.createElement("div");d.className="var-row";
+  d.innerHTML='<div><div class="nm">'+r.n+'</div><div class="ds fb" aria-live="polite"></div></div><div class="opts" style="margin:0"></div>';
+  var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),done=false;
+  [["dep","Dependent (predict this)"],["ind","Independent (explains)"]].forEach(function(o){
+   var b=document.createElement("button");b.type="button";b.className="opt";b.textContent=o[1];
+   b.onclick=function(){
+    if(done)return;
+    if(o[0]===r.a){done=true;ok++;b.classList.add("right");fb.className="ds fb good";fb.textContent=r.a==="dep"?"Correct: this is the outcome management wants to predict.":"Correct: this factor is used to explain productivity.";
+     if(ok===rows.length)$("roleMsg").innerHTML="<b>All set.</b> One dependent variable (Productivity Score) and four independent variables. With more than one independent variable, this is <b>multiple</b> linear regression."}
+    else{b.classList.add("wrong");b.disabled=true;fb.className="ds fb bad";fb.textContent="Not quite. Ask: is this the outcome, or a factor that might explain it?"}
+   };
+   box.appendChild(b);
+  });
+  host.appendChild(d);
+ });
+})();
+
+/* Section 2 */
+(function(){
+ var host=$("picks");
+ V.forEach(function(v,i){
+  var l=document.createElement("label");l.innerHTML='<input type="checkbox" checked> '+v.label;
+  l.querySelector("input").onchange=function(e){on[i]=e.target.checked;run()};host.appendChild(l);
+ });
+ var wi=$("whatif");
+ V.forEach(function(v,i){
+  var d=document.createElement("div");d.style.margin="8px 0";
+  d.innerHTML='<label for="wi'+i+'">'+v.label+': <b id="wv'+i+'">'+v.def+'</b></label><input type="range" id="wi'+i+'" min="'+v.min+'" max="'+v.max+'" step="'+v.step+'" value="'+v.def+'">';
+  d.querySelector("input").oninput=function(){$("wv"+i).textContent=this.value;predict()};wi.appendChild(d);
+ });
+})();
+var M=null,cols=[];
+function fmtP(p){return p<0.001?"< 0.001":p.toFixed(3)}
+function fmt(x,d){return (x<0?"− ":"")+Math.abs(x).toFixed(d==null?2:d)}
+function run(){
+ cols=[];V.forEach(function(v,i){if(on[i])cols.push(i)});
+ if(!cols.length){M=null;$("eq").textContent="Select at least one independent variable.";$("coefTable").innerHTML="";$("donut").innerHTML="";$("fitMsg").textContent="";$("avp").innerHTML="";$("readMsg").innerHTML="";$("pred").textContent="–";return}
+ M=ols(DATA,cols);
+ var eq="Productivity = "+M.b[0].toFixed(2);
+ cols.forEach(function(c,j){var b=M.b[j+1];eq+=" "+(b<0?"−":"+")+" ("+Math.abs(b).toFixed(2)+" × "+V[c].short.split(" ")[0]+")"});
+ $("eq").textContent=eq;
+ var h="<tr><th>Term</th><th>Coefficient</th><th>Std. error</th><th>t</th><th>p-value</th><th>p &lt; 0.05?</th></tr>";
+ var names=["Intercept"].concat(cols.map(function(c){return V[c].short}));
+ names.forEach(function(n,j){
+  var sig=M.p[j]<0.05;
+  h+="<tr class='"+(sig&&j?"sig-row":"")+"'><td>"+n+"</td><td>"+M.b[j].toFixed(3)+"</td><td>"+M.se[j].toFixed(3)+"</td><td>"+M.t[j].toFixed(2)+"</td><td>"+fmtP(M.p[j])+"</td><td>"+(j===0?"<span style='color:var(--mute);font-size:12px'>n/a</span>":'<span class="badge '+(sig?"ok":"no")+'">'+(sig?"Yes":"No")+"</span>")+"</td></tr>";
+ });
+ $("coefTable").innerHTML=h;
+ donut();avp();
+ var sigs=[],nots=[];cols.forEach(function(c,j){(M.p[j+1]<0.05?sigs:nots).push(c)});
+ var msg="<b>Reading the output:</b> ";
+ if(sigs.length){msg+=sigs.map(function(c){var j=cols.indexOf(c)+1,b=M.b[j];return V[c].short.split(" (")[0].replace(/ \(.*/,"")+" (p "+(M.p[j]<0.001?"< 0.001":"= "+M.p[j].toFixed(3))+"): holding the other included variables constant, each additional "+V[c].unit+" is associated with a "+(b>=0?"rise":"drop")+" of "+Math.abs(b).toFixed(2)+" productivity points."}).join(" ")}
+ else msg+="No included variable is statistically significant at the 0.05 level.";
+ if(nots.length)msg+=" Not significant: "+nots.map(function(c){return V[c].short}).join(", ")+". That means the data do not show a reliable relationship after accounting for the other variables. It does not prove the effect is exactly zero.";
+ $("readMsg").innerHTML=msg;
+ predict();
+}
+function donut(){
+ var r2=M.r2,R=70,C=2*Math.PI*R;
+ var s=el("svg",{viewBox:"0 0 210 210",role:"img","aria-label":"R-squared equals "+r2.toFixed(2)});
+ s.appendChild(el("circle",{cx:105,cy:105,r:R,fill:"none",stroke:"#edebe8","stroke-width":26}));
+ s.appendChild(el("circle",{cx:105,cy:105,r:R,fill:"none",stroke:"#d34147","stroke-width":26,"stroke-dasharray":(C*r2)+" "+C,transform:"rotate(-90 105 105)"}));
+ s.appendChild(el("text",{x:105,y:104,"text-anchor":"middle","font-size":34,"font-weight":800,fill:"#1c1c1c"},(r2*100).toFixed(0)+"%"));
+ s.appendChild(el("text",{x:105,y:128,"text-anchor":"middle","font-size":13,fill:"#555"},"R² explained"));
+ $("donut").innerHTML="";$("donut").appendChild(s);
+ $("fitMsg").innerHTML="<b>R² = "+M.r2.toFixed(3)+"</b> · Adjusted R² = <b>"+M.adj.toFixed(3)+"</b><br>The model explains about "+(M.r2*100).toFixed(0)+"% of the variation in productivity. The remaining "+((1-M.r2)*100).toFixed(0)+"% comes from factors not in the model or random noise. Adjusted R² penalizes variables that add little.";
+}
+function avp(){
+ var W=640,H=340,L=60,R=20,T=18,B=50,pw=W-L-R,ph=H-T-B,lo=30,hi=100;
+ var sx=function(v){return L+(v-lo)/(hi-lo)*pw},sy=function(v){return T+ph-(v-lo)/(hi-lo)*ph};
+ var s=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Actual versus predicted productivity scatter plot"});
+ for(var t=30;t<=100;t+=10){s.appendChild(el("line",{x1:L,x2:W-R,y1:sy(t),y2:sy(t),stroke:"#eee"}));s.appendChild(el("text",{x:L-8,y:sy(t)+4,"text-anchor":"end","font-size":12,fill:"#555"},t));s.appendChild(el("text",{x:sx(t),y:T+ph+18,"text-anchor":"middle","font-size":12,fill:"#555"},t))}
+ s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:T+ph,stroke:"#555","stroke-width":1.5}));s.appendChild(el("line",{x1:L,x2:W-R,y1:T+ph,y2:T+ph,stroke:"#555","stroke-width":1.5}));
+ s.appendChild(el("line",{x1:sx(lo),y1:sy(lo),x2:sx(hi),y2:sy(hi),stroke:"#d34147","stroke-width":2.5,"stroke-dasharray":"6 5"}));
+ s.appendChild(el("text",{x:L+pw/2,y:H-8,"text-anchor":"middle","font-size":13,fill:"#333"},"Predicted productivity score"));
+ s.appendChild(el("text",{x:15,y:T+ph/2,"text-anchor":"middle","font-size":13,fill:"#333",transform:"rotate(-90 15 "+(T+ph/2)+")"},"Actual productivity score"));
+ DATA.forEach(function(r){
+  var p=M.b[0];cols.forEach(function(c,j){p+=M.b[j+1]*r[c]});
+  var err=Math.abs(r[4]-p),col=err<M.s?"#2d6a8f":err<2*M.s?"#e0a030":"#d34147";
+  var c=el("circle",{cx:sx(p),cy:sy(r[4]),r:6.5,fill:col,stroke:"#fff","stroke-width":1.5,opacity:.92});
+  var tt=el("title",{},"Predicted "+p.toFixed(1)+", actual "+r[4]);c.appendChild(tt);s.appendChild(c);
+ });
+ $("avp").innerHTML="";$("avp").appendChild(s);
+ var lg=document.createElement("div");lg.className="legend";lg.style.padding="0 12px 8px";
+ lg.innerHTML='<span><i style="background:#2d6a8f"></i>Within 1 standard error of the model ('+M.s.toFixed(1)+' pts)</span><span><i style="background:#e0a030"></i>1 to 2</span><span><i style="background:#d34147"></i>Over 2</span><span><i style="background:#d34147;opacity:.6"></i>Dashed line = perfect prediction</span>';
+ $("avp").appendChild(lg);
+}
+function predict(){
+ if(!M)return;
+ var p=M.b[0];cols.forEach(function(c,j){p+=M.b[j+1]*(+$("wi"+c).value)});
+ $("pred").textContent=Math.max(0,Math.min(100,p)).toFixed(1);
+ $("predNote").textContent="out of 100 · typical miss about ± "+M.s.toFixed(1)+" points";
+ V.forEach(function(v,i){$("wi"+i).disabled=!on[i];$("wi"+i).style.opacity=on[i]?1:.4});
+}
+
+/* Section 4 */
+(function(){
+ var Q=[
+  {q:"A variable has a p-value of 0.003. What is the best interpretation?",o:["It is statistically significant at the 0.05 level.","It has a very large effect on productivity.","It causes productivity to change."],a:0,w:"A small p-value signals a relationship unlikely to be due to chance. It says nothing about effect size or causation."},
+  {q:"A model has R² = 0.60. What does that tell you?",o:["60% of employees are productive.","The model explains about 60% of the variation in productivity.","The model is wrong 60% of the time."],a:1,w:"R² is the share of variation in the outcome that the model explains."},
+  {q:"A coefficient on Weekly Overtime is −1.0. What does that mean?",o:["Each extra overtime hour is associated with 1 point lower productivity, holding the other variables constant.","Productivity falls to −1 when overtime is zero.","Overtime hours are 1% of productivity."],a:0,w:"A coefficient is the expected change in the outcome for a one-unit change in that variable, holding the others constant."}
+ ];
+ var host=$("quiz");
+ Q.forEach(function(item,i){
+  var d=document.createElement("div");d.className="q";
+  d.innerHTML='<div><b>'+(i+1)+'.</b> '+item.q+'</div><div class="opts" style="flex-direction:column;align-items:stretch"></div><div class="fb" aria-live="polite"></div>';
+  var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),done=false;
+  shuf(item.o.map(function(t,j){return [t,j]})).forEach(function(pr){var t=pr[0],j=pr[1];
+   var b=document.createElement("button");b.type="button";b.className="opt";b.style.textAlign="left";b.textContent=t;
+   b.onclick=function(){if(done)return;if(j===item.a){done=true;b.classList.add("right");fb.className="fb good";fb.textContent="Correct. "+item.w}else{b.classList.add("wrong");b.disabled=true;fb.className="fb bad";fb.textContent="Not quite. Try again."}};
+   box.appendChild(b);
+  });
+  host.appendChild(d);
+ });
+})();
+run();
+})();
+</script>
+</body>
+</html>

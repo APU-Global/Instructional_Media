@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 5 Interactive | Forecasting with Exponential Smoothing</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#1c1c1c;--sand:#edebe8;--bg:#f7f6f4;--card:#fff;--mute:#5d5a56;--ok:#2f7d4f;--warn:#b7791f;--line:#d9d5cf;--blue:#2d6a8f;--gray:#b9b5af}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;line-height:1.55;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:#111;color:#fff;border-radius:20px;display:grid;grid-template-columns:1.1fr 1fr;gap:10px;overflow:hidden;align-items:center;margin-bottom:22px}
+.hero .txt{padding:34px 8px 34px 34px}
+.hero .bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin-bottom:14px}
+.hero .wk{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 12px;border-radius:99px;margin-bottom:10px}
+.hero h1{margin:0 0 10px;font-size:clamp(24px,4vw,34px);line-height:1.15}
+.hero p{margin:0;color:#ddd;font-size:16px}
+.hero svg{width:100%;height:auto;display:block}
+.card{background:var(--card);border-radius:20px;padding:26px 28px;margin-bottom:22px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.card.sand{background:var(--sand)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-size:15px;margin-right:10px;vertical-align:2px}
+.card .sub{color:var(--mute);margin:0 0 16px}
+.callout{background:var(--sand);border-left:5px solid var(--red);border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15px}
+.callout b{color:var(--red-d)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:10px 0 14px}
+label{font-size:14px;font-weight:600}
+select,input[type=number]{font:inherit;padding:6px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+input[type=range]{accent-color:var(--red);width:100%}
+input[type=checkbox],input[type=radio]{accent-color:var(--red);width:17px;height:17px;vertical-align:-3px;margin-right:6px}
+.btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;border-radius:12px;padding:9px 18px;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.alt:hover{background:var(--sand)}
+:focus-visible{outline:3px solid #1c6fd6;outline-offset:2px}
+.chart{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:14px}
+.chart svg{display:block;width:100%;height:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.scroll{overflow-x:auto}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;color:#fff}
+.badge.ok{background:var(--ok)}.badge.no{background:#8a8580}.badge.red{background:var(--red)}
+.stat{background:var(--sand);border-radius:14px;padding:12px 14px}
+.stat .k{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);font-weight:700}
+.stat .v{font-size:26px;font-weight:800;line-height:1.2}
+.stat .d{font-size:13px;color:var(--mute)}
+.fb{margin-top:8px;font-size:14.5px;min-height:22px}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--red-d)}
+.opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.opt{display:flex;align-items:center;gap:8px;font:inherit;font-weight:600;background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 12px 6px 8px;cursor:pointer}
+.opt:hover{border-color:var(--ink)}
+.opt.right{border-color:var(--ok);background:#eaf5ee}.opt.wrong{border-color:var(--red);background:#fbeaea}
+.opt svg{width:44px;height:32px}
+.q{border-top:1px solid var(--line);padding:14px 0}.q:first-of-type{border-top:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mute);margin:8px 2px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:3px;margin-right:6px}
+.foot{text-align:center;color:var(--mute);font-size:13px;margin-top:10px}
+.sr{position:absolute;left:-9999px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero .txt{padding:26px 22px 0}.grid2,.grid3{grid-template-columns:1fr}.card{padding:20px 16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+.wgt{display:flex;align-items:flex-end;gap:8px;height:130px;padding:8px 6px 0}
+.wgt div.c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.wgt div.b{width:100%;background:var(--red);border-radius:6px 6px 0 0;min-height:2px}
+.wgt span{font-size:11.5px;color:var(--mute);margin-top:4px;white-space:nowrap}
+.wgt em{font-style:normal;font-size:11.5px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="txt">
+    <div class="bar"></div>
+    <span class="wk">Week 5</span>
+    <h1>Forecasting with Exponential Smoothing</h1>
+    <p>Help Wine Plus in Napa Valley forecast next month's sales. Tune alpha and see how much weight recent months receive.</p>
+  </div>
+  <svg viewBox="0 0 440 300" role="img" aria-label="Illustration of a wine bottle, a wine glass, and a sales forecast line chart with a dashed forecast">
+    <rect width="440" height="300" fill="#111"/>
+    <path d="M0 250 Q80 205 160 235 T330 225 T440 240 V300 H0Z" fill="#d34147" opacity=".22"/>
+    <path d="M0 270 Q90 235 170 258 T340 250 T440 262 V300 H0Z" fill="#a8353a" opacity=".35"/>
+    <g transform="translate(40,34)">
+      <rect x="18" y="0" width="22" height="22" rx="3" fill="#2b2b2b"/>
+      <path d="M18 22 H40 V52 Q58 70 58 98 V210 Q58 220 48 220 H10 Q0 220 0 210 V98 Q0 70 18 52Z" fill="#3a1a22"/>
+      <rect x="2" y="118" width="54" height="62" rx="4" fill="#f3efe7"/>
+      <text x="29" y="144" text-anchor="middle" font-size="11" font-weight="700" fill="#a8353a" font-family="Georgia,serif">WINE</text>
+      <text x="29" y="160" text-anchor="middle" font-size="13" font-weight="800" fill="#a8353a" font-family="Georgia,serif">PLUS</text>
+      <path d="M10 98 Q10 80 22 66" stroke="#fff" stroke-opacity=".25" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(120,92)">
+      <path d="M0 0 H62 Q66 52 31 66 Q-4 52 0 0Z" fill="#fff" fill-opacity=".16" stroke="#fff" stroke-width="3"/>
+      <path d="M3 26 H59 Q56 52 31 61 Q6 52 3 26Z" fill="#d34147"/>
+      <line x1="31" y1="66" x2="31" y2="118" stroke="#fff" stroke-width="4"/><ellipse cx="31" cy="120" rx="24" ry="5" fill="none" stroke="#fff" stroke-width="4"/>
+    </g>
+    <rect x="212" y="40" width="204" height="150" rx="14" fill="#fff"/>
+    <polyline points="226,150 244,142 262,152 280,128 298,120 316,100 334,108 352,80" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="226,150 244,150 262,146 280,149 298,141 316,132 334,124 352,112 372,104 396,98" fill="none" stroke="#d34147" stroke-width="3.5" stroke-dasharray="8 6" stroke-linecap="round"/>
+    <circle cx="396" cy="98" r="7" fill="#d34147"/>
+    <text x="226" y="64" font-size="13" font-weight="700" fill="#1c1c1c" font-family="Segoe UI,Arial">Sales vs. forecast</text>
+    <rect x="212" y="206" width="204" height="52" rx="12" fill="#fff" fill-opacity=".1"/>
+    <text x="314" y="228" text-anchor="middle" font-size="13" fill="#fff" font-family="Segoe UI,Arial">F(t+1) = αY(t) + (1−α)F(t)</text>
+    <text x="314" y="248" text-anchor="middle" font-size="12" fill="#ddd" font-family="Segoe UI,Arial">recent data count more</text>
+  </svg>
+</header>
+
+<section class="card" aria-labelledby="a1">
+  <h2 id="a1"><span class="n">1</span>Tune the forecast</h2>
+  <p class="sub">Wine Plus monthly sales revenue (in $ thousands). Move alpha and compare the forecast to what actually happened.</p>
+
+  <div class="grid2" style="align-items:end">
+    <div>
+      <label for="alpha">Smoothing parameter α = <b id="av">0.30</b></label>
+      <input type="range" id="alpha" min="0.05" max="0.95" step="0.05" value="0.30">
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute)"><span>0.05 · smooth, slow to react</span><span>0.95 · jumpy, reacts fast</span></div>
+    </div>
+    <div class="controls" style="margin:0">
+      <label><input type="checkbox" id="cmp">Compare α = 0.1 and α = 0.9</label>
+      <button class="btn alt" type="button" id="best">Find the best α</button>
+      <button class="btn alt" type="button" id="a03">Set α = 0.3</button>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin:14px 0">
+    <div class="stat"><div class="k">Damping factor</div><div class="v" id="damp">0.70</div><div class="d">= 1 − α (Excel's input)</div></div>
+    <div class="stat"><div class="k">Next-month forecast</div><div class="v" id="nxt">–</div><div class="d">Jan, in $ thousands</div></div>
+    <div class="stat"><div class="k">Typical error (RMSE)</div><div class="v" id="rmse">–</div><div class="d" id="mae"></div></div>
+  </div>
+
+  <div class="chart" id="chart"></div>
+  <div class="legend" id="lg"></div>
+  <div class="callout" id="msg" aria-live="polite"></div>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:700">Show the forecast table (like your Excel output)</summary>
+    <div class="scroll" style="margin-top:8px"><table id="tbl"></table></div>
+    <p style="font-size:13px;color:var(--mute);margin:6px 0 0">Forecast error = Sales − Forecast. The first forecast is set equal to the first actual value, so there is no error for January.</p>
+  </details>
+</section>
+
+<section class="card sand" aria-labelledby="a2">
+  <h2 id="a2"><span class="n">2</span>Who gets the weight?</h2>
+  <p class="sub">Exponential smoothing is a weighted average. The weight on the observation <i>k</i> months back is α(1 − α)<sup>k</sup>. These bars update with your α.</p>
+  <div class="chart" style="padding:10px 14px 8px"><div class="wgt" id="wgt" role="img" aria-label="Weights on recent months"></div></div>
+  <div class="callout" id="wmsg" aria-live="polite"></div>
+</section>
+
+<section class="card" aria-labelledby="a3">
+  <h2 id="a3"><span class="n">3</span>What if something unexpected happens?</h2>
+  <p class="sub">Forecasts are estimates, not promises. Add a one-month shock (a supply problem, a viral review) and see how each α responds.</p>
+  <div class="controls">
+    <div><label for="shM">Month affected</label><br><select id="shM"></select></div>
+    <div><label for="shP">Change in sales: <b id="shV">0%</b></label><br><input type="range" id="shP" min="-40" max="40" step="5" value="0" style="width:220px"></div>
+    <button class="btn alt" type="button" id="shR">Reset</button>
+  </div>
+  <div class="callout" id="shMsg" aria-live="polite">Set a change other than 0% to see the effect on the next-month forecast.</div>
+</section>
+
+<section class="card" aria-labelledby="a4">
+  <h2 id="a4"><span class="n">4</span>Quick check</h2>
+  <div id="quiz"></div>
+</section>
+
+<p class="foot">Illustrative sales data created for this activity. Use the data file in your course for the assignment.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+function $(id){return document.getElementById(id)}
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e}
+var MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var BASE=[412,398,425,460,495,520,548,530,505,560,640,705];
+var data=BASE.slice();
+
+function smooth(y,a){var f=[null,y[0]];for(var t=1;t<y.length;t++)f.push(a*y[t]+(1-a)*f[t]);return f} // f[t] forecast for period t, f[n] = next
+function stats(y,f){var s=0,ab=0,n=0;for(var t=1;t<y.length;t++){var e=y[t]-f[t];s+=e*e;ab+=Math.abs(e);n++}return {rmse:Math.sqrt(s/n),mae:ab/n}}
+function currentData(){var d=BASE.slice(),m=+$("shM").value,p=+$("shP").value;d[m]=Math.round(BASE[m]*(1+p/100));return d}
+
+(function(){var s=$("shM");MO.forEach(function(m,i){s.add(new Option(m,i))});s.value="10"})();
+
+function draw(){
+ var a=+$("alpha").value;data=currentData();
+ var f=smooth(data,a),st=stats(data,f);
+ $("av").textContent=a.toFixed(2);$("damp").textContent=(1-a).toFixed(2);
+ $("nxt").textContent="$"+Math.round(f[12])+"K";$("rmse").textContent=st.rmse.toFixed(1);$("mae").textContent="Average miss (MAE): "+st.mae.toFixed(1);
+ var W=680,H=360,L=78,R=22,T=22,B=48,pw=W-L-R,ph=H-T-B,lo=300,hi=800,n=13;
+ var sx=function(i){return L+i*(pw/(n-1))},sy=function(v){return T+ph-(v-lo)/(hi-lo)*ph};
+ var s=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Line chart of Wine Plus monthly sales and exponential smoothing forecast"});
+ for(var v=lo;v<=hi;v+=100){s.appendChild(el("line",{x1:L,x2:W-R,y1:sy(v),y2:sy(v),stroke:"#eee"}));s.appendChild(el("text",{x:L-8,y:sy(v)+4,"text-anchor":"end","font-size":12,fill:"#555"},"$"+v+"K"))}
+ MO.concat(["Jan*"]).forEach(function(m,i){s.appendChild(el("text",{x:sx(i),y:T+ph+18,"text-anchor":"middle","font-size":12,fill:i===12?"#d34147":"#555","font-weight":i===12?700:400},m))});
+ s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:T+ph,stroke:"#555","stroke-width":1.5}));s.appendChild(el("line",{x1:L,x2:W-R,y1:T+ph,y2:T+ph,stroke:"#555","stroke-width":1.5}));
+ s.appendChild(el("text",{x:L+pw/2,y:H-6,"text-anchor":"middle","font-size":13,fill:"#333"},"Month (Jan* = next-month forecast)"));
+ s.appendChild(el("text",{x:14,y:T+ph/2,"text-anchor":"middle","font-size":13,fill:"#333",transform:"rotate(-90 14 "+(T+ph/2)+")"},"Sales revenue ($ thousands)"));
+ s.appendChild(el("rect",{x:sx(11.5),y:T,width:sx(12.5)-sx(11.5),height:ph,fill:"#d34147",opacity:.07}));
+ function path(arr,from,col,dash,w){var pts=[];for(var i=from;i<arr.length;i++)pts.push(sx(i).toFixed(1)+","+sy(arr[i]).toFixed(1));s.appendChild(el("polyline",{points:pts.join(" "),fill:"none",stroke:col,"stroke-width":w||3,"stroke-dasharray":dash||"none","stroke-linecap":"round","stroke-linejoin":"round"}))}
+ var lgx="";
+ if($("cmp").checked){
+  path(smooth(data,.1),1,"#2d6a8f","3 6",3);path(smooth(data,.9),1,"#e0a030","3 6",3);
+  lgx='<span><i style="background:#2d6a8f"></i>Forecast, α = 0.1</span><span><i style="background:#e0a030"></i>Forecast, α = 0.9</span>';
+ }
+ path(f,1,"#d34147","9 6",3.5);
+ path(data,0,"#111","none",3.5);
+ data.forEach(function(v,i){var c=el("circle",{cx:sx(i),cy:sy(v),r:4.5,fill:"#111"});c.appendChild(el("title",{},MO[i]+" actual: $"+v+"K"+(i>0?"; forecast $"+f[i].toFixed(0)+"K":"")));s.appendChild(c)});
+ var nc=el("circle",{cx:sx(12),cy:sy(f[12]),r:8,fill:"#d34147",stroke:"#fff","stroke-width":2});nc.appendChild(el("title",{},"Next-month forecast: $"+f[12].toFixed(0)+"K"));s.appendChild(nc);
+ s.appendChild(el("text",{x:sx(12)-12,y:sy(f[12])-14,"text-anchor":"end","font-size":13,"font-weight":800,fill:"#a8353a"},"$"+f[12].toFixed(0)+"K"));
+ $("chart").innerHTML="";$("chart").appendChild(s);
+ $("lg").innerHTML='<span><i style="background:#111"></i>Actual sales</span><span><i style="background:#d34147"></i>Forecast, α = '+a.toFixed(2)+' (dashed)</span>'+lgx;
+ // table
+ var h="<tr><th>Month</th><th>Sales</th><th>Forecast</th><th>Error</th></tr>";
+ for(var t=0;t<12;t++)h+="<tr><td>"+MO[t]+"</td><td>"+data[t]+"</td><td>"+(t?f[t].toFixed(1):"–")+"</td><td>"+(t?(data[t]-f[t]).toFixed(1):"–")+"</td></tr>";
+ h+="<tr><td><b>Jan (next)</b></td><td>–</td><td><b>"+f[12].toFixed(1)+"</b></td><td>–</td></tr>";
+ $("tbl").innerHTML=h;
+ // message
+ var late=data[11]-f[11],m="<b>Reading:</b> ";
+ m+=late>25?"Sales climbed through the year, so the forecast keeps <b>lagging below</b> actual sales (December missed by "+late.toFixed(0)+"K). Exponential smoothing works best without a strong trend, and this data has a holiday-season rise. ":"The forecast tracks the actual line closely. ";
+ m+=a<0.25?"A small α produces a smooth forecast that reacts slowly to new data.":a>0.65?"A large α makes the forecast chase recent changes, so it is jumpy.":"A moderate α balances smoothness and responsiveness.";
+ $("msg").innerHTML=m;
+ weights(a);shock(a);
+}
+function weights(a){
+ var h="",tot=0,K=8;
+ for(var k=0;k<K;k++){var w=a*Math.pow(1-a,k);tot+=w;
+  h+='<div class="c"><em>'+(w*100).toFixed(0)+'%</em><div class="b" style="height:'+(w/Math.max(a,.0001)*100*0.82).toFixed(1)+'%;opacity:'+(1-k*.09).toFixed(2)+'"></div><span>'+(k?k+" mo ago":"latest")+'</span></div>'}
+ $("wgt").innerHTML=h;
+ $("wmsg").innerHTML="<b>Reading:</b> With α = "+a.toFixed(2)+", the latest month gets <b>"+(a*100).toFixed(0)+"%</b> of the weight. The eight months shown carry "+(tot*100).toFixed(0)+"% of the total, and everything older shares the rest. Larger α concentrates the weight on recent data.";
+}
+function shock(a){
+ var p=+$("shP").value;$("shV").textContent=(p>0?"+":"")+p+"%";
+ if(!p){$("shMsg").innerHTML="Set a change other than 0% to see the effect on the next-month forecast.";return}
+ var m=+$("shM").value,base=smooth(BASE,a)[12],now=smooth(currentData(),a)[12],d=now-base;
+ var lo=smooth(currentData(),.1)[12]-smooth(BASE,.1)[12],hi=smooth(currentData(),.9)[12]-smooth(BASE,.9)[12];
+ $("shMsg").innerHTML="<b>Result:</b> A "+(p>0?"+":"")+p+"% change in "+MO[m]+" moves the next-month forecast by <b>"+(d>=0?"+":"")+d.toFixed(1)+"K</b> at your α. At α = 0.1 the shift would be "+(lo>=0?"+":"")+lo.toFixed(1)+"K, at α = 0.9 it would be "+(hi>=0?"+":"")+hi.toFixed(1)+"K. <b>Takeaway:</b> the effect depends on both α and how long ago the shock happened, because a month k periods back carries weight α(1 − α)<sup>k</sup>. Try different months. Good analysts report the forecast and its limits.";
+}
+$("alpha").addEventListener("input",draw);$("cmp").addEventListener("change",draw);
+$("shM").addEventListener("change",draw);$("shP").addEventListener("input",draw);
+$("shR").onclick=function(){$("shP").value=0;draw()};
+$("a03").onclick=function(){$("alpha").value=.3;draw()};
+$("best").onclick=function(){
+ var bestA=.01,bestE=1e9;for(var a=1;a<=99;a++){var al=a/100,e=stats(data,smooth(data,al)).rmse;if(e<bestE){bestE=e;bestA=al}}
+ $("alpha").value=Math.min(.95,Math.max(.05,Math.round(bestA*20)/20));draw();
+ $("msg").innerHTML+=" <b>Best fit:</b> the lowest historical error on this data occurs near α = "+bestA.toFixed(2)+" (the slider is set to the nearest value it allows, between 0.05 and 0.95). A very high best α is a sign of a trend that simple smoothing cannot capture.";
+};
+
+(function(){
+ var Q=[
+  {q:"Alpha is raised from 0.2 to 0.8. What happens to the forecast?",o:["It reacts faster to recent changes in sales.","It becomes smoother and ignores recent changes.","Nothing changes."],a:0,w:"A larger alpha puts more weight on the latest actual value, so the forecast responds quickly."},
+  {q:"In Excel's Exponential Smoothing tool you want α = 0.3. What damping factor do you enter?",o:["0.3","0.7","1.3"],a:1,w:"Damping factor = 1 − α, so 1 − 0.3 = 0.7."},
+  {q:"January sales were 400 and the forecast was 380. What is the forecast error?",o:["−20","+20","380"],a:1,w:"Forecast error = actual − forecast = 400 − 380 = +20."}
+ ];
+ var host=$("quiz");
+ Q.forEach(function(item,i){
+  var d=document.createElement("div");d.className="q";
+  d.innerHTML='<div><b>'+(i+1)+'.</b> '+item.q+'</div><div class="opts"></div><div class="fb" aria-live="polite"></div>';
+  var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),done=false;
+  shuf(item.o.map(function(t,j){return [t,j]})).forEach(function(pr){var t=pr[0],j=pr[1];
+   var b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;
+   b.onclick=function(){if(done)return;if(j===item.a){done=true;b.classList.add("right");fb.className="fb good";fb.textContent="Correct. "+item.w}else{b.classList.add("wrong");b.disabled=true;fb.className="fb bad";fb.textContent="Not quite. Try again."}};
+   box.appendChild(b);
+  });
+  host.appendChild(d);
+ });
+})();
+draw();
+})();
+</script>
+</body>
+</html>

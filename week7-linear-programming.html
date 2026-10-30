@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 7 Interactive | Linear Programming and Optimization</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#1c1c1c;--sand:#edebe8;--bg:#f7f6f4;--card:#fff;--mute:#5d5a56;--ok:#2f7d4f;--warn:#b7791f;--line:#d9d5cf;--blue:#2d6a8f;--gray:#b9b5af}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;line-height:1.55;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:#111;color:#fff;border-radius:20px;display:grid;grid-template-columns:1.1fr 1fr;gap:10px;overflow:hidden;align-items:center;margin-bottom:22px}
+.hero .txt{padding:34px 8px 34px 34px}
+.hero .bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin-bottom:14px}
+.hero .wk{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 12px;border-radius:99px;margin-bottom:10px}
+.hero h1{margin:0 0 10px;font-size:clamp(24px,4vw,34px);line-height:1.15}
+.hero p{margin:0;color:#ddd;font-size:16px}
+.hero svg{width:100%;height:auto;display:block}
+.card{background:var(--card);border-radius:20px;padding:26px 28px;margin-bottom:22px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.card.sand{background:var(--sand)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-size:15px;margin-right:10px;vertical-align:2px}
+.card .sub{color:var(--mute);margin:0 0 16px}
+.callout{background:var(--sand);border-left:5px solid var(--red);border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15px}
+.callout b{color:var(--red-d)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:10px 0 14px}
+label{font-size:14px;font-weight:600}
+select,input[type=number]{font:inherit;padding:6px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+input[type=range]{accent-color:var(--red);width:100%}
+input[type=checkbox],input[type=radio]{accent-color:var(--red);width:17px;height:17px;vertical-align:-3px;margin-right:6px}
+.btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;border-radius:12px;padding:9px 18px;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.alt:hover{background:var(--sand)}
+:focus-visible{outline:3px solid #1c6fd6;outline-offset:2px}
+.chart{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:14px}
+.chart svg{display:block;width:100%;height:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.scroll{overflow-x:auto}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;color:#fff}
+.badge.ok{background:var(--ok)}.badge.no{background:#8a8580}.badge.red{background:var(--red)}
+.stat{background:var(--sand);border-radius:14px;padding:12px 14px}
+.stat .k{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);font-weight:700}
+.stat .v{font-size:26px;font-weight:800;line-height:1.2}
+.stat .d{font-size:13px;color:var(--mute)}
+.fb{margin-top:8px;font-size:14.5px;min-height:22px}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--red-d)}
+.opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.opt{display:flex;align-items:center;gap:8px;font:inherit;font-weight:600;background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 12px 6px 8px;cursor:pointer}
+.opt:hover{border-color:var(--ink)}
+.opt.right{border-color:var(--ok);background:#eaf5ee}.opt.wrong{border-color:var(--red);background:#fbeaea}
+.opt svg{width:44px;height:32px}
+.q{border-top:1px solid var(--line);padding:14px 0}.q:first-of-type{border-top:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mute);margin:8px 2px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:3px;margin-right:6px}
+.foot{text-align:center;color:var(--mute);font-size:13px;margin-top:10px}
+.sr{position:absolute;left:-9999px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero .txt{padding:26px 22px 0}.grid2,.grid3{grid-template-columns:1fr}.card{padding:20px 16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+.form{font-size:15.5px}
+.form code{background:#fff;border-radius:6px;padding:1px 7px;font-family:Consolas,Menlo,monospace;font-size:14.5px}
+.form li{margin:4px 0}
+.param{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px}
+.param label{display:block;font-weight:600;font-size:13.5px}
+.chart{cursor:crosshair}
+.dot{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+@media(max-width:760px){.param{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="txt">
+    <div class="bar"></div>
+    <span class="wk">Week 7</span>
+    <h1>Linear Programming and Optimization</h1>
+    <p>Carroto, a farm in Bakersfield, grows only carrots and potatoes. Find the most profitable acreage mix within its limits.</p>
+  </div>
+  <svg viewBox="0 0 440 300" role="img" aria-label="Illustration of a farm field with carrots and potatoes and a small feasible-region graph">
+    <rect width="440" height="300" fill="#111"/>
+    <circle cx="370" cy="58" r="34" fill="#e0a030"/><g stroke="#e0a030" stroke-width="4" stroke-linecap="round"><line x1="370" y1="8" x2="370" y2="0"/><line x1="420" y1="58" x2="432" y2="58"/><line x1="322" y1="24" x2="314" y2="16"/><line x1="418" y1="24" x2="426" y2="16"/></g>
+    <path d="M0 150 Q110 120 220 140 T440 130 V300 H0Z" fill="#2f5d3a"/>
+    <path d="M0 190 H440 V300 H0Z" fill="#5a3b25"/>
+    <g stroke="#7a5333" stroke-width="5" stroke-linecap="round"><line x1="0" y1="212" x2="440" y2="212"/><line x1="0" y1="238" x2="440" y2="238"/><line x1="0" y1="264" x2="440" y2="264"/><line x1="0" y1="290" x2="440" y2="290"/></g>
+    <g transform="translate(36,176)"><path d="M0 18 L-11 -6 Q0 -12 11 -6Z" fill="#f08a24"/><path d="M0 -6 Q-10 -26 -3 -34 M0 -6 Q0 -30 2 -38 M0 -6 Q10 -24 8 -32" stroke="#4f9a6a" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+    <g transform="translate(84,176)"><path d="M0 18 L-11 -6 Q0 -12 11 -6Z" fill="#f08a24"/><path d="M0 -6 Q-10 -26 -3 -34 M0 -6 Q0 -30 2 -38 M0 -6 Q10 -24 8 -32" stroke="#4f9a6a" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+    <g transform="translate(132,176)"><path d="M0 18 L-11 -6 Q0 -12 11 -6Z" fill="#f08a24"/><path d="M0 -6 Q-10 -26 -3 -34 M0 -6 Q0 -30 2 -38 M0 -6 Q10 -24 8 -32" stroke="#4f9a6a" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+    <g fill="#c9a06a" stroke="#8d6a3d" stroke-width="2"><ellipse cx="60" cy="250" rx="17" ry="11" transform="rotate(-12 60 250)"/><ellipse cx="108" cy="276" rx="18" ry="11" transform="rotate(10 108 276)"/><ellipse cx="156" cy="250" rx="16" ry="10" transform="rotate(-6 156 250)"/><ellipse cx="204" cy="276" rx="17" ry="11" transform="rotate(14 204 276)"/></g>
+    <g fill="#8d6a3d"><circle cx="55" cy="248" r="1.8"/><circle cx="66" cy="253" r="1.8"/><circle cx="104" cy="274" r="1.8"/><circle cx="114" cy="279" r="1.8"/></g>
+    <rect x="236" y="62" width="180" height="168" rx="14" fill="#fff"/>
+    <line x1="256" y1="208" x2="400" y2="208" stroke="#888" stroke-width="2"/><line x1="256" y1="84" x2="256" y2="208" stroke="#888" stroke-width="2"/>
+    <polygon points="256,208 346,208 256,172" fill="#4f9a6a" fill-opacity=".35" stroke="#2f7d4f" stroke-width="3"/>
+    <line x1="256" y1="100" x2="388" y2="208" stroke="#555" stroke-width="2.5" stroke-dasharray="6 5"/>
+    <circle cx="346" cy="208" r="8" fill="#e0a030" stroke="#1c1c1c" stroke-width="2"/>
+    <text x="352" y="190" text-anchor="middle" font-size="12" font-weight="700" fill="#1c1c1c" font-family="Segoe UI,Arial">best corner</text>
+    <text x="268" y="106" font-size="12" fill="#555" font-family="Segoe UI,Arial">land</text>
+    <text x="262" y="224" font-size="12" font-weight="700" fill="#2f7d4f" font-family="Segoe UI,Arial">feasible region</text>
+  </svg>
+</header>
+
+<section class="card sand" aria-labelledby="a1">
+  <h2 id="a1"><span class="n">1</span>Translate the business into a model</h2>
+  <p class="sub">Every linear program starts the same way: what do you control, what do you want, and what limits you? The model below updates when you change the scenario in Step 2.</p>
+  <div class="form" id="form"></div>
+</section>
+
+<section class="card" aria-labelledby="a2">
+  <h2 id="a2"><span class="n">2</span>Explore the feasible region</h2>
+  <p class="sub"><b>Click anywhere on the graph</b> to test an acreage plan. Try to beat the best corner. Slide the profit line to see why the optimum sits at a corner point.</p>
+
+  <details style="margin-bottom:12px">
+    <summary style="cursor:pointer;font-weight:700">Change the scenario (defaults match the Carroto assignment)</summary>
+    <div class="param" id="params" style="margin-top:10px"></div>
+    <div style="margin-top:10px"><button class="btn alt" type="button" id="reset">Reset to Carroto defaults</button></div>
+  </details>
+
+  <div class="controls">
+    <div style="min-width:260px;flex:1"><label for="zs">Profit line: Z = <b id="zv">$0</b></label><input type="range" id="zs" min="0" max="1000000" step="10000" value="400000"></div>
+    <label><input type="checkbox" id="zoom">Zoom to feasible region</label>
+    <button class="btn" type="button" id="reveal">Reveal the optimal corner</button>
+  </div>
+
+  <div class="chart" id="chart"></div>
+  <div class="legend" id="lg"></div>
+  <div class="callout" id="pt" aria-live="polite"><b>Your test point:</b> click the graph to try a plan.</div>
+</section>
+
+<section class="card" aria-labelledby="a3">
+  <h2 id="a3"><span class="n">3</span>Check the corner points</h2>
+  <p class="sub">The best solution of a linear program occurs at a corner of the feasible region, so you only need to compare the corners.</p>
+  <div class="scroll"><table id="corners"></table></div>
+  <div class="callout" id="optMsg" aria-live="polite"></div>
+  <h3 style="margin:18px 0 6px;font-size:17px">Which limits actually bind?</h3>
+  <div class="scroll"><table id="slack"></table></div>
+  <div class="callout" id="slackMsg" aria-live="polite"></div>
+</section>
+
+<section class="card sand" aria-labelledby="a4">
+  <h2 id="a4"><span class="n">4</span>Quick check</h2>
+  <div id="quiz"></div>
+  <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">Excel Solver setup cheat sheet</summary>
+    <div class="form" id="solver" style="margin-top:8px"></div>
+  </details>
+</section>
+
+<p class="foot">Defaults come from the Week 7 Carroto scenario: 250 acres, a $200,000 budget, costs of $2,000 and $5,000 per acre, and profits of $8,000 and $10,000 per acre.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+function $(id){return document.getElementById(id)}
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e}
+function $$(n){return "$"+Math.round(n).toLocaleString()}
+var DEF={land:250,budget:200000,cc:2000,cp:5000,pc:8000,pp:10000,dc:0,dp:0};
+var P={};for(var k in DEF)P[k]=DEF[k];
+var SPEC=[
+ ["land","Total land (acres)",50,500,10],["budget","Budget ($)",50000,500000,5000],
+ ["cc","Cost per acre: carrots ($)",500,6000,100],["cp","Cost per acre: potatoes ($)",1000,10000,100],
+ ["pc","Profit per acre: carrots ($)",2000,16000,500],["pp","Profit per acre: potatoes ($)",2000,16000,500],
+ ["dc","Demand limit, carrots (acres; 0 = none)",0,250,5],["dp","Demand limit, potatoes (acres; 0 = none)",0,250,5]
+];
+(function(){
+ var h=$("params");
+ SPEC.forEach(function(s){
+  var d=document.createElement("div");
+  d.innerHTML='<label for="p_'+s[0]+'">'+s[1]+': <b id="pv_'+s[0]+'"></b></label><input type="range" id="p_'+s[0]+'" min="'+s[2]+'" max="'+s[3]+'" step="'+s[4]+'" value="'+P[s[0]]+'">';
+  d.querySelector("input").oninput=function(){P[s[0]]=+this.value;update()};h.appendChild(d);
+ });
+ $("reset").onclick=function(){for(var k in DEF){P[k]=DEF[k];$("p_"+k).value=DEF[k]}pts=[];best=null;update()};
+})();
+
+/* geometry */
+function cons(){
+ var c=[{id:"land",name:"Land",a:1,b:1,c:P.land,col:"#555",txt:"x + y ≤ "+P.land,use:function(x,y){return x+y},cap:P.land,unit:"acres"},
+        {id:"bud",name:"Budget",a:P.cc,b:P.cp,c:P.budget,col:"#d34147",txt:$$(P.cc)+"x + "+$$(P.cp)+"y ≤ "+$$(P.budget),use:function(x,y){return P.cc*x+P.cp*y},cap:P.budget,unit:"$"}];
+ if(P.dc>0)c.push({id:"dc",name:"Carrot demand",a:1,b:0,c:P.dc,col:"#2d6a8f",txt:"x ≤ "+P.dc,use:function(x,y){return x},cap:P.dc,unit:"acres"});
+ if(P.dp>0)c.push({id:"dp",name:"Potato demand",a:0,b:1,c:P.dp,col:"#7a5ea8",txt:"y ≤ "+P.dp,use:function(x,y){return y},cap:P.dp,unit:"acres"});
+ return c;
+}
+function clip(poly,a,b,c){
+ var out=[],n=poly.length,e=1e-9;
+ for(var i=0;i<n;i++){
+  var p=poly[i],q=poly[(i+1)%n],fp=a*p[0]+b*p[1]-c,fq=a*q[0]+b*q[1]-c,pin=fp<=e,qin=fq<=e;
+  var x=function(){var t=fp/(fp-fq);return [p[0]+t*(q[0]-p[0]),p[1]+t*(q[1]-p[1])]};
+  if(qin){if(!pin)out.push(x());out.push(q)}else if(pin)out.push(x());
+ }
+ return out;
+}
+function region(cs){
+ var B=1e6,poly=[[0,0],[B,0],[B,B],[0,B]];
+ cs.forEach(function(k){poly=clip(poly,k.a,k.b,k.c)});
+ var res=[];poly.forEach(function(v){var dup=res.some(function(r){return Math.abs(r[0]-v[0])<1e-6&&Math.abs(r[1]-v[1])<1e-6});if(!dup)res.push(v)});
+ return res;
+}
+function profit(x,y){return P.pc*x+P.pp*y}
+function feasible(x,y,cs){return x>=-1e-9&&y>=-1e-9&&cs.every(function(k){return k.a*x+k.b*y<=k.c+1e-6})}
+var pts=[],best=null,revealed=false,V=null;
+
+function nice(r){var p=Math.pow(10,Math.floor(Math.log10(r/4))),f=(r/4)/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p}
+
+function update(){
+ SPEC.forEach(function(s){var v=P[s[0]];$("pv_"+s[0]).textContent=(s[0]==="budget"||s[0]==="cc"||s[0]==="cp"||s[0]==="pc"||s[0]==="pp")?$$(v):(v===0&&s[0].charAt(0)==="d"?"none":v)});
+ var cs=cons(),poly=region(cs);
+ var opt=null;poly.forEach(function(v){var z=profit(v[0],v[1]);if(!opt||z>opt.z+1e-6)opt={x:v[0],y:v[1],z:z}});
+ // form
+ var f='<ul style="margin:0;padding-left:20px"><li><b>Decision variables:</b> <code>x</code> = acres of carrots, <code>y</code> = acres of potatoes</li>'
+  +'<li><b>Objective:</b> maximize profit <code>Z = '+$$(P.pc)+'x + '+$$(P.pp)+'y</code></li><li><b>Constraints:</b><ul>'
+  +cs.map(function(k){return '<li><span class="dot" style="background:'+k.col+'"></span>'+k.name+': <code>'+k.txt+'</code></li>'}).join("")
+  +'<li><span class="dot" style="background:#4f9a6a"></span>Non-negativity: <code>x ≥ 0, y ≥ 0</code></li></ul></li></ul>';
+ $("form").innerHTML=f;
+ $("solver").innerHTML='<ol style="margin:0;padding-left:20px"><li>Put x and y in two <b>changing cells</b> (start both at 0).</li><li>Enter the profit formula in one cell and set it as the <b>objective: Max</b>.</li><li>Add each constraint above, including the non-negativity box.</li><li>Choose <b>Simplex LP</b> and click Solve. Your answer should match the starred corner.</li></ol>';
+ // view
+ var xr,yr;
+ if($("zoom").checked&&poly.length>2){var mx=0,my=0;poly.forEach(function(v){mx=Math.max(mx,v[0]);my=Math.max(my,v[1])});xr=Math.max(mx,1)*1.3;yr=Math.max(my,1)*1.3}
+ else{xr=Math.max(P.land,P.budget/P.cc,P.dc||0)*1.08;yr=Math.max(P.land,P.budget/P.cp,P.dp||0)*1.08}
+ V={xr:xr,yr:yr};
+ var maxZ=Math.max(opt?opt.z:0,100000)*1.5,zs=$("zs");zs.max=Math.ceil(maxZ/10000)*10000;
+ draw(cs,poly,opt);corners(poly,opt,cs);
+}
+
+var G={W:700,H:500,L:70,R:24,T:20,B:56};
+function draw(cs,poly,opt){
+ var W=G.W,H=G.H,L=G.L,R=G.R,T=G.T,B=G.B,pw=W-L-R,ph=H-T-B,xr=V.xr,yr=V.yr;
+ var sx=function(v){return L+v/xr*pw},sy=function(v){return T+ph-v/yr*ph};
+ var s=el("svg",{viewBox:"0 0 "+W+" "+H,id:"lpsvg",role:"img","aria-label":"Graph of the constraints and feasible region for acres of carrots and potatoes"});
+ var defs=el("defs",{});var cp=el("clipPath",{id:"cp"});cp.appendChild(el("rect",{x:L,y:T,width:pw,height:ph}));defs.appendChild(cp);s.appendChild(defs);
+ var sxs=nice(xr),sys=nice(yr);
+ for(var v=0;v<=xr;v+=sxs){s.appendChild(el("line",{x1:sx(v),x2:sx(v),y1:T,y2:T+ph,stroke:"#eee"}));s.appendChild(el("text",{x:sx(v),y:T+ph+18,"text-anchor":"middle","font-size":12,fill:"#555"},Math.round(v)))}
+ for(v=0;v<=yr;v+=sys){s.appendChild(el("line",{x1:L,x2:W-R,y1:sy(v),y2:sy(v),stroke:"#eee"}));s.appendChild(el("text",{x:L-8,y:sy(v)+4,"text-anchor":"end","font-size":12,fill:"#555"},Math.round(v)))}
+ s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:T+ph,stroke:"#555","stroke-width":1.5}));s.appendChild(el("line",{x1:L,x2:W-R,y1:T+ph,y2:T+ph,stroke:"#555","stroke-width":1.5}));
+ s.appendChild(el("text",{x:L+pw/2,y:H-10,"text-anchor":"middle","font-size":13.5,"font-weight":600,fill:"#333"},"x = acres of carrots"));
+ s.appendChild(el("text",{x:16,y:T+ph/2,"text-anchor":"middle","font-size":13.5,"font-weight":600,fill:"#333",transform:"rotate(-90 16 "+(T+ph/2)+")"},"y = acres of potatoes"));
+ var g=el("g",{"clip-path":"url(#cp)"});
+ if(poly.length>2)g.appendChild(el("polygon",{points:poly.map(function(v){return sx(v[0]).toFixed(1)+","+sy(v[1]).toFixed(1)}).join(" "),fill:"#4f9a6a","fill-opacity":.3,stroke:"#2f7d4f","stroke-width":3}));
+ cs.forEach(function(k){
+  var x1,y1,x2,y2;
+  if(k.b===0){x1=x2=k.c/k.a;y1=0;y2=yr*1.2}else if(k.a===0){y1=y2=k.c/k.b;x1=0;x2=xr*1.2}else{x1=0;y1=k.c/k.b;x2=xr*1.2;y2=(k.c-k.a*x2)/k.b}
+  g.appendChild(el("line",{x1:sx(x1),y1:sy(y1),x2:sx(x2),y2:sy(y2),stroke:k.col,"stroke-width":3,"stroke-dasharray":k.id==="land"?"9 6":"none"}));
+ });
+ // profit line
+ var Z=+$("zs").value;$("zv").textContent=$$(Z);
+ if(P.pp>0){g.appendChild(el("line",{x1:sx(0),y1:sy(Z/P.pp),x2:sx(xr*1.2),y2:sy((Z-P.pc*xr*1.2)/P.pp),stroke:"#e0a030","stroke-width":3.5}))}
+ s.appendChild(g);
+ // corners
+ poly.forEach(function(v){var isO=opt&&Math.abs(v[0]-opt.x)<1e-6&&Math.abs(v[1]-opt.y)<1e-6;
+  s.appendChild(el("circle",{cx:sx(v[0]),cy:sy(v[1]),r:isO&&revealed?9:5.5,fill:isO&&revealed?"#e0a030":"#fff",stroke:"#1c1c1c","stroke-width":2.2}))});
+ if(revealed&&opt){var left=sx(opt.x)>W-300;s.appendChild(el("text",{x:left?sx(opt.x)-14:sx(opt.x)+14,y:Math.min(sy(opt.y)-16,T+ph-10),"text-anchor":left?"end":"start","font-size":14,"font-weight":800,fill:"#1c1c1c"},"★ Optimal: ("+(Math.round(opt.x*10)/10)+", "+(Math.round(opt.y*10)/10)+") → "+$$(opt.z)))}
+ // user points
+ pts.forEach(function(p,i){s.appendChild(el("circle",{cx:sx(p.x),cy:sy(p.y),r:6,fill:p.ok?"#2d6a8f":"#d34147",stroke:"#fff","stroke-width":2}));if(!p.ok){s.appendChild(el("text",{x:sx(p.x),y:sy(p.y)+4,"text-anchor":"middle","font-size":10,"font-weight":800,fill:"#fff"},"×"))}});
+ $("chart").innerHTML="";$("chart").appendChild(s);
+ s.addEventListener("click",function(e){
+  var r=s.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*W,vy=(e.clientY-r.top)/r.height*H;
+  if(vx<L||vx>W-R||vy<T||vy>T+ph)return;
+  var x=Math.round((vx-L)/pw*xr),y=Math.round((T+ph-vy)/ph*yr),ok=feasible(x,y,cs);
+  pts.push({x:x,y:y,ok:ok});if(pts.length>12)pts.shift();
+  var z=profit(x,y),msg="<b>Your test point:</b> "+x+" acres of carrots, "+y+" acres of potatoes. ";
+  if(ok){msg+="<b style='color:var(--ok)'>Feasible.</b> Profit = "+$$(z)+".";if(!best||z>best.z)best={x:x,y:y,z:z};}
+  else{var bad=cs.filter(function(k){return k.a*x+k.b*y>k.c+1e-6}).map(function(k){return k.name.toLowerCase()});msg+="<b style='color:var(--red-d)'>Not feasible</b>: it breaks the "+bad.join(" and ")+" constraint"+(bad.length>1?"s":"")+".";}
+  if(best&&opt)msg+=" Your best feasible plan so far: "+$$(best.z)+" ("+(best.z/opt.z*100).toFixed(0)+"% of the optimum"+(best.z>=opt.z-1?" — you found it!":"")+").";
+  $("pt").innerHTML=msg;draw(cs,poly,opt);
+ });
+ var lg='<span><i style="background:#2f7d4f;height:8px;opacity:.6"></i>Feasible region</span>';
+ cs.forEach(function(k){lg+='<span><i style="background:'+k.col+'"></i>'+k.name+'</span>'});
+ lg+='<span><i style="background:#e0a030;height:5px"></i>Profit line</span><span>○ Corner points · blue dot = feasible test · red × = infeasible</span>';
+ $("lg").innerHTML=lg;
+}
+
+function corners(poly,opt,cs){
+ var h="<tr><th>Corner (x, y)</th><th>Carrots</th><th>Potatoes</th><th>Profit Z</th></tr>";
+ poly.slice().sort(function(a,b){return profit(b[0],b[1])-profit(a[0],a[1])}).forEach(function(v){
+  var z=profit(v[0],v[1]),isO=opt&&Math.abs(z-opt.z)<1e-6;
+  h+="<tr style='"+(isO?"background:#fff6dc;font-weight:700":"")+"'><td>("+(Math.round(v[0]*10)/10)+", "+(Math.round(v[1]*10)/10)+")"+(isO?" ★":"")+"</td><td>"+(Math.round(v[0]*10)/10)+" ac</td><td>"+(Math.round(v[1]*10)/10)+" ac</td><td>"+$$(z)+"</td></tr>"});
+ $("corners").innerHTML=h;
+ if(!opt){$("optMsg").textContent="No feasible region. Relax a constraint.";return}
+ $("optMsg").innerHTML="<b>Optimal plan:</b> plant <b>"+(Math.round(opt.x*10)/10)+" acres of carrots</b> and <b>"+(Math.round(opt.y*10)/10)+" acres of potatoes</b> for a profit of <b>"+$$(opt.z)+"</b>. Per budget dollar, carrots return $"+(P.pc/P.cc).toFixed(2)+" and potatoes $"+(P.pp/P.cp).toFixed(2)+", so the budget favors "+(P.pc/P.cc>P.pp/P.cp?"carrots":"potatoes")+" when it is the scarce resource.";
+ var t="<tr><th>Constraint</th><th>Used at optimum</th><th>Available</th><th>Slack</th><th>Status</th></tr>";
+ var nb=[];
+ cs.forEach(function(k){var u=k.use(opt.x,opt.y),sl=k.c-u,bind=sl<1e-6;if(!bind)nb.push(k);
+  t+="<tr><td>"+k.name+"</td><td>"+(k.unit==="$"?$$(u):(Math.round(u*10)/10)+" ac")+"</td><td>"+(k.unit==="$"?$$(k.c):k.c+" ac")+"</td><td>"+(k.unit==="$"?$$(sl):(Math.round(sl*10)/10)+" ac")+"</td><td><span class='badge "+(bind?"red":"no")+"'>"+(bind?"Binding":"Slack")+"</span></td></tr>"});
+ $("slack").innerHTML=t;
+ $("slackMsg").innerHTML=nb.length?"<b>Insight:</b> "+nb.map(function(k){return k.name.toLowerCase()}).join(" and ")+" "+(nb.length>1?"are":"is")+" not binding at the optimum. Having more of "+(nb.length>1?"those resources":"that resource")+" would not raise profit, because other limits stop production first. Always check that the model's constraints reflect the real situation.":"<b>Insight:</b> every constraint is binding at the optimum. Relaxing any of them would change the best plan.";
+}
+
+$("zs").addEventListener("input",update);$("zoom").addEventListener("change",update);
+$("reveal").onclick=function(){revealed=true;update()};
+document.addEventListener("input",function(e){if(e.target&&/^p_/.test(e.target.id)){revealed=false;best=null;pts=[]}});
+
+(function(){
+ var Q=[
+  {q:"In the Carroto model, what does the objective function represent?",o:["The total profit to maximize: 8000x + 10000y","The total land available: 250 acres","The number of crops grown"],a:0,w:"The objective is the quantity you want to maximize or minimize, written in terms of the decision variables."},
+  {q:"Where does the best solution of a linear program occur?",o:["Always in the middle of the feasible region","At a corner point of the feasible region","Outside the feasible region"],a:1,w:"For a linear objective, the optimum is at a corner (extreme) point, which is why Solver and graphs focus on corners."},
+  {q:"At the optimum, a constraint has leftover (slack) capacity. What does that tell the farm?",o:["That resource is not what limits profit right now.","The model has an error.","Production should stop."],a:0,w:"Slack means the resource is not fully used, so adding more of it would not increase profit."}
+ ];
+ var host=$("quiz");
+ Q.forEach(function(item,i){
+  var d=document.createElement("div");d.className="q";
+  d.innerHTML='<div><b>'+(i+1)+'.</b> '+item.q+'</div><div class="opts" style="flex-direction:column;align-items:stretch"></div><div class="fb" aria-live="polite"></div>';
+  var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),done=false;
+  shuf(item.o.map(function(t,j){return [t,j]})).forEach(function(pr){var t=pr[0],j=pr[1];
+   var b=document.createElement("button");b.type="button";b.className="opt";b.style.textAlign="left";b.textContent=t;
+   b.onclick=function(){if(done)return;if(j===item.a){done=true;b.classList.add("right");fb.className="fb good";fb.textContent="Correct. "+item.w}else{b.classList.add("wrong");b.disabled=true;fb.className="fb bad";fb.textContent="Not quite. Try again."}};
+   box.appendChild(b);
+  });
+  host.appendChild(d);
+ });
+})();
+update();
+})();
+</script>
+</body>
+</html>

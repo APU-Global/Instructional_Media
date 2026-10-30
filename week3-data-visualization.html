@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 3 Interactive | The Art and Science of Data Visualization</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#1c1c1c;--sand:#edebe8;--bg:#f7f6f4;--card:#fff;--mute:#5d5a56;--ok:#2f7d4f;--warn:#b7791f;--line:#d9d5cf;--blue:#2d6a8f;--gray:#b9b5af}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;line-height:1.55;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:#111;color:#fff;border-radius:20px;display:grid;grid-template-columns:1.1fr 1fr;gap:10px;overflow:hidden;align-items:center;margin-bottom:22px}
+.hero .txt{padding:34px 8px 34px 34px}
+.hero .bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin-bottom:14px}
+.hero .wk{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 12px;border-radius:99px;margin-bottom:10px}
+.hero h1{margin:0 0 10px;font-size:clamp(24px,4vw,34px);line-height:1.15}
+.hero p{margin:0;color:#ddd;font-size:16px}
+.hero svg{width:100%;height:auto;display:block}
+.card{background:var(--card);border-radius:20px;padding:26px 28px;margin-bottom:22px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.card.sand{background:var(--sand)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-size:15px;margin-right:10px;vertical-align:2px}
+.card .sub{color:var(--mute);margin:0 0 16px}
+.callout{background:var(--sand);border-left:5px solid var(--red);border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15px}
+.callout b{color:var(--red-d)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:10px 0 14px}
+label{font-size:14px;font-weight:600}
+select,input[type=number]{font:inherit;padding:6px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+input[type=range]{accent-color:var(--red);width:100%}
+input[type=checkbox],input[type=radio]{accent-color:var(--red);width:17px;height:17px;vertical-align:-3px;margin-right:6px}
+.btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;border-radius:12px;padding:9px 18px;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.alt:hover{background:var(--sand)}
+:focus-visible{outline:3px solid #1c6fd6;outline-offset:2px}
+.chart{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:14px}
+.chart svg{display:block;width:100%;height:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.scroll{overflow-x:auto}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;color:#fff}
+.badge.ok{background:var(--ok)}.badge.no{background:#8a8580}.badge.red{background:var(--red)}
+.stat{background:var(--sand);border-radius:14px;padding:12px 14px}
+.stat .k{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);font-weight:700}
+.stat .v{font-size:26px;font-weight:800;line-height:1.2}
+.stat .d{font-size:13px;color:var(--mute)}
+.fb{margin-top:8px;font-size:14.5px;min-height:22px}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--red-d)}
+.opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.opt{display:flex;align-items:center;gap:8px;font:inherit;font-weight:600;background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 12px 6px 8px;cursor:pointer}
+.opt:hover{border-color:var(--ink)}
+.opt.right{border-color:var(--ok);background:#eaf5ee}.opt.wrong{border-color:var(--red);background:#fbeaea}
+.opt svg{width:44px;height:32px}
+.q{border-top:1px solid var(--line);padding:14px 0}.q:first-of-type{border-top:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mute);margin:8px 2px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:3px;margin-right:6px}
+.foot{text-align:center;color:var(--mute);font-size:13px;margin-top:10px}
+.sr{position:absolute;left:-9999px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero .txt{padding:26px 22px 0}.grid2,.grid3{grid-template-columns:1fr}.card{padding:20px 16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="txt">
+    <div class="bar"></div>
+    <span class="wk">Week 3</span>
+    <h1>The Art and Science of Data Visualization</h1>
+    <p>Choose the right chart, see how design choices change the story, and weigh trade-offs across five neighborhoods.</p>
+  </div>
+  <svg viewBox="0 0 440 300" role="img" aria-label="Illustration of a bar chart, line chart and scatter plot viewed through a magnifying glass">
+    <rect x="0" y="0" width="440" height="300" fill="#111"/>
+    <circle cx="350" cy="60" r="120" fill="#d34147" opacity=".16"/>
+    <rect x="40" y="40" width="250" height="190" rx="14" fill="#fff"/>
+    <line x1="62" y1="205" x2="270" y2="205" stroke="#999" stroke-width="2"/>
+    <line x1="62" y1="62" x2="62" y2="205" stroke="#999" stroke-width="2"/>
+    <rect x="78" y="150" width="30" height="55" rx="3" fill="#b9b5af"/>
+    <rect x="118" y="112" width="30" height="93" rx="3" fill="#b9b5af"/>
+    <rect x="158" y="82" width="30" height="123" rx="3" fill="#d34147"/>
+    <rect x="198" y="132" width="30" height="73" rx="3" fill="#b9b5af"/>
+    <rect x="238" y="165" width="22" height="40" rx="3" fill="#b9b5af"/>
+    <polyline points="78,140 118,120 158,90 198,112 255,70" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 7"/>
+    <g fill="#111"><circle cx="78" cy="140" r="4"/><circle cx="118" cy="120" r="4"/><circle cx="158" cy="90" r="4"/><circle cx="198" cy="112" r="4"/><circle cx="255" cy="70" r="4"/></g>
+    <rect x="236" y="190" width="170" height="86" rx="12" fill="#fff"/>
+    <g fill="#2d6a8f"><circle cx="258" cy="258" r="5"/><circle cx="278" cy="246" r="5"/><circle cx="296" cy="250" r="5"/><circle cx="318" cy="232" r="5"/><circle cx="338" cy="236" r="5"/><circle cx="362" cy="214" r="5"/><circle cx="384" cy="206" r="5"/></g>
+    <line x1="252" y1="262" x2="392" y2="202" stroke="#d34147" stroke-width="3" stroke-linecap="round"/>
+    <g transform="translate(330,70)"><circle cx="0" cy="0" r="46" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="8"/><line x1="33" y1="33" x2="72" y2="72" stroke="#fff" stroke-width="12" stroke-linecap="round"/></g>
+    <g transform="translate(330,70)" fill="#fff"><rect x="-26" y="2" width="12" height="22" rx="2"/><rect x="-8" y="-16" width="12" height="40" rx="2" fill="#d34147"/><rect x="10" y="-4" width="12" height="28" rx="2"/></g>
+  </svg>
+</header>
+
+<!-- ============ ACTIVITY 1 ============ -->
+<section class="card" aria-labelledby="a1">
+  <h2 id="a1"><span class="n">1</span>Match the chart to the question</h2>
+  <p class="sub">Start with the business question. Pick the chart type that answers it best.</p>
+  <div id="quiz"></div>
+  <div class="callout" id="quizScore" aria-live="polite"><b>Score:</b> 0 of 4 answered.</div>
+</section>
+
+<!-- ============ ACTIVITY 2 ============ -->
+<section class="card" aria-labelledby="a2">
+  <h2 id="a2"><span class="n">2</span>Neighborhood chart studio</h2>
+  <p class="sub">You are choosing a home in one of five neighborhoods. Build a chart, then change the design choices and watch the message change.</p>
+
+  <div class="controls">
+    <div><label for="ctype">Chart type</label><br>
+      <select id="ctype"><option value="bar">Bar chart (compare categories)</option><option value="scatter">Scatter plot (two variables)</option></select></div>
+    <div id="yWrap"><label for="fy" id="fyLab">Factor</label><br><select id="fy"></select></div>
+    <div id="xWrap" hidden><label for="fx">X-axis factor</label><br><select id="fx"></select></div>
+    <div><label for="hl">Highlight</label><br><select id="hl"></select></div>
+  </div>
+  <div class="controls">
+    <label><input type="checkbox" id="gray" checked>Start with gray (highlight one, mute the rest)</label>
+    <label id="sortWrap"><input type="checkbox" id="sort">Sort bars</label>
+    <label id="truncWrap"><input type="checkbox" id="trunc">Truncate the axis (don't start at zero)</label>
+  </div>
+
+  <div class="chart" id="studio"></div>
+  <div class="callout" id="studioMsg" aria-live="polite"></div>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:700">View the data table</summary>
+    <div class="scroll" style="margin-top:8px"><table id="dataTable"></table></div>
+    <p class="sub" style="margin-top:8px;font-size:13px">Illustrative data created for this activity. For the assignment, use the data file in your course.</p>
+  </details>
+</section>
+
+<!-- ============ ACTIVITY 3 ============ -->
+<section class="card sand" aria-labelledby="a3">
+  <h2 id="a3"><span class="n">3</span>Priority scorecard: what matters most to you?</h2>
+  <p class="sub">Set how much each factor matters and which direction is better. The ranking updates instantly, which shows why different priorities lead to different visualizations and recommendations.</p>
+  <div id="sliders"></div>
+  <div class="chart" id="rank" style="padding:14px 16px;margin-top:10px"></div>
+  <div class="callout" id="rankMsg" aria-live="polite"></div>
+  <p style="margin-bottom:0"><b>Reflect:</b> Which single chart would best show your top-ranked trade-off to a reader? Write 2 to 3 sentences you could reuse in your 100 to 300 word interpretation.</p>
+</section>
+
+<p class="foot">Based on the Week 3 Deep Dive: choose the chart for the question, simplify, label everything, and design honestly.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+var N=["Maple Heights","Harbor View","Cedar Park","Lakeside","Old Town"];
+var F={
+ util:{label:"Utility cost",unit:"$/month",fmt:function(v){return "$"+v},v:[182,241,156,207,134],dir:-1},
+ ins:{label:"Insurance premium",unit:"$/year",fmt:function(v){return "$"+v.toLocaleString()},v:[1480,2310,1260,1920,1710],dir:-1},
+ sqft:{label:"Home size",unit:"sq ft",fmt:function(v){return v.toLocaleString()+" sq ft"},v:[2150,1680,2480,1950,1420],dir:1},
+ crime:{label:"Violent crime index",unit:"index (lower is safer)",fmt:function(v){return String(v)},v:[38,72,21,45,63],dir:-1},
+ age:{label:"Average homeowner age",unit:"years",fmt:function(v){return v+" yrs"},v:[41,36,47,39,33],dir:1}
+};
+var KEYS=Object.keys(F);
+var PAL=["#d34147","#2d6a8f","#e0a030","#4f9a6a","#7a5ea8"];
+var GRAY="#b9b5af";
+function $(id){return document.getElementById(id)}
+function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e}
+function niceMax(v){var p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p}
+
+/* ---------- Activity 1 ---------- */
+var ICON={
+ bar:'<svg viewBox="0 0 44 32"><rect x="5" y="16" width="7" height="12" fill="#2d6a8f"/><rect x="16" y="8" width="7" height="20" fill="#d34147"/><rect x="27" y="12" width="7" height="16" fill="#2d6a8f"/><line x1="3" y1="29" x2="41" y2="29" stroke="#555" stroke-width="1.5"/></svg>',
+ line:'<svg viewBox="0 0 44 32"><polyline points="4,24 14,16 24,20 40,6" fill="none" stroke="#d34147" stroke-width="2.5" stroke-linejoin="round"/><line x1="3" y1="29" x2="41" y2="29" stroke="#555" stroke-width="1.5"/></svg>',
+ scatter:'<svg viewBox="0 0 44 32"><g fill="#2d6a8f"><circle cx="8" cy="24" r="2.5"/><circle cx="15" cy="19" r="2.5"/><circle cx="21" cy="21" r="2.5"/><circle cx="28" cy="13" r="2.5"/><circle cx="36" cy="9" r="2.5"/></g><line x1="3" y1="29" x2="41" y2="29" stroke="#555" stroke-width="1.5"/></svg>',
+ box:'<svg viewBox="0 0 44 32"><line x1="22" y1="3" x2="22" y2="29" stroke="#555" stroke-width="1.5"/><rect x="12" y="10" width="20" height="12" fill="#fff" stroke="#d34147" stroke-width="2"/><line x1="12" y1="16" x2="32" y2="16" stroke="#d34147" stroke-width="2"/><line x1="16" y1="3" x2="28" y2="3" stroke="#555" stroke-width="1.5"/><line x1="16" y1="29" x2="28" y2="29" stroke="#555" stroke-width="1.5"/></svg>'
+};
+var NAMES={bar:"Bar chart",line:"Line chart",scatter:"Scatter plot",box:"Box-and-whisker"};
+var QS=[
+ {q:"Which of the five neighborhoods has the lowest monthly utility cost?",a:"bar",why:"Bars compare a value across separate categories, and length is easy to judge."},
+ {q:"How has the average insurance premium in one neighborhood changed over the last ten years?",a:"line",why:"Lines show change over time and make the direction of a trend easy to see."},
+ {q:"Do larger homes tend to sit in neighborhoods with a lower crime index?",a:"scatter",why:"A scatter plot shows the relationship between two numeric variables, one point per neighborhood."},
+ {q:"How spread out are homeowner ages within one neighborhood, and are there outliers?",a:"box",why:"A box-and-whisker plot summarizes the distribution: median, quartiles, spread, and outliers."}
+];
+var answered=0,correct=0;
+(function(){
+ var host=$("quiz");
+ QS.forEach(function(item,i){
+  var d=document.createElement("div");d.className="q";
+  d.innerHTML='<div><b>'+(i+1)+'.</b> '+item.q+'</div><div class="opts" role="group" aria-label="Chart choices for question '+(i+1)+'"></div><div class="fb" aria-live="polite"></div>';
+  var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),done=false;
+  Object.keys(ICON).forEach(function(k){
+   var b=document.createElement("button");b.type="button";b.className="opt";b.innerHTML=ICON[k]+"<span>"+NAMES[k]+"</span>";
+   b.addEventListener("click",function(){
+    if(done)return;
+    if(k===item.a){done=true;answered++;correct++;b.classList.add("right");fb.className="fb good";fb.textContent="Correct. "+item.why;upd();}
+    else{b.classList.add("wrong");b.disabled=true;fb.className="fb bad";fb.textContent="Not quite. Think about what the question is asking you to see, then try again.";}
+   });
+   box.appendChild(b);
+  });
+  host.appendChild(d);
+ });
+ function upd(){$("quizScore").innerHTML="<b>Score:</b> "+correct+" of "+QS.length+" answered correctly."+(correct===QS.length?" Nice work: you matched every question to its chart.":"")}
+})();
+
+/* ---------- Activity 2 ---------- */
+var fy=$("fy"),fx=$("fx"),hl=$("hl");
+KEYS.forEach(function(k,i){fy.add(new Option(F[k].label,k));fx.add(new Option(F[k].label,k))});
+fy.value="crime";fx.value="sqft";
+hl.add(new Option("None","-1"));N.forEach(function(n,i){hl.add(new Option(n,String(i)))});hl.value="2";
+
+function corr(a,b){var n=a.length,ma=a.reduce(function(s,x){return s+x},0)/n,mb=b.reduce(function(s,x){return s+x},0)/n,sa=0,sb=0,sp=0;for(var i=0;i<n;i++){sa+=Math.pow(a[i]-ma,2);sb+=Math.pow(b[i]-mb,2);sp+=(a[i]-ma)*(b[i]-mb)}return sp/Math.sqrt(sa*sb)}
+
+function drawBar(){
+ var k=fy.value,f=F[k],vals=f.v.slice(),idx=N.map(function(_,i){return i});
+ if($("sort").checked)idx.sort(function(a,b){return vals[b]-vals[a]});
+ var W=640,H=380,L=74,R=20,T=46,B=70,pw=W-L-R,ph=H-T-B;
+ var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
+ var top=niceMax(mx*1.05),base=0;
+ if($("trunc").checked){var step=niceMax((mx-mn)||1)/5;base=Math.floor(mn*0.9/step)*step;top=Math.ceil(mx*1.03/step)*step}
+ var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Bar chart of "+f.label+" by neighborhood"});
+ svg.appendChild(el("text",{x:L,y:26,"font-size":17,"font-weight":700,fill:"#1c1c1c"},f.label+" by neighborhood"));
+ var y=function(v){return T+ph-(v-base)/(top-base)*ph};
+ for(var t=0;t<=5;t++){var v=base+(top-base)*t/5,yy=y(v);
+  svg.appendChild(el("line",{x1:L,x2:W-R,y1:yy,y2:yy,stroke:t?"#e6e3de":"#555","stroke-width":t?1:1.5}));
+  svg.appendChild(el("text",{x:L-8,y:yy+4,"text-anchor":"end","font-size":12,fill:"#555"},(Math.round(v*10)/10).toLocaleString()));}
+ var bw=pw/N.length,h=+hl.value,gray=$("gray").checked;
+ idx.forEach(function(i,j){
+  var x=L+j*bw+bw*0.17,w=bw*0.66,yy=y(vals[i]);
+  var col=gray?(i===h?"#d34147":GRAY):PAL[i%PAL.length];
+  svg.appendChild(el("rect",{x:x,y:yy,width:w,height:Math.max(0,T+ph-yy),fill:col,rx:3}));
+  svg.appendChild(el("text",{x:x+w/2,y:yy-6,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"#1c1c1c"},f.fmt(vals[i])));
+  var nm=N[i].split(" ");
+  nm.forEach(function(p,q){svg.appendChild(el("text",{x:x+w/2,y:T+ph+20+q*15,"text-anchor":"middle","font-size":13,fill:"#333"},p))});
+ });
+ var yl=el("text",{x:16,y:T+ph/2,"text-anchor":"middle","font-size":13,fill:"#333",transform:"rotate(-90 16 "+(T+ph/2)+")"},f.unit);svg.appendChild(yl);
+ if($("trunc").checked){svg.appendChild(el("text",{x:W-R,y:26,"text-anchor":"end","font-size":12,"font-weight":700,fill:"#d34147"},"Axis starts at "+Math.round(base).toLocaleString()+", not 0"))}
+ // message
+ var o=vals.map(function(v,i){return i}).sort(function(a,b){return vals[a]-vals[b]}),lo=o[0],hi=o[o.length-1];
+ var trueR=vals[hi]/vals[lo],visR=(vals[hi]-base)/(vals[lo]-base);
+ var msg="<b>Reading:</b> "+N[lo]+" is lowest ("+f.fmt(vals[lo])+") and "+N[hi]+" is highest ("+f.fmt(vals[hi])+"). The true gap is "+trueR.toFixed(2)+"x.";
+ if($("trunc").checked)msg+=" <b>But with the truncated axis, the tallest bar looks "+visR.toFixed(1)+"x the shortest.</b> Truncated axes exaggerate differences, so bars should start at zero.";
+ else msg+=" Bars start at zero, so the bar lengths match the real differences.";
+ if(gray)msg+=" Gray focus directs attention to "+(h>=0?N[h]:"nothing yet (pick a highlight)")+".";
+ return {svg:svg,msg:msg};
+}
+
+function drawScatter(){
+ var kx=fx.value,ky=fy.value,X=F[kx],Y=F[ky];
+ var W=640,H=380,L=74,R=30,T=46,B=58,pw=W-L-R,ph=H-T-B;
+ var xs=X.v,ys=Y.v,xmn=Math.min.apply(null,xs),xmx=Math.max.apply(null,xs),ymn=Math.min.apply(null,ys),ymx=Math.max.apply(null,ys);
+ var xp=(xmx-xmn)*0.15||1,yp=(ymx-ymn)*0.15||1,x0=xmn-xp,x1=xmx+xp,y0=ymn-yp,y1=ymx+yp;
+ var sx=function(v){return L+(v-x0)/(x1-x0)*pw},sy=function(v){return T+ph-(v-y0)/(y1-y0)*ph};
+ var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Scatter plot of "+Y.label+" against "+X.label});
+ svg.appendChild(el("text",{x:L,y:26,"font-size":17,"font-weight":700,fill:"#1c1c1c"},Y.label+" vs. "+X.label.toLowerCase()));
+ for(var t=0;t<=4;t++){
+  var vy=y0+(y1-y0)*t/4,yy=sy(vy),vx=x0+(x1-x0)*t/4,xx=sx(vx);
+  svg.appendChild(el("line",{x1:L,x2:W-R,y1:yy,y2:yy,stroke:"#e6e3de"}));
+  svg.appendChild(el("line",{x1:xx,x2:xx,y1:T,y2:T+ph,stroke:"#f0eeea"}));
+  svg.appendChild(el("text",{x:L-8,y:yy+4,"text-anchor":"end","font-size":12,fill:"#555"},Math.round(vy).toLocaleString()));
+  svg.appendChild(el("text",{x:xx,y:T+ph+18,"text-anchor":"middle","font-size":12,fill:"#555"},Math.round(vx).toLocaleString()));}
+ svg.appendChild(el("line",{x1:L,x2:L,y1:T,y2:T+ph,stroke:"#555","stroke-width":1.5}));
+ svg.appendChild(el("line",{x1:L,x2:W-R,y1:T+ph,y2:T+ph,stroke:"#555","stroke-width":1.5}));
+ svg.appendChild(el("text",{x:L+pw/2,y:H-10,"text-anchor":"middle","font-size":13,fill:"#333"},X.label+" ("+X.unit+")"));
+ svg.appendChild(el("text",{x:16,y:T+ph/2,"text-anchor":"middle","font-size":13,fill:"#333",transform:"rotate(-90 16 "+(T+ph/2)+")"},Y.label+" ("+Y.unit+")"));
+ var h=+hl.value,gray=$("gray").checked;
+ N.forEach(function(n,i){
+  var cx=sx(xs[i]),cy=sy(ys[i]),col=gray?(i===h?"#d34147":GRAY):PAL[i%PAL.length];
+  svg.appendChild(el("circle",{cx:cx,cy:cy,r:i===h&&gray?10:8,fill:col,stroke:"#fff","stroke-width":2}));
+  var right=cx<W-R-90;
+  svg.appendChild(el("text",{x:cx+(right?13:-13),y:cy+4,"text-anchor":right?"start":"end","font-size":12.5,"font-weight":i===h?700:400,fill:"#222"},n));
+ });
+ var r=corr(xs,ys);
+ var strength=Math.abs(r)>0.8?"strong":Math.abs(r)>0.5?"moderate":"weak";
+ var msg="<b>Reading:</b> correlation r = "+r.toFixed(2)+" ("+strength+", "+(r>=0?"positive":"negative")+"). ";
+ msg+=kx===ky?"You chose the same factor on both axes, so the points fall on a perfect line. Pick two different factors. ":"With only five points, treat this as a pattern to explore, not proof. ";
+ msg+="A scatter plot answers 'are these two factors related?'. A bar chart answers 'which neighborhood is highest or lowest?'.";
+ return {svg:svg,msg:msg};
+}
+
+function renderStudio(){
+ var sc=$("ctype").value==="scatter";
+ $("xWrap").hidden=!sc;$("sortWrap").style.display=sc?"none":"";$("truncWrap").style.display=sc?"none":"";
+ $("fyLab").textContent=sc?"Y-axis factor":"Factor";
+ var r=sc?drawScatter():drawBar();
+ var s=$("studio");s.innerHTML="";s.appendChild(r.svg);$("studioMsg").innerHTML=r.msg;
+}
+["ctype","fy","fx","hl","gray","sort","trunc"].forEach(function(id){$(id).addEventListener("input",renderStudio);$(id).addEventListener("change",renderStudio)});
+
+(function(){
+ var t=$("dataTable"),h="<tr><th>Neighborhood</th>"+KEYS.map(function(k){return "<th>"+F[k].label+"<br><span style='font-weight:400;text-transform:none'>"+F[k].unit+"</span></th>"}).join("")+"</tr>";
+ N.forEach(function(n,i){h+="<tr><td>"+n+"</td>"+KEYS.map(function(k){return "<td>"+F[k].v[i].toLocaleString()+"</td>"}).join("")+"</tr>"});
+ t.innerHTML=h;
+})();
+
+/* ---------- Activity 3 ---------- */
+var W={util:3,ins:3,sqft:3,crime:5,age:0},DIR={util:-1,ins:-1,sqft:1,crime:-1,age:1};
+(function(){
+ var host=$("sliders");host.className="grid3";host.style.marginBottom="6px";
+ KEYS.forEach(function(k){
+  var d=document.createElement("div");d.className="stat";
+  d.innerHTML='<div class="k">'+F[k].label+'</div><label class="sr" for="w_'+k+'">Importance of '+F[k].label+'</label><input type="range" id="w_'+k+'" min="0" max="5" step="1" value="'+W[k]+'"><div class="d"><span id="wv_'+k+'"></span></div><label style="font-weight:400;font-size:13px">Better when: <select id="d_'+k+'" aria-label="Direction for '+F[k].label+'"><option value="-1">lower</option><option value="1">higher</option></select></label>';
+  host.appendChild(d);
+  var rng=d.querySelector("input"),sel=d.querySelector("select");sel.value=String(DIR[k]);
+  rng.addEventListener("input",function(){W[k]=+rng.value;renderRank()});
+  sel.addEventListener("change",function(){DIR[k]=+sel.value;renderRank()});
+ });
+})();
+function renderRank(){
+ var tw=0;KEYS.forEach(function(k){tw+=W[k];$("wv_"+k).textContent="Importance: "+W[k]+" of 5"});
+ var host=$("rank");
+ if(!tw){host.innerHTML="<p style='margin:6px'>Give at least one factor an importance above 0.</p>";$("rankMsg").innerHTML="";return}
+ var sc=N.map(function(n,i){
+  var s=0;KEYS.forEach(function(k){var v=F[k].v,mn=Math.min.apply(null,v),mx=Math.max.apply(null,v),z=(v[i]-mn)/(mx-mn);if(DIR[k]<0)z=1-z;s+=W[k]*z});
+  return {n:n,s:s/tw*100,i:i}}).sort(function(a,b){return b.s-a.s});
+ host.innerHTML=sc.map(function(o,j){
+  return '<div style="display:grid;grid-template-columns:120px 1fr 46px;gap:10px;align-items:center;margin:7px 0"><div style="font-weight:'+(j?500:800)+'">'+(j+1)+'. '+o.n+'</div><div style="background:#f0eeea;border-radius:8px;height:22px;overflow:hidden"><div style="height:100%;width:'+o.s.toFixed(1)+'%;background:'+(j?GRAY:"#d34147")+';border-radius:8px"></div></div><div style="text-align:right;font-weight:700">'+o.s.toFixed(0)+'</div></div>'}).join("");
+ var top=sc[0],gap=sc[0].s-sc[1].s;
+ $("rankMsg").innerHTML="<b>Result:</b> With these priorities, <b>"+top.n+"</b> ranks first"+(gap<5?", but the lead over "+sc[1].n+" is small ("+gap.toFixed(0)+" points), so a different chart or priority could change the recommendation.":" by "+gap.toFixed(0)+" points. Scores are rescaled 0 to 100 between the best and worst neighborhood on each factor.");
+}
+renderStudio();renderRank();
+})();
+</script>
+</body>
+</html>
