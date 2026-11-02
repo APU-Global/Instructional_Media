@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 510 Week 1: Testing vs. Assessment</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--ink:#2b2b2b;--mut:#5b5b5b;--ok:#1d7a4d;--okbg:#e6f4ec;--bad:#a8353a;--badbg:#fbeaea;color-scheme:light}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:#fff}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.45;font-size:15px}
+.app{height:100%;overflow-y:auto;overflow-x:hidden;padding:8px 14px 10px;display:flex;flex-direction:column;gap:8px}
+header{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--sand);padding-bottom:6px}
+header .ico{flex:0 0 44px;width:44px;height:44px}
+.kicker{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);font-weight:700}
+h1{font-size:1.35rem;margin:0;line-height:1.2}
+.sub{margin:2px 0 0;color:var(--mut);font-size:.92rem}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{font:inherit;font-weight:600;border:2px solid var(--sand);background:#fff;color:var(--ink);padding:6px 14px;border-radius:999px;cursor:pointer;min-height:44px}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.tab:hover{border-color:var(--red)}
+button:focus-visible{outline:3px solid #1a4fd6;outline-offset:2px}
+.panel{flex:1;min-height:0;display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:12px;background:var(--sand);border-radius:18px;padding:10px}
+.panel[hidden]{display:none}
+.gfx{background:#fff;border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center;min-height:0}
+.gfx svg{width:100%;height:auto;max-height:100%;display:block}
+.qa{background:#fff;border-radius:14px;padding:10px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.intro{font-size:.9rem;color:var(--mut);margin:0}
+.count{font-size:.8rem;font-weight:700;color:var(--red-d);text-transform:uppercase;letter-spacing:.05em}
+.bar{height:6px;background:var(--sand);border-radius:6px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--red);transition:width .3s}
+.q{font-size:1rem;font-weight:600;margin:2px 0}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{font:inherit;text-align:left;background:#fcfcfc;border:2px solid #ddd;border-left:6px solid var(--red);border-radius:12px;padding:6px 12px;cursor:pointer;min-height:42px;color:var(--ink)}
+.opt:hover:not(:disabled){background:#fff5f5;border-color:var(--red)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--okbg);border-color:var(--ok);border-left-color:var(--ok)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.fb{min-height:0;font-size:.95rem}
+.fb .box{border-radius:12px;padding:7px 12px;font-size:.9rem}
+.fb .ok{background:var(--okbg);border-left:6px solid var(--ok)}
+.fb .no{background:var(--badbg);border-left:6px solid var(--bad)}
+.nav{margin-top:auto;display:flex;justify-content:flex-end;min-height:44px}
+.btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;border-radius:999px;padding:8px 22px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--red-d)}
+.btn[hidden]{display:none}
+.done{text-align:center;padding:10px}
+.done .score{font-size:2.2rem;font-weight:800;color:var(--red-d)}
+.note{font-size:.78rem;color:var(--mut);margin:0}
+@media (max-width:680px){.panel{grid-template-columns:1fr}.gfx svg{max-height:200px}h1{font-size:1.15rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><svg class="ico" viewBox="0 0 52 52" role="img" aria-label="Clipboard with a checkmark"><rect x="9" y="7" width="34" height="40" rx="6" fill="#edebe8" stroke="#d34147" stroke-width="3"/><rect x="18" y="3" width="16" height="9" rx="3" fill="#d34147"/><path d="M16 28l7 7 13-15" fill="none" stroke="#a8353a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div class="kicker">PSYC 510 &middot; Week 1 Interactive</div><h1>Testing vs. Assessment</h1><p class="sub">Practice the core vocabulary: reliability, validity, testing, and assessment.</p></div></header>
+<div class="tabs" role="tablist" aria-label="Activities"><button type="button" role="tab" class="tab" aria-selected="false">Hit the Target: Reliability &amp; Validity</button><button type="button" role="tab" class="tab" aria-selected="false">Testing or Assessment?</button></div>
+<section class="panel" id="p1" role="tabpanel"><div class="gfx"></div><div class="qa"></div></section><section class="panel" id="p2" role="tabpanel"><div class="gfx"></div><div class="qa"></div></section>
+</div>
+<script>
+function Quiz(root, items, o){
+  o=o||{}; var i=0, score=0, picks=[], answered=false;
+  var gfx=root.querySelector('.gfx'), qa=root.querySelector('.qa');
+  function esc(s){return s}
+  function draw(ans, it){ gfx.innerHTML = o.gfx ? o.gfx(i,picks,ans,it) : it.svg; }
+  function render(){
+    answered=false; var it=items[i]; draw(false,it);
+    var opts=it.opts.map(function(t,k){return '<button type="button" class="opt" data-k="'+k+'">'+t+'</button>';}).join('');
+    qa.innerHTML=(o.intro?'<p class="intro">'+o.intro+'</p>':'')+
+      '<div class="count">'+(o.label||'Question')+' '+(i+1)+' of '+items.length+'</div>'+
+      '<div class="bar" aria-hidden="true"><span style="width:'+(i/items.length*100)+'%"></span></div>'+
+      '<p class="q">'+it.q+'</p><div class="opts">'+opts+'</div>'+
+      '<div class="fb" aria-live="polite"></div>'+
+      '<div class="nav"><button type="button" class="btn next" hidden>'+(i<items.length-1?'Next':'See results')+'</button></div>';
+  }
+  function finish(){
+    gfx.innerHTML = o.doneGfx ? o.doneGfx() : (o.gfx? o.gfx(items.length-1,picks,true,items[items.length-1]):'');
+    var pct=Math.round(score/items.length*100);
+    var msg = pct===100 ? (o.perfect||'Excellent work.') : pct>=60 ? 'Good progress. Review the explanations and try again for a perfect round.' : 'Worth another pass. Read each explanation, then restart.';
+    qa.innerHTML='<div class="done"><div class="count">Results</div><div class="score">'+score+' / '+items.length+'</div><p>'+msg+'</p><button type="button" class="btn restart">Try again</button></div>';
+    qa.querySelector('.restart').focus();
+  }
+  qa.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    if(b.classList.contains('restart')){i=0;score=0;picks=[];render();return;}
+    if(b.classList.contains('next')){ if(i<items.length-1){i++;render();qa.querySelector('.opt').focus();} else finish(); return;}
+    if(b.classList.contains('opt') && !answered){
+      answered=true; var it=items[i], k=+b.dataset.k, ok=(k===it.ans); if(ok) score++; picks[i]=k;
+      qa.querySelectorAll('.opt').forEach(function(x){x.disabled=true; if(+x.dataset.k===it.ans) x.classList.add('right');});
+      if(!ok) b.classList.add('wrong');
+      qa.querySelector('.fb').innerHTML='<div class="box '+(ok?'ok':'no')+'"><strong>'+(ok?'Correct. ':'Not quite. ')+'</strong>'+it.why+'</div>';
+      var n=qa.querySelector('.next'); n.hidden=false; n.focus(); draw(true,it);
+    }
+  });
+  render();
+}
+function initTabs(){
+  var tabs=[].slice.call(document.querySelectorAll('.tab')), panels=[].slice.call(document.querySelectorAll('.panel'));
+  function sel(n){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===n);t.tabIndex=k===n?0:-1;});panels.forEach(function(p,k){p.hidden=k!==n;});}
+  tabs.forEach(function(t,k){t.addEventListener('click',function(){sel(k);});
+    t.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){var n=(k+d+tabs.length)%tabs.length;sel(n);tabs[n].focus();}});});
+  sel(0);
+}
+
+(function(){
+function target(kind){
+  var shots={
+    rv:[[100,100],[94,104],[106,96],[99,93],[103,107]],
+    ro:[[62,66],[57,72],[68,62],[60,60],[66,70]],
+    ro2:[[142,138],[148,132],[137,144],[144,146],[139,133]],
+    none:[[40,60],[150,40],[60,150],[160,140],[100,30]]
+  }[kind];
+  var s='<svg viewBox="0 0 200 200" role="img" aria-label="Archery target with shots">';
+  [90,72,54,36,18].forEach(function(r,k){s+='<circle cx="100" cy="100" r="'+r+'" fill="'+(k%2?'#fff':'#f3dcdc')+'" stroke="#a8353a" stroke-width="1.5"/>';});
+  s+='<circle cx="100" cy="100" r="5" fill="#d34147"/>';
+  shots.forEach(function(p){s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="6" fill="#2b2b2b" stroke="#fff" stroke-width="2"/>';});
+  return s+'</svg>';
+}
+function funnel(hl){
+  var clip=hl==='testing'?'#d34147':'#a8353a', fw=hl==='testing'?5:2.5;
+  var f=hl==='assessment'?'#f3c9cb':'#edebe8';
+  return '<svg viewBox="0 0 260 300" role="img" aria-label="Three information sources (test, interview, observation) feeding into one assessment">'+
+  '<g stroke="'+clip+'" stroke-width="'+fw+'" fill="#fff"><rect x="16" y="14" width="58" height="72" rx="7"/></g>'+
+  '<rect x="30" y="8" width="30" height="12" rx="4" fill="#d34147"/>'+
+  '<g stroke="#a8353a" stroke-width="3" stroke-linecap="round"><path d="M28 38h34M28 52h34M28 66h20"/></g>'+
+  '<text x="45" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#2b2b2b">Test</text>'+
+  '<g fill="#fff" stroke="#a8353a" stroke-width="2.5"><path d="M92 20h60a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8h-34l-14 14v-14h-12a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8z"/></g>'+
+  '<circle cx="110" cy="43" r="3.5" fill="#d34147"/><circle cx="126" cy="43" r="3.5" fill="#d34147"/><circle cx="142" cy="43" r="3.5" fill="#d34147"/>'+
+  '<text x="126" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#2b2b2b">Interview</text>'+
+  '<g fill="#fff" stroke="#a8353a" stroke-width="2.5"><path d="M180 50q28-34 56 0q-28 34-56 0z"/></g><circle cx="208" cy="50" r="11" fill="#d34147"/><circle cx="208" cy="50" r="4" fill="#fff"/>'+
+  '<text x="208" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#2b2b2b">Observation</text>'+
+  '<path d="M16 122h228l-70 78v34h-88v-34z" fill="'+f+'" stroke="#d34147" stroke-width="3"/>'+
+  '<text x="130" y="160" text-anchor="middle" font-size="13" fill="#2b2b2b">Integrate the evidence</text>'+
+  '<text x="130" y="262" text-anchor="middle" font-size="17" font-weight="800" fill="#a8353a">ASSESSMENT</text>'+
+  '</svg>';
+}
+var TOPT=["Reliable and valid","Reliable, but not valid","Neither reliable nor valid"];
+Quiz(document.getElementById('p1'),[
+ {q:"Where do these shots land relative to the bullseye (the thing you meant to measure)?",svg:target('rv'),opts:TOPT,ans:0,why:"The shots are tightly grouped (consistent, so reliable) and they hit the bullseye (they measure the intended target, so valid)."},
+ {q:"Look at this cluster. What does it say about the instrument?",svg:target('ro'),opts:TOPT,ans:1,why:"Tight grouping means consistent scores, but consistently missing the bullseye means the scores do not support the intended interpretation. Think of a scale that is always 5 lb too heavy."},
+ {q:"Now classify this pattern.",svg:target('none'),opts:TOPT,ans:2,why:"The shots are scattered, so scores are not consistent, and they do not center on the target. If scores are not consistent, they cannot support a valid interpretation."},
+ {q:"One more. How would you describe this instrument?",svg:target('ro2'),opts:TOPT,ans:1,why:"Consistent but off target again. Reliability is necessary for validity, but it is not enough. An instrument can be consistent and still measure the wrong thing."}
+],{label:'Target',intro:'Reliability = consistency. Validity = hitting what you intend to measure.',perfect:'You can tell reliability and validity apart, which is the starting point for judging any instrument.'});
+var TA=["Testing","Assessment"];
+Quiz(document.getElementById('p2'),[
+ {q:"Administering and scoring a specific 10-item anxiety questionnaire.",opts:TA,ans:0,hl:'testing',why:"This is testing: administering and scoring one instrument."},
+ {q:"Combining test scores, a clinical interview, and school records to answer a referral question.",opts:TA,ans:1,hl:'assessment',why:"This is assessment: gathering and integrating information from several sources to answer a question about a person."},
+ {q:"Following the manual’s exact directions so every examinee receives the same instructions.",opts:TA,ans:0,hl:'testing',why:"This is testing. Standardization means administering and scoring an instrument the same way each time."},
+ {q:"Observing a student in class, interviewing a parent, and reviewing a test result.",opts:TA,ans:1,hl:'assessment',why:"This is assessment. Multiple sources are brought together, and the test is only one piece."},
+ {q:"Converting a raw score to a standard score using the instrument’s norm tables.",opts:TA,ans:0,hl:'testing',why:"This is testing. Norms are the comparison group that gives a score meaning."},
+ {q:"Using information from several sources to decide on a treatment plan.",opts:TA,ans:1,hl:'assessment',why:"This is assessment. A single score does not make a plan; integrated evidence does."}
+],{label:'Statement',intro:'Testing is one part of assessment. Decide which one each statement describes.',gfx:function(i,p,ans,it){return funnel(ans?it.hl:'');},perfect:'You can separate testing from the broader assessment process.'});
+})();
+initTabs();
+</script>
+</body>
+</html>
