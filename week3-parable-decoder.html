@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parable Decoder</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1f2a44;--ink2:#4a5675;--gold:#c8962e;--gold2:#f3dfae;--parch:#fbf6ea;--line:#e6dcc3;--sage:#3f7d6b;--rose:#a8433b;--sky:#3b6ea5;--white:#fff}
+html,body{height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{height:100vh;display:flex;flex-direction:column;background:var(--parch);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.hdr{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(100deg,#1f2a44,#2f3e66);color:#fff}
+.hdr svg{flex:0 0 auto;width:44px;height:44px}
+.hdr h1{font-family:Georgia,"Times New Roman",serif;font-size:19px;font-weight:700;line-height:1.15}
+.hdr p{font-size:12.5px;color:#d9def0}
+.tag{margin-left:auto;background:var(--gold);color:#1f2a44;font-weight:700;font-size:12px;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.main{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;padding:12px 16px;scrollbar-width:thin}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.btn{background:var(--ink);color:#fff;border:0;border-radius:8px;padding:8px 16px;font-weight:600}
+.btn:hover{background:#2f3e66}.btn:disabled{opacity:.4;cursor:default}
+.btn.alt{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tab{background:#fff;border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:600;font-size:14px;color:var(--ink2)}
+.tab[aria-selected=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(31,42,68,.08)}
+.sr{position:absolute;left:-9999px}
+.hide{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:600px){.hdr p{display:none}.tag{display:none}}
+
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;height:calc(100% - 50px);align-content:start}
+.col{display:flex;flex-direction:column;gap:8px;min-height:0}
+.scene{border-radius:12px;overflow:hidden;border:2px solid var(--gold);background:#fff;flex:0 0 auto}
+.scene svg{display:block;width:100%;height:200px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.chip{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--line);border-radius:10px;padding:6px 10px;font-weight:600;text-align:left}
+.chip svg{width:26px;height:26px;flex:0 0 auto}
+.chip[aria-pressed=true]{border-color:var(--ink);background:var(--gold2)}
+.panel{flex:0 0 auto;min-height:90px}
+.panel h3{font-family:Georgia,serif;font-size:17px;margin-bottom:4px}
+.panel p{font-size:14px}
+.quiz h3{font-size:14px;margin-bottom:5px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:8px;padding:5px 10px;margin-bottom:5px;font-size:13.5px}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.ok{border-color:var(--sage);background:#eaf5f0}.opt.no{border-color:var(--rose);background:#fbeeec}
+.quiz .note{font-size:13px;color:var(--ink2);min-height:18px}
+@media (max-width:700px){.grid{grid-template-columns:1fr;height:auto}}
+</style></head><body>
+<div class="app">
+<header class="hdr"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#c8962e"/><path d="M10 14c5-2 10-1 14 2 4-3 9-4 14-2v21c-5-2-10-1-14 2-4-3-9-4-14-2z" fill="#fbf6ea"/><path d="M24 16v21" stroke="#c8962e" stroke-width="2"/><path d="M14 20h7M14 24h7M14 28h7M27 20h7M27 24h7M27 28h7" stroke="#b9ab86" stroke-width="1.4"/></svg><div><h1>Parable Decoder</h1><p>Explore the setting, characters, and turn in three parables of Jesus</p></div><span class="tag">Week 3</span></header>
+<main class="main" id="main">
+<div class="tabs" role="tablist" id="tabs"></div>
+<div class="grid">
+ <div class="col">
+  <div class="scene" id="scene" role="img" aria-label=""></div>
+  <div class="card quiz"><h3 id="qq"></h3><div id="opts"></div><div class="note" id="note" aria-live="polite"></div></div>
+ </div>
+ <div class="col">
+  <div class="chips" id="chips"></div>
+  <div class="card panel" id="panel" aria-live="polite"></div>
+ </div>
+</div>
+</main>
+</div>
+<script>
+const P=(x,y,c,s=1,extra='')=>`<g transform="translate(${x} ${y}) scale(${s})" ${extra}><circle cx="0" cy="-34" r="8" fill="#e8b98d"/><path d="M-11 -24h22l4 38h-30z" fill="${c}"/><path d="M-6 14v16M6 14v16" stroke="#3b2f2f" stroke-width="5" stroke-linecap="round"/></g>`;
+const scenes={
+samaritan:`<svg viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="230" fill="#f7e1b0"/><circle cx="330" cy="40" r="22" fill="#f6c453"/><path d="M0 120l70-50 70 40 80-60 90 70 90-40v150H0z" fill="#d7b27a"/><path d="M0 120l70-50 70 40 80-60 90 70 90-40v20H0z" fill="#c59e66" opacity=".5"/><path d="M-10 230C80 170 160 150 410 140v90z" fill="#c9a36b"/><path d="M0 200c120-40 220-50 400-48" stroke="#a9824c" stroke-width="3" fill="none" stroke-dasharray="8 8"/><g transform="translate(150 186) rotate(-86)"><circle cx="0" cy="-34" r="8" fill="#e8b98d"/><path d="M-11 -24h22l4 38h-30z" fill="#a8433b"/></g>${P(70,170,'#5b4b8a',.8)}${P(26,190,'#3b6ea5',.8)}${P(225,172,'#3f7d6b',1)}<g transform="translate(300 160)"><ellipse cx="0" cy="0" rx="34" ry="18" fill="#8b6b4a"/><rect x="22" y="-22" width="12" height="22" rx="5" fill="#8b6b4a" transform="rotate(20 28 -10)"/><path d="M-20 14v26M-6 14v26M10 14v26M24 14v26" stroke="#6e5238" stroke-width="5"/></g><text x="14" y="26" font-size="12" font-weight="700" fill="#5a4325">Road from Jerusalem to Jericho</text></svg>`,
+fool:`<svg viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="nt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2547"/><stop offset="1" stop-color="#3c4b7c"/></linearGradient></defs><rect width="400" height="230" fill="url(#nt)"/><circle cx="330" cy="46" r="22" fill="#f6efd0"/><circle cx="338" cy="40" r="20" fill="#2a355f"/><g fill="#fff"><circle cx="40" cy="30" r="2"/><circle cx="110" cy="56" r="1.6"/><circle cx="190" cy="24" r="2"/><circle cx="250" cy="60" r="1.6"/><circle cx="70" cy="90" r="1.5"/></g><rect y="180" width="400" height="50" fill="#4b6a3e"/><g><path d="M70 180v-60l50-34 50 34v60z" fill="#a8433b"/><path d="M52 124l68-46 68 46" fill="none" stroke="#7a2f2a" stroke-width="8"/><rect x="104" y="140" width="32" height="40" fill="#5b2420"/><path d="M104 140l32 40M136 140l-32 40" stroke="#7a2f2a" stroke-width="3"/></g><g><path d="M230 180v-50l44-30 44 30v50z" fill="#b9553d"/><path d="M214 134l60-40 60 40" fill="none" stroke="#7a2f2a" stroke-width="8"/><rect x="258" y="150" width="30" height="30" fill="#5b2420"/></g><g fill="#e5b73b"><path d="M20 210c4-18 4-34 0-50 8 14 8 36 0 50z"/><path d="M36 214c4-18 4-34 0-50 8 14 8 36 0 50z"/><path d="M350 214c4-18 4-34 0-50 8 14 8 36 0 50z"/><path d="M368 210c4-18 4-34 0-50 8 14 8 36 0 50z"/></g>${P(190,205,'#e5b73b',.9)}<text x="14" y="22" font-size="12" font-weight="700" fill="#f6efd0">“Build bigger barns…”</text></svg>`,
+prodigal:`<svg viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="230" fill="#fbe5b9"/><circle cx="90" cy="130" r="60" fill="#f6c453" opacity=".55"/><path d="M0 150c80-24 160-20 400 0v80H0z" fill="#9cbf7a"/><path d="M60 230C140 190 230 170 330 150" stroke="#c9a36b" stroke-width="22" fill="none" stroke-linecap="round"/><g><rect x="300" y="86" width="84" height="64" fill="#d9a67a"/><path d="M290 90l52-40 52 40z" fill="#a8433b"/><rect x="332" y="112" width="20" height="38" fill="#6b4630"/><rect x="310" y="100" width="14" height="14" fill="#fff6dc"/></g>${P(270,148,'#3f7d6b',.95)}<g transform="translate(270 148)"><path d="M-12 -20l-26 -10M12 -20l26 -10" stroke="#e8b98d" stroke-width="6" stroke-linecap="round"/></g>${P(150,190,'#7a6f66',.85)}${P(366,176,'#3b6ea5',.7)}<g fill="#e2574c"><path d="M236 100c0-6 8-6 8 0 0 6-8 10-8 10s-8-4-8-10c0-6 8-6 8 0z" transform="translate(0 -4)"/></g><text x="14" y="22" font-size="12" font-weight="700" fill="#5a4325">“While he was still far off…”</text></svg>`
+};
+const ic={
+ set:'<svg viewBox="0 0 26 26"><path d="M13 3l9 18H4z" fill="#8c6a43"/><circle cx="19" cy="6" r="3" fill="#f3c34a"/></svg>',
+ chr:'<svg viewBox="0 0 26 26"><circle cx="8" cy="9" r="4" fill="#3b6ea5"/><circle cx="18" cy="9" r="4" fill="#a8433b"/><path d="M2 22c0-6 12-6 12 0zM12 22c0-6 12-6 12 0z" fill="#3f7d6b"/></svg>',
+ turn:'<svg viewBox="0 0 26 26"><path d="M4 20c0-10 12-12 16-4l-3-1M20 16l1-4" fill="none" stroke="#c8962e" stroke-width="3" stroke-linecap="round"/></svg>',
+ rev:'<svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="6" fill="#f3c34a"/><g stroke="#c8962e" stroke-width="2" stroke-linecap="round"><path d="M13 2v3M13 21v3M2 13h3M21 13h3M5 5l2 2M19 19l2 2M21 5l-2 2M5 21l2-2"/></g></svg>'
+};
+const data={
+samaritan:{name:"The Good Samaritan",ref:"Luke 10:25-37",
+ set:["Setting","A legal expert asks Jesus, “Who is my neighbor?” Jesus answers with a story set on the dangerous road from Jerusalem to Jericho."],
+ chr:["Characters","A man beaten and left half dead, a priest, a Levite, and a Samaritan. Notice who passes by and who stops."],
+ turn:["The turn","The one the listeners would least expect, the Samaritan, is the one who shows mercy, while the religious leaders walk past."],
+ rev:["What it reveals","God’s mercy crosses boundaries. Luke’s concern for the poor and overlooked shows up in a neighbor who acts with compassion."],
+ q:"What is the surprise in this parable?",o:[["A priest stops to help",0],["A Samaritan is the one who shows mercy",1],["The traveler refuses help",0]],
+ why:"Right: the surprise is who helps. The hated outsider becomes the model of mercy."},
+fool:{name:"The Rich Fool",ref:"Luke 12:13-21",
+ set:["Setting","Someone in the crowd asks Jesus to settle an inheritance dispute. Jesus warns against greed and tells a story about a farmer."],
+ chr:["Characters","A wealthy farmer with a huge harvest, and God, who speaks to him at the end. The farmer only talks to himself."],
+ turn:["The turn","Just as he plans to store up grain and relax, God says, “You fool! This very night your life is being demanded of you.”"],
+ rev:["What it reveals","Life is more than possessions. Jesus invites trust in God and a generous life (see Luke 12:13-34)."],
+ q:"What does the farmer’s plan leave out?",o:[["A bigger barn",0],["God and the people around him",1],["A good harvest",0]],
+ why:"Right: he plans only for himself. The parable points to trusting God rather than stored-up wealth."},
+prodigal:{name:"The Prodigal Son",ref:"Luke 15:11-32",
+ set:["Setting","Tax collectors and sinners are gathering around Jesus, and some religious leaders grumble. Jesus answers with three stories, including this one."],
+ chr:["Characters","A father, a younger son who leaves and wastes his inheritance, and an older son who stays home but resents the welcome."],
+ turn:["The turn","While the son is still far off, the father sees him and runs to embrace him, then throws a celebration."],
+ rev:["What it reveals","God welcomes the lost with joy. The older brother’s reaction invites listeners to ask whether they share that joy."],
+ q:"What does the father do when his son returns?",o:[["Makes him earn his way back",0],["Runs to meet him and celebrates",1],["Sends him away again",0]],
+ why:"Right: the father runs to welcome him. That is the picture of God’s welcome."}
+};
+const $=id=>document.getElementById(id);
+let cur='samaritan',step='set',answered={};
+function tabs(){
+ $('tabs').innerHTML=Object.keys(data).map(k=>`<button class="tab" role="tab" aria-selected="${k===cur}" data-k="${k}">${data[k].name}</button>`).join('');
+ $('tabs').querySelectorAll('.tab').forEach(b=>b.onclick=()=>{cur=b.dataset.k;step='set';render()});
+}
+function render(){
+ tabs();const d=data[cur];
+ $('scene').innerHTML=scenes[cur];$('scene').setAttribute('aria-label','Illustration of '+d.name);
+ $('chips').innerHTML=['set','chr','turn','rev'].map(k=>`<button class="chip" data-k="${k}" aria-pressed="${k===step}">${ic[k]}${d[k][0]}</button>`).join('');
+ $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{step=b.dataset.k;render()});
+ $('panel').innerHTML=`<h3>${d[step][0]} <small style="font-weight:400;color:#4a5675">· ${d.name}, ${d.ref}</small></h3><p>${d[step][1]}</p>`;
+ $('qq').textContent='Check yourself: '+d.q;
+ const a=answered[cur];
+ $('opts').innerHTML=d.o.map((o,n)=>`<button class="opt ${a!=null?(o[1]?'ok':(a===n?'no':'')):''}" data-n="${n}" ${a!=null?'disabled':''}>${o[0]}</button>`).join('');
+ $('opts').querySelectorAll('.opt').forEach(b=>b.onclick=()=>{answered[cur]=+b.dataset.n;render()});
+ $('note').textContent=a!=null?(d.o[a][1]?d.why:'Not quite. Open “The turn” and look again.'):'';
+}
+render();
+</script>
+</body></html>
