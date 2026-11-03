@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 Interactive | What Does a Shipment Really Cost?</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.item{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.item.done{border-color:var(--ok);background:#f6fbf8}
+.item .opts{display:flex;gap:6px}
+.opts button{font:inherit;font-weight:600;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:5px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.item .fb{flex-basis:100%}
+.ctl{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:12px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;margin:12px 0}@media(max-width:720px){.kpis{grid-template-columns:1fr 1fr}}
+.kpis div{background:var(--warm);border-radius:14px;padding:10px}.kpis b{display:block;font:700 1.45rem Georgia,serif}.kpis small{color:var(--mut)}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a delivery truck on a road, with price tags and a calculator above">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<path d="M0 185h980v45H0z" fill="#8e2b31"/><path d="M0 208h980" stroke="#f7dcdd" stroke-width="4" stroke-dasharray="26 18"/>
+<g transform="translate(120 96)"><rect width="190" height="82" rx="8" fill="#f7dcdd"/><path d="M190 18h46l30 34v30h-76z" fill="#fff"/><path d="M204 28h26l16 22h-42z" fill="#7d2429"/><circle cx="48" cy="86" r="20" fill="#231f20"/><circle cx="48" cy="86" r="8" fill="#f6c453"/><circle cx="224" cy="86" r="20" fill="#231f20"/><circle cx="224" cy="86" r="8" fill="#f6c453"/><text x="95" y="52" text-anchor="middle" font-size="26" font-weight="800" fill="#a8353a" font-family="system-ui">FREIGHT</text></g>
+<g transform="translate(520 34)"><rect width="150" height="104" rx="14" fill="#fff"/><rect x="14" y="14" width="122" height="26" rx="6" fill="#f6c453"/><text x="130" y="33" text-anchor="end" font-size="16" font-weight="800" fill="#7d2429" font-family="system-ui">$ / trip</text><g fill="#d34147"><rect x="14" y="52" width="30" height="16" rx="4"/><rect x="60" y="52" width="30" height="16" rx="4"/><rect x="106" y="52" width="30" height="16" rx="4"/><rect x="14" y="76" width="30" height="16" rx="4"/><rect x="60" y="76" width="30" height="16" rx="4"/><rect x="106" y="76" width="30" height="16" rx="4" fill="#1f6f78"/></g></g>
+<g transform="translate(740 50) rotate(-8)"><path d="M0 0h90l22 24-22 24H0z" fill="#f6c453"/><circle cx="14" cy="24" r="5" fill="#a8353a"/><text x="30" y="30" font-size="17" font-weight="800" fill="#7d2429" font-family="system-ui">$2.10/mi</text></g>
+</svg>
+<div class="txt"><div class="kick">SCHM 320 · Week 2 Interactive</div><h1>What Does a Shipment Really Cost?</h1><p>Sound transportation decisions begin with understanding what a shipment actually costs. Sort the cost drivers, then watch how volume changes the cost of every trip.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Sort the cost drivers</h2>
+<p class="lead">Carriers and shippers analyze fixed, variable, and joint costs. Fixed costs do not change with volume in the short run; variable costs change with distance, weight, or number of trips; a joint cost arises when providing one service automatically creates another.</p>
+<div id="items"></div>
+<p class="live score" id="ires" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Cost per trip on a common basis</h2>
+<p class="lead">Your company runs its own truck. Adjust the volume and distance, then compare your cost per trip with a for-hire carrier's price. Compare rates on a common basis, such as cost per trip or per unit.</p>
+<div class="ctl" id="ctl"></div>
+<div class="kpis" aria-live="polite"><div><b id="k1">–</b><small>Annual cost</small></div><div><b id="k2">–</b><small>Cost per trip (own truck)</small></div><div><b id="k3">–</b><small>Carrier price per trip</small></div><div><b id="k4">–</b><small>Cost per unit (own truck)</small></div></div>
+<svg class="chart" id="chart" viewBox="0 0 700 330" role="img" aria-label="Chart of own-truck cost per trip falling as annual trips rise, against a flat carrier price"></svg>
+<div class="note teal live" id="verdict" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">Illustrative figures for practice. Assumptions: fixed costs $97,000 per year (truck payment, insurance, permits, driver salary); variable costs $1.10 per mile (fuel, tires, maintenance, tolls).</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Two ways to price</h2>
+<div class="grid2">
+<div class="note"><strong>Cost-of-service pricing</strong><br>The rate is built up from the carrier's cost of providing the service, plus a margin.</div>
+<div class="note teal"><strong>Value-of-service pricing</strong><br>The rate reflects what the service is worth to the shipper, such as speed or reliability, not only what it costs the carrier.</div></div>
+<p>When you compare options, make your assumptions visible and consider service quality along with price.</p>
+</section>
+</div>
+<p class="foot">Source: SCHM 320 Week 2 Deep Dive. All numbers are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var CL=["Fixed","Variable","Joint"];
+var IT=[
+{t:"Monthly truck lease payment",a:0,w:"It is owed whether the truck runs one trip or fifty, so it is fixed in the short run."},
+{t:"Fuel burned on each trip",a:1,w:"Fuel rises with distance and the number of trips: a variable cost."},
+{t:"Annual vehicle insurance premium",a:0,w:"The premium is set for the year and does not move with volume: fixed."},
+{t:"Highway tolls on a delivery",a:1,w:"Tolls are paid per trip taken: variable."},
+{t:"A truck hauls freight out to a city, which automatically creates capacity for the return trip",a:2,w:"One decision (the outbound haul) produces two services (outbound and return). That is a joint cost, which is why backhaul pricing is tricky."},
+{t:"Annual operating permits and licenses",a:0,w:"Paid yearly regardless of volume: fixed."},
+{t:"Tire wear and maintenance charged per mile",a:1,w:"The more miles driven, the more wear and service: variable."}];
+var ih=document.getElementById("items"),sc=0,dn=0;
+IT.forEach(function(x){var d=document.createElement("div");d.className="item";
+ d.innerHTML='<span style="flex:1;min-width:220px">'+x.t+'</span><span class="opts" role="group"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),fb=d.querySelector(".fb"),f=false;
+ CL.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});fb.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!f)sc++;dn++;
+   if(dn===IT.length)document.getElementById("ires").textContent="First-try correct: "+sc+" of "+IT.length+"."}
+  else{b.className="wrong";b.disabled=true;f=true;fb.innerHTML='<span class="badbox">Not quite. Ask whether it changes with volume, and whether one decision creates two services.</span>'}};o.appendChild(b)});
+ ih.appendChild(d)});
+// calculator
+var P={trips:120,miles:600,units:400,rate:2.1},FIX=97000,VAR=1.1;
+var ctl=document.getElementById("ctl");
+[["trips","Trips per year",10,300,5,function(v){return v}],["miles","Miles per trip",100,1500,50,function(v){return v}],["rate","Carrier rate ($/mile)",1.2,3.5,0.1,function(v){return"$"+v.toFixed(2)}]].forEach(function(c){
+ var d=document.createElement("div");d.innerHTML='<label for="c_'+c[0]+'">'+c[1]+' <span id="v_'+c[0]+'"></span></label><input type="range" id="c_'+c[0]+'" min="'+c[2]+'" max="'+c[3]+'" step="'+c[4]+'" value="'+P[c[0]]+'">';ctl.appendChild(d);
+ d.querySelector("input").oninput=function(){P[c[0]]=+this.value;upd()};c.fmt=c[5]});
+var fm={trips:function(v){return v},miles:function(v){return v},rate:function(v){return"$"+v.toFixed(2)}};
+function $(n){return Math.round(n).toLocaleString()}
+function own(trips){return(FIX+VAR*P.miles*trips)/trips}
+var ch=document.getElementById("chart");
+function upd(){
+ ["trips","miles","rate"].forEach(function(k){document.getElementById("v_"+k).textContent=fm[k](P[k])});
+ var annual=FIX+VAR*P.miles*P.trips,per=annual/P.trips,carr=P.rate*P.miles;
+ document.getElementById("k1").textContent="$"+$(annual);document.getElementById("k2").textContent="$"+$(per);document.getElementById("k3").textContent="$"+$(carr);document.getElementById("k4").textContent="$"+(per/P.units).toFixed(2);
+ ch.innerHTML="";
+ var maxY=Math.max(own(10),carr)*1.05;maxY=Math.min(maxY,Math.max(carr*3,own(60)));
+ function X(t){return 60+(t-10)/290*610}function Y(c){return 290-Math.min(c,maxY)/maxY*260}
+ el("rect",{x:60,y:30,width:610,height:260,fill:"#fff",stroke:"#e8e3de"},ch);
+ for(var g=0;g<=4;g++){var yy=290-g*65,l=el("text",{x:54,y:yy+4,"text-anchor":"end","font-size":"11",fill:"#5b5557"},ch);l.textContent="$"+$(maxY*g/4);el("path",{d:"M60 "+yy+"H670",stroke:"#f0ece8"},ch)}
+ [50,100,150,200,250,300].forEach(function(t){var l=el("text",{x:X(t),y:308,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},ch);l.textContent=t});
+ var pts="";for(var t=10;t<=300;t+=5)pts+=(pts?"L":"M")+X(t)+" "+Y(own(t));
+ el("path",{d:pts,fill:"none",stroke:"#d34147","stroke-width":4},ch);
+ el("path",{d:"M60 "+Y(carr)+"H670",stroke:"#1f6f78","stroke-width":4,"stroke-dasharray":"10 6"},ch);
+ var t1=el("text",{x:664,y:Y(carr)-8,"text-anchor":"end","font-size":"12","font-weight":"700",fill:"#1f6f78"},ch);t1.textContent="Carrier price per trip";
+ var t2=el("text",{x:180,y:56,"font-size":"12","font-weight":"700",fill:"#d34147"},ch);t2.textContent="Own-truck cost per trip";
+ var xl=el("text",{x:365,y:326,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#231f20"},ch);xl.textContent="Trips per year →";
+ var be=null;for(var t=10;t<=300;t+=1){if(own(t)<=carr){be=t;break}}
+ if(be){el("path",{d:"M"+X(be)+" 30V290",stroke:"#e0a526","stroke-width":2,"stroke-dasharray":"4 4"},ch);var bt=el("text",{x:X(be)+6,y:70,"font-size":"11","font-weight":"700",fill:"#8a6a10"},ch);bt.textContent="break-even ≈ "+be+" trips"}
+ el("circle",{cx:X(P.trips),cy:Y(per),r:9,fill:"#231f20",stroke:"#fff","stroke-width":3},ch);
+ var v=document.getElementById("verdict");
+ v.innerHTML=per<carr?"<strong>Own truck is cheaper at this volume</strong> by $"+$(carr-per)+" per trip. Fixed costs are spread over "+P.trips+" trips, so each trip carries only $"+$(FIX/P.trips)+" of fixed cost.":"<strong>The carrier is cheaper at this volume</strong> by $"+$(per-carr)+" per trip. Your fixed costs of $"+$(FIX)+" are spread over only "+P.trips+" trips ($"+$(FIX/P.trips)+" each)."+(be?" The own truck pays off beyond about "+be+" trips per year.":" At this distance and rate, the own truck does not beat the carrier within this range.")+" Also weigh service quality, not price alone.";
+}
+upd();
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

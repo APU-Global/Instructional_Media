@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive | Match the Mode to the Shipment</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.scn{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(max-width:720px){.scn{grid-template-columns:1fr}}
+.scn button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:16px;padding:12px;cursor:pointer;display:flex;gap:12px;align-items:center}
+.scn button svg{width:46px;height:46px;flex:none}
+.scn button:hover{border-color:var(--red)}.scn button[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.modes button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.modes button svg{width:24px;height:24px}
+.modes button[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.radar{width:100%;height:auto;display:block}
+.w{background:var(--warm);border-radius:14px;padding:10px 12px;margin-bottom:8px}.w label{font-weight:700;display:flex;justify-content:space-between}
+.rank{list-style:none;padding:0;margin:0}
+.rank li{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border:2px solid #eee;border-radius:12px;margin-bottom:6px;background:#fff}
+.rank li.top{border-color:var(--ok);background:var(--ok-l)}
+.rank .sw{width:24px;height:24px;border-radius:50%}
+.rank .bar2{height:8px;background:var(--warm);border-radius:5px;margin-top:4px;overflow:hidden}.rank .bar2 i{display:block;height:100%;transition:width .4s}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a truck, train, plane, ship, and pipeline across a landscape">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<path d="M0 190q200-30 400-10t580-20v70H0z" fill="#8e2b31"/>
+<g transform="translate(60 120)"><rect width="70" height="40" rx="5" fill="#f7dcdd"/><path d="M70 10h24l16 18v12H70z" fill="#fff"/><circle cx="22" cy="44" r="10" fill="#231f20"/><circle cx="90" cy="44" r="10" fill="#231f20"/></g>
+<g transform="translate(240 126)" fill="#f7dcdd"><rect width="46" height="30" rx="4"/><rect x="50" width="46" height="30" rx="4" opacity=".8"/><rect x="100" width="46" height="30" rx="4" opacity=".6"/><circle cx="14" cy="36" r="7" fill="#231f20"/><circle cx="82" cy="36" r="7" fill="#231f20"/><circle cx="130" cy="36" r="7" fill="#231f20"/></g>
+<g transform="translate(470 40) rotate(-12)" fill="#fff"><path d="M0 24h110l30-14 6 14-6 14-30-14H0z"/><path d="M60 24l-24-24h14l34 24zM60 24l-24 24h14l34-24z" opacity=".85"/></g>
+<g transform="translate(640 118)"><path d="M0 30h150l-18 32H18z" fill="#f7dcdd"/><g fill="#d34147"><rect x="20" y="8" width="30" height="22"/><rect x="52" y="8" width="30" height="22" fill="#f6c453"/><rect x="84" y="8" width="30" height="22" fill="#1f6f78"/></g></g>
+<path d="M0 205H980" stroke="#f6c453" stroke-width="12" stroke-linecap="round" opacity=".9"/><path d="M0 205H980" stroke="#7d2429" stroke-width="3" stroke-dasharray="5 18"/>
+</svg>
+<div class="txt"><div class="kick">SCHM 320 · Week 4 Interactive</div><h1>Match the Mode to the Shipment</h1><p>No single mode is best on every dimension. Predict the best mode for four shipments, then change what matters and watch the answer move.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Step 1 · Choose a shipment</h2>
+<div class="scn" id="scn"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Step 2 · Predict the best mode</h2>
+<p class="lead" id="sdesc">Choose a shipment above first.</p>
+<div class="modes" id="modes" role="group" aria-label="Predicted mode"></div>
+<div class="row"><button class="btn pri" id="reveal" disabled>Reveal the analysis</button></div>
+<div class="live" id="pred" aria-live="polite" style="margin-top:10px"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Step 3 · Weigh the criteria</h2>
+<p class="lead">Modes are compared on cost, transit time, reliability, capability, and accessibility. Faster modes usually cost more. Change the importance of each criterion, and compare modes on the radar chart (select a mode to show or hide it).</p>
+<div class="two">
+<div><svg class="radar" id="radar" viewBox="-50 0 520 380" role="img" aria-label="Radar chart of mode scores on five criteria"></svg>
+<div class="modes" id="legend" role="group" aria-label="Show on chart"></div></div>
+<div><div id="wts"></div><ol class="rank" id="rank" aria-live="polite"></ol></div></div>
+<div class="note teal"><strong>Think total cost.</strong> A cheap freight rate can still cost more once inventory, speed, and service effects are included.</div>
+<div class="note gold"><strong>Intermodal</strong> combines two or more modes in one journey, with containers transferring between them. It can balance cost and service. Compare it to the single modes above.</div>
+<p class="lead" style="font-size:.85rem">Scores (1 to 5, higher is better) are illustrative generalizations for practice. Real performance varies with distance, topography, capacity, and loading procedures.</p>
+</section>
+</div>
+<p class="foot">Source: SCHM 320 Week 4 Deep Dive.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var CR=["Cost","Speed","Reliability","Capability","Accessibility"];
+var M=[
+{n:"Motor carrier",c:"#d34147",s:[3,3,4,4,5],ic:'<rect x="2" y="8" width="14" height="10" rx="2" fill="#d34147"/><path d="M16 11h5l3 4v3H16z" fill="#7d2429"/><circle cx="7" cy="20" r="3" fill="#231f20"/><circle cx="19" cy="20" r="3" fill="#231f20"/>'},
+{n:"Rail",c:"#7d2429",s:[4,2,3,4,3],ic:'<rect x="3" y="6" width="18" height="12" rx="3" fill="#7d2429"/><rect x="6" y="9" width="5" height="4" fill="#fff"/><rect x="13" y="9" width="5" height="4" fill="#fff"/><path d="M4 22h16" stroke="#231f20" stroke-width="2"/>'},
+{n:"Air",c:"#1f6f78",s:[1,5,5,2,3],ic:'<path d="M2 14l20-8-6 8 6 8z" fill="#1f6f78"/>'},
+{n:"Water",c:"#2c8a8f",s:[5,1,3,5,2],ic:'<path d="M3 14h18l-3 6H6z" fill="#2c8a8f"/><rect x="8" y="7" width="8" height="7" fill="#1f6f78"/>'},
+{n:"Pipeline",c:"#e0a526",s:[5,1,5,1,1],ic:'<rect x="2" y="9" width="20" height="6" rx="3" fill="#e0a526"/><rect x="7" y="7" width="3" height="10" fill="#a8741a"/><rect x="14" y="7" width="3" height="10" fill="#a8741a"/>'},
+{n:"Intermodal (rail + truck)",c:"#3b9a63",s:[3.5,2.5,3,3.5,4],ic:'<rect x="2" y="9" width="9" height="7" fill="#3b9a63"/><rect x="13" y="9" width="9" height="7" fill="#7bc28a"/><path d="M11 12.5h2" stroke="#231f20" stroke-width="2"/>'}];
+var SC=[
+{n:"Fresh strawberries to a grocery distribution center 800 miles away",d:"Perishable and time-sensitive; every hour of transit shortens shelf life.",w:[2,4,4,1,5],best:0,ic:'<circle cx="24" cy="28" r="14" fill="#d34147"/><path d="M14 18q10-10 20 0z" fill="#3b9a63"/>',ex:"Speed and reliability dominate, and the product must reach a distribution door, which favors motor carrier."},
+{n:"10,000 tons of grain moving to a port",d:"Low value per ton, no urgency, huge volume.",w:[5,1,3,4,2],best:3,ic:'<path d="M10 40q14-34 28 0z" fill="#e0a526"/><path d="M24 12v28" stroke="#a8741a" stroke-width="3"/>',ex:"When cost and capacity matter far more than speed, water (or rail) wins. Check how close the runner-up is."},
+{n:"An urgent medical device needed on another continent in two days",d:"Small, valuable, and time-critical.",w:[1,5,5,1,2],best:2,ic:'<rect x="8" y="14" width="32" height="24" rx="5" fill="#1f6f78"/><path d="M24 20v12M18 26h12" stroke="#fff" stroke-width="4"/>',ex:"Speed and reliability are everything, and cost barely matters, so air is the answer."},
+{n:"Crude oil moving between a field and a refinery on a fixed route",d:"Continuous flow of a liquid between two fixed points.",w:[5,1,5,1,1],best:4,ic:'<path d="M24 8c8 12 12 18 12 24a12 12 0 01-24 0c0-6 4-12 12-24z" fill="#231f20"/>',ex:"A pipeline is cheap and reliable for liquids on a fixed route, but it cannot carry anything else."}];
+var cs=-1,pm=-1,W=[3,3,3,3,3],shown={0:true},rv=false;
+var sh=document.getElementById("scn");
+SC.forEach(function(s,i){var b=document.createElement("button");b.setAttribute("aria-pressed","false");b.innerHTML='<svg viewBox="0 0 48 48" aria-hidden="true">'+s.ic+'</svg><span>'+s.n+'</span>';
+ b.onclick=function(){cs=i;pm=-1;rv=false;[].forEach.call(sh.children,function(x,k){x.setAttribute("aria-pressed",k===i)});
+  document.getElementById("sdesc").textContent=s.d+" Which mode will win?";document.getElementById("pred").innerHTML="";document.getElementById("reveal").disabled=true;
+  [].forEach.call(mb.children,function(x){x.setAttribute("aria-pressed","false")});W=s.w.slice();syncW();upd()};sh.appendChild(b)});
+var mb=document.getElementById("modes");
+M.forEach(function(m,i){var b=document.createElement("button");b.setAttribute("aria-pressed","false");b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+m.ic+'</svg>'+m.n;
+ b.onclick=function(){if(cs<0)return;pm=i;[].forEach.call(mb.children,function(x,k){x.setAttribute("aria-pressed",k===i)});document.getElementById("reveal").disabled=false};mb.appendChild(b)});
+function score(m){var t=W.reduce(function(a,b){return a+b},0)||1;return m.s.reduce(function(a,v,i){return a+v*W[i]},0)/t/5*100}
+function order(){return M.map(function(m,i){return i}).sort(function(a,b){return score(M[b])-score(M[a])})}
+document.getElementById("reveal").onclick=function(){rv=true;var o=order(),top=o[0],s=SC[cs];
+ 
+ document.getElementById("pred").innerHTML='<span class="'+(pm===top?"good":"badbox")+'">'+(pm===top?"✓ ":"Not the top score. ")+'Highest weighted score: <strong>'+M[top].n+'</strong>. '+s.ex+'</span>';
+ shown={};shown[top]=true;shown[pm]=true;upd()};
+var wd=document.getElementById("wts");
+CR.forEach(function(c,i){var d=document.createElement("div");d.className="w";d.innerHTML='<label for="w'+i+'">'+c+' <span id="wv'+i+'">3</span></label><input type="range" id="w'+i+'" min="0" max="5" value="3">';wd.appendChild(d);d.querySelector("input").oninput=function(){W[i]=+this.value;upd()}});
+function syncW(){W.forEach(function(v,i){document.getElementById("w"+i).value=v})}
+var lg=document.getElementById("legend");
+M.forEach(function(m,i){var b=document.createElement("button");b.setAttribute("aria-pressed",!!shown[i]);b.innerHTML='<span style="width:14px;height:14px;border-radius:50%;background:'+m.c+';display:inline-block"></span>'+m.n;b.onclick=function(){shown[i]=!shown[i];upd()};lg.appendChild(b)});
+var rd=document.getElementById("radar");
+function upd(){
+ W.forEach(function(v,i){document.getElementById("wv"+i).textContent=v});
+ [].forEach.call(lg.children,function(b,i){b.setAttribute("aria-pressed",!!shown[i])});
+ rd.innerHTML="";var cx=210,cy=190,R=130;
+ function pt(i,v){var a=-Math.PI/2+i*2*Math.PI/5;return[cx+Math.cos(a)*R*v/5,cy+Math.sin(a)*R*v/5]}
+ for(var l=1;l<=5;l++){var p=CR.map(function(c,i){return pt(i,l).join(",")}).join(" ");el("polygon",{points:p,fill:l===5?"#fff":"none",stroke:"#e0dad4"},rd)}
+ CR.forEach(function(c,i){var e=pt(i,5),t=pt(i,5.9);el("path",{d:"M"+cx+" "+cy+"L"+e[0]+" "+e[1],stroke:"#e0dad4"},rd);var tx=el("text",{x:t[0],y:t[1]+4,"text-anchor":"middle","font-size":"12.5","font-weight":"700",fill:"#231f20"},rd);tx.textContent=c+" ("+W[i]+")"});
+ M.forEach(function(m,k){if(!shown[k])return;var p=m.s.map(function(v,i){return pt(i,v).join(",")}).join(" ");el("polygon",{points:p,fill:m.c,"fill-opacity":.18,stroke:m.c,"stroke-width":3},rd)});
+ var o=order(),rk=document.getElementById("rank");rk.innerHTML="";
+ o.forEach(function(i,p){var m=M[i],li=document.createElement("li");li.className=p===0?"top":"";li.innerHTML='<span class="sw" style="background:'+m.c+'"></span><span><strong>'+m.n+'</strong><div class="bar2"><i style="width:'+score(m)+'%;background:'+m.c+'"></i></div></span><strong>'+Math.round(score(m))+'</strong>';rk.appendChild(li)});
+}
+upd();
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

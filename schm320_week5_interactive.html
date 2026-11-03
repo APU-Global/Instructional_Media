@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive | The Transportation Risk Matrix</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.two{display:grid;grid-template-columns:1fr 1.15fr;gap:16px;align-items:start}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.rl{list-style:none;margin:0;padding:0}
+.rl button{width:100%;font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 12px;margin-bottom:6px;cursor:pointer;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center}
+.rl button .n{width:30px;height:30px;border-radius:50%;background:#7d2429;color:#fff;display:grid;place-items:center;font-weight:800}
+.rl button[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.rl button.placed .n{background:var(--teal)}
+.mx{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.cell{cursor:pointer}.cell:focus{outline:none}.cell:focus-visible{stroke:#231f20;stroke-width:3}
+.strat{border:2px solid #eee;border-radius:16px;padding:14px;margin-bottom:12px;background:#fff}
+.strat .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}@media(max-width:820px){.strat .opts{grid-template-columns:1fr 1fr}}
+.strat .opts button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer;font-size:.88rem}
+.strat .opts button[aria-pressed=true]{border-color:var(--teal);background:var(--teal-l)}
+.res{height:12px;background:var(--warm);border-radius:8px;overflow:hidden;margin-top:6px}.res i{display:block;height:100%;transition:width .4s}
+.bud{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a storm cloud over a port with cranes and a ship, beside a warning triangle">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g fill="#f7dcdd"><circle cx="260" cy="64" r="30" opacity=".9"/><circle cx="300" cy="52" r="38" opacity=".9"/><circle cx="350" cy="68" r="30" opacity=".9"/><rect x="236" y="66" width="140" height="28" rx="14" opacity=".9"/></g>
+<path d="M300 98l-16 34h14l-10 30 30-40h-16l12-24z" fill="#f6c453"/>
+<path d="M0 190h980v40H0z" fill="#8e2b31"/>
+<g stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><path d="M560 190V90H650M560 90l-16 26M650 90v40M690 190V110H770M690 110l-14 22M770 110v40"/></g>
+<path d="M520 190l24-18h160l24 18z" fill="#f7dcdd"/><g fill="#d34147"><rect x="560" y="156" width="30" height="16"/><rect x="592" y="156" width="30" height="16" fill="#f6c453"/><rect x="624" y="156" width="30" height="16" fill="#1f6f78"/></g>
+<g transform="translate(850 54)"><path d="M0 100L60 0l60 100z" fill="#f6c453"/><rect x="54" y="34" width="12" height="36" rx="5" fill="#7d2429"/><circle cx="60" cy="84" r="7" fill="#7d2429"/></g>
+</svg>
+<div class="txt"><div class="kick">SCHM 320 · Week 5 Interactive</div><h1>Name the Risks, Rank the Risks</h1><p>You cannot manage what you have not identified. Place eight risks on a likelihood-and-impact matrix, then spend a limited budget on mitigation and ask who really bears the risk.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Place the risks</h2>
+<p class="lead">Risk combines likelihood and impact. Select a risk, then select a square on the matrix (each square is likelihood across, impact up). Use your judgment for a mid-sized importer.</p>
+<div class="two">
+<div><ul class="rl" id="rl"></ul><div class="row"><button class="btn pri" id="rv" disabled>Compare with a typical assessment</button><button class="btn" id="rs">Clear</button></div></div>
+<div><svg class="mx" id="mx" viewBox="0 0 440 418" role="group" aria-label="Five by five risk matrix"></svg></div></div>
+<p class="live" id="rfb" aria-live="polite" style="margin-top:10px"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Spend a limited mitigation budget</h2>
+<p class="lead">Mitigation has a cost, so match protection to the risk. You have $100,000 for the three biggest risks. Choose one strategy for each.</p>
+<div class="bud"><span>Spent: <span id="sp">$0</span> of $100,000</span><span id="rr">Residual risk: –</span></div>
+<div id="strats"></div>
+<div class="note live" id="eth" aria-live="polite">Choose a strategy for each risk to see the result.</div>
+</section>
+</div>
+<p class="foot">Source: SCHM 320 Week 5 Deep Dive. Risks, ratings, and dollar figures are illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var R=[
+{t:"A labor strike closes a key port",L:2,I:5},
+{t:"Fuel prices spike",L:4,I:3},
+{t:"A driver shortage raises rates",L:4,I:2},
+{t:"Cargo theft at a transfer yard",L:3,I:2},
+{t:"Your main carrier goes bankrupt",L:2,I:4},
+{t:"A hurricane closes the Gulf port",L:3,I:4},
+{t:"A new emissions rule raises carrier costs",L:4,I:2},
+{t:"The tracking system goes down",L:3,I:3}];
+var sel=-1,pos={},mx=document.getElementById("mx"),rl=document.getElementById("rl"),btns=[],ghost=false;
+function zc(s){return s>=15?"#ee9aa0":s>=10?"#f6c9a0":s>=5?"#fbe9b4":"#cfe9d6"}
+R.forEach(function(r,i){var li=document.createElement("li"),b=document.createElement("button");b.setAttribute("aria-pressed","false");b.innerHTML='<span class="n">'+(i+1)+'</span><span>'+r.t+'</span>';
+ b.onclick=function(){sel=i;draw()};li.appendChild(b);rl.appendChild(li);btns.push(b)});
+function draw(){
+ mx.innerHTML="";var x0=70,y0=14,cs=70;
+ for(var L=1;L<=5;L++)for(var I=1;I<=5;I++){
+  var x=x0+(L-1)*cs,y=y0+(5-I)*cs,g=el("g",{},mx);
+  var c=el("rect",{x:x,y:y,width:cs,height:cs,fill:zc(L*I),stroke:"#fff","stroke-width":2,"class":"cell",tabindex:0,role:"button","aria-label":"Likelihood "+L+", impact "+I},g);
+  (function(L,I){c.onclick=function(){place(L,I)};c.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();place(L,I)}}})(L,I)}
+ for(var k=1;k<=5;k++){var a=el("text",{x:x0+(k-.5)*cs,y:y0+5*cs+20,"text-anchor":"middle","font-size":"13",fill:"#5b5557"},mx);a.textContent=k;var b=el("text",{x:x0-10,y:y0+(5-k+.5)*cs+5,"text-anchor":"end","font-size":"13",fill:"#5b5557"},mx);b.textContent=k}
+ var xl=el("text",{x:x0+2.5*cs,y:y0+5*cs+40,"text-anchor":"middle","font-size":"13","font-weight":"700",fill:"#231f20"},mx);xl.textContent="Likelihood →";
+ var yl=el("text",{x:16,y:y0+2.5*cs,"text-anchor":"middle","font-size":"13","font-weight":"700",fill:"#231f20",transform:"rotate(-90 16 "+(y0+2.5*cs)+")"},mx);yl.textContent="Impact →";
+ if(ghost)R.forEach(function(r,i){var jx=((i%3)-1)*14,jy=(Math.floor(i/3)-1)*12;var cx=x0+(r.L-.5)*cs+jx,cy=y0+(5-r.I+.5)*cs+jy;el("circle",{cx:cx,cy:cy,r:11,fill:"none",stroke:"#231f20","stroke-width":2.5,"stroke-dasharray":"4 3"},mx);var t=el("text",{x:cx,y:cy+4,"text-anchor":"middle","font-size":"11","font-weight":"700",fill:"#231f20"},mx);t.textContent=i+1});
+ Object.keys(pos).forEach(function(k){var p=pos[k],i=+k,jx=((i%3)-1)*14,jy=(Math.floor(i/3)-1)*12;var cx=x0+(p[0]-.5)*cs+jx,cy=y0+(5-p[1]+.5)*cs+jy;el("circle",{cx:cx,cy:cy,r:12,fill:"#7d2429",stroke:"#fff","stroke-width":2,"pointer-events":"none"},mx);var t=el("text",{x:cx,y:cy+4,"text-anchor":"middle","font-size":"12","font-weight":"800",fill:"#fff","pointer-events":"none"},mx);t.textContent=i+1});
+ btns.forEach(function(b,i){b.setAttribute("aria-pressed",i===sel);b.className=pos[i]?"placed":""});
+ document.getElementById("rv").disabled=Object.keys(pos).length<R.length;
+}
+function place(L,I){if(sel<0){document.getElementById("rfb").innerHTML='<span class="badbox">Select a risk from the list first.</span>';return}
+ pos[sel]=[L,I];document.getElementById("rfb").textContent="Placed risk "+(sel+1)+" at likelihood "+L+", impact "+I+" (score "+L*I+").";
+ var nx=-1;for(var j=1;j<=R.length;j++){var k=(sel+j)%R.length;if(!pos[k]){nx=k;break}}sel=nx;draw()}
+document.getElementById("rs").onclick=function(){pos={};sel=-1;ghost=false;document.getElementById("rfb").textContent="";draw()};
+document.getElementById("rv").onclick=function(){ghost=true;draw();var close=0,out=[];
+ R.forEach(function(r,i){var p=pos[i],ok=Math.abs(p[0]-r.L)<=1&&Math.abs(p[1]-r.I)<=1;if(ok)close++;else out.push((i+1)+". "+r.t.toLowerCase()+" (typical: likelihood "+r.L+", impact "+r.I+")")});
+ document.getElementById("rfb").innerHTML='<span class="'+(close>=6?"good":"badbox")+'">'+close+' of 8 within one square of the typical assessment. Dashed rings show it. '+(out.length?"Reconsider: "+out.join("; ")+". ":"")+'The point is not a perfect match but the habit of ranking: spend attention where likelihood times impact is highest, and note that reasonable people place some of these differently.</span>'};
+draw();
+// part 2
+var TOP=[{t:"Hurricane closes the Gulf port",s:12},{t:"Fuel prices spike",s:12},{t:"Labor strike closes a key port",s:10}];
+var ST=[
+{n:"Diversify carriers or gateways",c:30000,r:.4,d:"Spreads exposure across more than one provider."},
+{n:"Add buffer inventory",c:45000,r:.5,d:"Protects service but ties up cash and space."},
+{n:"Use an alternate mode or route",c:25000,r:.35,d:"A ready backup if the main lane fails."},
+{n:"Push drivers to make up lost time",c:5000,r:.3,d:"Cheap on paper, but shifts the risk onto workers and the public."}];
+var ch=[-1,-1,-1],sh=document.getElementById("strats");
+TOP.forEach(function(r,i){var d=document.createElement("div");d.className="strat";d.innerHTML='<strong>'+r.t+'</strong> <span class="lead">(risk score '+r.s+')</span><div class="opts"></div><div class="res"><i></i></div>';
+ var o=d.querySelector(".opts");
+ ST.forEach(function(s,k){var b=document.createElement("button");b.setAttribute("aria-pressed","false");b.innerHTML="<strong>"+s.n+"</strong><br>$"+s.c.toLocaleString()+" · −"+Math.round(s.r*100)+"%<br><span class='lead'>"+s.d+"</span>";b.onclick=function(){ch[i]=(ch[i]===k?-1:k);fin()};o.appendChild(b)});sh.appendChild(d)});
+function fin(){
+ var sp=0,res=0,tot=0,bad=false,all=true;
+ TOP.forEach(function(r,i){var d=sh.children[i],k=ch[i],rs=r.s*(k<0?1:1-ST[k].r);tot+=r.s;res+=rs;if(k>=0){sp+=ST[k].c;if(k===3)bad=true}else all=false;
+  d.querySelector(".res i").style.width=(rs/12*100)+"%";d.querySelector(".res i").style.background=rs>=8?"#d34147":rs>=5?"#e0a526":"#3b9a63";
+  [].forEach.call(d.querySelectorAll(".opts button"),function(b,j){b.setAttribute("aria-pressed",j===k)})});
+ document.getElementById("sp").textContent="$"+sp.toLocaleString();document.getElementById("sp").style.color=sp>100000?"#b3261e":"";
+ document.getElementById("rr").textContent="Residual risk: "+res.toFixed(1)+" of "+tot;
+ var e=document.getElementById("eth"),m="";
+ if(!all){e.innerHTML="Choose a strategy for each risk to see the result.";return}
+ if(sp>100000)m+="<p><span class='badbox'>Over budget by $"+(sp-100000).toLocaleString()+". Mitigation has a cost; protection must be proportional to the risk.</span></p>";
+ if(bad)m+="<p><span class='badbox'><strong>Who bears the risk?</strong> Pressuring drivers to make up lost time looks cheap, but it moves the risk onto employees and other road users. Risk decisions can shift harm onto workers, communities, or customers. A Christian worldview of stewardship encourages protecting people and creation, so this is a poor trade even though the numbers look good.</span></p>";
+ if(sp<=100000&&!bad)m+="<p><span class='good'>Within budget with residual risk of "+res.toFixed(1)+" (of "+tot+"). Consider whether the protection you bought is proportional to each risk, and who else is affected by your choices.</span></p>";
+ e.innerHTML=m}
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
