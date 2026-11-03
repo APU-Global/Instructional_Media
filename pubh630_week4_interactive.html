@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive | Build a Logic Model</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.lm{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.col{cursor:pointer}.col:focus{outline:none}.col:focus-visible rect.bg{stroke:#e0a526;stroke-width:4}
+.col rect.bg{transition:.3s}
+.hand{background:var(--warm);border-radius:16px;padding:14px;min-height:76px}
+.card2{display:inline-block;margin:4px;padding:8px 14px;border-radius:12px;background:#fff;border:2px solid #d9d4cf;font:600 .92rem system-ui;cursor:pointer;text-align:left}
+.card2:hover{border-color:var(--red)}.card2[aria-pressed=true]{border-color:var(--red);background:var(--red-l);box-shadow:0 0 0 3px var(--gold)}
+.shocks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}@media(max-width:720px){.shocks{grid-template-columns:1fr}}
+.shocks button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:12px;cursor:pointer}
+.shocks button:hover{border-color:var(--red)}.shocks button[aria-pressed=true]{border-color:var(--bad);background:var(--bad-l)}
+.mi{border:2px solid #eee;border-radius:16px;padding:14px;margin-bottom:10px;background:#fff}
+.mi .opts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.mi .opts button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer}
+.mi .opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.mi .opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.prog{font-weight:700;color:var(--red-d)}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a flow of boxes joined by arrows from resources on the left to a sunrise on the right">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g fill="#f7dcdd"><rect x="60" y="86" width="100" height="58" rx="10" opacity=".4"/><rect x="215" y="86" width="100" height="58" rx="10" opacity=".55"/><rect x="370" y="86" width="100" height="58" rx="10" opacity=".7"/><rect x="525" y="86" width="100" height="58" rx="10" opacity=".85"/><rect x="680" y="86" width="100" height="58" rx="10"/></g>
+<g stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><path d="M165 115h45M320 115h45M475 115h45M630 115h45"/></g>
+<g fill="#fff"><path d="M210 115l-12-8v16zM365 115l-12-8v16zM520 115l-12-8v16zM675 115l-12-8v16z"/></g>
+<circle cx="880" cy="170" r="44" fill="#f6c453"/><g stroke="#f6c453" stroke-width="5" stroke-linecap="round"><path d="M880 100v-20M820 120l-14-14M940 120l14-14"/></g>
+<path d="M780 115q45 0 62 35" stroke="#fff" stroke-width="4" fill="none" stroke-dasharray="6 8"/>
+<path d="M0 205q300-30 600-6t380-14v45H0z" fill="#8e2b31"/>
+</svg>
+<div class="txt"><div class="kick">PUBH 630 · Week 4 Interactive</div><h1>Build a Logic Model</h1><p>A logic model is a hypothesis, not a guarantee. Assemble one for a neighborhood walking program, stress-test its assumptions, then choose indicators for each part.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Assemble the model</h2>
+<p class="lead">Select a card, then select the column where it belongs (or press its number key once a card is selected). Inputs are resources; activities are what the program does; outputs are direct products; outcomes are changes over time.</p>
+<div class="hand" id="hand" role="group" aria-label="Cards to place"></div>
+<p class="live prog" id="prog" aria-live="polite" style="margin-top:8px">Placed 0 of 9. Keys 1–6 place the selected card.</p>
+<svg class="lm" id="lm" viewBox="0 0 900 330" role="group" aria-label="Logic model columns"></svg>
+<p class="live" id="fb" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Stress-test the assumptions</h2>
+<p class="lead">Programs do not operate in isolation. Pick a change in conditions to see which parts of the model it threatens. Revisit assumptions whenever funding, staffing, or participation shifts.</p>
+<div class="shocks" id="shocks"></div>
+<div class="note live" id="shres" aria-live="polite">Select a change above.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Let the model guide measurement</h2>
+<p class="lead">Each component suggests what evidence to gather. Choose the best indicator for each.</p>
+<div id="ind"></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 630 Week 4 Deep Dive. W. K. Kellogg Foundation (2004), <em>Logic Model Development Guide</em>; CDC, <em>Logic models</em>. The program and its numbers are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var COLS=[{n:"Inputs",c:"#7d2429"},{n:"Activities",c:"#a8353a"},{n:"Outputs",c:"#d34147"},{n:"Short-term",sub:"outcomes",c:"#1f6f78"},{n:"Intermediate",sub:"outcomes",c:"#2c8a8f"},{n:"Long-term",sub:"outcomes",c:"#3b9a63"}];
+var C=[
+{t:"$50,000 grant",k:0,w:"Funding is a resource the program uses, so it is an input."},
+{t:"Two trained walk leaders",k:0,w:"Staff are resources the program uses: inputs."},
+{t:"Lead weekly group walks",k:1,w:"This is what the program does: an activity."},
+{t:"Host a trail-safety workshop",k:1,w:"Another thing the program does: an activity."},
+{t:"48 walks delivered",k:2,w:"A direct, countable product of the activities: an output."},
+{t:"120 residents attend at least one walk",k:2,w:"Reach is a direct product of the activities: an output, not yet a change in people."},
+{t:"Participants feel more confident walking regularly",k:3,w:"A change in attitude soon after participation: a short-term outcome."},
+{t:"Participants walk regularly each week",k:4,w:"A change in behavior that takes time to form: an intermediate outcome."},
+{t:"Lower rates of chronic disease in the neighborhood",k:5,w:"A population-level health change over years: a long-term outcome."}];
+var sel=-1,placed={},nplaced=0;
+var hand=document.getElementById("hand"),lm=document.getElementById("lm"),fb=document.getElementById("fb");
+var order=[6,2,8,0,4,7,1,5,3],btn={};
+order.forEach(function(i){var b=document.createElement("button");b.className="card2";b.textContent=C[i].t;b.setAttribute("aria-pressed","false");
+ b.onclick=function(){sel=(sel===i?-1:i);Object.keys(btn).forEach(function(k){btn[k].setAttribute("aria-pressed",String(+k===sel))})};btn[i]=b;hand.appendChild(b)});
+var cw=138,gap=10,cols=[];
+COLS.forEach(function(c,k){var x=k*(cw+gap)+6;
+ var g=el("g",{"class":"col",tabindex:0,role:"button","aria-label":"Place in "+c.n+" column"},lm);
+ el("rect",{"class":"bg",x:x,y:42,width:cw,height:278,rx:14,fill:c.c,"fill-opacity":.1,stroke:c.c,"stroke-width":2},g);
+ el("rect",{x:x,y:4,width:cw,height:34,rx:10,fill:c.c},g);
+ var t=el("text",{x:x+cw/2,y:c.sub?19:26,"text-anchor":"middle","font-size":"12.5","font-weight":"800",fill:"#fff","pointer-events":"none","font-family":"system-ui"},g);t.textContent=(k+1)+" · "+c.n;
+ if(c.sub){var t2=el("text",{x:x+cw/2,y:32,"text-anchor":"middle","font-size":"11","font-weight":"600",fill:"#fff","pointer-events":"none","font-family":"system-ui"},g);t2.textContent=c.sub}
+ if(k<5){el("path",{d:"M"+(x+cw+1)+" 172l8 7-8 7z",fill:"#5b5557"},lm)}
+ g.onclick=function(){drop(k)};g.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();drop(k)}};
+ cols.push({x:x,n:0,g:g});});
+document.addEventListener("keydown",function(e){if(sel>-1&&/^[1-6]$/.test(e.key)&&document.activeElement.tagName!=="INPUT"){drop(+e.key-1)}});
+function wrap(s,n){var w=s.split(" "),l=[""],i=0;w.forEach(function(x){if((l[i]+" "+x).trim().length>n){i++;l[i]=x}else l[i]=(l[i]+" "+x).trim()});return l}
+function drop(k){if(sel<0){fb.innerHTML='<span class="badbox">Select a card first.</span>';return}
+ var c=C[sel];
+ if(c.k!==k){fb.innerHTML='<span class="badbox">Not in '+COLS[k].n+'. Ask whether this is a resource, an action, a direct product, or a change in people.</span>';return}
+ var col=cols[k],y=50+col.n*58,g=el("g",{},lm);
+ el("rect",{x:col.x+6,y:y,width:cw-12,height:52,rx:10,fill:"#fff",stroke:COLS[k].c,"stroke-width":2},g);
+ wrap(c.t,18).slice(0,3).forEach(function(s,i){var t=el("text",{x:col.x+cw/2,y:y+18+i*13,"text-anchor":"middle","font-size":"11","font-weight":"600",fill:"#231f20","font-family":"system-ui"},g);t.textContent=s});
+ col.n++;placed[sel]=1;nplaced++;btn[sel].remove();
+ fb.innerHTML='<span class="good">✓ '+COLS[k].n+'. '+c.w+'</span>';sel=-1;
+ document.getElementById("prog").textContent="Placed "+nplaced+" of 9."+(nplaced===9?" Model complete. Notice how each part leads to the next.":" Keys 1–6 place the selected card.");
+ if(nplaced===9){var fl=el("path",{d:"M10 324H890",stroke:"#e0a526","stroke-width":4,"stroke-linecap":"round"},lm)}}
+var SH=[
+{t:"The grant is cut by 40%",hit:[0,1,2],w:"Fewer resources mean fewer walks and workshops, so output targets may not be reachable. The assumption that funding stays stable has failed. Revise activities and output targets."},
+{t:"A walk leader leaves mid-year",hit:[0,1,2,3],w:"Staffing is an input. If walks are cancelled or less engaging, participation and confidence may fall. Document the assumption that leaders stay, and plan for backup."},
+{t:"Residents say evening trails feel unsafe",hit:[1,2,3,4],w:"The assumption that people will participate may fail, especially for those who can only walk after work. Participation, confidence, and regular walking are all at risk. Consider changing times, routes, or partnering on lighting."}];
+var sh=document.getElementById("shocks");
+SH.forEach(function(s,i){var b=document.createElement("button");b.setAttribute("aria-pressed","false");b.innerHTML="<strong>"+s.t+"</strong>";
+ b.onclick=function(){[].forEach.call(sh.children,function(x){x.setAttribute("aria-pressed","false")});b.setAttribute("aria-pressed","true");
+  cols.forEach(function(c,k){c.g.querySelector("rect.bg").setAttribute("fill-opacity",s.hit.indexOf(k)>-1?.38:.1)});
+  document.getElementById("shres").innerHTML="<strong>"+s.t+".</strong> "+s.w+" <span class='lead'>Affected columns are shaded darker above.</span>"};sh.appendChild(b)});
+var IND=[
+{c:"Outputs",q:"Which indicator measures the output “48 walks delivered”?",o:["Number of walks held","Percent of participants who feel confident","Neighborhood chronic disease rate"],a:0,w:"Outputs are what the program produces, so count them directly."},
+{c:"Short-term outcome",q:"Which indicator tracks “Participants feel more confident walking regularly”?",o:["Number of workshops hosted","Percent of participants reporting higher walking confidence on a follow-up survey","Dollars spent on the grant"],a:1,w:"An outcome is a change in people, so measure the change, not the activity."},
+{c:"Long-term outcome",q:"Which indicator fits “Lower rates of chronic disease in the neighborhood”?",o:["Number of walk leaders trained","Walks per month","Neighborhood rates of chronic disease over several years"],a:2,w:"Long-term outcomes need long-horizon, population-level indicators, and caution about what else could explain changes."}];
+var ih=document.getElementById("ind");
+IND.forEach(function(x){var d=document.createElement("div");d.className="mi";d.innerHTML='<span class="tag">'+x.c+'</span><div><strong>'+x.q+'</strong></div><div class="opts"></div><div class="live" aria-live="polite" style="margin-top:8px"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".live");
+ x.o.forEach(function(t,k){var b=document.createElement("button");b.textContent=t;b.onclick=function(){if(k===x.a){b.className="right";o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>'}else{b.className="wrong";b.disabled=true;f.innerHTML='<span class="badbox">Not that one. Match the indicator to the kind of change this component describes.</span>'}};o.appendChild(b)});ih.appendChild(d)});
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

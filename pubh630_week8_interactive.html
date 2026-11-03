@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 8 Interactive | Communicating Evaluation Findings</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}@media(max-width:720px){.tabs{grid-template-columns:1fr}}
+.tabs button{font:inherit;border:2px solid #d9d4cf;background:#fff;border-radius:16px;padding:10px;cursor:pointer;display:flex;gap:10px;align-items:center;text-align:left}
+.tabs button svg{width:48px;height:48px;flex:none}
+.tabs button[aria-selected=true]{border-color:var(--red);background:var(--red-l)}
+.tabs button.done{box-shadow:inset 0 0 0 3px var(--ok)}
+.fnd{background:var(--gold-l);border-radius:16px;padding:14px 18px;margin-bottom:14px}
+.grp{margin-bottom:14px}.grp h3{font-size:1rem;margin-bottom:6px}
+.choice{display:flex;flex-direction:column;gap:6px}
+.choice button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer}
+.choice button:hover{border-color:var(--red)}.choice button[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.choice button.ok{background:var(--ok);border-color:var(--ok);color:#fff}.choice button.no{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:720px){.fcards{grid-template-columns:1fr}}
+.fcards label{display:flex;gap:10px;align-items:flex-start;border:2px solid #eee;border-radius:14px;padding:10px 12px;cursor:pointer;background:#fff}
+.fcards label:has(input:checked){border-color:var(--teal);background:var(--teal-l)}
+.rec{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.draft{line-height:2.1;font-size:1.02rem}
+.draft button{font:inherit;border:0;background:transparent;border-bottom:2px dotted #b8b0aa;padding:1px 2px;cursor:pointer;text-align:left}
+.draft button:hover{background:var(--gold-l)}.draft button[aria-pressed=true]{background:var(--gold);border-bottom-color:#231f20}
+.draft button.hit{background:var(--ok-l);border-bottom:2px solid var(--ok)}.draft button.miss{background:var(--bad-l);border-bottom:2px solid var(--bad)}.draft button.fine{background:#fff;border-bottom:2px solid var(--ok)}
+.whys{margin:10px 0 0;padding-left:20px}.whys li{margin-bottom:6px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of speech bubbles carrying a bar chart, a house, and a coin, in different sizes, from one speaker to an audience">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 60)"><circle cx="30" cy="30" r="22" fill="#f6c453"/><path d="M-6 130q0-50 36-50t36 50z" fill="#f7dcdd"/></g>
+<g><path d="M250 40h200a16 16 0 0116 16v70a16 16 0 01-16 16H330l-30 24v-24h-50a16 16 0 01-16-16V56a16 16 0 0116-16z" fill="#fff"/><g fill="#d34147"><rect x="290" y="96" width="24" height="26"/><rect x="326" y="76" width="24" height="46"/><rect x="362" y="60" width="24" height="62"/><rect x="398" y="84" width="24" height="38"/></g></g>
+<g><path d="M520 70h150a14 14 0 0114 14v50a14 14 0 01-14 14h-90l-26 20v-20h-34a14 14 0 01-14-14V84a14 14 0 0114-14z" fill="#f7dcdd"/><path d="M560 124v-28l25-20 25 20v28z" fill="#a8353a"/></g>
+<g><path d="M740 100h110a12 12 0 0112 12v40a12 12 0 01-12 12h-70l-20 16v-16h-20a12 12 0 01-12-12v-40a12 12 0 0112-12z" fill="#f6c453"/><circle cx="800" cy="132" r="16" fill="#fff" opacity=".85"/><text x="800" y="138" text-anchor="middle" font-size="18" font-weight="800" fill="#a8353a" font-family="system-ui">$</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 630 · Week 8 Interactive</div><h1>Findings Only Matter If They’re Used</h1><p>Tailor one set of findings to three audiences, tie a recommendation to evidence, and review an AI-drafted paragraph the way an accountable professional would.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>The evaluation findings</h2>
+<div class="fnd"><strong>Neighborhood Walking Program, 12-month results (invented for practice).</strong>
+<ul style="margin:.4em 0 0;padding-left:20px"><li>62% of participants walked weekly; the target was 70%.</li><li>Participation was lowest among residents over 65 and people who work evenings.</li><li>The program cost $48,000 and served 120 residents.</li><li>Participants reported higher confidence on a follow-up survey. Data were self-reported from a small sample.</li></ul></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Know your audience</h2>
+<p class="lead">The same finding may need to be shared differently with funders, community partners, and policymakers. Choose one option in each group for each audience, then check.</p>
+<div class="tabs" role="tablist" id="tabs"></div>
+<div id="aud"></div>
+<p class="live score" id="ares" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Turn conclusions into recommendations</h2>
+<p class="lead">Findings should lead to decisions. Choose what the program should do, then cite the evidence that supports it.</p>
+<div class="rec" role="group" aria-label="Recommendation" id="rec"></div>
+<div class="fcards" id="fc"></div>
+<div class="row"><button class="btn pri" id="rchk">Check my recommendation</button></div>
+<div class="live" id="rres" aria-live="polite" style="margin-top:10px"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Review the AI draft</h2>
+<div class="note gold">AI tools can help draft messages, but accountability remains with the professional. Tap every phrase that you would <strong>revise before sharing</strong>, then check your review.</div>
+<p class="draft" id="draft"></p>
+<div class="row"><button class="btn pri" id="dchk">Check my review</button></div>
+<div class="live" id="dres" aria-live="polite" style="margin-top:10px"></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 630 Week 8 Deep Dive. CDC Step 6 (act on findings); ATSDR Communication Toolkit. Scenario invented for practice.</p>
+</div>
+<script>
+var AU=[
+{n:"Funder",ic:'<circle cx="24" cy="30" r="14" fill="#e0a526"/><circle cx="24" cy="24" r="14" fill="#f6c453"/><text x="24" y="30" text-anchor="middle" font-size="16" font-weight="800" fill="#a8353a" font-family="system-ui">$</text>',
+g:[{h:"Lead with",o:["Progress toward the 70% target and the cost per participant","A story about one resident’s walking journey","A detailed description of the survey instrument"],a:0,w:"Funders want to know what their money produced against the target."},
+{h:"Format",o:["A two-page brief with a summary table","A 40-slide technical deck","A text message"],a:0,w:"A short brief with a table supports a funding decision without burying the evidence."},
+{h:"Language",o:["Plain language, no unnecessary jargon","Dense statistical terminology","Slang and humor"],a:0,w:"Even expert audiences benefit from plain language."},
+{h:"Limitations",o:["State them plainly: small, self-reported sample","Leave them out to keep the message positive","Mention them only if asked"],a:0,w:"Present evidence honestly, including limitations."}]},
+{n:"Community partners",ic:'<path d="M4 40V24l10-8 10 8v16zM24 40V20l10-8 10 8v20z" fill="#7d2429"/><rect x="11" y="30" width="6" height="10" fill="#f7dcdd"/><rect x="31" y="28" width="6" height="12" fill="#f7dcdd"/>',
+g:[{h:"Lead with",o:["What residents told us and what we will change","The program’s budget line items","Statistical significance tests"],a:0,w:"Share what you learned with the community that provided it, and show what happens next."},
+{h:"Format",o:["A community meeting with simple visuals and stories","A technical report posted online only","A spreadsheet of raw data"],a:0,w:"Pair data with stories and visuals, in formats and channels that reach the audience."},
+{h:"Language",o:["Plain, accessible language, with translation where needed","Academic language with citations in the text","Acronyms without explanation"],a:0,w:"Consider cultural and health literacy needs."},
+{h:"Limitations",o:["State them plainly: small, self-reported sample","Leave them out to keep the message positive","Mention them only if asked"],a:0,w:"Honest limits build trust, especially with the people who gave you the data."}]},
+{n:"Policymakers",ic:'<path d="M4 20L24 6l20 14z" fill="#1f6f78"/><g fill="#1f6f78"><rect x="8" y="24" width="6" height="14"/><rect x="21" y="24" width="6" height="14"/><rect x="34" y="24" width="6" height="14"/><rect x="4" y="40" width="40" height="4"/></g>',
+g:[{h:"Lead with",o:["What the findings mean for county decisions, with one clear recommendation","The history of the program’s founding","Every data table, in full"],a:0,w:"Policymakers need to know what decision the evidence supports."},
+{h:"Format",o:["A one-page policy brief with a single chart","A 60-page appendix","A long verbal presentation with no handout"],a:0,w:"Choose formats and channels that fit how decision-makers actually use information."},
+{h:"Language",o:["Plain language, with the key number up front","Technical terms of the evaluation design","Advocacy slogans"],a:0,w:"Use plain language and avoid unnecessary jargon."},
+{h:"Limitations",o:["State them plainly: small, self-reported sample","Leave them out to keep the message positive","Mention them only if asked"],a:0,w:"Policymakers can only weigh evidence fairly if they know its limits."}]}];
+var cur=0,pick=[[],[],[]],ok=[false,false,false],tabs=document.getElementById("tabs"),aud=document.getElementById("aud");
+AU.forEach(function(a,i){var b=document.createElement("button");b.setAttribute("role","tab");b.setAttribute("aria-selected",i===0);b.innerHTML='<svg viewBox="0 0 48 48" aria-hidden="true">'+a.ic+'</svg><strong>'+a.n+'</strong>';b.onclick=function(){cur=i;show()};tabs.appendChild(b)});
+function show(){
+ [].forEach.call(tabs.children,function(b,i){b.setAttribute("aria-selected",i===cur);b.classList.toggle("done",ok[i])});
+ var a=AU[cur];aud.innerHTML="";
+ a.g.forEach(function(g,gi){var d=document.createElement("div");d.className="grp";d.innerHTML='<h3>'+g.h+'</h3><div class="choice"></div>';var c=d.querySelector(".choice");
+  g.o.forEach(function(t,k){var b=document.createElement("button");b.textContent=t;b.setAttribute("aria-pressed",pick[cur][gi]===k);
+   if(ok[cur]){b.disabled=true;b.className=k===g.a?"ok":"";}
+   b.onclick=function(){pick[cur][gi]=k;show()};c.appendChild(b)});aud.appendChild(d)});
+ var row=document.createElement("div");row.className="row";row.innerHTML='<button class="btn pri">Check '+a.n+' message</button>';
+ var fb=document.createElement("div");fb.className="live";fb.setAttribute("aria-live","polite");fb.style.marginTop="10px";
+ if(ok[cur]){row.firstChild.disabled=true;fb.innerHTML='<span class="good">✓ A well-fitted message for '+a.n.toLowerCase()+'.</span>'}
+ row.firstChild.onclick=function(){
+  if(pick[cur].filter(function(x){return x!==undefined}).length<4){fb.innerHTML='<span class="badbox">Choose one option in every group first.</span>';return}
+  var msgs=[],all=true;a.g.forEach(function(g,gi){if(pick[cur][gi]!==g.a){all=false;msgs.push("<li><strong>"+g.h+":</strong> "+g.w+"</li>")}});
+  if(all){ok[cur]=true;show();var n=ok.filter(Boolean).length;document.getElementById("ares").textContent=n+" of 3 audiences complete.";}
+  else{fb.innerHTML='<div class="badbox">Reconsider these. Think about what this audience needs to decide or do.<ul class="whys">'+msgs.join("")+'</ul></div>'}};
+ aud.appendChild(row);aud.appendChild(fb)}
+show();
+// part 2
+var RECS=["Continue as is","Expand to more neighborhoods","Modify the program","Discontinue"];
+var F=["62% walked weekly, below the 70% target","Participation was lowest among residents over 65 and evening workers","The program cost $48,000 for 120 residents","Participants reported higher confidence (self-reported, small sample)"];
+var rsel=-1,rh=document.getElementById("rec"),fh=document.getElementById("fc");
+RECS.forEach(function(r,i){var b=document.createElement("button");b.className="btn";b.setAttribute("aria-pressed","false");b.textContent=r;b.onclick=function(){rsel=i;[].forEach.call(rh.children,function(x,k){x.setAttribute("aria-pressed",k===i)})};rh.appendChild(b)});
+F.forEach(function(f,i){var l=document.createElement("label");l.innerHTML='<input type="checkbox" value="'+i+'"> <span>'+f+'</span>';fh.appendChild(l)});
+document.getElementById("rchk").onclick=function(){
+ var c=[].map.call(fh.querySelectorAll("input:checked"),function(x){return+x.value}),o=document.getElementById("rres");
+ if(rsel<0){o.innerHTML='<span class="badbox">Choose a recommendation.</span>';return}
+ if(!c.length){o.innerHTML='<span class="badbox">A recommendation must follow from the evidence. Cite at least one finding.</span>';return}
+ var strong=c.indexOf(0)>-1||c.indexOf(1)>-1,m="";
+ if(rsel===2)m=strong?'<span class="good">✓ Well supported. Missing the target, with the gaps concentrated among older adults and evening workers, points to changing how and when the program runs (for example, morning or weekend walks) rather than abandoning or simply growing it. It is also feasible, because it builds on what already works.</span>':'<span class="badbox">Modifying is a reasonable choice, but the findings that most directly support it are the missed target and the participation gaps. Cite at least one of them.</span>';
+ else if(rsel===1)m='<span class="badbox">Expanding would likely repeat the same gaps in new places, and the evidence of success is self-reported and from a small sample. The evidence points more strongly to modifying first.</span>';
+ else if(rsel===0)m='<span class="badbox">Continuing unchanged would leave the participation gaps in place. The findings suggest specific changes worth making.</span>';
+ else m='<span class="badbox">The evidence does not support stopping: participants reported gains and the shortfall is specific and fixable. Discontinuing would waste lessons learned.</span>';
+ o.innerHTML=m};
+// part 3
+var D=[
+{t:"Over the past year, 62% of participants walked weekly, short of the 70% target.",f:false},
+{t:"The program caused a dramatic improvement in the community’s health.",f:true,w:"Overclaims causation. The evaluation measured walking and self-reported confidence, not community health, and cannot show the program was the cause."},
+{t:"Participants demonstrated a statistically significant uptake of ambulatory behavior.",f:true,w:"Jargon, and an unsupported claim. No significance test was reported, and “walking” is clearer than “ambulatory behavior.”"},
+{t:"Participation was lowest among residents over 65 and evening-shift workers.",f:false},
+{t:"Older residents simply chose not to participate.",f:true,w:"Blames participants. The finding is about who was reached; the program should ask what barriers, such as timing or safety, stood in the way."},
+{t:"These results apply to every county in the state.",f:true,w:"Overgeneralizes from a single, small, self-reported data source. Name the limitations instead."},
+{t:"We recommend adding morning and weekend walks and re-measuring in six months.",f:false}];
+var dp=document.getElementById("draft"),dsel={},db=[];
+D.forEach(function(s,i){var b=document.createElement("button");b.textContent=s.t;b.setAttribute("aria-pressed","false");b.onclick=function(){dsel[i]=!dsel[i];b.setAttribute("aria-pressed",!!dsel[i])};db.push(b);dp.appendChild(b);dp.appendChild(document.createTextNode(" "))});
+document.getElementById("dchk").onclick=function(){
+ var hit=0,miss=0,fl=0,why=[];
+ D.forEach(function(s,i){var b=db[i],p=!!dsel[i];b.disabled=true;
+  if(s.f){fl++;if(p){hit++;b.className="hit"}else{b.className="miss"}why.push("<li>“"+s.t+"” "+s.w+"</li>")}
+  else{if(p){miss++;b.className="miss"}else b.className="fine"}});
+ document.getElementById("dres").innerHTML='<div class="'+(hit===fl&&!miss?"good":"badbox")+'"><strong>You caught '+hit+' of '+fl+' problems'+(miss?' and flagged '+miss+' sentence'+(miss>1?'s':'')+' that were fine':'')+'.</strong> Green underline = problem you caught; red = a problem missed or a fine sentence flagged.<ul class="whys">'+why.join("")+'</ul>The professional stays accountable for accuracy, context, and bias in anything shared.</div>'};
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
