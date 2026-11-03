@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Interactive | Correlation, Regression, and Causation</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px;touch-action:none}
+.pt{cursor:grab}.pt:focus{outline:none}.pt:focus-visible{stroke:#231f20;stroke-width:3}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.35rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.pre{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.q{border:2px solid #eee;border-radius:16px;padding:14px;margin-bottom:12px;background:#fff}
+.q .opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.q .opts button{font:inherit;font-weight:600;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 16px;cursor:pointer}
+.q .opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.q .opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.pred{background:var(--warm);border-radius:14px;padding:12px 14px;margin-top:10px}.pred label{font-weight:700;display:flex;justify-content:space-between}
+.tg{display:flex;gap:10px;align-items:center;margin:8px 0;font-weight:600}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a scatter plot with a rising trend line and a question mark beside it">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 30)"><path d="M0 0V170H340" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M20 150L320 30" stroke="#f6c453" stroke-width="6" stroke-linecap="round"/><g fill="#f7dcdd"><circle cx="40" cy="140" r="8"/><circle cx="70" cy="132" r="8"/><circle cx="100" cy="146" r="8"/><circle cx="130" cy="112" r="8"/><circle cx="170" cy="100" r="8"/><circle cx="200" cy="108" r="8"/><circle cx="235" cy="70" r="8"/><circle cx="270" cy="68" r="8"/><circle cx="300" cy="40" r="8"/></g></g>
+<g transform="translate(560 40)"><rect width="180" height="64" rx="14" fill="#fff"/><text x="90" y="40" text-anchor="middle" font-size="26" font-weight="800" fill="#a8353a" font-family="system-ui">r = 0.92</text></g>
+<g transform="translate(790 50)"><circle cx="50" cy="50" r="50" fill="#f6c453"/><text x="50" y="72" text-anchor="middle" font-size="68" font-weight="800" fill="#7d2429" font-family="Georgia,serif">?</text></g>
+<g transform="translate(560 130)" fill="#fff" font-family="system-ui" font-size="15" font-weight="700"><text>Association</text><text y="26" fill="#f6c453">is not causation</text></g>
+</svg>
+<div class="txt"><div class="kick">STAT 280 · Week 3 Interactive</div><h1>Association Is Not Causation</h1><p>Regression can show that two variables move together, and it can predict. It cannot, on its own, prove that one causes the other. Move the points and see what r and the line really tell you.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Move the points</h2>
+<p class="lead">Think of x as hours studied and y as exam score. Drag any point (or focus it and use the arrow keys). The correlation coefficient <em>r</em> ranges from −1 to 1; values near 0 indicate little linear relationship.</p>
+<div class="pre" role="group" aria-label="Presets"><button class="btn" data-p="pos">Strong positive</button><button class="btn" data-p="none">No relationship</button><button class="btn" data-p="neg">Negative</button><button class="btn" data-p="inf">Add a far-away point</button></div>
+<svg class="chart" id="sc" viewBox="0 0 720 380" role="group" aria-label="Scatter plot with least-squares line"></svg>
+<div class="stats" aria-live="polite"><div><b id="r">–</b><small>Correlation r</small></div><div><b id="r2">–</b><small>R² (variation explained)</small></div><div><b id="sl">–</b><small>Slope</small></div><div><b id="ic">–</b><small>Intercept</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite"></div>
+<div class="pred"><label for="px">Predict y at x = <span id="pxv">5</span></label><input type="range" id="px" min="0" max="16" step="0.5" value="5"><div class="live" id="pout" aria-live="polite"></div></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · A hidden third variable</h2>
+<p class="lead">Each point is one month of the year: ice cream sales (x) against drownings (y). The correlation is very high. Does ice cream cause drowning?</p>
+<div class="tg"><label><input type="checkbox" id="col"> Color each month by temperature</label></div>
+<svg class="chart" id="ice" viewBox="0 0 720 330" role="img" aria-label="Scatter of ice cream sales versus drownings by month"></svg>
+<div class="stats"><div><b id="ir">–</b><small>Correlation r</small></div></div>
+<div class="note live" id="inote" aria-live="polite">Turn on the colors and look at which months sit where.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · What can you conclude?</h2>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+</div>
+<p class="foot">Source: STAT 280 Week 3 Deep Dive. All data are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var XS=[1,1.5,2,2.5,3,4,4.5,5,6,7,8,9];
+var PR={pos:[56,55,60,63,62,70,68,74,76,82,85,92],none:[72,58,80,64,70,55,78,62,74,66,60,76],neg:[92,88,90,80,82,75,78,70,66,62,58,55]};
+var P=XS.map(function(x,i){return[x,PR.pos[i]]});
+var XL=0,XH=16,YL=30,YH=115;
+function reg(a){var n=a.length,mx=a.reduce(function(s,p){return s+p[0]},0)/n,my=a.reduce(function(s,p){return s+p[1]},0)/n,sxx=0,syy=0,sxy=0;
+ a.forEach(function(p){sxx+=(p[0]-mx)*(p[0]-mx);syy+=(p[1]-my)*(p[1]-my);sxy+=(p[0]-mx)*(p[1]-my)});
+ var b=sxy/sxx;return{r:sxy/Math.sqrt(sxx*syy),b:b,a:my-b*mx}}
+var sc=document.getElementById("sc");
+function SX(x){return 60+(x-XL)/(XH-XL)*620}function SY(y){return 330-(y-YL)/(YH-YL)*300}
+var active=-1;
+function f2(v){return(Math.round(v*100)/100).toFixed(2)}
+function draw(){
+ sc.innerHTML="";var g=reg(P),minx=Math.min.apply(null,P.map(function(p){return p[0]})),maxx=Math.max.apply(null,P.map(function(p){return p[0]}));
+ el("rect",{x:60,y:30,width:620,height:300,fill:"#fff",stroke:"#e8e3de"},sc);
+ for(var x=0;x<=16;x+=2){var l=el("text",{x:SX(x),y:348,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},sc);l.textContent=x}
+ for(var y=40;y<=110;y+=10){var l2=el("text",{x:54,y:SY(y)+4,"text-anchor":"end","font-size":"11",fill:"#5b5557"},sc);l2.textContent=y;el("path",{d:"M60 "+SY(y)+"H680",stroke:"#f0ece8"},sc)}
+ el("rect",{x:SX(minx),y:30,width:SX(maxx)-SX(minx),height:300,fill:"#dcf1e3","fill-opacity":.35},sc);
+ var rl=el("text",{x:(SX(minx)+SX(maxx))/2,y:46,"text-anchor":"middle","font-size":"11","font-weight":"700",fill:"#14502c"},sc);rl.textContent="range of the data";
+ var xl=el("text",{x:370,y:368,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#231f20"},sc);xl.textContent="x";
+ var yl=el("text",{x:16,y:180,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#231f20",transform:"rotate(-90 16 180)"},sc);yl.textContent="y";
+ function clampY(v){return Math.max(YL,Math.min(YH,v))}
+ el("path",{d:"M"+SX(0)+" "+SY(clampY(g.a))+"L"+SX(16)+" "+SY(clampY(g.a+g.b*16)),stroke:"#d34147","stroke-width":2,"stroke-dasharray":"7 6"},sc);
+ el("path",{d:"M"+SX(minx)+" "+SY(clampY(g.a+g.b*minx))+"L"+SX(maxx)+" "+SY(clampY(g.a+g.b*maxx)),stroke:"#d34147","stroke-width":5,"stroke-linecap":"round"},sc);
+ var px=+document.getElementById("px").value,py=g.a+g.b*px;
+ if(py>=YL&&py<=YH)el("circle",{cx:SX(px),cy:SY(py),r:9,fill:"#e0a526",stroke:"#231f20","stroke-width":2},sc);
+ P.forEach(function(p,i){var c=el("circle",{"class":"pt",cx:SX(p[0]),cy:SY(p[1]),r:9,fill:"#1f6f78","fill-opacity":.88,stroke:"#fff","stroke-width":2,tabindex:0,role:"slider","aria-label":"Point "+(i+1)+": x "+f2(p[0])+", y "+Math.round(p[1])},sc);
+  c.addEventListener("pointerdown",function(e){e.preventDefault();active=i});
+  c.addEventListener("keydown",function(e){var dx=0,dy=0;if(e.key==="ArrowRight")dx=.25;if(e.key==="ArrowLeft")dx=-.25;if(e.key==="ArrowUp")dy=1;if(e.key==="ArrowDown")dy=-1;if(dx||dy){e.preventDefault();P[i]=[Math.max(XL,Math.min(XH,p[0]+dx)),Math.max(YL,Math.min(YH,p[1]+dy))];draw();var n=sc.querySelectorAll(".pt")[i];if(n)n.focus()}})});
+ document.getElementById("r").textContent=f2(g.r);document.getElementById("r2").textContent=Math.round(g.r*g.r*100)+"%";document.getElementById("sl").textContent=f2(g.b);document.getElementById("ic").textContent=f2(g.a);
+ var a=document.getElementById("adv"),s=Math.abs(g.r);
+ a.innerHTML="<strong>r = "+f2(g.r)+": a "+(s>.8?"strong":s>.5?"moderate":s>.25?"weak":"very weak or no")+" "+(s>.25?(g.r>0?"positive":"negative")+" linear relationship":"linear relationship")+".</strong> The line explains about "+Math.round(g.r*g.r*100)+"% of the variation in y. Even a strong r only shows association. It does not show that x causes y.";
+ document.getElementById("pxv").textContent=px;
+ var out=document.getElementById("pout"),inr=px>=minx&&px<=maxx;
+ out.innerHTML=inr?"Predicted y ≈ <strong>"+Math.round(py*10)/10+"</strong> (inside the range of the data, so this is interpolation).":(py>100?"Predicted y ≈ <strong>"+Math.round(py)+"</strong>, which is more than 100. <span class='badbox'>Extrapolating far beyond your data gives nonsense. A score above 100 is impossible.</span>":"Predicted y ≈ <strong>"+Math.round(py*10)/10+"</strong>. <span class='badbox'>This x is outside the range of the data, so the prediction is an extrapolation and may not be trustworthy.</span>");
+}
+window.addEventListener("pointermove",function(e){if(active<0)return;var r=sc.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*720,y=(e.clientY-r.top)/r.height*380;
+ P[active]=[Math.max(XL,Math.min(XH,XL+(x-60)/620*(XH-XL))),Math.max(YL,Math.min(YH,YL+(330-y)/300*(YH-YL)))];draw()});
+window.addEventListener("pointerup",function(){active=-1});
+document.querySelectorAll(".pre button").forEach(function(b){b.onclick=function(){var p=b.dataset.p;if(p==="inf"){P[P.length-1]=[15,38]}else P=XS.map(function(x,i){return[x,PR[p][i]]});draw()}});
+document.getElementById("px").oninput=draw;
+draw();
+// ice cream
+var IC=[[20,1,30],[22,1,35],[35,2,45],[50,3,55],[65,5,65],[82,7,75],[95,9,85],[100,10,90],[88,8,80],[62,5,68],[40,3,50],[25,2,38]];
+var MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],ice=document.getElementById("ice");
+function drawI(){ice.innerHTML="";var colr=document.getElementById("col").checked;
+ var rr=reg(IC.map(function(p){return[p[0],p[1]]}));
+ function X(v){return 60+(v-10)/100*610}function Y(v){return 290-v/12*260}
+ el("rect",{x:60,y:30,width:610,height:260,fill:"#fff",stroke:"#e8e3de"},ice);
+ [20,40,60,80,100].forEach(function(v){var l=el("text",{x:X(v),y:308,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},ice);l.textContent=v});
+ [0,2,4,6,8,10,12].forEach(function(v){var l=el("text",{x:54,y:Y(v)+4,"text-anchor":"end","font-size":"11",fill:"#5b5557"},ice);l.textContent=v});
+ var xl=el("text",{x:365,y:326,"text-anchor":"middle","font-size":"12","font-weight":"700"},ice);xl.textContent="Ice cream sales (index)";
+ var yl=el("text",{x:16,y:160,"text-anchor":"middle","font-size":"12","font-weight":"700",transform:"rotate(-90 16 160)"},ice);yl.textContent="Drownings";
+ el("path",{d:"M"+X(15)+" "+Y(rr.a+rr.b*15)+"L"+X(105)+" "+Y(rr.a+rr.b*105),stroke:"#8a8286","stroke-width":3,"stroke-dasharray":"7 6"},ice);
+ IC.forEach(function(p,i){var warm=p[2]>=65;var c=el("circle",{cx:X(p[0]),cy:Y(p[1]),r:10,fill:colr?(warm?"#d34147":"#1f6f78"):"#5b5557","fill-opacity":.9,stroke:"#fff","stroke-width":2},ice);
+  var t=el("text",{x:X(p[0]),y:Y(p[1])-14,"text-anchor":"middle","font-size":"10","font-weight":"700",fill:"#231f20"},ice);t.textContent=MN[i]});
+ if(colr){var k=el("g",{},ice);el("circle",{cx:90,cy:48,r:7,fill:"#d34147"},k);var a=el("text",{x:102,y:52,"font-size":"12"},k);a.textContent="warm months (65°F or above)";el("circle",{cx:90,cy:70,r:7,fill:"#1f6f78"},k);var b=el("text",{x:102,y:74,"font-size":"12"},k);b.textContent="cool months"}
+ document.getElementById("ir").textContent=f2(rr.r);
+ document.getElementById("inote").innerHTML=colr?"<strong>A lurking variable.</strong> Hot weather drives both ice cream sales and swimming, so both numbers rise together in summer. The two variables are associated, yet neither causes the other. Regression finds the relationship, but only careful study design can speak to cause.":"Turn on the colors and look at which months sit where."}
+document.getElementById("col").onchange=drawI;drawI();
+// quiz
+var Q=[
+{t:"A study finds r = 0.85 between hours studied and exam score. “Students who study more tend to score higher.”",a:0,w:"This describes an association, which is exactly what the data show. Note the careful wording: “tend to”, not “causes”."},
+{t:"A regression of exam score on hours studied (data from 1 to 9 hours) predicts a score of 138 at 25 hours.",a:1,w:"That is extrapolation far beyond the data, and the result is impossible. Avoid predicting well outside the range you observed."},
+{t:"A business finds r = 0.9 between advertising spend and sales. “Spending more on ads will raise sales by exactly the slope each time.”",a:1,w:"The slope describes an average association in the observed range. It is not a guarantee, and causation is not proven by the regression itself."}];
+var qh=document.getElementById("qs"),qs=0,qd=0;
+Q.forEach(function(q){var d=document.createElement("div");d.className="q";d.innerHTML='<div>'+q.t+'</div><div class="opts"></div><div class="live" aria-live="polite" style="margin-top:8px"></div>';
+ var o=d.querySelector(".opts"),fb=d.querySelector(".live"),f=false;
+ ["Reasonable, with caution","Not justified as stated"].forEach(function(t,k){var b=document.createElement("button");b.textContent=t;b.onclick=function(){
+  if(k===q.a){b.className="right";o.querySelectorAll("button").forEach(function(z){z.disabled=true});fb.innerHTML='<span class="good">✓ '+q.w+'</span>';if(!f)qs++;qd++;if(qd===Q.length)document.getElementById("qres").textContent="First-try correct: "+qs+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;f=true;fb.innerHTML='<span class="badbox">Look again at what the data can and cannot show.</span>'}};o.appendChild(b)});qh.appendChild(d)});
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive | The Central Limit Theorem in Action</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.pop{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.pop button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:7px 16px;cursor:pointer}
+.pop button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff}
+.ctl{background:var(--warm);border-radius:14px;padding:12px 14px;margin:10px 0}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.3rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.tg{display:flex;gap:10px;align-items:center;margin:8px 0;font-weight:600}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of an irregular histogram transforming through arrows into a smooth bell curve">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(70 40)" fill="#f7dcdd"><rect x="0" y="20" width="26" height="130" rx="3"/><rect x="30" y="60" width="26" height="90" rx="3" opacity=".9"/><rect x="60" y="100" width="26" height="50" rx="3" opacity=".8"/><rect x="90" y="124" width="26" height="26" rx="3" opacity=".7"/><rect x="120" y="136" width="26" height="14" rx="3" opacity=".6"/><rect x="150" y="142" width="26" height="8" rx="3" opacity=".5"/><path d="M0 154H180" stroke="#fff" stroke-width="3"/></g>
+<g transform="translate(330 100)" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"><path d="M0 20H110M92 4l18 16-18 16"/></g>
+<text x="385" y="95" text-anchor="middle" font-size="15" font-weight="700" fill="#fff" font-family="system-ui">average n values</text>
+<g transform="translate(520 40)"><path d="M0 150C40 150 60 148 90 90S130 6 170 6 250 40 280 100 330 150 360 150" fill="#f7dcdd" stroke="#fff" stroke-width="3"/><path d="M180 6V150" stroke="#f6c453" stroke-width="3" stroke-dasharray="5 5"/><path d="M0 154H360" stroke="#fff" stroke-width="3"/></g>
+<g fill="#f6c453"><circle cx="900" cy="48" r="9"/></g>
+</svg>
+<div class="txt"><div class="kick">STAT 280 · Week 5 Interactive</div><h1>The Central Limit Theorem in Action</h1><p>For large samples, the distribution of sample means is approximately normal, whatever the shape of the population. Draw thousands of samples and watch the bell curve appear.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Build a sampling distribution</h2>
+<p class="lead">Choose a population (the top graph, which is clearly not normal for two of the choices), set the sample size <em>n</em>, then draw samples. Each sample contributes one <strong>sample mean</strong> to the histogram below.</p>
+<div class="pop" id="pop" role="group" aria-label="Population shape"></div>
+<svg class="chart" id="cp" viewBox="0 0 720 150" role="img" aria-label="Population distribution"></svg>
+<div class="ctl"><label for="n">Sample size n <span id="nv">5</span></label><input type="range" id="n" min="1" max="50" value="5"></div>
+<div class="row"><button class="btn pri" data-k="1">Draw 1 sample</button><button class="btn pri" data-k="100">Draw 100</button><button class="btn pri" data-k="1000">Draw 1,000</button><button class="btn" id="rst">Reset</button></div>
+<svg class="chart" id="ch" viewBox="0 0 720 260" role="img" aria-label="Histogram of sample means" style="margin-top:12px"></svg>
+<div class="stats" aria-live="polite"><div><b id="c">0</b><small>Samples drawn</small></div><div><b id="m">–</b><small>Mean of sample means<br>(population μ = <span id="pm"></span>)</small></div><div><b id="s">–</b><small>SD of sample means</small></div><div><b id="t">–</b><small>Theory: σ/√n<br>(σ = <span id="ps"></span>)</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite">Draw some samples to begin. Try n = 1 first, then n = 30.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Z-scores and the normal curve</h2>
+<p class="lead">Heights of adult men are roughly normal with mean 69 inches and standard deviation 3 inches. A z-score tells you how many standard deviations a value is from the mean: z = (x − mean) / standard deviation.</p>
+<div class="ctl"><label for="x">Height x (inches) <span id="xv">72</span></label><input type="range" id="x" min="58" max="80" step="0.5" value="72"></div>
+<div class="tg"><label><input type="checkbox" id="er"> Show the empirical rule (68%, 95%, 99.7%)</label></div>
+<svg class="chart" id="nz" viewBox="0 0 720 240" role="img" aria-label="Normal curve with shaded area below x"></svg>
+<div class="note live" id="zt" aria-live="polite"></div>
+</section>
+</div>
+<p class="foot">Source: STAT 280 Week 5 Deep Dive. Simulations run in your browser; each run is random, so results vary slightly.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function erf(x){var s=x<0?-1:1;x=Math.abs(x);var t=1/(1+.3275911*x),y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-x*x);return s*y}
+function ncdf(z){return .5*(1+erf(z/Math.SQRT2))}
+function gauss(){var u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+var POP=[
+{n:"Uniform",lo:0,hi:1,mu:.5,sd:Math.sqrt(1/12),draw:function(){return Math.random()},pdf:function(x){return x>=0&&x<=1?1:0}},
+{n:"Right-skewed",lo:0,hi:4,mu:1,sd:1,draw:function(){return-Math.log(1-Math.random())},pdf:function(x){return x>=0?Math.exp(-x):0}},
+{n:"Two peaks",lo:0,hi:1,mu:.5,sd:Math.sqrt(.07*.07+.25*.25),draw:function(){return(Math.random()<.5?.25:.75)+.07*gauss()},pdf:function(x){var f=function(m){return Math.exp(-(x-m)*(x-m)/(2*.0049))/(.07*Math.sqrt(2*Math.PI))};return .5*f(.25)+.5*f(.75)}}];
+var pi=1,means=[],B=36;
+var pb=document.getElementById("pop");
+POP.forEach(function(p,i){var b=document.createElement("button");b.textContent=p.n;b.setAttribute("aria-pressed",i===pi);b.onclick=function(){pi=i;means=[];render()};pb.appendChild(b)});
+function render(){[].forEach.call(pb.children,function(b,i){b.setAttribute("aria-pressed",i===pi)});
+ var P=POP[pi],cp=document.getElementById("cp");cp.innerHTML="";
+ var maxd=0;for(var x=P.lo;x<=P.hi;x+=(P.hi-P.lo)/200)maxd=Math.max(maxd,P.pdf(x));
+ function X(v){return 40+(v-P.lo)/(P.hi-P.lo)*640}
+ var path="M"+X(P.lo)+" 120";for(var x2=P.lo;x2<=P.hi+1e-9;x2+=(P.hi-P.lo)/200)path+="L"+X(x2)+" "+(120-P.pdf(x2)/maxd*95);path+="L"+X(P.hi)+" 120Z";
+ el("path",{d:path,fill:"#f7dcdd",stroke:"#d34147","stroke-width":3},cp);
+ el("path",{d:"M40 120H680",stroke:"#5b5557","stroke-width":2},cp);
+ el("path",{d:"M"+X(P.mu)+" 20V120",stroke:"#1f6f78","stroke-width":3,"stroke-dasharray":"5 4"},cp);
+ var l=el("text",{x:X(P.mu)+6,y:30,"font-size":"12","font-weight":"700",fill:"#1f6f78"},cp);l.textContent="μ";
+ var t=el("text",{x:360,y:144,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#231f20"},cp);t.textContent="Population: "+P.n.toLowerCase()+" (not normal"+(pi===0?", flat":"")+")";
+ document.getElementById("pm").textContent=Math.round(P.mu*100)/100;document.getElementById("ps").textContent=Math.round(P.sd*1000)/1000;
+ hist()}
+function hist(){
+ var P=POP[pi],n=+document.getElementById("n").value,ch=document.getElementById("ch");ch.innerHTML="";document.getElementById("nv").textContent=n;
+ var se0=P.sd/Math.sqrt(n),DL=Math.max(P.lo,P.mu-5*se0),DH=Math.min(P.hi,P.mu+5*se0),bw=(DH-DL)/B,cnt=new Array(B).fill(0);means.forEach(function(m){var k=Math.max(0,Math.min(B-1,Math.floor((m-DL)/bw)));cnt[k]++});
+ var se=P.sd/Math.sqrt(n);
+ var N=means.length;
+ function X(v){return 40+(v-DL)/(DH-DL)*640}
+ // y scale: max of counts and theory peak
+ var peak=N*bw/(se*Math.sqrt(2*Math.PI)),mx=Math.max.apply(null,cnt.concat([N?peak*.6:1,3]));
+ function Y(c){return 210-c/mx*180}
+ el("rect",{x:40,y:20,width:640,height:190,fill:"#fff",stroke:"#e8e3de"},ch);
+ cnt.forEach(function(c,k){if(c)el("rect",{x:X(DL+k*bw)+1,y:Y(c),width:640/B-2,height:210-Y(c),fill:"#d34147","fill-opacity":.8},ch)});
+ if(N>=30){var d="";for(var x=DL;x<=DH+1e-9;x+=(DH-DL)/200){var y=N*bw*Math.exp(-(x-P.mu)*(x-P.mu)/(2*se*se))/(se*Math.sqrt(2*Math.PI));d+=(d?"L":"M")+X(x)+" "+Y(Math.min(y,mx))}
+  el("path",{d:d,fill:"none",stroke:"#1f6f78","stroke-width":4},ch)}
+ el("path",{d:"M40 210H680",stroke:"#5b5557","stroke-width":2},ch);
+ for(var g=0;g<=4;g++){var v=DL+(DH-DL)*g/4,l=el("text",{x:X(v),y:228,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},ch);l.textContent=Math.round(v*100)/100}
+ var xl=el("text",{x:360,y:248,"text-anchor":"middle","font-size":"12","font-weight":"700"},ch);xl.textContent="Sample mean (n = "+n+")";
+ if(N>=30){var lg=el("text",{x:676,y:38,"text-anchor":"end","font-size":"12","font-weight":"700",fill:"#1f6f78"},ch);lg.textContent="Normal curve predicted by theory"}
+ var mean=N?means.reduce(function(a,b){return a+b},0)/N:0,sd=N>1?Math.sqrt(means.reduce(function(a,b){return a+(b-mean)*(b-mean)},0)/(N-1)):0;
+ function f(v){return(Math.round(v*1000)/1000).toString()}
+ document.getElementById("c").textContent=N.toLocaleString();document.getElementById("m").textContent=N?f(mean):"–";document.getElementById("s").textContent=N>1?f(sd):"–";document.getElementById("t").textContent=f(se);
+ var a=document.getElementById("adv");
+ if(!N)a.textContent="Draw some samples to begin. Try n = 1 first, then n = 30.";
+ else if(n<=2)a.innerHTML="<strong>With n = "+n+", the sample means look like the population itself.</strong> Increase n and draw again to see the shape change.";
+ else if(n<15)a.innerHTML="<strong>With n = "+n+", the sample means are already less skewed and narrower</strong> (SD ≈ σ/√n). Keep increasing n.";
+ else a.innerHTML="<strong>With n = "+n+", the distribution of sample means is approximately normal</strong>, centered at μ, with standard deviation σ/√n = "+f(se)+". That is true even though the population is "+P.n.toLowerCase()+". This is the central limit theorem."}
+document.getElementById("n").oninput=function(){means=[];hist()};
+document.querySelectorAll(".row button[data-k]").forEach(function(b){b.onclick=function(){var k=+b.dataset.k,P=POP[pi],n=+document.getElementById("n").value;
+ for(var i=0;i<k;i++){var s=0;for(var j=0;j<n;j++)s+=P.draw();means.push(s/n)}hist()}});
+document.getElementById("rst").onclick=function(){means=[];hist()};
+render();
+// z-score
+var nz=document.getElementById("nz");
+function zdraw(){var x=+document.getElementById("x").value,mu=69,sd=3,z=(x-mu)/sd,er=document.getElementById("er").checked;nz.innerHTML="";
+ document.getElementById("xv").textContent=x;
+ function X(v){return 40+(v-57)/(81-57)*640}function Y(d){return 190-d*430}
+ function pdf(v){return Math.exp(-(v-mu)*(v-mu)/(2*sd*sd))/(sd*Math.sqrt(2*Math.PI))}
+ if(er){[[1,"#bfe0c8","68%"],[2,"#dcf1e3","95%"],[3,"#eef8f1","99.7%"]].reverse().forEach(function(b){el("rect",{x:X(mu-b[0]*sd),y:20,width:X(mu+b[0]*sd)-X(mu-b[0]*sd),height:170,fill:b[1]},nz);
+  var t=el("text",{x:X(mu+b[0]*sd)-4,y:36+b[0]*14,"text-anchor":"end","font-size":"11","font-weight":"700",fill:"#14502c"},nz);t.textContent="within "+b[0]+" SD: "+b[2]})}
+ var d="M"+X(57)+" 190";for(var v=57;v<=Math.min(x,81);v+=.25)d+="L"+X(v)+" "+Y(pdf(v));d+="L"+X(x)+" 190Z";
+ el("path",{d:d,fill:"#d34147","fill-opacity":.35},nz);
+ var c="";for(var v2=57;v2<=81;v2+=.25)c+=(c?"L":"M")+X(v2)+" "+Y(pdf(v2));
+ el("path",{d:c,fill:"none",stroke:"#7d2429","stroke-width":4},nz);el("path",{d:"M40 190H680",stroke:"#5b5557","stroke-width":2},nz);
+ for(var k=60;k<=78;k+=3){var l=el("text",{x:X(k),y:208,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},nz);l.textContent=k;var zz=el("text",{x:X(k),y:224,"text-anchor":"middle","font-size":"10",fill:"#8a8286"},nz);zz.textContent="z="+(k-mu)/sd}
+ el("path",{d:"M"+X(x)+" 30V190",stroke:"#231f20","stroke-width":3},nz);
+ el("path",{d:"M"+X(mu)+" 30V190",stroke:"#1f6f78","stroke-width":2,"stroke-dasharray":"5 4"},nz);
+ var p=ncdf(z),zt=document.getElementById("zt");
+ zt.innerHTML="<strong>z = ("+x+" − 69) / 3 = "+(Math.round(z*100)/100)+"</strong>. A height of "+x+" inches is "+Math.abs(Math.round(z*100)/100)+" standard deviation"+(Math.abs(z)===1?"":"s")+(z>=0?" above":" below")+" the mean. About <strong>"+(Math.round(p*1000)/10)+"%</strong> of men are shorter, and about "+(Math.round((1-p)*1000)/10)+"% are taller. Z-scores let you compare values from different distributions."}
+document.getElementById("x").oninput=zdraw;document.getElementById("er").onchange=zdraw;zdraw();
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
