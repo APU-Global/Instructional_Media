@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Matters: CDC Evaluation Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .animate-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 50;
+            bottom: 125%;
+            left: 0;
+            width: 220px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 10px;
+            font-weight: normal;
+            text-transform: none;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        button:focus-visible {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        const Icon = ({ name, className = "w-5 h-5" }) => {
+            const icons = {
+                'users': (
+                    <>
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </>
+                ),
+                'target': (
+                    <>
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </>
+                ),
+                'layout-grid': (
+                    <>
+                        <rect width="7" height="7" x="3" y="3" rx="1"/>
+                        <rect width="7" height="7" x="14" y="3" rx="1"/>
+                        <rect width="7" height="7" x="14" y="14" rx="1"/>
+                        <rect width="7" height="7" x="3" y="14" rx="1"/>
+                    </>
+                ),
+                'bar-chart-3': (
+                    <>
+                        <path d="M3 3v18h18"/>
+                        <path d="M18 17V9"/>
+                        <path d="M13 17V5"/>
+                        <path d="M8 17v-3"/>
+                    </>
+                ),
+                'book-open': (
+                    <>
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </>
+                ),
+                'award': (
+                    <>
+                        <circle cx="12" cy="8" r="6"/>
+                        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                    </>
+                ),
+                'message-square': (
+                    <>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </>
+                ),
+                'rotate-ccw': (
+                    <>
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </>
+                ),
+                'check-circle-2': (
+                    <>
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </>
+                ),
+                'info': (
+                    <>
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </>
+                ),
+                'help-circle': (
+                    <>
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <path d="M12 17h.01"/>
+                    </>
+                ),
+                'chevron-right': (
+                    <>
+                        <path d="m9 18 6-6-6-6"/>
+                    </>
+                ),
+                'chevron-left': (
+                    <>
+                        <path d="m15 18-6-6 6-6"/>
+                    </>
+                ),
+                'alert-circle': (
+                    <>
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" x2="12" y1="8" y2="12"/>
+                        <line x1="12" x2="12.01" y1="16" y2="16"/>
+                    </>
+                ),
+                'shield-alert': (
+                    <>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                        <line x1="12" x2="12" y1="8" y2="12"/>
+                        <line x1="12" x2="12.01" y1="16" y2="16"/>
+                    </>
+                ),
+                'copy': (
+                    <>
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                    </>
+                ),
+                'play': (
+                    <>
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </>
+                ),
+                'external-link': (
+                    <>
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                    </>
+                )
+            };
+
+            return (
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className={className}
+                    aria-hidden="true"
+                >
+                    {icons[name] || null}
+                </svg>
+            );
+        };
+
+        const SCENES = [
+            {
+                id: 'c1',
+                checkpoint: 'Checkpoint 1: Assessing Needs',
+                cdcReference: 'Step 1: Engage Stakeholders & Assess Context',
+                image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "A wide-angle shot of diverse community stakeholders and professionals collaborating around a large table.",
+                question: "Mind Matters has focused primarily on reducing teen social media usage. Which evaluation question is most aligned with CDC guidance on assessing community needs?",
+                icon: "users",
+                cdcTip: "Evaluation encourages us to identify strengths, weaknesses, and areas for improvement in program focus.",
+                options: [
+                    { id: 'A', text: 'Are teens spending fewer hours on social media after program participation?', feedback: 'Incorrect. This measures outcomes (post-program effects) rather than needs assessment.', correct: false, outcome: "Rationale: Choice A measures outcomes, not needs assessment. Reference: CDC Executive Summary, p.1–2." },
+                    { id: 'B', text: 'Is the program budget being spent exactly as planned?', feedback: 'Incorrect. This addresses operational compliance, not whether the program is targeting the right community needs.', correct: false, outcome: "Rationale: Focuses on adherence to plans rather than relevance to community context. Reference: CDC Executive Summary, p.1–2." },
+                    { id: 'C', text: 'Are the mental health issues addressed by Mind Matters the ones most prevalent in the community?', feedback: 'Correct! This directly addresses whether the program is targeting the right community needs.', correct: true, outcome: "Rationale: Directly addresses whether the program is targeting the right community needs (CDC Executive Summary, p.1–2)." },
+                    { id: 'D', text: 'Did all teens in the school attend Mind Matters sessions at least once?', feedback: 'Incorrect. This is about reach and participation volume, not the underlying relevance of the program topic.', correct: false, outcome: "Rationale: Reach is about implementation volume, not needs alignment. Reference: CDC Executive Summary, p.1–2." }
+                ]
+            },
+            {
+                id: 'c2',
+                checkpoint: 'Checkpoint 2: Reviewing Goals',
+                cdcReference: 'Step 2: Describe the Program (Intended Outcomes)',
+                image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "A professional writing clearly defined objectives on a whiteboard.",
+                question: "The current program goal states: “We want to make teens happier.” Which critique best reflects CDC evaluation principles?",
+                icon: "target",
+                cdcTip: "Evaluation should assess the specific effectiveness and impact of a program.",
+                options: [
+                    { id: 'A', text: 'This goal is clear, measurable, and achievable.', feedback: 'Incorrect. While it sounds positive, it is actually too vague to measure or assess for effectiveness.', correct: false, outcome: "Rationale: This is actually too vague to measure or assess for effectiveness. Reference: CDC Introduction, p.4–5." },
+                    { id: 'B', text: 'This goal is vague and does not define specific, measurable outcomes.', feedback: 'Correct! CDC emphasizes clarity in program goals to ensure evaluation can assess effectiveness and impact.', correct: true, outcome: "Rationale: Highlights the need for specific and measurable outcomes (CDC Introduction, p.4–5)." },
+                    { id: 'C', text: 'Happiness is irrelevant to mental health programs.', feedback: 'Incorrect. Mental well-being is highly relevant, but the goal remains unmeasurable without further definition.', correct: false, outcome: "Rationale: Subjective domains are valid but must be defined specifically for evaluation. Reference: CDC Introduction, p.4–5." },
+                    { id: 'D', text: 'Goals should always focus on cost-effectiveness instead.', feedback: 'Incorrect. Cost-effectiveness is secondary to the clarity of the program\'s health objectives.', correct: false, outcome: "Rationale: Clarity of objectives is the prerequisite for assessing cost-effectiveness. Reference: CDC Introduction, p.4–5." }
+                ]
+            },
+            {
+                id: 'c3',
+                checkpoint: 'Checkpoint 3: Evaluating Components',
+                cdcReference: 'Step 2: Align Activities with Outcomes',
+                image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "A diverse team collaborating to map out program strategies.",
+                question: "Mind Matters includes workshops, social media campaigns, and peer mentorship. Which statement demonstrates proper evaluation alignment?",
+                icon: "layout-grid",
+                cdcTip: "Evaluation documents progress on goals and the effectiveness of various strategies used to produce results.",
+                options: [
+                    { id: 'A', text: 'Peer mentorship should be removed because workshops are more fun.', feedback: 'Incorrect. Evaluation decisions must be based on evidence of effectiveness, not student entertainment value.', correct: false, outcome: "Rationale: Choice A ignores core evaluation principles (CDC Executive Summary, p.2)." },
+                    { id: 'B', text: 'Social media campaigns can be assumed effective because other programs use them.', feedback: 'Incorrect. Assuming effectiveness without data contradicts evaluation principles.', correct: false, outcome: "Rationale: Assumptions do not replace data-driven evaluation. Reference: CDC Executive Summary, p.2." },
+                    { id: 'C', text: 'Only workshops need evaluation since they involve direct instruction.', feedback: 'Incorrect. All components consume resources and contribute to outcomes; therefore, all require assessment.', correct: false, outcome: "Rationale: Risks misallocating resources by ignoring the effectiveness of non-instructional strategies. Reference: CDC Executive Summary, p.2." },
+                    { id: 'D', text: 'Each component should be evaluated to see if it contributes to the intended outcomes.', feedback: 'Correct! This aligns with CDC guidance to assess the effectiveness of various program strategies.', correct: true, outcome: "Rationale: Follows CDC guidance to evaluate the effectiveness of various program strategies (CDC Executive Summary, p.2)." }
+                ]
+            },
+            {
+                id: 'c4',
+                checkpoint: 'Checkpoint 4: Resource Efficiency',
+                cdcReference: 'Step 3: Focus the Evaluation Design (Efficiency)',
+                image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "Financial documents representing budget evaluation and management.",
+                question: "The program spent 70% of its budget on digital ads that reached 5% of teens. What is the most appropriate evaluation question?",
+                icon: "bar-chart-3",
+                cdcTip: "Evaluation questions should address implementation, effectiveness, and efficiency.",
+                options: [
+                    { id: 'A', text: 'Is the program reaching the intended population efficiently?', feedback: 'Correct! Efficiency is a core evaluation category in the CDC framework.', correct: true, outcome: "Rationale: Addresses efficiency, a core group of CDC evaluation questions (CDC Introduction, p.4)." },
+                    { id: 'B', text: 'Should we cancel peer mentorship sessions to save money?', feedback: 'Incorrect. This is a premature tactical decision. One must first evaluate the efficiency of the high-spend component.', correct: false, outcome: "Rationale: Proposes action without assessing the efficiency of the current high-spend component. Reference: CDC Introduction, p.4." },
+                    { id: 'C', text: 'Did teens enjoy the digital ads?', feedback: 'Incorrect. Satisfaction is an acceptability metric, not an efficiency metric addressing budget-to-reach misallocation.', correct: false, outcome: "Rationale: Measures satisfaction rather than the core issue of resource waste. Reference: CDC Introduction, p.4." },
+                    { id: 'D', text: 'Are all staff following internal reporting procedures?', feedback: 'Incorrect. This is a process adherence question unrelated to the strategic efficiency of the ad budget.', correct: false, outcome: "Rationale: Administrative compliance is not the same as resource efficiency. Reference: CDC Introduction, p.4." }
+                ]
+            },
+            {
+                id: 'c5',
+                checkpoint: 'Checkpoint 5: Selecting Data Sources',
+                cdcReference: 'Step 4: Gather Credible Evidence (Mixed Methods)',
+                image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "Data charts and statistical graphs showing program evidence trends.",
+                question: "Which approach best aligns with CDC guidance for gathering credible evidence for Mind Matters?",
+                icon: "bar-chart-3",
+                cdcTip: "The CDC recommends multiple data sources (triangulation) and mixed methods.",
+                options: [
+                    { id: 'A', text: 'Only use pre/post surveys with a single class of students.', feedback: 'Incorrect. CDC guidance suggests data sources should be multiple. A single class lacks representativeness.', correct: false, outcome: "Rationale: Limited representativeness; violates triangulation principles (CDC Principles Table, p.7)." },
+                    { id: 'B', text: 'Ask staff for opinions only, since they see everything.', feedback: 'Incorrect. Subjective anecdotes alone do not meet the standard for "credible evidence" in public health evaluation.', correct: false, outcome: "Rationale: Relies on subjective staff bias rather than rigorous data triangulation. Reference: CDC Principles Table, p.7." },
+                    { id: 'C', text: 'Combine surveys, focus groups, and administrative data to assess multiple outcomes.', feedback: 'Correct! Triangulation through mixed methods provides more credible evidence.', correct: true, outcome: "Rationale: Uses multiple sources and mixed methods recommended by CDC (CDC Principles Table, p.7)." },
+                    { id: 'D', text: 'Observe one workshop and assume all others are identical.', feedback: 'Incorrect. This fails to account for implementation variability and lacks scientific rigor.', correct: false, outcome: "Rationale: Assumes fidelity without evidence. Reference: CDC Principles Table, p.7." }
+                ]
+            },
+            {
+                id: 'c6',
+                checkpoint: 'Checkpoint 6: Attribution & Program Contribution',
+                cdcReference: 'Step 5: Justify Conclusions (Attribution)',
+                image: 'https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "An analytics screen comparing program data against broader city trends.",
+                question: "Teen depression rates have slightly decreased, but a citywide campaign was running simultaneously. What is the best evaluation conclusion?",
+                icon: "target",
+                cdcTip: "Account for alternative explanations and show similar effects in similar contexts to justify conclusions.",
+                options: [
+                    { id: 'A', text: 'Mind Matters caused the reduction in depression rates.', feedback: 'Incorrect. This overstates causation and ignores confounding factors like the citywide campaign.', correct: false, outcome: "Rationale: Overstates causation, ignoring confounding factors. Reference: CDC Principles Table, p.8." },
+                    { id: 'B', text: 'The reduction is likely due to Mind Matters, but alternative explanations must be considered.', feedback: 'Correct! This reflects CDC guidance to consider attribution and alternative explanations.', correct: true, outcome: "Rationale: Reflects CDC guidance to consider attribution and alternative explanations (CDC Principles Table, p.8)." },
+                    { id: 'C', text: 'Mind Matters probably had some impact, but we should report it as the main cause to funders.', feedback: 'Incorrect. This is unethical and misleading; evaluation should be a balanced, objective assessment.', correct: false, outcome: "Rationale: Reporting should be balanced and objective rather than political. Reference: CDC Principles Table, p.8." },
+                    { id: 'D', text: 'The decrease cannot be attributed to any program unless a randomized control trial is conducted.', feedback: 'Incorrect. Evaluation can make contribution judgments even without full RCTs if plausible mechanisms are shown.', correct: false, outcome: "Rationale: Overemphasizes strict research methods; evaluation allows for contribution judgment. Reference: CDC Principles Table, p.8." }
+                ]
+            },
+            {
+                id: 'c7',
+                checkpoint: 'Checkpoint 7: Ensuring Use of Findings',
+                cdcReference: 'Step 6: Use & Share Lessons Learned',
+                image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "Team members reviewing and discussing an evaluation report together.",
+                question: "How should Mind Matters evaluation results be shared to best follow CDC guidance?",
+                icon: "book-open",
+                cdcTip: "Focus on intended uses by intended users and ensure full disclosure and a balanced assessment.",
+                options: [
+                    { id: 'A', text: 'Share results internally only with staff to protect the program’s image.', feedback: 'Incorrect. This hides findings and reduces the usefulness of evaluation for broader improvement.', correct: false, outcome: "Rationale: Hiding findings reduces utility and violates transparency standards. Reference: CDC Principles Table, p.8." },
+                    { id: 'B', text: 'Highlight only positive outcomes to funders and omit areas needing improvement.', feedback: 'Incorrect. CDC principles require a balanced assessment for evaluation results to be credible.', correct: false, outcome: "Rationale: Selective reporting is biased and misleading to intended users. Reference: CDC Principles Table, p.8." },
+                    { id: 'C', text: 'Wait until the program ends before reporting anything.', feedback: 'Incorrect. Continuous feedback allows for iterative program improvements.', correct: false, outcome: "Rationale: Delays improvements that increase program impact. Reference: CDC Principles Table, p.8." },
+                    { id: 'D', text: 'Publish a summary online with findings and recommendations for stakeholders.', feedback: 'Correct! demonstrating transparency, stakeholder feedback, and use of findings.', correct: true, outcome: "Rationale: Demonstrates transparency, stakeholder feedback, and use of findings (CDC Principles Table, p.8)." }
+                ]
+            },
+            {
+                id: 'c8',
+                checkpoint: 'Checkpoint 8: Continuous Improvement',
+                cdcReference: 'Step 6: Application of Findings',
+                image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000',
+                imageAlt: "A group setting a collaborative plan for program refinement based on data.",
+                question: "Some components show weak outcomes. What is the best next step?",
+                icon: "award",
+                cdcTip: "Evaluation encourages us to increase impact by identifying weaknesses and modifying program elements.",
+                options: [
+                    { id: 'A', text: 'Modify or strengthen components using evaluation data while maintaining successful elements.', feedback: 'Correct! Reflects formative use of evaluation data to identify weaknesses and increase program impact.', correct: true, outcome: "Rationale: Reflects formative use of evaluation for program improvement (CDC Executive Summary, p.1–2)." },
+                    { id: 'B', text: 'Continue all activities without change to maintain consistency.', feedback: 'Incorrect. Ignoring data leads to misallocation of resources and missed impact opportunities.', correct: false, outcome: "Rationale: Choice A ignores data and opportunities for improvement. Reference: CDC Executive Summary, p.1–2." },
+                    { id: 'C', text: 'Cancel the program entirely, since parts are ineffective.', feedback: 'Incorrect. Termination is extreme; evaluation should guide specific fixes rather than immediate closure.', correct: false, outcome: "Rationale: Extreme reaction; does not differentiate between functional and weak components. Reference: CDC Executive Summary, p.1–2." },
+                    { id: 'D', text: 'Blame staff for poor implementation and require additional training before continuing.', feedback: 'Incorrect. Evaluation focuses on program design and systematic barriers rather than individual performance blame.', correct: false, outcome: "Rationale: Focuses on individual personnel rather than systemic issues. Reference: CDC Executive Summary, p.1–2." }
+                ]
+            }
+        ];
+
+        function App() {
+            const [isStarted, setIsStarted] = useState(false);
+            const [currentScene, setCurrentScene] = useState(0);
+            const [history, setHistory] = useState([]);
+            const [isFinished, setIsFinished] = useState(false);
+            const [showFeedback, setShowFeedback] = useState(null);
+            const [imgLoaded, setImgLoaded] = useState(false);
+            const [copySuccess, setCopySuccess] = useState(false);
+
+            const completionCode = "IMPACT";
+            const cdcGuideUrl = "https://stacks.cdc.gov/view/cdc/26245";
+
+            useEffect(() => { setImgLoaded(false); }, [currentScene, isStarted]);
+
+            const handleOptionSelect = (option) => {
+                setShowFeedback(option);
+            };
+
+            const proceedToNext = () => {
+                const updatedHistory = [...history];
+                updatedHistory[currentScene] = { 
+                    checkpoint: SCENES[currentScene].checkpoint,
+                    question: SCENES[currentScene].question,
+                    selected: showFeedback.text,
+                    isCorrect: showFeedback.correct,
+                    rationale: showFeedback.outcome
+                };
+                setHistory(updatedHistory);
+                setShowFeedback(null);
+                
+                if (currentScene < SCENES.length - 1) setCurrentScene(currentScene + 1);
+                else setIsFinished(true);
+            };
+
+            const handleBack = () => {
+                if (showFeedback) {
+                    setShowFeedback(null);
+                } else if (currentScene > 0) {
+                    setCurrentScene(currentScene - 1);
+                } else {
+                    setIsStarted(false);
+                }
+            };
+
+            const copyToClipboard = () => {
+                const textField = document.createElement('textarea');
+                textField.innerText = completionCode;
+                document.body.appendChild(textField);
+                textField.select();
+                document.execCommand('copy');
+                textField.remove();
+                setCopySuccess(true);
+                setTimeout(() => setCopySuccess(false), 2000);
+            };
+
+            const restart = () => {
+                setIsStarted(false);
+                setCurrentScene(0);
+                setHistory([]);
+                setIsFinished(false);
+                setShowFeedback(null);
+            };
+
+            if (!isStarted) {
+                return (
+                    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+                        <article className="max-w-4xl w-full bg-white rounded-[2.5rem] shadow-2xl border border-slate-200 overflow-hidden animate-in">
+                            <div className="flex flex-col md:flex-row h-full">
+                                <section className="md:w-1/3 bg-slate-900 p-10 text-white flex flex-col justify-between shrink-0">
+                                    <header>
+                                        <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20">
+                                            <Icon name="book-open" className="w-6 h-6 text-white" />
+                                        </div>
+                                        <h1 className="text-2xl font-black tracking-tight leading-tight mb-2 uppercase">Scenario Overview</h1>
+                                        <p className="text-slate-400 text-sm font-medium">Evaluation Consultation</p>
+                                    </header>
+                                    <div className="mt-12 space-y-4">
+                                        <div className="p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">
+                                            <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 text-center">Reference Protocol</p>
+                                            <a 
+                                                href={cdcGuideUrl} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="text-[11px] text-blue-400 hover:text-blue-300 transition-colors flex items-center justify-center gap-1 leading-relaxed text-center italic"
+                                                aria-label="Open CDC 2011 Self-Study Guide in a new tab"
+                                            >
+                                                CDC (2011) Self-Study Guide <Icon name="external-link" className="w-3 h-3" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section className="md:w-2/3 flex flex-col">
+                                    <div className="relative h-48 md:h-56 bg-slate-100 overflow-hidden">
+                                        <img 
+                                            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000" 
+                                            className={`w-full h-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} 
+                                            onLoad={() => setImgLoaded(true)} 
+                                            alt="A modern, professional office meeting room representing a public health department workspace."
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+                                    </div>
+                                    <div className="p-10 md:px-12 md:pb-12 md:pt-4">
+                                        <div className="space-y-6">
+                                            <div className="prose prose-slate text-sm">
+                                                <p className="text-slate-600 leading-relaxed">
+                                                    You are a public health consultant brought in after the launch of a new teen mental health initiative called <strong className="text-slate-900">Mind Matters</strong>. Leadership is unsure whether the program is addressing the right needs, achieving outcomes, or using resources effectively.
+                                                </p>
+                                                <p className="text-slate-600 leading-relaxed">
+                                                    Your role is to evaluate the program design using the <a href={cdcGuideUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline inline-flex items-center gap-1" aria-label="CDC Program Evaluation Guide link">CDC’s Introduction to Program Evaluation for Public Health Programs (2011) <Icon name="external-link" className="w-3.5 h-3.5" /></a>.
+                                                </p>
+                                                <p className="text-slate-600 leading-relaxed">
+                                                    Throughout this simulation, you will review existing decisions, assess their quality, and determine whether they align with CDC evaluation guidance—or risk wasted resources.
+                                                </p>
+                                                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 mt-4 flex items-start gap-3">
+                                                    <Icon name="info" className="text-amber-600 shrink-0 w-4 h-4 mt-0.5" />
+                                                    <p className="text-[11px] text-amber-800 font-semibold leading-relaxed">
+                                                        Upon completing all phases of this training scenario, you will receive a unique completion code. Please save this code for your records.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => setIsStarted(true)}
+                                                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-200 group mt-4 active:scale-[0.98]"
+                                                aria-label="Start Simulation"
+                                            >
+                                                Begin Consultation
+                                                <Icon name="play" className="w-4 h-4 fill-current group-hover:translate-x-1 transition-transform" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </article>
+                    </main>
+                );
+            }
+
+            if (isFinished) {
+                const totalCorrect = history.filter(h => h.isCorrect).length;
+                let rank = "Novice Consultant";
+                if (totalCorrect >= 7) rank = "CDC-Certified Public Health Strategist";
+                else if (totalCorrect >= 5) rank = "Effective Program Coordinator";
+
+                return (
+                    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+                        <article className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 animate-in">
+                            <header className="bg-slate-900 py-8 px-10 text-center text-white relative">
+                                <Icon name="book-open" className="w-12 h-12 mx-auto mb-3 text-blue-400" />
+                                <h1 className="text-2xl font-bold mb-1 uppercase tracking-tight">Consultation Complete</h1>
+                                <p className="text-slate-400 text-sm font-medium tracking-wide">Strategic Evaluation Report Summary</p>
+                            </header>
+                            
+                            <div className="p-8 md:px-12 md:py-8 overflow-y-auto max-h-[75vh] custom-scrollbar">
+                                <section className="bg-slate-900 rounded-2xl p-6 mb-8 border border-emerald-500/30 shadow-xl shadow-emerald-500/5">
+                                    <h2 className="text-emerald-400 font-bold text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        📋 Important: Completion Code
+                                    </h2>
+                                    <p className="text-slate-400 text-xs mb-4 leading-relaxed">
+                                        You have successfully completed all phases of the Mind Matters evaluation scenario. Please copy and save your unique completion code as proof of completion for your records.
+                                    </p>
+                                    <div className="flex items-center gap-3">
+                                        <div 
+                                            className="bg-slate-800 border border-slate-700 px-4 py-3 rounded-xl flex-grow font-mono text-white text-lg tracking-widest text-center shadow-inner uppercase"
+                                            aria-label={`Your completion code is ${completionCode}`}
+                                        >
+                                            {completionCode}
+                                        </div>
+                                        <button 
+                                            onClick={copyToClipboard}
+                                            className={`px-4 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 ${copySuccess ? 'bg-emerald-500 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                                            aria-label={copySuccess ? "Code copied to clipboard" : "Copy completion code to clipboard"}
+                                        >
+                                            <Icon name={copySuccess ? "check-circle-2" : "copy"} className="w-5 h-5" />
+                                            <span className="hidden sm:inline">{copySuccess ? 'Copied!' : 'Copy Code'}</span>
+                                        </button>
+                                    </div>
+                                </section>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                                    <section className="bg-blue-50 p-4 rounded-xl border border-blue-100 flex items-center gap-4">
+                                        <div className="p-2.5 bg-blue-600 rounded-lg text-white"><Icon name="award" className="w-5 h-5" /></div>
+                                        <div>
+                                            <p className="text-blue-600 text-[9px] font-black uppercase tracking-widest mb-0.5">Consultant Status</p>
+                                            <h3 className="text-lg font-bold text-slate-800 leading-none">{rank}</h3>
+                                        </div>
+                                    </section>
+                                    <section className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex items-center gap-4">
+                                        <div className="p-2.5 bg-emerald-600 rounded-lg text-white"><Icon name="bar-chart-3" className="w-5 h-5" /></div>
+                                        <div>
+                                            <p className="text-emerald-600 text-[9px] font-black uppercase tracking-widest mb-0.5">Alignment Score</p>
+                                            <h3 className="text-lg font-bold text-slate-800 leading-none">{totalCorrect} / 8 Framework Steps</h3>
+                                        </div>
+                                    </section>
+                                </div>
+
+                                <section className="mb-8">
+                                    <h2 className="text-md font-black text-slate-900 mb-4 flex items-center gap-2 uppercase tracking-tight">
+                                        <div className="w-6 h-1 bg-blue-500 rounded-full"></div>
+                                        Strategic Review Summary
+                                    </h2>
+                                    <div className="space-y-3">
+                                        {history.map((h, i) => (
+                                            <article key={i} className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 items-start">
+                                                <div className={`mt-1 p-1 rounded-full shrink-0 ${h.isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`} aria-label={h.isCorrect ? "Correct" : "Incorrect"}>
+                                                    <Icon name={h.isCorrect ? "check-circle-2" : "alert-circle"} className="w-4 h-4" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase mb-0.5">{h.checkpoint}</p>
+                                                    <h4 className="text-sm font-bold text-slate-800 leading-tight mb-1">{h.question}</h4>
+                                                    <p className="text-xs text-slate-600 font-medium italic border-l-2 border-slate-200 pl-3 mt-2 leading-relaxed">{h.rationale}</p>
+                                                </div>
+                                            </article>
+                                        ))}
+                                    </div>
+                                </section>
+
+                                <button 
+                                    onClick={restart} 
+                                    className="w-full bg-slate-100 text-slate-600 py-4 rounded-xl font-bold hover:bg-slate-200 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                                    aria-label="Restart simulation from the beginning"
+                                >
+                                    <Icon name="rotate-ccw" className="w-4 h-4" /> Restart Simulation
+                                </button>
+                            </div>
+                        </article>
+                    </main>
+                );
+            }
+
+            const scene = SCENES[currentScene];
+
+            return (
+                <div className="min-h-screen bg-slate-50 p-4 md:p-8 flex items-center justify-center">
+                    <div className="max-w-5xl w-full">
+                        <header className="text-center mb-6">
+                            <h1 className="text-2xl font-black text-slate-900 tracking-tighter mb-1 uppercase">Minds Matter</h1>
+                            <p className="text-slate-500 font-semibold tracking-widest uppercase text-[9px]">CDC Evaluation Self-Study Protocol</p>
+                        </header>
+
+                        <div className="bg-white rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden flex flex-col md:flex-row min-h-[650px] animate-in">
+                            <nav className="md:w-1/4 bg-slate-900 p-6 text-white flex flex-col shrink-0" aria-label="Progress sidebar">
+                                <div className="mb-8">
+                                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-6">Simulation Path</p>
+                                    <ol className="space-y-5">
+                                        {SCENES.map((s, idx) => (
+                                            <li key={s.id} className="flex items-center gap-3">
+                                                <div 
+                                                    className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold border-2 transition-all duration-500 ${currentScene === idx ? 'bg-blue-600 border-blue-600 shadow-lg scale-110' : currentScene > idx ? 'bg-emerald-500 border-emerald-500' : 'border-slate-800 text-slate-700'}`}
+                                                    aria-current={currentScene === idx ? "step" : undefined}
+                                                >
+                                                    {currentScene > idx ? <Icon name="check-circle-2" className="w-3.5 h-3.5" /> : idx + 1}
+                                                </div>
+                                                <span className={`text-[10px] font-black uppercase transition-colors tracking-tight ${currentScene === idx ? 'text-white' : 'text-slate-600'}`}>{s.checkpoint.split(':')[0]}</span>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                                <div className="mt-auto p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">
+                                    <Icon name="info" className="text-blue-400 w-4 h-4 mb-2" />
+                                    <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
+                                        Assess the current implementation against the <a href={cdcGuideUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline hover:text-blue-300" aria-label="CDC framework link">CDC framework</a> to prevent misallocation.
+                                    </p>
+                                </div>
+                            </nav>
+
+                            <main className="md:w-3/4 flex flex-col bg-white">
+                                <section className="relative h-48 md:h-64 bg-slate-100 overflow-hidden" aria-label="Current scene illustration">
+                                    <img src={scene.image} className={`w-full h-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={() => setImgLoaded(true)} alt={scene.imageAlt} />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                                    <div className="absolute bottom-5 left-8 right-8 text-white">
+                                        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-400 mb-1">{scene.cdcReference}</p>
+                                        <h2 className="text-xl font-bold tracking-tight leading-tight">{scene.checkpoint}</h2>
+                                    </div>
+                                </section>
+
+                                <section className="p-8 md:p-10 flex flex-col flex-1" aria-live="polite">
+                                    {!showFeedback ? (
+                                        <div className="animate-in flex flex-col h-full">
+                                            <div className="flex gap-4 items-start mb-6">
+                                                <div className="p-2.5 bg-blue-50 rounded-xl shrink-0"><Icon name="users" className="text-blue-500 w-5 h-5" /></div>
+                                                <div className="flex-1">
+                                                    <p id="question-text" className="text-slate-800 text-base md:text-lg leading-relaxed font-bold mb-4">{scene.question}</p>
+                                                    <aside className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 text-[11px] text-slate-300 leading-relaxed shadow-lg">
+                                                        <span className="text-blue-400 font-bold uppercase block mb-1 tracking-widest text-[9px]">CDC Consultant Tip:</span>
+                                                        {scene.cdcTip}
+                                                    </aside>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2.5 mt-auto" role="radiogroup" aria-labelledby="question-text">
+                                                {scene.options.map((opt) => (
+                                                    <button 
+                                                        key={opt.id} 
+                                                        onClick={() => handleOptionSelect(opt)} 
+                                                        className="w-full text-left p-3.5 rounded-xl border border-slate-100 bg-white hover:border-blue-500 hover:shadow-md transition-all group flex items-start gap-4 active:bg-slate-50"
+                                                        aria-label={`Option ${opt.id}: ${opt.text}`}
+                                                    >
+                                                        <div className="mt-0.5 w-5 h-5 rounded border border-slate-200 group-hover:border-blue-600 flex items-center justify-center shrink-0 transition-colors">
+                                                            <div className="w-2.5 h-2.5 rounded-sm bg-blue-600 scale-0 group-hover:scale-100 transition-transform"></div>
+                                                        </div>
+                                                        <span className="text-slate-600 font-semibold text-sm group-hover:text-blue-900 transition-colors leading-snug">({opt.id}) {opt.text}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                onClick={handleBack} 
+                                                className="mt-4 flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest"
+                                                aria-label="Go back to the previous section"
+                                            >
+                                                <Icon name="chevron-left" className="w-4 h-4" /> Back to Previous
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="animate-in flex flex-col h-full">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-3 mb-5">
+                                                    <div className="w-8 h-1 bg-blue-600 rounded-full"></div>
+                                                    <h3 className="text-xs font-black text-slate-900 tracking-widest uppercase">Strategic Review</h3>
+                                                </div>
+                                                <div className="bg-slate-900 p-5 rounded-2xl text-white mb-6 shadow-xl relative overflow-hidden">
+                                                    <div className="absolute top-0 right-0 p-4 opacity-5">
+                                                        <Icon name={showFeedback.correct ? "check-circle-2" : "alert-circle"} className="w-16 h-16" />
+                                                    </div>
+                                                    <div className="relative z-10">
+                                                        <p className={`text-[10px] font-black mb-2 tracking-[0.2em] uppercase ${showFeedback.correct ? 'text-emerald-400' : 'text-amber-400'}`}>
+                                                            {showFeedback.correct ? "Evaluation Aligned" : "Evaluation Misaligned"}
+                                                        </p>
+                                                        <p className="text-slate-200 text-sm leading-relaxed mb-4 font-medium italic">
+                                                            "{showFeedback.feedback}"
+                                                        </p>
+                                                        <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-xl border border-white/10 flex items-start gap-3">
+                                                            <Icon name="shield-alert" className="text-blue-400 shrink-0 mt-0.5 w-4 h-4" />
+                                                            <div>
+                                                                <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-0.5">Rationale</p>
+                                                                <p className="text-xs text-slate-300 font-medium leading-tight leading-relaxed">{showFeedback.outcome}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-3 mt-auto">
+                                                <button 
+                                                    onClick={handleBack} 
+                                                    className="px-6 py-4 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                                                    aria-label="Dismiss feedback and change answer"
+                                                >
+                                                    <Icon name="chevron-left" className="w-4 h-4" /> Back
+                                                </button>
+                                                <button 
+                                                    onClick={proceedToNext} 
+                                                    className="flex-grow bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] shadow-lg shadow-blue-50"
+                                                    aria-label="Confirm choice and proceed to next checkpoint"
+                                                >
+                                                    Continue Evaluation <Icon name="chevron-right" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </section>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
