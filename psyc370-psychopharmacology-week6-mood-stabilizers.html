@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 Interactive: Mood Stabilizers &amp; Chemical Imbalance</title>
+<style>:root{--bg:#f6f8fa;--card:#fff;--ink:#1b2430;--muted:#566173;--line:#d8dee7;--acc:#0f766e;--acc2:#0b5a54;--soft:#e2f3f0;--good:#166534;--goodbg:#e4f5ea;--bad:#9f1d1d;--badbg:#fbe9e9;--chip:#fff;--shadow:0 1px 2px rgba(20,30,50,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--card:#1b232e;--ink:#e8edf3;--muted:#a3afbf;--line:#334050;--soft:#16302d;--good:#7bd99b;--goodbg:#173424;--bad:#ff9a9a;--badbg:#3a1c1c;--chip:#222c39;--shadow:none}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:12px}
+.hero{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px;box-shadow:var(--shadow)}
+.hero svg{flex:0 0 auto;width:230px;height:auto;display:block}
+.eyebrow{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);font-weight:700}
+@media (prefers-color-scheme:dark){.eyebrow{color:#6fd3c8}}
+.hero h1{font-size:1.35rem;line-height:1.2;margin:2px 0 4px}
+.hero p{margin:0;color:var(--muted);font-size:.95rem}
+.tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tab{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;min-height:40px}
+.tab svg{width:20px;height:20px}
+.tab[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+.tab:focus-visible,.chip:focus-visible,.btn:focus-visible,.bin:focus-visible,.opt:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)}
+.panel[hidden]{display:none}
+.panel h2{font-size:1.05rem;margin:0 0 2px}
+.lead{margin:0 0 10px;color:var(--muted);font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:12px;min-height:56px;background:var(--bg)}
+.chip{border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:6px 12px;font:inherit;font-size:.92rem;cursor:grab;min-height:38px;display:inline-flex;align-items:center;gap:8px}
+.chip small{color:var(--muted);font-size:.8rem}
+.chip.sel{border-color:var(--acc);background:var(--soft);box-shadow:0 0 0 2px var(--acc)}
+.chip.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:10px}
+.bin{border:2px solid var(--line);border-radius:12px;padding:8px;background:var(--card);min-height:120px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.bin.over,.bin.ready{border-color:var(--acc);background:var(--soft)}
+.bin h3{margin:0 0 4px;font-size:.95rem;display:flex;align-items:center;gap:6px}
+.bin h3 svg{width:22px;height:22px;flex:none}
+.bin .hint{font-size:.78rem;color:var(--muted);margin:0 0 6px}
+.placed{display:flex;flex-wrap:wrap;gap:4px}
+.placed span{font-size:.8rem;background:var(--goodbg);color:var(--good);border-radius:8px;padding:2px 8px;font-weight:600}
+.bar{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--acc);background:var(--acc);color:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer;min-height:40px}
+.btn.ghost{background:transparent;color:var(--acc)}
+@media (prefers-color-scheme:dark){.btn.ghost{color:#6fd3c8;border-color:#6fd3c8}}
+.fb{flex:1;min-width:200px;padding:8px 12px;border-radius:10px;background:var(--soft);font-size:.92rem;min-height:40px}
+.fb.good{background:var(--goodbg);color:var(--good)}.fb.bad{background:var(--badbg);color:var(--bad)}
+.prog{font-weight:700;font-size:.9rem;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}.hero svg{width:96px}.hero p{display:none}.panel{padding:12px}}
+.card{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.card h3{margin:0 0 4px;font-size:.98rem}
+.card ul{margin:4px 0 0;padding-left:18px;font-size:.9rem}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:8px 12px;margin:6px 0;font:inherit;font-size:.93rem;cursor:pointer;min-height:40px}
+.opt.right{border-color:var(--good);background:var(--goodbg)}.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.ref{margin:10px 2px 0;font-size:.76rem;color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--acc:#b45309;--soft:#fdf0dc}
+@media (prefers-color-scheme:dark){:root{--soft:#3a2a14}.eyebrow{color:#fbbf6a}.btn.ghost{color:#fbbf6a;border-color:#fbbf6a}}
+.tab[aria-selected=true]{background:var(--acc);border-color:var(--acc)}
+.btn{background:var(--acc);border-color:var(--acc)}.btn.ghost{background:transparent;color:var(--acc)}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+@media (max-width:700px){.lab{grid-template-columns:1fr}}
+.meds{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.meds .chip{cursor:pointer}
+.meds .chip[aria-pressed=true]{border-color:var(--acc);background:var(--soft);box-shadow:0 0 0 2px var(--acc)}
+.vis{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:6px}.vis svg{width:100%;height:auto;display:block}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--soft);color:var(--acc);margin-right:4px}
+@media (prefers-color-scheme:dark){.tag{color:#fbbf6a}}
+.tag.w{background:var(--badbg);color:var(--bad)}
+.qs label{display:flex;gap:8px;align-items:flex-start;padding:5px 0;font-size:.93rem;cursor:pointer}
+.qs input{margin-top:4px;width:18px;height:18px;accent-color:var(--acc)}
+.qs{columns:2 300px;column-gap:18px}
+.qs label{break-inside:avoid}
+input[type=text],textarea,select{font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:7px 10px;background:var(--chip);color:var(--ink);width:100%}
+textarea{height:96px;resize:none}
+.pans{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+@media (max-width:700px){.pans{grid-template-columns:1fr}}
+.pan{border:2px solid var(--line);border-radius:12px;padding:8px;min-height:90px}
+.pan h3{margin:0 0 4px;font-size:.92rem}
+.ev{border-radius:8px;background:var(--soft);padding:4px 8px;margin:4px 0;font-size:.82rem;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.ev button{border:0;background:transparent;color:inherit;font-weight:800;cursor:pointer;font-size:1rem;line-height:1}
+.addrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:8px}.addrow input[type=text]{grid-column:1/-1}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 230 110" role="img" aria-label="Balance scale with a lithium symbol and a brain chemical molecule">
+ <rect width="230" height="110" rx="12" fill="#fdf0dc"/>
+ <path d="M115 22 V96 M85 96 H145" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+ <path d="M38 36 L192 28" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+ <path d="M38 36 L18 66 H58Z" fill="#fbbf6a" stroke="#b45309" stroke-width="2"/>
+ <path d="M192 28 L172 58 H212Z" fill="#fbbf6a" stroke="#b45309" stroke-width="2"/>
+ <circle cx="38" cy="50" r="10" fill="#b45309"/><text x="38" y="54" font-size="10" fill="#fff" text-anchor="middle" font-weight="800" font-family="system-ui">Li</text>
+ <circle cx="184" cy="46" r="5" fill="#2563eb"/><circle cx="198" cy="50" r="5" fill="#16a34a"/><circle cx="191" cy="38" r="5" fill="#dc2626"/>
+ <circle cx="115" cy="18" r="6" fill="#b45309"/>
+</svg>
+<div><div class="eyebrow">Week 6 · Deep Dive</div><h1>Mood Stabilizers, Lithium &amp; the Chemical Imbalance Question</h1><p>Explore bipolar medications, prepare for a prescriber visit, and weigh evidence on a famous theory.</p></div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Week 6 activities">
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><text x="12" y="16" font-size="9" text-anchor="middle" fill="currentColor" font-weight="800">Li</text></svg>Medication Explorer</button>
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 9l2 2 3-4M8 16h8" stroke="currentColor" stroke-width="2" fill="none"/></svg>Appointment Prep</button>
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M7 20h10M4 8l8-3 8 3" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>Test the Theory</button>
+</nav>
+
+<section class="panel" data-panel>
+ <h2>Medications for bipolar disorder</h2>
+ <p class="lead">Select a medication to see what the NIMH guide (pp. 7–9) says about its use, monitoring and warnings.</p>
+ <div class="meds" id="meds"></div>
+ <div class="lab"><div class="vis" id="mvis"></div><div id="mtxt"></div></div>
+</section>
+
+<section class="panel" data-panel>
+ <h2>Build your question list</h2>
+ <p class="lead">These questions come from the NIMH guide (p. 16). Uncheck any that do not apply, add your own, and build a list to bring to an appointment. It is a model for helping clients prepare.</p>
+ <div class="lab" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)">
+  <div><div class="qs" id="qs"></div>
+   <div class="addrow" style="grid-template-columns:1fr auto"><input type="text" style="grid-column:auto" id="custom" placeholder="Add your own question" aria-label="Add your own question"><button class="btn ghost" id="addq" type="button">Add</button></div></div>
+  <div><label for="medname" style="font-weight:600;font-size:.9rem">Medication name</label><input type="text" id="medname" placeholder="e.g., a medication you are researching"><div class="bar"><button class="btn" id="mk" type="button">Build list</button><button class="btn ghost" id="cp" type="button">Copy</button></div><textarea id="out" readonly aria-label="Your question list" style="margin-top:8px"></textarea><div class="fb" id="cpfb" style="margin-top:6px">Your list appears here.</div></div>
+ </div>
+</section>
+
+<section class="panel" data-panel>
+ <h2>Weigh the chemical imbalance theory</h2>
+ <p class="lead">Kirsch (2010, Ch. 4) argues it is a myth; the NIMH guide says antidepressants balance natural brain chemicals. Add what <em>you</em> find, rate its strength, and watch the scale. Counting sources is not the same as weighing them.</p>
+ <div class="lab" style="grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)">
+  <div class="vis"><svg viewBox="0 0 300 200" role="img" aria-label="Balance scale that tilts according to the weight of evidence you add"><path d="M150 40 V170 M110 170 H190" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><g id="beam" style="transition:transform .5s"><path d="M30 50 H270" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><g id="lp"><path d="M30 50 L8 100 H52Z" fill="#fbbf6a" stroke="#b45309" stroke-width="2"/></g><g id="rp"><path d="M270 50 L248 100 H292Z" fill="#c7d2fe" stroke="#4338ca" stroke-width="2"/></g></g><circle cx="150" cy="40" r="8" fill="#b45309"/><text x="6" y="150" font-size="11" fill="currentColor">Supports theory</text><text x="294" y="150" font-size="11" text-anchor="end" fill="currentColor">Challenges theory</text><text x="150" y="192" font-size="12" text-anchor="middle" font-weight="700" fill="currentColor" id="bal">Balanced</text></svg></div>
+  <div><div class="pans"><div class="pan"><h3>Supports</h3><div id="L"></div></div><div class="pan"><h3>Challenges</h3><div id="R"></div></div></div>
+   <div class="addrow"><input type="text" id="en" placeholder="Source you found" aria-label="Source you found"><select id="es" aria-label="Which side"><option value="L">Supports</option><option value="R">Challenges</option></select><select id="ew" aria-label="Strength"><option value="1">Weak</option><option value="2" selected>Moderate</option><option value="3">Strong</option></select><button class="btn" id="ea" type="button">Add</button></div></div>
+ </div>
+</section>
+<p class="ref">U.S. Department of Health and Human Services (2012), <em>Mental Health Medications</em>; Kirsch (2010), Ch. 4; Breggin &amp; Fisher (2008), Ch. 8; NAMI lithium page. Always refer a client’s medication questions to their doctor.</p>
+</div>
+<script>(function(){
+function postH(){try{parent.postMessage({type:'iframe-resize',height:document.querySelector('.wrap').offsetHeight},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+window.postH=postH;
+window.initTabs=function(){
+  var tabs=[].slice.call(document.querySelectorAll('nav.tabs .tab')),panels=[].slice.call(document.querySelectorAll('.panel[data-panel]'));
+  function eq(){panels.forEach(function(p){p.style.minHeight=''});var m=0;panels.forEach(function(p){var h=p.hidden;p.hidden=false;m=Math.max(m,p.offsetHeight);p.hidden=h});panels.forEach(function(p){p.style.minHeight=m+'px'})}
+  window.addEventListener('resize',function(){eq();postH()});
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i)});panels.forEach(function(p,j){p.hidden=j!==i});postH()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){e.preventDefault();var n=(i+1)%tabs.length;show(n);tabs[n].focus()}
+    if(e.key==='ArrowLeft'){e.preventDefault();var n2=(i+tabs.length-1)%tabs.length;show(n2);tabs[n2].focus()}})});
+  eq();show(0);setTimeout(function(){eq();postH()},300)};
+/* generic click-or-drag sorter */
+window.initSorter=function(o){
+  var root=document.getElementById(o.id),pool=root.querySelector('.pool'),binsEl=root.querySelector('.bins'),fb=root.querySelector('.fb'),prog=root.querySelector('.prog');
+  var sel=null,done=0,tries=0,total=o.items.length;
+  function say(m,c){fb.className='fb '+(c||'');fb.innerHTML=m}
+  function upd(){prog.textContent=done+' of '+total+' placed'+(tries?' · '+tries+' retr'+(tries===1?'y':'ies'):'')}
+  function build(){
+    pool.innerHTML='';binsEl.innerHTML='';sel=null;done=0;tries=0;
+    o.bins.forEach(function(b){var d=document.createElement('button');d.type='button';d.className='bin';d.dataset.bin=b.id;
+      d.innerHTML='<h3>'+(b.icon||'')+'<span>'+b.label+'</span></h3><p class="hint">'+(b.hint||'')+'</p><div class="placed"></div>';
+      d.addEventListener('click',function(){if(sel)place(sel,d)});
+      d.addEventListener('dragover',function(e){e.preventDefault();d.classList.add('over')});
+      d.addEventListener('dragleave',function(){d.classList.remove('over')});
+      d.addEventListener('drop',function(e){e.preventDefault();d.classList.remove('over');var id=e.dataTransfer.getData('text/plain');var c=pool.querySelector('[data-i="'+id+'"]');if(c)place(c,d)});
+      binsEl.appendChild(d)});
+    o.items.slice().sort(function(){return .5-Math.random()}).forEach(function(it){
+      var c=document.createElement('button');c.type='button';c.className='chip';c.draggable=true;c.dataset.i=o.items.indexOf(it);
+      c.innerHTML=it.label+(it.sub?' <small>'+it.sub+'</small>':'');
+      c.addEventListener('click',function(){pick(c)});
+      c.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',c.dataset.i);pick(c,true)});
+      pool.appendChild(c)});
+    say(o.start||'Pick a card, then pick its category (or drag it).');upd();postH()}
+  function pick(c,keep){if(sel===c&&!keep){c.classList.remove('sel');sel=null;binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.remove('ready')});return}
+    if(sel)sel.classList.remove('sel');sel=c;c.classList.add('sel');binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.add('ready')})}
+  function place(c,bin){var it=o.items[+c.dataset.i];
+    binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.remove('ready')});
+    if(it.bin===bin.dataset.bin){var s=document.createElement('span');s.textContent=it.label;bin.querySelector('.placed').appendChild(s);c.remove();sel=null;done++;
+      say('Correct. '+(it.why||''),'good');upd();
+      if(done===total){say(o.finish||'All sorted!','good')}}
+    else{tries++;c.classList.add('shake');setTimeout(function(){c.classList.remove('shake')},400);say('Not quite. '+(it.hint||'Try another category.'),'bad');upd()}
+    postH()}
+  root.querySelector('.reset').addEventListener('click',build);build()};
+/* generic quiz */
+window.initQuiz=function(o){
+  var root=document.getElementById(o.id),i=0,score=0,locked=false;
+  function render(){
+    if(i>=o.qs.length){root.innerHTML='<h3>Score: '+score+' / '+o.qs.length+'</h3><p class="lead">'+(o.end||'')+'</p><button class="btn" type="button">Try again</button>';root.querySelector('button').onclick=function(){i=0;score=0;render()};postH();return}
+    var q=o.qs[i];locked=false;
+    root.innerHTML='<div class="prog">Question '+(i+1)+' of '+o.qs.length+'</div><p style="margin:6px 0;font-weight:600">'+q.q+'</p><div class="opts"></div><div class="bar"><div class="fb">Choose an answer.</div></div>';
+    var box=root.querySelector('.opts'),fb=root.querySelector('.fb');
+    q.a.forEach(function(t,k){var b=document.createElement('button');b.type='button';b.className='opt';b.textContent=t;
+      b.onclick=function(){if(locked)return;locked=true;var ok=k===q.c;if(ok)score++;b.classList.add(ok?'right':'wrong');if(!ok)box.children[q.c].classList.add('right');
+        fb.className='fb '+(ok?'good':'bad');fb.innerHTML=(ok?'Correct. ':'Not quite. ')+q.w;
+        var n=document.createElement('button');n.type='button';n.className='btn';n.textContent=i<o.qs.length-1?'Next':'See score';n.onclick=function(){i++;render()};root.querySelector('.bar').appendChild(n);postH()};
+      box.appendChild(b)});postH()}
+  render()};
+})();
+
+initTabs();
+var M=[
+ {n:'Lithium',cat:'Mood stabilizer',col:'#b45309',use:'A very effective mood stabilizer and the first approved by the FDA in the 1970s for both manic and depressive episodes.',mon:'Regular doctor visits to check blood lithium levels and make sure the kidneys and thyroid work normally.',warn:['Loss of coordination, excessive thirst, frequent urination','Slurred speech, blackouts, seizures','Irregular or pounding heartbeat, hallucinations, vision changes','Swelling of eyes, face, lips or limbs; itching or rash']},
+ {n:'Valproic acid',cat:'Anticonvulsant',col:'#2563eb',use:'Also called divalproex sodium (Depakote). Originally developed for seizures; for some people it may work better than lithium.',mon:'See the doctor regularly; it may damage the liver or pancreas.',warn:['Changes in weight, nausea, stomach pain, vomiting, loss of appetite','May raise testosterone in teen girls and lead to PCOS','May cause birth defects in pregnancy','FDA warning: possible increased risk of suicidal thoughts and behaviors']},
+ {n:'Carbamazepine',cat:'Anticonvulsant',col:'#2563eb',use:'Tegretol. An anticonvulsant used as a mood stabilizer.',mon:'People should be closely monitored for new or worsening depression, suicidal thoughts, or unusual changes in mood or behavior.',warn:['FDA warning on anticonvulsants: possible increased risk of suicidal thoughts and behaviors','Do not make changes without talking to a health care professional']},
+ {n:'Lamotrigine',cat:'Anticonvulsant',col:'#2563eb',use:'Lamictal. An anticonvulsant used as a mood stabilizer.',mon:'Any rash should be reported to a doctor right away.',warn:['Can cause a rare but serious skin rash that needs hospital treatment; in some cases it can cause permanent disability or be life-threatening','FDA warning on anticonvulsants: possible increased risk of suicidal thoughts and behaviors']},
+ {n:'Oxcarbazepine',cat:'Anticonvulsant',col:'#2563eb',use:'Trileptal. An anticonvulsant used as a mood stabilizer.',mon:'Closely monitor mood and behavior changes.',warn:['FDA warning on anticonvulsants: possible increased risk of suicidal thoughts and behaviors']},
+ {n:'Atypical antipsychotics',cat:'Often added to other medications',col:'#7c3aed',use:'Olanzapine (Zyprexa) for severe or psychotic depression; aripiprazole (Abilify) as pill or shot; risperidone, ziprasidone; clozapine for people who do not respond to lithium or anticonvulsants.',mon:'See the Week 7 page for monitoring of weight, glucose and lipids.',warn:['Often used along with other medications','Antidepressants alone can cause a rapid switch from depression to mania; a mood stabilizer or antipsychotic is given alongside']}];
+var mb=document.getElementById('meds');
+M.forEach(function(m,i){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=m.n;b.setAttribute('aria-pressed','false');b.onclick=function(){sel(i)};mb.appendChild(b)});
+function gauge(c,name){return '<svg viewBox="0 0 300 190" role="img" aria-label="Illustration: '+name+'"><rect width="300" height="190" rx="10" fill="none"/><circle cx="150" cy="90" r="56" fill="'+c+'" opacity=".16"/><rect x="82" y="64" width="136" height="52" rx="26" fill="'+c+'"/><rect x="150" y="64" width="68" height="52" rx="26" fill="#fff" opacity=".4"/><text x="150" y="172" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">'+name+'</text><text x="150" y="30" font-size="11" text-anchor="middle" fill="currentColor">Dose and blood level are closely related</text></svg>'}
+function lithG(){return '<svg viewBox="0 0 300 190" role="img" aria-label="Gauge showing a narrow safe window for blood level, which is checked regularly"><path d="M40 140 A110 110 0 0 1 260 140" fill="none" stroke="#fbbf24" stroke-width="22"/><path d="M40 140 A110 110 0 0 1 100 52" fill="none" stroke="#94a3b8" stroke-width="22"/><path d="M200 52 A110 110 0 0 1 260 140" fill="none" stroke="#dc2626" stroke-width="22"/><path d="M150 140 L160 62" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="150" cy="140" r="9" fill="currentColor"/><text x="38" y="168" font-size="11" fill="currentColor">too low</text><text x="150" y="26" font-size="11" fill="currentColor" text-anchor="middle">target range (illustrative)</text><text x="262" y="168" font-size="11" fill="currentColor" text-anchor="end">too high</text><text x="150" y="186" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">Blood level checked regularly</text></svg>'}
+function sel(i){[].forEach.call(mb.children,function(b,j){b.setAttribute('aria-pressed',j===i)});var m=M[i];
+ document.getElementById('mvis').innerHTML=i===0?lithG():gauge(m.col,m.n);
+ document.getElementById('mtxt').innerHTML='<h3 style="margin:0 0 4px">'+m.n+' <span class="tag">'+m.cat+'</span></h3><p style="margin:0 0 6px;font-size:.93rem">'+m.use+'</p><p style="margin:0 0 6px;font-size:.93rem"><strong>Monitoring:</strong> '+m.mon+'</p><div class="card"><h3>Warnings &amp; side effects</h3><ul>'+m.warn.map(function(w){return '<li>'+w+'</li>'}).join('')+'</ul></div>';postH()}
+sel(0);
+
+var Q=['What is the name of the medication?','What is the medication supposed to do?','How and when should I take it?','How much should I take?','What should I do if I miss a dose?','When and how should I stop taking it?','Will it interact with other medications I take?','Do I need to avoid any types of food or drink while taking the medication?','Should it be taken with or without food?','Is it safe to drink alcohol while taking this medication?','What are the side effects? What should I do if I experience them?','Is the Patient Package Insert for the medication available?'];
+var qs=document.getElementById('qs');
+function addQ(t,chk){var l=document.createElement('label');var c=document.createElement('input');c.type='checkbox';c.checked=chk;var s=document.createElement('span');s.textContent=t;l.appendChild(c);l.appendChild(s);qs.appendChild(l)}
+Q.forEach(function(t){addQ(t,true)});
+document.getElementById('addq').onclick=function(){var v=document.getElementById('custom');if(v.value.trim()){addQ(v.value.trim(),true);v.value='';postH()}};
+var out=document.getElementById('out'),cf=document.getElementById('cpfb');
+document.getElementById('mk').onclick=function(){var med=document.getElementById('medname').value.trim()||'my medication';var L=[].filter.call(qs.children,function(l){return l.querySelector('input').checked}).map(function(l,i){return (i+1)+'. '+l.querySelector('span').textContent.replace(/medication/g,function(m){return m})});
+ out.value='Questions about '+med+':\n'+L.join('\n');cf.className='fb good';cf.textContent=L.length+' questions ready.'};
+document.getElementById('cp').onclick=function(){out.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}cf.className='fb '+(ok?'good':'');cf.textContent=ok?'Copied.':'Select the text and copy it manually.'};
+
+var ev={L:[{t:'NIMH guide (p. 4): antidepressants “work to balance some of the natural chemicals” in the brain',w:2}],R:[{t:'Kirsch (2010, Ch. 4): argues the chemical imbalance explanation is a myth',w:2}]};
+function draw(){['L','R'].forEach(function(k){var d=document.getElementById(k);d.innerHTML='';ev[k].forEach(function(e,i){var r=document.createElement('div');r.className='ev';r.innerHTML='<span>'+e.t+' <strong>('+['','weak','moderate','strong'][e.w]+')</strong></span>';var x=document.createElement('button');x.textContent='×';x.setAttribute('aria-label','Remove');x.onclick=function(){ev[k].splice(i,1);draw()};r.appendChild(x);d.appendChild(r)})});
+ var l=ev.L.reduce(function(a,e){return a+e.w},0),r=ev.R.reduce(function(a,e){return a+e.w},0),diff=Math.max(-8,Math.min(8,r-l));
+ document.getElementById('beam').style.transform='rotate('+(diff*3)+'deg)';document.getElementById('beam').style.transformOrigin='150px 50px';
+ document.getElementById('lp').style.transform='rotate('+(-diff*3)+'deg)';document.getElementById('lp').style.transformOrigin='30px 50px';document.getElementById('rp').style.transform='rotate('+(-diff*3)+'deg)';document.getElementById('rp').style.transformOrigin='270px 50px';
+ document.getElementById('bal').textContent=diff===0?'Balanced':(diff>0?'Tilts toward “challenges”':'Tilts toward “supports”');postH()}
+document.getElementById('ea').onclick=function(){var t=document.getElementById('en');if(!t.value.trim())return;ev[document.getElementById('es').value].push({t:t.value.trim(),w:+document.getElementById('ew').value});t.value='';draw()};
+draw();
+</script></body></html>
