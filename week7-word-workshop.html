@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7: Word Workshop</title><style>
+:root{--brick:#b0262c;--red:#d34147;--ink:#2a2220;--sand:#edebe8;--paper:#fff;--teal:#1e6b73;--tealbg:#e3f1f2;--gold:#8a6100;--goldbg:#fbf0d0;--mute:#5f5652;--line:#d9d4cf}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:var(--ink);font:16px/1.45 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow:hidden}
+.app{max-width:920px;margin:0 auto;padding:12px 14px 14px}
+.hero{display:flex;gap:16px;align-items:center;background:var(--sand);border-left:6px solid var(--brick);padding:10px 16px;border-radius:0 10px 10px 0}
+.hero svg{flex:0 0 auto;width:130px;height:auto}
+.hero h1{font:700 25px/1.15 Georgia,"Times New Roman",serif;margin:0 0 4px;color:var(--brick)}
+.hero p{margin:0;color:var(--mute);font-size:15px}
+.tabs{display:flex;gap:6px;margin:12px 0 10px;flex-wrap:wrap}
+.tab{border:2px solid var(--line);background:#fff;color:var(--ink);padding:6px 14px;border-radius:999px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--brick);border-color:var(--brick);color:#fff}
+.tab:disabled{opacity:.55;cursor:default}.tab[aria-selected=true]:disabled{opacity:1}
+.stage{min-height:420px}
+.btn{background:var(--brick);color:#fff;border:0;padding:9px 18px;border-radius:8px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:#8f1e23}.btn.ghost{background:#fff;color:var(--brick);border:2px solid var(--brick)}
+.btn:disabled{background:#bbb;cursor:default}
+:focus-visible{outline:3px solid #1b57b8;outline-offset:2px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:9px 12px;margin:0 0 8px;font:15px/1.4 inherit;font-family:inherit;color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brick)}
+.opt.right{border-color:var(--teal);background:var(--tealbg)}
+.opt.wrong{border-color:var(--brick);background:#fbe9ea}
+.opt:disabled{cursor:default;color:var(--ink)}
+.fb{border-radius:10px;padding:8px 12px;margin:4px 0 8px;font-size:14.5px;background:var(--sand);min-height:0}
+.fb.ok{background:var(--tealbg);border-left:5px solid var(--teal)}.fb.no{background:#fbe9ea;border-left:5px solid var(--brick)}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}.dot.on{background:var(--brick)}.dot.done{background:var(--teal)}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:10px}
+.q{font:700 18px/1.3 Georgia,serif;margin:0 0 10px}
+.small{font-size:13.5px;color:var(--mute)}
+@media (max-width:640px){.hero svg{width:84px}.hero h1{font-size:20px}.hero p{font-size:13.5px}.stage{min-height:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body><div class="app">
+<header class="hero"><svg viewBox="0 0 130 90" role="img" aria-label="Speech bubble with a pencil"><rect width="130" height="90" rx="10" fill="#fff"/><path d="M18 14h74a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8H52l-16 14v-14H18a8 8 0 0 1-8-8V22a8 8 0 0 1 8-8z" fill="#b0262c"/><rect x="24" y="26" width="62" height="5" rx="2" fill="#fff"/><rect x="24" y="38" width="46" height="5" rx="2" fill="#fff" opacity=".8"/><path d="M96 78l4-16 18-18 8 8-18 18z" fill="#8a6100"/><path d="M96 78l4-16 8 8z" fill="#2a2220"/></svg><div><h1>Week 7: Word Workshop</h1><p>Strengthen sentences and fill your language toolkit: clear, vivid, inclusive, global.</p></div></header>
+<div class="stage" id="stage"></div>
+</div><script>
+function $(s,r){return (r||document).querySelector(s)}
+function h(t,a,c){var e=document.createElement(t);for(var k in (a||{})){if(k==='class')e.className=a[k];else if(k==='html')e.innerHTML=a[k];else e.setAttribute(k,a[k])}(c||[]).forEach(function(x){e.appendChild(typeof x==='string'?document.createTextNode(x):x)});return e}
+function postH(){try{var H=document.querySelector('.app').offsetHeight+4;parent.postMessage({type:'comm105-resize',height:H},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+if(window.ResizeObserver){new ResizeObserver(postH).observe(document.documentElement)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+
+var K={clear:{n:'Clear',col:'#1e6b73',bg:'#e3f1f2'},vivid:{n:'Vivid',col:'#b0262c',bg:'#fbe9ea'},incl:{n:'Inclusive',col:'#8a6100',bg:'#fbf0d0'},glob:{n:'Global',col:'#2a2220',bg:'#edebe8'}};
+var icon={
+ clear:'<circle cx="26" cy="26" r="11" fill="none" stroke="currentColor" stroke-width="4"/><path d="M34 34l12 12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>',
+ vivid:'<path d="M32 8l6 16 17 1-13 11 4 17-14-9-14 9 4-17L9 25l17-1z" fill="currentColor"/>',
+ incl:'<circle cx="22" cy="30" r="14" fill="currentColor" opacity=".55"/><circle cx="42" cy="30" r="14" fill="currentColor" opacity=".55"/>',
+ glob:'<circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="32" cy="32" rx="9" ry="22" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 32h44" stroke="currentColor" stroke-width="3"/>'};
+var R=[
+{k:'clear',s:'“We must leverage synergies to operationalize our deliverables.”',o:['“We must work together to finish our projects.”','“We must proactively actualize our cross-functional bandwidth.”','“Deliverables should be operationalized by stakeholders.”'],c:0,w:'Listeners cannot reread. Simple, specific words beat jargon and vague terms.'},
+{k:'vivid',s:'“The storm was really bad.”',o:['“The storm was extremely, very bad.”','“Rain hammered our roof like a thousand drumsticks.”','“It was a dark and stormy night.”'],c:1,w:'A concrete image makes the idea stick. The last option is a cliché; the first just adds filler.'},
+{k:'incl',s:'“Hey guys, thanks for coming tonight.”',o:['“Hey guys and gals, thanks for coming tonight.”','“Hello, ladies, thanks for coming tonight.”','“Thank you all for coming tonight.”'],c:2,w:'Language should respect every member of your audience. “Everyone” or “all” includes people without assuming.'},
+{k:'glob',s:'“Let’s hit this out of the park and cover all the bases.”',o:['“Let’s knock it out of the ballpark, folks.”','“Let’s prepare carefully and do excellent work.”','“Let’s go for a home run, you know what I mean.”'],c:1,w:'Idioms and sports slang often do not translate across cultures. Plain words travel further.'},
+{k:'clear',s:'“It was decided by the committee that the policy should be changed.”',o:['“The committee changed the policy.”','“A change to the policy was decided on by the committee.”','“The policy was subject to a committee-level change.”'],c:0,w:'Active voice and shorter sentences are easier to follow when listening.'},
+{k:'vivid',s:'“Our team worked hard and succeeded.”',o:['“Our team gave 110 percent and thought outside the box.”','“We worked hard. We worked smart. We succeeded.”','“We planned together, we practiced together, we won together.”'],c:2,w:'Repetition and parallel structure create rhythm. The first option relies on clichés.'},
+{k:'incl',s:'“Old people can’t figure out new technology.”',o:['“Many older adults learn new technology quickly when training is clear.”','“Seniors are often a bit slow with technology.”','“The elderly need extra help with gadgets.”'],c:0,w:'Avoid stereotypes about groups. Choose respectful, accurate wording.'},
+{k:'glob',s:'You are speaking to an international audience. What is the best plan?',o:['Use plenty of slang and jokes so it feels relaxed','Speak slightly slower, skip slang, and define unfamiliar terms','Speak louder and use big gestures'],c:1,w:'For diverse audiences, slow your pace, avoid slang, and remember that gestures and eye contact can mean different things in different cultures.'}];
+R=shuffle(R);
+var i=0,sc=0,got={clear:0,vivid:0,incl:0,glob:0},st=$('#stage');
+function kit(last){
+ var s='<svg viewBox="0 0 150 300" role="img" aria-label="Language toolkit progress" style="width:100%;max-width:150px;height:auto;display:block;margin:auto">';
+ Object.keys(K).forEach(function(k,n){var y=n*74,on=got[k]>0,full=got[k]>=2;
+  s+='<g transform="translate(0,'+y+')"><rect x="4" y="4" width="142" height="66" rx="10" fill="'+(full?K[k].col:on?K[k].bg:'#fff')+'" stroke="'+K[k].col+'" stroke-width="'+(last===k?5:3)+'"/>'
+  +'<g color="'+(full?'#fff':K[k].col)+'" transform="translate(8,6) scale(.85)">'+icon[k]+'</g>'
+  +'<text x="76" y="34" font-family="Georgia,serif" font-size="16" font-weight="700" fill="'+(full?'#fff':K[k].col)+'">'+K[k].n+'</text>'
+  +'<text x="76" y="54" font-size="13" fill="'+(full?'#fff':'#5f5652')+'">'+got[k]+' of 2</text></g>'});
+ return s+'</svg>'}
+function show(last){
+ st.innerHTML='';
+ var w=h('div',{style:'display:grid;grid-template-columns:150px minmax(0,1fr);gap:20px;align-items:center'});
+ var L=h('div',{id:'kit'});L.innerHTML=kit(last);
+ var P=h('div',{});
+ if(i>=R.length){
+  var b=h('button',{class:'btn'},['Play again']);b.onclick=function(){R=shuffle(R);i=0;sc=0;got={clear:0,vivid:0,incl:0,glob:0};show()};
+  P.appendChild(h('p',{class:'q',style:'font-size:26px'},['Toolkit score: '+sc+' of '+R.length]));
+  P.appendChild(h('p',{},[sc>=7?'Your language toolkit is full. Choose words on purpose.':'Aim to fill every tile. Reread the feedback for any round you missed.']));
+  P.appendChild(h('p',{class:'small'},['Before you record your Persuasive Speech, check your script against all four tiles.']));P.appendChild(b);
+ }else{
+  var r=R[i];var m=K[r.k];
+  P.appendChild(h('p',{class:'small',style:'margin:0 0 4px'},['Round '+(i+1)+' of '+R.length+'. Skill: '+m.n]));
+  P.appendChild(h('div',{style:'background:'+m.bg+';border-left:5px solid '+m.col+';border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:10px;font:italic 18px/1.35 Georgia,serif'},[r.s]));
+  P.appendChild(h('p',{class:'q',style:'font-size:16px;margin-bottom:8px'},[r.o[0].charAt(0)==='“'?'Which rewrite works best for listeners?':'Choose the best option.']));
+  var fb=h('div',{class:'fb',style:'display:none','aria-live':'polite'});
+  var nx=h('button',{class:'btn',style:'display:none'},[i===R.length-1?'See results':'Next round']);
+  r.o.forEach(function(t,k){var b=h('button',{class:'opt'},[t]);b.onclick=function(){
+   P.querySelectorAll('.opt').forEach(function(x,j){x.disabled=true;if(j===r.c)x.classList.add('right')});
+   var ok=k===r.c;if(ok){sc++;got[r.k]++}else b.classList.add('wrong');
+   fb.style.display='block';fb.className='fb '+(ok?'ok':'no');fb.textContent=(ok?'Yes. ':'Not quite. ')+r.w;
+   $('#kit').innerHTML=kit(r.k);nx.style.display='inline-block';nx.focus();postH()};P.appendChild(b)});
+  P.appendChild(fb);P.appendChild(nx);nx.onclick=function(){i++;show()};
+ }
+ w.appendChild(L);w.appendChild(P);st.appendChild(w);
+ if(window.innerWidth<640){w.style.gridTemplateColumns='1fr';L.style.display='none'}
+ postH();
+}
+show();
+</script></body></html>

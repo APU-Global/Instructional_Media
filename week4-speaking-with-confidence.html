@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4: Speak with Confidence</title><style>
+:root{--brick:#b0262c;--red:#d34147;--ink:#2a2220;--sand:#edebe8;--paper:#fff;--teal:#1e6b73;--tealbg:#e3f1f2;--gold:#8a6100;--goldbg:#fbf0d0;--mute:#5f5652;--line:#d9d4cf}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:var(--ink);font:16px/1.45 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow:hidden}
+.app{max-width:920px;margin:0 auto;padding:12px 14px 14px}
+.hero{display:flex;gap:16px;align-items:center;background:var(--sand);border-left:6px solid var(--brick);padding:10px 16px;border-radius:0 10px 10px 0}
+.hero svg{flex:0 0 auto;width:130px;height:auto}
+.hero h1{font:700 25px/1.15 Georgia,"Times New Roman",serif;margin:0 0 4px;color:var(--brick)}
+.hero p{margin:0;color:var(--mute);font-size:15px}
+.tabs{display:flex;gap:6px;margin:12px 0 10px;flex-wrap:wrap}
+.tab{border:2px solid var(--line);background:#fff;color:var(--ink);padding:6px 14px;border-radius:999px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--brick);border-color:var(--brick);color:#fff}
+.tab:disabled{opacity:.55;cursor:default}.tab[aria-selected=true]:disabled{opacity:1}
+.stage{min-height:420px}
+.btn{background:var(--brick);color:#fff;border:0;padding:9px 18px;border-radius:8px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:#8f1e23}.btn.ghost{background:#fff;color:var(--brick);border:2px solid var(--brick)}
+.btn:disabled{background:#bbb;cursor:default}
+:focus-visible{outline:3px solid #1b57b8;outline-offset:2px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:9px 12px;margin:0 0 8px;font:15px/1.4 inherit;font-family:inherit;color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brick)}
+.opt.right{border-color:var(--teal);background:var(--tealbg)}
+.opt.wrong{border-color:var(--brick);background:#fbe9ea}
+.opt:disabled{cursor:default;color:var(--ink)}
+.fb{border-radius:10px;padding:8px 12px;margin:4px 0 8px;font-size:14.5px;background:var(--sand);min-height:0}
+.fb.ok{background:var(--tealbg);border-left:5px solid var(--teal)}.fb.no{background:#fbe9ea;border-left:5px solid var(--brick)}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}.dot.on{background:var(--brick)}.dot.done{background:var(--teal)}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:10px}
+.q{font:700 18px/1.3 Georgia,serif;margin:0 0 10px}
+.small{font-size:13.5px;color:var(--mute)}
+@media (max-width:640px){.hero svg{width:84px}.hero h1{font-size:20px}.hero p{font-size:13.5px}.stage{min-height:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body><div class="app">
+<header class="hero"><svg viewBox="0 0 130 90" role="img" aria-label="Calm speaker with a steady pulse line"><rect width="130" height="90" rx="10" fill="#fff"/><circle cx="40" cy="30" r="12" fill="#2a2220"/><path d="M20 80 Q40 44 60 80Z" fill="#b0262c"/><path d="M66 40 h12 l5 -14 l8 30 l6 -16 h14" fill="none" stroke="#1e6b73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="92" cy="70" r="10" fill="#e3f1f2" stroke="#1e6b73" stroke-width="2"/><circle cx="92" cy="70" r="4" fill="#1e6b73"/></svg><div><h1>Week 4: Speak with Confidence</h1><p>Calm your body, reframe your thoughts, then build an opening that starts strong.</p></div></header>
+<div class="tabs" role="tablist" id="tabs"></div><div class="stage" id="stage"></div>
+</div><script>
+function $(s,r){return (r||document).querySelector(s)}
+function h(t,a,c){var e=document.createElement(t);for(var k in (a||{})){if(k==='class')e.className=a[k];else if(k==='html')e.innerHTML=a[k];else e.setAttribute(k,a[k])}(c||[]).forEach(function(x){e.appendChild(typeof x==='string'?document.createTextNode(x):x)});return e}
+function postH(){try{var H=document.querySelector('.app').offsetHeight+4;parent.postMessage({type:'comm105-resize',height:H},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+if(window.ResizeObserver){new ResizeObserver(postH).observe(document.documentElement)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+
+var st=$('#stage'),tabsEl=$('#tabs'),cur=0,timer=null,done={0:false,1:false,2:false};
+var T=['1. Breathe','2. Reframe','3. Open strong'];
+function tabs(){tabsEl.innerHTML='';T.forEach(function(t,i){var b=h('button',{class:'tab',role:'tab','aria-selected':i===cur?'true':'false'},[t+(done[i]?' ✓':'')]);b.onclick=function(){go(i)};tabsEl.appendChild(b)})}
+function go(i){cur=i;if(timer){cancelAnimationFrame(timer);timer=null}tabs();[breathe,reframe,opening][i]();postH()}
+/* ---------- 1 breathe ---------- */
+function breathe(){
+ st.innerHTML='';
+ var w=h('div',{style:'display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:center'});
+ var svg='<svg viewBox="0 0 260 260" role="img" aria-label="Breathing circle that grows as you inhale and shrinks as you exhale" style="width:100%;max-width:300px;height:auto;display:block;margin:auto"><circle cx="130" cy="130" r="118" fill="#edebe8"/><circle id="ring" cx="130" cy="130" r="60" fill="#e3f1f2" stroke="#1e6b73" stroke-width="4"/><text id="ph" x="130" y="128" text-anchor="middle" font-family="Georgia,serif" font-size="24" fill="#1e6b73" font-weight="700">Ready</text><text id="sec" x="130" y="154" text-anchor="middle" font-size="16" fill="#5f5652"></text></svg>';
+ var L=h('div',{});L.innerHTML=svg;
+ var R=h('div',{});
+ R.innerHTML='<p class="q">Calm your body before you speak.</p><p>Nerves are energy. A slow breath tells your body it is safe to use that energy as focus.</p><p class="small">Breathe in for 4, hold for 2, out for 6. Complete 3 rounds.</p><div class="dots" id="dots" aria-label="Rounds completed" style="margin:10px 0"></div><div id="msg" class="fb" aria-live="polite">Press start and follow the circle.</div>';
+ var b=h('button',{class:'btn'},['Start breathing']);R.appendChild(b);
+ w.appendChild(L);w.appendChild(R);st.appendChild(w);
+ if(window.innerWidth<640)w.style.gridTemplateColumns='1fr';
+ var dots=$('#dots');for(var i=0;i<3;i++)dots.appendChild(h('span',{class:'dot'}));
+ var run=false,t0,rounds=0;
+ function frame(now){
+  var t=((now-t0)/1000),c=t%12,r,p,s;
+  if(c<4){p='Breathe in';r=60+ (c/4)*50;s=4-Math.floor(c)}
+  else if(c<6){p='Hold';r=110;s=6-Math.floor(c)}
+  else{p='Breathe out';r=110-((c-6)/6)*50;s=12-Math.floor(c)}
+  $('#ring').setAttribute('r',r.toFixed(1));$('#ph').textContent=p;$('#sec').textContent=s;
+  var n=Math.floor(t/12);
+  if(n!==rounds){rounds=n;dots.children[n-1].classList.add('done');
+   if(n>=3){run=false;$('#ring').setAttribute('r',60);$('#ph').textContent='Well done';$('#sec').textContent='';$('#msg').className='fb ok';$('#msg').textContent='Three slow rounds complete. Do this in the minute before you speak.';b.textContent='Go again';done[0]=true;tabs();return}}
+  timer=requestAnimationFrame(frame)}
+ b.onclick=function(){if(run)return;run=true;rounds=0;[].forEach.call(dots.children,function(d){d.className='dot'});$('#msg').className='fb';$('#msg').textContent='Follow the circle. Let your shoulders drop.';t0=performance.now();timer=requestAnimationFrame(frame)};
+}
+/* ---------- 2 reframe ---------- */
+function reframe(){
+ var D=[
+ {t:'“Everyone will notice me shaking.”',o:['“Most people cannot see my nerves, and they want me to do well.”','“I will probably shake, so I should skip eye contact.”','“I just need to stop feeling anything.”'],c:0,w:'Realistic self-talk replaces the worst case with what is likely true: audiences are usually on your side.'},
+ {t:'“I am going to forget everything.”',o:['“I should memorize every word so nothing can go wrong.”','“I have practiced aloud, and my outline will bring me back if I lose my place.”','“Forgetting would be a disaster.”'],c:1,w:'Confidence comes from preparation and a plan for things that go wrong, not from perfection.'},
+ {t:'“I feel my heart racing, so I must be unprepared.”',o:['“Nervousness means I should cancel.”','“Racing hearts mean something is wrong with me.”','“Butterflies are normal. I can turn this energy into enthusiasm.”'],c:2,w:'Experienced speakers still feel butterflies. The goal is to channel nerves, not erase them.'},
+ {t:'“I said ‘um’ three times. That was terrible.”',o:['“Next time I will pause on purpose instead of filling the silence.”','“I am just a bad speaker.”','“No one should record me.”'],c:0,w:'Pausing deliberately replaces filler words and builds credibility.'}];
+ var i=0,sc=0;
+ function show(){
+  st.innerHTML='';var d=D[i];
+  var w=h('div',{style:'max-width:680px;margin:0 auto'});
+  w.appendChild(h('p',{class:'small',style:'margin:0 0 6px'},['Thought '+(i+1)+' of 4']));
+  w.appendChild(h('div',{style:'background:#2a2220;color:#fff;border-radius:14px 14px 14px 2px;padding:12px 16px;font:italic 19px Georgia,serif;margin-bottom:6px'},[d.t]));
+  w.appendChild(h('p',{class:'q',style:'margin:12px 0 8px'},['Choose the most constructive reframe.']));
+  var fb=h('div',{class:'fb',style:'display:none','aria-live':'polite'});
+  var nx=h('button',{class:'btn',style:'display:none'},[i===3?'Finish':'Next thought']);
+  d.o.forEach(function(x,k){var b=h('button',{class:'opt'},[x]);b.onclick=function(){
+   w.querySelectorAll('.opt').forEach(function(y,j){y.disabled=true;if(j===d.c)y.classList.add('right')});
+   var ok=k===d.c;if(ok)sc++;else b.classList.add('wrong');fb.style.display='block';fb.className='fb '+(ok?'ok':'no');fb.textContent=d.w;nx.style.display='inline-block';nx.focus();postH()};w.appendChild(b)});
+  w.appendChild(fb);w.appendChild(nx);st.appendChild(w);
+  nx.onclick=function(){i++;if(i>=4){fin()}else show()};postH()}
+ function fin(){st.innerHTML='';done[1]=true;tabs();
+  var b=h('button',{class:'btn'},['Next: build an opening']);b.onclick=function(){go(2)};
+  st.appendChild(h('div',{style:'text-align:center;padding:50px 10px'},[h('p',{class:'q',style:'font-size:26px'},['Reframed '+sc+' of 4 thoughts well']),h('p',{},['Replace negative self-talk with realistic, constructive thoughts before you speak.']),b]));postH()}
+ show();
+}
+/* ---------- 3 open strong ---------- */
+function opening(){
+ var steps=[
+ {k:'Attention-getter',t:'Imagine it is 3 a.m., and you are staring at the ceiling, wide awake.'},
+ {k:'Connect to the audience',t:'Most of us in this room are students, so we have all been there.'},
+ {k:'Establish credibility',t:'I tracked my own sleep for a semester and read the research behind it.'},
+ {k:'Preview main points',t:'Today I will share three habits: a fixed schedule, a screen limit, and a wind-down routine.'}];
+ st.innerHTML='';
+ var w=h('div',{style:'max-width:720px;margin:0 auto'});
+ w.appendChild(h('p',{class:'q'},['Build a strong introduction for a speech on sleep.']));
+ w.appendChild(h('p',{class:'small',style:'margin:-4px 0 10px'},['Tap the pieces in the order a speaker should deliver them. Start with what grabs attention.']));
+ var ord=h('div',{id:'ord',style:'min-height:60px;margin-bottom:8px'});
+ var pool=h('div',{});
+ var fb=h('div',{class:'fb','aria-live':'polite'},['Pick the first piece.']);
+ var next=0;
+ shuffle(steps.map(function(s,i){return i})).forEach(function(i){
+  var b=h('button',{class:'opt'},[steps[i].t]);
+  b.onclick=function(){
+   if(i===next){b.disabled=true;b.classList.add('right');var lab=h('div',{style:'display:flex;gap:10px;align-items:flex-start;margin-bottom:6px'},[
+     h('div',{style:'flex:0 0 auto;background:#1e6b73;color:#fff;border-radius:6px;padding:2px 8px;font-size:13px;font-weight:700;min-width:160px;text-align:center'},[steps[i].k]),h('div',{style:'font-size:15px'},[steps[i].t])]);
+     ord.appendChild(lab);b.style.display='none';next++;
+     if(next===4){fb.className='fb ok';fb.textContent='Complete. That intro earns attention, connects, builds trust, and gives the audience a roadmap. Close the same way: summarize, then leave a memorable final thought.';done[2]=true;tabs()}
+     else{fb.className='fb ok';fb.textContent='Yes. What comes next?'}
+   }else{b.classList.add('wrong');fb.className='fb no';fb.textContent='Not yet. Think about what the audience needs first. '+(next===0?'Start with an attention-getter.':'Check the order again.');setTimeout(function(){b.classList.remove('wrong')},900)}
+   postH()};
+  pool.appendChild(b)});
+ w.appendChild(ord);w.appendChild(fb);w.appendChild(pool);st.appendChild(w);
+}
+go(0);
+</script></body></html>

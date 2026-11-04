@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2: Read the Room</title><style>
+:root{--brick:#b0262c;--red:#d34147;--ink:#2a2220;--sand:#edebe8;--paper:#fff;--teal:#1e6b73;--tealbg:#e3f1f2;--gold:#8a6100;--goldbg:#fbf0d0;--mute:#5f5652;--line:#d9d4cf}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:var(--ink);font:16px/1.45 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;overflow:hidden}
+.app{max-width:920px;margin:0 auto;padding:12px 14px 14px}
+.hero{display:flex;gap:16px;align-items:center;background:var(--sand);border-left:6px solid var(--brick);padding:10px 16px;border-radius:0 10px 10px 0}
+.hero svg{flex:0 0 auto;width:130px;height:auto}
+.hero h1{font:700 25px/1.15 Georgia,"Times New Roman",serif;margin:0 0 4px;color:var(--brick)}
+.hero p{margin:0;color:var(--mute);font-size:15px}
+.tabs{display:flex;gap:6px;margin:12px 0 10px;flex-wrap:wrap}
+.tab{border:2px solid var(--line);background:#fff;color:var(--ink);padding:6px 14px;border-radius:999px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--brick);border-color:var(--brick);color:#fff}
+.tab:disabled{opacity:.55;cursor:default}.tab[aria-selected=true]:disabled{opacity:1}
+.stage{min-height:420px}
+.btn{background:var(--brick);color:#fff;border:0;padding:9px 18px;border-radius:8px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:#8f1e23}.btn.ghost{background:#fff;color:var(--brick);border:2px solid var(--brick)}
+.btn:disabled{background:#bbb;cursor:default}
+:focus-visible{outline:3px solid #1b57b8;outline-offset:2px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:9px 12px;margin:0 0 8px;font:15px/1.4 inherit;font-family:inherit;color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brick)}
+.opt.right{border-color:var(--teal);background:var(--tealbg)}
+.opt.wrong{border-color:var(--brick);background:#fbe9ea}
+.opt:disabled{cursor:default;color:var(--ink)}
+.fb{border-radius:10px;padding:8px 12px;margin:4px 0 8px;font-size:14.5px;background:var(--sand);min-height:0}
+.fb.ok{background:var(--tealbg);border-left:5px solid var(--teal)}.fb.no{background:#fbe9ea;border-left:5px solid var(--brick)}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}.dot.on{background:var(--brick)}.dot.done{background:var(--teal)}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:10px}
+.q{font:700 18px/1.3 Georgia,serif;margin:0 0 10px}
+.small{font-size:13.5px;color:var(--mute)}
+@media (max-width:640px){.hero svg{width:84px}.hero h1{font-size:20px}.hero p{font-size:13.5px}.stage{min-height:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body><div class="app">
+<header class="hero"><svg viewBox="0 0 130 90" role="img" aria-label="Speaker at a podium facing an audience"><rect width="130" height="90" rx="10" fill="#fff"/><rect x="50" y="14" width="30" height="26" rx="3" fill="#b0262c"/><circle cx="65" cy="8" r="6" fill="#2a2220"/><rect x="58" y="14" width="14" height="6" fill="#2a2220"/>
+<g fill="#d34147"><circle cx="20" cy="62" r="7"/><circle cx="42" cy="68" r="7"/><circle cx="65" cy="62" r="7"/><circle cx="88" cy="68" r="7"/><circle cx="110" cy="62" r="7"/></g><g fill="#1e6b73"><circle cx="31" cy="80" r="7"/><circle cx="54" cy="82" r="7"/><circle cx="77" cy="80" r="7"/><circle cx="99" cy="82" r="7"/></g>
+<path d="M65 36 L24 56 M65 36 L65 55 M65 36 L106 56" stroke="#8a6100" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/></svg><div><h1>Week 2: Read the Room</h1><p>Study each audience profile, then adapt your commemorative speech to fit.</p></div></header>
+<div class="stage" id="stage"></div>
+</div><script>
+function $(s,r){return (r||document).querySelector(s)}
+function h(t,a,c){var e=document.createElement(t);for(var k in (a||{})){if(k==='class')e.className=a[k];else if(k==='html')e.innerHTML=a[k];else e.setAttribute(k,a[k])}(c||[]).forEach(function(x){e.appendChild(typeof x==='string'?document.createTextNode(x):x)});return e}
+function postH(){try{var H=document.querySelector('.app').offsetHeight+4;parent.postMessage({type:'comm105-resize',height:H},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+if(window.ResizeObserver){new ResizeObserver(postH).observe(document.documentElement)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+
+var A=[
+{name:'Retirement party',room:'work',
+ chips:[['D','Ages 35–65, mostly coworkers'],['P','Value loyalty and reliability'],['S','40 guests, banquet hall, 5-minute slot after lunch']],
+ qs:[{q:'You are honoring a longtime manager. Which story connects best?',o:['A funny meme about Mondays','The night she stayed late to save a client launch and fed the whole team','A quote from a famous CEO about leadership'],c:1,w:'Colleagues share this workplace history. A specific story they may have lived themselves shows why she deserves recognition.'},
+ {q:'Which tone and vocabulary fit this room?',o:['Warm, professional, plain language','Slang and inside jokes from your friend group','Technical management theory terms'],c:0,w:'A mixed-age workplace crowd expects warmth with a professional edge. Slang or theory would leave some listeners out.'}]},
+{name:'Graduation ceremony',room:'grad',
+ chips:[['D','Ages 17–22, plus parents and teachers'],['P','Hopeful, anxious about what is next'],['S','800 people, outdoors, long program, hot afternoon']],
+ qs:[{q:'You are honoring a favorite teacher. Which opening works for this crowd?',o:['A long list of the teacher’s degrees','A short, vivid moment from class that every graduate remembers','A detailed history of the school'],c:1,w:'In a big, restless crowd, a shared memory grabs attention fast and speaks to what graduates value.'},
+ {q:'Interest is fading after 20 minutes of speeches. What is your plan?',o:['Speak faster to finish early','Cut to your best story and keep the close short','Read your notes word for word'],c:1,w:'Adapting means planning for lost attention: trim, move to your strongest material, and end on time.'}]},
+{name:'Family reunion',room:'reunion',
+ chips:[['D','Ages 4–90, many backgrounds'],['P','Share family pride and traditions'],['S','25 people, backyard, casual, informal toast']],
+ qs:[{q:'You are honoring Grandma Rosa. Which detail will land?',o:['Her recipe that every cousin begged for, and the smell of her kitchen','Statistics about grandparents in America','A formal list of dates in her life'],c:0,w:'Sensory details and family memories reach every age at the table, from kids to elders.'},
+ {q:'Which delivery fits the setting?',o:['Podium voice and formal language','Conversational, warm, and short enough for kids to stay with you','Quiet and reserved'],c:1,w:'A casual, small setting calls for a conversational tone that includes the youngest and oldest listeners.'}]}
+];
+var CH={D:['Demographic','#b0262c','#fbe9ea'],P:['Psychological','#1e6b73','#e3f1f2'],S:['Situational','#8a6100','#fbf0d0']};
+function room(t){
+ var s='<svg viewBox="0 0 300 150" role="img" aria-label="Illustration of the '+t+' audience" style="width:100%;height:auto;display:block;border-radius:10px;background:#fff;border:2px solid #d9d4cf">';
+ s+='<rect x="128" y="12" width="44" height="26" rx="3" fill="#b0262c"/><circle cx="150" cy="8" r="7" fill="#2a2220"/>';
+ var i,j;
+ if(t==='work'){s+='<rect x="95" y="2" width="110" height="0" fill="none"/>';
+  [[60,95],[150,105],[240,95]].forEach(function(p){s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="20" fill="#edebe8" stroke="#bdb6b0"/>';
+   for(var k=0;k<4;k++){var a=k*Math.PI/2+.8;s+='<circle cx="'+(p[0]+Math.cos(a)*29).toFixed(1)+'" cy="'+(p[1]+Math.sin(a)*29).toFixed(1)+'" r="7" fill="'+['#2a2220','#5f5652','#1e6b73','#8a6100'][k]+'"/>'}});
+ } else if(t==='grad'){
+  for(i=0;i<4;i++)for(j=0;j<11;j++){var x=24+j*25+(i%2)*10,y=62+i*21;s+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#d34147"/><rect x="'+(x-8)+'" y="'+(y-12)+'" width="16" height="4" fill="#2a2220"/>'}
+ } else {
+  s+='<path d="M20 52 Q150 36 280 52" fill="none" stroke="#8a6100" stroke-dasharray="2 6" stroke-width="2"/>';
+  [[70,110],[220,110]].forEach(function(p){s+='<rect x="'+(p[0]-45)+'" y="'+(p[1]-12)+'" width="90" height="24" rx="6" fill="#edebe8" stroke="#bdb6b0"/>';
+   [-34,-12,12,34].forEach(function(dx,k){var r=[4,7,8,6][(k+p[0]/70)%4|0]||7;s+='<circle cx="'+(p[0]+dx)+'" cy="'+(p[1]-22)+'" r="'+r+'" fill="'+['#d34147','#1e6b73','#2a2220','#8a6100'][k]+'"/><circle cx="'+(p[0]+dx)+'" cy="'+(p[1]+26)+'" r="'+(r-1)+'" fill="'+['#1e6b73','#d34147','#8a6100','#2a2220'][k]+'"/>'})});
+ }
+ return s+'</svg>';
+}
+var ai=0,qi=0,score=0,log=[],st=$('#stage');
+function view(){
+ if(ai>=A.length)return done();
+ var a=A[ai],q=a.qs[qi];
+ st.innerHTML='';
+ var tabs=h('div',{class:'tabs',role:'tablist'});
+ A.forEach(function(x,i){var b=h('button',{class:'tab',role:'tab','aria-selected':i===ai?'true':'false',disabled:'disabled'},[x.name]);tabs.appendChild(b)});
+ st.appendChild(tabs);
+ var g=h('div',{style:'display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:16px;align-items:start'});
+ var L=h('div',{});L.innerHTML=room(a.room);
+ var ch=h('div',{style:'margin-top:8px'});
+ a.chips.forEach(function(c){var m=CH[c[0]];ch.appendChild(h('div',{style:'background:'+m[2]+';border-left:5px solid '+m[1]+';padding:5px 9px;margin-bottom:5px;font-size:13.5px;border-radius:0 8px 8px 0'},[h('b',{style:'color:'+m[1]},[m[0]+': ']),c[1]]))});
+ L.appendChild(ch);
+ var R=h('div',{});
+ R.appendChild(h('p',{class:'small',style:'margin:0 0 4px'},['Audience '+(ai+1)+' of 3, question '+(qi+1)+' of 2']));
+ R.appendChild(h('p',{class:'q'},[q.q]));
+ var fb=h('div',{class:'fb','aria-live':'polite',style:'display:none'});
+ var nx=h('button',{class:'btn',style:'display:none'},[qi===1&&ai===A.length-1?'See my results':qi===1?'Next audience':'Next question']);
+ q.o.forEach(function(t,i){var b=h('button',{class:'opt'},[t]);b.onclick=function(){
+   R.querySelectorAll('.opt').forEach(function(x,k){x.disabled=true;if(k===q.c)x.classList.add('right')});
+   var ok=i===q.c;if(!ok)b.classList.add('wrong');else score++;log.push(ok);
+   fb.style.display='block';fb.className='fb '+(ok?'ok':'no');fb.textContent=(ok?'Good adaptation. ':'Not the best fit. ')+q.w;nx.style.display='inline-block';nx.focus();postH()};R.appendChild(b)});
+ R.appendChild(fb);R.appendChild(nx);
+ nx.onclick=function(){qi++;if(qi>1){qi=0;ai++}view()};
+ g.appendChild(L);g.appendChild(R);st.appendChild(g);
+ if(window.innerWidth<640)g.style.gridTemplateColumns='1fr';
+ postH();
+}
+function done(){
+ st.innerHTML='';
+ var msg=score>=6?'You read every room well.':score>=4?'Solid instincts. Review the choices you missed.':'Audience analysis takes practice. Try again and look at the profile cards first.';
+ st.appendChild(h('div',{style:'text-align:center;padding:36px 10px'},[
+  h('p',{class:'q',style:'font-size:28px'},['You scored '+score+' of 6']),h('p',{},[msg]),
+  h('p',{class:'small',style:'max-width:560px;margin:8px auto 18px'},['Remember: demographic, psychological and situational factors all shape which examples, vocabulary and tone will work. Use the same three checks before you write your Commemorative Speech outline.']),
+  (function(){var b=h('button',{class:'btn'},['Try again']);b.onclick=function(){ai=0;qi=0;score=0;view()};return b})()]));
+ postH();
+}
+view();
+</script></body></html>
