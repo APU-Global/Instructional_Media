@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 405 Physiological Psychology | Week 1 | Autonomic Balance Dashboard</title>
+<style>
+:root{
+  --ink:#1f2a37; --muted:#5b6672; --accent:#b8323a; --teal:#1c7c8c; --bg:#f7f5f2; --card:#ffffff; --line:#e1ddd6;
+  --symp:#c2413a; --para:#1c7c8c;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column;padding:10px 12px;gap:8px}
+header{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.chip{background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+h1{font-size:clamp(15px,2.4vw,19px);margin:0;line-height:1.2}
+.main{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:0;min-width:0}
+.stage{display:flex;flex-direction:column;padding:6px}
+.stage svg{flex:1 1 auto;min-height:0;width:100%}
+.panel{display:flex;flex-direction:column;padding:10px 12px;gap:10px;justify-content:space-between}
+.scen{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.sbtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font-size:12.5px;font-weight:600;color:var(--ink)}
+.sbtn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sbtn:focus-visible,input:focus-visible{outline:3px solid #f2b705;outline-offset:2px}
+.slider-wrap{display:flex;flex-direction:column;gap:2px}
+.slider-labels{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700}
+.slider-labels span:first-child{color:var(--para)} .slider-labels span:last-child{color:var(--symp)}
+input[type=range]{width:100%;height:26px;margin:0;accent-color:var(--accent)}
+.track{height:8px;border-radius:6px;background:linear-gradient(90deg,var(--para),#d8d2c4 50%,var(--symp));margin-bottom:-18px;position:relative;top:-1px;pointer-events:none}
+.readouts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ro{background:var(--bg);border-radius:8px;padding:5px 7px;text-align:center}
+.ro b{display:block;font-size:clamp(15px,2.6vw,20px);line-height:1.1}
+.ro small{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td{padding:5px 4px;border-bottom:1px solid var(--line);vertical-align:middle}
+td:first-child{font-weight:700;width:28%} td:nth-child(2){width:42%}
+.bar{height:6px;border-radius:4px;background:#eee7;position:relative;overflow:hidden;background:#ece8e1}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;transition:width .4s}
+.note{font-size:12px;line-height:1.35;color:var(--ink);background:#fff7e6;border-left:4px solid #f2b705;border-radius:6px;padding:6px 9px;flex:0 0 auto}
+.breath{display:flex;align-items:center;gap:8px}
+.breath .sbtn{background:var(--teal);color:#fff;border-color:var(--teal)}
+.breath .sbtn[aria-pressed="true"]{background:var(--ink)}
+.bt{font-size:12px;color:var(--muted)}
+@media (max-width:640px){
+  .main{grid-template-columns:1fr;grid-template-rows:minmax(0,.8fr) minmax(0,1.5fr)}
+  table{font-size:11px} .note{font-size:11px;padding:4px 7px}
+  .readouts .ro{padding:3px 4px}
+  td.hide-sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header><span class="chip">Week 1</span><h1>Autonomic Balance Dashboard</h1></header>
+  <div class="main">
+    <div class="card stage">
+      <svg id="body" viewBox="0 0 360 440" role="img" aria-labelledby="bt bd" preserveAspectRatio="xMidYMid meet">
+        <title id="bt">Body diagram showing autonomic effects</title>
+        <desc id="bd">A torso diagram with brain, eye, lungs, heart, stomach and a spinal cord. Organs change as the slider moves between rest-and-digest and fight-or-flight.</desc>
+        <defs>
+          <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4e6d8"/><stop offset="1" stop-color="#ead5c2"/></linearGradient>
+          <radialGradient id="glow"><stop offset="0" stop-color="#c2413a" stop-opacity=".45"/><stop offset="1" stop-color="#c2413a" stop-opacity="0"/></radialGradient>
+        </defs>
+        <circle id="aura" cx="180" cy="230" r="170" fill="url(#glow)" opacity="0"/>
+        <!-- silhouette -->
+        <path d="M165 136C122 144 74 154 60 202L50 304 80 308 94 238 100 396Q100 404 108 404H252Q260 404 260 396L266 238 280 308 310 304 300 202C286 154 238 144 195 136Z" fill="url(#skin)" stroke="#c9b29b" stroke-width="2"/>
+        <rect x="163" y="104" width="34" height="40" rx="8" fill="#ead5c2" stroke="#c9b29b" stroke-width="2"/>
+        <ellipse cx="180" cy="62" rx="50" ry="58" fill="url(#skin)" stroke="#c9b29b" stroke-width="2"/>
+        <!-- brain -->
+        <g id="brain" transform="translate(180 40) scale(.78) translate(-176 -58)">
+          <path d="M140 52c-10-16 6-34 24-28 10-10 30-10 38 2 18-2 30 14 22 30 10 10 4 28-12 28-8 12-26 12-34 2-14 6-30-4-28-16-12-2-18-12-10-18z" fill="#e8a5ad" stroke="#b8323a" stroke-width="2.5"/>
+          <path d="M172 34c-4 14 4 20 0 34M196 36c4 12-4 22 2 36M150 56c10 0 14 8 24 6" stroke="#b8323a" stroke-width="2" fill="none"/>
+        </g>
+        <!-- spinal cord -->
+        <path d="M180 100V372" stroke="#e6d28f" stroke-width="9" stroke-linecap="round"/>
+        <path d="M180 100V372" stroke="#a88a2c" stroke-width="1.5" stroke-dasharray="3 5"/>
+        <!-- vagus line -->
+        <path id="vagus" d="M172 82C130 110 120 160 146 206" stroke="#1c7c8c" stroke-width="4" fill="none" stroke-linecap="round" opacity=".35"/>
+        <!-- eyes -->
+        <g id="eyes">
+          <ellipse cx="160" cy="88" rx="11" ry="6.5" fill="#fff" stroke="#6b5a49"/>
+          <ellipse cx="200" cy="88" rx="11" ry="6.5" fill="#fff" stroke="#6b5a49"/>
+          <circle id="pupL" cx="160" cy="88" r="4" fill="#222"/>
+          <circle id="pupR" cx="200" cy="88" r="4" fill="#222"/>
+        </g>
+        <!-- lungs -->
+        <g id="lungs">
+          <path id="lungL" d="M170 160c-8 0-44 6-54 34-8 24-8 50 6 60 14 8 36 0 44-16z" fill="#9ccbd2" stroke="#1c7c8c" stroke-width="2"/>
+          <path id="lungR" d="M190 160c8 0 44 6 54 34 8 24 8 50-6 60-14 8-36 0-44-16z" fill="#9ccbd2" stroke="#1c7c8c" stroke-width="2"/>
+          <path d="M180 140v40M180 180l-16 16M180 180l16 16" stroke="#1c7c8c" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </g>
+        <!-- heart -->
+        <g id="heart" transform="translate(180 212)">
+          <path d="M0 22C-26 4-28-18-12-22c8-2 12 2 12 8 0-6 4-10 12-8 16 4 14 26-12 44z" fill="#d6454d" stroke="#8c1f27" stroke-width="2"/>
+        </g>
+        <!-- stomach/gut -->
+        <g id="gut">
+          <path d="M150 290c0-18 30-24 46-14 20 4 30 20 18 34-10 12-28 8-34 18-8 12-34 6-34-14 0-10 4-16 4-24z" fill="#f0c58e" stroke="#a9742c" stroke-width="2"/>
+          <path id="gutwave" d="M160 296q10 6 20 0t20 0" stroke="#a9742c" stroke-width="2" fill="none"/>
+          <path d="M130 345q20 10 40 0t40 0t40 0" stroke="#a9742c" stroke-width="6" fill="none" stroke-linecap="round" opacity=".6"/>
+        </g>
+        <!-- adrenal + glucose -->
+        <g id="adrenal">
+          <path d="M236 262l14-6 8 12-14 8z" fill="#f2b705" stroke="#a37d00" stroke-width="1.5"/>
+          <path d="M124 262l-14-6-8 12 14 8z" fill="#f2b705" stroke="#a37d00" stroke-width="1.5"/>
+        </g>
+        <!-- labels -->
+        <g font-size="11.5" font-weight="700" fill="#33404d" stroke="#fff" stroke-width="3.5" paint-order="stroke" stroke-linejoin="round">
+          <text x="268" y="262">Adrenal</text><text x="268" y="275" font-weight="400">medulla</text>
+          <text x="262" y="206">Heart</text>
+          <text x="100" y="262">Lungs</text>
+          <text x="226" y="316">Stomach</text><text x="226" y="329" font-weight="400">&amp; gut</text>
+          <text x="240" y="92">Pupils</text>
+          <text x="236" y="60">Brain</text>
+          <text x="66" y="140">Vagus</text><text x="66" y="153" font-weight="400">nerve</text>
+        </g>
+        <path d="M262 258l-14 8M236 90l-24 -2M240 56l-20 0" stroke="#7a8794" stroke-width="1.2"/>
+        <g id="pulse" opacity="0"><circle cx="180" cy="212" r="26" fill="none" stroke="#d6454d" stroke-width="3"/></g>
+      </svg>
+    </div>
+
+    <div class="card panel">
+      <div class="scen" role="group" aria-label="Scenarios">
+        <button class="sbtn" data-v="85" aria-pressed="false">😰 Deadline pounding</button>
+        <button class="sbtn" data-v="12" aria-pressed="false">🛋️ Rest &amp; digest</button>
+        <button class="sbtn" data-v="95" aria-pressed="false">⚠️ Trauma trigger</button>
+        <button class="sbtn" data-v="50" aria-pressed="true">⚖️ Balanced</button>
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-labels"><span>Parasympathetic: rest &amp; digest</span><span>Sympathetic: fight or flight</span></div>
+        <div class="track"></div>
+        <input id="slide" type="range" min="0" max="100" value="50" aria-label="Autonomic balance, 0 parasympathetic to 100 sympathetic">
+      </div>
+      <div class="readouts" aria-live="polite">
+        <div class="ro"><b id="hr">72</b><small>Heart rate bpm</small></div>
+        <div class="ro"><b id="br">14</b><small>Breaths / min</small></div>
+        <div class="ro"><b id="nt">Mixed</b><small>Main transmitter</small></div>
+      </div>
+      <table aria-label="Organ effects">
+        <tr><td>Pupils</td><td><div class="bar"><i id="b1" style="background:#444"></i></div></td><td class="hide-sm" id="t1"></td></tr>
+        <tr><td>Airways</td><td><div class="bar"><i id="b2" style="background:#1c7c8c"></i></div></td><td class="hide-sm" id="t2"></td></tr>
+        <tr><td>Digestion</td><td><div class="bar"><i id="b3" style="background:#a9742c"></i></div></td><td class="hide-sm" id="t3"></td></tr>
+        <tr><td>Blood glucose</td><td><div class="bar"><i id="b4" style="background:#f2b705"></i></div></td><td class="hide-sm" id="t4"></td></tr>
+      </table>
+      <div class="breath">
+        <button class="sbtn" id="bbtn" aria-pressed="false">🌬️ Start paced breathing</button>
+        <span class="bt" id="bcue">Inhale 4s, exhale 6s: slows the heart via the vagus nerve.</span>
+      </div>
+      <div class="note" id="note"></div>
+    </div>
+  </div>
+</div>
+<div class="sr" aria-live="polite" id="live"></div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var slide=$('slide'), val=50, target=50, reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var notes=[
+   [20,"Parasympathetic dominance: acetylcholine slows the heart, constricts pupils and stimulates digestion. The vagus nerve is a key pathway."],
+   [40,"Leaning toward rest. Heart rate and breathing are lower than baseline and digestion is active."],
+   [60,"Balanced. Most organs get input from both branches, so control is fine-tuned rather than on/off."],
+   [80,"Sympathetic arousal: norepinephrine and adrenal epinephrine speed the heart, widen airways, dilate pupils and release glucose."],
+   [101,"Persistent hyperarousal, as seen in PTSD: threat signals stay on and the system is slow to stand down. This is physiology, not weakness."]
+  ];
+  function lerp(a,b,t){return a+(b-a)*t}
+  function render(){
+    var t=val/100;
+    var hr=Math.round(t<.5?lerp(52,72,t*2):lerp(72,150,(t-.5)*2)), br=Math.round(t<.5?lerp(10,14,t*2):lerp(14,26,(t-.5)*2));
+    $('hr').textContent=hr; $('br').textContent=br;
+    $('nt').textContent=val>58?'Norepinephrine':val<42?'Acetylcholine':'Mixed';
+    // pupils
+    var r=lerp(2.2,8,t); $('pupL').setAttribute('r',r); $('pupR').setAttribute('r',r);
+    // lungs scale
+    var s=lerp(.94,1.1,t);
+    ['lungL','lungR'].forEach(function(id,i){ $(id).setAttribute('transform','translate('+(i?190:170)+' 210) scale('+s+') translate('+(i?-190:-170)+' -210)')});
+    // gut opacity
+    $('gut').setAttribute('opacity',lerp(1,.35,t));
+    $('gutwave').setAttribute('stroke-width',lerp(3.5,1,t));
+    // adrenal glow
+    $('adrenal').setAttribute('transform','translate(180 266) scale('+lerp(1,1.5,t)+') translate(-180 -266)');
+    $('aura').setAttribute('opacity',Math.max(0,(t-.55)*1.6));
+    $('vagus').setAttribute('opacity',lerp(.95,.2,t));
+    // heart anim speed
+    heartPeriod=60/hr;
+    // bars
+    var bars=[[1,lerp(15,100,t),val>58?'Dilated':val<42?'Constricted':'Normal'],
+      [2,lerp(25,100,t),val>58?'Widened':val<42?'Narrowed':'Normal'],
+      [3,lerp(100,10,t),val>58?'Slowed':val<42?'Stimulated':'Normal'],
+      [4,lerp(15,100,t),val>58?'Released':val<42?'Stored':'Steady']];
+    bars.forEach(function(b){ $('b'+b[0]).style.width=b[1]+'%'; $('t'+b[0]).textContent=b[2]});
+    for(var i=0;i<notes.length;i++){ if(val<notes[i][0]){ $('note').textContent=notes[i][1]; break; } }
+  }
+  var heartPeriod=.83, phase=0, last=performance.now();
+  function tick(now){
+    var dt=(now-last)/1000; last=now;
+    if(Math.abs(target-val)>.3){ val+=(target-val)*Math.min(1,dt*3); slide.value=Math.round(val); render(); }
+    if(!reduce){
+      phase=(phase+dt/heartPeriod)%1;
+      var beat=Math.exp(-Math.pow((phase-.08)*9,2))+.5*Math.exp(-Math.pow((phase-.3)*9,2));
+      $('heart').setAttribute('transform','translate(180 212) scale('+(1+.16*beat)+')');
+      $('pulse').setAttribute('opacity',.7*beat); 
+      $('pulse').firstElementChild.setAttribute('r',26+30*(phase<.5?phase*2:1));
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+  slide.addEventListener('input',function(){ stopBreath(); val=target=+slide.value; setPressed(null); render(); });
+  var btns=document.querySelectorAll('.scen .sbtn');
+  function setPressed(b){ btns.forEach(function(x){x.setAttribute('aria-pressed',x===b)}) }
+  btns.forEach(function(b){ b.addEventListener('click',function(){ stopBreath(); target=+b.dataset.v; setPressed(b); $('live').textContent=b.textContent+' selected'; }) });
+  // breathing
+  var bt=null, bstart=0;
+  function stopBreath(){ if(bt){clearInterval(bt);bt=null;} $('bbtn').setAttribute('aria-pressed','false'); $('bbtn').textContent='🌬️ Start paced breathing'; $('bcue').textContent='Inhale 4s, exhale 6s: slows the heart via the vagus nerve.'; }
+  $('bbtn').addEventListener('click',function(){
+    if(bt){stopBreath();return;}
+    setPressed(null);
+    $('bbtn').setAttribute('aria-pressed','true'); $('bbtn').textContent='■ Stop';
+    bstart=Date.now(); if(target<70) target=Math.max(target,70);
+    bt=setInterval(function(){
+      var s=(Date.now()-bstart)/1000, c=s%10;
+      $('bcue').textContent=(c<4?'Inhale… ':'Exhale… ')+(c<4?Math.ceil(4-c):Math.ceil(10-c))+'s';
+      target=Math.max(8,target-0.9);
+      var sc=c<4?lerp(.95,1.15,c/4):lerp(1.15,.95,(c-4)/6);
+      $('lungs').setAttribute('transform','translate(180 210) scale('+sc+') translate(-180 -210)');
+    },200);
+  });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 405 Physiological Psychology | Week 2 | Synapse Lab</title>
+<style>
+:root{--ink:#1f2a37;--muted:#5b6672;--accent:#b8323a;--teal:#1c7c8c;--bg:#f7f5f2;--card:#fff;--line:#e1ddd6;--gold:#f2b705}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column;padding:10px 12px;gap:8px}
+header{display:flex;align-items:center;gap:10px;flex:0 0 auto;flex-wrap:wrap}
+.chip{background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+h1{font-size:clamp(15px,2.4vw,19px);margin:0;line-height:1.2}
+.tabs{margin-left:auto;display:flex;gap:4px;background:#ebe7e0;padding:3px;border-radius:10px}
+.tab{border:0;background:transparent;padding:5px 10px;border-radius:8px;font:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px #0002}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.view{flex:1 1 auto;min-height:0}
+[hidden]{display:none!important}
+#lab{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:0;min-width:0}
+.stage{padding:4px;display:flex}
+.stage svg{flex:1;min-height:0;width:100%}
+.panel{padding:10px 12px;display:flex;flex-direction:column;gap:9px;justify-content:space-between}
+.lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.row{display:flex;flex-wrap:wrap;gap:6px}
+.sbtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer}
+.sbtn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tog{display:flex;gap:6px;flex-wrap:wrap}
+.meter{background:var(--bg);border-radius:10px;padding:8px 10px}
+.mtop{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:700}
+.mbar{position:relative;height:14px;border-radius:8px;background:#e4dfd6;margin-top:5px;overflow:visible}
+.mbar i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:var(--teal);transition:background .3s}
+.mbar u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);text-decoration:none}
+.mbar u::after{content:"baseline";position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:4px;font-size:9.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+.meter{padding-bottom:20px!important}
+.note{font-size:12.5px;line-height:1.38;background:#fff7e6;border-left:4px solid var(--gold);border-radius:6px;padding:7px 10px}
+.note b{display:block;margin-bottom:2px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;background:var(--c);vertical-align:-1px}
+/* quiz */
+#quiz{display:flex;align-items:stretch;justify-content:center}
+.qcard{width:100%;max-width:760px;margin:auto;padding:16px;display:flex;gap:16px;align-items:center}
+.qart{flex:0 0 150px}
+.qart svg{width:100%;height:auto;display:block}
+.qbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:9px}
+.prog{font-size:12px;font-weight:700;color:var(--muted)}
+.qq{font-size:clamp(15px,2.4vw,18px);font-weight:700;line-height:1.3;margin:0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.opt{border:2px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font:inherit;font-weight:700;font-size:13.5px;text-align:left;cursor:pointer}
+.opt:hover{border-color:#b9b2a5}
+.opt.ok{border-color:#2e8b57;background:#e8f6ee}.opt.no{border-color:var(--accent);background:#fdeceb}
+.fb{min-height:40px;font-size:13px;line-height:1.35}
+.next{align-self:flex-start;border:0;background:var(--accent);color:#fff;border-radius:8px;padding:7px 14px;font:inherit;font-weight:700;cursor:pointer}
+.next[hidden]{display:none}
+@media (max-width:640px){
+  #lab{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  .panel{padding:8px 10px;gap:6px}.note{font-size:11.5px;padding:5px 8px}
+  .sbtn{padding:5px 7px;font-size:11.5px}
+  .qcard{flex-direction:column;padding:10px;gap:6px}.qart{flex-basis:auto;width:84px}
+  .opts{grid-template-columns:1fr}.opt{padding:6px 9px;font-size:12.5px}
+  .fb{font-size:12px;min-height:34px}
+  .legend{display:none}
+}
+@media (max-height:560px){.legend{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="chip">Week 2</span><h1>Synapse Lab: Brain Chemistry of Behavior</h1>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="t-lab" aria-selected="true" aria-controls="lab">Synapse Lab</button>
+      <button class="tab" role="tab" id="t-quiz" aria-selected="false" aria-controls="quiz">Transmitter Match</button>
+    </div>
+  </header>
+
+  <section id="lab" class="view" role="tabpanel" aria-labelledby="t-lab">
+    <div class="card stage">
+      <svg id="syn" viewBox="0 0 520 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated synapse with neurotransmitters crossing the cleft to receptors">
+        <defs>
+          <linearGradient id="pre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d9a8"/><stop offset="1" stop-color="#eeb86a"/></linearGradient>
+          <linearGradient id="post" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9dde3"/><stop offset="1" stop-color="#8cc4cf"/></linearGradient>
+        </defs>
+        <!-- presynaptic terminal -->
+        <path d="M30 0V90Q30 150 90 150H430Q490 150 490 90V0Z" fill="url(#pre)" stroke="#a9742c" stroke-width="3"/>
+        <text x="260" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#6b4410">Presynaptic neuron (axon terminal)</text>
+        <g id="vesicles"></g>
+        <path d="M190 150h140" stroke="#fff" stroke-width="0"/>
+        <!-- postsynaptic -->
+        <path d="M30 400V310Q30 250 90 250H430Q490 250 490 310V400Z" fill="url(#post)" stroke="#1c7c8c" stroke-width="3"/>
+        <text x="260" y="388" text-anchor="middle" font-size="14" font-weight="700" fill="#0e4a55">Postsynaptic neuron (dendrite)</text>
+        <text x="500" y="204" text-anchor="end" font-size="11" font-weight="700" fill="#7a8794" transform="rotate(0)">synaptic cleft</text>
+        <g id="trans"></g>
+        <g id="recs"></g>
+        <g id="parts"></g>
+        <g id="flash" opacity="0"><text x="260" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#6b4410">release</text></g>
+      </svg>
+    </div>
+    <div class="card panel">
+      <div>
+        <div class="lbl">1 · Choose a substance</div>
+        <div class="row" id="drugs" role="group" aria-label="Substance">
+          <button class="sbtn" data-d="none" aria-pressed="true">Normal</button>
+          <button class="sbtn" data-d="cocaine" aria-pressed="false">Cocaine</button>
+          <button class="sbtn" data-d="opioid" aria-pressed="false">Opioid</button>
+          <button class="sbtn" data-d="caffeine" aria-pressed="false">Caffeine</button>
+          <button class="sbtn" data-d="alcohol" aria-pressed="false">Alcohol</button>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">2 · Time course</div>
+        <div class="tog" role="group">
+          <button class="sbtn" id="bDrug" aria-pressed="true">Substance present</button>
+          <button class="sbtn" id="bChron" aria-pressed="false">Chronic use (adapted brain)</button>
+        </div>
+      </div>
+      <div class="meter" aria-live="polite">
+        <div class="mtop"><span id="mlab">Receptor activation</span><span id="mval">0%</span></div>
+        <div class="mbar"><i id="mfill" style="width:0"></i><u id="mbase"></u></div>
+      </div>
+      <div class="note" id="note"></div>
+      <div class="legend">
+        <span style="--c:#7a3fb5">Neurotransmitter</span><span style="--c:#f08a24">Substance</span><span style="--c:#1c7c8c">Receptor</span><span style="--c:#d6454d">Reuptake pump</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="view card" role="tabpanel" aria-labelledby="t-quiz" hidden>
+    <div class="qcard">
+      <div class="qart" id="qart" aria-hidden="true"></div>
+      <div class="qbody">
+        <div class="prog" id="qprog"></div>
+        <p class="qq" id="qq"></p>
+        <div class="opts" id="qopts"></div>
+        <div class="fb" id="qfb" aria-live="polite"></div>
+        <button class="next" id="qnext" hidden>Next</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)}, NS='http://www.w3.org/2000/svg';
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- config per substance ---------- */
+var CFG={
+ none:{nt:'Dopamine',col:'#7a3fb5',lab:'Receptor activation',reup:.9,bind:.5,hold:.7,rate:1,
+   t:'Normal signaling',d:'Dopamine is released, binds receptors (reward, motivation, movement), then transporters pull it back into the neuron (reuptake) to end the signal.'},
+ cocaine:{nt:'Dopamine',col:'#7a3fb5',lab:'Dopamine receptor activation',reup:.05,bind:.5,hold:.7,rate:1,drug:'block',
+   t:'Cocaine: reuptake blocker',d:'Cocaine plugs the transporters, so dopamine (and norepinephrine, serotonin) lingers in the cleft and keeps activating receptors.'},
+ opioid:{nt:'Endorphin',col:'#7a3fb5',lab:'Opioid receptor activation',reup:.9,bind:.5,hold:.7,rate:1,drug:'agonist',
+   t:'Opioid: agonist',d:'Opioids mimic endorphins and bind opioid receptors directly, producing strong pain relief and pleasure, even without natural release.'},
+ caffeine:{nt:'Adenosine',col:'#7a3fb5',lab:'Adenosine receptor activation',reup:.9,bind:.5,hold:.7,rate:1,drug:'antagonist',
+   t:'Caffeine: antagonist',d:'Caffeine blocks adenosine receptors. Adenosine builds up as "sleep pressure," so blocking it reduces drowsiness without adding energy.'},
+ alcohol:{nt:'GABA',col:'#7a3fb5',lab:'GABA (inhibitory) activation',reup:.9,bind:.9,hold:1.2,rate:1,drug:'gaba',
+   t:'Alcohol: enhances GABA',d:'Alcohol boosts GABA, the main inhibitory transmitter (and dampens glutamate), so neural activity slows. This is why it acts as a depressant.'}
+};
+var state={d:'none',on:true,chronic:false};
+var BASE=0;  // calibrated baseline (% activation, normal brain)
+var W=520, CY1=152, CY2=248;
+var NREC=6, recX=[110,170,230,290,350,410], transX=[75,260,445];
+var recs=[], trans=[], parts=[], active=0, ema=0, t0=performance.now(), nextBurst=0, drugClock=0;
+
+/* ---------- static art ---------- */
+var gV=$('vesicles'); [[110,80],[160,100],[215,70],[300,75],[350,100],[405,82],[255,105]].forEach(function(p,i){
+  var g=el('g',{},gV); el('circle',{cx:p[0],cy:p[1],r:15,fill:'#fff6e3',stroke:'#a9742c','stroke-width':2},g);
+  for(var k=0;k<3;k++) el('circle',{cx:p[0]-5+k*5,cy:p[1]+(k%2?3:-3),r:3,fill:'#7a3fb5'},g);
+});
+var gT=$('trans');
+transX.forEach(function(x){
+  var g=el('g',{},gT);
+  var pump=el('path',{d:'M'+(x-13)+' '+(CY1+1)+'h26l-4 -14h-18z',fill:'#d6454d',stroke:'#8c1f27','stroke-width':2},g);
+  var x2=el('g',{opacity:0},g); el('path',{d:'M'+(x-8)+' '+(CY1+5)+'l16 12M'+(x+8)+' '+(CY1+5)+'l-16 12',stroke:'#1f2a37','stroke-width':3,'stroke-linecap':'round'},x2);
+  trans.push({x:x,x2:x2,pump:pump});
+});
+var gR=$('recs');
+recX.forEach(function(x,i){
+  var g=el('g',{},gR);
+  var body=el('path',{d:'M'+(x-16)+' '+(CY2+8)+'Q'+(x-16)+' '+(CY2-8)+' '+(x-6)+' '+(CY2-10)+'Q'+x+' '+(CY2+3)+' '+(x+6)+' '+(CY2-10)+'Q'+(x+16)+' '+(CY2-8)+' '+(x+16)+' '+(CY2+8)+'Z',fill:'#1c7c8c',stroke:'#0e4a55','stroke-width':2},g);
+  var ring=el('circle',{cx:x,cy:CY2-2,r:20,fill:'none',stroke:'#f2b705','stroke-width':4,opacity:0},g);
+  recs.push({x:x,body:body,ring:ring,state:'free',timer:0,en:true,kind:null,g:g});
+});
+
+/* ---------- particles ---------- */
+var gP=$('parts');
+function spawn(type,x,y){
+  var c=type==='nt'?'#7a3fb5':'#f08a24';
+  var e=el('circle',{r:type==='nt'?5:6,fill:c,stroke:'#fff','stroke-width':1.2},gP);
+  var p={e:e,type:type,x:x,y:y,vx:(Math.random()-.5)*40,vy:20+Math.random()*30,state:'free',life:0,rec:null,tr:null};
+  parts.push(p); return p;
+}
+function kill(p){ if(p.e.parentNode) p.e.parentNode.removeChild(p.e); p.dead=true }
+function rand(a,b){return a+Math.random()*(b-a)}
+
+function applyConfig(){
+  var cfg=CFG[state.d], drugActive=state.on && state.d!=='none';
+  // receptors enabled
+  var en=state.chronic && state.d!=='none' ? [1,0,1,0,1,0] : [1,1,1,1,1,1];
+  recs.forEach(function(r,i){ r.en=!!en[i]; r.g.setAttribute('opacity',r.en?1:.3); });
+  // pumps
+  trans.forEach(function(t){ t.x2.setAttribute('opacity',(drugActive&&cfg.drug==='block')?1:0); });
+  $('mlab').textContent=cfg.lab;
+  $('note').innerHTML='<b>'+cfg.t+'</b>'+cfg.d+extra(drugActive);
+  // clean drug particles
+  parts.forEach(function(p){ if(p.type==='drug'&&!drugActive) {if(p.rec!==null){recs[p.rec].state='free';recs[p.rec].kind=null;} kill(p);} });
+  parts=parts.filter(function(p){return !p.dead});
+}
+function extra(drugActive){
+  if(state.d==='none') return '';
+  if(state.chronic && drugActive) return ' <i>Tolerance:</i> the brain has removed receptors to compensate, so the same dose produces a weaker effect.';
+  if(state.chronic && !drugActive) return ' <i>Withdrawal:</i> with fewer receptors and no substance, activation falls below baseline.';
+  if(!drugActive) return ' <i>Substance cleared:</i> signaling returns to normal.';
+  return '';
+}
+
+/* ---------- main loop ---------- */
+var last=performance.now();
+function frame(now){
+  var dt=Math.min(.05,(now-last)/1000); last=now;
+  var cfg=CFG[state.d], drugActive=state.on&&state.d!=='none';
+  var reup=drugActive&&cfg.drug==='block'?cfg.reup:(state.d==='cocaine'?CFG.none.reup:CFG.none.reup);
+  if(drugActive&&cfg.drug==='block') reup=cfg.reup; else reup=.9;
+  var bindP=drugActive&&cfg.drug==='gaba'?cfg.bind:.5, hold=drugActive&&cfg.drug==='gaba'?cfg.hold:.7;
+
+  // release bursts
+  if(now>nextBurst){
+    nextBurst=now+1500;
+    var n=6; for(var i=0;i<n;i++) spawn('nt',rand(215,305),CY1+4);
+    var f=$('flash'); f.setAttribute('opacity',1); setTimeout(function(){f.setAttribute('opacity',0)},250);
+  }
+  // drug particles
+  drugClock+=dt;
+  if(drugActive && cfg.drug && cfg.drug!=='gaba' && cfg.drug!=='block' && drugClock>.25){
+    drugClock=0; var free=parts.filter(function(p){return p.type==='drug'}).length;
+    if(free<14){ spawn('drug',rand(80,440),rand(CY1+10,CY1+40)); }
+  }
+  if(drugActive && cfg.drug==='block' && drugClock>.6){
+    drugClock=0; if(parts.filter(function(p){return p.type==='drug'}).length<3){ var pp=spawn('drug',transX[parts.length%3],CY1+14); pp.state='plug'; pp.tr=parts.length%3; }
+  }
+  active=0;
+  parts.forEach(function(p){
+    if(p.dead) return;
+    if(p.state==='plug'){ var tx=transX[p.tr]; p.x=tx; p.y=CY1+22; p.e.setAttribute('cx',p.x); p.e.setAttribute('cy',p.y); return; }
+    if(p.state==='bound'){
+      var r=recs[p.rec]; p.life-=dt; p.e.setAttribute('cx',r.x); p.e.setAttribute('cy',CY2-14);
+      if(p.life<=0){ r.state='free'; r.kind=null; if(p.type==='nt'&&!(drugActive&&cfg.drug==='block')){kill(p);} else if(!drugActive){kill(p);} else { p.state='free'; p.vy=-30; p.y=CY2-24; p.rec=null; } }
+      return;
+    }
+    // free diffusion
+    p.vx+=rand(-260,260)*dt; p.vy+=rand(-260,260)*dt+ (p.type==='nt'?14:8)*dt;
+    var sp=Math.hypot(p.vx,p.vy), mx=60; if(sp>mx){p.vx*=mx/sp;p.vy*=mx/sp}
+    p.x+=p.vx*dt; p.y+=p.vy*dt;
+    if(p.x<50){p.x=50;p.vx=Math.abs(p.vx)} if(p.x>470){p.x=470;p.vx=-Math.abs(p.vx)}
+    if(p.y<CY1+4){p.y=CY1+4;p.vy=Math.abs(p.vy)} if(p.y>CY2-12){p.y=CY2-12;p.vy=-Math.abs(p.vy)}
+    p.life+=dt;
+    // reuptake (nt only)
+    if(p.type==='nt'&&p.y<CY1+26){
+      for(var k=0;k<transX.length;k++){ if(Math.abs(p.x-transX[k])<20 && Math.random()<reup*dt*4){ p.dead=true; p.e.setAttribute('opacity',0); kill(p); break; } }
+    }
+    if(p.dead) return;
+    // receptor binding
+    if(p.y>CY2-30){
+      for(var j=0;j<recs.length;j++){ var r2=recs[j];
+        if(r2.state==='free'&&r2.en&&Math.abs(p.x-r2.x)<18 && Math.random()<(p.type==='drug'?1:bindP)*dt*10){
+          if(p.type==='drug' && cfg.drug==='block') break;
+          r2.state='bound'; r2.kind=p.type==='drug'?(cfg.drug==='antagonist'?'blocked':'agonist'):'nt';
+          p.state='bound'; p.rec=j; p.life=(p.type==='drug'?(cfg.drug==='antagonist'?6:3.5):hold);
+          break;
+        }
+      }
+    }
+    if(p.life>14){ p.dead=true; kill(p); }
+    p.e.setAttribute('cx',p.x.toFixed(1)); p.e.setAttribute('cy',p.y.toFixed(1));
+  });
+  parts=parts.filter(function(p){return !p.dead});
+  // receptor visuals + activation
+  var act=0;
+  recs.forEach(function(r){
+    var on=r.state==='bound'&&r.kind!=='blocked';
+    if(on) act++;
+    r.ring.setAttribute('opacity',on?.95:0);
+    r.body.setAttribute('fill', r.kind==='blocked'?'#6b7480':on?'#12a3b8':'#1c7c8c');
+  });
+  var cur=act/NREC*100;
+  ema+=(cur-ema)*Math.min(1,dt*1.3);
+  var shown=Math.max(0,Math.min(100,ema*1.0));
+  var fill=$('mfill'); fill.style.width=shown+'%'; $('mval').textContent=Math.round(shown)+'%';
+  var rel=BASE?shown/BASE:1;
+  fill.style.background=rel>1.3?'#c2413a':rel<.7?'#6b7480':'#1c7c8c';
+  requestAnimationFrame(frame);
+}
+/* calibrate baseline marker: run quick simulation estimate */
+BASE=17; $('mbase').style.left=BASE+'%';
+function reset(){ parts.forEach(kill); parts=[]; recs.forEach(function(r){r.state='free';r.kind=null}); ema=0; applyConfig(); }
+
+/* ---------- controls ---------- */
+document.querySelectorAll('#drugs .sbtn').forEach(function(b){ b.addEventListener('click',function(){
+  document.querySelectorAll('#drugs .sbtn').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+  state.d=b.dataset.d; state.on=true; $('bDrug').setAttribute('aria-pressed','true'); reset();
+})});
+$('bDrug').addEventListener('click',function(){ state.on=!state.on; this.setAttribute('aria-pressed',state.on); applyConfig(); });
+$('bChron').addEventListener('click',function(){ state.chronic=!state.chronic; this.setAttribute('aria-pressed',state.chronic); applyConfig(); });
+applyConfig(); requestAnimationFrame(frame);
+
+/* ---------- tabs ---------- */
+function showTab(w){ var q=w==='quiz';
+  $('lab').hidden=q; $('quiz').hidden=!q; $('t-lab').setAttribute('aria-selected',!q); $('t-quiz').setAttribute('aria-selected',q);
+}
+$('t-lab').onclick=function(){showTab('lab')}; $('t-quiz').onclick=function(){showTab('quiz')};
+
+/* ---------- quiz ---------- */
+var Q=[
+ {a:'Dopamine',q:'Which transmitter is most tied to reward, motivation and movement?',f:'Dopamine reward circuits help explain craving and relapse.',c:'#e0613a',s:'reward'},
+ {a:'Serotonin',q:'Which transmitter is associated with mood, sleep and appetite?',f:'Serotonin systems are a common target of antidepressant medication.',c:'#2f86c9',s:'mood'},
+ {a:'Norepinephrine',q:'Which transmitter drives arousal and attention, and is released by sympathetic neurons?',f:'It links Week 1 (fight or flight) to Week 2 chemistry.',c:'#c2413a',s:'alert'},
+ {a:'Acetylcholine',q:'Which transmitter activates muscles and supports attention and memory?',f:'Nicotine acts on nicotinic acetylcholine receptors.',c:'#2e8b57',s:'muscle'},
+ {a:'GABA',q:'Which is the brain\u2019s main inhibitory transmitter, enhanced by alcohol?',f:'Enhancing GABA slows neural activity, which is why alcohol is a depressant.',c:'#5a5fc7',s:'brake'},
+ {a:'Glutamate',q:'Which is the main excitatory transmitter, central to learning?',f:'Glutamate and NMDA receptors underlie long-term potentiation (Week 7).',c:'#d49a00',s:'go'}
+];
+var ALL=['Dopamine','Serotonin','Norepinephrine','Acetylcholine','GABA','Glutamate','Endorphins'];
+var qi=0, score=0, locked=false;
+function art(c,s){
+  var sym={
+   reward:'<path d="M60 22l10 22 24 3-18 16 5 24-21-12-21 12 5-24-18-16 24-3z" fill="#fff"/>',
+   mood:'<circle cx="60" cy="60" r="30" fill="#fff"/><circle cx="50" cy="52" r="4" fill="'+c+'"/><circle cx="70" cy="52" r="4" fill="'+c+'"/><path d="M44 66q16 16 32 0" stroke="'+c+'" stroke-width="5" fill="none" stroke-linecap="round"/>',
+   alert:'<path d="M66 18L38 68h20l-6 34 32-52H62z" fill="#fff"/>',
+   muscle:'<path d="M34 76c0-18 8-30 24-34 4-10 20-10 24 2 6 4 6 14 0 18-6 10-14 14-22 14-10 4-26 6-26-0z" fill="#fff"/>',
+   brake:'<rect x="34" y="34" width="52" height="52" rx="8" fill="#fff"/><rect x="46" y="54" width="28" height="12" fill="'+c+'"/>',
+   go:'<path d="M40 30l46 30-46 30z" fill="#fff"/>'}[s];
+  return '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="'+c+'"/><circle cx="60" cy="60" r="56" fill="none" stroke="#0002" stroke-width="4"/>'+sym+'</svg>';
+}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function showQ(){
+  if(qi>=Q.length){
+    $('qprog').textContent='Complete';
+    $('qq').textContent='You scored '+score+' of '+Q.length+'.';
+    $('qopts').innerHTML=''; $('qfb').textContent=score===Q.length?'Excellent. You can now explain how these systems shape behavior and how substances change them.':'Review the Week 2 Deep Dive section "Major Neurotransmitters and Behavior" and try again.';
+    $('qnext').hidden=false; $('qnext').textContent='Try again'; $('qart').innerHTML=art('#b8323a','reward'); return;
+  }
+  var q=Q[qi]; locked=false;
+  $('qprog').textContent='Question '+(qi+1)+' of '+Q.length+' · Score '+score;
+  $('qq').textContent=q.q; $('qart').innerHTML='<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#8a929c"/><text x="60" y="82" text-anchor="middle" font-size="70" font-weight="800" fill="#fff">?</text></svg>';
+  var opts=shuffle([q.a].concat(shuffle(ALL.filter(function(x){return x!==q.a})).slice(0,3)));
+  var box=$('qopts'); box.innerHTML='';
+  opts.forEach(function(o){ var b=document.createElement('button'); b.className='opt'; b.textContent=o;
+    b.onclick=function(){ if(locked)return; locked=true;
+      var ok=o===q.a; if(ok)score++;
+      [].forEach.call(box.children,function(x){ if(x.textContent===q.a)x.classList.add('ok'); });
+      if(!ok) b.classList.add('no');
+      $('qfb').textContent=(ok?'Correct. ':'Not quite: it\u2019s '+q.a+'. ')+q.f;
+      $('qart').innerHTML=art(q.c,q.s); $('qprog').textContent='Question '+(qi+1)+' of '+Q.length+' · Score '+score;
+      $('qnext').hidden=false; $('qnext').textContent=qi===Q.length-1?'See score':'Next'; };
+    box.appendChild(b); });
+  $('qfb').textContent=''; $('qnext').hidden=true;
+}
+$('qnext').onclick=function(){ if(qi>=Q.length){qi=0;score=0;} else qi++; showQ(); };
+showQ();
+})();
+</script>
+</body>
+</html>

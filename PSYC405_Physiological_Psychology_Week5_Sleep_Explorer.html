@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 405 Physiological Psychology | Week 5 | Sleep Explorer</title>
+<style>
+:root{--ink:#1f2a37;--muted:#5b6672;--accent:#b8323a;--bg:#f7f5f2;--card:#fff;--line:#e1ddd6;--gold:#f2b705;
+ --w:#e0a100;--rem:#b8323a;--n1:#8fb8de;--n2:#4f86c6;--n3:#23468f}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column;padding:10px 12px;gap:8px}
+header{display:flex;align-items:center;gap:10px;flex:0 0 auto;flex-wrap:wrap}
+.chip{background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+h1{font-size:clamp(15px,2.4vw,19px);margin:0;line-height:1.2}
+.tabs{margin-left:auto;display:flex;gap:4px;background:#ebe7e0;padding:3px;border-radius:10px}
+.tab{border:0;background:transparent;padding:5px 10px;border-radius:8px;font:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px #0002}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+.view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:0;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:6px}
+.sbtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer}
+.sbtn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.note{font-size:12.5px;line-height:1.38;background:#fff7e6;border-left:4px solid var(--gold);border-radius:6px;padding:7px 10px;flex:0 0 auto}
+.note b{display:block;margin-bottom:1px}
+/* night view */
+.chartcard{flex:1 1 auto;min-height:0;display:flex;padding:4px}
+.chartcard svg{flex:1;min-height:0;width:100%}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;flex:0 0 auto}
+.st{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:5px 6px;text-align:center}
+.st b{display:block;font-size:clamp(14px,2.4vw,19px);line-height:1.15}
+.st small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.stagekey{display:flex;gap:6px;flex-wrap:wrap;flex:0 0 auto}
+.sk{border:2px solid transparent;border-radius:999px;padding:3px 9px;font:inherit;font-size:11.5px;font-weight:700;color:#fff;cursor:pointer}
+.sk[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px #fff inset}
+/* clock view */
+#clock{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:10px}
+.dial{display:flex;padding:4px}
+.dial svg{flex:1;min-height:0;width:100%}
+.panel{padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-height:0}
+.panel .chartsvg{flex:1;min-height:0;display:flex}
+.panel .chartsvg svg{flex:1;min-height:0;width:100%}
+.timerow{display:flex;align-items:center;gap:8px}
+.timerow output{font-weight:800;min-width:66px;font-variant-numeric:tabular-nums}
+input[type=range]{flex:1;accent-color:var(--accent);height:24px;margin:0}
+.ro{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ro div{background:var(--bg);border-radius:8px;padding:4px 6px;text-align:center}
+.ro b{display:block;font-size:15px}.ro small{font-size:10px;color:var(--muted);text-transform:uppercase}
+@media (max-width:640px){
+  #clock{grid-template-columns:1fr;grid-template-rows:minmax(0,.7fr) minmax(0,1.3fr)}
+  .stats{grid-template-columns:repeat(5,1fr)}.st{padding:3px}.st small{font-size:8.5px}
+  .note{font-size:11.5px;padding:5px 8px}.sbtn{padding:5px 7px;font-size:11.5px}
+  .panel{padding:8px 10px;gap:6px}
+}
+@media (max-height:560px){.stagekey{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <span class="chip">Week 5</span><h1>Sleep Explorer</h1>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-night" aria-selected="true">Build a Night</button>
+    <button class="tab" role="tab" id="t-clock" aria-selected="false">Body Clock</button>
+  </div>
+</header>
+
+<section id="night" class="view" role="tabpanel" aria-labelledby="t-night">
+  <div class="row" id="scen" role="group" aria-label="Choose a night">
+    <button class="sbtn" data-s="healthy" aria-pressed="true">😴 Healthy night</button>
+    <button class="sbtn" data-s="caffeine" aria-pressed="false">☕ Late caffeine</button>
+    <button class="sbtn" data-s="alcohol" aria-pressed="false">🍷 Alcohol nightcap</button>
+    <button class="sbtn" data-s="insomnia" aria-pressed="false">🌙 Insomnia (Sarah)</button>
+  </div>
+  <div class="card chartcard">
+    <svg id="hyp" viewBox="0 0 700 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Hypnogram showing sleep stages across the night"></svg>
+  </div>
+  <div class="stagekey" id="skey" role="group" aria-label="Stage descriptions"></div>
+  <div class="stats" aria-live="polite">
+    <div class="st"><b id="sTST">–</b><small>Time asleep</small></div>
+    <div class="st"><b id="sEff">–</b><small>Efficiency</small></div>
+    <div class="st"><b id="sN3">–</b><small>Deep (N3)</small></div>
+    <div class="st"><b id="sREM">–</b><small>REM</small></div>
+    <div class="st"><b id="sAw">–</b><small>Awakenings</small></div>
+  </div>
+  <div class="note" id="nnote"></div>
+</section>
+
+<section id="clock" class="view" role="tabpanel" aria-labelledby="t-clock" hidden>
+  <div class="card dial">
+    <svg id="dial" viewBox="0 0 360 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="24-hour clock with brain showing the suprachiasmatic nucleus and pineal gland"></svg>
+  </div>
+  <div class="card panel">
+    <div class="timerow">
+      <button class="sbtn" id="play" aria-pressed="false">▶ Play day</button>
+      <input type="range" id="tm" min="0" max="24" step="0.25" value="7" aria-label="Time of day">
+      <output id="tout">7:00 AM</output>
+    </div>
+    <div class="chartsvg"><svg id="cc" viewBox="0 0 420 228" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Chart of sleep pressure and melatonin over 24 hours"></svg></div>
+    <div class="row" role="group" aria-label="Modifiers">
+      <button class="sbtn" id="cafe" aria-pressed="false">☕ Coffee at 4 PM</button>
+      <button class="sbtn" id="scr" aria-pressed="false">📱 Bright screen at night</button>
+    </div>
+    <div class="ro" aria-live="polite">
+      <div><b id="rA">–</b><small>Sleep pressure</small></div><div><b id="rM">–</b><small>Melatonin</small></div><div><b id="rF">–</b><small>Feels like</small></div>
+    </div>
+    <div class="note" id="cnote"></div>
+  </div>
+</section>
+</div>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)}, NS='http://www.w3.org/2000/svg';
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(s,a,p){var e=el('text',a,p);e.textContent=s;return e}
+var COL={W:'#e0a100',REM:'#b8323a',N1:'#8fb8de',N2:'#4f86c6',N3:'#23468f'};
+var ROWS=['W','REM','N1','N2','N3'], LAB={W:'Awake',REM:'REM',N1:'N1',N2:'N2',N3:'N3'};
+var DESC={
+ W:'Awake: time spent awake in bed counts against sleep efficiency. Brief awakenings are normal; long ones suggest a problem.',
+ REM:'REM: vivid dreaming, rapid eye movements and muscle paralysis. REM periods get longer toward morning and support emotional memory.',
+ N1:'N1: the lightest stage, the doorway between waking and sleep. Easily disrupted.',
+ N2:'N2: light sleep with spindles and K-complexes. Makes up the largest share of the night.',
+ N3:'N3: deep slow-wave sleep, important for physical restoration. Concentrated early in the night and shortens across cycles.'};
+
+/* ---------- scenario builders (minutes from 11 PM; 480 min total) ---------- */
+function cyc(n1,n2,n3,n2b,rem){ return [['N1',n1],['N2',n2],['N3',n3],['N2',n2b],['REM',rem]]; }
+var C=[cyc(5,20,40,15,10),cyc(5,25,30,15,15),cyc(5,30,20,15,20),cyc(5,35,10,15,25),cyc(5,35,0,15,35)];
+function fill(seg){ var t=0,out=[]; seg.forEach(function(s){ if(s[1]<=0||t>=480)return; var d=Math.min(s[1],480-t); out.push([s[0],d]); t+=d; }); if(t<480) out.push(['W',480-t]); return out; }
+var NOTES={
+ healthy:['Healthy architecture','Roughly 90-minute cycles. Deep N3 sleep dominates early, while REM periods lengthen toward morning.'],
+ caffeine:['Caffeine blocks adenosine','Adenosine builds sleep pressure; caffeine blocks its receptors. Result: longer time to fall asleep, lighter sleep with less N3, and more night waking.'],
+ alcohol:['Alcohol: sedation, then fragmentation','Alcohol may speed sleep onset and suppress early REM, but sleep becomes fragmented with more waking in the second half of the night.'],
+ insomnia:['Sleep-maintenance insomnia','Like Sarah in the Deep Dive: she falls asleep, but wakes early and cannot return to sleep. Insomnia disorder requires symptoms 3+ nights/week for 3+ months plus daytime impairment. CBT-I is first-line treatment.']
+};
+function build(k){
+  if(k==='healthy') return fill([['W',15]].concat(C[0],C[1],C[2],C[3],C[4]));
+  if(k==='caffeine') return fill([['W',55],['N1',10],['N2',25],['N3',20],['N2',15],['REM',8],['W',8],['N1',8],['N2',30],['N3',14],['N2',20],['REM',12],['W',10],['N1',6],['N2',35],['N3',8],['N2',20],['REM',18],['W',6],['N1',8],['N2',45],['REM',22],['N2',25],['W',8],['N1',8],['N2',30],['REM',24]]);
+  if(k==='alcohol') return fill([['W',8],['N1',4],['N2',12],['N3',50],['N2',20],['N3',30],['N2',20],['N3',20],['N2',25],['REM',6],['N2',15],['W',20],['N1',10],['N2',25],['REM',14],['W',12],['N1',10],['N2',20],['REM',12],['W',18],['N1',12],['N2',20],['REM',10],['W',14],['N1',10],['N2',20],['W',10],['N2',20],['REM',12]]);
+  return fill([['W',25]].concat(C[0],C[1],[['N1',5],['N2',20]],[['W',12],['N1',8],['W',20],['N1',6],['W',25],['N1',10],['W',18]],[['N1',10],['N2',25],['W',10],['N2',35],['REM',20],['W',20],['W',60]]));
+}
+/* ---------- hypnogram draw ---------- */
+var svg=$('hyp'), X0=70, X1=680, Y0=36, RH=42, scen='healthy';
+function xOf(m){return X0+(X1-X0)*m/480}
+function yOf(st){return Y0+ROWS.indexOf(st)*RH+RH/2}
+function drawBase(){
+  svg.innerHTML='';
+  var d=el('defs',{},svg), cp=el('clipPath',{id:'rev'},d); el('rect',{id:'revr',x:X0,y:0,width:0,height:300},cp);
+  // moon/stars scene strip
+  el('rect',{x:0,y:0,width:700,height:26,fill:'#1f2a4d',rx:8},svg);
+  [[120,8],[190,15],[260,7],[350,16],[430,8],[520,14],[600,7],[660,16]].forEach(function(s){el('circle',{cx:s[0],cy:s[1],r:1.8,fill:'#fff',opacity:.8},svg)});
+  el('circle',{cx:24,cy:13,r:8,fill:'#f6e7a8'},svg); el('circle',{cx:28,cy:11,r:7,fill:'#1f2a4d'},svg);
+  [0,1,2,3,4].forEach(function(i){ var a=15+i*90; });
+  ROWS.forEach(function(r,i){
+    el('rect',{x:X0,y:Y0+i*RH,width:X1-X0,height:RH,fill:i%2?'#faf8f4':'#f2efe9'},svg);
+    txt(LAB[r],{x:X0-8,y:Y0+i*RH+RH/2+4,'text-anchor':'end','font-size':12,'font-weight':700,fill:COL[r]===COL.N1?'#3d6f9e':COL[r]},svg);
+  });
+  // cycle guides
+  for(var c=0;c<5;c++){ var m=15+c*90; el('line',{x1:xOf(m),x2:xOf(m),y1:Y0,y2:Y0+RH*5,stroke:'#cfc9bd','stroke-dasharray':'3 4'},svg); txt('Cycle '+(c+1),{x:xOf(m+45),y:Y0+RH*5+34,'text-anchor':'middle','font-size':10,fill:'#8a8f96'},svg); }
+  // hours axis
+  var hrs=['11 PM','12','1','2','3','4','5','6','7 AM'];
+  hrs.forEach(function(h,i){ var x=xOf(i*60); el('line',{x1:x,x2:x,y1:Y0+RH*5,y2:Y0+RH*5+5,stroke:'#8a8f96'},svg); txt(h,{x:x,y:Y0+RH*5+18,'text-anchor':'middle','font-size':11,fill:'#5b6672'},svg); });
+}
+function drawNight(){
+  drawBase();
+  var segs=build(scen), g=el('g',{'clip-path':'url(#rev)'},svg), t=0, prev=null;
+  segs.forEach(function(s){
+    var x=xOf(t), w=xOf(t+s[1])-x, y=yOf(s[0]);
+    if(prev!==null) el('line',{x1:x,x2:x,y1:prev,y2:y,stroke:'#6b7480','stroke-width':2},g);
+    el('rect',{x:x,y:y-7,width:Math.max(w,1.5),height:14,rx:3,fill:COL[s[0]]},g);
+    prev=y; t+=s[1];
+  });
+  // reveal animation
+  var r=$('revr'), start=null, dur=matchMedia('(prefers-reduced-motion: reduce)').matches?1:1600;
+  (function step(ts){ if(!start)start=ts; var p=Math.min(1,(ts-start)/dur); r.setAttribute('width',(X1-X0+4)*p); if(p<1)requestAnimationFrame(step); })(performance.now());
+  // stats
+  var tst=0,n3=0,rem=0,aw=0,seenSleep=false;
+  segs.forEach(function(s,i){ if(s[0]!=='W'){tst+=s[1];seenSleep=true;} else if(seenSleep&&i<segs.length-1&&s[1]>=5&&segs[i+1][0]!=='W')aw++; if(s[0]==='N3')n3+=s[1]; if(s[0]==='REM')rem+=s[1]; });
+  $('sTST').textContent=Math.floor(tst/60)+'h '+(tst%60)+'m';
+  $('sEff').textContent=Math.round(tst/480*100)+'%';
+  $('sN3').textContent=Math.round(n3/Math.max(tst,1)*100)+'%';
+  $('sREM').textContent=Math.round(rem/Math.max(tst,1)*100)+'%';
+  $('sAw').textContent=aw;
+  $('nnote').innerHTML='<b>'+NOTES[scen][0]+'</b>'+NOTES[scen][1];
+}
+document.querySelectorAll('#scen .sbtn').forEach(function(b){ b.onclick=function(){ document.querySelectorAll('#scen .sbtn').forEach(function(x){x.setAttribute('aria-pressed',x===b)}); scen=b.dataset.s; drawNight(); }});
+// stage key
+var sk=$('skey'); ROWS.slice().reverse().forEach(function(r){ var b=document.createElement('button'); b.className='sk'; b.style.background=COL[r]; b.textContent=LAB[r]; b.setAttribute('aria-pressed','false');
+  b.onclick=function(){ document.querySelectorAll('.sk').forEach(function(x){x.setAttribute('aria-pressed',x===b)}); $('nnote').innerHTML='<b>'+LAB[r]+' stage</b>'+DESC[r].replace(/^[^:]+: /,''); };
+  sk.appendChild(b); });
+drawNight();
+
+/* ---------- body clock ---------- */
+function gauss(t,c,s){ var d=Math.abs(t-c); d=Math.min(d,24-d); return Math.exp(-d*d/(2*s*s)); }
+var cafe=false, screen=false;
+function S(t){ // sleep pressure
+  if(t>=7&&t<23) return 1-.9*Math.exp(-(t-7)/10);
+  var tt=t<7?t+24:t, base=1-.9*Math.exp(-16/10);
+  return .08+(base-.08)*Math.exp(-(tt-23)/3.5);
+}
+function M(t){ var m=gauss(t,3.5,3.1); if(t>=9&&t<19) m=0; else if(t>7&&t<9) m*=(9-t)/2; if(screen&&(t>=20.5||t<8)) m*=.3; return m; }
+function caf(t){ if(!cafe)return 0; var d=t-16; if(d<0) d+=24; if(d>16) return 0; var ramp=Math.min(1,d/1.0); return ramp*Math.pow(.5,d/5); }
+function felt(t){ return S(t)*(1-.55*caf(t)); }
+var D=el('g',{},$('dial'));
+var dsv=$('dial'); dsv.innerHTML='';
+(function(){
+  var cx=180, cy=185, R=150;
+  var defs=el('defs',{},dsv);
+  var rg=el('radialGradient',{id:'sg'},defs); el('stop',{offset:0,'stop-color':'#ffe27a','stop-opacity':.95},rg); el('stop',{offset:1,'stop-color':'#ffe27a','stop-opacity':0},rg);
+  var pg=el('radialGradient',{id:'pg'},defs); el('stop',{offset:0,'stop-color':'#a56ad8','stop-opacity':.95},pg); el('stop',{offset:1,'stop-color':'#a56ad8','stop-opacity':0},pg);
+  // 24 wedge ring: midnight at bottom? put noon at top
+  for(var h=0;h<24;h++){
+    var a0=(h-12)*15-90+180, a1=a0+15; // noon (h=12) at top: angle -90
+    a0=(h-12)*15-90; a1=a0+15;
+    var f=function(a,r){return [cx+r*Math.cos(a*Math.PI/180),cy+r*Math.sin(a*Math.PI/180)]};
+    var p0=f(a0,R),p1=f(a1,R),p2=f(a1,R-34),p3=f(a0,R-34);
+    var daylight=Math.max(0,Math.sin((h+.5-6)/12*Math.PI)); // 0 at 6am/6pm
+    var c1=[31,42,77], c2=[255,214,102], k=Math.pow(daylight,.7);
+    var col='rgb('+c1.map(function(v,i){return Math.round(v+(c2[i]-v)*k)}).join(',')+')';
+    el('path',{d:'M'+p0+'A'+R+' '+R+' 0 0 1 '+p1+'L'+p2+'A'+(R-34)+' '+(R-34)+' 0 0 0 '+p3+'Z',fill:col,stroke:'#fff','stroke-width':1},dsv);
+  }
+  [[0,'12 AM'],[6,'6 AM'],[12,'12 PM'],[18,'6 PM']].forEach(function(p){ var a=(p[0]-12)*15-90+7.5, r=R+14; var x=cx+r*Math.cos(a*Math.PI/180), y=cy+r*Math.sin(a*Math.PI/180)+4; txt(p[1],{x:x,y:y,'text-anchor':'middle','font-size':11,'font-weight':700,fill:'#5b6672'},dsv); });
+  // head profile
+  el('path',{d:'M120 270c-6-40-8-70 0-100 10-44 50-64 92-58 40 6 62 36 58 70-2 14 6 22 10 30-6 4-12 4-14 10 4 8 2 14-6 16-6 2-8 8-6 16-8 12-22 14-34 12-10 28-14 44-14 44z',fill:'#f1dfcf',stroke:'#c9b29b','stroke-width':2.5},dsv);
+  // brain region
+  el('path',{d:'M146 168c-8-30 14-56 48-56 32 0 54 20 52 46-2 22-22 32-48 32-18 0-44-4-52-22z',fill:'#efb6bc',stroke:'#b8323a','stroke-width':2,opacity:.9},dsv);
+  el('path',{d:'M170 130c8 8 4 18 14 22M198 124c-4 12 8 18 4 30M224 140c-10 4-8 14-16 18',stroke:'#b8323a','stroke-width':1.5,fill:'none'},dsv);
+  // SCN (above optic chiasm) and pineal
+  el('circle',{id:'scnG',cx:196,cy:182,r:26,fill:'url(#sg)',opacity:0},dsv);
+  el('circle',{id:'scn',cx:196,cy:182,r:6,fill:'#f2b705',stroke:'#8a6a00','stroke-width':1.5},dsv);
+  el('circle',{id:'pinG',cx:170,cy:150,r:28,fill:'url(#pg)',opacity:0},dsv);
+  el('circle',{id:'pin',cx:170,cy:150,r:5,fill:'#8a47c4',stroke:'#4b2275','stroke-width':1.5},dsv);
+  el('path',{d:'M254 190c-24 2-40 0-52-8',stroke:'#f2b705','stroke-width':2.5,fill:'none','stroke-dasharray':'4 3'},dsv);
+  txt('Eye → light',{x:222,y:206,'font-size':10.5,'font-weight':700,fill:'#8a6a00',stroke:'#fff','stroke-width':3,'paint-order':'stroke'},dsv);
+  var lblS=txt('SCN (master clock)',{x:176,y:236,'font-size':11,'font-weight':700,fill:'#6b4e00',stroke:'#fff','stroke-width':3,'paint-order':'stroke'},dsv);
+  txt('Pineal → melatonin',{x:20,y:132,'font-size':11,'font-weight':700,fill:'#4b2275',stroke:'#fff','stroke-width':3,'paint-order':'stroke'},dsv);
+  el('path',{d:'M126 134L164 148',stroke:'#7a8794','stroke-width':1.2},dsv);
+  // time marker
+  el('g',{id:'mk'},dsv);
+  txt('',{id:'mid',x:cx,y:392,'text-anchor':'middle','font-size':14,'font-weight':800,fill:'#1f2a37'},dsv);
+})();
+function fmt(t){ var h=Math.floor(t)%24, m=Math.round((t%1)*60); var ap=h>=12?'PM':'AM'; var hh=h%12||12; return hh+':'+(m<10?'0':'')+m+' '+ap; }
+// chart
+var cs=$('cc'), CX0=34, CX1=410, CY0=14, CY1=176;
+function cx(t){return CX0+(CX1-CX0)*t/24} function cyv(v){return CY1-(CY1-CY0)*v}
+function drawChart(){
+  cs.innerHTML='';
+  // night shading 23-7
+  el('rect',{x:cx(0),y:CY0,width:cx(7)-cx(0),height:CY1-CY0,fill:'#e7e9f3'},cs);
+  el('rect',{x:cx(23),y:CY0,width:cx(24)-cx(23),height:CY1-CY0,fill:'#e7e9f3'},cs);
+  txt('asleep',{x:cx(3.5),y:CY0+12,'text-anchor':'middle','font-size':10,fill:'#6a6f9a'},cs);
+  el('line',{x1:CX0,x2:CX1,y1:CY1,y2:CY1,stroke:'#8a8f96'},cs); el('line',{x1:CX0,x2:CX0,y1:CY0,y2:CY1,stroke:'#8a8f96'},cs);
+  [0,6,12,18,24].forEach(function(h){ txt(h===0||h===24?'12A':h===12?'12P':(h<12?h+'A':(h-12)+'P'),{x:cx(h),y:CY1+14,'text-anchor':'middle','font-size':10.5,fill:'#5b6672'},cs); });
+  function path(fn,color,dash,w){ var d=''; for(var i=0;i<=96;i++){ var t=i/4, v=fn(t); d+=(i?'L':'M')+cx(t).toFixed(1)+' '+cyv(Math.min(1,v)).toFixed(1); } el('path',{d:d,fill:'none',stroke:color,'stroke-width':w||3,'stroke-dasharray':dash||'','stroke-linejoin':'round'},cs); }
+  path(S,'#e0a100',null,3);
+  path(M,'#8a47c4',null,3);
+  if(cafe) path(felt,'#b8323a','5 4',2.5);
+  var lg=el('g',{transform:'translate(60 218)','font-size':10.5},cs);
+  [['#e0a100','Sleep pressure',0],['#8a47c4','Melatonin',112]].forEach(function(l){ el('rect',{x:l[2],y:-8,width:12,height:5,fill:l[0]},lg); txt(l[1],{x:l[2]+16,y:-2,fill:'#33404d'},lg); });
+  if(cafe){ el('rect',{x:212,y:-8,width:12,height:5,fill:'#b8323a'},lg); txt('Felt sleepiness',{x:228,y:-2,fill:'#33404d'},lg); }
+  el('g',{id:'cur'},cs);
+}
+function update(t){
+  var s=S(t), m=M(t), f=felt(t), night=(t>=23||t<7);
+  $('tout').textContent=fmt(t);
+  var cur=$('cur'); cur.innerHTML=''; el('line',{x1:cx(t),x2:cx(t),y1:CY0,y2:CY1,stroke:'#1f2a37','stroke-width':1.5},cur);
+  el('circle',{cx:cx(t),cy:cyv(s),r:4.5,fill:'#e0a100',stroke:'#fff','stroke-width':1.5},cur); el('circle',{cx:cx(t),cy:cyv(m),r:4.5,fill:'#8a47c4',stroke:'#fff','stroke-width':1.5},cur);
+  // marker on dial
+  var a=(t-12)*15-90, r=133, X=180+r*Math.cos(a*Math.PI/180), Y=185+r*Math.sin(a*Math.PI/180);
+  var mk=$('mk'); mk.innerHTML=''; var day=t>=7&&t<19;
+  el('circle',{cx:X,cy:Y,r:15,fill:'#fff',stroke:'#1f2a37','stroke-width':2.5},mk);
+  if(day){ el('circle',{cx:X,cy:Y,r:7,fill:'#f2b705'},mk); for(var i=0;i<8;i++){ var b=i*45*Math.PI/180; el('line',{x1:X+9*Math.cos(b),y1:Y+9*Math.sin(b),x2:X+12*Math.cos(b),y2:Y+12*Math.sin(b),stroke:'#f2b705','stroke-width':2},mk);} }
+  else { el('circle',{cx:X,cy:Y,r:8,fill:'#e8d78a'},mk); el('circle',{cx:X+4,cy:Y-3,r:7,fill:'#fff'},mk); }
+  $('mid').textContent=fmt(t)+(night?'  ·  asleep':'');
+  var light=day?1:(screen&&t>=20.5&&!night?.8:(screen&&night?.6:0));
+  $('scnG').setAttribute('opacity',light); $('scn').setAttribute('fill',light?'#f2b705':'#b9a355');
+  $('pinG').setAttribute('opacity',m); $('pin').setAttribute('r',4+m*3);
+  $('rA').textContent=Math.round(s*100)+'%'; $('rM').textContent=m<.05?'Low':Math.round(m*100)+'%'; $('rF').textContent=cafe&&caf(t)>0?Math.round(f*100)+'%':Math.round(s*100)+'%';
+  var n;
+  if(night) n=['Asleep','Sleep pressure is discharged while melatonin peaks in the dark hours.'];
+  else if(t<9) n=['Waking','Light reaching the SCN halts melatonin release and sets the clock for the day. Adenosine starts to build.'];
+  else if(t<17) n=['Daytime build-up','Adenosine accumulates the longer you stay awake. Caffeine works by blocking its receptors.'];
+  else if(t<21) n=['Evening wind-down','Sleep pressure is high. Melatonin begins rising as light falls.'];
+  else n=['Bedtime window','High sleep pressure plus rising melatonin should make sleep easy, unless caffeine or bright light interferes.'];
+  if(cafe&&t>=16&&t<23) n=['Caffeine still on board','Caffeine has a half-life of about 5 hours. Sleep pressure is real, but you feel less of it ("felt sleepiness" dashed line).'];
+  if(screen&&(t>=20.5||t<7)) n=['Bright screen at night','Light at night signals "daytime" to the SCN, suppressing melatonin and delaying sleepiness.'];
+  $('cnote').innerHTML='<b>'+n[0]+'</b>'+n[1];
+}
+var tm=$('tm'); tm.oninput=function(){ stop(); update(+tm.value); };
+$('cafe').onclick=function(){ cafe=!cafe; this.setAttribute('aria-pressed',cafe); drawChart(); update(+tm.value); };
+$('scr').onclick=function(){ screen=!screen; this.setAttribute('aria-pressed',screen); drawChart(); update(+tm.value); };
+var timer=null;
+function stop(){ if(timer){clearInterval(timer);timer=null;} $('play').setAttribute('aria-pressed','false'); $('play').textContent='▶ Play day'; }
+$('play').onclick=function(){ if(timer){stop();return;} this.setAttribute('aria-pressed','true'); this.textContent='■ Pause';
+  timer=setInterval(function(){ var v=(+tm.value+.15); if(v>24)v=0; tm.value=v; update(v); },80); };
+drawChart(); update(7);
+
+/* tabs */
+function showTab(w){ var c=w==='clock'; $('night').hidden=c; $('clock').hidden=!c; $('t-night').setAttribute('aria-selected',!c); $('t-clock').setAttribute('aria-selected',c); if(!c)stop(); }
+$('t-night').onclick=function(){showTab('night')}; $('t-clock').onclick=function(){showTab('clock')};
+})();
+</script>
+</body>
+</html>
