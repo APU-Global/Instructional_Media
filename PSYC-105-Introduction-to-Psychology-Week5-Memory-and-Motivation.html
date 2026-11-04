@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5: Memory, Emotion, and Motivation</title>
+<style>:root{--ink:#2a2020;--muted:#6a5e5e;--paper:#fffdfb;--sand:#f1eeea;--red:#a8353a;--red2:#d34147;--line:#ddd4cf;--ok:#2f7d4f;--bad:#b3261e}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--paper);color:var(--ink);font:14.5px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:6px 14px;border-bottom:3px solid var(--red);background:#fff;flex:none;flex-wrap:wrap}
+header .ico{width:38px;height:38px;flex:none}
+h1{font:700 17px/1.15 Georgia,"Times New Roman",serif;margin:0}
+.sub{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--sand);color:var(--ink);padding:6px 11px;border-radius:999px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #1b6fd1;outline-offset:2px}
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;display:none;padding:8px 14px 10px;gap:14px}
+.panel.on{display:flex}
+.viz{flex:1.25;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:6px}
+.viz>svg{flex:1;min-height:0;width:100%;height:100%}
+.side{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;justify-content:center}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.card h2{font:700 16px/1.2 Georgia,serif;margin:0 0 3px;color:var(--red)}
+.card p{margin:3px 0}
+.lbl{font-size:12px;color:var(--muted);font-weight:600}
+.btn{border:0;background:var(--red);color:#fff;padding:8px 14px;border-radius:8px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:#8d2a2f}
+.btn.alt{background:var(--sand);color:var(--ink);border:1px solid var(--line)}
+.btn.alt:hover{background:#e6e1dc}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 9px;text-align:left;font:inherit;cursor:pointer}
+.opt:hover{border-color:var(--red)}
+.opt.right{background:#e4f3ea;border-color:var(--ok)}
+.opt.wrong{background:#fbe6e4;border-color:var(--bad)}
+.fb{min-height:2.6em;font-size:13.5px}
+.fb b.g{color:var(--ok)}.fb b.b{color:var(--bad)}
+.bar{height:10px;background:var(--sand);border-radius:6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--red2);width:0;transition:width .3s}
+.reg,.hot{cursor:pointer}
+.reg{transition:filter .15s}
+.reg:hover{filter:brightness(1.06)}
+.sel{stroke:var(--red)!important;stroke-width:4!important}
+input[type=range]{width:100%;accent-color:var(--red)}
+.pill{display:inline-block;background:var(--sand);border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600}
+.scripture{font-size:12px;color:var(--muted);font-style:italic}
+@media (max-width:640px){
+ header{padding:5px 10px}.tabs{margin-left:0;width:100%}.tab{padding:5px 9px;font-size:12px;flex:1}
+ .sub{display:none}
+ .panel.on{flex-direction:column;gap:6px;padding:6px 10px}
+ .viz{flex:1.1}.side{flex:1;justify-content:flex-start}
+ .card{padding:6px 9px}.card h2{font-size:14.5px}body{font-size:13px}.opt{padding:5px 7px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.mm.on{background:var(--red);color:#fff;border-color:var(--red)}svg text{font-family:system-ui,sans-serif}@media(min-width:641px){#p0.on{flex-direction:column}#p0 .side{flex-direction:row;flex:none}#p0 .side .card{flex:1}#p0 .viz{flex:1}}.sl{display:grid;grid-template-columns:105px 1fr 18px;gap:6px;align-items:center;font-size:12.5px}.sl input{margin:0}</style></head><body>
+<div class="app">
+<header>
+<svg class="ico" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#a8353a"/><path d="M20 8l12 22H8z" fill="#fff"/><path d="M14 24h12M17 18h6" stroke="#a8353a" stroke-width="2"/></svg>
+<div><h1>Week 5: Memory, Emotion, and Motivation</h1><div class="sub">How memories form, how much we can hold, and what drives us</div></div>
+<div class="tabs" role="tablist"><button class="tab" role="tab">Memory Pipeline</button><button class="tab" role="tab">Memory Span Test</button><button class="tab" role="tab">Motivation Audit</button></div>
+</header>
+<main>
+<section class="panel" id="p0">
+ <div class="viz">
+  <svg viewBox="0 0 560 260" id="mem" role="img" aria-label="Atkinson-Shiffrin memory model">
+   <rect width="560" height="260" rx="14" fill="#faf3ee"/>
+   <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#6a5e5e"/></marker></defs>
+   <g stroke="#6a5e5e" stroke-width="2.5" fill="none" marker-end="url(#ar)"><path d="M104 100H146"/><path d="M262 100H304"/><path d="M420 100H462"/></g>
+   <path d="M508 138V190H362V140" stroke="#2d6a9f" stroke-width="2.5" fill="none" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+   <g class="hot mb" data-b="env" tabindex="0"><rect x="8" y="64" width="96" height="72" rx="12" fill="#e8e1da" stroke="#6a5e5e" stroke-width="2"/><text x="56" y="96" text-anchor="middle" font-size="13" font-weight="700">Environment</text><text x="56" y="114" text-anchor="middle" font-size="11">sights, sounds</text></g>
+   <g class="hot mb" data-b="sm" tabindex="0"><rect id="r-sm" x="146" y="64" width="116" height="72" rx="12" fill="#cfe7f7" stroke="#2d6a9f" stroke-width="2"/><text x="204" y="94" text-anchor="middle" font-size="13" font-weight="700">Sensory</text><text x="204" y="110" text-anchor="middle" font-size="11">&lt; 1 to 3 seconds</text></g>
+   <g class="hot mb" data-b="stm" tabindex="0"><rect id="r-stm" x="304" y="64" width="116" height="72" rx="12" fill="#f3c58c" stroke="#b26a00" stroke-width="2"/><text x="362" y="90" text-anchor="middle" font-size="13" font-weight="700">Short-term /</text><text x="362" y="105" text-anchor="middle" font-size="13" font-weight="700">Working</text><text x="362" y="122" text-anchor="middle" font-size="11">about 7 ± 2 items</text></g>
+   <g class="hot mb" data-b="ltm" tabindex="0"><rect id="r-ltm" x="462" y="64" width="92" height="72" rx="12" fill="#b6d9ad" stroke="#2f7d4f" stroke-width="2"/><text x="508" y="94" text-anchor="middle" font-size="13" font-weight="700">Long-term</text><text x="508" y="112" text-anchor="middle" font-size="11">unlimited</text></g>
+   <g font-size="11" fill="#2a2020" text-anchor="middle"><text x="125" y="84">senses</text><text x="283" y="84">attention</text><text x="441" y="84">encoding</text><text x="435" y="212" fill="#2d6a9f" font-weight="700">retrieval (back to working memory)</text></g>
+   <circle id="mdot" cx="56" cy="100" r="9" fill="#d34147" opacity="0"/>
+   <text id="mx" x="204" y="40" text-anchor="middle" font-size="15" font-weight="700" fill="#8d2a2f"></text>
+   <g font-family="system-ui,sans-serif" id="gt"></g>
+  </svg>
+  <div class="row" style="justify-content:center"><label class="row" style="gap:4px"><input type="checkbox" id="attn" checked> Pay attention</label><label class="row" style="gap:4px"><input type="checkbox" id="rehe"> Rehearse and encode (meaningful, repeated)</label><button class="btn" id="send">Send a memory through</button></div>
+ </div>
+ <div class="side">
+  <div class="card"><h2 id="mt">Atkinson–Shiffrin model</h2><p id="md">Information moves from sensory memory to short-term memory to long-term memory. Choose how you handle a new fact, such as a stranger’s name, then send it through. Tap any box to learn more.</p></div>
+  <div class="card" style="font-size:13px"><b>Study tip:</b> spaced practice and retrieval practice (testing yourself) strengthen long-term memory far more than rereading.</div>
+ </div>
+</section>
+
+<section class="panel" id="p1">
+ <div class="viz">
+  <div class="card" style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#1f1b3a;border-color:#1f1b3a;position:relative">
+   <div id="disp" style="font:700 clamp(44px,12vh,92px) Georgia,serif;color:#ffd25e;letter-spacing:.08em;text-align:center">?</div>
+   <div id="dmsg" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#cfc9f5;font-size:13px">Pick a mode, then press Start.</div>
+  </div>
+  <div class="row" style="justify-content:center"><input id="ans" inputmode="numeric" autocomplete="off" placeholder="Type the digits" style="padding:9px 12px;font-size:18px;border:2px solid var(--line);border-radius:8px;width:190px" disabled><button class="btn" id="sub" disabled>Check</button></div>
+ </div>
+ <div class="side">
+  <div class="card"><div class="row" style="margin-bottom:6px"><button class="btn alt mm on" data-m="single">Single digits</button><button class="btn alt mm" data-m="chunk">Chunked in 3s</button></div>
+   <div class="row"><button class="btn" id="start">Start</button><span class="lbl" id="lv">Length: 4</span></div></div>
+  <div class="card"><span class="lbl">Your best span</span><div class="row" style="margin-top:3px"><span class="pill">Single: <b id="bs1">0</b></span><span class="pill">Chunked: <b id="bs2">0</b></span></div></div>
+  <div class="card" style="font-size:13px"><h2 style="font-size:14.5px">Why chunking helps</h2>Working memory holds roughly 7 ± 2 <i>chunks</i>, not digits. Grouping 9 digits into 3 chunks makes them far easier to hold.</div>
+ </div>
+</section>
+
+<section class="panel" id="p2">
+ <div class="viz">
+  <svg viewBox="0 0 400 280" id="pyr" role="img" aria-label="Maslow’s hierarchy of needs pyramid colored by your ratings">
+   <rect width="400" height="280" rx="14" fill="#faf3ee"/>
+   <g stroke="#fff" stroke-width="3" font-family="system-ui,sans-serif" font-size="13" font-weight="700" text-anchor="middle" id="pyrg"></g>
+  </svg>
+ </div>
+ <div class="side">
+  <div class="card" style="padding:7px 12px"><span class="lbl">Rate how well each need was met this week (1 to 5)</span><div id="sl"></div></div>
+  <div class="card" id="ins" style="min-height:5.2em"></div>
+ </div>
+</section>
+</main></div>
+<script>(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+ function show(i){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i)});panels.forEach(function(p,k){p.classList.toggle('on',k===i)});
+  if(window.onTab)window.onTab(i)}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)})});
+ window.showTab=show;show(0);
+})();
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function $(s,r){return (r||document).querySelector(s)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+</script>
+<script>
+/* Pipeline */
+var MB={env:['Environment','Every moment, far more information is available than you can process.'],
+ sm:['Sensory memory','A very brief snapshot of what your senses detect. Without attention, it fades in a second or two.'],
+ stm:['Short-term (working) memory','Limited capacity (about 7 \u00b1 2 items) and short duration (roughly 15 to 30 seconds) unless you rehearse or chunk.'],
+ ltm:['Long-term memory','Very large and long-lasting. Explicit memories are facts and events; implicit memories are skills and habits. Retrieval brings it back to working memory.']};
+[].forEach.call(document.querySelectorAll('.mb'),function(g){function go(){$('#mt').textContent=MB[g.dataset.b][0];$('#md').textContent=MB[g.dataset.b][1]}g.addEventListener('click',go);g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+var mbusy=false;
+function mo(dur,fn,done){if(RM){fn(1);done&&done();return}var t0=null;(function f(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/dur);fn(p);if(p<1)requestAnimationFrame(f);else done&&done()})(performance.now()+0.001)}
+$('#send').onclick=function(){
+ if(mbusy)return;mbusy=true;$('#send').disabled=true;var d=$('#mdot'),a=$('#attn').checked,r=$('#rehe').checked;
+ ['sm','stm','ltm'].forEach(function(k){$('#r-'+k).style.filter=''});$('#mx').textContent='';d.setAttribute('opacity',1);d.setAttribute('fill','#d34147');d.setAttribute('cx',56);
+ function finish(msg,title){d.setAttribute('opacity',0);$('#mx').textContent=msg;$('#mt').textContent=title.t;$('#md').textContent=title.d;mbusy=false;$('#send').disabled=false}
+ mo(700,function(p){d.setAttribute('cx',56+p*148)},function(){
+  $('#r-sm').style.filter='brightness(1.15) drop-shadow(0 0 5px #2d6a9f)';
+  if(!a){mo(700,function(p){d.setAttribute('opacity',1-p)},function(){finish('Lost: not attended to',{t:'Forgotten in sensory memory',d:'Without attention, information fades from sensory memory within a second or two. You cannot remember what you never noticed.'})});return}
+  mo(700,function(p){d.setAttribute('cx',204+p*158)},function(){
+   $('#r-stm').style.filter='brightness(1.15) drop-shadow(0 0 5px #b26a00)';
+   if(!r){mo(900,function(p){d.setAttribute('opacity',1-p);d.setAttribute('cy',100+p*8)},function(){d.setAttribute('cy',100);finish('Lost: not rehearsed',{t:'Forgotten from short-term memory',d:'You noticed it, but without rehearsal or meaningful encoding it decays or is displaced within about 15 to 30 seconds.'})});return}
+   mo(700,function(p){d.setAttribute('cx',362+p*146)},function(){
+    $('#r-ltm').style.filter='brightness(1.15) drop-shadow(0 0 5px #2f7d4f)';
+    finish('Stored in long-term memory!',{t:'Encoded into long-term memory',d:'Attention plus meaningful rehearsal moves information into long-term storage. Later, retrieval cues help you bring it back. Remember that memory is reconstructive, so recalled details can still change.'})})})})};
+
+/* Span test */
+var mode='single',best={single:0,chunk:0},len=4,seq='',fails=0,showing=false;
+[].forEach.call(document.querySelectorAll('.mm'),function(b){b.onclick=function(){if(showing)return;[].forEach.call(document.querySelectorAll('.mm'),function(x){x.classList.remove('on')});b.classList.add('on');mode=b.dataset.m;len=mode==='single'?4:6;$('#lv').textContent='Length: '+len}});
+function gen(n){var s='';for(var i=0;i<n;i++)s+=Math.floor(Math.random()*10);return s}
+function present(){
+ seq=gen(len);showing=true;$('#ans').value='';$('#ans').disabled=true;$('#sub').disabled=true;$('#start').disabled=true;$('#lv').textContent='Length: '+len;
+ var items=[],i;if(mode==='single'){for(i=0;i<seq.length;i++)items.push(seq[i])}else{for(i=0;i<seq.length;i+=3)items.push(seq.slice(i,i+3))}
+ var step=mode==='single'?800:1100,k=0;$('#dmsg').textContent='Watch carefully...';$('#disp').textContent='Ready';
+ setTimeout(function show(){if(k<items.length){$('#disp').textContent=items[k++];setTimeout(function(){$('#disp').textContent='\u00b7';setTimeout(show,130)},step-130)}else{$('#disp').textContent='?';$('#dmsg').textContent='Type the digits in order.';showing=false;$('#ans').disabled=false;$('#sub').disabled=false;$('#ans').focus()}},900)}
+$('#start').onclick=function(){fails=0;len=mode==='single'?4:6;present()};
+function check(){if($('#sub').disabled)return;var ok=$('#ans').value.trim()===seq;$('#ans').disabled=true;$('#sub').disabled=true;
+ if(ok){best[mode]=Math.max(best[mode],len);$('#bs1').textContent=best.single;$('#bs2').textContent=best.chunk;$('#disp').textContent='\u2713';$('#dmsg').textContent='Correct! Adding one digit...';len++;setTimeout(present,1100)}
+ else{fails++;$('#disp').textContent=seq;$('#dmsg').textContent=fails>=2?'Round over. Your span in this mode: '+best[mode]:'Not quite. The sequence was shown above. Try the same length again.';
+  if(fails>=2){$('#start').disabled=false;$('#start').textContent='Try again'}else setTimeout(present,1800)}}
+$('#sub').onclick=check;$('#ans').addEventListener('keydown',function(e){if(e.key==='Enter')check()});
+
+/* Maslow */
+var LV=[['Physiological','sleep, food, water, health','#c0504d','Autonomy: choose when and how you take care of your body this week.'],
+ ['Safety','security, stability, routine','#e08a3c','Competence: build one small, reliable routine, such as a budget or study schedule.'],
+ ['Belonging','friends, family, community','#d9b43a','Relatedness: reach out to one person or join a group activity.'],
+ ['Esteem','achievement, respect, confidence','#4f9d6b','Competence: set a goal that stretches you and track your progress.'],
+ ['Self-actualization','growth, purpose, creativity','#3b78b5','Autonomy: pick a project that reflects your values and do it your way.']];
+var rat=[3,3,3,3,3];
+function drawPyr(){var g='',top=24,h=46,gap=4;
+ for(var i=4;i>=0;i--){var row=4-i,y=top+row*(h+gap),wTop=40+row*66,wBot=40+(row+1)*66;if(i===4){wTop=0;wBot=106}
+  var xl1=200-wTop/2,xr1=200+wTop/2,xl2=200-wBot/2,xr2=200+wBot/2;
+  var op=0.25+rat[i]/5*0.75;
+  g+='<path d="M'+xl1+' '+y+'L'+xr1+' '+y+'L'+xr2+' '+(y+h)+'L'+xl2+' '+(y+h)+'Z" fill="'+LV[i][2]+'" fill-opacity="'+op.toFixed(2)+'" stroke="#fff" stroke-width="3"/>';
+  g+='<text x="200" y="'+(y+h/2+4)+'" fill="#2a2020" stroke="none" font-size="'+(i===4?10:13)+'">'+(i===4?'Self-act.':LV[i][0])+'</text>'}
+ $('#pyrg').innerHTML=g;
+ var low=0;for(var j=1;j<5;j++)if(rat[j]<rat[low])low=j;
+ var tie=rat.every(function(v){return v===rat[0]});
+ $('#ins').innerHTML=tie?'<h2>Your profile</h2><p>Move the sliders to rate each need. Brighter colors mean needs that are well met.</p>':'<h2>Lowest need: '+LV[low][0]+'</h2><p>'+LV[low][3]+'</p><p style="font-size:12px;color:var(--muted);margin:3px 0 0">Research suggests people can pursue several needs at once, so the order is not strict. Self-Determination Theory adds autonomy, competence, and relatedness.</p>'}
+var sh='';LV.forEach(function(l,i){sh+='<div class="sl"><label for="s'+i+'">'+l[0].replace('Self-actualization','Self-actual.')+'</label><input type="range" id="s'+i+'" min="1" max="5" value="3" data-i="'+i+'"><b id="v'+i+'">3</b></div>'});$('#sl').innerHTML=sh;
+$('#sl').addEventListener('input',function(e){var i=+e.target.dataset.i;rat[i]=+e.target.value;$('#v'+i).textContent=e.target.value;drawPyr()});
+drawPyr();
+</script>
+</body></html>

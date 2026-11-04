@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4: The Learning Lab</title>
+<style>:root{--ink:#2a2020;--muted:#6a5e5e;--paper:#fffdfb;--sand:#f1eeea;--red:#a8353a;--red2:#d34147;--line:#ddd4cf;--ok:#2f7d4f;--bad:#b3261e}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--paper);color:var(--ink);font:14.5px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:6px 14px;border-bottom:3px solid var(--red);background:#fff;flex:none;flex-wrap:wrap}
+header .ico{width:38px;height:38px;flex:none}
+h1{font:700 17px/1.15 Georgia,"Times New Roman",serif;margin:0}
+.sub{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--sand);color:var(--ink);padding:6px 11px;border-radius:999px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #1b6fd1;outline-offset:2px}
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;display:none;padding:8px 14px 10px;gap:14px}
+.panel.on{display:flex}
+.viz{flex:1.25;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:6px}
+.viz>svg{flex:1;min-height:0;width:100%;height:100%}
+.side{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;justify-content:center}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.card h2{font:700 16px/1.2 Georgia,serif;margin:0 0 3px;color:var(--red)}
+.card p{margin:3px 0}
+.lbl{font-size:12px;color:var(--muted);font-weight:600}
+.btn{border:0;background:var(--red);color:#fff;padding:8px 14px;border-radius:8px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:#8d2a2f}
+.btn.alt{background:var(--sand);color:var(--ink);border:1px solid var(--line)}
+.btn.alt:hover{background:#e6e1dc}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 9px;text-align:left;font:inherit;cursor:pointer}
+.opt:hover{border-color:var(--red)}
+.opt.right{background:#e4f3ea;border-color:var(--ok)}
+.opt.wrong{background:#fbe6e4;border-color:var(--bad)}
+.fb{min-height:2.6em;font-size:13.5px}
+.fb b.g{color:var(--ok)}.fb b.b{color:var(--bad)}
+.bar{height:10px;background:var(--sand);border-radius:6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--red2);width:0;transition:width .3s}
+.reg,.hot{cursor:pointer}
+.reg{transition:filter .15s}
+.reg:hover{filter:brightness(1.06)}
+.sel{stroke:var(--red)!important;stroke-width:4!important}
+input[type=range]{width:100%;accent-color:var(--red)}
+.pill{display:inline-block;background:var(--sand);border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600}
+.scripture{font-size:12px;color:var(--muted);font-style:italic}
+@media (max-width:640px){
+ header{padding:5px 10px}.tabs{margin-left:0;width:100%}.tab{padding:5px 9px;font-size:12px;flex:1}
+ .sub{display:none}
+ .panel.on{flex-direction:column;gap:6px;padding:6px 10px}
+ .viz{flex:1.1}.side{flex:1;justify-content:flex-start}
+ .card{padding:6px 9px}.card h2{font-size:14.5px}body{font-size:13px}.opt{padding:5px 7px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.sp.on{background:var(--red);color:#fff;border-color:var(--red)}.opt small{color:#4a4040}.cq{font-weight:600}</style></head><body>
+<div class="app">
+<header>
+<svg class="ico" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#a8353a"/><path d="M20 9c-4 0-7 3-7 7v6l-3 4h20l-3-4v-6c0-4-3-7-7-7z" fill="#fff"/><circle cx="20" cy="31" r="3" fill="#fff"/></svg>
+<div><h1>Week 4: The Learning Lab</h1><div class="sub">Classical conditioning, operant conditioning, and reinforcement schedules</div></div>
+<div class="tabs" role="tablist"><button class="tab" role="tab">Pavlov’s Bell</button><button class="tab" role="tab">Sort the Consequence</button><button class="tab" role="tab">Reward Schedules</button></div>
+</header>
+<main>
+<section class="panel" id="p0">
+ <div class="viz">
+  <svg viewBox="0 0 520 280" role="img" aria-label="A dog, a bell, and a food bowl illustrating classical conditioning">
+   <rect width="520" height="280" rx="14" fill="#faf3ee"/>
+   <rect y="226" width="520" height="54" fill="#eadfd6"/>
+   <g id="bell" transform-origin="90 70"><path d="M90 40c-18 0-28 14-28 32v18l-10 12h76l-10-12V72c0-18-10-32-28-32z" fill="#f6c453" stroke="#c38d12" stroke-width="3"/><circle cx="90" cy="108" r="7" fill="#c38d12"/><rect x="86" y="24" width="8" height="14" rx="3" fill="#8a6a1c"/></g>
+   <g id="bellwaves" opacity="0" fill="none" stroke="#c38d12" stroke-width="3" stroke-linecap="round"><path d="M38 60q-12 14 0 30M24 52q-20 22 0 46"/><path d="M142 60q12 14 0 30M156 52q20 22 0 46"/></g>
+   <g id="food" opacity="0"><ellipse cx="440" cy="222" rx="50" ry="12" fill="#6a5e5e"/><path d="M394 220c10-34 86-34 92 0z" fill="#b8742a"/><circle cx="420" cy="198" r="6" fill="#8a4e12"/><circle cx="446" cy="192" r="6" fill="#8a4e12"/><circle cx="466" cy="202" r="6" fill="#8a4e12"/></g>
+   <g id="dog">
+    <ellipse cx="270" cy="188" rx="76" ry="36" fill="#c98b4e"/>
+    <rect x="212" y="206" width="16" height="30" rx="7" fill="#b27538"/><rect x="300" y="206" width="16" height="30" rx="7" fill="#b27538"/>
+    <path d="M196 176q-30-30-8-52" stroke="#b27538" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <circle cx="330" cy="150" r="38" fill="#d79d62"/>
+    <path d="M306 126q-26 6-24 44 20-2 28-22z" fill="#8a5424"/>
+    <ellipse cx="364" cy="164" rx="26" ry="18" fill="#e8bf8f"/><ellipse cx="384" cy="158" rx="8" ry="6" fill="#2a2020"/>
+    <circle cx="340" cy="140" r="5" fill="#2a2020"/><circle cx="342" cy="138" r="1.6" fill="#fff"/>
+    <path id="mouth" d="M350 176q14 8 30 0" stroke="#2a2020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path id="tongue" d="M362 176q8 22 16 0z" fill="#e0707a" opacity="0"/>
+   </g>
+   <g id="drops" fill="#6ec3f0"></g>
+   <g font-family="system-ui,sans-serif" font-size="12" fill="#6a5e5e" text-anchor="middle"><text x="90" y="138">Bell</text><text x="440" y="250">Food</text></g>
+  </svg>
+  <div class="row" style="justify-content:center"><button class="btn" id="b-bell">Ring bell</button><button class="btn" id="b-food">Give food</button><button class="btn" id="b-both">Bell + food</button><button class="btn alt" id="b-rest">Rest a day</button><button class="btn alt" id="b-reset">Reset</button></div>
+ </div>
+ <div class="side">
+  <div class="card"><span class="lbl">Bell → salivation strength</span><div class="bar" style="margin:5px 0 4px"><i id="strength"></i></div><span class="pill" id="phase">Before conditioning</span></div>
+  <div class="card"><h2 id="pt">Bell = neutral stimulus (NS)</h2><p id="pd">Try ringing the bell. The dog has no reason to react. Then give food and watch the unconditioned response.</p></div>
+  <div class="card" style="font-size:13px"><b>Key terms:</b> US food · UR drooling to food · CS bell after learning · CR drooling to the bell. Pair them 5 or more times, then try bell alone to see extinction and a rest day for spontaneous recovery.</div>
+ </div>
+</section>
+
+<section class="panel" id="p1">
+ <div class="viz" style="justify-content:flex-start">
+  <div class="card" style="text-align:center"><span class="lbl" id="cn">Scenario 1 of 10</span><p id="ct" style="font-size:16px;font-weight:600;margin:4px 0 2px"></p></div>
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:34px 1fr 1fr;grid-template-rows:22px 1fr 1fr;gap:6px">
+   <div></div><div class="lbl" style="text-align:center;align-self:end">Something is ADDED</div><div class="lbl" style="text-align:center;align-self:end">Something is REMOVED</div>
+   <div class="lbl" style="writing-mode:vertical-rl;transform:rotate(180deg);text-align:center">Behavior goes UP</div>
+   <button class="opt cq" data-k="pr" style="background:#e4f3ea">Positive reinforcement<br><small>add pleasant</small></button>
+   <button class="opt cq" data-k="nr" style="background:#e6eefb">Negative reinforcement<br><small>remove unpleasant</small></button>
+   <div class="lbl" style="writing-mode:vertical-rl;transform:rotate(180deg);text-align:center">Behavior goes DOWN</div>
+   <button class="opt cq" data-k="pp" style="background:#fbe6e4">Positive punishment<br><small>add unpleasant</small></button>
+   <button class="opt cq" data-k="np" style="background:#fdf1d8">Negative punishment<br><small>remove pleasant</small></button>
+  </div>
+ </div>
+ <div class="side">
+  <div class="card fb" id="cf" style="min-height:5em">Choose the quadrant that fits. Ask two questions: What was added or removed? Did the behavior increase or decrease?</div>
+  <div class="row"><button class="btn" id="cnext" disabled>Next</button><span class="lbl" id="cs">Score: 0</span></div>
+  <div class="card" style="font-size:13px"><b>Remember:</b> “Positive” and “negative” mean add and remove, not good and bad. Negative reinforcement is not punishment.</div>
+ </div>
+</section>
+
+<section class="panel" id="p2">
+ <div class="viz">
+  <svg id="chart" viewBox="0 0 520 280" role="img" aria-label="Cumulative response chart for reinforcement schedules">
+   <rect width="520" height="280" rx="14" fill="#faf3ee"/>
+   <g stroke="#ddd4cf"><line x1="50" y1="30" x2="50" y2="236"/><line x1="50" y1="236" x2="500" y2="236"/></g>
+   <text x="275" y="262" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#6a5e5e">Time</text>
+   <text transform="translate(16 133) rotate(-90)" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#6a5e5e">Total responses</text>
+   <g id="curves" fill="none" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></g>
+   <g id="legend" font-family="system-ui,sans-serif" font-size="12"></g>
+  </svg>
+  <div class="row" style="justify-content:center"><button class="btn" id="sch-play">Compare the four schedules</button><button class="btn alt" id="sch-clear">Clear</button></div>
+ </div>
+ <div class="side">
+  <div class="card" style="padding-bottom:6px"><span class="lbl">Try it yourself: pick a schedule, then tap the button</span>
+   <div class="row" style="margin:5px 0" id="sch-pick"><button class="btn alt sp on" data-s="FR">Fixed ratio</button><button class="btn alt sp" data-s="VR">Variable ratio</button><button class="btn alt sp" data-s="FI">Fixed interval</button><button class="btn alt sp" data-s="VI">Variable interval</button></div>
+   <div class="row"><button class="btn" id="press" style="font-size:18px;padding:12px 22px">Press</button><div><div style="font-size:20px">🎁 <b id="rw">0</b> rewards</div><div class="lbl" id="presses">0 presses</div></div></div>
+  </div>
+  <div class="card"><h2 id="sh">Fixed ratio</h2><p id="sd">A reward arrives after a set number of responses (every 5th press here). Expect a burst of responding, then a short pause after each reward.</p></div>
+ </div>
+</section>
+</main></div>
+<script>(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+ function show(i){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i)});panels.forEach(function(p,k){p.classList.toggle('on',k===i)});
+  if(window.onTab)window.onTab(i)}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)})});
+ window.showTab=show;show(0);
+})();
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function $(s,r){return (r||document).querySelector(s)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+</script>
+<script>
+/* Pavlov */
+var s=0,peak=0,pairs=0,ext=0,rested=false;
+function drool(n){var g=$('#drops');g.innerHTML='';n=Math.round(n);for(var i=0;i<n;i++){var c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',372+i*6);c.setAttribute('cy',186+i*4);c.setAttribute('r',4);g.appendChild(c)}
+ $('#tongue').setAttribute('opacity',n>0?1:0);$('#mouth').setAttribute('d',n>0?'M350 176q14 2 30 0':'M350 176q14 8 30 0');
+ if(n>0&&!RM)setTimeout(function(){drool(0)},1400)}
+function ringAnim(){if(RM)return;var w=$('#bellwaves');w.setAttribute('opacity',1);$('#bell').animate([{transform:'rotate(-12deg)'},{transform:'rotate(12deg)'},{transform:'rotate(-8deg)'},{transform:'rotate(0)'}],{duration:500});setTimeout(function(){w.setAttribute('opacity',0)},700)}
+function upd(title,desc){
+ $('#strength').style.width=Math.round(s*100)+'%';
+ var ph=s<0.1&&pairs===0?'Before conditioning':s>=0.6?'Acquired: bell is now a CS':s>=0.1?'Learning in progress':ext>0?'Extinction (bell no longer predicts food)':'Before conditioning';
+ $('#phase').textContent=ph;$('#pt').textContent=title;$('#pd').textContent=desc}
+$('#b-food').onclick=function(){$('#food').setAttribute('opacity',1);drool(5);setTimeout(function(){$('#food').setAttribute('opacity',0)},1400);upd('Food = US, drooling = UR','Food naturally triggers drooling. No learning is needed, so this is an unconditioned stimulus and an unconditioned response.')};
+$('#b-bell').onclick=function(){ringAnim();var d=s*5;
+ if(pairs>0){if(s>0.05){ext++;peak=Math.max(peak,s);s=Math.max(0,s*0.72)}}
+ drool(d);
+ if(pairs===0)upd('Bell = neutral stimulus (NS)','The bell alone means nothing yet, so there is no drooling. Pair it with food to build an association.');
+ else if(d>=0.5)upd('Bell alone: conditioned response','Drooling to the bell is a conditioned response (CR). But without food, the link weakens: this is extinction.');
+ else upd('Extinction','The bell no longer predicts food, so the response has faded. Try \u201cRest a day\u201d to see spontaneous recovery.')};
+$('#b-both').onclick=function(){ringAnim();$('#food').setAttribute('opacity',1);setTimeout(function(){$('#food').setAttribute('opacity',0)},1400);pairs++;ext=0;rested=false;s=s+(1-s)*0.28;peak=Math.max(peak,s);drool(5);
+ upd('Acquisition: pairing '+pairs,pairs<5?'Repeated pairing of bell (NS) and food (US) builds the association. The curve rises quickly at first, then levels off.':'The bell has become a conditioned stimulus (CS). Now try ringing it alone.')};
+$('#b-rest').onclick=function(){if(ext>0&&peak>0.3&&!rested){rested=true;s=Math.max(s,peak*0.45);upd('Spontaneous recovery','After a rest, a weaker conditioned response reappears without any new pairing. Ring the bell to see it.')}else upd('Rest','Nothing changes much. Spontaneous recovery shows up after extinction and a rest period. Try: pair 5 times, ring the bell alone until it fades, then rest.');upd2()};
+function upd2(){$('#strength').style.width=Math.round(s*100)+'%'}
+$('#b-reset').onclick=function(){s=0;peak=0;pairs=0;ext=0;rested=false;drool(0);upd('Bell = neutral stimulus (NS)','Try ringing the bell. The dog has no reason to react. Then give food and watch the unconditioned response.')};
+
+/* Consequence sorter */
+var CQ=[
+ ['You get a streak badge in a language app for practicing daily, so you keep practicing.','pr','A pleasant thing (badge) was added and the behavior increased.'],
+ ['You put on headphones and the noisy hallway disappears, so you wear them every time you study.','nr','An unpleasant thing (noise) was removed and the behavior increased.'],
+ ['You post something rude, get blocked by a friend, and stop posting like that.','pp','An unpleasant thing (being blocked) was added and the behavior decreased.'],
+ ['Your phone is taken away for an hour after you skip chores, so you skip chores less.','np','A pleasant thing (phone) was removed and the behavior decreased.'],
+ ['A streamer says your name on air when you subscribe, so you subscribe again next month.','pr','Recognition was added and the behavior increased.'],
+ ['You turn off a loud autoplay ad by clicking \u201cSkip,\u201d so you click Skip more often.','nr','The annoying ad was removed, which strengthened clicking.'],
+ ['A video game gives you a time-out from multiplayer after rage-quitting, and you rage-quit less.','np','Access to something pleasant was removed and the behavior decreased.'],
+ ['You get a loud alarm every time you forget to buckle your seat belt, so you buckle less?','__','__'],
+ ['A teacher adds extra homework when students talk, and the talking stops.','pp','Something unpleasant was added and the behavior decreased.'],
+ ['You take pain relief and your headache goes away, so you take it at the first sign of pain.','nr','The pain was removed and taking the medicine increased.']];
+CQ[7]=['The seat belt alarm beeps until you buckle up, so you now buckle immediately.','nr','The beeping (unpleasant) is removed when you buckle, so buckling increased.'];
+var ci=0,cs=0,clock=false,cord=shuffle(CQ);
+var NAMES={pr:'Positive reinforcement',nr:'Negative reinforcement',pp:'Positive punishment',np:'Negative punishment'};
+function cask(){clock=false;$('#cn').textContent='Scenario '+(ci+1)+' of '+cord.length;$('#ct').textContent=cord[ci][0];$('#cf').textContent='Choose the quadrant that fits. Ask: what was added or removed, and did the behavior go up or down?';$('#cnext').disabled=true;
+ [].forEach.call(document.querySelectorAll('.cq'),function(b){b.classList.remove('right','wrong')})}
+[].forEach.call(document.querySelectorAll('.cq'),function(b){b.onclick=function(){if(clock)return;clock=true;var c=cord[ci],ok=b.dataset.k===c[1];if(ok)cs++;
+ b.classList.add(ok?'right':'wrong');if(!ok)document.querySelector('.cq[data-k="'+c[1]+'"]').classList.add('right');
+ $('#cf').innerHTML=(ok?'<b class="g">Correct.</b> ':'<b class="b">Not this one.</b> ')+'It is <b>'+NAMES[c[1]].toLowerCase()+'</b>. '+c[2];$('#cs').textContent='Score: '+cs;$('#cnext').disabled=false;$('#cnext').textContent=ci==cord.length-1?'See result':'Next'}});
+$('#cnext').onclick=function(){if(ci>=cord.length-1){$('#ct').textContent='Finished: '+cs+' out of '+cord.length;$('#cf').textContent=cs>=8?'Strong grasp of operant conditioning!':'Good start. Retry and focus on whether something is added or removed.';$('#cnext').textContent='Play again';ci=-1;cord=shuffle(CQ);cs=0;$('#cs').textContent='Score: 0';return}ci++;cask()};
+cask();
+
+/* Schedules */
+var SD={
+ FR:['Fixed ratio','Reward after a set number of responses (every 5th press). Expect a burst of responding, then a pause after each reward.'],
+ VR:['Variable ratio','Reward after an unpredictable number of responses (about every 5th). Produces high, steady responding and strong resistance to extinction. Think slot machines, loot boxes, and refreshing a feed.'],
+ FI:['Fixed interval','The first response after a set time (5 seconds here) is rewarded. Responding speeds up as the reward time nears, creating a scalloped pattern.'],
+ VI:['Variable interval','The first response after an unpredictable time (about 5 seconds) is rewarded. Slow, steady responding, like checking for a text.']};
+var sch='FR',sp=0,sr=0,cnt=0,need=5,tlast=Date.now(),needT=5000;
+function newNeed(){need=sch==='VR'?1+Math.floor(Math.random()*9):5;needT=sch==='VI'?2000+Math.random()*6000:5000}
+[].forEach.call(document.querySelectorAll('.sp'),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll('.sp'),function(x){x.classList.remove('on')});b.classList.add('on');sch=b.dataset.s;sp=0;sr=0;cnt=0;tlast=Date.now();newNeed();
+ $('#sh').textContent=SD[sch][0];$('#sd').textContent=SD[sch][1];$('#rw').textContent=0;$('#presses').textContent='0 presses'}});
+$('#press').onclick=function(){sp++;var got=false;
+ if(sch==='FR'||sch==='VR'){cnt++;if(cnt>=need){got=true;cnt=0;newNeed()}}
+ else{if(Date.now()-tlast>=needT){got=true;tlast=Date.now();newNeed()}}
+ if(got){sr++;$('#rw').textContent=sr;var b=$('#press');if(!RM)b.animate([{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:250})}
+ $('#presses').textContent=sp+' presses'+(got?' \u2014 reward!':'')};
+newNeed();
+/* canonical curves */
+var COL={FR:'#7a4fb5',VR:'#d34147',FI:'#2d6a9f',VI:'#1f9d63'};
+function curve(k){var pts=[[0,0]],y=0,t=0,i;
+ if(k==='FR'){for(i=0;i<7;i++){t+=4;for(var j=0;j<5;j++){t+=1.3;y+=1;pts.push([t,y])}}}
+ if(k==='VR'){for(i=0;i<40;i++){t+=1.1+((i*7)%3)*.1;y+=1.6;pts.push([t,y])}}
+ if(k==='FI'){for(i=0;i<6;i++){for(var j=0;j<8;j++){t+=3.2-j*.35;y+=.4+j*.35;pts.push([t,y])}}}
+ if(k==='VI'){for(i=0;i<30;i++){t+=1.8+((i*5)%4)*.2;y+=1;pts.push([t,y])}}
+ return pts}
+function plot(){var g=$('#curves');g.innerHTML='';var all=['FR','VR','FI','VI'].map(function(k){return[k,curve(k)]});
+ var mx=0,my=0;all.forEach(function(a){var l=a[1][a[1].length-1];mx=Math.max(mx,l[0]);my=Math.max(my,l[1])});
+ var lg='';all.forEach(function(a,n){var d=a[1].map(function(p,i){return(i?'L':'M')+(50+p[0]/mx*445).toFixed(1)+' '+(236-p[1]/my*200).toFixed(1)}).join('');
+  var path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',d);path.setAttribute('stroke',COL[a[0]]);g.appendChild(path);
+  if(!RM){var L=path.getTotalLength();path.style.strokeDasharray=L;path.style.strokeDashoffset=L;path.getBoundingClientRect();path.style.transition='stroke-dashoffset 2.2s ease '+(n*.25)+'s';path.style.strokeDashoffset=0}
+  lg+='<rect x="'+(60+n*110)+'" y="8" width="12" height="12" rx="3" fill="'+COL[a[0]]+'"/><text x="'+(76+n*110)+'" y="18" fill="#2a2020">'+SD[a[0]][0]+'</text>'});
+ $('#legend').innerHTML=lg}
+var plotted=0;window.onTab=function(i){if(i===2&&!plotted){plotted=1;plot()}};$('#sch-play').onclick=plot;$('#sch-clear').onclick=function(){$('#curves').innerHTML='';$('#legend').innerHTML=''};
+</script>
+</body></html>

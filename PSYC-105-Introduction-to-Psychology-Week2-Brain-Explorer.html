@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2: Your Brain at Work</title>
+<style>:root{--ink:#2a2020;--muted:#6a5e5e;--paper:#fffdfb;--sand:#f1eeea;--red:#a8353a;--red2:#d34147;--line:#ddd4cf;--ok:#2f7d4f;--bad:#b3261e}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--paper);color:var(--ink);font:14.5px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:6px 14px;border-bottom:3px solid var(--red);background:#fff;flex:none;flex-wrap:wrap}
+header .ico{width:38px;height:38px;flex:none}
+h1{font:700 17px/1.15 Georgia,"Times New Roman",serif;margin:0}
+.sub{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--sand);color:var(--ink);padding:6px 11px;border-radius:999px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #1b6fd1;outline-offset:2px}
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;display:none;padding:8px 14px 10px;gap:14px}
+.panel.on{display:flex}
+.viz{flex:1.25;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:6px}
+.viz>svg{flex:1;min-height:0;width:100%;height:100%}
+.side{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;justify-content:center}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.card h2{font:700 16px/1.2 Georgia,serif;margin:0 0 3px;color:var(--red)}
+.card p{margin:3px 0}
+.lbl{font-size:12px;color:var(--muted);font-weight:600}
+.btn{border:0;background:var(--red);color:#fff;padding:8px 14px;border-radius:8px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:#8d2a2f}
+.btn.alt{background:var(--sand);color:var(--ink);border:1px solid var(--line)}
+.btn.alt:hover{background:#e6e1dc}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 9px;text-align:left;font:inherit;cursor:pointer}
+.opt:hover{border-color:var(--red)}
+.opt.right{background:#e4f3ea;border-color:var(--ok)}
+.opt.wrong{background:#fbe6e4;border-color:var(--bad)}
+.fb{min-height:2.6em;font-size:13.5px}
+.fb b.g{color:var(--ok)}.fb b.b{color:var(--bad)}
+.bar{height:10px;background:var(--sand);border-radius:6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--red2);width:0;transition:width .3s}
+.reg,.hot{cursor:pointer}
+.reg{transition:filter .15s}
+.reg:hover{filter:brightness(1.06)}
+.sel{stroke:var(--red)!important;stroke-width:4!important}
+input[type=range]{width:100%;accent-color:var(--red)}
+.pill{display:inline-block;background:var(--sand);border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600}
+.scripture{font-size:12px;color:var(--muted);font-style:italic}
+@media (max-width:640px){
+ header{padding:5px 10px}.tabs{margin-left:0;width:100%}.tab{padding:5px 9px;font-size:12px;flex:1}
+ .sub{display:none}
+ .panel.on{flex-direction:column;gap:6px;padding:6px 10px}
+ .viz{flex:1.1}.side{flex:1;justify-content:flex-start}
+ .card{padding:6px 9px}.card h2{font-size:14.5px}body{font-size:13px}.opt{padding:5px 7px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+<div class="app">
+<header>
+<svg class="ico" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#a8353a"/><path d="M9 22c-1-7 4-12 11-12s12 4 11 11c0 4-3 7-7 7h-3l-2 3-1-3c-5 0-8-2-9-6z" fill="#fff"/><path d="M15 16c3 1 4 4 3 7M23 14c-1 3 0 6 3 8" stroke="#a8353a" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+<div><h1>Week 2: Your Brain at Work</h1><div class="sub">Biopsychology, Growth, and Development</div></div>
+<div class="tabs" role="tablist"><button class="tab" role="tab">Brain Map</button><button class="tab" role="tab">One Neuron, One Message</button><button class="tab" role="tab">Test Yourself</button></div>
+</header>
+<main>
+<section class="panel" id="p0">
+ <div class="viz" id="map1"></div>
+ <div class="side">
+  <div class="card" id="info"><h2>Tap a region</h2><p>Click any colored lobe, or the dashed limbic structures inside, to see what it does.</p><p class="scripture">“I am fearfully and wonderfully made.” Psalm 139:14</p></div>
+  <div class="row"><button class="btn alt" id="rand">Surprise me</button><span class="lbl" id="seen">Explored 0 of 8</span></div>
+  <div class="bar" aria-hidden="true"><i id="seenbar"></i></div>
+ </div>
+</section>
+<section class="panel" id="p1">
+ <div class="viz">
+ <svg id="neuron" viewBox="0 0 640 260" role="img" aria-label="Diagram of two neurons and the synapse between them">
+  <defs><radialGradient id="glow"><stop offset="0" stop-color="#ffd25e"/><stop offset="1" stop-color="#ffd25e" stop-opacity="0"/></radialGradient></defs>
+  <rect width="640" height="260" rx="14" fill="#faf3ee"/>
+  <g stroke="#a8353a" stroke-width="4" stroke-linecap="round" fill="none" id="n-dend" class="hot" tabindex="0"><path d="M62 112L28 82M28 82L14 60M28 82L10 86M60 128L18 128M18 128L6 118M18 128L6 140M62 148L30 178M30 178L16 200M30 178L8 176"/></g>
+  <circle id="n-soma" class="hot" tabindex="0" cx="92" cy="130" r="34" fill="#e9777b" stroke="#a8353a" stroke-width="3"/>
+  <circle cx="92" cy="130" r="11" fill="#a8353a"/>
+  <line id="n-axon" class="hot" tabindex="0" x1="126" y1="130" x2="440" y2="130" stroke="#a8353a" stroke-width="6" stroke-linecap="round"/>
+  <g id="n-myelin" class="hot" tabindex="0" fill="#f6c453" stroke="#c38d12" stroke-width="2"><rect x="150" y="118" width="46" height="24" rx="12"/><rect x="206" y="118" width="46" height="24" rx="12"/><rect x="262" y="118" width="46" height="24" rx="12"/><rect x="318" y="118" width="46" height="24" rx="12"/><rect x="374" y="118" width="46" height="24" rx="12"/></g>
+  <g id="n-term" class="hot" tabindex="0" stroke="#a8353a" stroke-width="4" fill="none" stroke-linecap="round"><path d="M440 130L470 100M440 130L474 130M440 130L470 160"/></g>
+  <g fill="#a8353a"><circle cx="472" cy="99" r="7"/><circle cx="478" cy="130" r="7"/><circle cx="472" cy="161" r="7"/></g>
+  <g id="n-recv" stroke="#2d6a9f" stroke-width="5" fill="none" stroke-linecap="round"><path d="M640 130L538 130M538 130L508 100M538 130L506 130M538 130L508 160"/></g>
+  <g fill="#2d6a9f"><circle cx="505" cy="99" r="6"/><circle cx="502" cy="130" r="6"/><circle cx="505" cy="161" r="6"/></g>
+  <rect id="n-syn" class="hot" tabindex="0" x="484" y="86" width="14" height="88" rx="7" fill="#d8e9f7" opacity=".6"/>
+  <circle id="pulse" cx="126" cy="130" r="16" fill="url(#glow)" opacity="0"/>
+  <g id="nts" fill="#1f9d63"></g>
+  <g font-size="12" fill="#2a2020" font-family="system-ui,sans-serif" text-anchor="middle"><text x="40" y="236">Dendrites</text><text x="92" y="186">Soma</text><text x="283" y="168">Axon with myelin</text><text x="470" y="198">Terminal</text><text x="491" y="78">Synapse</text><text x="580" y="160" fill="#2d6a9f">Next neuron</text></g>
+ </svg>
+ <div class="row" style="justify-content:center"><button class="btn" id="fire">Fire the neuron</button><button class="btn alt" id="rst">Reset</button></div>
+ </div>
+ <div class="side">
+  <div class="card"><h2 id="nt">Resting state</h2><p id="nd">The neuron is waiting. Dendrites collect messages; if enough arrive, the cell fires. Press the button, or tap a part of the neuron to learn about it.</p></div>
+  <div class="card"><span class="lbl">Signal path</span><div class="row" id="steps" style="margin-top:4px;gap:4px"><span class="pill">1 Receive</span><span class="pill">2 Fire</span><span class="pill">3 Travel</span><span class="pill">4 Release</span><span class="pill">5 Bind</span></div></div>
+ </div>
+</section>
+<section class="panel" id="p2">
+ <div class="viz" id="map2"></div>
+ <div class="side">
+  <div class="card"><span class="lbl" id="qn">Question 1 of 8</span><p id="qt" style="font-weight:600;margin:2px 0 6px"></p><div class="opts" id="qo"></div></div>
+  <div class="card fb" id="qf">Which part of the brain is most involved? Pick an answer.</div>
+  <div class="row"><button class="btn" id="qnext" disabled>Next</button><span class="lbl" id="qs">Score: 0</span></div>
+ </div>
+</section>
+</main></div>
+<script>(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+ function show(i){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i)});panels.forEach(function(p,k){p.classList.toggle('on',k===i)});
+  if(window.onTab)window.onTab(i)}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)})});
+ window.showTab=show;show(0);
+})();
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function $(s,r){return (r||document).querySelector(s)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+</script>
+<script>
+var R={
+ frontal:{n:'Frontal lobe',c:'#eaa2a6',f:'Planning, decisions, self-control, voluntary movement, and speech production.',e:'Choosing to finish your reading before you open social media.',d:'Damage can change personality and impulse control.'},
+ parietal:{n:'Parietal lobe',c:'#f3c58c',f:'Touch, body position, and spatial awareness.',e:'Knowing where your hand is in the dark and feeling the texture of fabric.',d:'Damage can cause difficulty judging space and locating body parts.'},
+ occipital:{n:'Occipital lobe',c:'#a8c9ea',f:'Receives and processes visual information.',e:'Recognizing a friend\u2019s face across a crowded room.',d:'Damage can cause vision loss even when the eyes are healthy.'},
+ temporal:{n:'Temporal lobe',c:'#b6d9ad',f:'Hearing, language comprehension, and some memory functions.',e:'Understanding a lecture and recognizing a familiar song.',d:'Damage can disrupt understanding speech or recognizing sounds.'},
+ cerebellum:{n:'Cerebellum',c:'#cfb5e2',f:'Balance, coordination, and smooth, practiced movement.',e:'Riding a bike or catching a ball without thinking about each step.',d:'Damage leads to clumsy, unsteady movement.'},
+ brainstem:{n:'Brainstem',c:'#c4bcb4',f:'Automatic life functions such as breathing and heart rate.',e:'Your heartbeat continuing while you sleep.',d:'Damage can be life-threatening because basic functions depend on it.'},
+ amygdala:{n:'Amygdala (limbic system)',c:'#f08a8f',f:'Processes emotional significance, especially fear and threat.',e:'Your heart pounding at a sudden loud crash.',d:'Damage can blunt fear responses and emotional recognition.'},
+ hippocampus:{n:'Hippocampus (limbic system)',c:'#f0b36b',f:'Forms new explicit memories and supports spatial memory.',e:'Remembering what you had for lunch today.',d:'Damage makes it hard to form new long-term memories.'}
+};
+function brainSVG(){
+ return '<svg viewBox="0 0 400 300" role="img" aria-label="Side view of the brain with labeled regions">'+
+ '<rect width="400" height="300" rx="14" fill="#faf3ee"/>'+
+ '<g stroke="#fff" stroke-width="3" stroke-linejoin="round">'+
+ '<path class="reg" data-r="frontal" tabindex="0" fill="'+R.frontal.c+'" d="M52 150C42 95 90 48 168 44C190 43 200 46 205 50L212 165C180 160 140 170 110 175C80 178 56 170 52 150Z"/>'+
+ '<path class="reg" data-r="parietal" tabindex="0" fill="'+R.parietal.c+'" d="M205 50C255 40 310 60 335 105C340 125 330 140 322 150L212 165Z"/>'+
+ '<path class="reg" data-r="occipital" tabindex="0" fill="'+R.occipital.c+'" d="M335 105C365 125 372 165 352 190C336 206 318 196 316 180L322 150C330 140 340 125 335 105Z"/>'+
+ '<path class="reg" data-r="temporal" tabindex="0" fill="'+R.temporal.c+'" d="M110 175C140 170 180 160 212 165L322 150L316 180C310 205 280 215 240 212C190 216 150 216 120 205C100 195 100 180 110 175Z"/>'+
+ '<path class="reg" data-r="cerebellum" tabindex="0" fill="'+R.cerebellum.c+'" d="M250 214C290 210 320 205 338 200C346 226 320 254 285 256C260 254 244 236 250 214Z"/>'+
+ '<path class="reg" data-r="brainstem" tabindex="0" fill="'+R.brainstem.c+'" d="M215 214L250 214C248 246 252 272 250 292L222 292C226 266 218 240 215 214Z"/></g>'+
+ '<g fill="none" stroke="#fff" stroke-width="1.6" opacity=".7" stroke-linecap="round"><path d="M90 90C110 80 130 100 150 85M75 130C100 120 120 135 140 120M240 80C260 95 280 80 300 95M260 120C280 110 300 125 320 112M150 190C180 180 200 195 230 185M265 175C285 185 300 175 310 185"/></g>'+
+ '<ellipse class="reg" data-r="hippocampus" tabindex="0" cx="222" cy="186" rx="40" ry="11" transform="rotate(-8 222 186)" fill="'+R.hippocampus.c+'" stroke="#8a3f00" stroke-width="2" stroke-dasharray="5 3"/>'+
+ '<circle class="reg" data-r="amygdala" tabindex="0" cx="168" cy="192" r="13" fill="'+R.amygdala.c+'" stroke="#8a1c22" stroke-width="2" stroke-dasharray="5 3"/>'+
+ '<g font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#2a2020" text-anchor="middle" pointer-events="none"><text x="130" y="110">Frontal</text><text x="272" y="100">Parietal</text><text x="338" y="156" font-size="11">Occipital</text><text x="272" y="198" font-size="12">Temporal</text><text x="296" y="236" font-size="12">Cerebellum</text><text x="258" y="276" font-size="11" text-anchor="start">Brainstem</text></g>'+
+ '<g font-family="system-ui,sans-serif" font-size="10" fill="#6a3b00" pointer-events="none"><text x="199" y="168">Hippocampus</text><text x="140" y="178">Amygdala</text></g>'+
+ '<text x="16" y="285" font-size="11" fill="#6a5e5e" font-family="system-ui,sans-serif">Front of brain \u2190 \u2192 back (side view)</text></svg>';
+}
+$('#map1').innerHTML=brainSVG();$('#map2').innerHTML=brainSVG();
+var seen={};
+function selectRegion(root,k){[].forEach.call(root.querySelectorAll('.reg'),function(e){e.classList.toggle('sel',e.dataset.r===k)})}
+function explore(k){
+ var r=R[k];selectRegion($('#map1'),k);
+ $('#info').innerHTML='<h2>'+r.n+'</h2><p><b>What it does:</b> '+r.f+'</p><p><b>In your day:</b> '+r.e+'</p><p><b>If damaged:</b> '+r.d+'</p>';
+ seen[k]=1;var n=Object.keys(seen).length;$('#seen').textContent='Explored '+n+' of 8'+(n==8?' \u2713':'');$('#seenbar').style.width=(n/8*100)+'%';
+}
+$('#map1').addEventListener('click',function(e){var t=e.target.closest('.reg');if(t)explore(t.dataset.r)});
+$('#map1').addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.dataset.r){e.preventDefault();explore(e.target.dataset.r)}});
+$('#rand').onclick=function(){var ks=Object.keys(R);explore(ks[Math.floor(Math.random()*ks.length)])};
+
+/* neuron */
+var parts={
+ 'n-dend':['Dendrites','Branch-like receivers. They collect chemical messages from other neurons.'],
+ 'n-soma':['Soma (cell body)','Contains the nucleus and adds up incoming signals. If the total is strong enough, the neuron fires.'],
+ 'n-axon':['Axon','A long fiber that carries the electrical signal (action potential) away from the cell body.'],
+ 'n-myelin':['Myelin sheath','Fatty insulation that speeds up the signal. Gaps between segments let the impulse jump along.'],
+ 'n-term':['Axon terminals','The signal arrives here and triggers release of neurotransmitters.'],
+ 'n-syn':['Synapse','The tiny gap between neurons. The message crosses it chemically, not electrically.']};
+function setN(t,d,step){$('#nt').textContent=t;$('#nd').textContent=d;[].forEach.call($('#steps').children,function(s,i){s.style.background=i<step?'#a8353a':'';s.style.color=i<step?'#fff':''})}
+[].forEach.call(document.querySelectorAll('#neuron .hot'),function(el){
+ function go(){[].forEach.call(document.querySelectorAll('#neuron .hot'),function(x){x.style.filter=''});el.style.filter='drop-shadow(0 0 6px #1b6fd1)';setN(parts[el.id][0],parts[el.id][1],0)}
+ el.addEventListener('click',go);el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+var busy=false;
+function reset(){busy=false;$('#pulse').setAttribute('opacity',0);$('#nts').innerHTML='';$('#n-recv').setAttribute('stroke','#2d6a9f');$('#n-soma').setAttribute('fill','#e9777b');$('#fire').disabled=false;
+ [].forEach.call(document.querySelectorAll('#neuron .hot'),function(x){x.style.filter=''});setN('Resting state','The neuron is waiting. Dendrites collect messages; if enough arrive, the cell fires. Press the button, or tap a part of the neuron to learn about it.',0)}
+$('#rst').onclick=reset;
+function anim(dur,fn,done){if(RM){fn(1);done&&done();return}var t0=null;function f(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/dur);fn(p);if(p<1)requestAnimationFrame(f);else done&&done()}requestAnimationFrame(f)}
+$('#fire').onclick=function(){
+ if(busy)return;reset();busy=true;$('#fire').disabled=true;
+ setN('1. Receive','Dendrites receive neurotransmitters from upstream neurons and pass the message to the soma.',1);
+ $('#n-soma').setAttribute('fill','#ff9aa0');
+ setTimeout(function(){setN('2. Fire','Enough input arrived, so the neuron crosses its threshold. An action potential starts (all-or-none).',2);
+  var p=$('#pulse');p.setAttribute('opacity',1);
+  setTimeout(function(){setN('3. Travel','The electrical impulse races down the axon, jumping between gaps in the myelin sheath.',3);
+   anim(1500,function(q){p.setAttribute('cx',126+q*(440-126))},function(){
+    p.setAttribute('opacity',0);setN('4. Release','At the terminal, the impulse triggers vesicles to release neurotransmitters into the synapse.',4);
+    var g=$('#nts'),dots=[];for(var i=0;i<9;i++){var c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('r',4);c.setAttribute('cx',478);c.setAttribute('cy',100+(i%3)*30);g.appendChild(c);dots.push([c,100+(i%3)*30,95+Math.random()*70])}
+    anim(1000,function(q){dots.forEach(function(d,i){d[0].setAttribute('cx',478+q*26);d[0].setAttribute('cy',d[1]+(d[2]-d[1])*q*.15+Math.sin(q*6+i)*3)})},function(){
+     setN('5. Bind','Neurotransmitters lock onto receptors on the next neuron\u2019s dendrites, and the message continues. Leftover molecules are reabsorbed or broken down.',5);
+     $('#n-recv').setAttribute('stroke','#1f9d63');busy=false;$('#fire').disabled=false})})},RM?0:500)},RM?0:900)};
+
+/* quiz */
+var Q=[
+ ['You catch a ball tossed from across the room, adjusting your hand smoothly mid-air.','cerebellum'],
+ ['Light from a billboard first reaches this region at the very back of the brain.','occipital'],
+ ['You weigh whether to text back now or wait until after class.','frontal'],
+ ['You feel the rough texture of a rock and know exactly where your hand is.','parietal'],
+ ['You recognize a friend\u2019s voice and understand the sentence they say.','temporal'],
+ ['Your breathing and heartbeat keep going while you are asleep.','brainstem'],
+ ['A sudden crash makes your heart pound before you even know what it was.','amygdala'],
+ ['You are forming a new memory of the conversation you just had.','hippocampus']];
+var qi=0,qs=0,qlock=false,order=shuffle(Q);
+function ask(){
+ qlock=false;var q=order[qi];$('#qn').textContent='Question '+(qi+1)+' of '+order.length;$('#qt').textContent=q[0];
+ var opts=shuffle([q[1]].concat(shuffle(Object.keys(R).filter(function(k){return k!==q[1]})).slice(0,3)));
+ $('#qo').innerHTML=opts.map(function(k){return '<button class="opt" data-k="'+k+'">'+R[k].n.replace(' (limbic system)','')+'</button>'}).join('');
+ $('#qf').textContent='Which part of the brain is most involved? Pick an answer.';$('#qnext').disabled=true;selectRegion($('#map2'),'');
+}
+$('#qo').addEventListener('click',function(e){
+ var b=e.target.closest('.opt');if(!b||qlock)return;qlock=true;var q=order[qi],ok=b.dataset.k===q[1];
+ if(ok)qs++;
+ [].forEach.call($('#qo').children,function(x){if(x.dataset.k===q[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+ selectRegion($('#map2'),q[1]);
+ $('#qf').innerHTML=(ok?'<b class="g">Correct.</b> ':'<b class="b">Not quite.</b> ')+R[q[1]].n.replace(' (limbic system)','')+': '+R[q[1]].f;
+ $('#qs').textContent='Score: '+qs;$('#qnext').disabled=false;$('#qnext').textContent=qi==order.length-1?'See result':'Next';
+});
+$('#qnext').onclick=function(){
+ if(qi>=order.length-1){$('#qt').textContent='Finished: '+qs+' out of '+order.length+(qs>=7?'. Excellent work!':qs>=5?'. Solid. Revisit the Brain Map for the ones you missed.':'. Try the Brain Map again, then retake it.');
+  $('#qn').textContent='Quiz complete';$('#qo').innerHTML='';$('#qf').textContent='';$('#qnext').textContent='Play again';qi=-1;$('#qnext').disabled=false;order=shuffle(Q);qs=0;selectRegion($('#map2'),'');return}
+ qi++;ask()};
+ask();
+</script>
+</body></html>
