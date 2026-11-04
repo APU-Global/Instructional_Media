@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BUSN 450 Week 7 | Disruptive Innovation</title>
+<style>
+:root{
+  --red:#d34147; --red-d:#a8353a; --ink:#222; --mute:#5b5b5b; --line:#e3dfd9;
+  --paper:#fcfcfc; --sand:#f4f1ec; --sea:#0f5c6e; --sea-l:#d9eef2; --gold:#e0a526; --green:#2f8f5b;
+}
+*{box-sizing:border-box}
+/* No inner scrollbars: the iframe itself is sized to the content (see resize script) */
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{max-width:1040px;margin:0 auto;padding:12px 14px 16px}
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.brand{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:17px;color:var(--ink);margin-right:auto}
+.brand small{display:block;font:600 11px/1.2 "Segoe UI",system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 14px;font:600 13px inherit;font-family:inherit;cursor:pointer;transition:.15s}
+.tab:hover{border-color:var(--red)}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #1b6ef3;outline-offset:2px}
+.panel{display:none}.panel.on{display:block}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:center;background:var(--sand);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+.hero h1{font-family:Georgia,serif;font-size:24px;line-height:1.15;margin:2px 0 6px}
+.hero .wk{font:700 11px/1 inherit;letter-spacing:.14em;text-transform:uppercase;color:var(--red-d)}
+.hero p{margin:0;color:var(--mute);font-size:14px}
+.hero svg{width:100%;height:auto;max-height:130px;display:block}
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font:600 13px inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip.danger[aria-pressed=true]{background:var(--red);border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:8px 14px;font:700 13px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.meter{margin:6px 0}
+.meter .lab{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600}
+.meter .bar{height:10px;background:#ece8e1;border-radius:6px;overflow:hidden;margin-top:3px}
+.meter .bar i{display:block;height:100%;border-radius:6px;transition:width .4s}
+.note{font-size:13px;color:var(--mute)}
+.callout{border-left:4px solid var(--red);background:#fdf1f1;padding:8px 10px;border-radius:0 8px 8px 0;font-size:13.5px;margin-top:8px}
+.callout.ok{border-color:var(--green);background:#eef8f2}
+.callout.warn{border-color:var(--gold);background:#fff8e6}
+select{font:600 13px inherit;font-family:inherit;padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;background:#fff}
+input[type=range]{width:100%;accent-color:var(--red)}
+.sl{display:grid;grid-template-columns:120px 1fr 28px;gap:8px;align-items:center;font-size:13px;margin:3px 0}
+.sl b{font-weight:600}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-size:13.5px;cursor:pointer}
+.quiz .opt:hover{border-color:var(--ink)}
+.quiz .opt.right{border-color:var(--green);background:#eef8f2}
+.quiz .opt.wrong{border-color:var(--red);background:#fdf1f1}
+.ergrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ergrid div{border-radius:10px;padding:8px 10px;font-size:13px;min-height:62px}
+.ergrid h4{margin:0 0 3px;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.ergrid ul{margin:0;padding-left:16px}
+.e{background:#fdebec}.r{background:#fff4dc}.a{background:#e4f4ea}.c{background:#dff0f5}
+.legend{display:flex;gap:12px;font-size:12px;margin-top:4px;flex-wrap:wrap}
+.legend span::before{content:"";display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c)}
+.pulse{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.flow{stroke-dasharray:6 6;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+@media (prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}
+@media (max-width:760px){.hero,.grid2{grid-template-columns:1fr}.hero svg{max-height:100px}.sl{grid-template-columns:96px 1fr 24px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="topbar"><div class="brand"><small>BUSN 450 &middot; International Business</small>Week 7 Interactive</div></div>
+  <section class="panel on" id="p7">
+    <div class="hero">
+      <div><div class="wk">Week 7 &middot; Disruptive Innovation</div><h1>Draw your strategy canvas, find the blue ocean</h1>
+      <p>The grey line is the industry. Drag your sliders to shape a different curve, and the ERRC grid builds itself.</p></div>
+      <svg viewBox="0 0 320 130" role="img" aria-label="Illustration of a crowded red ocean on the left and an open blue ocean on the right">
+        <rect width="320" height="130" fill="#fff" opacity="0"/>
+        <rect x="0" y="60" width="150" height="70" fill="#d34147" opacity=".85"/><rect x="170" y="60" width="150" height="70" fill="#0f5c6e"/>
+        <path d="M0 70q12-8 25 0t25 0 25 0 25 0 25 0 25 0" fill="none" stroke="#fff" stroke-width="2"/><path d="M170 70q12-8 25 0t25 0 25 0 25 0 25 0 25 0" fill="none" stroke="#ffffffaa" stroke-width="2"/>
+        <g fill="#222"><path d="M20 50l22-2-4 14H24z"/><path d="M60 52l22-2-4 14H64z"/><path d="M100 48l22-2-4 14h-14z"/><path d="M40 78l22-2-4 14H44z"/><path d="M85 82l22-2-4 14H89z"/></g>
+        <g transform="translate(230 28)"><path d="M0 28l40-2-8 20H8z" fill="#fff"/><path d="M20 26V0l16 22z" fill="#e0a526"/></g>
+        <circle cx="290" cy="22" r="10" fill="#e0a526"/>
+        <text x="75" y="118" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Red ocean</text><text x="245" y="118" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Blue ocean</text>
+      </svg>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Strategy canvas: coffee in Mexico (Starbucks)</h3>
+        <svg id="canvas" viewBox="0 0 560 200" style="width:100%;height:auto" role="img" aria-label="Strategy canvas line chart comparing industry curve with your curve"></svg>
+        <div class="legend"><span style="--c:#9a9a9a">Industry average</span><span style="--c:#d34147">Your strategy</span></div>
+        <div id="sl7"></div>
+        <div class="row"><button class="btn ghost" id="reset7">Reset to industry</button><button class="btn" id="try7">Try an example blue-ocean curve</button></div>
+      </div>
+      <div class="card">
+        <h3>Your ERRC grid</h3>
+        <div class="ergrid">
+          <div class="e"><h4>Eliminate</h4><ul id="g-e"></ul></div>
+          <div class="r"><h4>Reduce</h4><ul id="g-r"></ul></div>
+          <div class="a"><h4>Raise</h4><ul id="g-a"></ul></div>
+          <div class="c"><h4>Create</h4><ul id="g-c"></ul></div>
+        </div>
+        <div id="g-msg" class="callout warn"></div>
+        <p class="note" style="margin-top:8px">Rules used: Eliminate = you set 0 where the industry offers 3+. Reduce = at least 2 below. Raise = at least 2 above. Create = industry at 0 and you offer 3+.</p>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+
+const $=s=>document.querySelector(s);
+const NS="http://www.w3.org/2000/svg";
+function el(t,a={},h=""){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);e.innerHTML=h;return e}
+
+
+
+/* ---------- WEEK 7 ---------- */
+const F=[
+ {n:"Price",i:7},{n:"Store ambiance",s:"Ambiance",i:8},{n:"Menu variety",s:"Variety",i:7},{n:"Speed of service",s:"Speed",i:5},{n:"Premium cup branding",s:"Branding",i:6},{n:"Local flavors / origin story",s:"Local flavors",i:2},{n:"Mobile-first ordering",s:"Mobile order",i:0}];
+let Y=F.map(f=>f.i);
+function build7(){
+  const box=$("#sl7");box.innerHTML="";
+  F.forEach((f,i)=>{const d=document.createElement("div");d.className="sl";d.innerHTML=`<b>${f.n}</b><input type="range" min="0" max="10" value="${Y[i]}" aria-label="${f.n}"><span>${Y[i]}</span>`;
+    d.querySelector("input").oninput=e=>{Y[i]=+e.target.value;d.querySelector("span").textContent=Y[i];draw7()};box.appendChild(d)});
+  draw7();
+}
+function draw7(){
+  const svg=$("#canvas");svg.innerHTML="";const L=40,T=14,W=500,H=140,step=W/(F.length-1);
+  const X=i=>L+i*step,Yp=v=>T+H-v/10*H;
+  [0,5,10].forEach(v=>{svg.appendChild(el("line",{x1:L,x2:L+W,y1:Yp(v),y2:Yp(v),stroke:"#e3dfd9"}));svg.appendChild(el("text",{x:L-8,y:Yp(v)+4,"text-anchor":"end","font-size":10,fill:"#5b5b5b"},v==0?"Low":v==10?"High":""))});
+  const line=(arr,col,w,dash)=>{svg.appendChild(el("polyline",{points:arr.map((v,i)=>X(i)+","+Yp(v)).join(" "),fill:"none",stroke:col,"stroke-width":w,"stroke-linejoin":"round",...(dash?{"stroke-dasharray":dash}:{})}));arr.forEach((v,i)=>svg.appendChild(el("circle",{cx:X(i),cy:Yp(v),r:4,fill:col})))};
+  line(F.map(f=>f.i),"#9a9a9a",3);line(Y,"#d34147",3.5);
+  F.forEach((f,i)=>svg.appendChild(el("text",{x:X(i),y:T+H+22,"text-anchor":"middle","font-size":10.5,"font-weight":600,fill:"#222"},f.s||f.n)));
+  const g={e:[],r:[],a:[],c:[]};
+  F.forEach((f,i)=>{const d=Y[i]-f.i;
+    if(f.i>=3&&Y[i]==0)g.e.push(f.n);else if(f.i==0&&Y[i]>=3)g.c.push(f.n);else if(d<=-2)g.r.push(f.n);else if(d>=2)g.a.push(f.n)});
+  Object.keys(g).forEach(k=>$("#g-"+k).innerHTML=g[k].map(x=>`<li>${x}</li>`).join("")||"<li style='list-style:none;margin-left:-16px;color:#8a8a8a'>none yet</li>");
+  const m=$("#g-msg"),cuts=g.e.length+g.r.length,adds=g.a.length+g.c.length;
+  if(!cuts&&!adds){m.className="callout warn";m.textContent="Your curve matches the industry. Move some sliders to differentiate."}
+  else if(!cuts){m.className="callout warn";m.textContent="You only add value. A blue ocean needs trade-offs: eliminate or reduce something to fund what you raise or create."}
+  else if(!adds){m.className="callout warn";m.textContent="You only cut. Cost savings alone aren’t differentiation; raise or create something buyers value."}
+  else{m.className="callout ok";m.textContent=`Good trade-offs: ${cuts} factor(s) cut, ${adds} raised or created. Next, test whether your curve is focused, different, and tells a clear story for Mexican customers.`}
+  report();
+}
+$("#reset7").onclick=()=>{Y=F.map(f=>f.i);build7()};
+$("#try7").onclick=()=>{Y=[5,4,3,5,6,8,8];build7()};
+build7();
+
+
+/* ---------- iframe auto-height (prevents a second scroll bar) ---------- */
+let last=0;
+function report(){
+  requestAnimationFrame(()=>{
+    const h=Math.ceil($("#app").getBoundingClientRect().height)+2;
+    if(h===last)return;last=h;
+    const msg={subject:"lti.frameResize",height:h,iframeHeight:h};
+    try{parent.postMessage(msg,"*");parent.postMessage(JSON.stringify(msg),"*")}catch(e){}
+  });
+}
+new ResizeObserver(report).observe($("#app"));
+window.addEventListener("load",report);window.addEventListener("resize",report);
+</script>
+</body>
+</html>

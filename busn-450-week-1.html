@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BUSN 450 Week 1 | Globalization</title>
+<style>
+:root{
+  --red:#d34147; --red-d:#a8353a; --ink:#222; --mute:#5b5b5b; --line:#e3dfd9;
+  --paper:#fcfcfc; --sand:#f4f1ec; --sea:#0f5c6e; --sea-l:#d9eef2; --gold:#e0a526; --green:#2f8f5b;
+}
+*{box-sizing:border-box}
+/* No inner scrollbars: the iframe itself is sized to the content (see resize script) */
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{max-width:1040px;margin:0 auto;padding:12px 14px 16px}
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.brand{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:17px;color:var(--ink);margin-right:auto}
+.brand small{display:block;font:600 11px/1.2 "Segoe UI",system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 14px;font:600 13px inherit;font-family:inherit;cursor:pointer;transition:.15s}
+.tab:hover{border-color:var(--red)}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #1b6ef3;outline-offset:2px}
+.panel{display:none}.panel.on{display:block}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:center;background:var(--sand);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+.hero h1{font-family:Georgia,serif;font-size:24px;line-height:1.15;margin:2px 0 6px}
+.hero .wk{font:700 11px/1 inherit;letter-spacing:.14em;text-transform:uppercase;color:var(--red-d)}
+.hero p{margin:0;color:var(--mute);font-size:14px}
+.hero svg{width:100%;height:auto;max-height:130px;display:block}
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font:600 13px inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip.danger[aria-pressed=true]{background:var(--red);border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:8px 14px;font:700 13px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.meter{margin:6px 0}
+.meter .lab{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600}
+.meter .bar{height:10px;background:#ece8e1;border-radius:6px;overflow:hidden;margin-top:3px}
+.meter .bar i{display:block;height:100%;border-radius:6px;transition:width .4s}
+.note{font-size:13px;color:var(--mute)}
+.callout{border-left:4px solid var(--red);background:#fdf1f1;padding:8px 10px;border-radius:0 8px 8px 0;font-size:13.5px;margin-top:8px}
+.callout.ok{border-color:var(--green);background:#eef8f2}
+.callout.warn{border-color:var(--gold);background:#fff8e6}
+select{font:600 13px inherit;font-family:inherit;padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;background:#fff}
+input[type=range]{width:100%;accent-color:var(--red)}
+.sl{display:grid;grid-template-columns:120px 1fr 28px;gap:8px;align-items:center;font-size:13px;margin:3px 0}
+.sl b{font-weight:600}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-size:13.5px;cursor:pointer}
+.quiz .opt:hover{border-color:var(--ink)}
+.quiz .opt.right{border-color:var(--green);background:#eef8f2}
+.quiz .opt.wrong{border-color:var(--red);background:#fdf1f1}
+.ergrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ergrid div{border-radius:10px;padding:8px 10px;font-size:13px;min-height:62px}
+.ergrid h4{margin:0 0 3px;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.ergrid ul{margin:0;padding-left:16px}
+.e{background:#fdebec}.r{background:#fff4dc}.a{background:#e4f4ea}.c{background:#dff0f5}
+.legend{display:flex;gap:12px;font-size:12px;margin-top:4px;flex-wrap:wrap}
+.legend span::before{content:"";display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c)}
+.pulse{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.flow{stroke-dasharray:6 6;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+@media (prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}
+@media (max-width:760px){.hero,.grid2{grid-template-columns:1fr}.hero svg{max-height:100px}.sl{grid-template-columns:96px 1fr 24px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="topbar"><div class="brand"><small>BUSN 450 &middot; International Business</small>Week 1 Interactive</div></div>
+  <section class="panel on" id="p1">
+    <div class="hero">
+      <div><div class="wk">Week 1 &middot; Globalization</div><h1>Stress-test a global supply chain</h1>
+      <p>Pick a sourcing strategy, then hit the chain with a disruption. How much output do you lose, and what did resilience cost you?</p></div>
+      <svg viewBox="0 0 320 130" role="img" aria-label="Illustration of a globe with trade routes and a container ship">
+        <circle cx="90" cy="65" r="52" fill="#0f5c6e"/>
+        <path d="M60 35c14-6 28-2 34 8s-6 16-14 18-10 14-4 22-18 6-22-6-8-30 6-42z" fill="#7fc3a0"/>
+        <path d="M104 78c10-6 22 0 24 10s-10 14-20 10-8-14-4-20z" fill="#7fc3a0"/>
+        <path d="M78 22c8-4 18-2 24 4-10 4-20 4-24-4z" fill="#7fc3a0"/>
+        <ellipse cx="90" cy="65" rx="52" ry="18" fill="none" stroke="#ffffff55"/><ellipse cx="90" cy="65" rx="22" ry="52" fill="none" stroke="#ffffff55"/>
+        <path d="M60 50Q95 -5 150 40" fill="none" stroke="#d34147" stroke-width="2.5" stroke-dasharray="5 4" class="flow"/>
+        <path d="M70 90Q120 125 190 95" fill="none" stroke="#e0a526" stroke-width="2.5" stroke-dasharray="5 4" class="flow"/>
+        <circle cx="60" cy="50" r="5" fill="#d34147"/><circle cx="150" cy="40" r="5" fill="#d34147"/><circle cx="70" cy="90" r="5" fill="#e0a526"/>
+        <g transform="translate(190 80)"><path d="M0 22h96l-12 16H14z" fill="#222"/><rect x="10" y="6" width="20" height="16" fill="#d34147"/><rect x="30" y="6" width="20" height="16" fill="#e0a526"/><rect x="50" y="6" width="20" height="16" fill="#0f5c6e"/><rect x="70" y="10" width="16" height="12" fill="#d34147"/><rect x="20" y="-10" width="20" height="16" fill="#0f5c6e"/><rect x="40" y="-10" width="20" height="16" fill="#d34147"/></g>
+        <path d="M180 124q10-6 20 0t20 0 20 0 20 0 20 0 20 0" fill="none" stroke="#0f5c6e" stroke-width="3"/>
+      </svg>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>The chain: wireless earbuds</h3>
+        <svg id="sc-map" viewBox="0 0 640 190" style="width:100%;height:auto" role="img" aria-label="Five-stage supply chain map"></svg>
+        <div class="row" id="sc-strat" role="group" aria-label="Sourcing strategy"></div>
+        <div class="row" id="sc-event" role="group" aria-label="Disruption"></div>
+        <div id="sc-msg" class="callout">Choose a strategy, then trigger a disruption.</div>
+      </div>
+      <div class="card">
+        <h3>Scorecard</h3>
+        <div class="meter"><div class="lab"><span>Unit cost index</span><span id="m-cost">100</span></div><div class="bar"><i id="b-cost" style="background:#0f5c6e"></i></div></div>
+        <div class="meter"><div class="lab"><span>Output lost in disruption</span><span id="m-loss">0%</span></div><div class="bar"><i id="b-loss" style="background:var(--red)"></i></div></div>
+        <div class="meter"><div class="lab"><span>Recovery time (weeks)</span><span id="m-rec">0</span></div><div class="bar"><i id="b-rec" style="background:var(--gold)"></i></div></div>
+        <div class="meter"><div class="lab"><span>Shipping distance index</span><span id="m-dist">100</span></div><div class="bar"><i id="b-dist" style="background:#7a6fb0"></i></div></div>
+        <p class="note" id="sc-def" style="margin-top:10px"></p>
+        <p class="note">Discussion link: use this logic when you map the chain for Discussion 1.</p>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+
+const $=s=>document.querySelector(s);
+const NS="http://www.w3.org/2000/svg";
+function el(t,a={},h=""){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);e.innerHTML=h;return e}
+
+
+
+/* ---------- WEEK 1 ---------- */
+const stages=[
+ {n:"Raw materials",c:"Chile",x:60,i:"⛏"},{n:"Components",c:"Taiwan",x:190,i:"▦"},{n:"Assembly",c:"Vietnam",x:320,i:"⚙"},
+ {n:"Shipping",c:"Pacific route",x:450,i:"🚢"},{n:"End market",c:"United States",x:580,i:"🛒"}];
+const strategies={
+ base:{name:"Concentrated (lowest cost)",conc:[.9,.9,.9,.9],cost:100,dist:100,rec:10,desc:"One region per stage. Cheapest, but one shock hits almost everything."},
+ div:{name:"Diversify suppliers",conc:[.5,.5,.55,.6],cost:110,dist:105,rec:5,desc:"Two or more suppliers per stage. Costs more to manage, but no single point of failure."},
+ reg:{name:"Regionalize",conc:[.7,.65,.6,.35],cost:118,dist:55,rec:4,desc:"Produce closer to end markets. Shorter lines and faster recovery, but higher labor and land cost."},
+ fri:{name:"Friend-shore",conc:[.65,.6,.6,.6],cost:106,dist:90,rec:6,desc:"Shift production to trusted partner countries. Lowers political risk, with modest cost."}};
+const events={
+ none:{name:"No disruption"},
+ lock:{name:"Assembly lockdown",stage:2,why:"A pandemic closes the assembly region."},
+ port:{name:"Shipping blockade",stage:3,why:"A conflict closes a key sea lane."},
+ ban:{name:"Export ban on components",stage:1,why:"A government restricts chip exports."}};
+let S1="base",E1="none";
+function chips(id,obj,get,set,cls=""){const box=$(id);box.innerHTML="";for(const k in obj){const b=document.createElement("button");b.className="chip "+cls;b.textContent=obj[k].name;b.setAttribute("aria-pressed",get()===k);b.onclick=()=>{set(k);renderSC()};box.appendChild(b)}}
+function renderSC(){
+  chips("#sc-strat",strategies,()=>S1,k=>S1=k);
+  chips("#sc-event",events,()=>E1,k=>E1=k,"danger");
+  const st=strategies[S1],ev=events[E1];
+  const svg=$("#sc-map");svg.innerHTML="";
+  // sea band and route lines
+  svg.appendChild(el("rect",{x:0,y:130,width:640,height:60,fill:"#d9eef2"}));
+  svg.appendChild(el("path",{d:"M0 150q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0",fill:"none",stroke:"#0f5c6e55","stroke-width":2}));
+  for(let i=0;i<4;i++){
+    const hit=ev.stage===i||(ev.stage!==undefined&&i>ev.stage&&false);
+    svg.appendChild(el("line",{x1:stages[i].x+34,y1:70,x2:stages[i+1].x-34,y2:70,stroke:hit?"#d34147":"#0f5c6e","stroke-width":3,class:"flow"}));
+  }
+  stages.forEach((s,i)=>{
+    const hit=ev.stage===i;
+    const g=el("g");
+    g.appendChild(el("circle",{cx:s.x,cy:70,r:32,fill:hit?"#d34147":"#fff",stroke:hit?"#a8353a":"#222","stroke-width":2.5,class:hit?"pulse":""}));
+    g.appendChild(el("text",{x:s.x,y:78,"text-anchor":"middle","font-size":24,fill:hit?"#fff":"#222"},s.i));
+    g.appendChild(el("text",{x:s.x,y:20,"text-anchor":"middle","font-size":12,"font-weight":700,fill:"#222"},s.n));
+    g.appendChild(el("text",{x:s.x,y:116,"text-anchor":"middle","font-size":11,fill:"#5b5b5b"},s.c));
+    if(i<4){const share=Math.round(st.conc[i]*100);g.appendChild(el("text",{x:s.x,y:176,"text-anchor":"middle","font-size":10.5,"font-weight":700,fill:hit?"#d34147":"#0f5c6e"},share+"% from one source"))}
+    else g.appendChild(el("text",{x:s.x,y:176,"text-anchor":"middle","font-size":10.5,fill:"#0f5c6e","font-weight":700},"customers"));
+    svg.appendChild(g);
+  });
+  const loss=ev.stage!==undefined?Math.round(st.conc[ev.stage]*100):0;
+  const rec=ev.stage!==undefined?st.rec:0;
+  const set=(id,v,max,txt)=>{$("#m-"+id).textContent=txt;$("#b-"+id).style.width=Math.min(100,v/max*100)+"%"};
+  set("cost",st.cost,130,st.cost);set("loss",loss,100,loss+"%");set("rec",rec,12,rec);set("dist",st.dist,110,st.dist);
+  $("#sc-def").textContent=st.desc;
+  const m=$("#sc-msg");
+  if(ev.stage===undefined){m.className="callout";m.textContent="Baseline: efficient, but fragile. Now trigger a disruption to see the exposure."}
+  else{const good=loss<=60;m.className="callout "+(good?"ok":"");m.textContent=`${ev.why} With "${st.name}", about ${loss}% of output at that stage is lost and recovery takes roughly ${rec} weeks. Cost index: ${st.cost}. ${good?"Resilience has a price, but the shock is survivable.":"Cheap in good times, painful in a shock."}`}
+}
+renderSC();
+
+
+/* ---------- iframe auto-height (prevents a second scroll bar) ---------- */
+let last=0;
+function report(){
+  requestAnimationFrame(()=>{
+    const h=Math.ceil($("#app").getBoundingClientRect().height)+2;
+    if(h===last)return;last=h;
+    const msg={subject:"lti.frameResize",height:h,iframeHeight:h};
+    try{parent.postMessage(msg,"*");parent.postMessage(JSON.stringify(msg),"*")}catch(e){}
+  });
+}
+new ResizeObserver(report).observe($("#app"));
+window.addEventListener("load",report);window.addEventListener("resize",report);
+</script>
+</body>
+</html>
