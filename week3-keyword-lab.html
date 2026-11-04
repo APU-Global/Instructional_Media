@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 | Keyword Lab</title>
+<style>
+:root{--navy:#14284b;--teal:#0e8a87;--teal-d:#0a6b69;--amber:#f2a516;--coral:#e0522d;--green:#2e9e5b;--blue:#2f6fed;--bg:#f4f7fb;--card:#fff;--ink:#1d2433;--mute:#566074;--line:#d5dde8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column;padding:10px 14px;gap:8px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top svg.logo{width:42px;height:42px;flex:none}
+.top h1{font-size:19px;margin:0;color:var(--navy);line-height:1.15}
+.top .sub{color:var(--mute);font-size:12.5px}
+.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--navy)}
+.tab[aria-selected=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+main{flex:1;min-height:0;overflow:auto}
+.panel[hidden]{display:none}
+.panel{height:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.btn{border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer;background:var(--teal);color:#fff}
+.btn:hover{background:var(--teal-d)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.ghost:hover{background:#eef3fa}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em}
+.tag.on{background:#dff3f2;color:#0a6b69}.tag.off{background:#fde9d4;color:#9a4b05}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+svg [role=button]{cursor:pointer}
+svg [role=button]:focus-visible{outline:none}
+svg [role=button]:focus-visible .ring{stroke:var(--blue);stroke-width:4}
+.live{min-height:1.4em}
+.ok{color:#17753f;font-weight:600}.bad{color:#b4371a;font-weight:600}
+h2{font-size:16px;margin:0 0 4px;color:var(--navy)}
+p{margin:0 0 6px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:700px){.tabs{margin-left:0}.top h1{font-size:16px}}
+
+.wrap{display:grid;grid-template-columns:210px 1fr;gap:12px;height:100%}
+.brand{display:flex;flex-direction:column;gap:6px;align-content:start}
+.brand svg{width:100%;height:auto;display:block;background:#eef4fb;border-radius:12px}
+.brand h2{margin-top:2px}
+.brand p{font-size:13px;color:var(--mute)}
+.work{display:flex;flex-direction:column;gap:8px;min-height:0}
+.steps{display:flex;gap:8px;font-size:13px;font-weight:700}
+.steps span{padding:3px 12px;border-radius:99px;background:#e3e9f2;color:var(--mute)}
+.steps span.cur{background:var(--navy);color:#fff}.steps span.done{background:#d8f0e1;color:#17753f}
+.kwbig{font-size:26px;font-weight:800;color:var(--navy);text-align:center;margin:4px 0 8px}
+.q2{font-weight:700;margin:8px 0 5px;font-size:14px;color:var(--navy)}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 14px;font:inherit;font-weight:600;cursor:pointer;color:var(--navy)}
+.opt:hover{background:#eef3fa}
+.opt.sel{border-color:var(--blue);background:#eaf1ff}.opt.good{border-color:var(--green);background:#e6f6ec}.opt.no{border-color:var(--coral);background:#fdeae4}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.kc{display:grid;grid-template-columns:1fr;gap:3px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 10px;font:inherit;cursor:pointer;color:var(--ink)}
+.kc:hover{background:#f6f9fd}
+.kc.sel{border-color:var(--blue);background:#eaf1ff}
+.kc b{font-size:13.5px;color:var(--navy)}
+.bars{display:grid;grid-template-columns:auto 1fr;gap:1px 7px;font-size:10.5px;color:var(--mute);align-items:center}
+.bars i{display:block;height:6px;border-radius:99px;background:#e3e9f2;position:relative;overflow:hidden}
+.bars i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);border-radius:99px}
+.bars .v::after{background:var(--blue)}.bars .r::after{background:var(--green)}.bars .c::after{background:var(--coral)}
+.kc .meta{font-size:10.5px;color:var(--mute)}
+.res{font-size:13.5px}
+.res .row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);font-size:13px}
+.legend{font-size:12px;color:var(--mute);display:flex;gap:12px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.sticky{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+@media (max-width:760px){.wrap{grid-template-columns:1fr;height:auto}.brand{display:none}.grid{grid-template-columns:1fr}}
+</style></head>
+<body><div class="app">
+<div class="top">
+<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="6" width="36" height="36" rx="8" fill="#e8f6f5" stroke="#14284b" stroke-width="3"/><path d="M14 30l6-8 6 5 8-12" fill="none" stroke="#0e8a87" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="15" r="3.5" fill="#f2a516"/></svg>
+<div><h1>Keyword Lab</h1><div class="sub">Week 3 · Keyword Research</div></div>
+<div class="tabs" role="tablist">
+<button class="tab" role="tab" aria-selected="true" data-panel="p1">1 · Classify</button>
+<button class="tab" role="tab" aria-selected="false" data-panel="p2">2 · Choose Keywords</button>
+</div></div>
+<main>
+<div class="wrap">
+<aside class="brand" aria-label="Brand profile">
+<svg viewBox="0 0 210 170" role="img" aria-label="Illustration of a coffee bag and a map pin">
+<rect width="210" height="170" fill="#eef4fb"/>
+<path d="M52 36h70l8 14v90a8 8 0 01-8 8H52a8 8 0 01-8-8V50z" fill="#c98a4b" stroke="#14284b" stroke-width="4"/>
+<path d="M44 50h86" stroke="#14284b" stroke-width="4"/><path d="M52 36l-4 14M122 36l8 14" stroke="#14284b" stroke-width="3"/>
+<rect x="56" y="68" width="62" height="50" rx="6" fill="#fff" stroke="#14284b" stroke-width="3"/>
+<path d="M66 84h42M66 94h30M66 104h36" stroke="#0e8a87" stroke-width="4" stroke-linecap="round"/>
+<ellipse cx="87" cy="130" rx="0" ry="0"/>
+<path d="M164 62c-14 0-24 10-24 22 0 16 24 40 24 40s24-24 24-40c0-12-10-22-24-22z" fill="#e0522d" stroke="#14284b" stroke-width="4"/><circle cx="164" cy="84" r="8" fill="#fff"/>
+<g fill="#6b4423"><ellipse cx="160" cy="146" rx="9" ry="6" transform="rotate(-25 160 146)"/><ellipse cx="182" cy="150" rx="9" ry="6" transform="rotate(20 182 150)"/></g>
+</svg>
+<h2>Maple &amp; Moss Coffee Roasters</h2>
+<p>Small-batch roaster in Portland, Oregon. Sells fresh whole-bean coffee online, offers a monthly subscription, and runs one tasting room.</p>
+<p><b>Does not</b> sell espresso machines.</p>
+</aside>
+<div class="work">
+<div class="steps" id="steps"></div>
+<!-- Panel 1 -->
+<section class="panel card" id="p1" style="height:auto;flex:1;min-height:0;overflow:auto"></section>
+<!-- Panel 2 -->
+<section class="panel card" id="p2" hidden style="height:auto;flex:1;min-height:0;overflow:auto"></section>
+</div></div>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
+  $$('.panel').forEach(p=>p.hidden=p.id!==t.dataset.panel);
+}));
+
+/* Keyword data: values are illustrative scores (0-100), not real search data */
+const K=[
+{k:"coffee",type:"Head",intent:"Informational",v:100,r:30,c:98},
+{k:"coffee beans",type:"Head",intent:"Commercial",v:80,r:60,c:90},
+{k:"fresh roasted coffee beans online",type:"Long-tail",intent:"Transactional",v:22,r:95,c:55},
+{k:"how to brew pour over coffee",type:"Long-tail",intent:"Informational",v:35,r:55,c:45},
+{k:"best coffee roasters in portland oregon",type:"Long-tail",intent:"Local",v:18,r:100,c:35},
+{k:"coffee shop near me",type:"Long-tail",intent:"Local",v:60,r:70,c:70},
+{k:"buy coffee subscription",type:"Long-tail",intent:"Transactional",v:15,r:90,c:40},
+{k:"espresso machine reviews",type:"Long-tail",intent:"Commercial",v:30,r:15,c:80},
+{k:"single origin ethiopian coffee",type:"Long-tail",intent:"Commercial",v:12,r:85,c:30},
+{k:"coffee history",type:"Head",intent:"Informational",v:25,r:10,c:60}
+].map(o=>({...o,score:Math.round(o.r*.5+o.v*.2+(100-o.c)*.3)}));
+const INTENTS=["Informational","Commercial","Transactional","Local"];
+const hint={Informational:"looking for an answer or to learn something",Commercial:"comparing options before a decision",Transactional:"ready to act or buy",Local:"looking for something nearby"};
+const quiz=[2,3,5,1,4,0].map(i=>K[i]);
+let qi=0,qs=0,tState={type:null,intent:null,locked:false};
+function steps(a){$('#steps').innerHTML=['Classify','Choose keywords','Review'].map((s,i)=>`<span class="${i<a?'done':i===a?'cur':''}">${i+1}. ${s}</span>`).join('')}
+function showClassify(){
+ const box=$('#p1');
+ if(qi>=quiz.length){
+  box.innerHTML=`<h2>Nice work: ${qs} of ${quiz.length*2} answers correct</h2><p>Every keyword has a <b>length</b> (head = 1–2 words, long-tail = 3+ words) and an <b>intent</b>. A strong keyword list mixes both types.</p><div class="sticky"><button class="btn" id="go2">Go to step 2: Choose keywords →</button><button class="btn ghost" id="redo">Practice again</button></div>`;
+  $('#go2').onclick=()=>$('.tab[data-panel=p2]').click();$('#redo').onclick=()=>{qi=0;qs=0;showClassify()};steps(1);return}
+ steps(0);tState={type:null,intent:null,locked:false};const c=quiz[qi];
+ box.innerHTML=`<div class="legend"><span>Keyword ${qi+1} of ${quiz.length}</span></div>
+ <div class="kwbig">“${c.k}”</div>
+ <div class="q2">Is this a head or long-tail keyword?</div><div class="opts" id="o1">${["Head","Long-tail"].map(x=>`<button class="opt" data-v="${x}">${x}</button>`).join('')}</div>
+ <div class="q2">What is the searcher’s intent?</div><div class="opts" id="o2">${INTENTS.map(x=>`<button class="opt" data-v="${x}">${x}</button>`).join('')}</div>
+ <div class="live" id="fbk" aria-live="polite" style="margin-top:10px"></div>
+ <button class="btn" id="chk" style="margin-top:6px">Check answers</button>`;
+ $$('#o1 .opt').forEach(b=>b.onclick=()=>{if(tState.locked)return;tState.type=b.dataset.v;$$('#o1 .opt').forEach(x=>x.classList.toggle('sel',x===b))});
+ $$('#o2 .opt').forEach(b=>b.onclick=()=>{if(tState.locked)return;tState.intent=b.dataset.v;$$('#o2 .opt').forEach(x=>x.classList.toggle('sel',x===b))});
+ $('#chk').onclick=()=>{
+  if(tState.locked){qi++;showClassify();return}
+  if(!tState.type||!tState.intent){$('#fbk').className='live bad';$('#fbk').textContent='Choose one answer for each question.';return}
+  tState.locked=true;const t=tState.type===c.type,i=tState.intent===c.intent;qs+=t+i;
+  $$('#o1 .opt').forEach(x=>{x.classList.remove('sel');if(x.dataset.v===c.type)x.classList.add('good');else if(x.dataset.v===tState.type)x.classList.add('no')});
+  $$('#o2 .opt').forEach(x=>{x.classList.remove('sel');if(x.dataset.v===c.intent)x.classList.add('good');else if(x.dataset.v===tState.intent)x.classList.add('no')});
+  $('#fbk').className='live '+(t&&i?'ok':'bad');
+  $('#fbk').textContent=`${c.type} keyword (${c.k.split(' ').length} word${c.k.split(' ').length>1?'s':''}). Intent: ${c.intent.toLowerCase()}, the searcher is ${hint[c.intent]}.`;
+  $('#chk').textContent=qi===quiz.length-1?'Finish →':'Next keyword →';
+ };
+}
+/* Step 2 */
+let picks=new Set(),checked=false;
+function showChoose(){
+ steps(checked?2:1);const box=$('#p2');
+ box.innerHTML=`<div class="sticky"><div><h2 style="margin:0">Pick the 3 best keywords for Maple &amp; Moss</h2><div class="legend"><span><i style="background:var(--blue)"></i>Search volume</span><span><i style="background:var(--green)"></i>Relevance</span><span><i style="background:var(--coral)"></i>Competition</span><span>(illustrative scores)</span></div></div>
+ <button class="btn" id="chk2" style="margin-left:auto" disabled>Check my picks</button><button class="btn ghost" id="rs2">Reset</button></div>
+ <div class="grid" id="kg" style="margin-top:8px"></div><div class="res" id="res" aria-live="polite"></div>`;
+ K.forEach((o,i)=>{const b=document.createElement('button');b.className='kc'+(picks.has(i)?' sel':'');b.setAttribute('aria-pressed',picks.has(i));
+  b.innerHTML=`<b>${o.k}</b><span class="meta">${o.type} · ${o.intent}</span><span class="bars"><span>Vol</span><i class="v" style="--w:${o.v}%"></i><span>Rel</span><i class="r" style="--w:${o.r}%"></i><span>Comp</span><i class="c" style="--w:${o.c}%"></i></span>`;
+  b.onclick=()=>{if(checked)return;if(picks.has(i))picks.delete(i);else if(picks.size<3)picks.add(i);
+   $$('.kc').forEach((x,j)=>{x.classList.toggle('sel',picks.has(j));x.setAttribute('aria-pressed',picks.has(j))});$('#chk2').disabled=picks.size!==3};
+  $('#kg').appendChild(b)});
+ $('#chk2').disabled=picks.size!==3||checked;
+ $('#chk2').onclick=()=>{checked=true;steps(2);const sel=[...picks].map(i=>K[i]);const avg=Math.round(sel.reduce((a,o)=>a+o.score,0)/3);
+  $('#kg').style.display='none';
+  const rows=[...K.keys()].sort((x,y)=>K[y].score-K[x].score).map(i=>{const o=K[i],mine=picks.has(i);return `<div class="row" style="${mine?'background:#eaf1ff;font-weight:700;padding:4px 6px;border-radius:6px':'padding:4px 6px'}"><span>${mine?'★ ':''}${o.k}</span><b class="${o.score>=60?'ok':'bad'}">${o.score}</b></div>`}).join('');
+  $('#res').innerHTML=`<h2 style="margin-top:8px">Your picks average ${avg}/100 ${avg>=62?'🌟':''}</h2><div style="font-size:12.5px;color:var(--mute);margin-bottom:4px">★ = your picks. Score = relevance ×0.5 + search volume ×0.2 + low competition ×0.3.</div>${rows}<p style="margin-top:6px;font-size:13px">Relevance counts most: a high-volume term like “coffee” is hard to win and rarely matches what the brand sells. Scores of 60+ are strong fits.</p>`;
+  $('#chk2').disabled=true;$$('.kc').forEach(x=>x.style.cursor='default');};
+ $('#rs2').onclick=()=>{picks=new Set();checked=false;showChoose()};
+}
+showChoose();showClassify();
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{if(t.dataset.panel==='p2')steps(checked?2:1);else steps(qi>=quiz.length?1:0)}));
+</script></body></html>

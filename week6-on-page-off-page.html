@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 | On-Page and Off-Page SEO</title>
+<style>
+:root{--navy:#14284b;--teal:#0e8a87;--teal-d:#0a6b69;--amber:#f2a516;--coral:#e0522d;--green:#2e9e5b;--blue:#2f6fed;--bg:#f4f7fb;--card:#fff;--ink:#1d2433;--mute:#566074;--line:#d5dde8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column;padding:10px 14px;gap:8px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top svg.logo{width:42px;height:42px;flex:none}
+.top h1{font-size:19px;margin:0;color:var(--navy);line-height:1.15}
+.top .sub{color:var(--mute);font-size:12.5px}
+.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--navy)}
+.tab[aria-selected=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+main{flex:1;min-height:0;overflow:auto}
+.panel[hidden]{display:none}
+.panel{height:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.btn{border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer;background:var(--teal);color:#fff}
+.btn:hover{background:var(--teal-d)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.ghost:hover{background:#eef3fa}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em}
+.tag.on{background:#dff3f2;color:#0a6b69}.tag.off{background:#fde9d4;color:#9a4b05}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+svg [role=button]{cursor:pointer}
+svg [role=button]:focus-visible{outline:none}
+svg [role=button]:focus-visible .ring{stroke:var(--blue);stroke-width:4}
+.live{min-height:1.4em}
+.ok{color:#17753f;font-weight:600}.bad{color:#b4371a;font-weight:600}
+h2{font-size:16px;margin:0 0 4px;color:var(--navy)}
+p{margin:0 0 6px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:700px){.tabs{margin-left:0}.top h1{font-size:16px}}
+
+.map svg{width:100%;height:auto;display:block;max-height:345px}
+.hs .ring{fill:#fff;stroke:var(--navy);stroke-width:3}
+.hs text{font-size:12px;font-weight:800;fill:var(--navy);text-anchor:middle;pointer-events:none;font-family:sans-serif}
+.hs.off .ring{stroke:#c26a08}
+.hs.act .ring{fill:var(--navy)}.hs.off.act .ring{fill:#c26a08}
+.hs.act text{fill:#fff}
+.hs{transition:opacity .2s}.hs.dim{opacity:.18}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0 2px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:99px;padding:4px 13px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:var(--navy)}
+.chip[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.info{display:flex;gap:12px;align-items:flex-start;margin-top:6px}
+.info .tip{background:#fff7e6;border-left:4px solid var(--amber);padding:6px 10px;border-radius:6px;font-size:13.5px;margin-top:5px}
+.lab{display:grid;grid-template-columns:1fr 1.05fr;gap:14px}
+.f{margin-bottom:8px}.f label{display:flex;justify-content:space-between;font-weight:700;font-size:13px;color:var(--navy)}
+.f input[type=text],.f textarea{width:100%;border:2px solid var(--line);border-radius:8px;padding:6px 9px;font:inherit;font-size:14px}
+.f textarea{resize:none;height:84px}
+.cnt{font-weight:600;color:var(--mute)}.cnt.bad{color:#b4371a}.cnt.ok{color:#17753f}
+.serp{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+.serp .u{font-size:12px;color:#3c6a4b;display:flex;align-items:center;gap:6px}
+.serp .t{font-size:19px;color:#1a0dab;margin:2px 0;line-height:1.25;word-break:break-word}
+.serp .d{font-size:13.5px;color:#4d5156}
+.serp.mob{max-width:300px}.serp.mob .t{font-size:17px}
+.thumb{display:flex;gap:8px;align-items:center;margin-top:8px;background:#f7f9fc;border-radius:10px;padding:6px}
+.thumb svg{width:64px;height:48px;flex:none}
+.thumb code{font-size:12px;color:var(--mute);word-break:break-word}
+.chk{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:13px}
+.chk li{display:flex;gap:6px;align-items:flex-start}
+.chk .m{font-weight:800;width:16px;flex:none}
+.chk .p .m{color:var(--green)}.chk .n .m{color:var(--coral)}.chk .n{color:var(--mute)}
+.ringwrap{display:flex;align-items:center;gap:10px;margin-top:8px}
+@media (max-width:800px){.lab{grid-template-columns:1fr}.chk{grid-template-columns:1fr}}
+</style></head>
+<body><div class="app">
+<div class="top">
+<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="10" width="24" height="28" rx="4" fill="#e8f6f5" stroke="#14284b" stroke-width="3"/><path d="M18 18h12M18 24h12M18 30h7" stroke="#0e8a87" stroke-width="3" stroke-linecap="round"/><path d="M4 12l6 3M4 36l6-3M44 12l-6 3M44 36l-6-3" stroke="#c26a08" stroke-width="3" stroke-linecap="round"/></svg>
+<div><h1>On-Page &amp; Off-Page SEO</h1><div class="sub">Week 6 · Optimize for On-Page and Off-Page SEO</div></div>
+<div class="tabs" role="tablist">
+<button class="tab" role="tab" aria-selected="true" data-panel="p1">1 · Anatomy Map</button>
+<button class="tab" role="tab" aria-selected="false" data-panel="p2">2 · Snippet Lab</button>
+</div></div>
+<main>
+<section class="panel" id="p1">
+<div class="card map"><svg viewBox="0 0 900 380" id="msvg" role="group" aria-label="Interactive web page diagram with numbered SEO hotspots">
+<defs><marker id="ar2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5 0 10z" fill="#c26a08"/></marker></defs>
+<!-- off-page nodes -->
+<g stroke="#c26a08" stroke-width="3" fill="none" marker-end="url(#ar2)"><path d="M200 78Q230 90 252 112" marker-end="url(#ar2)"/><path d="M200 188Q230 190 252 190" marker-end="url(#ar2)"/><path d="M700 78Q670 90 648 112" marker-end="url(#ar2)"/><path d="M700 188Q670 190 648 190" marker-end="url(#ar2)"/></g>
+<g font-family="sans-serif" font-size="14" font-weight="700" fill="#14284b">
+<rect x="14" y="46" width="186" height="58" rx="14" fill="#fde9d4" stroke="#c26a08" stroke-width="3"/><text x="107" y="70" text-anchor="middle">News site</text><text x="107" y="90" text-anchor="middle" font-size="12" font-weight="600">links to your page</text>
+<rect x="14" y="160" width="186" height="58" rx="14" fill="#fde9d4" stroke="#c26a08" stroke-width="3"/><text x="107" y="184" text-anchor="middle">Partner blog</text><text x="107" y="204" text-anchor="middle" font-size="12" font-weight="600">backlink</text>
+<rect x="700" y="46" width="186" height="58" rx="14" fill="#fde9d4" stroke="#c26a08" stroke-width="3"/><text x="793" y="70" text-anchor="middle">Customer reviews</text><text x="793" y="90" text-anchor="middle" font-size="13" fill="#f2a516" stroke="#c26a08" stroke-width=".6">★★★★★</text>
+<rect x="700" y="160" width="186" height="58" rx="14" fill="#fde9d4" stroke="#c26a08" stroke-width="3"/><text x="793" y="184" text-anchor="middle">Brand mentions</text><text x="793" y="204" text-anchor="middle" font-size="12" font-weight="600">across the web</text></g>
+<!-- browser -->
+<rect x="250" y="14" width="400" height="352" rx="14" fill="#fff" stroke="#14284b" stroke-width="4"/>
+<rect x="250" y="14" width="400" height="38" rx="14" fill="#e3e9f2"/><rect x="262" y="22" width="150" height="30" rx="8" fill="#fff" stroke="#14284b" stroke-width="2"/><text x="272" y="42" font-size="12" font-family="sans-serif" fill="#14284b" font-weight="700">Ethiopian Coffee Beans | M&amp;M</text>
+<rect x="262" y="58" width="376" height="22" rx="11" fill="#f1f4f9" stroke="#c7d2e2"/><text x="274" y="73" font-size="12" font-family="sans-serif" fill="#3c6a4b">mapleandmoss.com/ethiopian-coffee-beans</text>
+<rect x="282" y="94" width="230" height="17" rx="4" fill="#14284b"/><rect x="282" y="120" width="150" height="10" rx="3" fill="#566074"/>
+<g><rect x="282" y="142" width="130" height="92" rx="8" fill="#dbe9f7" stroke="#14284b" stroke-width="2.5"/><path d="M300 214l30-36 22 24 14-14 28 26z" fill="#2e9e5b" stroke="#14284b" stroke-width="2"/><circle cx="388" cy="162" r="8" fill="#f2a516"/></g>
+<g fill="#c7d2e2"><rect x="426" y="146" width="200" height="8" rx="3"/><rect x="426" y="162" width="190" height="8" rx="3"/><rect x="426" y="178" width="200" height="8" rx="3"/><rect x="426" y="194" width="160" height="8" rx="3"/><rect x="426" y="210" width="190" height="8" rx="3"/></g>
+<rect x="282" y="248" width="178" height="20" rx="4" fill="#eaf1ff"/><text x="290" y="263" font-size="12" font-family="sans-serif" fill="#2f6fed" text-decoration="underline">Related: Pour-over brewing guide</text>
+<rect x="592" y="236" width="34" height="50" rx="7" fill="#fff" stroke="#14284b" stroke-width="3"/><rect x="597" y="244" width="24" height="30" rx="2" fill="#dbe9f7"/>
+<rect x="262" y="296" width="376" height="58" rx="8" fill="#14284b"/>
+<g font-family="monospace" font-size="11" fill="#9fb4d3"><text x="272" y="313">&lt;head&gt;</text><text x="284" y="328" fill="#f2c36b">&lt;meta name="description" content="…"&gt;</text><text x="284" y="343">&lt;title&gt;Ethiopian Coffee Beans&lt;/title&gt;</text></g>
+</svg></div>
+<div class="filters" role="group" aria-label="Filter hotspots"><b style="font-size:13px">Show:</b><button class="chip" data-f="all" aria-pressed="true">All</button><button class="chip" data-f="on" aria-pressed="false">On-page</button><button class="chip" data-f="off" aria-pressed="false">Off-page</button><span style="font-size:12.5px;color:var(--mute)">Select a numbered circle to learn more.</span></div>
+<div class="card info" aria-live="polite"><div><span class="tag on" id="itag">On-page</span><h2 id="ittl" style="display:inline;margin-left:6px"></h2><p id="itxt" style="margin-top:4px"></p><div class="tip"><b>Try this: </b><span id="itip"></span></div></div></div>
+</section>
+<section class="panel" id="p2" hidden>
+<div class="lab card">
+<div>
+<div class="f"><label for="kw">Target keyword</label><input type="text" id="kw" value="ethiopian coffee beans"></div>
+<div class="f"><label for="ti">Title tag <span class="cnt" id="tc"></span></label><input type="text" id="ti" value="Home"></div>
+<div class="f"><label for="de">Meta description <span class="cnt" id="dc"></span></label><textarea id="de">Welcome to our website.</textarea></div>
+<div class="f"><label for="al">Image alt text <span class="cnt" id="ac"></span></label><input type="text" id="al" value="IMG_4021"></div>
+<button class="btn ghost" id="ex">Show an optimized example</button>
+</div>
+<div>
+<div class="filters" style="margin-top:0"><b style="font-size:13px">Preview on:</b><button class="chip" data-d="desk" aria-pressed="true">Desktop</button><button class="chip" data-d="mob" aria-pressed="false">Mobile</button></div>
+<div class="serp" id="serp"><div class="u"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="#e0522d"/><path d="M5 9c1-3 5-3 6 0" stroke="#fff" stroke-width="1.6" fill="none"/></svg>mapleandmoss.com › ethiopian-coffee-beans</div><div class="t" id="pt"></div><div class="d" id="pd"></div></div>
+<div class="thumb"><svg viewBox="0 0 64 48" aria-hidden="true"><rect width="64" height="48" rx="6" fill="#dbe9f7"/><path d="M8 40l16-20 12 13 8-8 12 15z" fill="#2e9e5b"/><circle cx="48" cy="14" r="5" fill="#f2a516"/></svg><code id="pa"></code></div>
+<div class="ringwrap"><svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="22" fill="none" stroke="#e3e9f2" stroke-width="7"/><circle id="rg" cx="27" cy="27" r="22" fill="none" stroke="#2e9e5b" stroke-width="7" stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="138.2" transform="rotate(-90 27 27)"/></svg><div><b id="sct" style="font-size:15px"></b><div style="font-size:12.5px;color:var(--mute)" id="scs"></div></div></div>
+<ul class="chk" id="cl" aria-live="polite"></ul>
+</div></div>
+</section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
+  $$('.panel').forEach(p=>p.hidden=p.id!==t.dataset.panel);
+}));
+
+const H=[
+{on:1,n:"Title tag",x:424,y:37,t:"The page title shown in the browser tab and as the blue headline in search results.",tip:"Put the main keyword near the front and keep it under about 60 characters."},
+{on:1,n:"URL",x:626,y:69,t:"The page address. Short, readable URLs help people and search engines understand the page topic.",tip:"Use plain words like /ethiopian-coffee-beans instead of /page?id=4821."},
+{on:1,n:"Main heading (H1)",x:520,y:103,t:"The headline on the page. Headings and subheadings organize content and signal what each section covers.",tip:"Use one clear H1 that matches the page topic, then H2s for sections."},
+{on:1,n:"Image alt text",x:414,y:152,t:"A text description of an image. It helps people using screen readers and tells search engines what the image shows.",tip:"Describe the image in plain words: “Bag of single-origin Ethiopian coffee beans on a wooden table.”"},
+{on:1,n:"Quality content",x:626,y:152,t:"The body copy. High-quality content that matches search intent and uses keywords naturally is the heart of on-page SEO.",tip:"Answer the question a searcher has, in the words they use. Don’t repeat the keyword unnaturally."},
+{on:1,n:"Internal link",x:474,y:258,t:"A link from one page of your site to another. It helps visitors and search engines find related content.",tip:"Use descriptive link text such as “pour-over brewing guide” rather than “click here.”"},
+{on:1,n:"Mobile-friendly layout",x:630,y:236,t:"Many people search on phones. Pages should be easy to read and use on small screens.",tip:"Check text size, tap targets, and that nothing needs sideways scrolling."},
+{on:1,n:"Meta description",x:630,y:300,t:"A short summary in the page code. Search engines often show it under the title, and it can encourage clicks.",tip:"Write a clear 120–155 character summary with the keyword and a reason to click."},
+{on:0,n:"Backlink from a news site",x:206,y:62,t:"A link to your page from another reputable site. Backlinks are a major off-page signal of credibility.",tip:"Create something worth citing, such as original data or a helpful guide."},
+{on:0,n:"Backlink from a partner blog",x:206,y:176,t:"Links from related, trusted sites act like endorsements. Quality matters more than quantity.",tip:"Build relationships with sites your audience already trusts."},
+{on:0,n:"Customer reviews",x:694,y:62,t:"Reviews on other sites shape a brand’s reputation and can support local visibility.",tip:"Make it easy for happy customers to leave an honest review."},
+{on:0,n:"Brand mentions",x:694,y:176,t:"Mentions, social conversation, and relationships with other sites all contribute to a brand’s reputation across the web.",tip:"Be present and genuinely useful where your audience talks."}
+];
+const sv=$('#msvg');let flt='all';
+H.forEach((h,i)=>{const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('class','hs '+(h.on?'on':'off'));g.setAttribute('role','button');g.setAttribute('tabindex','0');g.setAttribute('aria-label',(h.on?'On-page: ':'Off-page: ')+h.n);
+ g.innerHTML=`<circle class="ring" cx="${h.x}" cy="${h.y}" r="12"/><text x="${h.x}" y="${h.y+4}">${i+1}</text>`;
+ const f=()=>sel(i);g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}});sv.appendChild(g)});
+function sel(i){const h=H[i];$$('.hs').forEach((g,k)=>g.classList.toggle('act',k===i));
+ $('#itag').textContent=h.on?'On-page':'Off-page';$('#itag').className='tag '+(h.on?'on':'off');
+ $('#ittl').textContent=(i+1)+'. '+h.n;$('#itxt').textContent=h.t;$('#itip').textContent=h.tip}
+$$('[data-f]').forEach(b=>b.onclick=()=>{flt=b.dataset.f;$$('[data-f]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+ $$('.hs').forEach((g,k)=>g.classList.toggle('dim',flt!=='all'&&(flt==='on')!==!!H[k].on))});
+sel(0);
+/* Snippet lab */
+let dev='desk';
+$$('[data-d]').forEach(b=>b.onclick=()=>{dev=b.dataset.d;$$('[data-d]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#serp').classList.toggle('mob',dev==='mob');upd()});
+$('#ex').onclick=()=>{$('#kw').value='ethiopian coffee beans';$('#ti').value='Ethiopian Coffee Beans: Fresh Roasted | Maple & Moss';$('#de').value='Shop fresh-roasted Ethiopian coffee beans from our Portland roastery. Bright, fruity single-origin flavor, roasted to order. Order today!';$('#al').value='Bag of fresh-roasted Ethiopian coffee beans on a wooden table';upd()};
+['kw','ti','de','al'].forEach(id=>$('#'+id).addEventListener('input',upd));
+function cut(s,n){return s.length>n?s.slice(0,n-1).trimEnd()+'…':s}
+function upd(){
+ const kw=$('#kw').value.trim().toLowerCase(),ti=$('#ti').value,de=$('#de').value,al=$('#al').value;
+ const tl=ti.length,dl=de.length,alt=al.trim().split(/\s+/).filter(Boolean);
+ const dmax=dev==='mob'?120:155;
+ const cn=(el,txt,ok)=>{el.textContent=txt;el.className='cnt '+(ok?'ok':'bad')};
+ cn($('#tc'),tl+' / 60',tl>=30&&tl<=60);cn($('#dc'),dl+' (aim 120–155)',dl>=120&&dl<=155);cn($('#ac'),alt.length+' words',alt.length>=4&&al.length<=125);
+ $('#pt').textContent=cut(ti||'(no title)',60);$('#pd').textContent=cut(de||'(no description)',dmax);$('#pa').textContent='alt="'+al+'"';
+ const kws=kw.split(/\s+/).filter(w=>w.length>3);
+ const checks=[
+  ["Keyword appears in the title",kw&&ti.toLowerCase().includes(kw)],
+  ["Keyword is near the start of the title",kw&&ti.toLowerCase().indexOf(kw)>-1&&ti.toLowerCase().indexOf(kw)<=15],
+  ["Title is 30–60 characters",tl>=30&&tl<=60],
+  ["Description is 120–155 characters",dl>=120&&dl<=155],
+  ["Keyword appears in the description",kw&&de.toLowerCase().includes(kw)],
+  ["Description has a reason to click (shop, order, learn…)",/\b(shop|buy|order|learn|discover|try|get|find|explore|read)\b/i.test(de)],
+  ["Alt text describes the image (4+ words, uses the topic)",alt.length>=4&&al.length<=125&&kws.some(w=>al.toLowerCase().includes(w))]
+ ];
+ const p=checks.filter(c=>c[1]).length;
+ $('#cl').innerHTML=checks.map(c=>`<li class="${c[1]?'p':'n'}"><span class="m">${c[1]?'✓':'○'}</span>${c[0]}</li>`).join('');
+ $('#rg').setAttribute('stroke-dashoffset',138.2*(1-p/7));
+ $('#sct').textContent=p+' of 7 checks passed';$('#scs').textContent=p===7?'🎉 A well-optimized snippet and image!':'Edit the fields to light up every check.';
+}
+upd();
+</script></body></html>

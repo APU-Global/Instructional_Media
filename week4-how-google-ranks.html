@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 | How Google Ranks Pages</title>
+<style>
+:root{--navy:#14284b;--teal:#0e8a87;--teal-d:#0a6b69;--amber:#f2a516;--coral:#e0522d;--green:#2e9e5b;--blue:#2f6fed;--bg:#f4f7fb;--card:#fff;--ink:#1d2433;--mute:#566074;--line:#d5dde8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column;padding:10px 14px;gap:8px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top svg.logo{width:42px;height:42px;flex:none}
+.top h1{font-size:19px;margin:0;color:var(--navy);line-height:1.15}
+.top .sub{color:var(--mute);font-size:12.5px}
+.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--navy)}
+.tab[aria-selected=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+main{flex:1;min-height:0;overflow:auto}
+.panel[hidden]{display:none}
+.panel{height:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.btn{border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer;background:var(--teal);color:#fff}
+.btn:hover{background:var(--teal-d)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.ghost:hover{background:#eef3fa}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em}
+.tag.on{background:#dff3f2;color:#0a6b69}.tag.off{background:#fde9d4;color:#9a4b05}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+svg [role=button]{cursor:pointer}
+svg [role=button]:focus-visible{outline:none}
+svg [role=button]:focus-visible .ring{stroke:var(--blue);stroke-width:4}
+.live{min-height:1.4em}
+.ok{color:#17753f;font-weight:600}.bad{color:#b4371a;font-weight:600}
+h2{font-size:16px;margin:0 0 4px;color:var(--navy)}
+p{margin:0 0 6px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:700px){.tabs{margin-left:0}.top h1{font-size:16px}}
+
+.pipe svg{width:100%;height:auto;display:block;max-height:165px}
+.zone rect.bg{fill:#fff;stroke:var(--line);stroke-width:3;transition:.25s}
+.zone.act rect.bg{fill:#eaf6f5;stroke:var(--teal);stroke-width:4}
+.zone text.lbl{font-size:17px;font-weight:800;fill:var(--navy);text-anchor:middle}
+.bot{transition:transform .9s ease}
+.steps2{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 0}
+.sb{border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 14px;font:inherit;font-weight:700;color:var(--navy);cursor:pointer}
+.sb[aria-pressed=true]{background:var(--teal);color:#fff;border-color:var(--teal)}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;margin-top:6px}
+.scn{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:5px 9px;margin-bottom:4px;font-size:13px;line-height:1.35}
+.scn .row{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.scn .row button{border:2px solid var(--line);background:#fff;border-radius:8px;padding:3px 11px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--navy)}
+.scn .row button.good{border-color:var(--green);background:#e6f6ec}.scn .row button.no{border-color:var(--coral);background:#fdeae4}
+.lab{display:grid;grid-template-columns:minmax(260px,1fr) 1fr;gap:14px;align-items:center}
+.lab svg{width:100%;height:auto;display:block;background:#eef4fb;border-radius:14px}
+.ctl{display:flex;flex-direction:column;gap:9px}
+.sl label{display:flex;justify-content:space-between;font-weight:700;color:var(--navy);font-size:13.5px}
+.sl input[type=range]{width:100%;accent-color:var(--teal)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--navy)}
+.chip[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pos{background:#fff7e6;border-left:4px solid var(--amber);padding:7px 10px;border-radius:6px;font-size:13.5px}
+.pos b.big{font-size:20px;color:var(--navy)}
+.pre{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px}
+@media (max-width:760px){.two,.lab{grid-template-columns:1fr}}
+</style></head>
+<body><div class="app">
+<div class="top">
+<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 40V28h9v12M19 40V14h9v26M32 40V22h9v18" fill="#e8f6f5" stroke="#14284b" stroke-width="3" stroke-linejoin="round"/><path d="M10 22l1.5-4 1.5 4M23 8l1.5-4 1.5 4" stroke="#f2a516" stroke-width="3" stroke-linecap="round"/></svg>
+<div><h1>How Google Ranks Pages</h1><div class="sub">Week 4 · Google Top Ranking Factors</div></div>
+<div class="tabs" role="tablist">
+<button class="tab" role="tab" aria-selected="true" data-panel="p1">1 · Crawl → Index → Rank</button>
+<button class="tab" role="tab" aria-selected="false" data-panel="p2">2 · Three Pillars Lab</button>
+</div></div>
+<main>
+<section class="panel" id="p1">
+<div class="card pipe"><svg viewBox="0 0 900 215" role="img" aria-label="Three stages: crawling, indexing, ranking">
+<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5 0 10z" fill="#14284b"/></marker></defs>
+<g class="zone" id="z0"><rect class="bg" x="10" y="10" width="270" height="195" rx="16"/><text class="lbl" x="145" y="38">1 · Crawling</text>
+<g stroke="#14284b" stroke-width="2.5" fill="none"><path d="M70 100L145 80M145 80L220 105M145 80L145 150M70 100L90 160M220 105L205 160"/></g>
+<g fill="#fff" stroke="#14284b" stroke-width="3"><rect x="50" y="86" width="40" height="30" rx="4"/><rect x="125" y="64" width="40" height="30" rx="4"/><rect x="200" y="90" width="40" height="30" rx="4"/><rect x="125" y="136" width="40" height="30" rx="4"/><rect x="70" y="150" width="40" height="30" rx="4"/><rect x="185" y="150" width="40" height="30" rx="4"/></g>
+<g class="bot" id="bot" transform="translate(0 0)"><circle cx="145" cy="79" r="11" fill="#e0522d" stroke="#14284b" stroke-width="3"/><path d="M134 74l-9-6M134 80l-11 0M134 86l-9 6M156 74l9-6M156 80l11 0M156 86l9 6" stroke="#14284b" stroke-width="2.5" stroke-linecap="round"/></g></g>
+<path d="M285 108h50" stroke="#14284b" stroke-width="4" marker-end="url(#ar)"/>
+<g class="zone" id="z1"><rect class="bg" x="340" y="10" width="270" height="195" rx="16"/><text class="lbl" x="475" y="38">2 · Indexing</text>
+<g fill="#fff" stroke="#14284b" stroke-width="3"><rect x="370" y="60" width="210" height="130" rx="6"/></g><path d="M370 103h210M370 146h210" stroke="#14284b" stroke-width="3"/>
+<g stroke="#14284b" stroke-width="2"><rect x="382" y="72" width="22" height="26" fill="#f2a516"/><rect x="410" y="72" width="22" height="26" fill="#0e8a87"/><rect x="438" y="72" width="22" height="26" fill="#7a5af8"/><rect x="466" y="72" width="22" height="26" fill="#e0522d"/><rect x="494" y="72" width="22" height="26" fill="#2f6fed"/>
+<rect x="382" y="115" width="22" height="26" fill="#2f6fed"/><rect x="410" y="115" width="22" height="26" fill="#f2a516"/><rect x="438" y="115" width="22" height="26" fill="#e0522d"/><rect x="466" y="115" width="22" height="26" fill="#0e8a87"/>
+<rect x="382" y="158" width="22" height="26" fill="#7a5af8"/><rect x="410" y="158" width="22" height="26" fill="#0e8a87"/></g></g>
+<path d="M615 108h50" stroke="#14284b" stroke-width="4" marker-end="url(#ar)"/>
+<g class="zone" id="z2"><rect class="bg" x="670" y="10" width="220" height="195" rx="16"/><text class="lbl" x="780" y="38">3 · Ranking</text>
+<g stroke="#14284b" stroke-width="3"><rect x="690" y="120" width="56" height="70" fill="#c7d2e2"/><rect x="752" y="90" width="56" height="100" fill="#f2a516"/><rect x="814" y="140" width="56" height="50" fill="#e1c9a5"/></g>
+<g font-family="sans-serif" font-weight="800" font-size="22" fill="#14284b" text-anchor="middle"><text x="718" y="162">2</text><text x="780" y="140">1</text><text x="842" y="172">3</text></g>
+<path d="M780 54l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f2a516" stroke="#14284b" stroke-width="2"/></g>
+</svg></div>
+<div class="steps2" role="group" aria-label="Choose a stage"><button class="sb" data-s="0" aria-pressed="true">1 · Crawling</button><button class="sb" data-s="1" aria-pressed="false">2 · Indexing</button><button class="sb" data-s="2" aria-pressed="false">3 · Ranking</button></div>
+<div class="two">
+<div class="card" aria-live="polite"><h2 id="st"></h2><p id="sx"></p><p><b>Helps this stage: </b><span id="sh"></span></p></div>
+<div class="card"><h2>Where is the problem?</h2><div id="scn"></div><div class="live" id="sc" style="font-size:13px;color:var(--mute)"></div></div>
+</div>
+</section>
+<section class="panel" id="p2" hidden>
+<div class="card lab">
+<svg viewBox="0 0 360 270" role="img" aria-label="A stool with three legs for relevance, authority and trust. A page balances on top." id="stool"></svg>
+<div class="ctl">
+<div class="pre"><b>Try a scenario:</b><button class="chip" data-p="0">New blog, great answers</button><button class="chip" data-p="1">Old site, many links, outdated</button><button class="chip" data-p="2">Local bakery</button></div>
+<div class="sl"><label for="rel">Relevance <span id="rv"></span></label><input type="range" id="rel" min="0" max="100" value="60"></div>
+<div class="sl"><label for="aut">Authority <span id="av"></span></label><input type="range" id="aut" min="0" max="100" value="40"></div>
+<div class="sl"><label>Trust, built with E-E-A-T <span id="tv"></span></label><div class="chips" id="eeat"></div></div>
+<div class="pos" aria-live="polite"><div>Estimated spot for this search: <b class="big" id="pp"></b></div><div id="pm"></div></div>
+<div style="font-size:12px;color:var(--mute)">A simplified model for learning. Real rankings use many more signals.</div>
+</div></div>
+</section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
+  $$('.panel').forEach(p=>p.hidden=p.id!==t.dataset.panel);
+}));
+
+const stages=[
+{t:"Crawling: finding pages",x:"Search engines send automated programs (bots) that discover pages by following links from page to page.",h:"Links pointing to your pages, clear site navigation, and pages that bots are allowed to visit."},
+{t:"Indexing: storing what was found",x:"The search engine stores and organizes what it found so it can retrieve pages quickly. Pages must have enough original, useful content to be worth keeping.",h:"Original, helpful content that is clearly about a topic."},
+{t:"Ranking: deciding who goes first",x:"For each search, the engine orders the stored pages by how well they match. Relevance, authority, and trust are central to that decision.",h:"Content that matches search intent, quality links from related sites, and signs of credibility (E-E-A-T)."}
+];
+let cs=0;const botPos=[[0,0],[60,40],[-40,70]];
+function stage(i){cs=i;
+ $$('.zone').forEach((z,k)=>z.classList.toggle('act',k===i));
+ $$('.sb').forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+ $('#st').textContent=stages[i].t;$('#sx').textContent=stages[i].x;$('#sh').textContent=stages[i].h;
+ const bp=[[0,0],[75,85],[-75,60]];const p=bp[Math.min(2,Math.floor(Math.random()*3))];
+ $('#bot').setAttribute('transform',i===0?`translate(${p[0]*0.0} ${p[1]*0})`:'translate(0 0)');
+ if(i===0){let k=0;clearInterval(window._b);const wp=[[0,0],[75,26],[0,70],[-75,22],[-55,80],[0,0]];
+  window._b=setInterval(()=>{k=(k+1)%wp.length;$('#bot').setAttribute('transform',`translate(${wp[k][0]} ${wp[k][1]})`)},1000)}
+ else clearInterval(window._b);
+}
+$$('.sb').forEach(b=>b.onclick=()=>stage(+b.dataset.s));stage(0);
+const sc=[
+{t:"A new page has no links pointing to it, so Google never discovers it.",a:0},
+{t:"Google found a page, but it has almost no original content, so it isn’t kept.",a:1},
+{t:"A page is stored, but three competitors answer the search better and have more trusted links.",a:2},
+{t:"A site setting blocks search engine bots from visiting a page.",a:0}];
+let right=0,ans=0;
+sc.forEach((s,i)=>{const d=document.createElement('div');d.className='scn';d.innerHTML=`${s.t}<div class="row">${['Crawling','Indexing','Ranking'].map((n,j)=>`<button data-j="${j}">${n}</button>`).join('')}</div>`;
+ $$('button',d).forEach(b=>b.onclick=()=>{if(d.dataset.done)return;d.dataset.done=1;ans++;const ok=+b.dataset.j===s.a;if(ok)right++;
+  b.classList.add(ok?'good':'no');if(!ok)$$('button',d)[s.a].classList.add('good');
+  $('#sc').textContent=ans===sc.length?`You placed ${right} of ${sc.length} correctly.`:`${ans} of ${sc.length} answered.`});
+ $('#scn').appendChild(d)});
+/* Pillars lab */
+const EE=["Experience","Expertise","Authoritativeness","Trustworthiness"];const ee=[true,false,false,false];
+const eb=$('#eeat');EE.forEach((n,i)=>{const b=document.createElement('button');b.className='chip';b.textContent=n;b.setAttribute('aria-pressed',ee[i]);b.onclick=()=>{ee[i]=!ee[i];b.setAttribute('aria-pressed',ee[i]);draw()};eb.appendChild(b)});
+$('#rel').oninput=draw;$('#aut').oninput=draw;
+const presets=[{r:85,a:15,e:[1,1,0,0]},{r:35,a:90,e:[0,0,1,0]},{r:75,a:50,e:[1,1,0,1]}];
+$$('[data-p]').forEach(b=>b.onclick=()=>{const p=presets[b.dataset.p];$('#rel').value=p.r;$('#aut').value=p.a;p.e.forEach((v,i)=>ee[i]=!!v);$$('.chip',eb).forEach((c,i)=>c.setAttribute('aria-pressed',ee[i]));draw()});
+function draw(){
+ const r=+$('#rel').value,a=+$('#aut').value,t=ee.filter(Boolean).length*25;
+ $('#rv').textContent=r;$('#av').textContent=a;$('#tv').textContent=t;
+ const vals=[r,a,t],names=['Relevance','Authority','Trust'],cols=['#2e9e5b','#2f6fed','#f2a516'];
+ const min=Math.min(...vals),avg=(r+a+t)/3,score=.5*min+.5*avg;
+ const pos=Math.max(1,Math.min(15,Math.round(1+(100-score)/100*14)));
+ $('#pp').textContent=pos<=10?'Page 1, position #'+pos:'Page 2 or beyond (about #'+pos+')';
+ const wi=vals.indexOf(min);
+ $('#pm').textContent=min>=60?'Well balanced. All three pillars are carrying their weight.':`Weakest pillar: ${names[wi]}. Strength in one area cannot fully make up for weakness in the others.`;
+ const xs=[70,180,290],gy=250;const tops=vals.map(v=>gy-(30+v*1.4));
+ let s=`<rect x="0" y="${gy}" width="360" height="20" fill="#c7d2e2"/>`;
+ xs.forEach((x,i)=>{s+=`<rect x="${x-14}" y="${tops[i]}" width="28" height="${gy-tops[i]}" rx="4" fill="${cols[i]}" stroke="#14284b" stroke-width="3"/><text x="${x}" y="${gy+15}" text-anchor="middle" font-size="12" font-weight="700" font-family="sans-serif" fill="#14284b">${names[i]}</text><text x="${x}" y="${tops[i]+22}" text-anchor="middle" font-size="12" font-weight="800" font-family="sans-serif" fill="#fff">${vals[i]}</text>`});
+ s+=`<path d="M${xs[0]} ${tops[0]-8}L${xs[1]} ${tops[1]-8}L${xs[2]} ${tops[2]-8}" fill="none" stroke="#14284b" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/><path d="M${xs[0]} ${tops[0]-8}L${xs[1]} ${tops[1]-8}L${xs[2]} ${tops[2]-8}" fill="none" stroke="#e1c9a5" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>`;
+ const py=tops[1]-8-8;const ang=Math.atan2(tops[2]-tops[0],xs[2]-xs[0])*180/Math.PI*0.6;
+ s+=`<g transform="translate(180 ${py}) rotate(${ang})"><rect x="-30" y="-44" width="60" height="44" rx="5" fill="#fff" stroke="#14284b" stroke-width="3"/><path d="M-20 -32h40M-20 -23h30M-20 -14h36" stroke="#0e8a87" stroke-width="3.5" stroke-linecap="round"/></g>`;
+ s+=`<g><rect x="262" y="8" width="90" height="30" rx="15" fill="#14284b"/><text x="307" y="28" text-anchor="middle" font-size="14" font-weight="800" font-family="sans-serif" fill="#fff">${pos<=10?'#'+pos:'Page 2+'}</text></g>`;
+ $('#stool').innerHTML=s;
+}
+draw();
+</script></body></html>

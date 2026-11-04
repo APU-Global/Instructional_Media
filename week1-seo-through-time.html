@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 1 | SEO Through Time</title>
+<style>
+:root{--navy:#14284b;--teal:#0e8a87;--teal-d:#0a6b69;--amber:#f2a516;--coral:#e0522d;--green:#2e9e5b;--blue:#2f6fed;--bg:#f4f7fb;--card:#fff;--ink:#1d2433;--mute:#566074;--line:#d5dde8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column;padding:10px 14px;gap:8px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top svg.logo{width:42px;height:42px;flex:none}
+.top h1{font-size:19px;margin:0;color:var(--navy);line-height:1.15}
+.top .sub{color:var(--mute);font-size:12.5px}
+.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--navy)}
+.tab[aria-selected=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+main{flex:1;min-height:0;overflow:auto}
+.panel[hidden]{display:none}
+.panel{height:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.btn{border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer;background:var(--teal);color:#fff}
+.btn:hover{background:var(--teal-d)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.ghost:hover{background:#eef3fa}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em}
+.tag.on{background:#dff3f2;color:#0a6b69}.tag.off{background:#fde9d4;color:#9a4b05}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+svg [role=button]{cursor:pointer}
+svg [role=button]:focus-visible{outline:none}
+svg [role=button]:focus-visible .ring{stroke:var(--blue);stroke-width:4}
+.live{min-height:1.4em}
+.ok{color:#17753f;font-weight:600}.bad{color:#b4371a;font-weight:600}
+h2{font-size:16px;margin:0 0 4px;color:var(--navy)}
+p{margin:0 0 6px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:700px){.tabs{margin-left:0}.top h1{font-size:16px}}
+
+.tl{padding:8px 10px}
+.tl svg{width:100%;height:auto;display:block;max-height:150px}
+.node .ring{fill:#fff;stroke:var(--line);stroke-width:3;transition:.2s}
+.node.visited .ring{stroke:var(--teal)}
+.node.active .ring{fill:var(--navy);stroke:var(--navy)}
+.node text.yr{font-size:12px;font-weight:700;fill:var(--navy);text-anchor:middle}
+.node text.ic{font-size:15px;text-anchor:middle;fill:var(--navy)}
+.node.active text.ic{fill:#fff}
+.detail{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:8px;align-items:center;font-size:16.5px}
+.scene{background:#eef4fb;border-radius:12px;padding:6px}
+.scene svg{width:100%;height:auto;display:block}
+.era-yr{color:var(--teal-d);font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}
+.lesson{background:#fff7e6;border-left:4px solid var(--amber);padding:7px 10px;border-radius:6px;margin-top:6px}
+.nav{display:flex;gap:8px;align-items:center;margin-top:8px}
+.dots{margin-left:auto;font-size:12.5px;color:var(--mute)}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin-top:6px}
+.vcol{display:flex;flex-direction:column;gap:7px}
+.vitem{display:flex;align-items:center;gap:9px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:7px 10px;font:inherit;cursor:pointer;min-height:46px}
+.vitem svg{width:26px;height:26px;flex:none}
+.vitem.term{font-weight:700;color:var(--navy)}
+.vitem.def{font-size:13.5px}
+.vitem.sel{border-color:var(--blue);background:#eaf1ff}
+.vitem.done{border-color:var(--green);background:#e6f6ec;cursor:default}
+.vitem.wrong{border-color:var(--coral);background:#fdeae4}
+.vbar{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.vbar .prog{flex:1;height:10px;background:#e3e9f2;border-radius:99px;overflow:hidden}
+.vbar .prog i{display:block;height:100%;width:0;background:var(--green);transition:width .3s}
+.lf{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:center;padding:6px 4px}
+.lf .big{background:#eef4fb;border-radius:14px;padding:10px}
+.lf .big svg{width:100%;height:auto;display:block}
+.q{font-size:19px;font-weight:700;color:var(--navy);margin:2px 0 10px}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.choices .btn{min-width:150px}
+.btn.last{background:var(--green)}.btn.fade{background:var(--coral)}
+@media (max-width:700px){.detail,.lf{grid-template-columns:1fr}.vgrid{grid-template-columns:1fr}.scene,.lf .big{max-width:230px}}
+</style></head>
+<body><div class="app">
+<div class="top">
+<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="13" fill="#e8f6f5" stroke="#14284b" stroke-width="4"/><path d="M30 30l12 12" stroke="#14284b" stroke-width="6" stroke-linecap="round"/><path d="M13 22l5 5 9-12" fill="none" stroke="#0e8a87" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div><h1>SEO Through Time</h1><div class="sub">Week 1 · Understanding SEO Concepts</div></div>
+<div class="tabs" role="tablist">
+<button class="tab" role="tab" aria-selected="true" data-panel="p1">1 · Timeline</button>
+<button class="tab" role="tab" aria-selected="false" data-panel="p2">2 · Vocabulary Match</button>
+<button class="tab" role="tab" aria-selected="false" data-panel="p3">3 · Lasting or Fading?</button>
+</div></div>
+<main>
+<!-- TIMELINE -->
+<section class="panel" id="p1">
+<div class="card tl"><svg viewBox="0 0 900 120" id="tlsvg" role="group" aria-label="SEO timeline, five eras">
+<line x1="70" y1="52" x2="830" y2="52" stroke="#d5dde8" stroke-width="6" stroke-linecap="round"/>
+<line id="tlfill" x1="70" y1="52" x2="70" y2="52" stroke="#0e8a87" stroke-width="6" stroke-linecap="round"/>
+</svg></div>
+<div class="card detail" style="margin-top:8px">
+<div class="scene" id="scene"></div>
+<div aria-live="polite"><div class="era-yr" id="eyr"></div><h2 id="ett" style="font-size:19px"></h2><p id="etx"></p><div class="lesson"><b>What it taught us: </b><span id="elx"></span></div></div>
+</div>
+<div class="nav"><button class="btn ghost" id="prev">← Previous era</button><button class="btn" id="next">Next era →</button><span class="dots" id="dots"></span></div>
+</section>
+<!-- VOCAB -->
+<section class="panel" id="p2" hidden>
+<div class="card">
+<div class="vbar"><b>Match each term to its definition.</b><div class="prog"><i id="vprog"></i></div><span id="vcount" style="font-size:13px;color:var(--mute)">0 / 6</span><button class="btn ghost" id="vreset">Reset</button></div>
+<div class="live" id="vmsg" aria-live="polite" style="font-size:13.5px;color:var(--mute)">Choose a term, then choose the definition that fits.</div>
+<div class="vgrid"><div class="vcol" id="terms"></div><div class="vcol" id="defs"></div></div>
+</div></section>
+<!-- LASTING OR FADING -->
+<section class="panel" id="p3" hidden>
+<div class="card" id="lfcard"></div></section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
+  $$('.panel').forEach(p=>p.hidden=p.id!==t.dataset.panel);
+}));
+
+/* ---------- Timeline ---------- */
+const S=(inner)=>`<svg viewBox="0 0 240 160" role="img" aria-label="">${inner}</svg>`;
+const eras=[
+{yr:"Approx. 1990s",ic:"🔤",t:"Keyword Matching",
+ x:"Early search engines mostly matched the words on a page to the words in a search. Marketers noticed, and began repeating keywords again and again to “win.”",
+ l:"Tactics that exploit a simple system stop working as soon as the system improves.",
+ s:S(`<rect x="50" y="14" width="130" height="132" rx="8" fill="#fff" stroke="#14284b" stroke-width="3"/><g fill="#e0522d" font-size="11" font-weight="700" font-family="sans-serif"><text x="60" y="38">coffee coffee</text><text x="60" y="54">coffee coffee</text><text x="60" y="70">cheap coffee</text><text x="60" y="86">coffee coffee</text><text x="60" y="102">best coffee</text><text x="60" y="118">coffee coffee</text></g><circle cx="178" cy="112" r="24" fill="#e8f6f5" stroke="#14284b" stroke-width="5"/><path d="M196 130l24 22" stroke="#14284b" stroke-width="8" stroke-linecap="round"/><circle cx="62" cy="136" r="0"/>`)},
+{yr:"Early 2000s",ic:"🔗",t:"Links as Votes",
+ x:"Search engines began treating links from other websites as signals of credibility. A page that many trusted sites pointed to looked more reliable. Backlinks are still a major signal today.",
+ l:"Authority is earned from other people, not declared by you.",
+ s:S(`<g stroke="#14284b" stroke-width="2.5" fill="none"><path d="M40 40L112 82"/><path d="M200 30L128 80"/><path d="M36 128L108 92"/><path d="M204 130L130 92"/></g><circle cx="120" cy="86" r="26" fill="#0e8a87" stroke="#14284b" stroke-width="4"/><text x="120" y="92" text-anchor="middle" font-size="18" fill="#fff" font-family="sans-serif" font-weight="700">You</text><g fill="#fff" stroke="#14284b" stroke-width="3"><circle cx="36" cy="36" r="14"/><circle cx="204" cy="28" r="14"/><circle cx="32" cy="130" r="14"/><circle cx="208" cy="132" r="14"/></g><g fill="#f2a516" font-size="14" text-anchor="middle" font-family="sans-serif"><text x="36" y="41">★</text><text x="204" y="33">★</text><text x="32" y="135">★</text><text x="208" y="137">★</text></g>`)},
+{yr:"Approx. 2010s",ic:"🛡️",t:"Quality Updates",
+ x:"Algorithm updates started to demote thin content and manipulative link schemes, while rewarding pages that were genuinely useful.",
+ l:"Cutting corners tends to fail in the long run. Genuine value holds up.",
+ s:S(`<path d="M120 12l64 22v44c0 40-28 62-64 74-36-12-64-34-64-74V34z" fill="#e6f6ec" stroke="#14284b" stroke-width="4"/><path d="M90 80l22 22 40-46" fill="none" stroke="#2e9e5b" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><g stroke="#e0522d" stroke-width="5" stroke-linecap="round"><path d="M16 120l30 30M46 120l-30 30"/></g>`)},
+{yr:"Mid 2010s onward",ic:"📍",t:"Mobile & Local",
+ x:"More people searched on phones, and results became more local. Pages had to work on small screens, and nearby businesses needed accurate, complete details.",
+ l:"Meet people where and how they search.",
+ s:S(`<rect x="76" y="8" width="88" height="144" rx="14" fill="#fff" stroke="#14284b" stroke-width="5"/><rect x="86" y="24" width="68" height="104" rx="4" fill="#dbe9f7"/><path d="M120 48c-12 0-20 9-20 19 0 14 20 36 20 36s20-22 20-36c0-10-8-19-20-19z" fill="#e0522d" stroke="#14284b" stroke-width="3"/><circle cx="120" cy="66" r="7" fill="#fff"/><path d="M92 112h56M92 120h40" stroke="#14284b" stroke-width="3" stroke-linecap="round"/><circle cx="120" cy="140" r="4" fill="#14284b"/>`)},
+{yr:"Today",ic:"✨",t:"People-First & AI Summaries",
+ x:"Results pages now mix traditional links with local results and AI-generated summaries. Search engines aim to show pages that serve the person searching.",
+ l:"Publish helpful, reliable content written for people. It is the best preparation for SEO’s future.",
+ s:S(`<rect x="14" y="10" width="212" height="140" rx="10" fill="#fff" stroke="#14284b" stroke-width="4"/><rect x="26" y="22" width="188" height="48" rx="8" fill="#efe9ff" stroke="#7a5af8" stroke-width="2.5"/><path d="M42 36l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#7a5af8"/><g stroke="#7a5af8" stroke-width="4" stroke-linecap="round"><path d="M64 36h130M64 48h110M64 60h80"/></g><g stroke="#14284b" stroke-width="3" stroke-linecap="round"><path d="M28 88h90" stroke="#2f6fed" stroke-width="5"/><path d="M28 100h170M28 110h140"/><path d="M28 126h90" stroke="#2f6fed" stroke-width="5"/><path d="M28 138h150"/></g>`)}
+];
+let cur=0;const seen=new Set([0]);
+const xs=[100,285,470,655,830].map((v,i)=>70+i*190);
+const svg=$('#tlsvg');
+xs.forEach((x,i)=>{
+ const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+ g.setAttribute('class','node');g.setAttribute('role','button');g.setAttribute('tabindex','0');g.setAttribute('aria-label',eras[i].yr+': '+eras[i].t);
+ g.innerHTML=`<circle class="ring" cx="${x}" cy="52" r="26"/><text class="ic" x="${x}" y="58">${eras[i].ic}</text><text class="yr" x="${x}" y="108">${eras[i].yr}</text>`;
+ g.addEventListener('click',()=>go(i));
+ g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(i)}});
+ svg.appendChild(g);
+});
+function go(i){
+ cur=Math.max(0,Math.min(eras.length-1,i));seen.add(cur);const e=eras[cur];
+ $('#eyr').textContent=e.yr;$('#ett').textContent=e.t;$('#etx').textContent=e.x;$('#elx').textContent=e.l;
+ $('#scene').innerHTML=e.s;$('#scene svg').setAttribute('aria-label',e.t+' illustration');
+ $$('.node',svg).forEach((n,k)=>{n.classList.toggle('active',k===cur);n.classList.toggle('visited',seen.has(k))});
+ $('#tlfill').setAttribute('x2',xs[Math.max(...seen)]);
+ $('#prev').disabled=cur===0;$('#next').disabled=cur===eras.length-1;
+ $('#dots').textContent=seen.size===eras.length?'✓ You explored all 5 eras':`Explored ${seen.size} of ${eras.length} eras`;
+}
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);go(0);
+/* ---------- Vocabulary ---------- */
+const ic=(p)=>`<svg viewBox="0 0 26 26" aria-hidden="true" fill="none" stroke="#14284b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const vocab=[
+{t:"Keyword",d:"A word or phrase people type into a search engine.",i:ic('<circle cx="11" cy="11" r="6"/><path d="M16 16l6 6"/><path d="M8 11h6"/>')},
+{t:"SERP",d:"The page of results a search engine shows after a search.",i:ic('<rect x="3" y="4" width="20" height="18" rx="2"/><path d="M7 9h12M7 13h12M7 17h8"/>')},
+{t:"Crawling",d:"How search engines discover pages by following links.",i:ic('<circle cx="13" cy="13" r="4"/><path d="M13 9V3M9 11L3 8M17 11l6-3M9 15l-6 3M17 15l6 3M13 17v6"/>')},
+{t:"Indexing",d:"How search engines store and organize what they find.",i:ic('<path d="M3 8h20v14H3zM3 8l3-4h6l2 4"/><path d="M8 14h10"/>')},
+{t:"Ranking",d:"How search engines decide which pages appear first.",i:ic('<path d="M3 22V14h6v8M10 22V6h6v16M17 22v-12h6v12"/>')},
+{t:"Backlink",d:"A link from another website that points to your page.",i:ic('<path d="M11 15a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M15 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/>')}
+];
+let pick=null,done=0;
+const shuf=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+function vbuild(){
+ done=0;pick=null;$('#vprog').style.width='0';$('#vcount').textContent='0 / 6';
+ $('#vmsg').textContent='Choose a term, then choose the definition that fits.';$('#vmsg').className='live';
+ $('#terms').innerHTML='';$('#defs').innerHTML='';
+ vocab.forEach((v,i)=>{const b=document.createElement('button');b.className='vitem term';b.dataset.i=i;b.innerHTML=v.i+'<span>'+v.t+'</span>';b.onclick=()=>{if(b.classList.contains('done'))return;$$('.term').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');pick=i};$('#terms').appendChild(b)});
+ shuf(vocab.map((v,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='vitem def';b.dataset.i=i;b.textContent=vocab[i].d;b.onclick=()=>vcheck(b,i);$('#defs').appendChild(b)});
+}
+function vcheck(b,i){
+ if(b.classList.contains('done'))return;
+ if(pick===null){$('#vmsg').textContent='Pick a term on the left first.';return}
+ const tb=$(`.term[data-i="${pick}"]`);
+ if(pick===i){tb.classList.remove('sel');tb.classList.add('done');b.classList.add('done');done++;pick=null;
+  $('#vprog').style.width=(done/6*100)+'%';$('#vcount').textContent=done+' / 6';
+  $('#vmsg').className='live ok';$('#vmsg').textContent=done===6?'🎉 All matched! You now have the shared vocabulary for the rest of the course.':'Correct!';}
+ else{b.classList.add('wrong','shake');tb.classList.add('shake');$('#vmsg').className='live bad';$('#vmsg').textContent='Not quite. Try another definition.';
+  setTimeout(()=>{b.classList.remove('wrong','shake');tb.classList.remove('shake')},500)}
+}
+$('#vreset').onclick=vbuild;vbuild();
+/* ---------- Lasting or Fading ---------- */
+const cards=[
+{t:"Repeating a keyword over and over in a paragraph",a:"fade",w:"Keyword repetition worked on early, simple search engines. Today it hurts readability and is discouraged."},
+{t:"Answering the questions your audience is actually asking",a:"last",w:"Search engines aim to show pages that best serve the searcher, so helpful answers hold up."},
+{t:"Buying piles of low-quality links",a:"fade",w:"Algorithm updates discourage manipulation. Earned, quality links matter, not quantity."},
+{t:"Showing real expertise and experience with the topic",a:"last",w:"Demonstrated expertise builds trust with both people and search engines."},
+{t:"Hiding extra keywords where visitors can’t see them",a:"fade",w:"This is a shortcut that cuts corners, and it tends to fail in the long run."},
+{t:"Making pages easy to read and use on phones",a:"last",w:"Many people search on mobile devices, so a good mobile experience keeps paying off."},
+{t:"Earning links from respected, related websites",a:"last",w:"Backlinks act like endorsements, and they remain a major ranking signal."},
+{t:"Writing mainly for search engines instead of people",a:"fade",w:"The visitor-first perspective wins. Content written only for crawlers doesn’t serve anyone."}
+];
+let ci=0,cs=0,answered=false;
+function lfShow(){
+ const box=$('#lfcard');
+ if(ci>=cards.length){
+  box.innerHTML=`<div class="lf"><div class="big"><svg viewBox="0 0 200 160"><path d="M60 20h80v40c0 28-18 44-40 44S60 88 60 60z" fill="#f2a516" stroke="#14284b" stroke-width="5"/><path d="M60 30H36c0 22 10 34 26 36M140 30h24c0 22-10 34-26 36" fill="none" stroke="#14284b" stroke-width="5"/><path d="M100 104v22M70 138h60" stroke="#14284b" stroke-width="7" stroke-linecap="round"/><path d="M100 36l7 14 15 2-11 11 3 15-14-7-14 7 3-15-11-11 15-2z" fill="#fff"/></svg></div>
+  <div><div class="q">You scored ${cs} out of ${cards.length}</div><p>${cs>=7?'You can spot the difference between shortcuts and lasting practice.':'Review the timeline: tactics that add genuine value for visitors are the ones that last.'}</p><button class="btn" id="again">Play again</button></div></div>`;
+  $('#again').onclick=()=>{ci=0;cs=0;lfShow()};return}
+ const c=cards[ci];answered=false;
+ box.innerHTML=`<div class="lf"><div class="big"><svg viewBox="0 0 200 160" aria-hidden="true"><rect x="30" y="14" width="140" height="132" rx="12" fill="#fff" stroke="#14284b" stroke-width="5"/><path d="M100 40v54M100 110v6" stroke="#f2a516" stroke-width="12" stroke-linecap="round"/><text x="100" y="138" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#566074">Card ${ci+1} of ${cards.length}</text></svg></div>
+ <div><div class="q">${c.t}</div><div class="choices"><button class="btn last" data-a="last">🌱 Lasting practice</button><button class="btn fade" data-a="fade">🍂 Fading tactic</button></div>
+ <div class="live" id="fb" aria-live="polite" style="margin-top:12px"></div><button class="btn ghost" id="nx" style="margin-top:8px;display:none">${ci===cards.length-1?'See my score':'Next card →'}</button></div></div>`;
+ $$('.choices .btn',box).forEach(b=>b.onclick=()=>{
+  if(answered)return;answered=true;const r=b.dataset.a===c.a;if(r)cs++;
+  $('#fb').className='live '+(r?'ok':'bad');$('#fb').textContent=(r?'Correct. ':'Not quite. ')+c.w;
+  $$('.choices .btn',box).forEach(x=>x.disabled=true);$('#nx').style.display='inline-block';$('#nx').focus();
+ });
+ $('#nx').onclick=()=>{ci++;lfShow()};
+}
+lfShow();
+</script></body></html>
