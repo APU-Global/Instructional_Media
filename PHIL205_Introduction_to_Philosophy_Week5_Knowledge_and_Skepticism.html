@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PHIL 205 Introduction to Philosophy: Week 5 Interactive: Is It Knowledge?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Newsreader:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1E2430;--muted:#566070;--paper:#F5F6F8;--card:#fff;--line:#D5DAE2;--cardinal:#A5313A;--cardinal-d:#852630;
+--hue:#2F4C7A;--hue-t:#E6ECF5;--ok:#2A7653;--ok-t:#E1F2E9;--bad:#A8432E;--bad-t:#FBE9E4;
+--serif:'Newsreader',Georgia,'Times New Roman',serif;--sans:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.45 var(--sans);overscroll-behavior:none}
+#stage{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;flex-direction:column;width:900px;height:560px;overflow:hidden}
+.hdr{flex:0 0 54px;display:flex;align-items:center;gap:12px;padding:0 20px;background:#fff;border-bottom:1px solid var(--line)}
+.hdr svg.mark{flex:0 0 26px}
+.hdr h1{margin:0;font:600 19px/1.1 var(--serif);letter-spacing:.1px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr .wk{font-size:13px;font-weight:600;color:var(--hue);background:var(--hue-t);padding:3px 10px;border-radius:99px;white-space:nowrap}
+.tabs{display:flex;gap:4px;flex:0 0 auto;padding:8px 20px 0;background:#fff;border-bottom:1px solid var(--line)}
+.tab{appearance:none;border:0;background:none;font:600 14px var(--sans);color:var(--muted);padding:8px 14px 9px;border-bottom:3px solid transparent;cursor:pointer;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--cardinal)}
+.view{flex:1;min-height:0;display:none;padding:14px 20px 16px;gap:18px}
+.view.on{display:flex}
+.col-g{flex:0 0 42%;min-width:0;display:flex;flex-direction:column;gap:8px;min-height:0}
+.col-p{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;min-height:0}
+.gfx{flex:1;min-height:0;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.gfx svg{width:100%;height:100%;display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-height:0;overflow:hidden}
+.card.grow{flex:1}
+h2{font:600 24px/1.15 var(--serif);margin:0 0 8px}
+h3{font:700 14px/1.2 var(--sans);margin:12px 0 3px;color:var(--hue)}
+p{margin:0 0 8px}
+.muted{color:var(--muted)}
+.say{font:italic 400 17px/1.4 var(--serif);color:var(--ink);border-left:3px solid var(--hue);padding:2px 0 2px 12px;margin:8px 0 10px}
+.btn{appearance:none;border:1.5px solid var(--cardinal);background:var(--cardinal);color:#fff;font:600 14px var(--sans);padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn:hover{background:var(--cardinal-d);border-color:var(--cardinal-d)}
+.btn.ghost{background:#fff;color:var(--cardinal)}
+.btn.ghost:hover{background:#faf0f1}
+.btn[disabled]{opacity:.4;cursor:default}
+.pill{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--ink);font:600 13.5px var(--sans);padding:7px 13px;border-radius:99px;cursor:pointer;text-align:left}
+.pill:hover{border-color:var(--hue)}
+.pill[aria-pressed=true],.pill.sel{background:var(--hue);border-color:var(--hue);color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dots{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.dots i{width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--line);display:inline-block}
+.dots i.on{background:var(--hue);border-color:var(--hue)}
+.fb{border-radius:10px;padding:9px 12px;font-size:14px;margin-top:8px}
+.fb.ok{background:var(--ok-t);color:#16452F}
+.fb.no{background:var(--bad-t);color:#6E2412}
+.fb.info{background:var(--hue-t);color:var(--ink)}
+:focus-visible{outline:3px solid #1A5FD0;outline-offset:2px;border-radius:6px}
+g[role=button]:focus,g[role=button]:focus-visible{outline:none}
+g[role=button]:focus-visible .ring{stroke:#1A5FD0;stroke-width:4}
+g[role=button]{cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* narrow (phone) layout: single column, still no scrolling */
+#stage.narrow .view{flex-direction:column;gap:10px;padding:10px 14px 12px}
+#stage.narrow .col-g{flex:0 0 40%}
+#stage.narrow .col-p{flex:1}
+#stage.narrow .hdr{padding:0 14px}
+#stage.narrow .tabs{padding:6px 10px 0}
+#stage.narrow .card{padding:12px 14px}
+#stage.narrow h2{font-size:21px}
+
+:root{--hue:#8A5A12;--hue-t:#F8EBD0}
+.gfx{background:#FFFBF2}
+.scn{font:italic 400 17px/1.45 var(--serif);margin:0 0 8px}
+.tests{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.tst{display:flex;align-items:center;gap:10px;font-size:14.5px}
+.tst .q{flex:1}
+.tst .pill{padding:5px 12px;min-width:48px;text-align:center}
+.tst .pill.sel{background:var(--hue);border-color:var(--hue)}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:6px;gap:10px}
+.cases{display:flex;gap:6px;flex-wrap:wrap}
+.cases .pill{padding:5px 11px;min-width:34px;text-align:center}
+.cases .pill.done{border-color:var(--ok);color:var(--ok)}
+.cases .pill.sel.done{color:#fff;background:var(--ok);border-color:var(--ok)}
+.lab{font:600 19px/1.2 var(--serif);margin:8px 0 2px}
+.vname{font:600 15px var(--serif)}
+.reg{transition:opacity .25s}
+.vat-btn{display:flex;flex-direction:column;gap:6px}
+.vat-btn .pill{border-radius:10px;white-space:normal}
+</style></head>
+<body>
+<div id="stage">
+ <div class="hdr">
+  <svg class="mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M3 3h20v13a7 7 0 0 1-7 7H3z" fill="#A5313A"/><path d="M13 3v20M3 11h20" stroke="#fff" stroke-width="2"/></svg>
+  <h1>How Do We Know Anything?</h1><span class="wk">Week 5</span>
+ </div>
+ <div class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true" data-v="v1">Test the claim</button>
+  <button class="tab" role="tab" aria-selected="false" data-v="v2">Face the skeptic</button>
+ </div>
+
+ <section class="view on" id="v1">
+  <div class="col-g"><div class="gfx"><svg id="venn" viewBox="40 30 320 300" role="img" aria-label="Venn diagram of belief, truth, and justification"></svg></div></div>
+  <div class="col-p"><div class="card grow" id="panel" aria-live="polite"></div></div>
+ </section>
+
+ <section class="view" id="v2">
+  <div class="col-g"><div class="gfx" id="vgfx"></div></div>
+  <div class="col-p"><div class="card grow" id="vpanel" aria-live="polite"></div></div>
+ </section>
+</div>
+<script>
+(function(){var st=document.getElementById('stage');
+function fit(){var w=window.innerWidth,h=window.innerHeight,n=w<620,mw=n?460:900,mh=n?800:560;
+var s=Math.min(w/mw,h/mh,1.25);st.classList.toggle('narrow',n);
+st.style.width=(w/s)+'px';st.style.height=(h/s)+'px';st.style.transform='scale('+s+')';}
+window.addEventListener('resize',fit);fit();
+window.$=function(s,r){return (r||document).querySelector(s)};
+window.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+window.tabsInit=function(){var t=$$('.tab');t.forEach(function(b){b.addEventListener('click',function(){
+t.forEach(function(x){x.setAttribute('aria-selected',x===b)});
+$$('.view').forEach(function(v){v.classList.toggle('on',v.id===b.dataset.v)});});});};
+window.keyBtn=function(el,fn){el.addEventListener('click',fn);el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();fn(e)}});};
+})();
+
+tabsInit();
+var INK='#1E2430',GOLD='#B5832A',RED='#A5313A',BLUE='#2F4C7A';
+// ----- Venn -----
+var C={b:{x:150,y:138,col:'#2F4C7A',n:'Belief'},t:{x:250,y:138,col:'#A5313A',n:'Truth'},j:{x:200,y:222,col:'#B5832A',n:'Justification'}};
+var R=88;
+var NAMES={
+ '111':['Knowledge: justified true belief','The traditional definition of knowledge.'],
+ '110':['Lucky guess','A true belief with no good reason behind it.'],
+ '101':['Honest mistake','A well-supported belief that turns out false.'],
+ '100':['Wishful belief','Held with confidence but neither true nor supported.'],
+ '011':['Unaccepted truth','The evidence is there and so is the truth, but you have not come to believe it.'],
+ '010':['A truth no one holds','Something that is the case, which no one believes or can support.'],
+ '001':['Good evidence, wrong and unbelieved','Supported but neither true nor accepted.'],
+ '000':['Outside the circles','Not believed, not true, not justified.']};
+var CASES=[
+ {s:'Maya checks a trusted transit app and believes the 8:15 train is on time. The train arrives on time.',k:[1,1,1],ex:'She believes it, it is true, and she has a reliable reason. This is the standard case of knowledge.'},
+ {s:'Leo is certain that tomorrow’s coin flip will land heads. It does.',k:[1,1,0],ex:'He believes it and it is true, but he had no reason. A true belief reached by luck is not knowledge.'},
+ {s:'Dana sees her dog’s leash on its hook and believes her dog is home. A neighbor took the dog to the groomer, and the leash was a spare.',k:[1,0,1],ex:'Her reason was good, but the belief is false. Justification does not guarantee truth.'},
+ {s:'Omar glances at a station clock showing 3:00 and believes it is 3:00. It is 3:00, but the clock stopped exactly one day earlier.',k:[1,1,1],g:1,ex:'All three conditions are met, yet it feels like luck. Cases like this, called Gettier cases, lead many philosophers to doubt that justified true belief is enough for knowledge.'},
+ {s:'Ruth has strong evidence that her new coworker is honest: references and a clean record. She has not made up her mind. The coworker is honest.',k:[0,1,1],ex:'The truth and the evidence are both there, but she does not yet believe it, so she does not know it.'},
+ {s:'Eli believes his lottery ticket is a winner because it has his lucky number. It is not a winner.',k:[1,0,0],ex:'He believes it, but it is false and rests on no real reason.'}];
+var cur=0,sel=[],chk=[];
+for(var i=0;i<CASES.length;i++){sel.push([null,null,null]);chk.push(false)}
+var vn=$('#venn');
+function mkMask(id,key,inside){var c=C[key];return '<mask id="'+id+'" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="360"><rect width="400" height="360" fill="'+(inside?'#000':'#fff')+'"/><circle cx="'+c.x+'" cy="'+c.y+'" r="'+R+'" fill="'+(inside?'#fff':'#000')+'"/></mask>'}
+function drawVenn(a){ // a = [b,t,j] booleans or null
+ var h='<defs>';['b','t','j'].forEach(function(k,i){h+=mkMask('mi'+k,k,true)+mkMask('mo'+k,k,false)});h+='</defs>';
+ h+='<rect width="400" height="360" fill="#FFFBF2"/>';
+ ['b','t','j'].forEach(function(k){var c=C[k];h+='<circle cx="'+c.x+'" cy="'+c.y+'" r="'+R+'" fill="'+c.col+'" fill-opacity=".11" stroke="'+c.col+'" stroke-width="2.5"/>'});
+ if(a&&a.every(function(v){return v!==null})){var ks=['b','t','j'];
+  var open='',close='';ks.forEach(function(k,i){open+='<g mask="url(#'+(a[i]?'mi':'mo')+k+')">';close+='</g>'});
+  var key=a.join('');var col=key==='111'?'#2A7653':'#1E2430';
+  h+=open+'<rect width="400" height="360" fill="'+col+'" fill-opacity="'+(key==='111'?'.55':'.32')+'"/>'+close;}
+ ['b','t','j'].forEach(function(k){var c=C[k];var dx=k==='b'?-48:(k==='t'?48:0),dy=k==='j'?58:-50;
+  h+='<text x="'+(c.x+dx)+'" y="'+(c.y+dy)+'" text-anchor="middle" font-family="Newsreader,serif" font-weight="600" font-size="19" fill="'+c.col+'">'+c.n+'</text>'});
+ h+='<text x="200" y="168" text-anchor="middle" font-family="Newsreader,serif" font-weight="600" font-size="13" fill="'+INK+'" opacity=".8">Knowledge?</text>';
+ vn.innerHTML=h}
+function panel(){var P=$('#panel'),c=CASES[cur],a=sel[cur],done=chk[cur];
+ var h='<div class="cases" role="group" aria-label="Cases">'+CASES.map(function(x,i){return '<button class="pill'+(i===cur?' sel':'')+(chk[i]?' done':'')+'" data-c="'+i+'" aria-label="Case '+(i+1)+'">'+(i+1)+(chk[i]?' ✓':'')+'</button>'}).join('')+'</div>';
+ h+='<p class="scn" style="margin-top:10px">'+c.s+'</p><div class="tests">';
+ ['Does the person believe it?','Is it true?','Do they have good reason (justification)?'].forEach(function(q,i){
+  var correct=c.k[i];
+  h+='<div class="tst"><span class="q">'+q+'</span>'+[1,0].map(function(v){var on=a[i]===v;var st='';if(done){if(v===correct)st=' style="background:var(--ok);border-color:var(--ok);color:#fff"';else if(on)st=' style="background:var(--bad-t);border-color:var(--bad);color:#6E2412"'}
+   return '<button class="pill'+(on&&!done?' sel':'')+'" data-t="'+i+'" data-v="'+v+'"'+st+(done?' disabled':'')+'>'+(v?'Yes':'No')+'</button>'}).join('')+'</div>'});
+ h+='</div>';
+ var ready=a.every(function(v){return v!==null});
+ if(done){var key=c.k.join('');var nm=NAMES[key];var mine=a.join('')===key;
+  h+='<div class="lab">'+(c.g?'Justified true belief, but is it knowledge?':nm[0])+'</div><div class="fb '+(mine?'ok':'info')+'">'+(mine?'Your marks match. ':'Compare the marks. ')+c.ex+'</div>';}
+ else if(ready){var nm2=NAMES[a.join('')];h+='<div class="lab">Your marks point to: '+nm2[0]+'</div><p class="muted">'+nm2[1]+'</p>';}
+ else h+='<p class="muted">Mark all three tests to see where this case falls on the diagram.</p>';
+ h+='<div class="nav"><span class="muted">'+chk.filter(Boolean).length+' of '+CASES.length+' checked</span>'+(done?'<button class="btn" id="nx">'+(cur<CASES.length-1?'Next case':'Back to case 1')+'</button>':'<button class="btn" id="ck"'+(ready?'':' disabled')+'>Check my marks</button>')+'</div>';
+ P.innerHTML=h;
+ $$('[data-c]',P).forEach(function(b){b.addEventListener('click',function(){cur=+b.dataset.c;panel()})});
+ $$('[data-t]',P).forEach(function(b){b.addEventListener('click',function(){sel[cur][+b.dataset.t]=+b.dataset.v;panel()})});
+ var ck=$('#ck',P);if(ck)ck.addEventListener('click',function(){chk[cur]=true;panel()});
+ var nx=$('#nx',P);if(nx)nx.addEventListener('click',function(){cur=(cur+1)%CASES.length;panel()});
+ drawVenn(done?c.k.map(Number):(ready?a:null))}
+panel();
+// ----- Brain in a vat -----
+var VG='<svg viewBox="0 0 400 360" role="img" aria-label="A brain in a vat connected by wires to a computer that feeds it an experience of the world"><rect width="400" height="360" fill="#FFFBF2"/>'+
+'<g><rect x="40" y="130" width="130" height="170" rx="16" fill="#E8F3F0" stroke="'+BLUE+'" stroke-width="3"/><path d="M44 190q22-10 44 0t44 0t34 0" fill="none" stroke="#8CC6BC" stroke-width="3"/>'+
+'<ellipse cx="105" cy="236" rx="38" ry="28" fill="#F3C9CF" stroke="'+RED+'" stroke-width="3"/><path d="M82 232c8-14 20-14 26 0M100 246c10-10 20-8 24 2M88 222c5-4 10-4 14-1" fill="none" stroke="'+RED+'" stroke-width="2.5" stroke-linecap="round"/>'+
+'<circle cx="80" cy="165" r="4" fill="#fff" stroke="#8CC6BC"/><circle cx="130" cy="155" r="3" fill="#fff" stroke="#8CC6BC"/></g>'+
+'<path d="M143 236C190 236 190 140 235 140M143 244C195 252 190 200 235 200" fill="none" stroke="'+INK+'" stroke-width="3" stroke-linecap="round"/>'+
+'<g><rect x="235" y="110" width="130" height="110" rx="10" fill="#fff" stroke="'+INK+'" stroke-width="3"/><rect x="247" y="122" width="106" height="72" rx="4" fill="#EEF3FA"/><circle cx="270" cy="146" r="9" fill="#F6C94E"/><path d="M247 194l30-26 22 16 18-14 36 24z" fill="#8CC6BC"/><path d="M285 220h30l6 18h-42z" fill="#fff" stroke="'+INK+'" stroke-width="3"/></g>'+
+'<text x="105" y="322" text-anchor="middle" font-family="Figtree,sans-serif" font-size="13" font-weight="700" fill="'+INK+'">The vat</text><text x="300" y="262" text-anchor="middle" font-family="Figtree,sans-serif" font-size="13" font-weight="700" fill="'+INK+'">Simulated “world”</text>'+
+'<text x="200" y="60" text-anchor="middle" font-family="Newsreader,serif" font-style="italic" font-size="22" fill="'+INK+'">Could you tell the difference?</text></svg>';
+$('#vgfx').innerHTML=VG;
+var V=[
+ {b:'Check with my senses',r:'My senses are the very thing in doubt. If I am a brain in a vat, the vat would feed me the same experience. Using the senses to defend the senses goes in a circle.'},
+ {b:'Reason it out with logic',r:'Logic can show that being a brain in a vat is a possibility. It cannot show it is the case. And if I demand that every belief be proven first, I could not prove my reasoning either.'},
+ {b:'Treat basic beliefs as a starting point',r:'Trusting my senses and memory cannot be proven without circularity, yet it is the reasonable default. I hold it until I have a good reason to doubt it. Many philosophers answer the skeptic this way.'},
+ {b:'Doubt everything',r:'Taken all the way, doubt leaves me unable to know anything, including that doubt itself is warranted. Skepticism sharpens our standards, but few think it can be lived out.'}];
+var vd={};
+function vp(){var P=$('#vpanel'),n=Object.keys(vd).length;
+ var last=null;Object.keys(vd).forEach(function(k){last=k});
+ var h='<h2>The skeptic’s challenge</h2><p>You are certain you are reading this on a screen. The skeptic asks: how do you know you are not a brain in a vat, fed experiences by a computer? Try each response.</p><div class="vat-btn">'+V.map(function(v,i){return '<button class="pill'+(vd[i]?' sel':'')+'" data-v="'+i+'" aria-pressed="'+!!vd[i]+'">'+v.b+'</button>'}).join('')+'</div>';
+ if(sel2!==null)h+='<div class="fb info" style="margin-top:10px"><b>'+V[sel2].b+'.</b> '+V[sel2].r+'</div>';
+ h+='<div class="nav" style="margin-top:auto"><span class="muted">Responses tried: '+n+' of 4</span></div>';
+ P.innerHTML=h;$$('[data-v]',P).forEach(function(b){b.addEventListener('click',function(){sel2=+b.dataset.v;vd[sel2]=1;vp()})})}
+var sel2=null;vp();
+</script></body></html>

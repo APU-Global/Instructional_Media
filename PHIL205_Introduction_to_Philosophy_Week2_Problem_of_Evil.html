@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PHIL 205 Introduction to Philosophy: Week 2 Interactive: The Problem of Evil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Newsreader:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1E2430;--muted:#566070;--paper:#F5F6F8;--card:#fff;--line:#D5DAE2;--cardinal:#A5313A;--cardinal-d:#852630;
+--hue:#2F4C7A;--hue-t:#E6ECF5;--ok:#2A7653;--ok-t:#E1F2E9;--bad:#A8432E;--bad-t:#FBE9E4;
+--serif:'Newsreader',Georgia,'Times New Roman',serif;--sans:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.45 var(--sans);overscroll-behavior:none}
+#stage{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;flex-direction:column;width:900px;height:560px;overflow:hidden}
+.hdr{flex:0 0 54px;display:flex;align-items:center;gap:12px;padding:0 20px;background:#fff;border-bottom:1px solid var(--line)}
+.hdr svg.mark{flex:0 0 26px}
+.hdr h1{margin:0;font:600 19px/1.1 var(--serif);letter-spacing:.1px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr .wk{font-size:13px;font-weight:600;color:var(--hue);background:var(--hue-t);padding:3px 10px;border-radius:99px;white-space:nowrap}
+.tabs{display:flex;gap:4px;flex:0 0 auto;padding:8px 20px 0;background:#fff;border-bottom:1px solid var(--line)}
+.tab{appearance:none;border:0;background:none;font:600 14px var(--sans);color:var(--muted);padding:8px 14px 9px;border-bottom:3px solid transparent;cursor:pointer;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--cardinal)}
+.view{flex:1;min-height:0;display:none;padding:14px 20px 16px;gap:18px}
+.view.on{display:flex}
+.col-g{flex:0 0 42%;min-width:0;display:flex;flex-direction:column;gap:8px;min-height:0}
+.col-p{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;min-height:0}
+.gfx{flex:1;min-height:0;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.gfx svg{width:100%;height:100%;display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-height:0;overflow:hidden}
+.card.grow{flex:1}
+h2{font:600 24px/1.15 var(--serif);margin:0 0 8px}
+h3{font:700 14px/1.2 var(--sans);margin:12px 0 3px;color:var(--hue)}
+p{margin:0 0 8px}
+.muted{color:var(--muted)}
+.say{font:italic 400 17px/1.4 var(--serif);color:var(--ink);border-left:3px solid var(--hue);padding:2px 0 2px 12px;margin:8px 0 10px}
+.btn{appearance:none;border:1.5px solid var(--cardinal);background:var(--cardinal);color:#fff;font:600 14px var(--sans);padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn:hover{background:var(--cardinal-d);border-color:var(--cardinal-d)}
+.btn.ghost{background:#fff;color:var(--cardinal)}
+.btn.ghost:hover{background:#faf0f1}
+.btn[disabled]{opacity:.4;cursor:default}
+.pill{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--ink);font:600 13.5px var(--sans);padding:7px 13px;border-radius:99px;cursor:pointer;text-align:left}
+.pill:hover{border-color:var(--hue)}
+.pill[aria-pressed=true],.pill.sel{background:var(--hue);border-color:var(--hue);color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dots{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.dots i{width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--line);display:inline-block}
+.dots i.on{background:var(--hue);border-color:var(--hue)}
+.fb{border-radius:10px;padding:9px 12px;font-size:14px;margin-top:8px}
+.fb.ok{background:var(--ok-t);color:#16452F}
+.fb.no{background:var(--bad-t);color:#6E2412}
+.fb.info{background:var(--hue-t);color:var(--ink)}
+:focus-visible{outline:3px solid #1A5FD0;outline-offset:2px;border-radius:6px}
+g[role=button]:focus,g[role=button]:focus-visible{outline:none}
+g[role=button]:focus-visible .ring{stroke:#1A5FD0;stroke-width:4}
+g[role=button]{cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* narrow (phone) layout: single column, still no scrolling */
+#stage.narrow .view{flex-direction:column;gap:10px;padding:10px 14px 12px}
+#stage.narrow .col-g{flex:0 0 40%}
+#stage.narrow .col-p{flex:1}
+#stage.narrow .hdr{padding:0 14px}
+#stage.narrow .tabs{padding:6px 10px 0}
+#stage.narrow .card{padding:12px 14px}
+#stage.narrow h2{font-size:21px}
+
+:root{--hue:#2F4C7A;--hue-t:#E6ECF5}
+.node .box{fill:#fff;stroke:var(--hue);stroke-width:2.5;transition:all .25s}
+.node text{font-family:var(--sans);fill:var(--ink);pointer-events:none}
+.node .t1{font-weight:700;font-size:15px}.node .t2{font-size:11.5px;fill:var(--muted)}
+.node:hover .box{fill:#F3F6FB}
+.node.dropped .box{stroke:#9AA5B5;stroke-dasharray:6 5;fill:#F0F2F5}
+.node.dropped text{fill:#8A94A3}.node.dropped .ic{opacity:.35}
+.edge{stroke:var(--hue);stroke-width:2.5;transition:all .25s}
+.edge.off{stroke:#B9C1CD;stroke-dasharray:3 7;stroke-width:2}
+#tension,#calm{transition:opacity .3s;transform-origin:200px 232px}
+.state-calm #tension{opacity:0}.state-calm #calm{opacity:1}
+.state-tense #tension{opacity:1}.state-tense #calm{opacity:0}
+.defs{display:flex;gap:6px;margin:6px 0 2px}
+.defs .pill{flex:1;text-align:center;padding:7px 6px;font-size:13px}
+.qrow{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.qrow:last-child{border-bottom:0}
+.qrow .qt{flex:1;font-size:14.5px}
+.qrow .pill{padding:6px 12px}
+.qrow .pill.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.qrow .pill.wrong{background:var(--bad-t);border-color:var(--bad);color:#6E2412}
+.mini{display:flex;gap:12px;align-items:flex-start}
+.mini svg{flex:0 0 54px;width:54px;height:54px}
+@media (prefers-reduced-motion:no-preference){#tension{animation:pulse 2.4s ease-in-out infinite}}
+@keyframes pulse{50%{transform:scale(1.08) rotate(3deg)}}
+</style></head>
+<body>
+<div id="stage">
+ <div class="hdr">
+  <svg class="mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M3 3h20v13a7 7 0 0 1-7 7H3z" fill="#A5313A"/><path d="M13 3v20M3 11h20" stroke="#fff" stroke-width="2"/></svg>
+  <h1>God, the Universe, and the Problem of Evil</h1><span class="wk">Week 2</span>
+ </div>
+ <div class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true" data-v="v1">Explore the triad</button>
+  <button class="tab" role="tab" aria-selected="false" data-v="v2">Check yourself</button>
+ </div>
+
+ <section class="view on" id="v1">
+  <div class="col-g">
+   <div class="gfx" id="gfx">
+    <svg id="tri" viewBox="0 24 400 346" class="state-tense" role="group" aria-label="Three claims about God and evil. Select one to give it up.">
+     <defs><pattern id="gr" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#D8DFEA"/></pattern></defs>
+     <rect width="400" height="400" fill="url(#gr)"/>
+     <line id="e1" class="edge" x1="200" y1="78" x2="86" y2="318"/>
+     <line id="e2" class="edge" x1="200" y1="78" x2="314" y2="318"/>
+     <line id="e3" class="edge" x1="86" y1="318" x2="314" y2="318"/>
+     <g id="tension"><polygon points="200,198 207,221 229,215 214,232 232,244 208,244 202,266 195,244 171,252 186,232 172,216 193,221" fill="#A5313A"/><text x="200" y="291" text-anchor="middle" font-family="Figtree,sans-serif" font-size="12" font-weight="700" fill="#A5313A">Tension</text></g>
+     <g id="calm" opacity="0"><circle cx="200" cy="232" r="30" fill="#E1F2E9" stroke="#2A7653" stroke-width="2.5"/><path d="M186 232l10 10 19-21" fill="none" stroke="#2A7653" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><text x="200" y="283" text-anchor="middle" font-family="Figtree,sans-serif" font-size="12" font-weight="700" fill="#2A7653">Consistent</text></g>
+
+     <g class="node" id="n-power" role="button" tabindex="0" aria-pressed="false" aria-label="Claim: God is all-powerful. Select to give it up.">
+      <rect class="box ring" x="104" y="46" width="192" height="62" rx="14"/>
+      <g class="ic" transform="translate(134 77)"><circle r="17" fill="#F5E7B8"/><path d="M1,-11 L-7,3 L-1,3 L-3,12 L7,-4 L1,-4 Z" fill="#8A6410"/></g>
+      <text class="t1" x="159" y="73">All-powerful</text><text class="t2" x="159" y="90">Can do all that is possible</text></g>
+     <g class="node" id="n-good" role="button" tabindex="0" aria-pressed="false" aria-label="Claim: God is all-good. Select to give it up.">
+      <rect class="box ring" x="6" y="288" width="160" height="62" rx="14"/>
+      <g class="ic" transform="translate(36 319)"><circle r="17" fill="#F9DDE0"/><path d="M0,9 C-13,-1 -9,-11 0,-4 C9,-11 13,-1 0,9Z" fill="#A5313A"/></g>
+      <text class="t1" x="61" y="315">All-good</text><text class="t2" x="61" y="332">Wills good for all</text></g>
+     <g class="node" id="n-evil" role="button" tabindex="0" aria-pressed="false" aria-label="Claim: Evil exists. Select to give it up.">
+      <rect class="box ring" x="234" y="288" width="160" height="62" rx="14"/>
+      <g class="ic" transform="translate(264 319)"><circle r="17" fill="#DDE3EC"/><path d="M-9,3 a5,5 0 0 1 2,-9 a7,7 0 0 1 13,1 a4.5,4.5 0 0 1 1,8Z" fill="#4A5568"/><path d="M-5,7l-2,5M0,7l-2,5M5,7l-2,5" stroke="#4A5568" stroke-width="2" stroke-linecap="round"/></g>
+      <text class="t1" x="289" y="315">Evil exists</text><text class="t2" x="289" y="332">Suffering is real</text></g>
+    </svg>
+   </div>
+   <div class="defs" style="margin:0">
+    <button class="pill" id="b-god" aria-pressed="false" style="flex:1;text-align:center">Reject God altogether</button>
+    <button class="pill" id="b-keep" aria-pressed="false" style="flex:1;text-align:center">Keep all three</button>
+   </div>
+  </div>
+  <div class="col-p">
+   <div class="card grow" id="panel" aria-live="polite"></div>
+   <div class="dots" id="prog"></div>
+  </div>
+ </section>
+
+ <section class="view" id="v2">
+  <div class="col-p" style="flex:1.2">
+   <div class="card grow">
+    <h2>Logical or evidential?</h2>
+    <p class="muted">The problem of evil comes in two forms. The <b>logical</b> version says God and evil cannot both exist. The <b>evidential</b> version says evil makes God unlikely. Label each statement.</p>
+    <div id="quiz"></div>
+    <div id="qres"></div>
+   </div>
+  </div>
+  <div class="col-g" style="flex:0 0 34%">
+   <div class="gfx">
+    <svg viewBox="0 0 300 300" aria-label="Two scales: one tipped by contradiction, one tipped by probability">
+     <rect width="300" height="300" fill="#F8FAFD"/>
+     <g transform="translate(75 40)"><line x1="0" y1="0" x2="0" y2="150" stroke="#2F4C7A" stroke-width="4"/><line x1="-50" y1="30" x2="50" y2="30" stroke="#2F4C7A" stroke-width="4"/><path d="M-50 30l-22 44h44zM50 30l-22 44h44z" fill="none" stroke="#2F4C7A" stroke-width="2.5"/><path d="M-70 78h40M30 78h40" stroke="#2F4C7A" stroke-width="3" stroke-linecap="round"/><circle cx="-50" cy="64" r="8" fill="#A5313A"/><circle cx="50" cy="64" r="8" fill="#A5313A"/><path d="M-12 150h24" stroke="#2F4C7A" stroke-width="6" stroke-linecap="round"/></g>
+     <text x="75" y="226" text-anchor="middle" font-family="Newsreader,serif" font-weight="600" font-size="20" fill="#1E2430">Logical</text>
+     <text x="75" y="246" text-anchor="middle" font-family="Figtree,sans-serif" font-size="12" fill="#566070">Cannot both be true</text>
+     <g transform="translate(225 40) rotate(8 0 30)"><line x1="0" y1="0" x2="0" y2="150" stroke="#2F4C7A" stroke-width="4" transform="rotate(-8 0 30)"/><line x1="-50" y1="30" x2="50" y2="30" stroke="#2F4C7A" stroke-width="4"/><path d="M-50 30l-22 44h44z" fill="none" stroke="#2F4C7A" stroke-width="2.5" transform="translate(0 -4)"/><path d="M50 30l-22 44h44z" fill="none" stroke="#2F4C7A" stroke-width="2.5" transform="translate(0 4)"/></g>
+     <circle cx="214" cy="104" r="14" fill="#A5313A"/><circle cx="236" cy="104" r="9" fill="#A5313A" opacity=".7"/><circle cx="258" cy="116" r="6" fill="#A5313A" opacity=".5"/>
+     <text x="225" y="226" text-anchor="middle" font-family="Newsreader,serif" font-weight="600" font-size="20" fill="#1E2430">Evidential</text>
+     <text x="225" y="246" text-anchor="middle" font-family="Figtree,sans-serif" font-size="12" fill="#566070">Makes God unlikely</text>
+    </svg>
+   </div>
+  </div>
+ </section>
+</div>
+<script>
+(function(){var st=document.getElementById('stage');
+function fit(){var w=window.innerWidth,h=window.innerHeight,n=w<620,mw=n?460:900,mh=n?800:560;
+var s=Math.min(w/mw,h/mh,1.25);st.classList.toggle('narrow',n);
+st.style.width=(w/s)+'px';st.style.height=(h/s)+'px';st.style.transform='scale('+s+')';}
+window.addEventListener('resize',fit);fit();
+window.$=function(s,r){return (r||document).querySelector(s)};
+window.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+window.tabsInit=function(){var t=$$('.tab');t.forEach(function(b){b.addEventListener('click',function(){
+t.forEach(function(x){x.setAttribute('aria-selected',x===b)});
+$$('.view').forEach(function(v){v.classList.toggle('on',v.id===b.dataset.v)});});});};
+window.keyBtn=function(el,fn){el.addEventListener('click',fn);el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();fn(e)}});};
+})();
+
+tabsInit();
+var O={
+ power:{t:'Give up “God is all-powerful”',say:'“God is good and wants to end evil, but there are things God cannot do.”',fits:'A limited, finite God. Deism softens the problem another way: God made the world but does not step in.',cost:'A God who cannot defeat evil is hard to trust with the final outcome, and harder to worship.'},
+ good:{t:'Give up “God is all-good”',say:'“Ultimate reality is powerful, but not good in the way we mean goodness.”',fits:'A deity who is powerful yet indifferent or morally mixed.',cost:'Goodness no longer anchors morality, and it is unclear why such a being deserves devotion.'},
+ evil:{t:'Give up “Evil exists”',say:'“What we call evil is an illusion, or a limited view of a larger whole.”',fits:'Some pantheistic and Eastern views, where the physical world is not ultimately real (Worldview Question 2).',cost:'Suffering is vivid to those who endure it. Calling it an illusion can leave their pain unaddressed.'},
+ god:{t:'Reject God altogether',say:'“Matter and energy are all that exist. Suffering is a fact of nature, not a puzzle about God.”',fits:'Naturalism.',cost:'The problem of evil goes away. Critics ask what grounds calling anything evil rather than merely unwelcome, and naturalists offer their own answers.'}
+};
+var D={
+ free:{n:'Free will',idea:'God gave people real freedom. Love and moral choice require the ability to choose wrongly, so some evil is the price of freedom.',obj:'Earthquakes and disease do not come from anyone’s choices. Free will does not obviously explain natural evil.'},
+ goods:{n:'Greater goods',idea:'Some goods, such as courage, compassion, and growth, may depend on suffering. God permits evil only for a greater good.',obj:'Some suffering looks pointless or out of proportion. Critics ask what greater good could justify it.'},
+ limits:{n:'Limits of understanding',idea:'God’s reasons may lie beyond what we can grasp. Failing to see a reason is weak evidence that none exists.',obj:'This can look unfalsifiable, and it may weaken our confidence in our own moral judgments.'}
+};
+var seen={},cur=null,defKey='free';
+var panel=$('#panel'),tri=$('#tri');
+function prog(){var ks=['power','good','evil','god','keep'];$('#prog').innerHTML=ks.map(function(k){return '<i class="'+(seen[k]?'on':'')+'"></i>'}).join('')+'<span>Options explored: '+ks.filter(function(k){return seen[k]}).length+' of 5</span>'}
+function render(){
+ ['power','good','evil'].forEach(function(k){var n=$('#n-'+k);n.classList.toggle('dropped',cur===k);n.setAttribute('aria-pressed',cur===k)});
+ $('#b-god').setAttribute('aria-pressed',cur==='god');$('#b-keep').setAttribute('aria-pressed',cur==='keep');
+ var drop=['power','good','evil'].indexOf(cur)>-1;
+ tri.setAttribute('class',(cur&&cur!=='keep')?'state-calm':'state-tense');
+ var m={e1:'power',e2:'power',e3:'good'};
+ $('#e1').classList.toggle('off',cur==='power'||cur==='good');
+ $('#e2').classList.toggle('off',cur==='power'||cur==='evil');
+ $('#e3').classList.toggle('off',cur==='good'||cur==='evil');
+ var h='';
+ if(!cur){h='<h2>Can all three be true?</h2><p>Many believers hold all three claims at once. Together they look inconsistent: if God is all-good and all-powerful, why is there evil?</p><p>Tap a claim to give it up, or choose one of the other routes below the graphic. Each choice commits you to something.</p><p class="muted">Aim to see all five options before you post in this week’s discussion.</p>';}
+ else if(cur==='keep'){var d=D[defKey];
+  h='<h2>Keep all three, and offer a defense</h2><p>Theism holds that God is all-powerful and all-good, and that evil is real. It then needs a reason why God allows evil. Pick a defense:</p><div class="defs">'+Object.keys(D).map(function(k){return '<button class="pill" data-d="'+k+'" aria-pressed="'+(k===defKey)+'">'+D[k].n+'</button>'}).join('')+'</div><h3>The idea</h3><p>'+d.idea+'</p><h3>The pressing objection</h3><p>'+d.obj+'</p><p class="muted" style="margin-top:8px">Compare these with Craig’s article in the Week 2 Resources.</p>';}
+ else{var o=O[cur];
+  h='<h2>'+o.t+'</h2><div class="say">'+o.say+'</div><h3>Worldview it fits</h3><p>'+o.fits+'</p><h3>What it costs</h3><p>'+o.cost+'</p>';}
+ panel.innerHTML=h;
+ $$('[data-d]',panel).forEach(function(b){b.addEventListener('click',function(){defKey=b.dataset.d;render()})});
+ prog();
+}
+function pick(k){cur=(cur===k?null:k);if(cur)seen[cur]=1;render()}
+['power','good','evil'].forEach(function(k){keyBtn($('#n-'+k),function(){pick(k)})});
+$('#b-god').addEventListener('click',function(){pick('god')});$('#b-keep').addEventListener('click',function(){pick('keep')});
+render();
+var Q=[
+ ['A good, all-powerful God and any amount of evil cannot both exist.','L'],
+ ['The sheer amount and kind of suffering makes it unlikely that a good God exists.','E'],
+ ['God and evil contradict each other, the way a square circle is a contradiction.','L'],
+ ['Given how many innocent people suffer, God’s existence seems improbable, though not impossible.','E']];
+var ans={};
+function quiz(){$('#quiz').innerHTML=Q.map(function(q,i){var a=ans[i];
+ function cls(v){if(!a)return '';return v===q[1]?(a===v?'right':''):(a===v?'wrong':'')}
+ return '<div class="qrow"><div class="qt">'+q[0]+'</div><button class="pill '+cls('L')+'" data-i="'+i+'" data-a="L"'+(a?' disabled':'')+'>Logical</button><button class="pill '+cls('E')+'" data-i="'+i+'" data-a="E"'+(a?' disabled':'')+'>Evidential</button></div>'}).join('');
+ $$('#quiz .pill').forEach(function(b){b.addEventListener('click',function(){ans[b.dataset.i]=b.dataset.a;quiz()})});
+ var n=Object.keys(ans).length,c=Object.keys(ans).filter(function(i){return ans[i]===Q[i][1]}).length;
+ $('#qres').innerHTML=n<Q.length?'':'<div class="fb '+(c===Q.length?'ok':'info')+'">'+c+' of '+Q.length+' correct. A claim of contradiction is logical. A claim about likelihood is evidential. The free will defense is aimed mostly at the logical version.</div>';}
+quiz();
+</script></body></html>
