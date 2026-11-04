@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading a Portrait: Who Is Shown, and Who Decides?</title>
+<style>:root{--accent:#0b6b6b}
+:root{--ink:#1c2430;--muted:#566070;--paper:#f5f6f8;--card:#ffffff;--line:#d5dae1;--ok:#17653f;--bad:#a4231b}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5}
+.app{height:100%;display:flex;flex-direction:column}
+header.top{flex:0 0 auto;background:var(--card);border-bottom:3px solid var(--accent);padding:10px 16px 0}
+.wk{margin:0;font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.01em}
+h1{margin:0;font-family:"Iowan Old Style",Palatino,"Palatino Linotype",Georgia,serif;font-size:clamp(19px,3.2vw,26px);line-height:1.2}
+.tabs{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.tabs button{appearance:none;border:1px solid var(--line);border-bottom:none;background:#eceff3;color:var(--ink);
+  padding:7px 14px;border-radius:8px 8px 0 0;font:inherit;font-size:14px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.tabs button:focus-visible,button:focus-visible,.chip:focus-visible{outline:3px solid #1a5fd0;outline-offset:2px}
+.stage{flex:1 1 auto;min-height:0;overflow:auto;padding:14px 16px 18px;scrollbar-width:thin}
+.panel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+svg.art{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);border-radius:10px;border:1px solid var(--line);background:#fff}
+@media(max-width:760px){svg.art{max-height:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card h2{margin:0 0 6px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:19px;line-height:1.25}
+.card h3{margin:10px 0 2px;font-size:14px;color:var(--accent)}
+.card p{margin:2px 0 6px}
+.muted{color:var(--muted);font-size:14px}
+.lead{margin:0 0 10px;color:var(--muted);font-size:15px}
+.prog{display:flex;gap:6px;margin:8px 0 2px;align-items:center;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);background:#fff}
+.dot.on{background:var(--accent)}
+.btn{appearance:none;border:2px solid var(--accent);background:var(--accent);color:#fff;font:inherit;font-weight:600;
+  padding:8px 16px;border-radius:8px;cursor:pointer}
+.btn.alt{background:#fff;color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.chip{appearance:none;border:2px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:14px;
+  padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--accent);background:var(--accent);color:#fff;font-weight:600}
+.fb{margin-top:10px;padding:10px 12px;border-radius:8px;border-left:5px solid var(--line);background:#f1f3f6;font-size:15px}
+.fb.ok{border-color:var(--ok);background:#e8f4ed}.fb.bad{border-color:var(--bad);background:#fbeceb}
+.hot{cursor:pointer}
+.hot circle.b{fill:#fff;stroke:var(--accent);stroke-width:3}
+.hot text{font:700 15px "Segoe UI",Arial,sans-serif;fill:var(--accent);text-anchor:middle;pointer-events:none}
+.hot circle.p{fill:none;stroke:var(--accent);stroke-width:2;opacity:.7;transform-box:fill-box;transform-origin:center;animation:pulse 2.2s ease-out infinite}
+.hot.seen circle.b{fill:var(--accent)}.hot.seen text{fill:#fff}.hot.seen circle.p{animation:none;opacity:0}
+.hot.on circle.b{stroke:#1a5fd0;stroke-width:5}
+.hot:focus{outline:none}.hot:focus-visible circle.b{stroke:#1a5fd0;stroke-width:5}
+@keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@media(prefers-reduced-motion:reduce){.hot circle.p{animation:none;opacity:0}*{transition:none!important}}
+input[type=range]{width:100%;accent-color:var(--accent)}
+label.f{display:block;font-weight:600;font-size:14px;margin-top:10px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style></head>
+<body><div class="app">
+<header class="top"><p class="wk">ARTS 110 · Week 2</p><h1>Reading a Portrait: Who Is Shown, and Who Decides?</h1><div class="tabs" role="tablist"><button role="tab" id="t-0" data-panel="decode" aria-selected="true">1. Decode the portrait</button><button role="tab" id="t-1" data-panel="label" aria-selected="false">2. Change the museum label</button></div></header>
+<main class="stage">
+<section class="panel" id="decode">
+ <p class="lead">A portrait is evidence. Select each numbered detail to see what a pose, a costume, or an object can communicate about the sitter. (The sitter is an invented figure.)</p>
+ <div class="grid">
+  <svg class="art" id="art" viewBox="0 0 800 560" role="img" aria-label="Original illustration of a seated portrait: a figure in a dark robe with a fur collar and black cap, a gold ring on one hand, a book on a table, a red curtain and stone column at left, a window with a river landscape at right, and a small dog."></svg>
+  <div>
+   <div class="card" id="detail" aria-live="polite"><h2>Start decoding</h2><p>Choose a numbered circle. There are six clues to find.</p></div>
+   <div class="prog" id="prog" aria-hidden="true"></div>
+   <p class="muted" id="count">0 of 6 clues found</p>
+   <div class="fb ok" id="done" hidden><strong>Portrait decoded.</strong> Now see how a museum label can change the story, in the next tab.</div>
+  </div>
+ </div>
+</section>
+<section class="panel" id="label" hidden>
+ <p class="lead">Museums choose what to say, and what to leave out. Pick a museum setting to see how the same portrait is framed.</p>
+ <div class="grid">
+  <div>
+   <svg class="art" id="art2" viewBox="0 0 800 560" role="img" aria-label="The same portrait, shown again beside a museum wall label."></svg>
+  </div>
+  <div>
+   <div class="row" role="group" aria-label="Choose a museum setting" style="margin-top:0">
+     <button class="chip" aria-pressed="true" data-m="0">Art museum</button>
+     <button class="chip" aria-pressed="false" data-m="1">History museum</button>
+     <button class="chip" aria-pressed="false" data-m="2">Community heritage center</button>
+   </div>
+   <div class="card" style="margin-top:10px;background:#fbfaf6;border-color:#8c7a4b" aria-live="polite">
+     <p class="muted" style="margin:0">Wall label</p>
+     <h2 id="lt"></h2><p id="lb"></p>
+   </div>
+   <div class="card" style="margin-top:10px" aria-live="polite">
+     <h3 style="margin-top:0">The label asks you to notice</h3><p id="ln"></p>
+     <h3>What it leaves out</h3><p id="lo"></p>
+   </div>
+  </div>
+ </div>
+</section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function initTabs(){
+  const tabs=$$('[role=tab]');
+  const show=id=>{tabs.forEach(t=>t.setAttribute('aria-selected',t.dataset.panel===id));
+    $$('.panel').forEach(p=>p.hidden=p.id!==id);$('.stage').scrollTop=0};
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(t.dataset.panel));
+    t.addEventListener('keydown',e=>{let j=null;if(e.key==='ArrowRight')j=(i+1)%tabs.length;if(e.key==='ArrowLeft')j=(i-1+tabs.length)%tabs.length;
+      if(j!==null){tabs[j].focus();show(tabs[j].dataset.panel);e.preventDefault()}})});
+}
+function addHots(svg,data,onPick){
+  const seen=new Set();
+  data.forEach((d,i)=>{
+    const g=document.createElementNS(NS,'g');g.setAttribute('class','hot');g.setAttribute('tabindex','0');
+    g.setAttribute('role','button');g.setAttribute('aria-label','Detail '+(i+1)+': '+d.title);
+    g.setAttribute('transform','translate('+d.x+' '+d.y+')');
+    g.innerHTML='<circle class="p" r="15"/><circle class="b" r="15"/><text y="5.5">'+(i+1)+'</text>';
+    const pick=()=>{$$('.hot',svg).forEach(h=>h.classList.remove('on'));g.classList.add('on','seen');seen.add(i);onPick(d,i,seen)};
+    g.addEventListener('click',pick);
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
+    svg.appendChild(g);
+  });
+  return seen;
+}
+function dots(el,n,k){el.innerHTML='';for(let i=0;i<n;i++){const d=document.createElement('span');d.className='dot'+(i<k?' on':'');el.appendChild(d)}}
+
+
+function portrait(p){return `
+<defs><linearGradient id="${p}sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9d4e6"/><stop offset="1" stop-color="#eef0e0"/></linearGradient>
+<linearGradient id="${p}cur" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5e1420"/><stop offset=".5" stop-color="#8e2433"/><stop offset="1" stop-color="#5e1420"/></linearGradient>
+<clipPath id="${p}win"><path d="M520 300V130Q520 50 630 50Q740 50 740 130V300Z"/></clipPath></defs>
+<rect width="800" height="560" fill="#2f3d3b"/>
+<g><path d="M520 300V130Q520 50 630 50Q740 50 740 130V300Z" fill="url(#${p}sky)"/>
+<g clip-path="url(#${p}win)"><path d="M520 230Q580 170 640 215T740 190V300H520Z" fill="#7da16a"/><path d="M520 262Q600 225 680 255T740 245V300H520Z" fill="#547a4b"/>
+<path d="M600 300Q630 262 660 240Q690 222 740 224V240Q690 244 664 262Q640 282 640 300Z" fill="#6fa6c9"/>
+<g fill="#3d5f38"><circle cx="560" cy="195" r="16"/><rect x="557" y="205" width="6" height="22"/><circle cx="700" cy="170" r="12"/><rect x="697" y="178" width="6" height="18"/></g></g>
+<path d="M520 300V130Q520 50 630 50Q740 50 740 130V300Z" fill="none" stroke="#d8d1bd" stroke-width="10"/><rect x="508" y="296" width="244" height="14" fill="#d8d1bd"/></g>
+<path d="M0 0H230Q180 120 205 300Q150 360 120 560H0Z" fill="url(#${p}cur)"/>
+<path d="M60 0Q70 200 40 560M130 0Q150 220 90 560" stroke="#47101a" stroke-width="3" fill="none" opacity=".6"/>
+<rect x="238" y="0" width="52" height="470" fill="#cfc7b2"/><rect x="230" y="0" width="68" height="18" fill="#b9b19b"/><g stroke="#a79f89" stroke-width="3"><path d="M252 20V470M264 20V470M276 20V470"/></g>
+<rect y="450" width="800" height="110" fill="#4a3322"/><rect y="450" width="800" height="10" fill="#6d4b32"/>
+<g><path d="M300 560Q295 420 330 350Q380 300 440 330Q490 350 500 440L520 560Z" fill="#1e2232"/>
+<path d="M330 350Q380 395 440 335L470 360Q385 440 312 372Z" fill="#d8ccb2"/>
+<g fill="#b8ad93"><circle cx="345" cy="368" r="3"/><circle cx="372" cy="388" r="3"/><circle cx="404" cy="384" r="3"/><circle cx="436" cy="362" r="3"/></g>
+<rect x="372" y="262" width="40" height="46" fill="#d8ac86"/>
+<ellipse cx="392" cy="222" rx="50" ry="60" fill="#e2b793"/>
+<path d="M338 208Q340 150 392 148Q446 150 446 208Q420 180 392 184Q362 180 338 208Z" fill="#241d22"/>
+<ellipse cx="392" cy="150" rx="68" ry="20" fill="#18141a"/><ellipse cx="392" cy="140" rx="52" ry="14" fill="#241d22"/>
+<ellipse cx="370" cy="218" rx="6" ry="3.5" fill="#2b2225"/><ellipse cx="414" cy="218" rx="6" ry="3.5" fill="#2b2225"/>
+<path d="M384 244Q392 249 402 244" stroke="#8a4c40" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M392 222v14" stroke="#c49670" stroke-width="3"/></g>
+<g><path d="M350 420Q312 400 306 372Q334 360 360 392Z" fill="#1e2232"/><ellipse cx="322" cy="383" rx="22" ry="14" fill="#e2b793" transform="rotate(-25 322 383)"/>
+<circle cx="312" cy="375" r="6" fill="none" stroke="#e6b422" stroke-width="3"/><circle cx="312" cy="369" r="2.6" fill="#b3342b"/></g>
+<g><rect x="520" y="420" width="170" height="40" rx="3" fill="#7c2a2a" transform="rotate(-4 520 420)"/><rect x="524" y="426" width="164" height="8" fill="#e8dcc0" transform="rotate(-4 520 420)"/>
+<rect x="676" y="418" width="10" height="22" fill="#d9a62e" transform="rotate(-4 520 420)"/></g>
+<g><ellipse cx="560" cy="505" rx="52" ry="30" fill="#efe6d2"/><circle cx="520" cy="478" r="22" fill="#efe6d2"/><path d="M505 460Q490 480 502 498Q514 482 512 466Z" fill="#b99a6c"/><circle cx="514" cy="476" r="3" fill="#222"/><ellipse cx="502" cy="486" rx="5" ry="4" fill="#222"/></g>`}
+const A=$('#art'),B=$('#art2');A.innerHTML=portrait('a');B.innerHTML=portrait('b');
+const CL=[
+ {x:458,y:214,title:'Pose and gaze',see:'The sitter turns slightly and looks straight out at the viewer, head upright.',feel:'A direct gaze can signal confidence, openness, or authority. Compare how a lowered gaze would feel.'},
+ {x:405,y:350,title:'Clothing',see:'A dark robe with a pale fur collar and a black cap. The dark fabric makes the face and collar stand out.',feel:'Fur and fine cloth were costly in many places and times, so clothing often points to wealth or rank.'},
+ {x:286,y:400,title:'The ring',see:'A gold ring with a red stone is visible on one hand, placed near the lower left, close to the viewer.',feel:'Rings can mark marriage, office, or membership. The artist chose to show it clearly. Why?'},
+ {x:604,y:446,title:'The book',see:'A closed red book with a gold clasp rests on the table in the lower right.',feel:'A book can stand for learning, faith, or record keeping. Objects in a portrait are chosen, not accidental.'},
+ {x:130,y:170,title:'Curtain and column',see:'A heavy red curtain and a stone column frame the sitter on the left.',feel:'These borrow the look of palaces and temples. They raise the sitter\u2019s dignity, whatever the real setting was.'},
+ {x:630,y:150,title:'The landscape and the dog',see:'Through an arched window: hills, a river, and trees. A small cream dog sits at the lower right.',feel:'Nature can show land ownership, calm, or the sitter\u2019s place in the world. Dogs often signal loyalty or companionship.'}];
+const dt=$('#detail'),pr=$('#prog');dots(pr,6,0);
+addHots(A,CL,(d,i,seen)=>{dt.innerHTML=`<h2>${d.title}</h2><h3>What you can see</h3><p>${d.see}</p><h3>What it can communicate</h3><p>${d.feel}</p>`;
+ dots(pr,6,seen.size);$('#count').textContent=seen.size+' of 6 clues found';if(seen.size===6)$('#done').hidden=false});
+const M=[
+ {t:'Portrait of a Merchant, c. 1620',b:'Oil on panel. Gift of a private collector. A masterwork of portraiture admired for its handling of fabric, light, and the painter\u2019s skill.',n:'Brushwork, the treatment of fur and velvet, composition, and the painter\u2019s reputation.',o:'Who the sitter was in daily life, and who paid for and used the portrait.'},
+ {t:'Merchant\u2019s Household, early 1600s',b:'Part of the gallery on trade and wealth. The ring, fur, and book show how merchants displayed status at a time of growing commerce.',n:'Clothing, objects, and symbols as evidence of social class and economic change.',o:'The artist\u2019s technique, and the experiences of people who did not appear in portraits like this.'},
+ {t:'Our Ancestors\u2019 Image',b:'Displayed with permission from descendants of the family. Local residents helped write this label and share stories passed down about the sitter and the household.',n:'Family memory, how the community has kept and cared for the portrait, and why it matters today.',o:'Formal art-historical comparison with other portraits, unless the community chooses to add it.'}];
+function setM(i){$$('[data-m]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m==i));
+ $('#lt').textContent=M[i].t;$('#lb').textContent=M[i].b;$('#ln').textContent=M[i].n;$('#lo').textContent=M[i].o}
+$$('[data-m]').forEach(b=>b.addEventListener('click',()=>setM(+b.dataset.m)));setM(0);
+
+initTabs();</script></body></html>
