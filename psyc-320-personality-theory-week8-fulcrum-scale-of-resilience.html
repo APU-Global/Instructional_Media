@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 320 Personality Theory | Week 8 | Fulcrum Scale of Resilience</title>
+<style>
+:root{
+  --red:#d34147; --red-d:#b32d34; --red-dd:#8f2229;
+  --cream:#edebe8; --cream-l:#f7f5f2; --ink:#2a2826; --muted:#625d58; --line:#d9d4ce;
+  --teal:#2c5f6b; --teal-l:#dcebed; --gold:#e3a72f; --gold-l:#fbf0d4;
+  --ok:#2f7d4f; --ok-l:#dff1e5; --bad-l:#f8e1e2;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#fff;color:var(--ink);
+  font:16px/1.5 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
+h1,h2,h3,h4{font-family:Georgia,"Times New Roman",serif;line-height:1.2;margin:0;color:var(--ink)}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+
+/* app shell: fills the iframe exactly, so the parent page is the only thing that scrolls */
+.app{height:100%;display:flex;flex-direction:column;padding:12px 16px 12px;gap:10px;min-height:0}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.rule{width:100px;height:6px;border-radius:5px;background:var(--red);margin-bottom:8px}
+h1{font-size:1.4rem}
+.sub{color:var(--muted);font-size:.9rem;margin-top:2px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:2px solid var(--cream);background:#fff;border-radius:999px;padding:6px 16px;font-weight:600;font-size:.9rem;color:var(--muted)}
+.tab:hover{border-color:var(--red)}
+.tab[aria-selected="true"]{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.stage{flex:1;min-height:0;background:var(--cream);border-radius:18px;padding:12px;display:flex}
+.panel{flex:1;min-width:0;min-height:0;background:#fff;border-radius:12px;padding:16px;display:none}
+.panel.on{display:flex;gap:18px}
+.col{min-width:0;min-height:0;display:flex;flex-direction:column}
+.btn{border:0;background:var(--red-d);color:#fff;font-weight:600;border-radius:10px;padding:9px 18px}
+.btn:hover:not(:disabled){background:var(--red-dd)}
+.btn:disabled{background:#c9c4be;color:#fff;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--red-d);border:2px solid var(--red-d);padding:7px 16px}
+.btn.ghost:hover{background:var(--cream-l)}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 13px;font-size:.88rem;font-weight:600}
+.chip:hover{border-color:var(--red)}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.note{background:var(--gold-l);border-left:5px solid var(--gold);border-radius:10px;padding:9px 13px;font-size:.88rem}
+.lead{font-size:.95rem;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg{display:block;max-width:100%}
+
+/* narrow screens: stack and let the page flow (iframe needs to be taller) */
+@media (max-width:760px){
+  html,body{overflow:auto;height:auto}
+  .app{height:auto}
+  .stage{display:block}
+  .panel.on{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- Week 8 specific ---------- */
+.panel{gap:16px}
+.left{flex:1;gap:8px}
+.right{width:300px;flex:none;gap:8px}
+.scalebox{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--cream-l);border-radius:12px;padding:4px}
+.scalebox svg{width:100%;height:100%;max-height:100%}
+.read{background:var(--teal-l);border-radius:12px;padding:9px 13px;font-size:.88rem;line-height:1.4;min-height:62px}
+h2.s{font-size:.98rem}
+.fld{width:100%;font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:8px;margin-top:5px;background:#fff}
+.seg{display:flex;gap:0;border:2px solid var(--line);border-radius:9px;overflow:hidden;flex:1}
+.seg button{flex:1;border:0;background:#fff;padding:5px 4px;font-weight:600;font-size:.84rem;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.seg.diff button[aria-pressed="true"]{background:var(--red-d)}
+.seg.pos button[aria-pressed="true"]{background:var(--teal)}
+.line{display:flex;gap:8px;align-items:center}
+.ideas{display:flex;flex-wrap:wrap;gap:5px}
+.ideas button{border:1px dashed #b5aea6;background:#fff;border-radius:999px;padding:2px 10px;font-size:.78rem;color:var(--muted)}
+.ideas button:hover{border-color:var(--red);color:var(--ink)}
+.sup{display:flex;flex-wrap:wrap;gap:5px}
+.sup button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:3px 11px;font-size:.82rem;font-weight:600}
+.sup button:hover{border-color:var(--gold)}
+.sup button[aria-pressed="true"]{background:var(--gold);border-color:#b9862a;color:var(--ink)}
+.items{display:flex;flex-wrap:wrap;gap:5px;min-height:0}
+.it{display:inline-flex;align-items:center;gap:5px;font-size:.78rem;font-weight:600;border-radius:999px;padding:2px 4px 2px 10px;color:#fff}
+.it.d{background:var(--red-d)} .it.p{background:var(--teal)}
+.it button{border:0;background:rgba(255,255,255,.28);color:#fff;width:18px;height:18px;border-radius:50%;line-height:1;font-size:.8rem;padding:0}
+.it button:hover{background:rgba(255,255,255,.5)}
+.status{font-size:.8rem;color:var(--red-d);min-height:1.1em}
+.mini{font-size:.76rem;color:var(--muted)}
+@media (max-width:760px){.right{width:auto}.scalebox{height:auto}.scalebox svg{height:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="rule"></div>
+      <h1>Fulcrum Scale of Resilience</h1>
+      <p class="sub">Week 8 · Resilience and Self-Reflection</p>
+    </div>
+    <div class="line" style="flex:none"><button class="btn ghost" id="ex">Try an example</button><button class="btn ghost" id="rs">Clear scale</button></div>
+  </header>
+  <main class="stage">
+    <section class="panel on" aria-label="Fulcrum scale builder">
+      <div class="col left">
+        <div class="scalebox"><svg id="svg" viewBox="0 0 560 400" role="img" aria-labelledby="svgt"><title id="svgt">A balance scale. Difficult experiences sit on the left pan, positive experiences on the right. Supports move the fulcrum toward the difficult side.</title></svg></div>
+        <div class="read" id="read" aria-live="polite"></div>
+      </div>
+      <div class="col right">
+        <div>
+          <h2 class="s">Add an experience</h2>
+          <input class="fld" id="txt" type="text" maxlength="26" placeholder="A few words, e.g., moved schools" autocomplete="off" aria-label="Experience description">
+        </div>
+        <div class="line">
+          <div class="seg diff" id="side" role="group" aria-label="Which side">
+            <button data-v="d" aria-pressed="true">Difficult</button><button data-v="p" aria-pressed="false" style="">Positive</button>
+          </div>
+        </div>
+        <div class="line">
+          <div class="seg" id="wt" role="group" aria-label="Weight">
+            <button data-v="1" aria-pressed="false">Light</button><button data-v="2" aria-pressed="true">Medium</button><button data-v="3" aria-pressed="false">Heavy</button>
+          </div>
+          <button class="btn" id="add" style="padding:7px 16px">Add</button>
+        </div>
+        <div class="status" id="status" aria-live="polite"></div>
+        <div>
+          <h2 class="s" style="margin-bottom:5px">Supports that shift the fulcrum</h2>
+          <div class="sup" id="sup" role="group" aria-label="Protective factors"></div>
+        </div>
+        <div class="items" id="items"></div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var NS="http://www.w3.org/2000/svg";
+var F='font-family="Segoe UI,Roboto,Arial,sans-serif"';
+var CAP=4,PX0=280,PY=124,HALF=200;
+var SUPPORTS=["Supportive relationships","Healthy coping","Faith community","Sense of purpose","A safe place to live","Self-regulation skills"];
+var IDEAS=[["Moved to a new school","d"],["A mentor believed in me","p"],["Lost someone close","d"],["Joined a team","p"]];
+var state={items:[],sup:[],side:"d",wt:2};
+var cur={a:0,f:0},tgt={a:0,f:0},raf=null,uid=0;
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- static scale drawing ---------- */
+var svg=$("#svg");
+svg.insertAdjacentHTML("beforeend",
+ '<rect x="40" y="356" width="480" height="14" rx="7" fill="#8a8178"/>'+
+ '<text x="100" y="16" '+F+' font-size="15" font-weight="700" fill="#b32d34" text-anchor="middle">Difficult experiences</text>'+
+ '<text x="460" y="16" '+F+' font-size="15" font-weight="700" fill="#2c5f6b" text-anchor="middle">Positive experiences</text>'+
+ '<defs><marker id="ar" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="#6b645d"/></marker></defs>'+
+ '<line id="dl" y1="40" y2="40" stroke="#6b645d" stroke-width="2" marker-start="url(#ar)" marker-end="url(#ar)"/><line id="dr" y1="40" y2="40" stroke="#6b645d" stroke-width="2" marker-start="url(#ar)" marker-end="url(#ar)"/>'+
+ '<text id="tl" y="34" '+F+' font-size="11" font-weight="600" fill="#625d58" text-anchor="middle"></text><text id="tr" y="34" '+F+' font-size="11" font-weight="600" fill="#625d58" text-anchor="middle"></text>'+
+ '<g id="stand"><path id="tri" fill="#e3a72f" stroke="#8a6414" stroke-width="3" stroke-linejoin="round"/>'+
+ '<text id="fl" '+F+' font-size="12" font-weight="700" fill="#5a4a42" text-anchor="middle" y="386"></text></g>'+
+ '<g id="beam"><rect id="bar" x="'+(PX0-HALF)+'" y="'+(PY-6)+'" width="'+(2*HALF)+'" height="12" rx="6" fill="#4a4540"/></g>'+
+ '<circle id="pin" r="9" fill="#fff" stroke="#4a4540" stroke-width="4"/>'+
+ '<g id="panL"></g><g id="panR"></g>');
+var els={dl:$("#dl"),dr:$("#dr"),tl:$("#tl"),tr:$("#tr"),tri:$("#tri"),fl:$("#fl"),beam:$("#beam"),pin:$("#pin"),pl:$("#panL"),pr:$("#panR")};
+
+function pan(side,x,y){
+  var g=side==="d"?els.pl:els.pr,col=side==="d"?"#b32d34":"#2c5f6b";
+  var list=state.items.filter(function(i){return i.s===side});
+  var h='<g transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+')">'+
+   '<path d="M0 0L-72 156M0 0L72 156" stroke="#6b645d" stroke-width="2" fill="none"/><circle r="6" fill="#4a4540"/>';
+  var base=156,ht={1:20,2:28,3:38};
+  list.forEach(function(it){
+    var bh=ht[it.w];base-=bh;
+    h+='<g class="blk" data-id="'+it.id+'" style="cursor:pointer" tabindex="0" role="button" aria-label="Remove '+esc(it.t)+'">'+
+      '<rect x="-60" y="'+base+'" width="120" height="'+(bh-2)+'" rx="5" fill="'+col+'" stroke="#fff" stroke-width="1.5"/>'+
+      '<text x="0" y="'+(base+(bh-2)/2+4)+'" text-anchor="middle" '+F+' font-size="11" font-weight="600" fill="#fff">'+esc(trunc(it.t,18))+'</text></g>';
+  });
+  h+='<rect x="-80" y="156" width="160" height="9" rx="4.5" fill="#4a4540"/></g>';
+  g.innerHTML=h;
+}
+function trunc(s,n){return s.length>n?s.slice(0,n-1)+"…":s}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function draw(){
+  var px=PX0+cur.f*HALF,rad=cur.a*Math.PI/180,c=Math.cos(rad),s=Math.sin(rad);
+  els.beam.setAttribute("transform","rotate("+cur.a.toFixed(2)+" "+px.toFixed(1)+" "+PY+")");
+  els.tri.setAttribute("d","M"+px+" "+(PY+4)+"L"+(px-42)+" 352L"+(px+42)+" 352z");
+  els.pin.setAttribute("cx",px);els.pin.setAttribute("cy",PY);
+  els.fl.setAttribute("x",px);els.fl.textContent="Fulcrum";
+  var L=PX0-HALF,R=PX0+HALF;
+  els.dl.setAttribute("x1",L+2);els.dl.setAttribute("x2",Math.max(L+4,px-3));
+  els.dr.setAttribute("x1",px+3);els.dr.setAttribute("x2",R-2);
+  els.tl.setAttribute("x",(L+px)/2);els.tr.setAttribute("x",(px+R)/2);
+  els.tl.textContent=cur.f<-0.04?"shorter lever arm":"lever arm";els.tr.textContent=cur.f<-0.04?"longer lever arm":"lever arm";
+  var lx=PX0-HALF-px,rx=PX0+HALF-px;
+  pan("d",px+lx*c,PY+lx*s);
+  pan("p",px+rx*c,PY+rx*s);
+}
+function loop(){
+  var da=tgt.a-cur.a,df=tgt.f-cur.f;
+  if(reduce||(Math.abs(da)<.05&&Math.abs(df)<.002)){cur.a=tgt.a;cur.f=tgt.f;draw();raf=null;return}
+  cur.a+=da*.12;cur.f+=df*.12;draw();raf=requestAnimationFrame(loop);
+}
+function recompute(){
+  var D=0,P=0;state.items.forEach(function(i){if(i.s==="d")D+=i.w;else P+=i.w});
+  var f=-0.1*state.sup.length;
+  var net=P*(1-f)-D*(1+f);
+  var dxMax=Math.max(PX0+HALF-(PX0+f*HALF),(PX0+f*HALF)-(PX0-HALF));
+  var maxA=Math.min(18,Math.asin(Math.min(1,58/dxMax))*180/Math.PI);
+  var ang=Math.max(-maxA,Math.min(maxA,net*3.2));
+  if(!state.items.length)ang=0;
+  tgt.a=ang;tgt.f=f;
+  if(!raf)raf=requestAnimationFrame(loop);
+  // reading
+  var n=state.sup.length,msg;
+  if(!state.items.length){
+    msg="<b>Start by adding one difficult and one positive experience.</b> Then switch on supports to see how leverage changes the balance. Nothing you type is saved or shared.";
+  }else{
+    var nd=state.items.filter(function(i){return i.s==="d"}).length,np=state.items.length-nd;
+    if(!nd||!np){msg="Add experiences to <b>both</b> sides. Real lives hold difficulty and good things together.";}
+    else if(Math.abs(net)<0.6){msg="<b>The scale is close to level.</b> Both sides carry similar weight at this fulcrum position. Notice what keeps it steady.";}
+    else if(net>0){msg="<b>The scale tips toward positive outcomes.</b> Difficult experiences are still on the scale. Resilience is not the absence of difficulty.";}
+    else if(n===0){msg="<b>The difficult side is heavier.</b> Try switching on a support below. Moving the fulcrum gives the same weight less leverage.";}
+    else{msg="<b>Even with "+n+" support"+(n>1?"s":"")+", the difficult side is heavier.</b> Which other supports, people, or practices could help carry the load?";}
+  }
+  $("#read").innerHTML=msg;
+  renderItems();
+}
+function renderItems(){
+  $("#items").innerHTML=state.items.map(function(i){
+    return '<span class="it '+i.s+'">'+esc(trunc(i.t,20))+'<button data-id="'+i.id+'" aria-label="Remove '+esc(i.t)+'">×</button></span>';
+  }).join("");
+  [].forEach.call(document.querySelectorAll(".it button"),function(b){b.onclick=function(){remove(+b.dataset.id)}});
+}
+function remove(id){state.items=state.items.filter(function(i){return i.id!==id});recompute()}
+svg.addEventListener("click",function(e){var b=e.target.closest(".blk");if(b)remove(+b.dataset.id)});
+svg.addEventListener("keydown",function(e){var b=e.target.closest&&e.target.closest(".blk");if(b&&(e.key==="Enter"||e.key===" ")){e.preventDefault();remove(+b.dataset.id)}});
+
+/* ---------- controls ---------- */
+function seg(id,key,after){
+  [].forEach.call(document.querySelectorAll(id+" button"),function(b){b.onclick=function(){
+    [].forEach.call(document.querySelectorAll(id+" button"),function(x){x.setAttribute("aria-pressed",x===b)});
+    state[key]=key==="wt"?+b.dataset.v:b.dataset.v;if(after)after();
+  }});
+}
+seg("#side","side");seg("#wt","wt");
+function setSide(v){state.side=v;[].forEach.call(document.querySelectorAll("#side button"),function(x){x.setAttribute("aria-pressed",x.dataset.v===v)})}
+function add(text,side,w){
+  text=(text||"").trim();
+  if(!text){$("#status").textContent="Describe the experience in a few words.";$("#txt").focus();return false}
+  var count=state.items.filter(function(i){return i.s===side}).length;
+  if(count>=CAP){$("#status").textContent="That side is full ("+CAP+"). Remove one to add another.";return false}
+  $("#status").textContent="";
+  state.items.push({id:++uid,t:text,s:side,w:w});recompute();return true;
+}
+$("#add").onclick=function(){if(add($("#txt").value,state.side,state.wt))$("#txt").value=""};
+$("#txt").addEventListener("keydown",function(e){if(e.key==="Enter")$("#add").click()});
+$("#sup").innerHTML=SUPPORTS.map(function(s,i){return '<button data-i="'+i+'" aria-pressed="false">'+s+'</button>'}).join("");
+[].forEach.call(document.querySelectorAll("#sup button"),function(b){b.onclick=function(){
+  var i=+b.dataset.i,k=state.sup.indexOf(i);
+  if(k>-1)state.sup.splice(k,1);else state.sup.push(i);
+  b.setAttribute("aria-pressed",k===-1);recompute();
+}});
+$("#ex").onclick=function(){
+  state.items=[];state.sup=[];
+  [].forEach.call(document.querySelectorAll("#sup button"),function(b){b.setAttribute("aria-pressed","false")});
+  [["Parents divorced","d",3],["Moved schools","d",2],["Lost a close friend","d",2],["A mentor believed in me","p",2],["Joined a team","p",1]].forEach(function(x){state.items.push({id:++uid,t:x[0],s:x[1],w:x[2]})});
+  recompute();
+};
+$("#rs").onclick=function(){
+  state.items=[];state.sup=[];$("#status").textContent="";$("#txt").value="";
+  [].forEach.call(document.querySelectorAll("#sup button"),function(b){b.setAttribute("aria-pressed","false")});
+  recompute();
+};
+draw();recompute();
+})();
+</script>
+</body>
+</html>

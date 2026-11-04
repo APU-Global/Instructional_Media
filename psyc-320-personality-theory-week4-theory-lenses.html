@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 320 Personality Theory | Week 4 | Theory Lenses</title>
+<style>
+:root{
+  --red:#d34147; --red-d:#b32d34; --red-dd:#8f2229;
+  --cream:#edebe8; --cream-l:#f7f5f2; --ink:#2a2826; --muted:#625d58; --line:#d9d4ce;
+  --teal:#2c5f6b; --teal-l:#dcebed; --gold:#e3a72f; --gold-l:#fbf0d4;
+  --ok:#2f7d4f; --ok-l:#dff1e5; --bad-l:#f8e1e2;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#fff;color:var(--ink);
+  font:16px/1.5 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
+h1,h2,h3,h4{font-family:Georgia,"Times New Roman",serif;line-height:1.2;margin:0;color:var(--ink)}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+
+/* app shell: fills the iframe exactly, so the parent page is the only thing that scrolls */
+.app{height:100%;display:flex;flex-direction:column;padding:12px 16px 12px;gap:10px;min-height:0}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.rule{width:100px;height:6px;border-radius:5px;background:var(--red);margin-bottom:8px}
+h1{font-size:1.4rem}
+.sub{color:var(--muted);font-size:.9rem;margin-top:2px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:2px solid var(--cream);background:#fff;border-radius:999px;padding:6px 16px;font-weight:600;font-size:.9rem;color:var(--muted)}
+.tab:hover{border-color:var(--red)}
+.tab[aria-selected="true"]{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.stage{flex:1;min-height:0;background:var(--cream);border-radius:18px;padding:12px;display:flex}
+.panel{flex:1;min-width:0;min-height:0;background:#fff;border-radius:12px;padding:16px;display:none}
+.panel.on{display:flex;gap:18px}
+.col{min-width:0;min-height:0;display:flex;flex-direction:column}
+.btn{border:0;background:var(--red-d);color:#fff;font-weight:600;border-radius:10px;padding:9px 18px}
+.btn:hover:not(:disabled){background:var(--red-dd)}
+.btn:disabled{background:#c9c4be;color:#fff;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--red-d);border:2px solid var(--red-d);padding:7px 16px}
+.btn.ghost:hover{background:var(--cream-l)}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 13px;font-size:.88rem;font-weight:600}
+.chip:hover{border-color:var(--red)}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.note{background:var(--gold-l);border-left:5px solid var(--gold);border-radius:10px;padding:9px 13px;font-size:.88rem}
+.lead{font-size:.95rem;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg{display:block;max-width:100%}
+
+/* narrow screens: stack and let the page flow (iframe needs to be taller) */
+@media (max-width:760px){
+  html,body{overflow:auto;height:auto}
+  .app{height:auto}
+  .stage{display:block}
+  .panel.on{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- Week 4 specific ---------- */
+.panel{flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row .k{font-weight:700;font-size:.88rem;margin-right:2px;white-space:nowrap}
+.lenses{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lens{display:flex;align-items:center;gap:10px;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:7px 10px}
+.lens:hover{border-color:var(--red)}
+.lens[aria-pressed="true"]{border-color:var(--red-d);background:var(--cream-l);box-shadow:inset 0 0 0 1px var(--red-d)}
+.lens svg{flex:none}
+.lens b{display:block;font-size:.88rem;line-height:1.2}
+.lens small{display:block;color:var(--muted);font-size:.74rem;line-height:1.25}
+.results{flex:1;min-height:0;display:grid;gap:12px}
+.results.n1{grid-template-columns:1fr}
+.results.n2{grid-template-columns:1fr 1fr}
+.res{background:var(--cream-l);border-radius:12px;padding:8px 14px 10px;display:flex;flex-direction:column;gap:4px;min-height:0;min-width:0}
+.res .art{display:flex;justify-content:center}
+.res .art svg{width:100%;max-width:225px;height:auto}
+.n1 .res{flex-direction:row;align-items:center;gap:24px}
+.n1 .res .art{flex:none;width:300px}
+.n1 .res .art svg{max-width:300px}
+.res h3{font-size:1.05rem;color:var(--red-d)}
+.res .who{font-size:.76rem;color:var(--muted);margin-top:-2px}
+.res p.body{font-size:.86rem;line-height:1.4}
+.res .ask{font-size:.88rem;background:#fff;border-left:5px solid var(--teal);border-radius:8px;padding:6px 10px}
+.frame{font-size:.85rem;background:var(--gold-l);border-left:5px solid var(--gold);border-radius:10px;padding:6px 12px}
+.hint{font-size:.85rem;color:var(--muted)}
+@media (min-width:761px) and (max-width:940px){
+  .res .art svg{max-width:150px}
+  .res p.body{font-size:.8rem;line-height:1.36}
+  .res .ask{font-size:.8rem;padding:4px 9px}
+  .res h3{font-size:.98rem}
+  .lens small{display:none}
+  .frame{font-size:.8rem}
+}
+@media (max-width:760px){.lenses{grid-template-columns:1fr 1fr}.results.n2{grid-template-columns:1fr}.n1 .res{flex-direction:column}.n1 .res .art{width:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="rule"></div>
+      <h1>Theory Lenses</h1>
+      <p class="sub">Week 4 · Major Theories of Personality</p>
+    </div>
+    <p class="hint" style="max-width:420px;text-align:right">Pick a behavior, then choose up to two lenses to see how each theory explains it.</p>
+  </header>
+  <main class="stage">
+    <section class="panel on" aria-label="Theory lenses explorer">
+      <div class="row" role="group" aria-label="Behavior"><span class="k">Behavior</span><span id="bchips" class="row"></span></div>
+      <div class="lenses" id="lenses" role="group" aria-label="Theory lenses (choose up to two)"></div>
+      <div class="results n2" id="results" aria-live="polite"></div>
+      <div class="frame" id="frame"></div>
+    </section>
+  </main>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var F='font-family="Segoe UI,Roboto,Arial,sans-serif"';
+
+var BEH=[
+ {id:"help",name:"Helping others first",tip:"Helping others",deep:"fear of rejection; guilt"},
+ {id:"avoid",name:"Avoiding conflict",tip:"Avoiding conflict",deep:"buried anger; fear of loss"},
+ {id:"delay",name:"Putting things off",tip:"Putting things off",deep:"fear of failing; old pressure"},
+ {id:"perf",name:"Chasing perfect grades",tip:"Perfect grades",deep:"inner critic; ideal self"}
+];
+var LENS=[
+ {id:"psy",name:"Psychodynamic",who:"Freud, Horney, Chodorow",focus:"unconscious conflict and early relationships"},
+ {id:"ana",name:"Analytical",who:"Jung",focus:"archetypes and the parts of the self we hide or neglect"},
+ {id:"hum",name:"Humanistic & existential",who:"Frankl, Rogers, Maslow",focus:"meaning, acceptance, and growth"},
+ {id:"soc",name:"Psychosocial",who:"Erikson",focus:"the central challenge of a life stage"}
+];
+var D={
+ help:{
+  psy:{t:"Care as a way to manage worry",b:"Freud might see helping as an acceptable outlet for impulses or guilt the person does not consciously notice. Horney would ask whether helping eases anxiety about being rejected. Chodorow would look at how early caregiving relationships taught that connection means caring for others.",q:"What might I gain, emotionally, by always being the helper?"},
+  ana:{t:"The Caregiver archetype",b:"Jung proposed that shared patterns, called archetypes, shape how people see themselves. Helping may express a Caregiver image from the collective unconscious. He would also ask what the “helper” persona leaves out, such as the person’s own needs, which can slip into the shadow.",q:"What part of me goes unlived while I play the helper?",ring:2,mark:"Caregiver"},
+  hum:{t:"Meaning and belonging",b:"Frankl would ask what meaning helping gives this person’s life. Rogers would ask whether acceptance felt dependent on being useful. Maslow would place helping with belonging and esteem needs, and suggest that growth means helping from fullness rather than need.",q:"Do I help because it matters to me, or because I fear losing acceptance?",hl:2},
+  soc:{t:"Generativity vs. stagnation",b:"Erikson saw adulthood as a time to care for the next generation through parenting, mentoring, or service. Helping may reflect a healthy push toward generativity. For a younger person, it may be part of working out identity: who am I to others?",q:"Which stage’s challenge is this behavior helping me work through?",hl:6}},
+ avoid:{
+  psy:{t:"Keeping the peace to keep anxiety down",b:"Freud would point to defenses that protect us from threatening feelings, such as pushing anger out of awareness. Horney described a “moving toward people” style in which a person complies to feel safe. Early family relationships may have taught that conflict was dangerous.",q:"What feeling am I protecting myself from?"},
+  ana:{t:"The peacemaker persona",b:"Jung called the face we show others the persona. A peacemaker persona can be useful, but if it hides real opinions, those feelings may live on in the shadow and appear later as sudden irritation or resentment.",q:"What does my persona keep out of view?",ring:0,mark:"Peacemaker persona"},
+  hum:{t:"Conditions of worth",b:"Rogers suggested that when children feel accepted only if they are agreeable, they learn conditions of worth and shrink their authentic self. Maslow would note the pull of safety and belonging needs. Growth means feeling secure enough to disagree.",q:"Who taught me that being agreeable was the price of acceptance?",hl:2},
+  soc:{t:"Identity vs. role confusion",b:"In adolescence, Erikson said, people try out roles and test who they are. Avoiding conflict can mean not yet knowing, or not yet feeling free to state, what one stands for. The lessons of each stage can be revisited later in life.",q:"Does avoiding conflict help me hide who I am becoming?",hl:4}},
+ delay:{
+  psy:{t:"Avoiding uncomfortable feelings",b:"A psychodynamic view treats putting things off as a way to dodge anxiety about failure or judgment, an unconscious defense. Early experiences with authority or high expectations may shape what a task now means emotionally.",q:"What feeling shows up when I picture starting?"},
+  ana:{t:"Two sides pulling apart",b:"Jung saw the psyche as full of opposing tendencies. One side wants to achieve while another resists. He would ask what the resisting side is trying to say, rather than only trying to override it.",q:"What is the resisting part of me asking for?",ring:1,mark:"Resisting part"},
+  hum:{t:"Unmet needs or missing meaning",b:"Maslow would check whether lower needs such as sleep, safety, or stability are crowding out the task. Frankl would ask whether the task connects to anything the person finds meaningful. Rogers would ask how harshly the person judges themselves.",q:"Is this a need problem, a meaning problem, or a self-judgment problem?",hl:1},
+  soc:{t:"Industry vs. inferiority",b:"Erikson described a stage focused on feeling capable of doing work well. If someone doubts their competence, delaying can protect them from a test of ability. Encouragement and manageable successes help rebuild a sense of industry.",q:"Am I delaying because I doubt I can do it well?",hl:3}},
+ perf:{
+  psy:{t:"Meeting an inner critic’s demands",b:"Freud described a harsh superego that punishes failure with guilt. Horney wrote about the “tyranny of the shoulds,” rigid demands people place on themselves to match an idealized self. Perfect grades can become a way to quiet that critic.",q:"Whose voice says anything less is failure?"},
+  ana:{t:"The Hero and the neglected side",b:"Jung would see the Hero archetype in the drive to conquer every challenge. He would also ask what was set aside to make it possible, such as rest, play, or vulnerability, and warn that neglected sides tend to return.",q:"What parts of me are waiting while I achieve?",ring:2,mark:"Hero"},
+  hum:{t:"Esteem versus self-actualization",b:"Maslow placed esteem needs below self-actualization, so grades can feed respect without fully satisfying growth. Rogers would ask whether worth feels earned only through performance. Frankl would ask what the grades are for.",q:"If no one ever saw my grades, what would I still want to learn?",hl:3},
+  soc:{t:"Achievement as identity",b:"Erikson linked competence to the stage of industry and the question “Who am I?” to the stage after it. When grades become the main answer to that question, identity can narrow. Healthy development lets achievement be one part of a wider self.",q:"If my grades changed, would my sense of who I am change?",hl:4}}
+};
+var MASLOW=["Physiological","Safety","Belonging","Esteem","Self-actualization"];
+var ERIK=["Trust vs. mistrust","Autonomy vs. shame","Initiative vs. guilt","Industry vs. inferiority","Identity vs. role confusion","Intimacy vs. isolation","Generativity vs. stagnation","Integrity vs. despair"];
+
+/* ---------- graphics ---------- */
+function iceberg(tip,deep){
+  var d=deep.split(";").map(function(s){return s.trim()});
+  return '<svg viewBox="0 0 250 140" role="img" aria-label="Iceberg: only the behavior \''+tip+'\' is visible above the waterline; motives such as '+deep+' lie beneath">'+
+   '<rect x="0" y="52" width="250" height="88" fill="#dcebed"/>'+
+   '<path d="M0 52q15-5 31 0t31 0 31 0 31 0 31 0 31 0 31 0 33 0" fill="none" stroke="#2c5f6b" stroke-width="2"/>'+
+   '<path d="M98 52l16-34 16 34z" fill="#fff" stroke="#2c5f6b" stroke-width="2"/>'+
+   '<path d="M72 56h100l26 40-34 38H80L46 96z" fill="#2c5f6b"/>'+
+   '<text x="4" y="12" '+F+' font-size="11" font-weight="700" fill="#2a2826">Visible: '+tip+'</text>'+
+   '<text x="125" y="90" text-anchor="middle" '+F+' font-size="10.5" fill="#fff" font-weight="600">'+d[0]+(d[1]?';':'')+'</text>'+
+   '<text x="125" y="104" text-anchor="middle" '+F+' font-size="10.5" fill="#fff" font-weight="600">'+(d[1]||"")+'</text>'+
+   '<text x="125" y="123" text-anchor="middle" '+F+' font-size="9" fill="#cfe3e6">beneath awareness</text></svg>';
+}
+function rings(ring,mark){
+  var rs=[20,38,56],cols=["#d34147","#f3c7c9","#fbf0d4"];
+  var pos=[[60,72],[60,48],[60,28]];
+  var s='<svg viewBox="0 0 250 140" role="img" aria-label="Jung\'s layers of the psyche, with \''+mark+'\' marked in one layer">';
+  [2,1,0].forEach(function(i){s+='<circle cx="60" cy="72" r="'+rs[i]+'" fill="'+cols[i]+'" stroke="#8f2229" stroke-width="1.5"/>'});
+  var p=pos[ring];
+  s+='<path d="M'+p[0]+' '+(p[1]-8)+'l2.5 6 6.5.5-5 4 1.7 6.5-5.7-3.6-5.7 3.6 1.7-6.5-5-4 6.5-.5z" fill="#2c5f6b" stroke="#fff" stroke-width="1"/>';
+  var L=[["Conscious ego","#d34147"],["Personal unconscious","#f3c7c9"],["Collective unconscious","#fbf0d4"]];
+  L.forEach(function(l,i){var y=34+i*20;s+='<rect x="126" y="'+(y-9)+'" width="10" height="10" rx="2" fill="'+l[1]+'" stroke="#8f2229"/><text x="141" y="'+y+'" '+F+' font-size="9" fill="#2a2826">'+l[0]+'</text>'});
+  s+='<path d="M130 100l2.2 5.4 5.8.4-4.5 3.7 1.5 5.7-5-3.2-5 3.2 1.5-5.7-4.5-3.7 5.8-.4z" fill="#2c5f6b" transform="translate(-5 -9)"/>'+
+     '<text x="141" y="106" '+F+' font-size="10.5" font-weight="700" fill="#2c5f6b">'+mark+'</text></svg>';
+  return s;
+}
+function pyramid(hl){
+  var s='<svg viewBox="0 0 250 140" role="img" aria-label="Maslow\'s hierarchy of needs with \''+MASLOW[hl]+'\' highlighted">';
+  var top=8,H=127,lh=H/5,hw=function(y){return (y-top)/H*58};
+  for(var k=0;k<5;k++){
+    var lvl=4-k,y0=top+k*lh+1,y1=top+(k+1)*lh-1,on=lvl===hl;
+    s+='<polygon points="'+(64-hw(y0))+','+y0+' '+(64+hw(y0))+','+y0+' '+(64+hw(y1))+','+y1+' '+(64-hw(y1))+','+y1+'" fill="'+(on?'#d34147':'#f1dede')+'" stroke="#8f2229" stroke-width="1.2"/>'+
+       '<text x="130" y="'+((y0+y1)/2+4)+'" '+F+' font-size="10.5" '+(on?'font-weight="700" fill="#8f2229"':'fill="#4a4540"')+'>'+MASLOW[lvl]+'</text>';
+  }
+  return s+'</svg>';
+}
+function stairs(hl){
+  var s='<svg viewBox="0 0 250 140" role="img" aria-label="Erikson\'s eight stages, with stage '+(hl+1)+', '+ERIK[hl]+', highlighted">';
+  for(var i=0;i<8;i++){
+    var h=i*12+16,x=4+i*30.5,on=i===hl;
+    s+='<rect x="'+x+'" y="'+(134-h)+'" width="29" height="'+h+'" rx="2" fill="'+(on?'#d34147':'#f1dede')+'" stroke="#8f2229" stroke-width="1.2"/>'+
+       '<text x="'+(x+14.5)+'" y="130" text-anchor="middle" '+F+' font-size="11" font-weight="700" fill="'+(on?'#fff':'#8f2229')+'">'+(i+1)+'</text>';
+  }
+  s+='<text x="4" y="14" '+F+' font-size="11" font-weight="700" fill="#2a2826">Stage '+(hl+1)+': '+ERIK[hl]+'</text></svg>';
+  return s;
+}
+function art(lens,b,d){
+  if(lens==="psy")return iceberg(b.tip,b.deep);
+  if(lens==="ana")return rings(d.ring,d.mark);
+  if(lens==="hum")return pyramid(d.hl);
+  return stairs(d.hl);
+}
+function mini(l){
+  var c={psy:'<path d="M12 4l5 9H7z" fill="#fff" stroke="#2c5f6b" stroke-width="1.5"/><path d="M5 14h14l-3 9H8z" fill="#2c5f6b"/><path d="M1 13h22" stroke="#2c5f6b" stroke-width="1.5"/>',
+   ana:'<circle cx="12" cy="13" r="10" fill="#fbf0d4" stroke="#8f2229" stroke-width="1.5"/><circle cx="12" cy="13" r="6.5" fill="#f3c7c9" stroke="#8f2229" stroke-width="1.5"/><circle cx="12" cy="13" r="3" fill="#d34147"/>',
+   hum:'<path d="M12 2l10 22H2z" fill="#f1dede" stroke="#8f2229" stroke-width="1.5"/><path d="M12 2l3.7 8.1H8.3z" fill="#d34147"/>',
+   soc:'<g fill="#f1dede" stroke="#8f2229" stroke-width="1.3"><rect x="1" y="18" width="6" height="6"/><rect x="8" y="13" width="6" height="11"/><rect x="15" y="8" width="6" height="16"/></g><rect x="15" y="8" width="6" height="16" fill="#d34147"/>'}[l];
+  return '<svg width="30" height="30" viewBox="0 0 24 26" aria-hidden="true">'+c+'</svg>';
+}
+
+/* ---------- state + render ---------- */
+var beh="help",sel=["psy","hum"];
+function renderChips(){
+  var h="";
+  BEH.forEach(function(b){h+='<button class="chip" data-b="'+b.id+'" aria-pressed="'+(b.id===beh)+'">'+b.name+'</button>'});
+  $("#bchips").innerHTML=h;
+  [].forEach.call(document.querySelectorAll("#bchips .chip"),function(c){c.onclick=function(){beh=c.dataset.b;renderChips();renderRes()}});
+}
+function renderLenses(){
+  var h="";
+  LENS.forEach(function(l){h+='<button class="lens" data-l="'+l.id+'" aria-pressed="'+(sel.indexOf(l.id)>-1)+'">'+mini(l.id)+'<span><b>'+l.name+'</b><small>'+l.who+'</small></span></button>'});
+  $("#lenses").innerHTML=h;
+  [].forEach.call(document.querySelectorAll(".lens"),function(b){b.onclick=function(){
+    var id=b.dataset.l,i=sel.indexOf(id);
+    if(i>-1){if(sel.length>1)sel.splice(i,1)}else{sel.push(id);if(sel.length>2)sel.shift()}
+    renderLenses();renderRes();
+  }});
+}
+function renderRes(){
+  var b=BEH.filter(function(x){return x.id===beh})[0];
+  var R=$("#results");R.className="results n"+sel.length;
+  var order=LENS.filter(function(l){return sel.indexOf(l.id)>-1});
+  R.innerHTML=order.map(function(l){
+    var d=D[beh][l.id];
+    return '<article class="res"><div class="art">'+art(l.id,b,d)+'</div><div><h3>'+d.t+'</h3><p class="body" style="margin-top:3px">'+d.b+'</p><p class="ask" style="margin-top:6px"><b>Ask yourself:</b> '+d.q+'</p></div></article>';
+  }).join("");
+  var f=$("#frame");
+  if(order.length===2){
+    f.innerHTML='<b>Paper starter:</b> “I will explain <i>'+b.name.toLowerCase()+'</i> with '+order[0].name+' theory, which emphasizes '+order[0].focus+', and '+order[1].name+' theory, which emphasizes '+order[1].focus+'.”';
+  }else{
+    f.innerHTML='Select a second lens to compare. Your Theory Application Paper uses two theories.';
+  }
+}
+renderChips();renderLenses();renderRes();
+})();
+</script>
+</body>
+</html>

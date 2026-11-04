@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 320 Personality Theory | Week 6 | Nature and Nurture Twin Lab</title>
+<style>
+:root{
+  --red:#d34147; --red-d:#b32d34; --red-dd:#8f2229;
+  --cream:#edebe8; --cream-l:#f7f5f2; --ink:#2a2826; --muted:#625d58; --line:#d9d4ce;
+  --teal:#2c5f6b; --teal-l:#dcebed; --gold:#e3a72f; --gold-l:#fbf0d4;
+  --ok:#2f7d4f; --ok-l:#dff1e5; --bad-l:#f8e1e2;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#fff;color:var(--ink);
+  font:16px/1.5 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
+h1,h2,h3,h4{font-family:Georgia,"Times New Roman",serif;line-height:1.2;margin:0;color:var(--ink)}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+
+/* app shell: fills the iframe exactly, so the parent page is the only thing that scrolls */
+.app{height:100%;display:flex;flex-direction:column;padding:12px 16px 12px;gap:10px;min-height:0}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.rule{width:100px;height:6px;border-radius:5px;background:var(--red);margin-bottom:8px}
+h1{font-size:1.4rem}
+.sub{color:var(--muted);font-size:.9rem;margin-top:2px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:2px solid var(--cream);background:#fff;border-radius:999px;padding:6px 16px;font-weight:600;font-size:.9rem;color:var(--muted)}
+.tab:hover{border-color:var(--red)}
+.tab[aria-selected="true"]{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.stage{flex:1;min-height:0;background:var(--cream);border-radius:18px;padding:12px;display:flex}
+.panel{flex:1;min-width:0;min-height:0;background:#fff;border-radius:12px;padding:16px;display:none}
+.panel.on{display:flex;gap:18px}
+.col{min-width:0;min-height:0;display:flex;flex-direction:column}
+.btn{border:0;background:var(--red-d);color:#fff;font-weight:600;border-radius:10px;padding:9px 18px}
+.btn:hover:not(:disabled){background:var(--red-dd)}
+.btn:disabled{background:#c9c4be;color:#fff;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--red-d);border:2px solid var(--red-d);padding:7px 16px}
+.btn.ghost:hover{background:var(--cream-l)}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 13px;font-size:.88rem;font-weight:600}
+.chip:hover{border-color:var(--red)}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.note{background:var(--gold-l);border-left:5px solid var(--gold);border-radius:10px;padding:9px 13px;font-size:.88rem}
+.lead{font-size:.95rem;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg{display:block;max-width:100%}
+
+/* narrow screens: stack and let the page flow (iframe needs to be taller) */
+@media (max-width:760px){
+  html,body{overflow:auto;height:auto}
+  .app{height:auto}
+  .stage{display:block}
+  .panel.on{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- Week 6 specific ---------- */
+.p1 .side{width:300px;flex:none;gap:10px}
+.p1 .viz{flex:1;gap:8px}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.sl{display:flex;flex-direction:column;gap:2px}
+.sl label{display:flex;justify-content:space-between;font-size:.86rem;font-weight:700}
+.sl label span{font-family:Georgia,serif;color:var(--red-d);font-size:1rem}
+.sl small{color:var(--muted);font-size:.76rem}
+input[type=range]{width:100%;accent-color:var(--red-d);height:26px;margin:0}
+.read{background:var(--cream-l);border-radius:12px;padding:10px 12px;font-size:.88rem;line-height:1.4}
+.read b.big{font-family:Georgia,serif;font-size:1.9rem;color:var(--teal);line-height:1;display:block}
+.charts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.chart{background:var(--cream-l);border-radius:12px;padding:8px 10px 6px;text-align:center}
+.chart h3{font-size:.95rem}
+.chart .meta{font-size:.78rem;color:var(--muted)}
+.chart > svg{width:100%;height:auto;max-height:206px}
+.twins{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 4px;font-size:.78rem;color:var(--muted);white-space:nowrap}
+.twins svg{flex:none}
+.ace{display:flex;height:38px;border-radius:10px;overflow:hidden;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.ace div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.92rem;transition:flex-basis .35s ease;min-width:0;overflow:hidden;white-space:nowrap}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* tab 2 */
+.p2 .art{width:215px;flex:none;align-items:center;justify-content:center}
+.p2 .qs{flex:1;gap:4px;justify-content:space-between}
+.q{padding:5px 0 6px;border-bottom:1px solid var(--cream)}
+.q:last-child{border-bottom:0}
+.q .t{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.q .t p{font-size:.9rem;line-height:1.35}
+.q .b{display:flex;gap:5px;flex:none}
+.q .b button{border:2px solid var(--line);background:#fff;border-radius:8px;padding:4px 12px;font-weight:700;font-size:.85rem}
+.q .b button:hover:not(:disabled){border-color:var(--red)}
+.q .b button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.q .b button.no{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.q .f{font-size:.82rem;margin-top:3px;padding:4px 9px;border-radius:8px}
+.q .f.good{background:var(--ok-l)} .q .f.bad{background:var(--bad-l)}
+@media (min-width:761px) and (max-width:940px){.p2 .art{width:150px}.p2 .art svg{width:140px;height:auto}.q .t p{font-size:.86rem}}
+@media (max-width:760px){.p1 .side,.p2 .art{width:auto}.charts{grid-template-columns:1fr}.q .t{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="rule"></div>
+      <h1>Nature and Nurture Twin Lab</h1>
+      <p class="sub">Week 6 · Genetics and Personality</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Activities">
+      <button class="tab" role="tab" id="t1" aria-selected="true" aria-controls="p1">1. Twin lab</button>
+      <button class="tab" role="tab" id="t2" aria-selected="false" aria-controls="p2">2. Myth or fact?</button>
+    </div>
+  </header>
+  <main class="stage">
+    <section class="panel p1 on" id="p1" role="tabpanel" aria-labelledby="t1">
+      <div class="col side">
+        <div>
+          <div class="lead" style="margin-bottom:5px;font-size:.86rem"><b style="color:var(--ink)">Start with a trait</b> (illustrative values)</div>
+          <div class="presets" id="presets"></div>
+        </div>
+        <div class="sl"><label for="mz">Identical twins’ similarity <span id="mzv"></span></label>
+          <input type="range" id="mz" min="0" max="1" step="0.01"><small>Correlation between twin scores (0 = unrelated, 1 = matching)</small></div>
+        <div class="sl"><label for="dz">Fraternal twins’ similarity <span id="dzv"></span></label>
+          <input type="range" id="dz" min="0" max="1" step="0.01"><small>Same measure, for fraternal pairs</small></div>
+        <div class="read" id="read" aria-live="polite"></div>
+      </div>
+      <div class="col viz">
+        <div class="charts">
+          <div class="chart"><h3>Identical (MZ) twins</h3><div class="twins"><svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><circle cx="11" cy="7" r="5.5" fill="#2c5f6b"/><path d="M1 25c0-8 4-12 10-12s10 4 10 12z" fill="#2c5f6b"/></svg><svg width="40" height="12" viewBox="0 0 40 12" aria-hidden="true"><rect x="0" y="3" width="40" height="6" rx="3" fill="#2c5f6b"/></svg><svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><circle cx="11" cy="7" r="5.5" fill="#2c5f6b"/><path d="M1 25c0-8 4-12 10-12s10 4 10 12z" fill="#2c5f6b"/></svg><span>~100% shared</span></div><svg id="svgmz" viewBox="0 0 250 206" role="img" aria-label="Scatter plot of identical twin pairs"></svg></div>
+          <div class="chart"><h3>Fraternal (DZ) twins</h3><div class="twins"><svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><circle cx="11" cy="7" r="5.5" fill="#2c5f6b"/><path d="M1 25c0-8 4-12 10-12s10 4 10 12z" fill="#2c5f6b"/></svg><svg width="40" height="12" viewBox="0 0 40 12" aria-hidden="true"><rect x="0" y="3" width="40" height="6" rx="3" fill="#e3ded8"/><rect x="0" y="3" width="20" height="6" rx="3" fill="#2c5f6b"/></svg><svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><circle cx="11" cy="7" r="5.5" fill="#d34147"/><path d="M1 25c0-8 4-12 10-12s10 4 10 12z" fill="#d34147"/></svg><span>about 50% shared</span></div><svg id="svgdz" viewBox="0 0 250 206" role="img" aria-label="Scatter plot of fraternal twin pairs"></svg></div>
+        </div>
+        <div class="ace" id="ace" role="img" aria-label="Estimated share of differences due to genes, shared environment, and unique experiences"></div>
+        <div class="legend">
+          <span><i style="background:var(--teal)"></i>Genes</span>
+          <span><i style="background:var(--gold)"></i>Shared family environment</span>
+          <span><i style="background:var(--red)"></i>Unique experiences + error</span>
+        </div>
+        <div class="note"><b>Remember:</b> heritability describes differences in a <em>group</em>. It does not tell you how much of one person’s trait comes from genes, and it does not mean a trait is fixed.</div>
+      </div>
+    </section>
+
+    <section class="panel p2" id="p2" role="tabpanel" aria-labelledby="t2">
+      <div class="col art" id="art2"></div>
+      <div class="col qs" id="qs"></div>
+    </section>
+  </main>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var tabs=[].slice.call(document.querySelectorAll(".tab"));
+function show(i){tabs.forEach(function(t,j){t.setAttribute("aria-selected",j===i);$("#p"+(j+1)).classList.toggle("on",j===i)})}
+tabs.forEach(function(t,i){t.addEventListener("click",function(){show(i)});
+  t.addEventListener("keydown",function(e){if(e.key==="ArrowRight"){show((i+1)%2);tabs[(i+1)%2].focus()}if(e.key==="ArrowLeft"){show((i+1)%2);tabs[(i+1)%2].focus()}})});
+
+/* ---------- Twin lab ---------- */
+var PRE=[
+ {n:"Extraversion",mz:.50,dz:.25},
+ {n:"Emotional stability",mz:.46,dz:.22},
+ {n:"Openness",mz:.52,dz:.28},
+ {n:"Agreeableness",mz:.42,dz:.22},
+ {n:"Conscientiousness",mz:.44,dz:.22},
+ {n:"Family-shaped trait",mz:.70,dz:.60}
+];
+var mz=.5,dz=.25,active=0;
+/* seeded standard-normal pairs so the cloud morphs smoothly when sliders move */
+function rng(seed){return function(){seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296}}
+function gauss(r){var u=Math.max(r(),1e-9),v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function makePts(seed,n){var r=rng(seed),a=[];for(var i=0;i<n;i++)a.push([gauss(r),gauss(r)]);
+  // standardize so sample correlation of (z1,z2) is ~0 and each has unit variance
+  var m1=0,m2=0;a.forEach(function(p){m1+=p[0];m2+=p[1]});m1/=n;m2/=n;
+  a.forEach(function(p){p[0]-=m1;p[1]-=m2});
+  var s11=0,s12=0,s22=0;a.forEach(function(p){s11+=p[0]*p[0];s12+=p[0]*p[1]});
+  var b=s12/s11;a.forEach(function(p){p[1]-=b*p[0]});
+  a.forEach(function(p){s22+=p[1]*p[1]});
+  var sd1=Math.sqrt(s11/n),sd2=Math.sqrt(s22/n);
+  a.forEach(function(p){p[0]/=sd1;p[1]/=sd2});
+  return a}
+var PTS={mz:makePts(11,44),dz:makePts(29,44)};
+function build(id,col){
+  var s=$(id),h='<rect x="30" y="6" width="210" height="178" rx="6" fill="#fff" stroke="#d9d4ce"/>';
+  h+='<path d="M30 184L240 6" stroke="#e3ded8" stroke-dasharray="4 4"/>';
+  for(var i=0;i<44;i++)h+='<circle r="4.2" fill="'+col+'" fill-opacity=".85" stroke="#fff" stroke-width="1"/>';
+  h+='<text x="135" y="201" text-anchor="middle" font-size="10.5" fill="#625d58" font-family="Segoe UI,Arial,sans-serif">Twin A’s score</text>'+
+     '<text transform="translate(11 95) rotate(-90)" text-anchor="middle" font-size="10.5" fill="#625d58" font-family="Segoe UI,Arial,sans-serif">Twin B’s score</text>'+
+     '<text id="'+id.slice(1)+'r" x="236" y="178" text-anchor="end" font-size="12" font-weight="700" fill="#8f2229" font-family="Segoe UI,Arial,sans-serif"></text>';
+  s.innerHTML=h;
+}
+build("#svgmz","#2c5f6b");build("#svgdz","#d34147");
+function plot(id,pts,r){
+  var c=$(id).querySelectorAll("circle"),k=Math.sqrt(1-r*r);
+  pts.forEach(function(p,i){
+    var x=p[0],y=r*p[0]+k*p[1];
+    c[i+0].setAttribute("cx",(135+x*34).toFixed(1));
+    c[i+0].setAttribute("cy",(95-y*31).toFixed(1));
+  });
+}
+/* the first circle in each svg is not a data point (none: we only added data circles) */
+function calc(){
+  var A=2*(mz-dz),C=2*dz-mz;
+  if(C<0){C=0;A=mz}
+  if(A<0){A=0;C=mz}
+  if(A>mz)A=mz;
+  var E=1-mz;
+  return {A:A,C:C,E:E};
+}
+function update(){
+  $("#mzv").textContent=mz.toFixed(2);$("#dzv").textContent=dz.toFixed(2);
+  plot("#svgmz",PTS.mz,mz);plot("#svgdz",PTS.dz,dz);
+  $("#svgmzr").textContent="r = "+mz.toFixed(2);$("#svgdzr").textContent="r = "+dz.toFixed(2);
+  var v=calc(),pc=function(x){return Math.round(x*100)};
+  var segs=[[v.A,"var(--teal)"],[v.C,"var(--gold)"],[v.E,"var(--red)"]];
+  var ace=$("#ace");
+  if(!ace.children.length){segs.forEach(function(){ace.appendChild(document.createElement("div"))})}
+  segs.forEach(function(s,i){
+    var d=ace.children[i];d.style.flexBasis=(s[0]*100)+"%";d.style.flexGrow="0";d.style.flexShrink="0";d.style.background=s[1];
+    d.textContent=s[0]>=.07?pc(s[0])+"%":"";
+    if(i===1)d.style.color="#2a2826";
+  });
+  var msg;
+  if(mz-dz>0.02){
+    msg="Identical twins resemble each other more than fraternal twins do, which points to a genetic contribution.";
+  }else if(mz-dz<-0.02){
+    msg="Fraternal twins are <em>more</em> alike than identical twins here, which is unusual. Check the sliders.";
+  }else{
+    msg="The two kinds of twins are equally alike, so this pattern gives no sign of genetic influence.";
+  }
+  $("#read").innerHTML='<b class="big">'+pc(v.A)+'%</b>estimated heritability in this group. '+msg;
+  ace.setAttribute("aria-label","Estimated genes "+pc(v.A)+" percent, shared environment "+pc(v.C)+" percent, unique experiences and error "+pc(v.E)+" percent");
+}
+function renderPresets(){
+  var h="";PRE.forEach(function(p,i){h+='<button class="chip" data-i="'+i+'" aria-pressed="'+(i===active)+'">'+p.n+'</button>'});
+  $("#presets").innerHTML=h;
+  [].forEach.call(document.querySelectorAll("#presets .chip"),function(b){b.onclick=function(){
+    active=+b.dataset.i;mz=PRE[active].mz;dz=PRE[active].dz;$("#mz").value=mz;$("#dz").value=dz;renderPresets();update()}});
+}
+$("#mz").addEventListener("input",function(e){mz=+e.target.value;active=-1;renderPresets();update()});
+$("#dz").addEventListener("input",function(e){dz=+e.target.value;active=-1;renderPresets();update()});
+$("#mz").value=mz;$("#dz").value=dz;
+renderPresets();update();
+
+/* ---------- Myth or fact ---------- */
+var QS=[
+ {t:"If extraversion is about 50% heritable, then half of your own extraversion comes from your genes.",a:"myth",w:"Heritability is a statistic about differences among people in a group. It cannot be split into “your” genes and “your” environment."},
+ {t:"A trait with high heritability cannot be changed by experience.",a:"myth",w:"Heritability does not mean fixed. Environments, relationships, and choices can still shift a trait, even a highly heritable one."},
+ {t:"When identical twins are more alike than fraternal twins, this suggests a genetic contribution.",a:"fact",w:"Identical twins share nearly all their genes and fraternal twins about half. Extra similarity in identical pairs is the key clue."},
+ {t:"Genes can influence which environments people seek out or draw from others.",a:"fact",w:"An outgoing child may attract more social contact, which strengthens sociability. Genes and environments work together."},
+ {t:"Adoption studies help separate shared genes from shared family environment.",a:"fact",w:"Comparing adopted children with their biological and adoptive relatives shows which resemblance tracks genes and which tracks the home."}
+];
+function helix(){
+  var s='<svg viewBox="0 0 200 330" width="190" role="img" aria-label="DNA helix and a house, both pointing to a person"><g>';
+  var pts1=[],pts2=[];
+  for(var y=0;y<=110;y+=2){var x=Math.sin(y/110*Math.PI*3)*26;pts1.push((100-0+x).toFixed(1)+","+(10+y));pts2.push((100-x).toFixed(1)+","+(10+y))}
+  for(var y=10;y<=110;y+=10){var x2=Math.sin((y-10)/110*Math.PI*3)*26;s+='<line x1="'+(100+x2)+'" y1="'+y+'" x2="'+(100-x2)+'" y2="'+y+'" stroke="#e3a72f" stroke-width="3" stroke-linecap="round"/>'}
+  s+='<polyline points="'+pts1.join(" ")+'" fill="none" stroke="#2c5f6b" stroke-width="5" stroke-linecap="round"/><polyline points="'+pts2.join(" ")+'" fill="none" stroke="#d34147" stroke-width="5" stroke-linecap="round"/></g>';
+  s+='<text x="100" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#2c5f6b" font-family="Segoe UI,Arial,sans-serif">Nature</text>';
+  s+='<path d="M100 150v18" stroke="#2c5f6b" stroke-width="3"/><path d="M100 150" />';
+  // house
+  s+='<g transform="translate(0 0)"><path d="M62 215l38-30 38 30z" fill="#b32d34"/><rect x="72" y="215" width="56" height="38" fill="#fbf0d4" stroke="#8f2229" stroke-width="2"/><rect x="92" y="230" width="16" height="23" fill="#2c5f6b"/></g>';
+  s+='<text x="100" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#b32d34" font-family="Segoe UI,Arial,sans-serif">Nurture</text>';
+  s+='<path d="M160 160c18 0 22 20 8 32" fill="none" stroke="none"/>';
+  s+='<circle cx="100" cy="304" r="10" fill="#4a4540"/><path d="M80 330c0-14 8-22 20-22s20 8 20 22z" fill="#4a4540"/>';
+  s+='<path d="M100 176v-4M96 168l4 6 4-6M100 276v8M96 282l4 6 4-6" stroke="#8f2229" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+  return s+'</svg>';
+}
+$("#art2").innerHTML=helix();
+function renderQs(){
+  var h="";
+  QS.forEach(function(q,i){
+    h+='<div class="q" data-i="'+i+'"><div class="t"><p>'+q.t+'</p><div class="b" role="group" aria-label="Myth or fact"><button data-a="myth">Myth</button><button data-a="fact">Fact</button></div></div><div class="f" hidden></div></div>';
+  });
+  $("#qs").innerHTML=h;
+  [].forEach.call(document.querySelectorAll(".q"),function(row){
+    var q=QS[+row.dataset.i];
+    [].forEach.call(row.querySelectorAll("button"),function(b){b.onclick=function(){
+      var ok=b.dataset.a===q.a;
+      [].forEach.call(row.querySelectorAll("button"),function(x){x.disabled=true;if(x.dataset.a===q.a)x.classList.add("ok")});
+      if(!ok)b.classList.add("no");
+      var f=row.querySelector(".f");f.hidden=false;f.className="f "+(ok?"good":"bad");
+      f.innerHTML="<b>"+(ok?"Right. ":"Not quite. ")+"It’s a "+q.a+". </b>"+q.w;
+    }});
+  });
+}
+renderQs();
+})();
+</script>
+</body>
+</html>
