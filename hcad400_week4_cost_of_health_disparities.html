@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 4 | The Financial Impact of Health Disparities</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--cream:#edebe8;--gray:#767676;--ink:#2b2b2b;--ok:#2e7d5b;--warn:#b7791f;--line:#d9d6d1}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink)}
+#app{max-width:980px;margin:0 auto;padding:12px}
+h1,h2,h3{margin:0 0 .4em;line-height:1.2}
+p{margin:0 0 .8em}
+.hero{display:flex;align-items:center;gap:18px;border-radius:20px;background:linear-gradient(120deg,#a8353a,#d34147);color:#fff;padding:14px 22px;margin-bottom:14px}
+.hero svg{flex:0 0 150px;width:150px;height:auto}
+.hero h1{font-size:1.55rem}
+.hero .kicker{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;margin-bottom:4px}
+.hero p{margin:0;opacity:.95}
+.rule{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 10px}
+.panel{background:var(--cream);border-radius:20px;padding:16px;margin-bottom:14px}
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--dark);border-radius:15px;padding:16px 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr}.hero{flex-direction:column;text-align:center}.hero svg{flex-basis:auto;width:120px}}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.tab,.btn,.opt{font:inherit;cursor:pointer;border-radius:999px;border:2px solid var(--dark);padding:8px 16px;background:#fff;color:var(--dark);font-weight:600}
+.tab[aria-selected="true"],.btn{background:var(--dark);color:#fff}
+.btn:hover,.tab:hover,.opt:hover{filter:brightness(.95)}
+.btn.ghost{background:#fff;color:var(--dark)}
+.opt{border-radius:14px;text-align:left;width:100%;font-weight:500;color:var(--ink);border-color:var(--line);background:#fff;padding:10px 14px}
+.opt:hover{border-color:var(--dark)}
+.opt.right{border-color:var(--ok);background:#e6f4ed}
+.opt.wrong{border-color:var(--red);background:#fbe9ea}
+:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--dark)}
+select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);width:100%;background:#fff}
+.lbl{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:.95rem}
+.small{font-size:.85rem;color:#555}
+.bar{height:16px;background:#dedad4;border-radius:9px;position:relative;margin:6px 0 14px}
+.fill{height:100%;border-radius:9px;background:var(--dark);transition:width .35s}
+.tick{position:absolute;top:-5px;bottom:-5px;width:3px;background:#2b2b2b}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--cream);color:var(--dark)}
+.msg{border-radius:12px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-left:6px solid var(--gray)}
+.msg.good{border-left-color:var(--ok)}.msg.bad{border-left-color:var(--red)}.msg.warn{border-left-color:var(--warn)}
+.stat{background:#fff;border-radius:14px;padding:10px 12px;text-align:center;border:1px solid var(--line)}
+.stat b{display:block;font-size:1.4rem;color:var(--dark)}
+.note{font-size:.8rem;color:#555;margin-top:10px}
+svg text{font-family:inherit}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main id="app">
+<header class="hero"><svg viewBox="0 0 150 110" role="img" aria-label="Map pin over a neighborhood with a dollar sign"><rect x="10" y="70" width="130" height="30" rx="6" fill="#fff" opacity=".35"/><rect x="20" y="52" width="22" height="30" fill="#fff"/><rect x="48" y="44" width="22" height="38" fill="#edebe8"/><rect x="76" y="56" width="22" height="26" fill="#fff"/><path d="M118 8c-14 0-24 10-24 23 0 17 24 38 24 38s24-21 24-38c0-13-10-23-24-23z" fill="#fff"/><text x="118" y="42" font-size="26" font-weight="700" fill="#a8353a" text-anchor="middle">$</text></svg><div><div class="kicker">HCAD 400 · Week 4</div><h1>The Cost of Health Disparities</h1><p>Explore a fictional neighborhood, uncover the barriers behind disparities, and test policy responses.</p></div></header>
+
+<section class="panel"><div class="rule"></div><p style="margin:0"><b>Key question:</b> How do economic conditions and past policy choices create health disparities, and what does it cost us when they persist?</p></section>
+<div class="grid2" style="grid-template-columns:1.5fr 1fr">
+<div class="card" style="padding:10px">
+<p class="small" style="margin:2px 6px 8px"><b>Fictional neighborhood.</b> Select each numbered marker to explore a barrier. <span id="seen">0 of 5 explored</span></p>
+<svg id="map" viewBox="0 0 640 360" role="group" aria-label="Neighborhood map with five clickable barriers" style="width:100%;height:auto;display:block">
+<rect width="640" height="360" rx="12" fill="#f3f1ee"/>
+<rect x="0" y="270" width="640" height="90" fill="#e4e0da"/>
+<rect x="0" y="300" width="640" height="14" fill="#8a8a8a"/><g stroke="#fff" stroke-width="3" stroke-dasharray="14 12"><line x1="0" y1="307" x2="640" y2="307"/></g>
+<rect x="0" y="0" width="318" height="270" fill="#e3efe3"/>
+<line x1="320" y1="0" x2="320" y2="270" stroke="#d34147" stroke-width="4" stroke-dasharray="10 8"/>
+<text x="326" y="18" font-size="11" fill="#a8353a" font-weight="700">Historic redlining boundary</text>
+<!-- clinic far side -->
+<g><rect x="50" y="110" width="90" height="70" rx="6" fill="#fff" stroke="#a8353a" stroke-width="2"/><rect x="88" y="124" width="14" height="30" fill="#d34147"/><rect x="80" y="132" width="30" height="14" fill="#d34147"/><text x="95" y="200" font-size="12" text-anchor="middle" font-weight="700">Clinic</text><text x="95" y="214" font-size="10" text-anchor="middle" fill="#555">9 miles away</text></g>
+<g fill="#7fb07f"><circle cx="190" cy="80" r="16"/><circle cx="230" cy="190" r="18"/><circle cx="40" cy="60" r="14"/><circle cx="250" cy="60" r="12"/></g>
+<!-- affected side buildings -->
+<g fill="#cfc9c0" stroke="#8a8a8a"><rect x="350" y="200" width="40" height="55"/><rect x="396" y="212" width="36" height="43"/><rect x="520" y="190" width="44" height="65"/><rect x="570" y="205" width="40" height="50"/><rect x="474" y="215" width="36" height="40"/></g>
+<g><rect x="360" y="150" width="70" height="45" fill="#fff" stroke="#767676"/><text x="395" y="176" font-size="10" text-anchor="middle" fill="#555">Closed market</text><line x1="360" y1="150" x2="430" y2="195" stroke="#d34147" stroke-width="2"/></g>
+<g><rect x="462" y="262" width="6" height="30" fill="#555"/><rect x="450" y="248" width="30" height="16" rx="3" fill="#a8353a"/><text x="465" y="260" font-size="9" fill="#fff" text-anchor="middle">BUS</text></g>
+<g><path d="M520 120 q20 -26 40 0" fill="none" stroke="#767676" stroke-width="3"/><path d="M528 130 q12 -14 24 0" fill="none" stroke="#767676" stroke-width="3"/><circle cx="540" cy="140" r="3" fill="#767676"/><line x1="522" y1="108" x2="558" y2="146" stroke="#d34147" stroke-width="3"/></g>
+<g><rect x="398" y="80" width="50" height="34" rx="3" fill="#fff" stroke="#767676"/><text x="423" y="102" font-size="13" text-anchor="middle" fill="#a8353a" font-weight="700">$ BILL</text></g>
+<g id="hs"></g>
+</svg>
+</div>
+<div class="card" id="detail" aria-live="polite"><h2 id="dT">Choose a marker</h2><p id="dB" class="small">Each barrier adds a financial burden for patients, health systems and society.</p></div>
+</div>
+
+<div class="panel" style="margin-top:14px">
+<div class="grid2">
+<div>
+<h3>Annual burden index <span class="small">(illustrative)</span></h3>
+<div class="lbl"><span>Total</span><span id="tot">100</span></div>
+<div class="bar" style="height:22px;background:#dedad4"><div class="fill" id="fD" style="float:left;border-radius:11px 0 0 11px;background:#a8353a"></div><div class="fill" id="fI" style="float:left;border-radius:0 11px 11px 0;background:#e08a8e"></div></div>
+<p class="small"><span style="color:#a8353a">■</span> Direct costs (avoidable hospitalizations, ER use) &nbsp; <span style="color:#e08a8e">■</span> Indirect costs (lost productivity)</p>
+</div>
+<div><div id="vd" class="msg" role="status" aria-live="polite">Explore a barrier, then switch on a policy response to see what changes.</div></div>
+</div></div>
+<p class="note">Fictional neighborhood and illustrative index values for learning, not data from any study.</p>
+
+</main>
+<script>
+function $(id){return document.getElementById(id)}
+function setupTabs(){var tabs=document.querySelectorAll('[role=tab]');tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.setAttribute('aria-selected',x===t);$(x.getAttribute('aria-controls')).hidden=x!==t});report()})})}
+var lastH=0;
+function report(){if(window.parent===window)return;var h=Math.ceil($('app').getBoundingClientRect().height+24);if(Math.abs(h-lastH)<2)return;lastH=h;
+ try{window.parent.postMessage({subject:'lti.frameResize',height:h},'*');window.parent.postMessage({type:'iframe-resize',height:h},'*')}catch(e){}}
+window.addEventListener('load',function(){report();if(window.ResizeObserver){new ResizeObserver(report).observe($('app'))}});
+window.addEventListener('resize',report);
+
+
+var B=[
+ {n:'Food access',x:395,y:140,d:12,i:8,what:'The only grocery store closed. Residents rely on fast food and convenience stores, which raises risk of diabetes and heart disease.',pol:'Fresh-food financing, mobile markets, produce prescriptions.',cat:'Social determinant'},
+ {n:'Transportation',x:465,y:238,d:9,i:6,what:'Infrequent buses make the clinic a long trip. Patients miss appointments and delay care until it becomes an emergency.',pol:'Non-emergency medical transport, transit routes to care.',cat:'Barrier to access'},
+ {n:'Housing and redlining history',x:560,y:176,d:14,i:11,what:'Past redlining restricted loans and housing here. Disinvestment still shows up in housing quality and neighborhood conditions that affect health.',pol:'Housing-health partnerships, targeted community investment.',cat:'Historical root'},
+ {n:'Digital divide',x:540,y:98,d:7,i:8,what:'Without home broadband, residents cannot use telehealth, patient portals or online insurance enrollment.',pol:'Broadband subsidies, community telehealth kiosks, audio-only visit options.',cat:'Barrier to access'},
+ {n:'Medical debt and cost',x:423,y:62,d:14,i:11,what:'Bills fall hardest on low-income households. People skip preventive care to avoid cost, and later need costlier treatment.',pol:'Sliding-fee scales, financial assistance, no-cost preventive services.',cat:'Economic root'}];
+var seen={},on={},ns='http://www.w3.org/2000/svg';
+var hs=$('hs');
+B.forEach(function(b,k){var g=document.createElementNS(ns,'g');g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',b.n+' barrier '+(k+1));g.style.cursor='pointer';
+ g.innerHTML='<circle cx="'+b.x+'" cy="'+b.y+'" r="17" fill="#d34147" stroke="#fff" stroke-width="3"/><text x="'+b.x+'" y="'+(b.y+6)+'" font-size="16" font-weight="700" fill="#fff" text-anchor="middle">'+(k+1)+'</text>';
+ g.addEventListener('click',function(){pick(k)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(k)}});hs.appendChild(g)});
+function pick(k){var b=B[k];seen[k]=1;var n=Object.keys(seen).length;$('seen').textContent=n+' of 5 explored';
+ $('dT').textContent=(k+1)+'. '+b.n;
+ $('dB').innerHTML='<span class="tag">'+b.cat+'</span><p style="margin-top:8px;font-size:.95rem;color:#2b2b2b">'+b.what+'</p><p class="small"><b>Burden:</b> direct '+b.d+' + indirect '+b.i+' = '+(b.d+b.i)+' points</p><p class="small"><b>Policy response:</b> '+b.pol+'</p><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="sw" style="width:20px;height:20px;accent-color:#a8353a"'+(on[k]?' checked':'')+'> Apply policy response</label>';
+ $('sw').addEventListener('change',function(e){on[k]=e.target.checked;calc()});
+ hs.querySelectorAll('circle').forEach(function(c,j){c.setAttribute('stroke',j===k?'#2b2b2b':'#fff')});report()}
+function calc(){var D=0,I=0,cut=0;B.forEach(function(b,k){var f=on[k]?0.4:1;D+=b.d*f;I+=b.i*f});
+ var t=D+I;$('tot').textContent=Math.round(t);$('fD').style.width=D+'%';$('fI').style.width=I+'%';
+ var cnt=Object.keys(on).filter(function(k){return on[k]}).length,v=$('vd');
+ if(cnt===0){v.className='msg';v.textContent='Explore a barrier, then switch on a policy response to see what changes.'}
+ else if(cnt<5){v.className='msg warn';v.textContent='Burden is down '+Math.round(100-t)+' points. Barriers cluster in the same communities, so addressing one helps but the others still carry cost.'}
+ else{v.className='msg good';v.textContent='Burden down '+Math.round(100-t)+' points. Reducing disparities is both an ethical and an economic priority. Prevention and equity investments pay off for the whole system.'}
+ report()}
+calc();
+
+</script>
+</body>
+</html>

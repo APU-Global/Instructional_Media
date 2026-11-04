@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HCAD 300 | Compliance & Ethics Decision Lab</title>
+<style>
+*{box-sizing:border-box}
+:root{--red:#d34147;--dred:#a8353a;--ink:#222;--mut:#555;--line:#d6d6d6;--card:#fcfcfc;--ok:#1e7a4c;--okbg:#e6f4ec;--bad:#b3261e;--badbg:#fbe9e7;--blue:#2f6f8f}
+html,body{margin:0;padding:0;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:#fff;font-size:15px;line-height:1.4}
+.wrap{max-width:980px;margin:0 auto;padding:8px 12px 10px}
+.hero{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#a8353a,#d34147);color:#fff;border-radius:14px;padding:8px 16px;margin-bottom:10px}
+.hero svg{width:54px;height:54px;flex:none}
+.hero .tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.hero h1{margin:0;font-size:20px;line-height:1.2}
+.hero p{margin:2px 0 0;font-size:13px;opacity:.95}
+.card{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--red);border-radius:14px;padding:12px 14px}
+.card h2{margin:0 0 4px;font-size:17px}
+.card h3{margin:8px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--dred)}
+.card p{margin:0 0 4px}
+.grid{display:grid;gap:12px}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--dred);border-radius:10px;padding:8px 14px;cursor:pointer;text-align:left}
+.btn:hover,.btn:focus-visible{background:#fdeeee;outline:none}
+.btn.primary{background:var(--red);color:#fff}
+.btn.primary:hover{background:var(--dred)}
+.btn:disabled{opacity:.5;cursor:default}
+.fb{border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14px}
+.fb.ok{background:var(--okbg);border:1px solid var(--ok)}
+.fb.bad{background:var(--badbg);border:1px solid var(--bad)}
+.chip{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;color:var(--dred)}
+.bar{height:8px;background:#eee;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);width:0;transition:width .3s}
+.hidden{display:none!important}
+.sr{position:absolute;left:-9999px}
+@media(max-width:720px){.hero h1{font-size:17px}.hero p{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media(max-width:720px){#main{grid-template-columns:1fr!important}}</style></head>
+<body><div class="wrap">
+<header class="hero"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff" opacity=".18"/><path d="M32 8 12 16v14c0 13 8 21 20 26 12-5 20-13 20-26V16z" fill="#fff"/><path d="M22 32l7 7 13-14" fill="none" stroke="#d34147" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div class="tag">HCAD 300 · Week 2 · Healthcare Regulations and Compliance</div><h1>Compliance & Ethics Decision Lab</h1><p>Compliance is more than paperwork. Make the call in five real-world scenarios.</p></div></header>
+
+<div class="grid" style="grid-template-columns:170px 1fr;align-items:stretch" id="main">
+ <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px">
+  <div id="ill" style="width:120px;height:120px"></div>
+  <span class="chip" id="cat"></span>
+  <div style="width:100%"><div class="bar"><i id="prog"></i></div><div style="font-size:12px;margin-top:3px" id="cnt"></div></div>
+ </div>
+ <div class="card" id="qcard" style="min-height:330px">
+  <h2 id="qt"></h2><p id="qp"></p>
+  <div id="opts" style="display:grid;gap:7px;margin-top:8px"></div>
+  <div id="fb"></div>
+  <div style="margin-top:8px;text-align:right"><button class="btn primary hidden" id="next">Next scenario →</button></div>
+ </div>
+</div>
+<div class="card hidden" id="done" style="text-align:center;min-height:330px">
+ <h2 style="font-size:22px">Scenario set complete</h2>
+ <div id="score" style="font-size:40px;font-weight:800;color:var(--red);margin:6px 0"></div>
+ <p id="msg"></p>
+ <div id="badges" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0"></div>
+ <button class="btn primary" onclick="restart()">Try again</button>
+</div>
+
+</div>
+<script>
+const ICON={
+priv:'<svg viewBox="0 0 120 120"><path d="M60 8 20 24v30c0 28 17 46 40 56 23-10 40-28 40-56V24z" fill="#d34147"/><rect x="40" y="52" width="40" height="32" rx="6" fill="#fff"/><path d="M47 52v-9a13 13 0 0 1 26 0v9" fill="none" stroke="#fff" stroke-width="6"/><circle cx="60" cy="67" r="5" fill="#d34147"/></svg>',
+bill:'<svg viewBox="0 0 120 120"><path d="M28 10h64v100l-11-8-11 8-10-8-10 8-11-8-11 8z" fill="#2f6f8f"/><path d="M42 34h36M42 50h36M42 66h20" stroke="#fff" stroke-width="6" stroke-linecap="round"/><circle cx="78" cy="78" r="12" fill="#fff"/><path d="M78 72v12M73 76c0-4 10-4 10 0s-10 2-10 6 10 4 10 0" stroke="#2f6f8f" stroke-width="2.4" fill="none"/></svg>',
+just:'<svg viewBox="0 0 120 120"><path d="M60 14v86M36 100h48" stroke="#3a8a6a" stroke-width="7" stroke-linecap="round"/><path d="M24 34h72" stroke="#3a8a6a" stroke-width="6" stroke-linecap="round"/><path d="M24 34 10 66h28zM96 34 82 66h28z" fill="#3a8a6a"/><path d="M10 66a14 8 0 0 0 28 0M82 66a14 8 0 0 0 28 0" fill="#3a8a6a"/><circle cx="60" cy="24" r="8" fill="#3a8a6a"/></svg>',
+auto:'<svg viewBox="0 0 120 120"><circle cx="60" cy="34" r="20" fill="#8a6d2f"/><path d="M22 108a38 38 0 0 1 76 0z" fill="#8a6d2f"/><path d="M60 66s-14-8-14-17a7 7 0 0 1 14-2 7 7 0 0 1 14 2c0 9-14 17-14 17z" fill="#fff"/></svg>',
+prog:'<svg viewBox="0 0 120 120"><rect x="24" y="16" width="72" height="92" rx="8" fill="#a8353a"/><rect x="44" y="8" width="32" height="18" rx="6" fill="#fff" stroke="#a8353a" stroke-width="4"/><path d="M38 50l8 8 12-14M38 78l8 8 12-14" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M68 52h18M68 80h18" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg>'};
+const S=[
+{cat:'Privacy (HIPAA)',ic:'priv',t:'The curious peek',p:'You see a neighbor\u2019s name on the day\u2019s schedule. A staff member says, \u201cI\u2019ll just check her chart to see if she\u2019s okay.\u201d What do you do?',o:[
+['Remind the staff member that access without a work purpose violates HIPAA, even with kind intentions. Suggest a personal call or card instead.',1,'Correct. HIPAA limits access to what is needed for work. Good intentions do not create permission.'],
+['Allow it since no information will be shared outside the building.',0,'Internal snooping is still a privacy violation. Access must be tied to job duties.'],
+['Allow it but ask the staff member to keep quiet about it.',0,'Hiding it adds a second problem. Audit logs record who opened each chart.']]},
+{cat:'Billing accuracy',ic:'bill',t:'The upcoded claim',p:'A coder finds a Medicaid claim billed at a higher level than the documentation supports. A supervisor says, \u201cBudgets are tight, let it go this once.\u201d',o:[
+['Correct the claim, document the error, and report the pressure through the compliance channel.',1,'Correct. Accurate billing is both a legal duty and an act of integrity. Errors can lead to repayment and penalties.'],
+['Leave it and hope it is not audited.',0,'Knowingly submitting inaccurate claims creates serious legal and ethical exposure.'],
+['Fix only this claim and say nothing about the instruction.',0,'Better, but the pattern of pressure needs to reach compliance so it does not repeat.']]},
+{cat:'Justice',ic:'just',t:'The new waitlist',p:'A new, scarce service has no regulation governing who is seen first. Staff are using personal connections to schedule people. What principle should guide your fix?',o:[
+['Publish clear, consistent criteria (such as clinical need and time on list) and apply them to everyone.',1,'Correct. Justice calls for fair, transparent treatment, especially when the law is silent.'],
+['Let each department decide for itself case by case.',0,'Inconsistent decisions invite favoritism and unequal access.'],
+['Prioritize patients with private insurance to protect revenue.',0,'Ability to pay is not a just basis for access to scarce care.']]},
+{cat:'Autonomy',ic:'auto',t:'The declined treatment',p:'A competent patient declines a recommended treatment after receiving a full explanation. The family pushes the team to \u201cdo whatever it takes.\u201d',o:[
+['Confirm the patient understands the risks, document the informed decision, and keep offering support.',1,'Correct. Respect for autonomy means honoring informed choices while continuing to care.'],
+['Follow the family\u2019s wishes since they know the patient best.',0,'A competent patient\u2019s decision takes priority over family preference.'],
+['Pressure the patient until they agree, for their own good.',0,'Coercion violates autonomy and erodes trust.']]},
+{cat:'Compliance program',ic:'prog',t:'The recurring gap',p:'An internal audit finds the same documentation errors in one department month after month. What is the strongest response?',o:[
+['Provide targeted training, clarify the policy, and schedule follow-up monitoring to confirm improvement.',1,'Correct. Strong programs combine policies, training, and monitoring to prevent violations.'],
+['Reprimand the department and move on.',0,'Blame alone does not fix unclear processes or knowledge gaps.'],
+['Stop auditing that department to avoid more findings.',0,'Audits exist to find problems early. Hiding them increases risk.']]}];
+let i=0,sc=0,res=[];
+const $=id=>document.getElementById(id);
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function show(){
+ const s=S[i];$('ill').innerHTML=ICON[s.ic];$('cat').textContent=s.cat;$('qt').textContent=s.t;$('qp').textContent=s.p;
+ $('cnt').textContent=`Scenario ${i+1} of ${S.length}`;$('prog').style.width=(i/S.length*100)+'%';
+ $('fb').innerHTML='';$('next').classList.add('hidden');const o=$('opts');o.innerHTML='';
+ shuffle(s.o).forEach(x=>{const b=document.createElement('button');b.className='btn';b.textContent=x[0];b.onclick=()=>{
+  [...o.children].forEach(c=>c.disabled=true);
+  if(x[1]){sc++;b.style.background='#e6f4ec';b.style.borderColor='#1e7a4c'}else{b.style.background='#fbe9e7';b.style.borderColor='#b3261e'}
+  res.push([s.cat,x[1]]);
+  $('fb').innerHTML=`<div class="fb ${x[1]?'ok':'bad'}">${x[2]}</div>`;
+  $('next').textContent=i===S.length-1?'See results \u2192':'Next scenario \u2192';$('next').classList.remove('hidden');
+ };o.appendChild(b)});
+}
+$('next').onclick=()=>{i++;if(i>=S.length)finish();else show()};
+function finish(){
+ $('main').classList.add('hidden');$('done').classList.remove('hidden');
+ $('score').textContent=`${sc} / ${S.length}`;
+ $('msg').textContent=sc===S.length?'Excellent. You applied compliance and ethics with clear reasoning.':sc>=3?'Solid work. Review the scenarios you missed and notice which principle applied.':'Keep practicing. Ask what the rule protects, then what ethics adds when rules are silent.';
+ $('badges').innerHTML=res.map(r=>`<span class="chip" style="font-size:13px;padding:5px 12px;${r[1]?'background:#e6f4ec;border-color:#1e7a4c;color:#1e7a4c':'background:#fbe9e7;border-color:#b3261e;color:#b3261e'}">${r[1]?'\u2713':'\u2717'} ${r[0]}</span>`).join('');
+}
+function restart(){i=0;sc=0;res=[];$('done').classList.add('hidden');$('main').classList.remove('hidden');show()}
+show();
+</script>
+<script>
+(function(){function send(){try{parent.postMessage({type:'iframe-height',height:document.documentElement.scrollHeight},'*')}catch(e){}}
+window.addEventListener('load',send);window.addEventListener('resize',send);
+if(window.MutationObserver)new MutationObserver(send).observe(document.body,{childList:true,subtree:true,attributes:true});})();
+</script>
+</body></html>
