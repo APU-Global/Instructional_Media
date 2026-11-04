@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 8 | The Commons Challenge</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#edebe8;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f}
+#stage{position:absolute;left:0;top:0;width:800px;height:600px;transform-origin:0 0;background:#fcfcfc;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.18);display:flex;flex-direction:column}
+.top{height:56px;flex:none;background:#000;color:#fff;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:4px solid #a8353a}
+.pill{background:#d34147;color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.top h1{font-size:17px;margin:0;font-weight:700}
+.prog{margin-left:auto;font-size:13px;color:#eee;white-space:nowrap}
+#main{flex:1;position:relative;min-height:0}
+.screen{position:absolute;inset:0;padding:14px 22px;display:none;flex-direction:column;gap:10px}
+.screen.active{display:flex;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.row{display:flex;gap:18px;min-height:0}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+h2{margin:0;font-size:20px;color:#a8353a}
+h3{margin:0;font-size:15px}
+p{margin:0;font-size:14px;line-height:1.45}
+.small{font-size:12.5px;color:#555}
+.card{background:#fff;border:1px solid #d9d4cc;border-radius:10px;padding:12px 14px}
+.cream{background:#edebe8;border-radius:10px;padding:12px 14px}
+.btn{font:inherit;font-size:14px;font-weight:700;border:2px solid #a8353a;background:#a8353a;color:#fff;border-radius:8px;padding:9px 16px;cursor:pointer;transition:.15s}
+.btn:hover:not(:disabled){background:#d34147;border-color:#d34147}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#a8353a}
+.btn.ghost:hover:not(:disabled){background:#f7e6e7;color:#a8353a;border-color:#a8353a}
+.btn:focus-visible,input:focus-visible{outline:3px solid #2b5f8a;outline-offset:2px}
+.spacer{flex:1}
+.fb{border-left:5px solid #2b5f8a;background:#eef4f9;padding:9px 12px;border-radius:6px;font-size:13.5px;line-height:1.4}
+.fb.good{border-color:#2e7d4f;background:#edf7f0}
+.fb.bad{border-color:#d34147;background:#fcefef}
+.verse{border-left:5px solid #a8353a;background:#edebe8;padding:9px 12px;border-radius:6px;font-size:13px;line-height:1.4}
+svg{display:block}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.seg{display:flex;gap:8px}
+.seg .btn.sel{background:#000;border-color:#000;color:#fff}
+.num{width:46px;height:46px;font-size:20px;padding:0}
+.stats{display:flex;gap:10px}
+.stats .cream{flex:1;text-align:center;padding:6px 8px}
+.stats b{display:block;font-size:20px;color:#a8353a}
+.stats span{font-size:11.5px;color:#555}
+.fish{transition:opacity .5s}
+.plus{animation:rise 1.4s forwards;font-weight:700;font-size:15px}
+@keyframes rise{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-22px)}}
+#modal{position:absolute;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:5}
+#modal .box{background:#fff;border-radius:12px;width:480px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.say{display:flex;gap:8px;align-items:flex-start;font-size:13.5px}
+.say i{flex:none;width:28px;height:28px;border-radius:50%;color:#fff;font-style:normal;font-weight:700;text-align:center;line-height:28px;font-size:13px}
+table{border-collapse:collapse;font-size:12.5px;width:100%}td{padding:2px 4px}
+</style></head><body>
+<div id="stage">
+<header class="top"><span class="pill">PSYC 350 · WEEK 8</span><h1>The Commons Challenge</h1><div class="prog"></div></header>
+<main id="main">
+
+<section class="screen active" id="s-intro">
+  <div class="row" style="flex:1;align-items:center">
+    <div class="col" style="flex:1">
+      <h2>Me versus we</h2>
+      <p>You and three other fishers share one pond. Each season you choose how many fish to take (0–4). The pond holds up to <b>40</b> fish, and whatever is left regrows by about 30%.</p>
+      <p>The more you take, the more you earn, but if everyone takes too much, the pond collapses. The others are simulated, each with their own style.</p>
+      <div class="cream"><b>Choose a rule for the pond:</b>
+        <div class="seg" style="margin-top:6px"><button class="btn ghost sel" data-m="anon">Anonymous: only the pond total is visible</button><button class="btn ghost" data-m="pub">Public ledger: everyone sees each catch</button></div></div>
+      <div><button class="btn" id="start">Cast off →</button></div>
+    </div>
+    <svg id="introsvg" viewBox="0 0 260 260" width="260" height="260" role="img" aria-label="Illustration of a pond with fish and boats"></svg>
+  </div>
+</section>
+
+<section class="screen" id="s-play">
+  <div class="stats"><div class="cream"><b id="stS">1/10</b><span>Season</span></div><div class="cream"><b id="stP">40</b><span>Fish in pond</span></div><div class="cream"><b id="stY">0</b><span>Your catch so far</span></div><div class="cream"><b id="stM">–</b><span>Rule</span></div></div>
+  <div class="row" style="flex:1">
+    <div class="col" style="width:470px;flex:none">
+      <div class="card" style="padding:0;overflow:hidden"><svg id="pond" viewBox="0 0 470 280" width="470" height="280" role="img" aria-label="Pond with fish and four boats"></svg></div>
+      <div class="card" style="padding:4px 8px"><svg id="spark" viewBox="0 0 450 78" width="450" height="78" role="img" aria-label="Pond level by season"></svg></div>
+    </div>
+    <div class="col" style="flex:1">
+      <h3>How many fish will you take?</h3>
+      <div class="seg" id="picks"></div>
+      <button class="btn ghost" id="meet" style="font-size:13px;padding:7px 10px">🗣 Call a pond meeting (once)</button>
+      <div class="fb" id="log">Pick a number to begin season 1. Taking 2 each keeps the pond full.</div>
+      <div class="spacer"></div>
+    </div>
+  </div>
+  <div id="modal"><div class="box"><h3>Pond meeting</h3><div id="talk"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost" id="mskip">Skip</button><button class="btn" id="mprop">Propose: 2 each</button></div></div></div>
+</section>
+
+<section class="screen" id="s-end">
+  <h2 id="endTitle"></h2>
+  <div class="row" style="flex:1">
+    <div class="col" style="width:380px;flex:none"><div class="card"><svg id="endchart" viewBox="0 0 350 190" width="350" height="190" role="img" aria-label="Pond level over ten seasons"></svg></div><div class="card" id="tbl"></div></div>
+    <div class="col" style="flex:1"><div class="fb" id="endfb"></div>
+      <div class="cream"><h3>What helps groups cooperate</h3><p class="small" style="margin-top:4px">Open <b>communication</b> and shared identity, <b>fair rules and accountability</b> (notice what the ledger did to the free rider), and appeals to values like <b>stewardship</b> of shared resources.</p></div>
+      <div class="verse"><b>Reflect:</b> Which course ideas showed up: norms and conformity, trust and attributions, diffusion of responsibility? How might a commitment to the common good change your choices?</div>
+      <div class="spacer"></div><div style="text-align:right"><button class="btn ghost" id="again">↺ Play again with the other rule</button></div></div>
+  </div>
+</section>
+</main></div>
+<script>
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function fit(){var st=$('#stage'),s=Math.min(innerWidth/800,innerHeight/600,1.3);var x=(innerWidth-800*s)/2,y=(innerHeight-600*s)/2;st.style.transform='translate('+x+'px,'+y+'px) scale('+s+')'}
+addEventListener('resize',fit);fit();
+function show(id){$$('.screen').forEach(function(e){e.classList.remove('active')});$('#'+id).classList.add('active')}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function prog(t){$('.prog').textContent=t||''}
+
+var CAP=40,SEASONS=10,mode='anon',P,season,pond,hist,tot,last,agreed,met,busy;
+var NAMES=['You','Dana','Marcus','Lee'],COLS=['#2b5f8a','#2e7d4f','#a8353a','#e0a526'];
+var BOATS=[[70,60],[400,60],[70,225],[400,225]];
+// deterministic fish positions
+var FISH=[],seed=7;function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
+while(FISH.length<CAP){var x=60+rnd()*350,y=45+rnd()*190;var dx=(x-235)/190,dy=(y-140)/115;if(dx*dx+dy*dy<.78)FISH.push([x,y,rnd()>.5?1:-1])}
+function fishSVG(f,i){return '<g class="fish" id="f'+i+'" transform="translate('+f[0]+','+f[1]+') scale('+f[2]+',1)"><ellipse rx="10" ry="5" fill="#f08a24"/><path d="M-9 0 L-17 -6 L-17 6Z" fill="#e0701a"/><circle cx="5" cy="-1" r="1.3" fill="#222"/></g>'}
+function boat(i){var b=BOATS[i];return '<g transform="translate('+b[0]+','+b[1]+')"><path d="M-30 0 H30 L22 14 H-22Z" fill="'+COLS[i]+'"/><rect x="-1" y="-30" width="2" height="30" fill="#6b5239"/><circle cx="-12" cy="-14" r="7" fill="#e0b48f"/><rect x="-18" y="-8" width="12" height="10" rx="4" fill="'+COLS[i]+'" stroke="#fff"/><path d="M-6 -14 L18 -2" stroke="#6b5239" stroke-width="2"/><text y="30" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">'+NAMES[i]+'</text><g id="pl'+i+'" ></g></g>'}
+function pondSVG(){var s='<defs><radialGradient id="wg"><stop offset="0" stop-color="#7cc3e8"/><stop offset="1" stop-color="#3e8fbf"/></radialGradient></defs><rect width="470" height="280" fill="#9ccf86"/><ellipse cx="235" cy="140" rx="215" ry="125" fill="#c8b58a"/><ellipse cx="235" cy="140" rx="205" ry="118" fill="url(#wg)"/>';
+ s+='<g stroke="#fff" stroke-opacity=".35" fill="none"><path d="M120 120 q10 -6 20 0 t20 0"/><path d="M300 180 q10 -6 20 0 t20 0"/></g>';
+ FISH.forEach(function(f,i){s+=fishSVG(f,i)});BOATS.forEach(function(b,i){s+=boat(i)});
+ 
+ $('#pond').innerHTML=s}
+function setFish(n){FISH.forEach(function(f,i){var e=$('#f'+i);if(e)e.style.opacity=i<n?1:0})}
+function spark(){var s='<text x="2" y="10" font-size="10" fill="#555">Pond level by season (40 = full)</text><path d="M30 20 V70 H440" stroke="#ccc" fill="none"/>',pts=[40].concat(hist);
+ var d=pts.map(function(v,i){return (30+i*(410/SEASONS))+','+(70-v*50/40)}).join(' L');s+='<path d="M'+d+'" fill="none" stroke="#a8353a" stroke-width="3"/>';
+ pts.forEach(function(v,i){s+='<circle cx="'+(30+i*(410/SEASONS))+'" cy="'+(70-v*50/40)+'" r="3.5" fill="#a8353a"/>'});$('#spark').innerHTML=s}
+function npc(name){var o=last?last.slice(0,0):0;var a=last;
+ if(name=='Dana'){if(!a)return 2;var avg=(a[0]+a[2]+a[3])/3;if(agreed&&avg<=2.7)return 2;return Math.max(1,Math.min(4,Math.round(avg)))}
+ if(name=='Lee'){if(!a)return 2;if(agreed&&met==season-1)return 2;var s=a.slice().sort();return Math.max(1,Math.min(4,Math.round((s[1]+s[2])/2)))}
+ if(name=='Marcus'){if(mode=='pub')return agreed?2:3;return 4}}
+function reset(){season=1;pond=CAP;hist=[];tot=[0,0,0,0];last=null;agreed=false;met=-9;busy=false}
+function begin(){reset();pondSVG();setFish(pond);spark();$('#stM').textContent=mode=='pub'?'Public':'Anon';
+ $('#picks').innerHTML='';for(var i=0;i<=4;i++){var b=document.createElement('button');b.className='btn num';b.textContent=i;b.dataset.n=i;b.onclick=function(){play(+this.dataset.n)};$('#picks').appendChild(b)}
+ $('#meet').disabled=true;$('#log').className='fb';$('#log').textContent='Pick a number to begin season 1. Taking 2 each keeps the pond full.';upd();show('s-play')}
+function upd(){$('#stS').textContent=Math.min(season,SEASONS)+'/'+SEASONS;$('#stP').textContent=pond;$('#stY').textContent=tot[0];prog('Season '+Math.min(season,SEASONS)+' of '+SEASONS);$('#meet').disabled=agreed||met>=0||season<3||season>8}
+function play(n){if(busy)return;busy=true;var req=[n,npc('Dana'),npc('Marcus'),npc('Lee')],got=[0,0,0,0],avail=pond;
+ shuffle([0,1,2,3]).forEach(function(i){var g=Math.min(req[i],avail);got[i]=g;avail-=g;tot[i]+=g});
+ got.forEach(function(g,i){var e=$('#pl'+i);e.innerHTML='<text class="plus" x="0" y="-36" text-anchor="middle" fill="#fff" stroke="#000" stroke-width=".5">+'+g+'</text>'});
+ setFish(avail);var rem=avail;pond=Math.min(CAP,Math.round(rem*1.3));hist.push(pond);last=req;
+ var tk=got.reduce(function(a,b){return a+b},0);
+ var msg='Season '+season+': the group took <b>'+tk+'</b>. '+(mode=='pub'?'Ledger: '+NAMES.map(function(n,i){return n+' '+got[i]}).join(', ')+'. ':'Individual catches stay private. ')+'Pond regrows to <b>'+pond+'</b>.';
+ $('#log').className=tk>9?'fb bad':'fb good';$('#log').innerHTML=msg;
+ setTimeout(function(){setFish(pond);spark();season++;busy=false;if(season>SEASONS)finish();else upd();$('#stP').textContent=pond;$('#stY').textContent=tot[0]},900)}
+$('#meet').onclick=function(){$('#talk').innerHTML='<div class="say"><i style="background:#2e7d4f">D</i><span>“Let’s each take 2. It keeps the pond full for everybody.”</span></div><div class="say"><i style="background:#e0a526">L</i><span>“I’ll go with whatever the group agrees.”</span></div><div class="say"><i style="background:#a8353a">M</i><span>'+(mode=='pub'?'“Fine. Everyone can see the ledger anyway.”':'“Eh. We’ll see.”')+'</span></div>';$('#modal').style.display='flex'};
+$('#mprop').onclick=function(){agreed=true;met=season-1;$('#modal').style.display='none';$('#log').className='fb';$('#log').textContent='Agreement: take 2 each. Whether it holds depends on the group, and on you.';upd()};
+$('#mskip').onclick=function(){met=season;$('#modal').style.display='none';upd()};
+function finish(){prog('Debrief');var f=hist[hist.length-1],st=f>=30?'The pond thrived':(f>=15?'The pond is strained':'The pond collapsed');$('#endTitle').textContent=st;
+ var grp=tot.reduce(function(a,b){return a+b},0),avg=grp/4,you=tot[0],rank=tot.slice().sort(function(a,b){return b-a}).indexOf(you)+1;
+ var s='<path d="M30 10 V160 H340" stroke="#ccc" fill="none"/><text x="2" y="14" font-size="10" fill="#555">40</text><text x="12" y="164" font-size="10" fill="#555">0</text>';
+ var pts=[40].concat(hist);s+='<path d="M'+pts.map(function(v,i){return (30+i*31)+','+(160-v*3.7)}).join(' L')+'" stroke="#a8353a" stroke-width="3" fill="none"/>';
+ pts.forEach(function(v,i){s+='<circle cx="'+(30+i*31)+'" cy="'+(160-v*3.7)+'" r="3.5" fill="#a8353a"/>'});s+='<text x="185" y="184" text-anchor="middle" font-size="11" fill="#555">Season</text>';$('#endchart').innerHTML=s;
+ $('#tbl').innerHTML='<table>'+NAMES.map(function(n,i){return '<tr><td><b style="color:'+COLS[i]+'">●</b> '+n+(i==0?' (you)':'')+'</td><td>'+['','Reciprocator','Free rider','Conformer'][i]+'</td><td style="text-align:right"><b>'+tot[i]+'</b> fish</td></tr>'}).join('')+'</table>';
+ $('#endfb').innerHTML='You caught <b>'+you+'</b> fish (group average '+avg.toFixed(1)+', rank '+rank+' of 4). '+(f<15?'The shared resource collapsed. This is Hardin’s <b>tragedy of the commons</b>: individually sensible choices added up to a result nobody wanted.':(you>avg+3?'You out-earned the group, but notice who paid for it. Individual gain and group health pulled in opposite directions.':'Cooperation largely held. Ask what made that possible: norms, trust in others’ intentions, the meeting, or the ledger.'))+(mode=='anon'?' Try the public ledger to see how visibility changes the free rider.':' Try the anonymous rule to see what changes when no one can see each catch.');
+ $('#again').textContent='↺ Play again with the '+(mode=='anon'?'public ledger':'anonymous rule');show('s-end')}
+$$('.seg .btn[data-m]').forEach(function(b){b.onclick=function(){mode=b.dataset.m;$$('.seg .btn[data-m]').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel')}});
+$('#start').onclick=begin;
+$('#again').onclick=function(){mode=mode=='anon'?'pub':'anon';$$('.seg .btn[data-m]').forEach(function(x){x.classList.toggle('sel',x.dataset.m==mode)});begin()};
+(function(){var s='<rect width="260" height="260" rx="130" fill="#9ccf86"/><ellipse cx="130" cy="130" rx="110" ry="85" fill="#4a97c4"/>';[[90,110],[150,100],[120,150],[170,140],[100,135]].forEach(function(p){s+='<g transform="translate('+p[0]+','+p[1]+')"><ellipse rx="10" ry="5" fill="#f08a24"/><path d="M-9 0 L-17 -6 L-17 6Z" fill="#e0701a"/></g>'});s+='<path d="M40 70 H80 L74 84 H46Z" fill="#2b5f8a"/><path d="M190 60 H230 L224 74 H196Z" fill="#a8353a"/><path d="M60 190 H100 L94 204 H66Z" fill="#e0a526"/><path d="M180 188 H220 L214 202 H186Z" fill="#2e7d4f"/>';$('#introsvg').innerHTML=s})();
+prog('');
+</script></body></html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 | The Line Challenge</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#edebe8;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f}
+#stage{position:absolute;left:0;top:0;width:800px;height:600px;transform-origin:0 0;background:#fcfcfc;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.18);display:flex;flex-direction:column}
+.top{height:56px;flex:none;background:#000;color:#fff;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:4px solid #a8353a}
+.pill{background:#d34147;color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.top h1{font-size:17px;margin:0;font-weight:700}
+.prog{margin-left:auto;font-size:13px;color:#eee;white-space:nowrap}
+#main{flex:1;position:relative;min-height:0}
+.screen{position:absolute;inset:0;padding:14px 22px;display:none;flex-direction:column;gap:10px}
+.screen.active{display:flex;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.row{display:flex;gap:18px;min-height:0}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+h2{margin:0;font-size:20px;color:#a8353a}
+h3{margin:0;font-size:15px}
+p{margin:0;font-size:14px;line-height:1.45}
+.small{font-size:12.5px;color:#555}
+.card{background:#fff;border:1px solid #d9d4cc;border-radius:10px;padding:12px 14px}
+.cream{background:#edebe8;border-radius:10px;padding:12px 14px}
+.btn{font:inherit;font-size:14px;font-weight:700;border:2px solid #a8353a;background:#a8353a;color:#fff;border-radius:8px;padding:9px 16px;cursor:pointer;transition:.15s}
+.btn:hover:not(:disabled){background:#d34147;border-color:#d34147}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#a8353a}
+.btn.ghost:hover:not(:disabled){background:#f7e6e7;color:#a8353a;border-color:#a8353a}
+.btn:focus-visible,input:focus-visible{outline:3px solid #2b5f8a;outline-offset:2px}
+.spacer{flex:1}
+.fb{border-left:5px solid #2b5f8a;background:#eef4f9;padding:9px 12px;border-radius:6px;font-size:13.5px;line-height:1.4}
+.fb.good{border-color:#2e7d4f;background:#edf7f0}
+.fb.bad{border-color:#d34147;background:#fcefef}
+.verse{border-left:5px solid #a8353a;background:#edebe8;padding:9px 12px;border-radius:6px;font-size:13px;line-height:1.4}
+svg{display:block}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.abtn{width:84px;height:60px;font-size:26px}
+.bubble{opacity:0;transition:opacity .25s}.bubble.on{opacity:1}
+.stat{flex:1;text-align:center}
+.stat b{display:block;font-size:26px;color:#a8353a}
+.opt{display:block;width:100%;text-align:left;margin:0 0 6px;font:inherit;font-size:13px;background:#fff;border:2px solid #d9d4cc;border-radius:8px;padding:8px 10px;cursor:pointer}
+.opt:hover{border-color:#a8353a}
+</style></head><body>
+<div id="stage">
+<header class="top"><span class="pill">PSYC 350 · WEEK 4</span><h1>The Line Challenge</h1><div class="prog"></div></header>
+<main id="main">
+
+<section class="screen active" id="s-intro">
+  <div class="row" style="flex:1;align-items:center">
+    <div class="col" style="flex:1">
+      <h2>Would you go along with the group?</h2>
+      <p>In the 1950s, Solomon Asch asked people to judge which of three lines matched a standard line. The task was easy. The twist: everyone else in the room was in on it.</p>
+      <p>You will join a group of six “participants.” They answer out loud, one at a time, and you answer last. Just say what you see.</p>
+      <div class="fb">9 short trials. Answer honestly. There are no points and nothing is graded until the end.</div>
+      <div><button class="btn" id="start">Take a seat →</button></div>
+    </div>
+    <svg id="introsvg" viewBox="0 0 280 280" width="280" height="280" role="img" aria-label="Illustration of a group of people seated in a row, one looking sideways"></svg>
+  </div>
+</section>
+
+<section class="screen" id="s-play">
+  <div class="card" style="padding:0;overflow:hidden"><svg id="scene" viewBox="0 0 756 300" width="754" height="300" role="img" aria-label="Line card and six group members answering in turn"></svg></div>
+  <div class="row" style="align-items:center;flex:1">
+    <div class="col" style="flex:1"><h3 id="status">Listen to the group…</h3><p class="small" id="hint">Which comparison line (A, B or C) is the same length as the standard line?</p></div>
+    <button class="btn abtn" data-a="0" disabled>A</button><button class="btn abtn" data-a="1" disabled>B</button><button class="btn abtn" data-a="2" disabled>C</button>
+  </div>
+</section>
+
+<section class="screen" id="s-res">
+  <h2>What the lines revealed</h2>
+  <div class="row" style="flex:1">
+    <div class="col" style="width:400px;flex:none">
+      <div class="card"><svg id="chart" viewBox="0 0 370 200" width="370" height="200" role="img" aria-label="Bar chart comparing your conformity to Asch’s findings"></svg>
+      <p class="small" style="margin-top:4px">Asch benchmarks are approximate averages from his 1956 studies.</p></div>
+      <div class="verse"><b>Reflect:</b> Romans 12:2 urges believers not to be conformed to the pattern of the world but to be transformed by the renewing of their minds. Where might you need an “ally” to stand apart?</div>
+    </div>
+    <div class="col" style="flex:1">
+      <div class="fb" id="resfb"></div>
+      <h3>When you felt unsure, what was closest?</h3>
+      <button class="opt" data-k="i">“The group probably sees something I’m missing.”</button>
+      <button class="opt" data-k="n">“I didn’t want to look odd or stand out.”</button>
+      <button class="opt" data-k="x">“I never doubted what I saw.”</button>
+      <div class="fb good" id="why" style="display:none"></div>
+      <div class="spacer"></div>
+      <div style="text-align:right"><button class="btn ghost" id="again">↺ Try again</button></div>
+    </div>
+  </div>
+</section>
+</main></div>
+<script>
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function fit(){var st=$('#stage'),s=Math.min(innerWidth/800,innerHeight/600,1.3);var x=(innerWidth-800*s)/2,y=(innerHeight-600*s)/2;st.style.transform='translate('+x+'px,'+y+'px) scale('+s+')'}
+addEventListener('resize',fit);fit();
+function show(id){$$('.screen').forEach(function(e){e.classList.remove('active')});$('#'+id).classList.add('active')}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function prog(t){$('.prog').textContent=t||''}
+
+var COL=['#e0a526','#2e7d4f','#7d3c98','#2b8ac4','#c0392b','#16a085'];
+function head(x,y,c,s,mood){return '<g transform="translate('+x+','+y+') scale('+(s||1)+')"><path d="M-22 36 q0 -22 22 -22 q22 0 22 22z" fill="'+c+'"/><circle cx="0" cy="-8" r="15" fill="#e0b48f"/><path d="M-15 -10 A15 15 0 0 1 15 -10 Q0 -22 -15 -10Z" fill="#3a2a20"/><circle cx="-5" cy="-7" r="1.8" fill="#222"/><circle cx="5" cy="-7" r="1.8" fill="#222"/><path d="M-4 1 h8" stroke="#222" stroke-width="2" stroke-linecap="round"/></g>'}
+$('#introsvg').innerHTML='<rect width="280" height="280" rx="140" fill="#edebe8"/>'+[0,1,2,3,4].map(function(i){return head(40+i*50,140,COL[i%6],1.3)}).join('')+'<g transform="translate(140,215)"><circle r="24" fill="#a8353a"/><text y="9" text-anchor="middle" font-size="26" font-weight="700" fill="#fff">?</text></g><rect x="40" y="40" width="200" height="50" rx="6" fill="#fff" stroke="#333" stroke-width="2"/><path d="M70 80 v-30 M110 80 v-22 M150 80 v-30 M190 80 v-38" stroke="#222" stroke-width="5" stroke-linecap="round"/>';
+// trials: type n=neutral(group right), c=critical(all wrong), a=critical with ally
+var PLAN=['n','n','c','c','c','c','a','a','a'];
+var T,idx,rec,timers=[];
+function mkTrials(){T=PLAN.map(function(t){var std=120+Math.floor(Math.random()*50);var diffs=shuffle([-45,-30,-18,22,34,46]);var d1=diffs[0],d2=diffs[1];
+ var opts=[std,std+d1,std+d2],ord=shuffle([0,1,2]);var L=ord.map(function(k){return opts[k]});var corr=L.indexOf(std);
+ var wr=[0,1,2].filter(function(k){return k!=corr});var wrong=wr[Math.floor(Math.random()*2)];
+ return {t:t,std:std,L:L,corr:corr,wrong:wrong}});rec=[]}
+function draw(tr,answers,youAns){var s='<rect x="14" y="10" width="300" height="280" rx="8" fill="#fff" stroke="#999" stroke-width="2"/><text x="164" y="32" text-anchor="middle" font-size="12" fill="#666" font-weight="700">VISION CARD</text>';
+ s+='<line x1="60" y1="260" x2="60" y2="'+(260-tr.std)+'" stroke="#000" stroke-width="7" stroke-linecap="round"/><text x="60" y="280" text-anchor="middle" font-size="12" fill="#333">Standard</text>';
+ tr.L.forEach(function(l,i){var x=140+i*55;s+='<line x1="'+x+'" y1="260" x2="'+x+'" y2="'+(260-l)+'" stroke="#a8353a" stroke-width="7" stroke-linecap="round"/><text x="'+x+'" y="280" text-anchor="middle" font-size="16" font-weight="700" fill="#a8353a">'+'ABC'[i]+'</text>'});
+ s+='<path d="M14 262 H314" stroke="#ddd"/>';
+ for(var k=0;k<7;k++){var x=372+k*55,me=k==6;s+='<rect x="'+(x-26)+'" y="196" width="52" height="94" rx="10" fill="'+(me?'#fff6d8':'#f4f1ec')+'" stroke="'+(me?'#e0a526':'#ddd')+'" stroke-width="'+(me?3:1)+'"/>'+head(x,236,me?'#000':COL[k%6],1.05);
+  s+='<text x="'+x+'" y="283" text-anchor="middle" font-size="10" font-weight="700" fill="#555">'+(me?'YOU':'P'+(k+1))+'</text>';
+  s+='<g class="bubble" id="b'+k+'"><rect x="'+(x-18)+'" y="'+(150)+'" width="36" height="36" rx="10" fill="#fff" stroke="#222" stroke-width="2"/><path d="M'+(x-5)+' 186 l5 8 l5 -8z" fill="#fff" stroke="#222" stroke-width="2"/><rect x="'+(x-4)+'" y="184" width="8" height="3" fill="#fff"/><text x="'+x+'" y="177" text-anchor="middle" font-size="22" font-weight="700" fill="#a8353a" id="bt'+k+'"></text></g>'}
+ s+='<text x="560" y="40" text-anchor="middle" font-size="13" fill="#666">Answers are given aloud, in order.</text>';
+ $('#scene').innerHTML=s}
+function bub(k,l){$('#bt'+k).textContent=l;$('#b'+k).classList.add('on')}
+function trial(){var tr=T[idx];draw(tr);prog('Trial '+(idx+1)+' of 9');$$('.abtn').forEach(function(b){b.disabled=true});
+ $('#status').textContent='Listen to the group…';var ans=[];
+ for(var k=0;k<6;k++){var a=tr.t=='n'?tr.corr:tr.wrong;if(tr.t=='a'&&k==2)a=tr.corr;ans.push(a)}
+ ans.forEach(function(a,k){timers.push(setTimeout(function(){bub(k,'ABC'[a])},500+k*650))});
+ timers.push(setTimeout(function(){$('#status').textContent='Your turn: which line matches?';$$('.abtn').forEach(function(b){b.disabled=false})},500+6*650))}
+$$('.abtn').forEach(function(b){b.onclick=function(){var a=+b.dataset.a,tr=T[idx];$$('.abtn').forEach(function(x){x.disabled=true});bub(6,'ABC'[a]);
+ rec.push({t:tr.t,conf:tr.t!='n'&&a==tr.wrong});$('#status').textContent='Recorded.';
+ setTimeout(function(){idx++;if(idx<9)trial();else results()},1000)}});
+function results(){prog('Results');var u=rec.filter(function(r){return r.t=='c'&&r.conf}).length,al=rec.filter(function(r){return r.t=='a'&&r.conf}).length,up=u/4*100,ap=al/3*100;
+ var bars=[['You: unanimous group',up,'#a8353a'],['Asch: unanimous',37,'#777'],['You: with one ally',ap,'#000'],['Asch: with ally',5.5,'#777']],s='';
+ bars.forEach(function(b,i){var y=10+i*46;s+='<text x="0" y="'+(y+12)+'" font-size="11.5" fill="#333">'+b[0]+'</text><rect x="0" y="'+(y+18)+'" width="'+(b[1]*3.2)+'" height="16" rx="3" fill="'+b[2]+'"/><text x="'+(b[1]*3.2+6)+'" y="'+(y+31)+'" font-size="12" font-weight="700" fill="#333">'+Math.round(b[1])+'%</text>'});
+ s+='<path d="M0 192 H330" stroke="#ccc"/>';$('#chart').innerHTML=s;
+ $('#resfb').innerHTML='With a unanimous group you matched the wrong answer on <b>'+u+' of 4</b> trials. With one ally who answered differently, you matched it on <b>'+al+' of 3</b>.'+(u>al?' Even one dissenting voice made independence easier.':(u==0&&al==0?' You stayed independent throughout. Asch found about a quarter of people never conformed.':' Notice how the pattern changed, or didn’t, when someone else disagreed.'));
+ $('#why').style.display='none';show('s-res')}
+var WHY={i:'<b>Informational influence:</b> you relied on the group as a source of evidence about what is correct. It is strongest when a task is ambiguous or hard.',n:'<b>Normative influence:</b> you wanted to be accepted. Asch’s participants often privately knew the group was wrong yet went along publicly.',x:'Holding firm is the most common single pattern in the data. About a quarter of Asch’s participants never conformed, and roughly three-quarters conformed at least once.'};
+$$('.opt').forEach(function(o){o.onclick=function(){var w=$('#why');w.style.display='block';w.innerHTML=WHY[o.dataset.k]}});
+function go(){timers.forEach(clearTimeout);timers=[];mkTrials();idx=0;show('s-play');trial()}
+$('#start').onclick=go;$('#again').onclick=go;prog('');
+</script></body></html>

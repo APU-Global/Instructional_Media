@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 | Attribution Detective</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#edebe8;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f}
+#stage{position:absolute;left:0;top:0;width:800px;height:600px;transform-origin:0 0;background:#fcfcfc;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.18);display:flex;flex-direction:column}
+.top{height:56px;flex:none;background:#000;color:#fff;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:4px solid #a8353a}
+.pill{background:#d34147;color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.top h1{font-size:17px;margin:0;font-weight:700}
+.prog{margin-left:auto;font-size:13px;color:#eee;white-space:nowrap}
+#main{flex:1;position:relative;min-height:0}
+.screen{position:absolute;inset:0;padding:14px 22px;display:none;flex-direction:column;gap:10px}
+.screen.active{display:flex;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.row{display:flex;gap:18px;min-height:0}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+h2{margin:0;font-size:20px;color:#a8353a}
+h3{margin:0;font-size:15px}
+p{margin:0;font-size:14px;line-height:1.45}
+.small{font-size:12.5px;color:#555}
+.card{background:#fff;border:1px solid #d9d4cc;border-radius:10px;padding:12px 14px}
+.cream{background:#edebe8;border-radius:10px;padding:12px 14px}
+.btn{font:inherit;font-size:14px;font-weight:700;border:2px solid #a8353a;background:#a8353a;color:#fff;border-radius:8px;padding:9px 16px;cursor:pointer;transition:.15s}
+.btn:hover:not(:disabled){background:#d34147;border-color:#d34147}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#a8353a}
+.btn.ghost:hover:not(:disabled){background:#f7e6e7;color:#a8353a;border-color:#a8353a}
+.btn:focus-visible,input:focus-visible{outline:3px solid #2b5f8a;outline-offset:2px}
+.spacer{flex:1}
+.fb{border-left:5px solid #2b5f8a;background:#eef4f9;padding:9px 12px;border-radius:6px;font-size:13.5px;line-height:1.4}
+.fb.good{border-color:#2e7d4f;background:#edf7f0}
+.fb.bad{border-color:#d34147;background:#fcefef}
+.verse{border-left:5px solid #a8353a;background:#edebe8;padding:9px 12px;border-radius:6px;font-size:13px;line-height:1.4}
+svg{display:block}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.sl-wrap{position:relative;padding-top:16px}
+.sl-wrap input{width:100%;accent-color:#a8353a;height:28px;margin:0}
+.sl-labels{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700}
+.sl-labels .s{color:#2b5f8a}.sl-labels .p{color:#a8353a}
+.marker{position:absolute;top:2px;width:2px;height:22px;background:#000;display:none}
+.marker span{position:absolute;top:-14px;left:-26px;font-size:11px;white-space:nowrap;background:#000;color:#fff;padding:1px 5px;border-radius:4px}
+.readout{text-align:center;font-weight:700;font-size:14px}
+.reveal{animation:fade .5s}
+.bar{height:16px;border-radius:4px}
+.legend span{display:inline-block;width:12px;height:12px;border-radius:3px;margin:0 5px 0 12px;vertical-align:-2px}
+</style></head><body>
+<div id="stage">
+<header class="top"><span class="pill">PSYC 350 · WEEK 3</span><h1>Attribution Detective</h1><div class="prog"></div></header>
+<main id="main">
+
+<section class="screen active" id="s-intro">
+  <div class="row" style="flex:1;align-items:center">
+    <div class="col" style="flex:1">
+      <h2>Why did they do that?</h2>
+      <p>Every day we explain other people’s behavior in seconds. <b>Dispositional attributions</b> point to personality and traits. <b>Situational attributions</b> point to circumstances.</p>
+      <p>You will meet four people in four moments. First, make a snap judgment with the information you have. Then you will get the rest of the story and can change your mind.</p>
+      <div class="fb">Slide toward <b>Personality</b> if you think the person’s character explains it, or toward <b>Situation</b> if circumstances explain it.</div>
+      <div><button class="btn" id="start">Start investigating →</button></div>
+    </div>
+    <svg id="introsvg" viewBox="0 0 300 300" width="300" height="300" role="img" aria-label="Illustration of a detective person holding a magnifying glass"></svg>
+  </div>
+</section>
+
+<section class="screen" id="s-play">
+  <div class="row" style="flex:1">
+    <div class="col" style="width:440px;flex:none">
+      <div class="card" style="padding:0;overflow:hidden;border-radius:10px"><svg id="scene" viewBox="0 0 440 310" width="440" height="310" role="img" aria-label="Scene illustration"></svg></div>
+      <div class="fb" id="caption" style="font-size:13px"></div>
+    </div>
+    <div class="col" style="flex:1">
+      <h3 id="stepLabel"></h3>
+      <p id="prompt" style="font-size:15px;font-weight:600"></p>
+      <div id="newinfo" class="fb bad reveal" style="display:none"></div>
+      <div class="cream">
+        <div class="sl-labels"><span class="s">◀ Situation</span><span class="p">Personality ▶</span></div>
+        <div class="sl-wrap"><input type="range" id="slider" min="0" max="100" value="50" aria-label="Personality versus situation"><div class="marker" id="marker"><span>1st guess</span></div></div>
+        <div class="readout" id="readout">50% personality · 50% situation</div>
+      </div>
+      <div class="fb good reveal" id="result" style="display:none"></div>
+      <div class="spacer"></div>
+      <button class="btn" id="lock">Lock in my first impression</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s-sum">
+  <h2>Your case file</h2>
+  <div class="row" style="flex:1">
+    <div class="col" style="width:420px;flex:none">
+      <div class="card"><svg id="chart" viewBox="0 0 390 190" width="390" height="190" role="img" aria-label="Chart of your ratings"></svg>
+      <div class="small legend" style="text-align:center"><span style="background:#a8353a"></span>First impression<span style="background:#000"></span>With full story</div></div>
+      <div class="fb" id="sumfb"></div>
+    </div>
+    <div class="col" style="flex:1">
+      <div class="cream">
+        <h3>Flip the lens</h3>
+        <p class="small" style="margin:4px 0 8px">Now <b>you</b> walk into that same meeting 20 minutes late. No other details. How much is it about your personality?</p>
+        <div class="sl-labels"><span class="s">◀ Situation</span><span class="p">Personality ▶</span></div>
+        <div class="sl-wrap" style="padding-top:4px"><input type="range" id="slider2" min="0" max="100" value="50" aria-label="Rate yourself"></div>
+        <div class="readout" id="readout2">50%</div>
+        <div style="text-align:center;margin-top:6px"><button class="btn ghost" id="lock2" style="padding:6px 12px">Compare with my rating of Jordan</button></div>
+      </div>
+      <div class="fb good reveal" id="mirror" style="display:none"></div>
+      <div class="verse"><b>Reflect:</b> Luke 6:35 and Romans 12:17–20 call us to do good even to those we would rather judge. How could asking “what might be going on for them?” change your response?</div>
+      <div class="spacer"></div>
+      <div style="text-align:right"><button class="btn ghost" id="again">↺ Replay</button></div>
+    </div>
+  </div>
+</section>
+</main></div>
+<script>
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function fit(){var st=$('#stage'),s=Math.min(innerWidth/800,innerHeight/600,1.3);var x=(innerWidth-800*s)/2,y=(innerHeight-600*s)/2;st.style.transform='translate('+x+'px,'+y+'px) scale('+s+')'}
+addEventListener('resize',fit);fit();
+function show(id){$$('.screen').forEach(function(e){e.classList.remove('active')});$('#'+id).classList.add('active')}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function prog(t){$('.prog').textContent=t||''}
+
+function person(x,y,o){o=Object.assign({s:1,skin:'#e0b48f',shirt:'#2b5f8a',hair:'#3a2a20',mood:'neutral',arms:'down',pants:'#33384a'},o);
+var faces={neutral:'<path d="M-7 -128 h14" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>',frown:'<path d="M-8 -124 q8 -8 16 0" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M-13 -148 l8 3 M13 -148 l-8 3" stroke="#222" stroke-width="2.5"/>',smile:'<path d="M-8 -130 q8 9 16 0" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>',worried:'<path d="M-6 -126 q6 -4 12 0" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M-13 -146 l8 -3 M13 -146 l-8 -3" stroke="#222" stroke-width="2.5"/>',stressed:'<ellipse cx="0" cy="-125" rx="5" ry="4" fill="#7a2b2b"/><path d="M-13 -149 l8 3 M13 -149 l-8 3" stroke="#222" stroke-width="2.5"/><path d="M24 -150 q4 6 0 10 q-4 -4 0 -10z" fill="#7fc4e8"/>'};
+var arms=o.arms=='crossed'?'<rect x="-24" y="-100" width="48" height="14" rx="7" fill="'+o.shirt+'" stroke="#0003"/><rect x="-18" y="-96" width="36" height="8" rx="4" fill="'+o.skin+'"/>':'<rect x="-32" y="-112" width="11" height="50" rx="5" fill="'+o.shirt+'"/><rect x="21" y="-112" width="11" height="50" rx="5" fill="'+o.shirt+'"/>';
+return '<g transform="translate('+x+','+y+') scale('+o.s+')"><rect x="-16" y="-62" width="12" height="62" rx="5" fill="'+o.pants+'"/><rect x="4" y="-62" width="12" height="62" rx="5" fill="'+o.pants+'"/><rect x="-24" y="-118" width="48" height="64" rx="16" fill="'+o.shirt+'"/>'+arms+'<circle cx="0" cy="-138" r="22" fill="'+o.skin+'"/><path d="M-22 -138 A22 22 0 0 1 22 -138 Q0 -154 -22 -138Z" fill="'+o.hair+'"/><circle cx="-8" cy="-138" r="2.6" fill="#222"/><circle cx="8" cy="-138" r="2.6" fill="#222"/>'+faces[o.mood]+'</g>'}
+function bubble(x,y,w,t,col){return '<g><rect x="'+x+'" y="'+y+'" width="'+w+'" height="30" rx="10" fill="#fff" stroke="'+(col||'#555')+'" stroke-width="1.5"/><text x="'+(x+w/2)+'" y="'+(y+19)+'" text-anchor="middle" font-size="12" fill="#222">'+t+'</text></g>'}
+function clock(cx,cy,r,h,m){var a=(h%12+m/60)*30,b=m*6,p=function(d,l){var t=(d-90)*Math.PI/180;return [cx+l*Math.cos(t),cy+l*Math.sin(t)]},H=p(a,r*.5),M=p(b,r*.8);return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#fff" stroke="#222" stroke-width="3"/><line x1="'+cx+'" y1="'+cy+'" x2="'+H[0]+'" y2="'+H[1]+'" stroke="#222" stroke-width="3.5" stroke-linecap="round"/><line x1="'+cx+'" y1="'+cy+'" x2="'+M[0]+'" y2="'+M[1]+'" stroke="#a8353a" stroke-width="2.5" stroke-linecap="round"/>'}
+function inset(inner,cap){return '<g class="reveal"><rect x="226" y="10" width="204" height="130" rx="10" fill="#fff" stroke="#a8353a" stroke-width="3"/><g transform="translate(233,16)">'+inner+'</g><rect x="226" y="122" width="204" height="18" rx="0" fill="#a8353a"/><text x="328" y="135" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">'+cap+'</text></g>'}
+var S=[
+{prompt:'Jordan walks into the team meeting 20 minutes late, flustered. Why was Jordan late?',cap:'Jordan · 9:20 team meeting',
+ reveal:'A crash closed the highway for 40 minutes, and Jordan texted the team lead from the road.',
+ scene:function(r){var s='<rect width="440" height="310" fill="#efe8dc"/><rect y="252" width="440" height="58" fill="#c9bfae"/><rect x="30" y="58" width="110" height="194" rx="4" fill="#8a6a4a"/><rect x="40" y="68" width="90" height="184" fill="#a98562"/><circle cx="118" cy="165" r="5" fill="#e8c35a"/>'+clock(300,66,30,9,20)+'<text x="300" y="112" text-anchor="middle" font-size="12" fill="#555">Meeting: 9:00</text><rect x="196" y="196" width="230" height="16" rx="4" fill="#6b5239"/><rect x="210" y="212" width="8" height="40" fill="#6b5239"/><rect x="404" y="212" width="8" height="40" fill="#6b5239"/>';
+  [250,320,390].forEach(function(x){s+='<circle cx="'+x+'" cy="158" r="15" fill="#9a9a9a"/><rect x="'+(x-20)+'" y="173" width="40" height="23" rx="10" fill="#7d8794"/>'});
+  s+=person(96,262,{mood:'stressed',s:1.0,shirt:'#a8353a'});
+  if(r)s+=inset('<rect width="190" height="100" fill="#8e9298"/><rect y="38" width="190" height="42" fill="#4a4d55"/><path d="M0 59 H190" stroke="#fff" stroke-dasharray="12 8" stroke-width="2"/><rect x="14" y="44" width="32" height="14" rx="4" fill="#d34147"/><rect x="54" y="44" width="32" height="14" rx="4" fill="#2b5f8a"/><rect x="94" y="62" width="32" height="14" rx="4" fill="#e0a526"/><g transform="translate(150,34)"><path d="M0 -14 L22 24 H-22Z" fill="#e0612a" stroke="#fff" stroke-width="2"/><text y="18" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">!</text></g><text x="10" y="22" font-size="13" font-weight="700" fill="#fff">ROAD CLOSED</text>','What you didn’t see');
+  else s+=bubble(130,100,100,'So sorry, I…','#a8353a');
+  return s}},
+{prompt:'A cashier barely looks up, sighs, and answers your question with one word: “Nope.” What explains the behavior?',cap:'The cashier · 4:45 pm',
+ reveal:'It is hour 11 of a double shift. Two coworkers called out, and the line is 15 people deep.',
+ scene:function(r){var s='<rect width="440" height="310" fill="#e9eef0"/><rect y="252" width="440" height="58" fill="#b9c0c4"/><rect x="190" y="190" width="240" height="66" rx="5" fill="#7a5c43"/><rect x="330" y="160" width="60" height="30" rx="4" fill="#333"/><rect x="338" y="166" width="44" height="10" fill="#7fd1a0"/>';
+  s+=person(300,196,{mood:'frown',s:.8,shirt:'#c0392b',skin:'#c68e64',hair:'#222'});
+  s+=person(100,262,{mood:'neutral',s:1,shirt:'#6a7a8a'})+bubble(30,70,150,'Do you have this in stock?','#555')+bubble(215,84,60,'Nope.','#a8353a');
+  if(r)s+=inset('<rect width="190" height="100" fill="#f3efe6"/>'+clock(46,44,30,4,45)+'<text x="46" y="92" text-anchor="middle" font-size="11" fill="#333">Hour 11 of 12</text><rect x="90" y="14" width="92" height="38" rx="6" fill="#d34147"/><text x="136" y="30" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">2 STAFF OUT</text><text x="136" y="44" text-anchor="middle" font-size="10" fill="#fff">Please be patient</text>'+[0,1,2,3,4,5].map(function(i){return '<circle cx="'+(100+i*14)+'" cy="76" r="6" fill="#8a8f98"/><rect x="'+(94+i*14)+'" y="82" width="12" height="14" rx="5" fill="#8a8f98"/>'}).join('')+'<text x="136" y="68" text-anchor="middle" font-size="10" fill="#333">15 in line</text>','What you didn’t see');
+  return s}},
+{prompt:'In class, Priya never joins the discussion. She sits with arms crossed and eyes down. How would you explain her silence?',cap:'Priya · Social Psychology class',
+ reveal:'Last week a classmate ridiculed her first comment, and today the room goes quiet whenever she looks up.',
+ scene:function(r){var s='<rect width="440" height="310" fill="#f1ece0"/><rect y="252" width="440" height="58" fill="#cdbf9f"/><rect x="40" y="24" width="360" height="76" rx="4" fill="#fff" stroke="#8a8a8a" stroke-width="4"/><text x="60" y="52" font-size="15" fill="#2b5f8a">Group discussion: Chapter 3</text><path d="M60 70 h150 M60 84 h100" stroke="#bbb" stroke-width="3"/>';
+  s+=person(60,262,{mood:'smile',s:.9,shirt:'#2e7d4f'});
+  [330,400].forEach(function(x){s+=person(x,236,{mood:'neutral',s:.62,shirt:'#9a9a9a'})+'<rect x="'+(x-30)+'" y="190" width="60" height="10" rx="3" fill="#7a5c43"/>'});
+  s+=person(220,250,{mood:'worried',arms:'crossed',s:.92,shirt:'#7d3c98',hair:'#1a1a1a',skin:'#b98560'})+'<rect x="160" y="196" width="120" height="14" rx="4" fill="#8a6a4a"/><rect x="170" y="210" width="8" height="44" fill="#8a6a4a"/><rect x="262" y="210" width="8" height="44" fill="#8a6a4a"/>';
+  if(r)s+=inset('<rect width="190" height="100" fill="#f6efe9"/><g opacity=".9"><rect x="14" y="10" width="160" height="34" rx="10" fill="#fff" stroke="#8a8a8a"/><text x="94" y="31" text-anchor="middle" font-size="11" fill="#444">“Wait… what did she say?”</text></g><g transform="translate(20,56)"><circle cx="20" cy="12" r="11" fill="#b98560"/><path d="M12 14 q8 6 16 0" stroke="#222" stroke-width="2" fill="none"/></g><text x="130" y="76" text-anchor="middle" font-size="11" fill="#555">Silence</text><text x="130" y="92" text-anchor="middle" font-size="11" fill="#555">falls…</text>','What you didn’t see');
+  else s+=bubble(40,90,160,'Anyone want to share?','#2e7d4f');
+  return s}},
+{prompt:'A driver swerves across two lanes and cuts you off. You brake hard. What explains this driver’s behavior?',cap:'The driver · rush hour',
+ reveal:'In the back seat, the driver’s child is having an asthma attack, and they are racing to the ER.',
+ scene:function(r){var s='<rect width="440" height="310" fill="#cfe4c0"/><rect y="90" width="440" height="170" fill="#50545c"/><path d="M0 175 H440" stroke="#fff" stroke-width="4" stroke-dasharray="26 18"/><path d="M0 92 H440 M0 258 H440" stroke="#e8c35a" stroke-width="4"/>';
+  s+='<g transform="translate(60,200)"><rect width="104" height="46" rx="12" fill="#2b5f8a"/><rect x="62" y="6" width="28" height="34" rx="6" fill="#a9d1ef"/><circle cx="20" cy="46" r="8" fill="#222"/><circle cx="84" cy="46" r="8" fill="#222"/></g><text x="112" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">You</text>';
+  s+='<g transform="translate(250,150) rotate(-22)"><rect width="104" height="46" rx="12" fill="#d34147"/><rect x="62" y="6" width="28" height="34" rx="6" fill="#a9d1ef"/><circle cx="20" cy="46" r="8" fill="#222"/><circle cx="84" cy="46" r="8" fill="#222"/></g><path d="M215 170 q-30 20 -50 40 M222 190 q-30 14 -52 30" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>'+bubble(160,40,130,'HONK!  What a jerk!','#a8353a');
+  if(r)s+=inset('<rect width="190" height="100" fill="#d9d6d0"/><rect x="10" y="30" width="90" height="62" rx="12" fill="#6b7280"/><circle cx="55" cy="30" r="14" fill="#e0b48f"/><path d="M46 36 q9 7 18 0" stroke="#7a2b2b" stroke-width="2.5" fill="none"/><rect x="108" y="48" width="14" height="30" rx="5" fill="#2b8ac4"/><rect x="104" y="42" width="22" height="8" rx="3" fill="#fff" stroke="#2b8ac4"/><rect x="134" y="14" width="46" height="46" rx="8" fill="#d34147"/><text x="157" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">H</text><text x="157" y="76" text-anchor="middle" font-size="10" fill="#333">ER · 2 mi</text><text x="115" y="92" text-anchor="middle" font-size="10" fill="#333">Inhaler</text>','What you didn’t see');
+  return s}}];
+var st={i:0,ph:0,res:[]};
+var sl=$('#slider'),lock=$('#lock');
+function ro(v){return v+'% personality · '+(100-v)+'% situation'}
+sl.oninput=function(){$('#readout').textContent=ro(sl.value)};
+$('#slider2').oninput=function(){$('#readout2').textContent=$('#slider2').value+'% personality'};
+$('#introsvg').innerHTML='<circle cx="150" cy="150" r="140" fill="#edebe8"/>'+person(130,270,{s:1.3,shirt:'#a8353a',mood:'smile',hair:'#222'})+'<g transform="translate(190,150)"><circle r="40" fill="#cfe9f5" fill-opacity=".6" stroke="#222" stroke-width="7"/><line x1="28" y1="28" x2="68" y2="68" stroke="#222" stroke-width="10" stroke-linecap="round"/><text y="12" text-anchor="middle" font-size="36" font-weight="700" fill="#a8353a">?</text></g>';
+function load(){var d=S[st.i];st.ph=0;$('#scene').innerHTML=d.scene(false);$('#caption').textContent=d.cap;prog('Case '+(st.i+1)+' of 4');
+ $('#stepLabel').textContent='Step 1 of 2 · First impression';$('#prompt').textContent=d.prompt;$('#newinfo').style.display='none';$('#result').style.display='none';
+ sl.disabled=false;sl.value=50;$('#readout').textContent=ro(50);$('#marker').style.display='none';lock.textContent='Lock in my first impression';lock.disabled=false;show('s-play')}
+lock.onclick=function(){var d=S[st.i],v=+sl.value;
+ if(st.ph==0){st.res[st.i]={a:v};st.ph=1;var m=$('#marker');m.style.display='block';m.style.left='calc('+v+'% + '+(8-v*0.16)+'px)';
+  $('#scene').innerHTML=d.scene(true);$('#newinfo').style.display='block';$('#newinfo').innerHTML='<b>New information:</b> '+d.reveal;
+  $('#stepLabel').textContent='Step 2 of 2 · Revise with the full story';lock.textContent='Re-rate with the new information'}
+ else if(st.ph==1){st.res[st.i].b=v;st.ph=2;sl.disabled=true;var dl=st.res[st.i].a-v,r=$('#result');r.style.display='block';
+  r.innerHTML=dl>=15?'You moved <b>'+dl+' points toward the situation</b>. A few facts rewrote the story. Situations are often invisible when we judge someone else’s behavior.':(dl>-5?'Your explanation barely moved. Even with the full story, we can stay anchored on personality. That anchor is the <b>fundamental attribution error</b> at work.':'You moved <b>toward personality</b> after the new information. Notice what you weighed, and consider whether the situation carries more of the explanation than you allowed.');
+  lock.textContent=st.i<3?'Next case →':'See my case file →'}
+ else{if(st.i<3){st.i++;load()}else summary()}};
+function summary(){prog('Case file');var W=390,H=190,s='';var avg=0;
+ st.res.forEach(function(r,i){avg+=r.a;var y=14+i*42,lbl=['Late coworker','Cashier','Silent student','Driver'][i];
+  s+='<text x="0" y="'+(y+10)+'" font-size="11" fill="#333">'+lbl+'</text><rect x="100" y="'+y+'" width="'+(r.a*2.7)+'" height="14" rx="3" fill="#a8353a"/><text x="'+(104+r.a*2.7)+'" y="'+(y+11)+'" font-size="10" fill="#333">'+r.a+'</text><rect x="100" y="'+(y+17)+'" width="'+(r.b*2.7)+'" height="14" rx="3" fill="#000"/><text x="'+(104+r.b*2.7)+'" y="'+(y+28)+'" font-size="10" fill="#333">'+r.b+'</text>'});
+ s+='<text x="100" y="186" font-size="10" fill="#2b5f8a">0 = all situation</text><text x="370" y="186" text-anchor="end" font-size="10" fill="#a8353a">100 = all personality</text>';
+ $('#chart').innerHTML=s;avg=Math.round(avg/4);
+ $('#sumfb').innerHTML=avg>=60?'Your first impressions averaged <b>'+avg+'% personality</b>. That tilt is the <b>fundamental attribution error</b>: we overestimate traits and underestimate situations when judging others.':(avg<=40?'Your first impressions averaged just <b>'+avg+'% personality</b>. You already lean toward situational explanations, which can offset the fundamental attribution error. Be careful that you also hold people accountable when it is warranted.':'Your first impressions averaged <b>'+avg+'% personality</b>, a balanced mix. Notice how much the revealed facts still shifted your view. Most people need that information before they look at the situation.');
+ $('#mirror').style.display='none';$('#slider2').value=50;$('#readout2').textContent='50% personality';show('s-sum')}
+$('#lock2').onclick=function(){var me=+$('#slider2').value,j=st.res[0].a,m=$('#mirror');m.style.display='block';
+ m.innerHTML=me<j-10?'For <b>Jordan</b> you said '+j+'%; for <b>yourself</b>, '+me+'%. That gap is the <b>actor–observer difference</b>: we explain our own behavior with the situation, but others’ with their character.':(me>j+10?'You were <i>harder</i> on yourself ('+me+'%) than on Jordan ('+j+'%). Self-critical thinking is real, but research finds the common pattern is the reverse: actors blame situations, observers blame dispositions.':'You rated yourself ('+me+'%) about the same as Jordan ('+j+'%). Consistent standards are a strength. The typical <b>actor–observer difference</b> would have you citing the situation more for yourself.')};
+$('#start').onclick=load;$('#again').onclick=function(){st={i:0,ph:0,res:[]};load()};
+prog('');
+</script></body></html>
