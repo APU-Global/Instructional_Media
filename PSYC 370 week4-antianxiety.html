@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive: Antianxiety Medications</title>
+<style>:root{--bg:#f6f8fa;--card:#fff;--ink:#1b2430;--muted:#566173;--line:#d8dee7;--acc:#0f766e;--acc2:#0b5a54;--soft:#e2f3f0;--good:#166534;--goodbg:#e4f5ea;--bad:#9f1d1d;--badbg:#fbe9e9;--chip:#fff;--shadow:0 1px 2px rgba(20,30,50,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--card:#1b232e;--ink:#e8edf3;--muted:#a3afbf;--line:#334050;--soft:#16302d;--good:#7bd99b;--goodbg:#173424;--bad:#ff9a9a;--badbg:#3a1c1c;--chip:#222c39;--shadow:none}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:12px}
+.hero{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px;box-shadow:var(--shadow)}
+.hero svg{flex:0 0 auto;width:230px;height:auto;display:block}
+.eyebrow{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);font-weight:700}
+@media (prefers-color-scheme:dark){.eyebrow{color:#6fd3c8}}
+.hero h1{font-size:1.35rem;line-height:1.2;margin:2px 0 4px}
+.hero p{margin:0;color:var(--muted);font-size:.95rem}
+.tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tab{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;min-height:40px}
+.tab svg{width:20px;height:20px}
+.tab[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+.tab:focus-visible,.chip:focus-visible,.btn:focus-visible,.bin:focus-visible,.opt:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)}
+.panel[hidden]{display:none}
+.panel h2{font-size:1.05rem;margin:0 0 2px}
+.lead{margin:0 0 10px;color:var(--muted);font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:12px;min-height:56px;background:var(--bg)}
+.chip{border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:6px 12px;font:inherit;font-size:.92rem;cursor:grab;min-height:38px;display:inline-flex;align-items:center;gap:8px}
+.chip small{color:var(--muted);font-size:.8rem}
+.chip.sel{border-color:var(--acc);background:var(--soft);box-shadow:0 0 0 2px var(--acc)}
+.chip.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:10px}
+.bin{border:2px solid var(--line);border-radius:12px;padding:8px;background:var(--card);min-height:120px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.bin.over,.bin.ready{border-color:var(--acc);background:var(--soft)}
+.bin h3{margin:0 0 4px;font-size:.95rem;display:flex;align-items:center;gap:6px}
+.bin h3 svg{width:22px;height:22px;flex:none}
+.bin .hint{font-size:.78rem;color:var(--muted);margin:0 0 6px}
+.placed{display:flex;flex-wrap:wrap;gap:4px}
+.placed span{font-size:.8rem;background:var(--goodbg);color:var(--good);border-radius:8px;padding:2px 8px;font-weight:600}
+.bar{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--acc);background:var(--acc);color:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer;min-height:40px}
+.btn.ghost{background:transparent;color:var(--acc)}
+@media (prefers-color-scheme:dark){.btn.ghost{color:#6fd3c8;border-color:#6fd3c8}}
+.fb{flex:1;min-width:200px;padding:8px 12px;border-radius:10px;background:var(--soft);font-size:.92rem;min-height:40px}
+.fb.good{background:var(--goodbg);color:var(--good)}.fb.bad{background:var(--badbg);color:var(--bad)}
+.prog{font-weight:700;font-size:.9rem;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}.hero svg{width:96px}.hero p{display:none}.panel{padding:12px}}
+.card{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.card h3{margin:0 0 4px;font-size:.98rem}
+.card ul{margin:4px 0 0;padding-left:18px;font-size:.9rem}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:8px 12px;margin:6px 0;font:inherit;font-size:.93rem;cursor:pointer;min-height:40px}
+.opt.right{border-color:var(--good);background:var(--goodbg)}.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.ref{margin:10px 2px 0;font-size:.76rem;color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--acc:#4338ca;--acc2:#312e81;--soft:#e8e8fb}
+@media (prefers-color-scheme:dark){:root{--soft:#26264a}.eyebrow{color:#a5a8ff}}
+.tab[aria-selected=true]{background:var(--acc);border-color:var(--acc)}
+.chip.sel{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc)}
+.btn{background:var(--acc);border-color:var(--acc)}.btn.ghost{background:transparent;color:var(--acc)}
+.lab{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:700px){.lab{grid-template-columns:1fr}}
+.vis{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:6px}
+.vis svg{width:100%;height:auto;display:block}
+.tg{display:flex;flex-direction:column;gap:8px}
+.sw{display:flex;align-items:center;gap:10px;border:2px solid var(--line);background:var(--chip);color:var(--ink);border-radius:12px;padding:8px 12px;font:inherit;font-weight:600;cursor:pointer;min-height:48px;text-align:left}
+.sw svg{width:30px;height:30px;flex:none}
+.sw[aria-pressed=true]{border-color:var(--acc);background:var(--soft)}
+.sw .st{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--muted)}
+.sw[aria-pressed=true] .st{color:var(--acc)}
+.meter{display:flex;gap:4px;margin:10px 0 4px}
+.meter i{flex:1;height:14px;border-radius:4px;background:var(--line)}
+.meter i.on1{background:#22c55e}.meter i.on2{background:#eab308}.meter i.on3{background:#f97316}.meter i.on4{background:#dc2626}
+.ml{font-weight:700;margin:0}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.seg .tab{border-radius:10px}
+#lung{transform-origin:center;transform-box:fill-box}
+.breath{animation:br var(--d,3s) ease-in-out infinite}
+@keyframes br{0%,100%{transform:scale(.92)}50%{transform:scale(var(--s,1.08))}}
+.glow{opacity:0;transition:opacity .3s}.glow.on{opacity:1}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 230 110" role="img" aria-label="GABA molecules binding to a receptor on a neuron">
+ <rect width="230" height="110" rx="12" fill="#e8e8fb"/>
+ <path d="M0 78 Q115 60 230 78 V110 H0Z" fill="#a5b4fc"/>
+ <rect x="82" y="50" width="66" height="34" rx="14" fill="#4338ca"/>
+ <circle cx="115" cy="67" r="9" fill="#e8e8fb"/>
+ <circle cx="60" cy="20" r="8" fill="#f59e0b"/><circle cx="108" cy="14" r="8" fill="#f59e0b"/><circle cx="155" cy="22" r="8" fill="#f59e0b"/>
+ <path d="M60 28 L96 54 M108 22 L112 50 M155 30 L132 52" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3 3"/>
+ <circle cx="195" cy="44" r="19" fill="#10b981"/><text x="195" y="48" font-size="10" text-anchor="middle" fill="#fff" font-weight="700" font-family="system-ui">Benzo</text>
+ <text x="12" y="104" font-size="10" fill="#312e81" font-weight="700" font-family="system-ui">GABA</text>
+</svg>
+<div><div class="eyebrow">Week 4 · Deep Dive</div><h1>Antianxiety Medications: Relief, Dependence &amp; Risk</h1><p>See how benzodiazepines act, why combinations matter, and why tapering is slow.</p></div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Week 4 activities">
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4 0-7 3-7 7 0 5 4 7 7 11 3-4 7-6 7-11 0-4-3-7-7-7z" fill="none" stroke="currentColor" stroke-width="2"/></svg>Brain &amp; Breathing Lab</button>
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18L9 9l4 5 8-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Tolerance &amp; Withdrawal</button>
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Quick Check</button>
+</nav>
+
+<section class="panel" data-panel>
+ <h2>What happens when sedating substances combine?</h2>
+ <p class="lead">Turn substances on and off. The lungs and meter show an <em>illustration</em> of combined slowing, not a dose prediction.</p>
+ <div class="lab">
+  <div class="vis">
+   <svg viewBox="0 0 420 230" role="img" aria-label="Neuron receptor with GABA and benzodiazepine, beside lungs whose breathing slows as more sedating substances are added">
+    <rect x="6" y="6" width="258" height="218" rx="10" fill="none" stroke="var(--line)"/>
+    <text x="135" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Inside the synapse</text>
+    <path d="M10 150 Q135 120 260 150 V222 H10Z" fill="#a5b4fc" opacity=".6"/>
+    <rect x="95" y="112" width="80" height="50" rx="18" fill="#4338ca"/>
+    <circle cx="135" cy="137" r="12" fill="#e8e8fb"/>
+    <g fill="#f59e0b"><circle cx="60" cy="60" r="10"/><circle cx="130" cy="50" r="10"/><circle cx="205" cy="64" r="10"/></g>
+    <g stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4 4"><path d="M62 70 L108 114"/><path d="M130 60 L134 110"/><path d="M203 74 L168 116"/></g>
+    <text x="36" y="84" text-anchor="middle" font-size="11" fill="currentColor">GABA</text>
+    <g class="glow" id="bzglow"><circle cx="135" cy="137" r="30" fill="none" stroke="#10b981" stroke-width="4"/><circle cx="222" cy="140" r="15" fill="#10b981"/><text x="222" y="144" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Benzo</text><text x="135" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#064e3b">GABA’s calming signal is stronger</text></g>
+    <text x="342" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Breathing</text>
+    <g id="lung" class="breath"><path d="M342 60 V110" stroke="#64748b" stroke-width="6" stroke-linecap="round"/><path d="M336 105 C300 80 280 130 286 180 C292 215 326 205 336 170Z" fill="#fb7185"/><path d="M348 105 C384 80 404 130 398 180 C392 215 358 205 348 170Z" fill="#fb7185"/></g>
+    <text x="342" y="222" text-anchor="middle" font-size="11" fill="currentColor" id="lungl">Baseline</text>
+   </svg>
+  </div>
+  <div>
+   <div class="tg">
+    <button class="sw" id="t-bz" aria-pressed="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="5" fill="#10b981"/><rect x="12" y="7" width="10" height="10" rx="5" fill="#fff" opacity=".45"/></svg>Benzodiazepine<span class="st">OFF</span></button>
+    <button class="sw" id="t-al" aria-pressed="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l-2 9a4 4 0 0 1-8 0z" fill="#f59e0b"/><path d="M12 14v6M8 21h8" stroke="#f59e0b" stroke-width="2" fill="none"/></svg>Alcohol<span class="st">OFF</span></button>
+    <button class="sw" id="t-op" aria-pressed="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3" fill="#ef4444"/><rect x="8" y="9" width="8" height="2" fill="#fff"/><rect x="8" y="13" width="8" height="2" fill="#fff"/></svg>Opioid medication<span class="st">OFF</span></button>
+   </div>
+   <div class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+   <p class="ml" id="ml" aria-live="polite"></p>
+   <p class="lead" id="mt" style="margin:4px 0 0"></p>
+  </div>
+ </div>
+</section>
+
+<section class="panel" data-panel>
+ <h2>Why stopping is a slow process</h2>
+ <p class="lead">Choose a scenario. These curves show <em>shapes only</em> (not real data) to illustrate what the NIMH guide describes.</p>
+ <div class="seg" id="seg"></div>
+ <div class="lab">
+  <div class="vis"><svg id="chart" viewBox="0 0 420 230" role="img" aria-label="Illustrative chart"></svg></div>
+  <div id="ctext"></div>
+ </div>
+</section>
+
+<section class="panel" data-panel>
+ <h2>Quick check</h2>
+ <p class="lead">Five questions drawn from the NIMH guide (pp. 10–11) and this week’s Deep Dive.</p>
+ <div id="q"></div>
+</section>
+<p class="ref">U.S. Department of Health and Human Services (2012), <em>Mental Health Medications</em>; Breggin &amp; Fisher (2008), Ch. 12. Educational illustration only. Do not use it to make medication decisions.</p>
+</div>
+<script>(function(){
+function postH(){try{parent.postMessage({type:'iframe-resize',height:document.querySelector('.wrap').offsetHeight},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+window.postH=postH;
+window.initTabs=function(){
+  var tabs=[].slice.call(document.querySelectorAll('nav.tabs .tab')),panels=[].slice.call(document.querySelectorAll('.panel[data-panel]'));
+  function eq(){panels.forEach(function(p){p.style.minHeight=''});var m=0;panels.forEach(function(p){var h=p.hidden;p.hidden=false;m=Math.max(m,p.offsetHeight);p.hidden=h});panels.forEach(function(p){p.style.minHeight=m+'px'})}
+  window.addEventListener('resize',function(){eq();postH()});
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i)});panels.forEach(function(p,j){p.hidden=j!==i});postH()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){e.preventDefault();var n=(i+1)%tabs.length;show(n);tabs[n].focus()}
+    if(e.key==='ArrowLeft'){e.preventDefault();var n2=(i+tabs.length-1)%tabs.length;show(n2);tabs[n2].focus()}})});
+  eq();show(0);setTimeout(function(){eq();postH()},300)};
+/* generic click-or-drag sorter */
+window.initSorter=function(o){
+  var root=document.getElementById(o.id),pool=root.querySelector('.pool'),binsEl=root.querySelector('.bins'),fb=root.querySelector('.fb'),prog=root.querySelector('.prog');
+  var sel=null,done=0,tries=0,total=o.items.length;
+  function say(m,c){fb.className='fb '+(c||'');fb.innerHTML=m}
+  function upd(){prog.textContent=done+' of '+total+' placed'+(tries?' · '+tries+' retr'+(tries===1?'y':'ies'):'')}
+  function build(){
+    pool.innerHTML='';binsEl.innerHTML='';sel=null;done=0;tries=0;
+    o.bins.forEach(function(b){var d=document.createElement('button');d.type='button';d.className='bin';d.dataset.bin=b.id;
+      d.innerHTML='<h3>'+(b.icon||'')+'<span>'+b.label+'</span></h3><p class="hint">'+(b.hint||'')+'</p><div class="placed"></div>';
+      d.addEventListener('click',function(){if(sel)place(sel,d)});
+      d.addEventListener('dragover',function(e){e.preventDefault();d.classList.add('over')});
+      d.addEventListener('dragleave',function(){d.classList.remove('over')});
+      d.addEventListener('drop',function(e){e.preventDefault();d.classList.remove('over');var id=e.dataTransfer.getData('text/plain');var c=pool.querySelector('[data-i="'+id+'"]');if(c)place(c,d)});
+      binsEl.appendChild(d)});
+    o.items.slice().sort(function(){return .5-Math.random()}).forEach(function(it){
+      var c=document.createElement('button');c.type='button';c.className='chip';c.draggable=true;c.dataset.i=o.items.indexOf(it);
+      c.innerHTML=it.label+(it.sub?' <small>'+it.sub+'</small>':'');
+      c.addEventListener('click',function(){pick(c)});
+      c.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',c.dataset.i);pick(c,true)});
+      pool.appendChild(c)});
+    say(o.start||'Pick a card, then pick its category (or drag it).');upd();postH()}
+  function pick(c,keep){if(sel===c&&!keep){c.classList.remove('sel');sel=null;binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.remove('ready')});return}
+    if(sel)sel.classList.remove('sel');sel=c;c.classList.add('sel');binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.add('ready')})}
+  function place(c,bin){var it=o.items[+c.dataset.i];
+    binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.remove('ready')});
+    if(it.bin===bin.dataset.bin){var s=document.createElement('span');s.textContent=it.label;bin.querySelector('.placed').appendChild(s);c.remove();sel=null;done++;
+      say('Correct. '+(it.why||''),'good');upd();
+      if(done===total){say(o.finish||'All sorted!','good')}}
+    else{tries++;c.classList.add('shake');setTimeout(function(){c.classList.remove('shake')},400);say('Not quite. '+(it.hint||'Try another category.'),'bad');upd()}
+    postH()}
+  root.querySelector('.reset').addEventListener('click',build);build()};
+/* generic quiz */
+window.initQuiz=function(o){
+  var root=document.getElementById(o.id),i=0,score=0,locked=false;
+  function render(){
+    if(i>=o.qs.length){root.innerHTML='<h3>Score: '+score+' / '+o.qs.length+'</h3><p class="lead">'+(o.end||'')+'</p><button class="btn" type="button">Try again</button>';root.querySelector('button').onclick=function(){i=0;score=0;render()};postH();return}
+    var q=o.qs[i];locked=false;
+    root.innerHTML='<div class="prog">Question '+(i+1)+' of '+o.qs.length+'</div><p style="margin:6px 0;font-weight:600">'+q.q+'</p><div class="opts"></div><div class="bar"><div class="fb">Choose an answer.</div></div>';
+    var box=root.querySelector('.opts'),fb=root.querySelector('.fb');
+    q.a.forEach(function(t,k){var b=document.createElement('button');b.type='button';b.className='opt';b.textContent=t;
+      b.onclick=function(){if(locked)return;locked=true;var ok=k===q.c;if(ok)score++;b.classList.add(ok?'right':'wrong');if(!ok)box.children[q.c].classList.add('right');
+        fb.className='fb '+(ok?'good':'bad');fb.innerHTML=(ok?'Correct. ':'Not quite. ')+q.w;
+        var n=document.createElement('button');n.type='button';n.className='btn';n.textContent=i<o.qs.length-1?'Next':'See score';n.onclick=function(){i++;render()};root.querySelector('.bar').appendChild(n);postH()};
+      box.appendChild(b)});postH()}
+  render()};
+})();
+
+initTabs();
+var on={bz:false,al:false,op:false};
+function sync(){
+ [['bz','t-bz'],['al','t-al'],['op','t-op']].forEach(function(p){var b=document.getElementById(p[1]);b.setAttribute('aria-pressed',on[p[0]]);b.querySelector('.st').textContent=on[p[0]]?'ON':'OFF'});
+ var n=(on.bz?1:0)+(on.al?1:0)+(on.op?1:0);
+ document.getElementById('bzglow').classList.toggle('on',on.bz);
+ var bars=document.querySelectorAll('.meter i');bars.forEach(function(b,i){b.className=i<n+(n>0?1:0)&&i<4?'on'+Math.min(i+1,4):''});
+ if(n===0)bars[0].className='on1';
+ var L=[['Baseline','3s','1.1'],['Slowed','5s','1.04'],['Compounded','8s','1.0'],['Highest concern','11s','.98']][n];
+ var lung=document.getElementById('lung');lung.style.setProperty('--d',L[1]);lung.style.setProperty('--s',L[2]);
+ document.getElementById('lungl').textContent=L[0];
+ var ml,mt;
+ if(n===0){ml='No sedating substances';mt='Nervous system activity and breathing are at baseline in this illustration.'}
+ else if(n===1&&on.bz){ml='Benzodiazepine alone';mt='Benzodiazepines enhance the effect of GABA, which slows nervous system activity. The most common side effects are drowsiness and dizziness.'}
+ else if(n===1){ml=on.al?'Alcohol alone':'Opioid alone';mt='Alcohol and opioid medications also slow breathing. Select the benzodiazepine to see how the effects combine.'}
+ else if(on.bz){ml='Combined use: higher risk';mt='Benzodiazepines can be especially dangerous with alcohol or opioid medications. The FDA has issued a boxed warning about combined use with opioids, and one about abuse and dependence.'}
+ else{ml='Two breathing-slowing substances';mt='Both slow breathing, so effects can add together. Talk with a doctor or pharmacist about any alcohol or drug use.'}
+ document.getElementById('ml').textContent=ml;document.getElementById('mt').textContent=mt;postH()}
+['bz','al','op'].forEach(function(k){document.getElementById('t-'+k).onclick=function(){on[k]=!on[k];sync()}});sync();
+
+var modes=[
+ {k:'Tolerance',t:'Tolerance over time',p:'<p style="margin:0 0 6px">People can build a <strong>tolerance</strong> to benzodiazepines when taken over a long period, and may need higher doses to get the same effect. Some people become <strong>dependent</strong>.</p><p style="margin:0">This is why doctors usually prescribe them for short periods, especially for people with substance abuse problems or who become dependent easily.</p>',
+  svg:function(){return axes('Weeks of regular use','Relative level')+curve('M50 80 C150 90 250 140 390 175','#dc2626')+curve('M50 175 C150 160 250 110 390 55','#4338ca')+lbl(300,175,'Effect of the same dose','#dc2626')+lbl(300,48,'Dose needed for same effect','#4338ca')}},
+ {k:'Stop suddenly',t:'Stopping suddenly',p:'<p style="margin:0">If people suddenly stop taking benzodiazepines, they may get <strong>withdrawal symptoms</strong>, or their anxiety may return. The NIMH guide advises against stopping any antianxiety medication without talking to the doctor.</p>',
+  svg:function(){return axes('Time','Relative level')+curve('M50 70 H200 V190 H390','#4338ca',1)+curve('M50 185 H200 C215 60 260 70 300 110 C330 140 360 160 390 170','#dc2626')+lbl(110,60,'Dose','#4338ca')+lbl(300,60,'Withdrawal / anxiety returns','#dc2626')+'<path d="M200 190 V200" stroke="#64748b"/><text x="200" y="214" text-anchor="middle" font-size="11" fill="currentColor">Stopped abruptly</text>'}},
+ {k:'Taper slowly',t:'Tapering slowly',p:'<p style="margin:0">Benzodiazepines, buspirone, and beta-blockers should be <strong>tapered off slowly</strong>, with a doctor’s guidance. Gradual reduction gives the body time to adjust.</p>',
+  svg:function(){return axes('Time','Relative level')+curve('M50 70 H120 V95 H180 V120 H240 V145 H300 V170 H390 V185','#4338ca',1)+curve('M50 185 C200 182 300 175 390 180','#16a34a')+lbl(110,60,'Dose steps down','#4338ca')+lbl(290,206,'Milder symptoms to monitor with a doctor','#16a34a')}}];
+function axes(x,y){return '<path d="M50 20 V190 H400" stroke="currentColor" stroke-width="2" fill="none"/><text x="225" y="226" text-anchor="middle" font-size="11" fill="currentColor">'+x+'</text><text transform="translate(16 110) rotate(-90)" text-anchor="middle" font-size="11" fill="currentColor">'+y+'</text>'}
+function curve(d,c,sq){return '<path d="'+d+'" stroke="'+c+'" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'}
+function lbl(x,y,t,c){return '<text x="'+x+'" y="'+y+'" font-size="12" font-weight="700" fill="'+c+'" text-anchor="middle">'+t+'</text>'}
+var seg=document.getElementById('seg');
+modes.forEach(function(m,i){var b=document.createElement('button');b.className='tab';b.type='button';b.textContent=m.k;b.onclick=function(){setM(i)};seg.appendChild(b)});
+function setM(i){[].forEach.call(seg.children,function(b,j){b.setAttribute('aria-selected',j===i)});var m=modes[i];document.getElementById('chart').innerHTML=m.svg();document.getElementById('ctext').innerHTML='<h3 style="margin:0 0 6px">'+m.t+'</h3>'+m.p;postH()}
+setM(0);
+
+initQuiz({id:'q',end:'Review the NIMH guide (pp. 10–11) and Breggin &amp; Fisher, Ch. 12, as you prepare Part 2.',qs:[
+ {q:'Which brain chemical do benzodiazepines enhance the effect of?',a:['Dopamine','GABA','Serotonin'],c:1,w:'Benzodiazepines enhance GABA, which slows nervous system activity.'},
+ {q:'Why do doctors usually prescribe benzodiazepines for short periods?',a:['They stop working after one dose','Tolerance and dependence can develop with long-term use','They are only approved for children'],c:1,w:'People can build tolerance and may need higher doses; some become dependent.'},
+ {q:'How long does buspirone take to begin working, compared with benzodiazepines?',a:['At least two weeks (slower)','The same day (faster)','About one hour'],c:0,w:'Benzodiazepines can work more quickly; buspirone takes at least two weeks.'},
+ {q:'The FDA has issued a boxed warning about combining benzodiazepines with which medications?',a:['Antibiotics','Opioid medications','Vitamins'],c:1,w:'Both slow breathing, so the combination can be especially dangerous.'},
+ {q:'If someone wants to stop an antianxiety medication, what does the guide recommend?',a:['Stop all at once','Switch to herbal remedies','Talk to the doctor and taper off slowly'],c:2,w:'Abrupt stopping can bring withdrawal symptoms or return of anxiety.'}]});
+</script></body></html>

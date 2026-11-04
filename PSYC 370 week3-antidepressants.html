@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Interactive: Antidepressants</title>
+<style>:root{--bg:#f6f8fa;--card:#fff;--ink:#1b2430;--muted:#566173;--line:#d8dee7;--acc:#0f766e;--acc2:#0b5a54;--soft:#e2f3f0;--good:#166534;--goodbg:#e4f5ea;--bad:#9f1d1d;--badbg:#fbe9e9;--chip:#fff;--shadow:0 1px 2px rgba(20,30,50,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#121820;--card:#1b232e;--ink:#e8edf3;--muted:#a3afbf;--line:#334050;--soft:#16302d;--good:#7bd99b;--goodbg:#173424;--bad:#ff9a9a;--badbg:#3a1c1c;--chip:#222c39;--shadow:none}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:12px}
+.hero{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px;box-shadow:var(--shadow)}
+.hero svg{flex:0 0 auto;width:230px;height:auto;display:block}
+.eyebrow{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);font-weight:700}
+@media (prefers-color-scheme:dark){.eyebrow{color:#6fd3c8}}
+.hero h1{font-size:1.35rem;line-height:1.2;margin:2px 0 4px}
+.hero p{margin:0;color:var(--muted);font-size:.95rem}
+.tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tab{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;min-height:40px}
+.tab svg{width:20px;height:20px}
+.tab[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+.tab:focus-visible,.chip:focus-visible,.btn:focus-visible,.bin:focus-visible,.opt:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)}
+.panel[hidden]{display:none}
+.panel h2{font-size:1.05rem;margin:0 0 2px}
+.lead{margin:0 0 10px;color:var(--muted);font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:12px;min-height:56px;background:var(--bg)}
+.chip{border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:6px 12px;font:inherit;font-size:.92rem;cursor:grab;min-height:38px;display:inline-flex;align-items:center;gap:8px}
+.chip small{color:var(--muted);font-size:.8rem}
+.chip.sel{border-color:var(--acc);background:var(--soft);box-shadow:0 0 0 2px var(--acc)}
+.chip.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:10px}
+.bin{border:2px solid var(--line);border-radius:12px;padding:8px;background:var(--card);min-height:120px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.bin.over,.bin.ready{border-color:var(--acc);background:var(--soft)}
+.bin h3{margin:0 0 4px;font-size:.95rem;display:flex;align-items:center;gap:6px}
+.bin h3 svg{width:22px;height:22px;flex:none}
+.bin .hint{font-size:.78rem;color:var(--muted);margin:0 0 6px}
+.placed{display:flex;flex-wrap:wrap;gap:4px}
+.placed span{font-size:.8rem;background:var(--goodbg);color:var(--good);border-radius:8px;padding:2px 8px;font-weight:600}
+.bar{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--acc);background:var(--acc);color:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer;min-height:40px}
+.btn.ghost{background:transparent;color:var(--acc)}
+@media (prefers-color-scheme:dark){.btn.ghost{color:#6fd3c8;border-color:#6fd3c8}}
+.fb{flex:1;min-width:200px;padding:8px 12px;border-radius:10px;background:var(--soft);font-size:.92rem;min-height:40px}
+.fb.good{background:var(--goodbg);color:var(--good)}.fb.bad{background:var(--badbg);color:var(--bad)}
+.prog{font-weight:700;font-size:.9rem;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}.hero svg{width:96px}.hero p{display:none}.panel{padding:12px}}
+.card{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.card h3{margin:0 0 4px;font-size:.98rem}
+.card ul{margin:4px 0 0;padding-left:18px;font-size:.9rem}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:8px 12px;margin:6px 0;font:inherit;font-size:.93rem;cursor:pointer;min-height:40px}
+.opt.right{border-color:var(--good);background:var(--goodbg)}.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.ref{margin:10px 2px 0;font-size:.76rem;color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--acc:#0f766e}
+.warn-stage{display:grid;grid-template-columns:230px 1fr;gap:14px;align-items:center}
+@media (max-width:700px){.warn-stage{grid-template-columns:1fr}}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.steps .tab{border-radius:10px}
+.stagebox{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:6px;display:flex;justify-content:center}
+.stagebox svg{width:100%;max-width:280px;height:auto}
+.note{font-size:.85rem;color:var(--muted);margin:6px 0 0}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 230 110" role="img" aria-label="Illustration of a synapse where serotonin is released and a reuptake pump is blocked">
+ <rect x="0" y="0" width="230" height="110" rx="12" fill="#e2f3f0"/>
+ <path d="M10 8 H120 Q150 8 150 30 Q150 44 120 44 H10 Z" fill="#7cc7bd" stroke="#0f766e" stroke-width="2"/>
+ <circle cx="35" cy="26" r="7" fill="#fff" stroke="#0f766e"/><circle cx="62" cy="22" r="7" fill="#fff" stroke="#0f766e"/><circle cx="88" cy="28" r="7" fill="#fff" stroke="#0f766e"/>
+ <rect x="104" y="40" width="26" height="10" rx="4" fill="#0b5a54"/>
+ <path d="M104 52 L130 52" stroke="#b91c1c" stroke-width="3"/><path d="M108 56 L126 70" stroke="#b91c1c" stroke-width="3" opacity="0"/>
+ <circle cx="60" cy="56" r="4" fill="#f59e0b"/><circle cx="82" cy="64" r="4" fill="#f59e0b"/><circle cx="46" cy="70" r="4" fill="#f59e0b"/><circle cx="96" cy="74" r="4" fill="#f59e0b"/>
+ <path d="M10 102 H120 Q150 102 150 84 Q150 84 120 84 Q100 90 80 84 Q50 90 10 84 Z" fill="#7cc7bd" stroke="#0f766e" stroke-width="2"/>
+ <path d="M168 14 H220 V96 H168 Q184 55 168 14Z" fill="#c9e6e2" stroke="#0f766e" stroke-width="2"/>
+ <path d="M168 34 l-8 6 8 6 M168 66 l-8 6 8 6" fill="none" stroke="#0b5a54" stroke-width="3"/>
+ <text x="190" y="58" font-size="9" fill="#0b5a54" text-anchor="middle" font-family="system-ui" font-weight="700">receptor</text>
+ <text x="10" y="106" font-size="1"> </text>
+</svg>
+<div><div class="eyebrow">Week 3 · Deep Dive</div><h1>Antidepressants: Know the Classes, Question the Evidence</h1><p>Sort medications, trace the FDA warning, and practice separating data from claims.</p></div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Week 3 activities">
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="4" fill="#fff" stroke="currentColor" stroke-width="2"/><path d="M12 8v8" stroke="currentColor" stroke-width="2"/></svg>Class Sorter</button>
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M6 20V10M12 20V4M18 20v-7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>FDA Warning Timeline</button>
+ <button class="tab" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15 15l6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Data or Claim?</button>
+</nav>
+
+<section class="panel" data-panel id="p1">
+ <h2>Match each medication to its class</h2>
+ <p class="lead">Based on the NIMH guide (pp. 4–6). Tap a card, then tap the class. On a computer you can also drag.</p>
+ <div id="s1"><div class="pool"></div><div class="bins"></div><div class="bar"><div class="fb"></div><span class="prog"></span><button class="btn ghost reset" type="button">Reset</button></div></div>
+</section>
+
+<section class="panel" data-panel id="p2">
+ <h2>How the boxed warning developed</h2>
+ <p class="lead">Select each step. Notice what data the FDA looked at, and think about Kirsch’s argument on selective publication.</p>
+ <div class="steps" id="steps"></div>
+ <div class="warn-stage"><div class="stagebox" id="wsvg"></div><div><div id="wtext"></div><p class="note">Source: NIMH, <em>Mental Health Medications</em> (2012), p. 6. Discuss warnings factually, and refer a client’s medication questions to their doctor.</p></div></div>
+</section>
+
+<section class="panel" data-panel id="p3">
+ <h2>Is it a data point or a claim?</h2>
+ <p class="lead">Strong evaluation starts by separating what was measured from what someone concludes. Sort these statements from the NIMH guide.</p>
+ <div id="s3"><div class="pool"></div><div class="bins"></div><div class="bar"><div class="fb"></div><span class="prog"></span><button class="btn ghost reset" type="button">Reset</button></div></div>
+</section>
+<p class="ref">Kirsch (2010); Breggin &amp; Fisher (2008); U.S. Dept. of Health and Human Services (2012), Publication no. 12–3929.</p>
+</div>
+<script>(function(){
+function postH(){try{parent.postMessage({type:'iframe-resize',height:document.querySelector('.wrap').offsetHeight},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+window.postH=postH;
+window.initTabs=function(){
+  var tabs=[].slice.call(document.querySelectorAll('nav.tabs .tab')),panels=[].slice.call(document.querySelectorAll('.panel[data-panel]'));
+  function eq(){panels.forEach(function(p){p.style.minHeight=''});var m=0;panels.forEach(function(p){var h=p.hidden;p.hidden=false;m=Math.max(m,p.offsetHeight);p.hidden=h});panels.forEach(function(p){p.style.minHeight=m+'px'})}
+  window.addEventListener('resize',function(){eq();postH()});
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i)});panels.forEach(function(p,j){p.hidden=j!==i});postH()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){e.preventDefault();var n=(i+1)%tabs.length;show(n);tabs[n].focus()}
+    if(e.key==='ArrowLeft'){e.preventDefault();var n2=(i+tabs.length-1)%tabs.length;show(n2);tabs[n2].focus()}})});
+  eq();show(0);setTimeout(function(){eq();postH()},300)};
+/* generic click-or-drag sorter */
+window.initSorter=function(o){
+  var root=document.getElementById(o.id),pool=root.querySelector('.pool'),binsEl=root.querySelector('.bins'),fb=root.querySelector('.fb'),prog=root.querySelector('.prog');
+  var sel=null,done=0,tries=0,total=o.items.length;
+  function say(m,c){fb.className='fb '+(c||'');fb.innerHTML=m}
+  function upd(){prog.textContent=done+' of '+total+' placed'+(tries?' · '+tries+' retr'+(tries===1?'y':'ies'):'')}
+  function build(){
+    pool.innerHTML='';binsEl.innerHTML='';sel=null;done=0;tries=0;
+    o.bins.forEach(function(b){var d=document.createElement('button');d.type='button';d.className='bin';d.dataset.bin=b.id;
+      d.innerHTML='<h3>'+(b.icon||'')+'<span>'+b.label+'</span></h3><p class="hint">'+(b.hint||'')+'</p><div class="placed"></div>';
+      d.addEventListener('click',function(){if(sel)place(sel,d)});
+      d.addEventListener('dragover',function(e){e.preventDefault();d.classList.add('over')});
+      d.addEventListener('dragleave',function(){d.classList.remove('over')});
+      d.addEventListener('drop',function(e){e.preventDefault();d.classList.remove('over');var id=e.dataTransfer.getData('text/plain');var c=pool.querySelector('[data-i="'+id+'"]');if(c)place(c,d)});
+      binsEl.appendChild(d)});
+    o.items.slice().sort(function(){return .5-Math.random()}).forEach(function(it){
+      var c=document.createElement('button');c.type='button';c.className='chip';c.draggable=true;c.dataset.i=o.items.indexOf(it);
+      c.innerHTML=it.label+(it.sub?' <small>'+it.sub+'</small>':'');
+      c.addEventListener('click',function(){pick(c)});
+      c.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',c.dataset.i);pick(c,true)});
+      pool.appendChild(c)});
+    say(o.start||'Pick a card, then pick its category (or drag it).');upd();postH()}
+  function pick(c,keep){if(sel===c&&!keep){c.classList.remove('sel');sel=null;binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.remove('ready')});return}
+    if(sel)sel.classList.remove('sel');sel=c;c.classList.add('sel');binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.add('ready')})}
+  function place(c,bin){var it=o.items[+c.dataset.i];
+    binsEl.querySelectorAll('.bin').forEach(function(b){b.classList.remove('ready')});
+    if(it.bin===bin.dataset.bin){var s=document.createElement('span');s.textContent=it.label;bin.querySelector('.placed').appendChild(s);c.remove();sel=null;done++;
+      say('Correct. '+(it.why||''),'good');upd();
+      if(done===total){say(o.finish||'All sorted!','good')}}
+    else{tries++;c.classList.add('shake');setTimeout(function(){c.classList.remove('shake')},400);say('Not quite. '+(it.hint||'Try another category.'),'bad');upd()}
+    postH()}
+  root.querySelector('.reset').addEventListener('click',build);build()};
+/* generic quiz */
+window.initQuiz=function(o){
+  var root=document.getElementById(o.id),i=0,score=0,locked=false;
+  function render(){
+    if(i>=o.qs.length){root.innerHTML='<h3>Score: '+score+' / '+o.qs.length+'</h3><p class="lead">'+(o.end||'')+'</p><button class="btn" type="button">Try again</button>';root.querySelector('button').onclick=function(){i=0;score=0;render()};postH();return}
+    var q=o.qs[i];locked=false;
+    root.innerHTML='<div class="prog">Question '+(i+1)+' of '+o.qs.length+'</div><p style="margin:6px 0;font-weight:600">'+q.q+'</p><div class="opts"></div><div class="bar"><div class="fb">Choose an answer.</div></div>';
+    var box=root.querySelector('.opts'),fb=root.querySelector('.fb');
+    q.a.forEach(function(t,k){var b=document.createElement('button');b.type='button';b.className='opt';b.textContent=t;
+      b.onclick=function(){if(locked)return;locked=true;var ok=k===q.c;if(ok)score++;b.classList.add(ok?'right':'wrong');if(!ok)box.children[q.c].classList.add('right');
+        fb.className='fb '+(ok?'good':'bad');fb.innerHTML=(ok?'Correct. ':'Not quite. ')+q.w;
+        var n=document.createElement('button');n.type='button';n.className='btn';n.textContent=i<o.qs.length-1?'Next':'See score';n.onclick=function(){i++;render()};root.querySelector('.bar').appendChild(n);postH()};
+      box.appendChild(b)});postH()}
+  render()};
+})();
+
+var pill=function(c){return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="7" width="22" height="10" rx="5" fill="'+c+'"/><rect x="12" y="7" width="11" height="10" rx="5" fill="#fff" opacity=".45"/></svg>'};
+initTabs();
+initSorter({id:'s1',
+ bins:[
+  {id:'ssri',label:'SSRI',hint:'Selective serotonin reuptake inhibitors',icon:pill('#0f766e')},
+  {id:'snri',label:'SNRI',hint:'Serotonin &amp; norepinephrine',icon:pill('#2563eb')},
+  {id:'tca',label:'Tricyclic',hint:'Older class',icon:pill('#9333ea')},
+  {id:'maoi',label:'MAOI',hint:'Older class; diet cautions',icon:pill('#c2410c')},
+  {id:'other',label:'No specific type',hint:'Works on dopamine',icon:pill('#64748b')}],
+ items:[
+  {label:'Fluoxetine',sub:'Prozac',bin:'ssri',why:'SSRIs are the most popular type of antidepressant.',hint:'This one is among the most popular type.'},
+  {label:'Sertraline',sub:'Zoloft',bin:'ssri',why:'Common SSRI side effects: headache, nausea, sleep changes, agitation, sexual problems.'},
+  {label:'Escitalopram',sub:'Lexapro',bin:'ssri',why:'Also an SSRI.'},
+  {label:'Paroxetine',sub:'Paxil',bin:'ssri',why:'Also an SSRI.'},
+  {label:'Venlafaxine',sub:'Effexor',bin:'snri',why:'SNRIs are similar to SSRIs but also act on norepinephrine.',hint:'It acts on two neurotransmitters.'},
+  {label:'Duloxetine',sub:'Cymbalta',bin:'snri',why:'SNRIs are similar to SSRIs.'},
+  {label:'Imipramine',sub:'Tofranil',bin:'tca',why:'Tricyclics can cause dry mouth, constipation, bladder problems, blurred vision, drowsiness.',hint:'Think older class with dry mouth and constipation.'},
+  {label:'Clomipramine',sub:'Anafranil',bin:'tca',why:'Tricyclic; also used for OCD.'},
+  {label:'Phenelzine',sub:'Nardil',bin:'maoi',why:'MAOI users must watch tyramine in foods (some cheeses, wines, pickles) and some cold medicines.',hint:'Older class with dietary cautions.'},
+  {label:'Tranylcypromine',sub:'Parnate',bin:'maoi',why:'MAOI. Tyramine mixing can sharply raise blood pressure.'},
+  {label:'Isocarboxazid',sub:'Marplan',bin:'maoi',why:'MAOI.'},
+  {label:'Bupropion',sub:'Wellbutrin',bin:'other',why:'It works on dopamine and does not fit a specific drug type.',hint:'It works on dopamine and is described as unique.'}],
+ finish:'All 12 sorted. Use the NIMH guide to match your assigned class to specific medications.'});
+
+var steps=[
+ {y:'2004',t:'FDA reviews trial data',p:'The FDA examined <strong>published and unpublished</strong> trial data involving nearly 4,400 children and adolescents. About 4% of those taking antidepressants thought about or tried suicide, compared with 2% on placebo. No suicides occurred.',
+  s:'<svg viewBox="0 0 280 200" role="img" aria-label="Bar chart: 4 percent antidepressant versus 2 percent placebo"><line x1="30" y1="160" x2="260" y2="160" stroke="#94a3b8" stroke-width="2"/><rect x="60" y="40" width="64" height="120" rx="6" fill="#0f766e"/><rect x="160" y="100" width="64" height="60" rx="6" fill="#94a3b8"/><text x="92" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">4%</text><text x="192" y="92" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">2%</text><text x="92" y="180" text-anchor="middle" font-size="12" fill="currentColor">Antidepressant</text><text x="192" y="180" text-anchor="middle" font-size="12" fill="currentColor">Placebo</text></svg>'},
+ {y:'2005',t:'“Black box” warning adopted',p:'The FDA adopted a boxed warning, its most serious type, on all antidepressants: increased risk of suicidal thinking or attempts in children and adolescents.',
+  s:'<svg viewBox="0 0 280 200" role="img" aria-label="Black box warning label"><rect x="20" y="30" width="240" height="140" fill="#fff" stroke="#111" stroke-width="2"/><rect x="34" y="44" width="212" height="112" fill="none" stroke="#111" stroke-width="5"/><text x="140" y="80" text-anchor="middle" font-size="15" font-weight="800" fill="#111">WARNING</text><rect x="52" y="96" width="176" height="6" fill="#999"/><rect x="52" y="110" width="176" height="6" fill="#999"/><rect x="52" y="124" width="120" height="6" fill="#999"/></svg>'},
+ {y:'2007',t:'Extension to age 24 proposed',p:'The FDA proposed extending the warning to young adults through age 24. Patients of all ages should be watched closely, especially during the first few weeks of treatment.',
+  s:'<svg viewBox="0 0 280 200" role="img" aria-label="Age bar from birth to 24 with the warned range highlighted"><rect x="20" y="80" width="240" height="30" rx="6" fill="#e2e8f0"/><rect x="20" y="80" width="120" height="30" rx="6" fill="#0f766e"/><rect x="140" y="80" width="40" height="30" fill="#f59e0b"/><text x="30" y="70" font-size="12" fill="currentColor">Children &amp; adolescents (2005)</text><text x="140" y="136" font-size="12" fill="currentColor">Young adults to 24 (proposed 2007)</text><text x="20" y="150" font-size="11" fill="currentColor">Age →</text></svg>'},
+ {y:'Later',t:'A counterweight',p:'A review of pediatric trials from 1988 to 2006, funded in part by NIMH, suggested the benefits of antidepressants likely outweigh the risks for children with major depression and anxiety. How would you weigh this against the warning? Which sources would you need?',
+  s:'<svg viewBox="0 0 280 200" role="img" aria-label="Balance scale weighing benefits and risks"><path d="M140 40 V160 M100 160 H180" stroke="currentColor" stroke-width="4"/><path d="M50 70 L230 50" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M50 70 L30 110 H80Z" fill="#0f766e"/><path d="M230 50 L210 90 H250Z" fill="#f59e0b"/><text x="55" y="132" text-anchor="middle" font-size="12" fill="currentColor">Benefits?</text><text x="230" y="112" text-anchor="middle" font-size="12" fill="currentColor">Risks?</text></svg>'}];
+var sb=document.getElementById('steps');
+steps.forEach(function(s,i){var b=document.createElement('button');b.className='tab';b.type='button';b.textContent=s.y;b.onclick=function(){go(i)};sb.appendChild(b)});
+function go(i){[].forEach.call(sb.children,function(b,j){b.setAttribute('aria-selected',j===i)});var s=steps[i];document.getElementById('wsvg').innerHTML=s.s;document.getElementById('wtext').innerHTML='<h3 style="margin:0 0 4px">'+s.y+': '+s.t+'</h3><p style="margin:0">'+s.p+'</p>';postH()}
+go(0);
+
+initSorter({id:'s3',
+ bins:[{id:'data',label:'Data point',hint:'A reported measurement or fact about a study',icon:pill('#0f766e')},{id:'claim',label:'Claim or conclusion',hint:'An interpretation or judgment',icon:pill('#c2410c')}],
+ items:[
+  {label:'The FDA reviewed trials involving nearly 4,400 children and adolescents.',bin:'data',why:'A countable detail about the data reviewed.',hint:'This reports a number from the review.'},
+  {label:'4% on antidepressants thought about or tried suicide, versus 2% on placebo.',bin:'data',why:'A measured result.',hint:'Percentages reported from trials are data.'},
+  {label:'Antidepressants are safe and popular.',bin:'claim',why:'A judgment that needs evidence behind it.',hint:'“Safe” is a conclusion.'},
+  {label:'The benefits likely outweigh the risks for children with major depression.',bin:'claim',why:'An interpretation of the evidence.',hint:'“Outweigh” is a judgment.'},
+  {label:'A 340-person trial compared St. John’s wort, an SSRI, and a placebo.',bin:'data',why:'A description of the study design and size.',hint:'It describes what was done.'},
+  {label:'St. John’s wort is no more effective than placebo for major depression.',bin:'claim',why:'A conclusion drawn from that trial’s results.',hint:'This draws a conclusion from a trial.'}],
+ finish:'Well done. When you read Kirsch and Breggin &amp; Fisher, ask the same question about every sentence.'});
+</script></body></html>
