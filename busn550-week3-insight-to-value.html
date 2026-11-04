@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 3 | Insight to Value Lab</title>
+<style>
+:root{--ink:#1c2638;--muted:#566175;--line:#d5dbe5;--soft:#f2f5f9;--navy:#23395d;--acc:#17727f;--acc-d:#0f5560;--acc-soft:#e3f2f4;--good:#1d7a4a;--good-soft:#e2f4e9;--bad:#b3282f;--bad-soft:#fbe8e9;--gold:#e3a72f;--gold-soft:#fdf3da}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;color:var(--ink);font:16px/1.45 "Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}
+.app{max-width:1000px;margin:0 auto;padding:16px 18px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.hd{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.badge{flex:none;width:52px;height:52px;border-radius:14px;background:var(--acc);color:#fff;display:grid;place-items:center}
+.badge .ic{width:30px;height:30px}
+.hd h1{margin:0;font-size:clamp(1.15rem,2.6vw,1.5rem);line-height:1.2;letter-spacing:-.01em}
+.hd p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.steps{display:flex;gap:6px;list-style:none;margin:0 0 14px;padding:0}
+.steps li{flex:1;font-size:.8rem;color:var(--muted);border-top:4px solid var(--line);padding-top:5px;line-height:1.25}
+.steps li.on{border-color:var(--acc);color:var(--ink);font-weight:600}
+.steps li.done{border-color:var(--acc)}
+h2{font-size:1.1rem;margin:0 0 4px;line-height:1.3}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.95rem}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:3px solid #f0a81a;outline-offset:2px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:600;min-height:44px}
+.btn:hover{background:var(--acc-d)}
+.btn:disabled{background:#b9c2ce;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--soft)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{font-size:.82rem;color:var(--muted)}
+.fb{border-radius:10px;padding:10px 12px;font-size:.92rem;border-left:5px solid var(--line);background:var(--soft)}
+.fb.good{background:var(--good-soft);border-color:var(--good)}
+.fb.bad{background:var(--bad-soft);border-color:var(--bad)}
+.fb.info{background:var(--acc-soft);border-color:var(--acc)}
+.fb b{display:block;margin-bottom:2px}
+@media (prefers-reduced-motion:no-preference){.tr{transition:all .35s ease}}
+@media (max-width:600px){.app{padding:12px;border-radius:10px}.badge{width:42px;height:42px}.badge .ic{width:24px;height:24px}.steps li{font-size:.7rem}}
+
+:root{--acc:#b57a0a;--acc-d:#8c5d06;--acc-soft:#fdf3da}
+.badge{background:var(--navy)}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
+.stairs{width:100%;height:auto;display:block;background:var(--soft);border-radius:12px}
+.stage-card{margin-top:8px;border-radius:10px;background:var(--gold-soft);border-left:5px solid var(--gold);padding:8px 12px;min-height:84px}
+.stage-card b{display:block;font-size:.98rem}
+.stage-card span{font-size:.86rem;color:var(--muted)}
+.drivers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.drv{display:flex;gap:8px;align-items:center;text-align:left;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;min-height:58px}
+.drv .ib{flex:none;width:34px;height:34px;border-radius:9px;background:var(--soft);display:grid;place-items:center;color:var(--navy)}
+.drv .t{font-size:.84rem;font-weight:600;line-height:1.2}
+.drv .s{display:block;font-weight:400;font-size:.74rem;color:var(--muted);margin-top:1px}
+.drv.on{border-color:var(--navy);background:#eef2f9}
+.drv.on .ib{background:var(--navy);color:#fff}
+.drv.foc{box-shadow:0 0 0 3px #f0c15a}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:8px}
+.tab{background:none;border:0;padding:8px 10px;font-size:.88rem;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected=true]{color:var(--ink);border-color:var(--gold)}
+.panel{min-height:128px;font-size:.92rem}
+.panel p{margin:0 0 8px}
+.meter{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin:4px 0 2px}
+.meter i{display:block;height:100%;background:var(--good);width:0}
+.empty{color:var(--muted);font-size:.9rem;padding:10px 0}
+.ck{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:.9rem}
+.ck input{width:20px;height:20px;accent-color:var(--good)}
+@media (max-width:700px){.lab{grid-template-columns:1fr}.drivers{grid-template-columns:1fr 1fr}.stage-card{min-height:0}}
+@media (max-width:420px){.drivers{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M3 20h18"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></symbol><symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.8 4.8 0 0 1 17 18z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5M16 6.5a3 3 0 0 1 0 5.5M18 15c2 .6 3 2.2 3 5"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2.2"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></symbol><symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9c0 2 3 2 4 0 1 2 3 2 4 0 1 2 3 2 4 0 1 2 4 2 4 0M10 20v-6h4v6"/></symbol><symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h12v6a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5zM17 9h2a2 2 0 0 1 0 5h-2M8 3v2M12 3v2"/></symbol><symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol><symbol id="i-dollar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6v2M12 16v2"/></symbol><symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h3l2.5 11h9L20 8H7"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></symbol><symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 5h12l-2 4 2 4H5"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="i-rules" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/></symbol><symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></symbol><symbol id="i-paint" viewBox="0 0 24 24"><path d="M4 4h12v5H4zM16 6.5h3V12h-8v3M11 15v6"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8"/></symbol><symbol id="i-cake" viewBox="0 0 24 24"><path d="M4 20h16v-7H4zM4 16c3 2 5-2 8 0s5-2 8 0M12 13V9M12 6v.01"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14 6a4 4 0 0 0 5 5l-9 9a2.1 2.1 0 0 1-3-3l9-9z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-cross" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17v.01"/></symbol><symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0M12 17l4-5"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol></defs></svg>
+<div class="app" id="app">
+  <header class="hd">
+    <div class="badge"><svg class="ic"><use href="#i-trend"/></svg></div>
+    <div><h1>Insight to value lab</h1><p>Week 3 · Big Data Maturity Index</p></div>
+  </header>
+  <p class="lead" style="margin-bottom:10px"><b>FreshCart</b> is a 40-store grocery chain that only reports last month’s sales. Switch on the four value drivers one at a time and watch how far up the maturity index it climbs.</p>
+  <div class="lab">
+    <div>
+      <svg class="stairs" id="stairs" viewBox="0 0 360 230" role="img" aria-label="Five-step maturity staircase"></svg>
+      <div class="stage-card" id="stageCard" aria-live="polite"></div>
+      <p class="note" style="margin:6px 0 0">Staircase stages follow Schmarzo’s Big Data Business Model Maturity Index. The driver-to-stage match here is a simplified teaching model.</p>
+    </div>
+    <div>
+      <div class="drivers" id="drivers" role="group" aria-label="Value drivers"></div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="panel" id="panel" aria-live="polite"></div>
+      <div style="margin-top:8px"><span class="note" id="mtxt"></span><div class="meter"><i id="mfill" class="tr"></i></div></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  function send(){
+    var h=Math.ceil(app.getBoundingClientRect().height)+4;
+    try{
+      parent.postMessage({subject:'lti.frameResize',height:h},'*');
+      parent.postMessage({type:'iframe-resize',height:h},'*');
+    }catch(e){}
+  }
+  if(window.ResizeObserver){new ResizeObserver(send).observe(app);}
+  window.addEventListener('load',send);window.addEventListener('resize',send);send();
+})();
+
+(function(){
+var DR=[
+{id:"trans",icon:"chart",n:"Transactional and operational data",s:"What sold, where, when",
+ use:"Basket and store data show which products sell where, and which stores run out of stock.",
+ money:"Operations: order what sells and cut spoiled produce.",
+ eth:"Loyalty-card histories can reveal health or family details. Is it fair to use them this way, and have customers agreed?"},
+{id:"unst",icon:"chat",n:"Integrating unstructured data",s:"Reviews, call notes, posts",
+ use:"Reviews, call-center notes, and social posts explain why sales move, which numbers alone can’t.",
+ money:"Product development: spot demand for a new line, such as gluten-free bakery, before rivals do.",
+ eth:"Would shoppers expect their public posts to be mined? Is it clear what is collected and why?"},
+{id:"real",icon:"bolt",n:"Real-time data analysis",s:"Act in minutes, not months",
+ use:"Shelf sensors and checkout feeds trigger restocking and price changes within minutes.",
+ money:"Customer-focused: send a coupon while a shopper is still in the aisle.",
+ eth:"In-store tracking needs transparency and an opt-out. Could live pricing treat some shoppers unfairly?"},
+{id:"pred",icon:"target",n:"Predictive analytics and data mining",s:"Forecast what comes next",
+ use:"Models forecast demand by store and flag customers likely to leave.",
+ money:"New revenue: sell demand insights to suppliers (data monetization).",
+ eth:"Predictions can carry bias. Who might be left out of offers, and who answers when a model is wrong?"}
+];
+var STAGES=[
+{n:"Business monitoring",d:"Reports describe what already happened. Data is not yet shaping decisions."},
+{n:"Business insights",d:"Analytics uncovers patterns, such as which products sell where."},
+{n:"Business optimization",d:"Insights are used to tune key processes, such as restocking and pricing."},
+{n:"Data monetization",d:"Data creates new revenue, such as supplier insights or personalized offers."},
+{n:"Business metamorphosis",d:"Data changes the business model itself, opening new markets and services."}
+];
+var on={},ok={},foc=null,tab="use";
+var $=function(i){return document.getElementById(i);};
+function ic(n){return '<svg class="ic"><use href="#i-'+n+'"/></svg>';}
+function count(){return DR.filter(function(d){return on[d.id];}).length;}
+function drawStairs(){
+  var lvl=count(),s='<rect width="360" height="230" fill="none"/>',cols=["#cfd8e6","#aebfd8","#7f9cc4","#4f73a8","#23395d"];
+  for(var i=0;i<5;i++){
+    var x=18+i*64,h=36+i*34,y=206-h,act=i<=lvl;
+    s+='<rect x="'+x+'" y="'+y+'" width="60" height="'+h+'" rx="4" fill="'+(act?cols[i]:"#fff")+'" stroke="'+(act?cols[i]:"#c3ccda")+'" stroke-width="2" stroke-dasharray="'+(act?0:"4 3")+'"/>';
+    s+='<text x="'+(x+30)+'" y="'+(206-8)+'" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="700" fill="'+(act&&i>1?"#fff":"#23395d")+'">'+(i+1)+'</text>';
+  }
+  var mx=18+lvl*64+30,my=206-(36+lvl*34)-6;
+  s+='<g class="tr" style="transform:translate('+mx+'px,'+my+'px)"><path d="M0 0v-30" stroke="#b3282f" stroke-width="3" stroke-linecap="round"/><path d="M0-30h20l-5 7 5 7H0z" fill="#b3282f"/><circle cx="0" cy="0" r="5" fill="#b3282f"/></g>';
+  s+='<text x="18" y="22" font-family="sans-serif" font-size="12" fill="#566175">Maturity stage</text>';
+  $("stairs").innerHTML=s;
+  $("stageCard").innerHTML='<b>Stage '+(lvl+1)+': '+STAGES[lvl].n+'</b><span>'+STAGES[lvl].d+'</span>';
+}
+function drawDrivers(){
+  $("drivers").innerHTML=DR.map(function(d){return '<button class="drv tr'+(on[d.id]?' on':'')+(foc===d.id?' foc':'')+'" data-id="'+d.id+'" aria-pressed="'+(!!on[d.id])+'"><span class="ib">'+ic(d.icon)+'</span><span class="t">'+d.n+'<span class="s">'+(on[d.id]?'On':d.s)+'</span></span></button>';}).join("");
+  $("drivers").querySelectorAll(".drv").forEach(function(b){b.onclick=function(){
+    var id=b.dataset.id;
+    if(on[id]&&foc===id){on[id]=false;delete ok[id];foc=null;}else{on[id]=true;foc=id;}
+    draw();};});
+}
+function drawTabs(){
+  var T=[["use","Put it to work"],["money","New revenue"],["eth","Ethics check"]];
+  $("tabs").innerHTML=T.map(function(t){return '<button class="tab" role="tab" data-t="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>';}).join("");
+  $("tabs").querySelectorAll(".tab").forEach(function(b){b.onclick=function(){tab=b.dataset.t;drawTabs();drawPanel();};});
+}
+function drawPanel(){
+  var p=$("panel");
+  if(!foc){p.innerHTML='<div class="empty">Select a value driver to see how FreshCart could use it. Nothing is on yet, so FreshCart sits on stage 1.</div>';return;}
+  var d=DR.filter(function(x){return x.id===foc;})[0];
+  if(tab==="eth"){
+    p.innerHTML='<p>'+d.eth+'</p><p class="note">Reflect: does this use serve customers as neighbors, or treat them only as targets? Your Insight to Value Strategy Analysis needs your own answer, grounded in a Christian worldview.</p><label class="ck"><input type="checkbox" id="eck"'+(ok[d.id]?' checked':'')+'> I have thought through this concern</label>';
+    $("eck").onchange=function(){ok[d.id]=this.checked;meter();};
+  }else{p.innerHTML='<p><b>'+d.n+'</b></p><p>'+d[tab]+'</p>'+(tab==="use"?'<p class="note">Insight only creates value when someone acts on it. Which decision does this improve?</p>':'<p class="note">Check both internal and external global challenges before committing.</p>');}
+}
+function meter(){
+  var n=count(),k=Object.keys(ok).filter(function(x){return ok[x]&&on[x];}).length;
+  $("mtxt").textContent=n?('Ethics concerns addressed: '+k+' of '+n):'Ethics concerns addressed: none raised yet';
+  $("mfill").style.width=(n?k/n*100:0)+'%';
+}
+function draw(){drawStairs();drawDrivers();drawTabs();drawPanel();meter();}
+draw();
+})();
+</script>
+</body>
+</html>

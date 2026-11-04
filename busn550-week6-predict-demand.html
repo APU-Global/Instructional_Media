@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 6 | Predict Market Demand</title>
+<style>
+:root{--ink:#1c2638;--muted:#566175;--line:#d5dbe5;--soft:#f2f5f9;--navy:#23395d;--acc:#17727f;--acc-d:#0f5560;--acc-soft:#e3f2f4;--good:#1d7a4a;--good-soft:#e2f4e9;--bad:#b3282f;--bad-soft:#fbe8e9;--gold:#e3a72f;--gold-soft:#fdf3da}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;color:var(--ink);font:16px/1.45 "Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}
+.app{max-width:1000px;margin:0 auto;padding:16px 18px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.hd{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.badge{flex:none;width:52px;height:52px;border-radius:14px;background:var(--acc);color:#fff;display:grid;place-items:center}
+.badge .ic{width:30px;height:30px}
+.hd h1{margin:0;font-size:clamp(1.15rem,2.6vw,1.5rem);line-height:1.2;letter-spacing:-.01em}
+.hd p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.steps{display:flex;gap:6px;list-style:none;margin:0 0 14px;padding:0}
+.steps li{flex:1;font-size:.8rem;color:var(--muted);border-top:4px solid var(--line);padding-top:5px;line-height:1.25}
+.steps li.on{border-color:var(--acc);color:var(--ink);font-weight:600}
+.steps li.done{border-color:var(--acc)}
+h2{font-size:1.1rem;margin:0 0 4px;line-height:1.3}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.95rem}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:3px solid #f0a81a;outline-offset:2px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:600;min-height:44px}
+.btn:hover{background:var(--acc-d)}
+.btn:disabled{background:#b9c2ce;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--soft)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{font-size:.82rem;color:var(--muted)}
+.fb{border-radius:10px;padding:10px 12px;font-size:.92rem;border-left:5px solid var(--line);background:var(--soft)}
+.fb.good{background:var(--good-soft);border-color:var(--good)}
+.fb.bad{background:var(--bad-soft);border-color:var(--bad)}
+.fb.info{background:var(--acc-soft);border-color:var(--acc)}
+.fb b{display:block;margin-bottom:2px}
+@media (prefers-reduced-motion:no-preference){.tr{transition:all .35s ease}}
+@media (max-width:600px){.app{padding:12px;border-radius:10px}.badge{width:42px;height:42px}.badge .ic{width:24px;height:24px}.steps li{font-size:.7rem}}
+
+:root{--acc:#23395d;--acc-d:#16253f;--acc-soft:#e8eef7}
+.badge{background:var(--navy)}
+.models{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.mdl{display:flex;gap:8px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;min-height:62px}
+.mdl i{flex:none;width:14px;height:14px;border-radius:50%;margin-top:3px;background:var(--c);border:2px solid var(--c)}
+.mdl.off i{background:#fff}
+.mdl.on{border-color:var(--c);background:#fafbfd}
+.mdl b{display:block;font-size:.85rem;line-height:1.2}
+.mdl span{font-size:.74rem;color:var(--muted);line-height:1.25;display:block;margin-top:2px}
+.chartbox{border:1.5px solid var(--line);border-radius:12px;padding:6px;background:#fff}
+.chartbox svg{width:100%;height:auto;display:block}
+.lower{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-top:12px}
+.sc{display:flex;flex-direction:column;gap:6px}
+.sr{display:grid;grid-template-columns:130px 1fr 54px;gap:8px;align-items:center;font-size:.82rem}
+.bar{height:12px;background:var(--soft);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px}
+.what{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.88rem}
+.what h3{margin:0 0 4px;font-size:.92rem}
+.what input[type=range]{width:100%;accent-color:var(--navy);height:28px}
+.big{font-size:1.4rem;font-weight:700;color:var(--navy)}
+@media (max-width:760px){.models{grid-template-columns:1fr 1fr}.lower{grid-template-columns:1fr}.sr{grid-template-columns:100px 1fr 48px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M3 20h18"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></symbol><symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.8 4.8 0 0 1 17 18z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5M16 6.5a3 3 0 0 1 0 5.5M18 15c2 .6 3 2.2 3 5"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2.2"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></symbol><symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9c0 2 3 2 4 0 1 2 3 2 4 0 1 2 3 2 4 0 1 2 4 2 4 0M10 20v-6h4v6"/></symbol><symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h12v6a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5zM17 9h2a2 2 0 0 1 0 5h-2M8 3v2M12 3v2"/></symbol><symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol><symbol id="i-dollar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6v2M12 16v2"/></symbol><symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h3l2.5 11h9L20 8H7"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></symbol><symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 5h12l-2 4 2 4H5"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="i-rules" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/></symbol><symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></symbol><symbol id="i-paint" viewBox="0 0 24 24"><path d="M4 4h12v5H4zM16 6.5h3V12h-8v3M11 15v6"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8"/></symbol><symbol id="i-cake" viewBox="0 0 24 24"><path d="M4 20h16v-7H4zM4 16c3 2 5-2 8 0s5-2 8 0M12 13V9M12 6v.01"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14 6a4 4 0 0 0 5 5l-9 9a2.1 2.1 0 0 1-3-3l9-9z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-cross" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17v.01"/></symbol><symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0M12 17l4-5"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol></defs></svg>
+<div class="app" id="app">
+  <header class="hd">
+    <div class="badge"><svg class="ic"><use href="#i-gauge"/></svg></div>
+    <div><h1>Which algorithm predicts demand best?</h1><p>Week 6 · Enabling Advanced Analytics</p></div>
+  </header>
+  <p class="lead" style="margin-bottom:10px">A brand manager has 39 weeks of sales for one product. Each model learns from those weeks, then forecasts the next 13 (shaded). Turn models on to compare them with what really happened.</p>
+  <div class="models" id="models" role="group" aria-label="Forecasting models"></div>
+  <div class="chartbox"><svg id="chart" viewBox="0 0 760 270" role="img" aria-label="Weekly demand chart with model forecasts"></svg></div>
+  <div class="lower">
+    <div><h2 style="font-size:.98rem">Forecast error on the 13 unseen weeks</h2><div class="sc" id="sc"></div><p class="note" style="margin:8px 0 0">Average miss in units per week. Shorter bar is better.</p></div>
+    <div class="what"><h3>Price what-if (price and promo model with seasonality)</h3><label for="px" class="note">Change next quarter’s price: <b id="pxv">$0.00</b></label><input type="range" id="px" min="-200" max="200" step="25" value="0"><div id="wi"></div></div>
+  </div>
+  <div class="fb info" id="insight" style="margin-top:12px" aria-live="polite"></div>
+</div>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  function send(){
+    var h=Math.ceil(app.getBoundingClientRect().height)+4;
+    try{
+      parent.postMessage({subject:'lti.frameResize',height:h},'*');
+      parent.postMessage({type:'iframe-resize',height:h},'*');
+    }catch(e){}
+  }
+  if(window.ResizeObserver){new ResizeObserver(send).observe(app);}
+  window.addEventListener('load',send);window.addEventListener('resize',send);send();
+})();
+
+(function(){
+var N=52,TR=39,T=[],y=[],price=[],promo=[];
+var seed=7;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+function gauss(){return (rnd()+rnd()+rnd()+rnd()-2)*1.7;}
+for(var t=0;t<N;t++){
+  var p=12+1.2*Math.sin(0.9*t+1)+(rnd()-.5), pr=(t%9===4)?1:0;
+  price.push(p);promo.push(pr);T.push(t);
+  y.push(260+1.8*t-14*(p-12)+35*pr+30*Math.sin(2*Math.PI*t/13+0.5)+gauss()*6);
+}
+function solve(A,b){var n=b.length,i,j,k;for(i=0;i<n;i++){var m=i;for(j=i+1;j<n;j++)if(Math.abs(A[j][i])>Math.abs(A[m][i]))m=j;var tmp=A[i];A[i]=A[m];A[m]=tmp;var tb=b[i];b[i]=b[m];b[m]=tb;for(j=i+1;j<n;j++){var f=A[j][i]/A[i][i];for(k=i;k<n;k++)A[j][k]-=f*A[i][k];b[j]-=f*b[i];}}
+  var x=new Array(n);for(i=n-1;i>=0;i--){var s=b[i];for(j=i+1;j<n;j++)s-=A[i][j]*x[j];x[i]=s/A[i][i];}return x;}
+function ols(feat){
+  var k=feat(0).length,A=[],b=[],i,j,t;for(i=0;i<k;i++){A.push(new Array(k).fill(0));b.push(0);}
+  for(t=0;t<TR;t++){var f=feat(t);for(i=0;i<k;i++){b[i]+=f[i]*y[t];for(j=0;j<k;j++)A[i][j]+=f[i]*f[j];}}
+  var w=solve(A,b);return function(t,dp){var f=feat(t,dp),s=0;for(var i=0;i<k;i++)s+=w[i]*f[i];return s;};
+}
+var fT=function(t){return [1,t];};
+var fP=function(t,dp){return [1,t,(price[t]+(dp||0)),promo[t]];};
+var fS=function(t,dp){return [1,t,(price[t]+(dp||0)),promo[t],Math.sin(2*Math.PI*t/13),Math.cos(2*Math.PI*t/13)];};
+var mTrend=ols(fT),mPrice=ols(fP),mSeas=ols(fS);
+var maAvg=0;for(var q=TR-4;q<TR;q++)maAvg+=y[q]/4;
+var M=[
+{id:"ma",n:"Moving average",s:"Average of the last 4 weeks",c:"#7a8594",f:function(t){return t<TR?(function(){var a=0,c=0;for(var k=1;k<=4;k++){if(t-k>=0){a+=y[t-k];c++;}}return c?a/c:y[0];})():maAvg;},
+ tip:"Simple and fast, but it only repeats the recent level. It cannot see trend, price, or seasons."},
+{id:"tr",n:"Trend line",s:"Straight line through time",c:"#c9821a",f:function(t){return mTrend(t);},
+ tip:"Captures steady growth, but misses price effects, promotions, and repeating cycles."},
+{id:"pp",n:"Price and promo regression",s:"Trend + price + promotion",c:"#17727f",f:function(t){return mPrice(t);},
+ tip:"Uses business levers as predictors, so it reacts to price and promotions. It still misses seasonal waves."},
+{id:"se",n:"Add seasonality",s:"Trend + price + promo + cycle",c:"#b3282f",f:function(t,dp){return mSeas(t,dp);},
+ tip:"Matches the real drivers in this data, so it tracks both the cycles and the spikes."}
+];
+var on={ma:true,tr:false,pp:false,se:false};
+var $=function(i){return document.getElementById(i);};
+function err(m){var s=0;for(var t=TR;t<N;t++)s+=Math.abs(m.f(t)-y[t]);return s/(N-TR);}
+M.forEach(function(m){m.e=err(m);});
+var maxE=Math.max.apply(null,M.map(function(m){return m.e;}));
+function drawModels(){
+  $("models").innerHTML=M.map(function(m){return '<button class="mdl tr '+(on[m.id]?'on':'off')+'" style="--c:'+m.c+'" data-id="'+m.id+'" aria-pressed="'+on[m.id]+'"><i></i><span style="margin:0"><b>'+m.n+'</b><span>'+m.s+'</span></span></button>';}).join("");
+  $("models").querySelectorAll(".mdl").forEach(function(b){b.onclick=function(){on[b.dataset.id]=!on[b.dataset.id];draw();};});
+}
+function drawChart(){
+  var W=760,H=270,L=44,R=12,Tp=14,Bt=34,pw=W-L-R,ph=H-Tp-Bt,lo=150,hi=400;
+  var X=function(t){return L+t/(N-1)*pw;},Y=function(v){return Tp+(1-(v-lo)/(hi-lo))*ph;};
+  var s='<rect x="'+X(TR-0.5)+'" y="'+Tp+'" width="'+(X(N-1)-X(TR-0.5))+'" height="'+ph+'" fill="#e8eef7"/><text x="'+(X(TR+6))+'" y="'+(Tp+14)+'" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#23395d">Forecast period</text>';
+  for(var v=150;v<=400;v+=50){s+='<path d="M'+L+' '+Y(v)+'H'+(W-R)+'" stroke="#e3e8ef"/><text x="'+(L-6)+'" y="'+(Y(v)+4)+'" text-anchor="end" font-family="sans-serif" font-size="11" fill="#566175">'+v+'</text>';}
+  for(var t=0;t<N;t+=13)s+='<text x="'+X(t)+'" y="'+(H-14)+'" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#566175">Wk '+(t+1)+'</text>';
+  s+='<text x="'+(L+pw/2)+'" y="'+(H-1)+'" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#566175">Weekly units sold</text>';
+  for(var t=0;t<N;t++)if(promo[t])s+='<path d="M'+X(t)+' '+(Tp+ph)+'v-8" stroke="#e3a72f" stroke-width="3" stroke-linecap="round"/>';
+  M.forEach(function(m){if(!on[m.id])return;var d='';for(var t=0;t<N;t++){d+=(t?'L':'M')+X(t).toFixed(1)+' '+Y(m.f(t)).toFixed(1);}s+='<path d="'+d+'" fill="none" stroke="'+m.c+'" stroke-width="2.5" stroke-linejoin="round" '+(m.id==="ma"?'stroke-dasharray="5 4"':'')+'/>';});
+  var a='';for(var t=0;t<N;t++)a+=(t?'L':'M')+X(t).toFixed(1)+' '+Y(y[t]).toFixed(1);
+  s+='<path d="'+a+'" fill="none" stroke="#1c2638" stroke-width="1.6" opacity=".55"/>';
+  for(var t=0;t<N;t++)s+='<circle cx="'+X(t).toFixed(1)+'" cy="'+Y(y[t]).toFixed(1)+'" r="2.6" fill="#1c2638"/>';
+  s+='<g font-family="sans-serif" font-size="11" fill="#1c2638"><circle cx="'+(L+8)+'" cy="'+(Tp+8)+'" r="3" /><text x="'+(L+16)+'" y="'+(Tp+12)+'">Actual sales</text><path d="M'+(L+92)+' '+(Tp+13)+'v-8" stroke="#e3a72f" stroke-width="3" stroke-linecap="round"/><text x="'+(L+100)+'" y="'+(Tp+12)+'">Promotion week</text></g>';
+  $("chart").innerHTML=s;
+}
+function drawScore(){
+  $("sc").innerHTML=M.map(function(m){return '<div class="sr"><span>'+m.n+'</span><div class="bar"><i class="tr" style="width:'+(m.e/maxE*100)+'%;background:'+m.c+'"></i></div><b>'+m.e.toFixed(1)+'</b></div>';}).join("");
+}
+function drawWhat(){
+  var dp=+$("px").value/100;$("pxv").textContent=(dp>0?'+':dp<0?'−':'')+'$'+Math.abs(dp).toFixed(2);
+  var base=0,alt=0;for(var t=TR;t<N;t++){base+=mSeas(t,0);alt+=mSeas(t,dp);}
+  var pct=(alt-base)/base*100;
+  $("wi").innerHTML='<div class="big">'+Math.round(alt).toLocaleString()+' units</div><div class="note">Forecast for 13 weeks ('+(pct>=0?'+':'−')+Math.abs(pct).toFixed(1)+'% vs. current price). Revenue also depends on the price itself, so check profit before cutting.</div>';
+}
+function drawInsight(){
+  var act=M.filter(function(m){return on[m.id];});
+  var el=$("insight");
+  if(!act.length){el.innerHTML='<b>Pick a model</b>Turn on at least one model to compare it with real sales.';return;}
+  var best=act.slice().sort(function(a,b){return a.e-b.e;})[0];
+  el.innerHTML='<b>'+(act.length>1?'Best fit among selected: ':'')+best.n+' (average miss '+best.e.toFixed(1)+' units)</b>'+best.tip+' Justify your choice by matching the technique to the decision: here, planning inventory and promotions.';
+}
+function draw(){drawModels();drawChart();drawScore();drawInsight();}
+$("px").oninput=drawWhat;
+draw();drawWhat();
+})();
+</script>
+</body>
+</html>

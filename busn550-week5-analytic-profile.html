@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 5 | Analytic Profile Builder</title>
+<style>
+:root{--ink:#1c2638;--muted:#566175;--line:#d5dbe5;--soft:#f2f5f9;--navy:#23395d;--acc:#17727f;--acc-d:#0f5560;--acc-soft:#e3f2f4;--good:#1d7a4a;--good-soft:#e2f4e9;--bad:#b3282f;--bad-soft:#fbe8e9;--gold:#e3a72f;--gold-soft:#fdf3da}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;color:var(--ink);font:16px/1.45 "Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}
+.app{max-width:1000px;margin:0 auto;padding:16px 18px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.hd{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.badge{flex:none;width:52px;height:52px;border-radius:14px;background:var(--acc);color:#fff;display:grid;place-items:center}
+.badge .ic{width:30px;height:30px}
+.hd h1{margin:0;font-size:clamp(1.15rem,2.6vw,1.5rem);line-height:1.2;letter-spacing:-.01em}
+.hd p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.steps{display:flex;gap:6px;list-style:none;margin:0 0 14px;padding:0}
+.steps li{flex:1;font-size:.8rem;color:var(--muted);border-top:4px solid var(--line);padding-top:5px;line-height:1.25}
+.steps li.on{border-color:var(--acc);color:var(--ink);font-weight:600}
+.steps li.done{border-color:var(--acc)}
+h2{font-size:1.1rem;margin:0 0 4px;line-height:1.3}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.95rem}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:3px solid #f0a81a;outline-offset:2px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:600;min-height:44px}
+.btn:hover{background:var(--acc-d)}
+.btn:disabled{background:#b9c2ce;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--soft)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{font-size:.82rem;color:var(--muted)}
+.fb{border-radius:10px;padding:10px 12px;font-size:.92rem;border-left:5px solid var(--line);background:var(--soft)}
+.fb.good{background:var(--good-soft);border-color:var(--good)}
+.fb.bad{background:var(--bad-soft);border-color:var(--bad)}
+.fb.info{background:var(--acc-soft);border-color:var(--acc)}
+.fb b{display:block;margin-bottom:2px}
+@media (prefers-reduced-motion:no-preference){.tr{transition:all .35s ease}}
+@media (max-width:600px){.app{padding:12px;border-radius:10px}.badge{width:42px;height:42px}.badge .ic{width:24px;height:24px}.steps li{font-size:.7rem}}
+
+:root{--acc:#b3282f;--acc-d:#8c1e24;--acc-soft:#fbe8e9}
+.badge{background:var(--acc)}
+.top{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;margin-bottom:10px}
+.avatar{width:100%;height:auto;display:block}
+.who b{font-size:1rem}
+.who p{margin:2px 0 8px;font-size:.88rem;color:var(--muted)}
+.pool{display:flex;flex-wrap:wrap;gap:6px;min-height:40px;padding:8px;border:1.5px dashed var(--line);border-radius:10px;background:var(--soft)}
+.chip{border:1.5px solid #c3ccda;background:#fff;border-radius:999px;padding:5px 11px;font-size:.83rem;line-height:1.25;text-align:left;cursor:grab}
+.chip.sel{border-color:var(--acc);background:var(--acc-soft);box-shadow:0 0 0 2px #f2b7ba}
+.chip.ok{border-color:var(--good);background:var(--good-soft)}
+.chip.no{border-color:var(--bad);background:var(--bad-soft)}
+.buckets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.bk{border:1.5px solid var(--line);border-radius:10px;padding:8px;background:#fff;display:flex;flex-direction:column;gap:6px;min-height:150px;cursor:pointer}
+.bk.over{border-color:var(--acc);background:var(--acc-soft)}
+.bk .h{display:flex;gap:6px;align-items:center;font-weight:700;font-size:.85rem;line-height:1.15;color:var(--navy)}
+.bk .h .ic{width:20px;height:20px}
+.bk .d{font-size:.72rem;color:var(--muted);line-height:1.3}
+.bk .in{display:flex;flex-direction:column;gap:5px}
+.bk .chip{font-size:.76rem;padding:4px 8px;border-radius:8px}
+.hint{font-size:.78rem;margin-top:3px;color:var(--bad)}
+.dash{border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
+.dh{background:var(--navy);color:#fff;padding:8px 14px;font-weight:600;font-size:.92rem;display:flex;justify-content:space-between}
+.db{display:grid;grid-template-columns:170px 1fr;gap:14px;padding:12px 14px;align-items:center}
+.db .g{width:100%;height:auto}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.pill{background:var(--acc-soft);color:var(--acc-d);border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:600}
+.kv{font-size:.88rem;margin:0 0 6px}
+.act{background:var(--gold-soft);border-left:5px solid var(--gold);border-radius:8px;padding:8px 12px;font-size:.9rem}
+@media (max-width:760px){.buckets{grid-template-columns:repeat(2,minmax(0,1fr))}.bk{min-height:110px}.top{grid-template-columns:90px 1fr}.db{grid-template-columns:1fr}.db .g{max-width:200px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M3 20h18"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></symbol><symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.8 4.8 0 0 1 17 18z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5M16 6.5a3 3 0 0 1 0 5.5M18 15c2 .6 3 2.2 3 5"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2.2"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></symbol><symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9c0 2 3 2 4 0 1 2 3 2 4 0 1 2 3 2 4 0 1 2 4 2 4 0M10 20v-6h4v6"/></symbol><symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h12v6a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5zM17 9h2a2 2 0 0 1 0 5h-2M8 3v2M12 3v2"/></symbol><symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol><symbol id="i-dollar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6v2M12 16v2"/></symbol><symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h3l2.5 11h9L20 8H7"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></symbol><symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 5h12l-2 4 2 4H5"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="i-rules" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/></symbol><symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></symbol><symbol id="i-paint" viewBox="0 0 24 24"><path d="M4 4h12v5H4zM16 6.5h3V12h-8v3M11 15v6"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8"/></symbol><symbol id="i-cake" viewBox="0 0 24 24"><path d="M4 20h16v-7H4zM4 16c3 2 5-2 8 0s5-2 8 0M12 13V9M12 6v.01"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14 6a4 4 0 0 0 5 5l-9 9a2.1 2.1 0 0 1-3-3l9-9z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-cross" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17v.01"/></symbol><symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0M12 17l4-5"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol></defs></svg>
+<div class="app" id="app">
+  <header class="hd">
+    <div class="badge"><svg class="ic"><use href="#i-layers"/></svg></div>
+    <div><h1>Analytic profile builder</h1><p>Week 5 · Analytic Profiles</p></div>
+  </header>
+  <div class="top">
+    <svg class="avatar" viewBox="0 0 150 150" role="img" aria-label="Customer Maya"><circle cx="75" cy="75" r="72" fill="#fbe8e9"/><circle cx="75" cy="58" r="22" fill="#fff" stroke="#23395d" stroke-width="3"/><path d="M30 130c0-30 20-44 45-44s45 14 45 44a72 72 0 0 1-90 0z" fill="#fff" stroke="#23395d" stroke-width="3"/><path d="M53 54c4-14 40-14 44 0-8-6-36-6-44 0z" fill="#23395d"/><circle cx="68" cy="60" r="2.5" fill="#23395d"/><circle cx="82" cy="60" r="2.5" fill="#23395d"/><path d="M68 70q7 5 14 0" fill="none" stroke="#23395d" stroke-width="2.5" stroke-linecap="round"/></svg>
+    <div class="who"><b>Maya R., meal-kit subscriber</b><p>Build her analytic profile. Click a card, then click the component it belongs to (or drag it there). Click a placed card to send it back.</p><div class="pool" id="pool"></div></div>
+  </div>
+  <div class="buckets" id="bk"></div>
+  <div id="fbwrap" style="margin-top:10px"></div>
+  <div class="row" style="margin-top:10px"><button class="btn" id="chk">Check my profile</button><button class="btn ghost" id="rev">Show answers</button><button class="btn ghost" id="rst">Start over</button></div>
+  <div id="dashwrap" style="margin-top:14px"></div>
+</div>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  function send(){
+    var h=Math.ceil(app.getBoundingClientRect().height)+4;
+    try{
+      parent.postMessage({subject:'lti.frameResize',height:h},'*');
+      parent.postMessage({type:'iframe-resize',height:h},'*');
+    }catch(e){}
+  }
+  if(window.ResizeObserver){new ResizeObserver(send).observe(app);}
+  window.addEventListener('load',send);window.addEventListener('resize',send);send();
+})();
+
+(function(){
+var B=[
+{id:"metric",n:"Metrics",d:"Measured facts about past behavior",i:"chart"},
+{id:"pred",n:"Predictive indicators",d:"Signals that point to what may happen",i:"trend"},
+{id:"seg",n:"Segments",d:"Groups the customer belongs to",i:"users"},
+{id:"score",n:"Scores",d:"A single number that ranks or rates",i:"gauge"},
+{id:"rule",n:"Business rules",d:"If this, then take this action",i:"rules"}];
+var CH=[
+{id:"c1",t:"9 orders in the last 90 days",b:"metric",h:"This is a measured count of past behavior, so it is a metric."},
+{id:"c2",t:"Average basket: $62",b:"metric",h:"A measured average, so a metric."},
+{id:"c3",t:"Skipped two deliveries in a row",b:"pred",h:"It signals a likely cancellation, so it is a predictive indicator."},
+{id:"c4",t:"Stopped opening emails",b:"pred",h:"A warning signal about future behavior: a predictive indicator."},
+{id:"c5",t:"Busy-family planner",b:"seg",h:"A group she belongs to: a segment."},
+{id:"c6",t:"Premium organic buyer",b:"seg",h:"A group she belongs to: a segment."},
+{id:"c7",t:"Churn risk score: 78 of 100",b:"score",h:"One number that rates her likelihood to leave: a score."},
+{id:"c8",t:"Lifetime value score: 84 of 100",b:"score",h:"One number that rates her value: a score."},
+{id:"c9",t:"If churn risk is above 70, offer a free dessert box",b:"rule",h:"An if-then instruction that triggers action: a business rule."},
+{id:"c10",t:"Never send more than two emails a week",b:"rule",h:"A rule that limits how the company acts."}];
+var order=[2,9,4,0,7,5,3,8,1,6];
+var place={},sel=null,checked=false,done=false;
+var $=function(i){return document.getElementById(i);};
+function ic(n){return '<svg class="ic"><use href="#i-'+n+'"/></svg>';}
+function chipEl(c,cls){return '<button class="chip'+(cls||'')+'" draggable="true" data-id="'+c.id+'">'+c.t+'</button>';}
+function get(id){return CH.filter(function(c){return c.id===id;})[0];}
+function chipCls(c){if(sel===c.id)return' sel';if(checked&&place[c.id])return place[c.id]===c.b?' ok':' no';return'';}
+function draw(){
+  var pool=order.map(function(i){return CH[i];}).filter(function(c){return !place[c.id];});
+  $("pool").innerHTML=pool.length?pool.map(function(c){return chipEl(c,chipCls(c));}).join(""):'<span class="note">All cards placed. Check your profile.</span>';
+  $("bk").innerHTML=B.map(function(b){
+    var inn=CH.filter(function(c){return place[c.id]===b.id;});
+    return '<div class="bk" data-b="'+b.id+'" tabindex="0" role="button" aria-label="Place selected card in '+b.n+'"><div class="h">'+ic(b.i)+'<span>'+b.n+'</span></div><div class="d">'+b.d+'</div><div class="in">'+inn.map(function(c){return chipEl(c,chipCls(c))+(checked&&c.b!==b.id?'<div class="hint">'+c.h+'</div>':'');}).join("")+'</div></div>';}).join("");
+  document.querySelectorAll(".chip").forEach(function(el){
+    el.onclick=function(e){e.stopPropagation();var id=el.dataset.id;if(place[id]){delete place[id];checked=false;sel=null;}else{sel=sel===id?null:id;}draw();};
+    el.ondragstart=function(e){e.dataTransfer.setData("text/plain",el.dataset.id);sel=el.dataset.id;};
+  });
+  document.querySelectorAll(".bk").forEach(function(el){
+    function drop(id){if(!id)return;place[id]=el.dataset.b;sel=null;checked=false;done=false;$("fbwrap").innerHTML="";$("dashwrap").innerHTML="";draw();}
+    el.onclick=function(){drop(sel);};
+    el.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();drop(sel);}};
+    el.ondragover=function(e){e.preventDefault();el.classList.add("over");};
+    el.ondragleave=function(){el.classList.remove("over");};
+    el.ondrop=function(e){e.preventDefault();drop(e.dataTransfer.getData("text/plain"));};
+  });
+}
+function check(){
+  var n=Object.keys(place).length;
+  if(n<CH.length){$("fbwrap").innerHTML='<div class="fb info">Place all '+CH.length+' cards first. '+(CH.length-n)+' left.</div>';return;}
+  checked=true;draw();
+  var ok=CH.filter(function(c){return place[c.id]===c.b;}).length;
+  if(ok===CH.length){$("fbwrap").innerHTML='<div class="fb good"><b>All 10 correct</b>Maya’s profile is complete. Now see how a manager would use it.</div>';showDash();}
+  else{$("fbwrap").innerHTML='<div class="fb bad"><b>'+ok+' of 10 correct</b>Red cards are in the wrong component. Click one to send it back and read the hint.</div>';$("dashwrap").innerHTML="";}
+}
+function showDash(){
+  var a=78,ang=Math.PI*(1-a/100),cx=100,cy=100,r=70,x=cx+r*Math.cos(ang),y=cy-r*Math.sin(ang);
+  $("dashwrap").innerHTML='<div class="dash"><div class="dh"><span>Retention dashboard · Maya R.</span><span>Today</span></div><div class="db"><svg class="g" viewBox="0 0 200 120" role="img" aria-label="Churn risk gauge at 78"><path d="M30 100A70 70 0 0 1 170 100" fill="none" stroke="#e3e8ef" stroke-width="16" stroke-linecap="round"/><path d="M30 100A70 70 0 0 1 '+x.toFixed(1)+' '+y.toFixed(1)+'" fill="none" stroke="#b3282f" stroke-width="16" stroke-linecap="round"/><text x="100" y="92" text-anchor="middle" font-family="sans-serif" font-size="30" font-weight="700" fill="#1c2638">78</text><text x="100" y="114" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#566175">Churn risk score</text></svg><div><div class="pills"><span class="pill">Busy-family planner</span><span class="pill">Premium organic buyer</span></div><p class="kv"><b>Metrics:</b> 9 orders in 90 days, $62 average basket</p><p class="kv"><b>Warning signals:</b> two skipped deliveries, stopped opening emails</p><p class="kv"><b>Lifetime value score:</b> 84, worth keeping</p><div class="act" id="act"><b>Rule triggered:</b> churn risk is above 70. Offer a free dessert box. <div class="row" style="margin-top:8px"><button class="btn" id="send">Send offer</button></div></div></div></div></div><p class="note" style="margin-top:6px">This closes the analytics loop: the profile turns into an action a manager can take in one click.</p>';
+  $("send").onclick=function(){this.textContent="Offer queued (max two emails a week respected)";this.disabled=true;};
+}
+$("chk").onclick=check;
+$("rev").onclick=function(){CH.forEach(function(c){place[c.id]=c.b;});sel=null;check();};
+$("rst").onclick=function(){place={};sel=null;checked=false;$("fbwrap").innerHTML="";$("dashwrap").innerHTML="";draw();};
+draw();
+})();
+</script>
+</body>
+</html>
