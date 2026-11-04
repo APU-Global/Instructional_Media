@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 300 Research Methods in Psychology | Week 3: Ethics & Measurement Lab</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--muted:#5a6270;--line:#dcdfe4;--bg:#f4f5f7;--card:#fff;
+--good:#1c7c4d;--goodbg:#e6f4ec;--bad:#a8353a;--badbg:#fbeaea;--soft:#fdf0f0;--blue:#2f5d8a;--amber:#e0902b}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);
+font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+#app{height:100%;display:flex;flex-direction:column;min-height:0}
+header{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;background:#222;color:#fff;border-bottom:4px solid var(--red)}
+header svg{width:38px;height:38px;flex:none}
+header .wk{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#f0b3b6;font-weight:600}
+header h1{margin:0;font-size:18px;line-height:1.15;font-weight:650}
+nav{flex:none;display:flex;gap:4px;padding:6px 12px 0;background:#fff;border-bottom:1px solid var(--line);overflow:hidden}
+nav button{border:1px solid transparent;border-bottom:none;background:transparent;font:inherit;font-weight:600;font-size:14px;
+color:var(--muted);padding:7px 14px;border-radius:9px 9px 0 0;cursor:pointer;white-space:nowrap}
+nav button:hover{color:var(--ink);background:#f3f4f6}
+nav button.on{color:var(--red-d);background:var(--bg);border-color:var(--line);box-shadow:inset 0 3px 0 var(--red)}
+main{flex:1;min-height:0;position:relative}
+.panel{display:none;height:100%;padding:12px 16px;overflow-y:auto;overflow-x:hidden}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;height:100%;min-height:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-height:0;overflow:hidden}
+.art{background:#fff;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
+.art svg{width:100%;height:100%;display:block}
+h2{margin:0 0 4px;font-size:18px;line-height:1.25}
+h3{margin:0 0 4px;font-size:15px}
+p{margin:0 0 8px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red-d);background:var(--soft);padding:2px 9px;border-radius:99px}
+.qc{display:flex;flex-direction:column;gap:6px}
+.qtop{display:flex;align-items:center;justify-content:space-between}
+.dots{display:flex;gap:5px}.dots i{width:10px;height:10px;border-radius:50%;background:#d7dae0}
+.dots i.ok{background:var(--good)}.dots i.no{background:var(--red)}.dots i.cur{outline:2px solid #222;outline-offset:1px}
+.opts{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+.opt,.btn{font:inherit;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--ink);
+transition:border-color .15s,background .15s,transform .1s}
+.opt:hover:not(:disabled){border-color:var(--red);background:var(--soft)}
+.opt:focus-visible,.btn:focus-visible,nav button:focus-visible,input:focus-visible{outline:3px solid #7aa7d6;outline-offset:2px}
+.opt.right{border-color:var(--good);background:var(--goodbg);font-weight:600}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.btn{text-align:center;font-weight:650;background:#222;color:#fff;border-color:#222}
+.btn:hover:not(:disabled){background:var(--red-d);border-color:var(--red-d)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.alt{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn.alt:hover:not(:disabled){background:var(--soft);color:var(--ink);border-color:var(--red)}
+.btn.on{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.fb{font-size:14px;border-radius:10px;padding:0 12px;max-height:0;overflow:hidden;opacity:0;transition:all .25s}
+.fb.show{padding:8px 12px;max-height:200px;opacity:1}
+.fb.good{background:var(--goodbg);border-left:4px solid var(--good)}
+.fb.bad{background:var(--badbg);border-left:4px solid var(--bad)}
+.qnav{display:flex;justify-content:flex-end;margin-top:auto}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ctrl{margin:6px 0}
+.ctrl label{display:flex;justify-content:space-between;font-weight:600;font-size:14px}
+.ctrl output{font-variant-numeric:tabular-nums;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red-d);margin:4px 0}
+.stat{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;border-radius:10px;background:#f7f8fa;border:1px solid var(--line);margin-top:6px;font-size:14px}
+.stat>div>b{display:block}
+.badge{display:inline-block;font-weight:700;border-radius:8px;padding:2px 9px;font-size:13px}
+.badge.g{background:var(--goodbg);color:var(--good)}.badge.r{background:var(--badbg);color:var(--bad)}.badge.n{background:#eceef2;color:#444}
+.fadein{animation:fi .35s both}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:720px){
+ header h1{font-size:15px}header svg{width:30px;height:30px}
+ nav button{padding:7px 9px;font-size:13px}
+ .panel{padding:10px}
+ .grid{grid-template-columns:1fr;height:auto;grid-auto-rows:auto}
+ .art{height:210px}
+}
+</style></head>
+<body><div id="app">
+<header><svg viewBox="0 0 40 40"><path d="M20 3 L35 9 V20 C35 29 28 35 20 38 C12 35 5 29 5 20 V9Z" fill="#d34147"/><path d="M13 20 l5 5 l10 -11" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div class="wk">PSYC 300 · Week 3</div><h1>Ethics & Measurement Lab</h1></div></header>
+<nav role="tablist"><button role="tab" data-tab="ethics">🛡️ IRB Review Desk</button><button role="tab" data-tab="target">🎯 Reliability & Validity Lab</button><button role="tab" data-tab="check">✅ Measurement Check</button></nav>
+<main>
+<section class="panel" id="ethics"><div id="q-ethics" style="height:100%"></div></section>
+<section class="panel" id="target"><div class="grid">
+ <div class="art" id="targetArt"></div>
+ <div class="card">
+  <span class="pill">Experiment</span>
+  <h2>Fire the darts</h2>
+  <p class="muted small">Each dart is one measurement of the same thing. The bullseye is the <b>true value</b> of the construct. Move the sliders and watch what happens.</p>
+  <div class="ctrl"><label for="spread">Consistency (spread of measurements) <output id="oSpread"></output></label><input type="range" id="spread" min="4" max="70" value="10"></div>
+  <div class="ctrl"><label for="bias">Accuracy (how far off-center) <output id="oBias"></output></label><input type="range" id="bias" min="0" max="85" value="0"></div>
+  <div class="row" style="margin:6px 0"><button class="btn alt" data-p="1,0">Reliable + valid</button><button class="btn alt" data-p="1,1">Reliable, not valid</button><button class="btn alt" data-p="0,0">Unreliable</button></div>
+  <div class="stat"><span id="rIcon" style="font-size:20px"></span><div><b id="rHead"></b><span id="rText" class="small"></span></div></div>
+  <div class="stat"><span id="vIcon" style="font-size:20px"></span><div><b id="vHead"></b><span id="vText" class="small"></span></div></div>
+ </div></div></section>
+<section class="panel" id="check"><div id="q-check" style="height:100%"></div></section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function initTabs(){const b=$$('nav button');const show=id=>{b.forEach(x=>{const on=x.dataset.tab===id;x.classList.toggle('on',on);x.setAttribute('aria-selected',on)});
+$$('.panel').forEach(p=>p.classList.toggle('on',p.id===id))};b.forEach(x=>x.addEventListener('click',()=>show(x.dataset.tab)));show(b[0].dataset.tab)}
+const S=(vb,inner,label='')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" preserveAspectRatio="xMidYMid meet" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">${inner}</svg>`;
+const MOUTH={happy:'M-4 7 Q0 11 4 7',sad:'M-4 10 Q0 6 4 10',worried:'M-4 9 Q0 7 4 9',flat:'M-4 8 L4 8'};
+function person(x,y,s=1,shirt='#4f7cac',mood='happy',hair='#3b2f2f',skin='#f1c9a5'){return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-16" y="12" width="32" height="40" rx="14" fill="${shirt}"/><circle r="14" fill="${skin}"/><path d="M-14 -2 Q-13 -18 0 -17 Q13 -18 14 -2 Q6 -9 -14 -2Z" fill="${hair}"/><circle cx="-5" cy="0" r="1.7" fill="#333"/><circle cx="5" cy="0" r="1.7" fill="#333"/><path d="${MOUTH[mood]}" stroke="#333" fill="none" stroke-width="1.6" stroke-linecap="round"/></g>`}
+function Quiz(root,items,o={}){let i=0,score=0,res=[];const lab=o.label||'Question';
+function render(){const it=items[i];root.innerHTML=`<div class="grid quiz"><div class="art"></div><div class="card qc"><div class="qtop"><span class="pill">${lab} ${i+1} of ${items.length}</span><div class="dots">${items.map((_,k)=>`<i class="${res[k]===undefined?(k===i?'cur':''):res[k]?'ok':'no'}"></i>`).join('')}</div></div><h2>${it.title}</h2><p class="muted" style="margin:0">${it.text}</p><div class="opts"></div><div class="fb" aria-live="polite"></div><div class="qnav"><button class="btn" disabled>${i<items.length-1?'Next →':'See results'}</button></div></div></div>`;
+$('.art',root).innerHTML=it.art;const opts=$('.opts',root),fb=$('.fb',root),nx=$('.qnav .btn',root);
+it.options.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{const ok=k===it.answer;res[i]=ok;if(ok)score++;
+$$('.opt',root).forEach((x,j)=>{x.disabled=true;if(j===it.answer)x.classList.add('right');else if(j===k)x.classList.add('wrong')});
+fb.className='fb show '+(ok?'good':'bad');fb.innerHTML=(ok?'<b>Yes!</b> ':'<b>Not quite.</b> ')+(it.why[k]??it.why.default??it.why);
+if(it.reveal)$('.art',root).innerHTML=it.reveal;nx.disabled=false;nx.focus({preventScroll:true})};opts.appendChild(b)});
+nx.onclick=()=>{i++;i<items.length?render():done()}}
+function done(){const m=o.final(score,items.length);root.innerHTML=`<div class="grid"><div class="art">${m.art}</div><div class="card qc fadein"><span class="pill">Results</span><h2>${m.head}</h2><p>${m.body}</p><div class="qnav"><button class="btn">Try again ↺</button></div></div></div>`;
+$('.btn',root).onclick=()=>{i=0;score=0;res=[];render()}}
+render()}
+
+
+/* ---------- IRB cases ---------- */
+const bg=(inner,c='#eef3f8')=>S('0 0 400 300',`<rect width="400" height="300" fill="${c}"/><rect y="235" width="400" height="65" fill="#d8dee6"/>${inner}`);
+const sign=(x,y,w,h,t1,t2='',c='#fff',tc='#222')=>`<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${c}" stroke="#222" stroke-width="2"/><text x="${x+w/2}" y="${y+h/2-(t2?3:-5)}" text-anchor="middle" font-size="15" font-weight="700" fill="${tc}">${t1}</text>${t2?`<text x="${x+w/2}" y="${y+h/2+16}" text-anchor="middle" font-size="11" fill="${tc}">${t2}</text>`:''}</g>`;
+const art1=bg(`<rect x="30" y="170" width="170" height="70" rx="6" fill="#8a5a3c"/>${person(115,110,1.5,'#222','happy','#777')}${sign(205,52,175,74,'EXTRA CREDIT','only if you join my study','#fff7d6')}<path d="M262 126 l-18 30" stroke="#222" stroke-width="3"/>${person(320,190,1.2,'#4f7cac','worried')}<g transform="translate(350 120)"><rect x="-13" y="2" width="26" height="20" rx="4" fill="#d34147"/><path d="M-8 2 v-7 a8 8 0 0 1 16 0 v7" fill="none" stroke="#d34147" stroke-width="4"/></g>
+<text x="115" y="262" text-anchor="middle" font-size="12" fill="#444">No other way to earn the points</text>`);
+const art2=bg(`<rect x="40" y="170" width="140" height="14" rx="4" fill="#8a5a3c"/><rect x="60" y="184" width="8" height="52" fill="#8a5a3c"/><rect x="152" y="184" width="8" height="52" fill="#8a5a3c"/>${person(110,110,1.5,'#7a5aa8','sad')}<path d="M72 40 q-30 4 -22 24 q-22 10 0 24 q10 24 40 14 q28 12 50 -6 q26 -2 14 -22 q14 -24 -20 -28 q-20 -16 -62 -6Z" fill="#8c96a6"/><path d="M100 98 l-6 14 l8 -4 l-6 14" fill="none" stroke="#f2c230" stroke-width="3" stroke-linejoin="round"/>
+<rect x="215" y="60" width="150" height="62" rx="8" fill="#fff" stroke="#222" stroke-width="2"/><text x="290" y="85" text-anchor="middle" font-size="13" font-weight="700">“Describe your worst</text><text x="290" y="104" text-anchor="middle" font-size="13" font-weight="700">memory in detail.”</text>
+<rect x="250" y="160" width="110" height="64" rx="6" fill="#fff" stroke="#222" stroke-width="2"/><rect x="260" y="170" width="38" height="44" fill="#ddd" stroke="#222"/><circle cx="292" cy="193" r="2.5" fill="#222"/><text x="332" y="198" text-anchor="middle" font-size="13" font-weight="700" fill="#a8353a">EXIT</text><text x="305" y="248" text-anchor="middle" font-size="12" fill="#444">No debrief · no resources</text>`);
+const art3=bg(`<g><rect x="25" y="105" width="150" height="130" fill="#e8d9a8" stroke="#222" stroke-width="2"/><path d="M15 105 L100 55 L185 105Z" fill="#b9573c" stroke="#222" stroke-width="2"/><text x="100" y="140" text-anchor="middle" font-size="13" font-weight="700">Private Prep School</text><rect x="85" y="185" width="30" height="50" fill="#8a5a3c"/></g>
+<g><rect x="225" y="125" width="150" height="110" fill="#cfd8e3" stroke="#222" stroke-width="2"/><rect x="225" y="112" width="150" height="14" fill="#7d8a9b" stroke="#222" stroke-width="2"/><text x="300" y="158" text-anchor="middle" font-size="13" font-weight="700">Community Clinic</text><path d="M290 185 h20 M300 175 v20" stroke="#d34147" stroke-width="6"/></g>
+${person(60,205,.55,'#2f8a5a')}${person(100,205,.55,'#2f8a5a')}${person(140,205,.55,'#2f8a5a')}
+${person(265,205,.55,'#8c96a6','sad')}${person(300,215,.55,'#8c96a6','sad')}${person(335,205,.55,'#8c96a6','sad')}
+<text x="100" y="40" text-anchor="middle" font-size="22" fill="#1c7c4d">✔ invited</text><text x="300" y="75" text-anchor="middle" font-size="22" fill="#a8353a">✘ never contacted</text>
+<text x="200" y="285" text-anchor="middle" font-size="12" fill="#444">Free therapy trial · recruited from one school only</text>`);
+const art4=bg(`<rect x="60" y="80" width="190" height="125" rx="8" fill="#2b3340" stroke="#222" stroke-width="3"/><rect x="70" y="90" width="170" height="105" fill="#fff"/><g font-size="11" fill="#222"><text x="76" y="106" font-weight="700">Name · Diagnosis · Score</text><line x1="76" x2="234" y1="111" y2="111" stroke="#bbb"/><text x="76" y="127">Maria Lopez · anxiety · 41</text><text x="76" y="145">J. Carter · depression · 38</text><text x="76" y="163">Dana Wu · PTSD · 52</text><text x="76" y="181">T. Okafor · bipolar · 47</text></g><path d="M30 205 h250 l-14 20 h-222Z" fill="#7d8a9b" stroke="#222" stroke-width="2"/>
+<rect x="268" y="60" width="115" height="52" rx="8" fill="#fff7d6" stroke="#222" stroke-width="2"/><text x="325" y="82" text-anchor="middle" font-size="12" font-weight="700">Shared drive</text><text x="325" y="99" text-anchor="middle" font-size="12" fill="#a8353a" font-weight="700">“Anyone with link”</text>
+<g transform="translate(325 160)"><path d="M-34 0 Q0 -30 34 0 Q0 30 -34 0Z" fill="#fff" stroke="#222" stroke-width="3"/><circle r="10" fill="#d34147"/><circle r="4" fill="#222"/></g><text x="325" y="215" text-anchor="middle" font-size="12" fill="#444">Anyone could look</text>`);
+const stamp=(t,c)=>S('0 0 400 300',`<rect width="400" height="300" fill="#eef3f8"/><rect x="95" y="38" width="210" height="230" rx="8" fill="#fff" stroke="#222" stroke-width="2"/><g fill="#cfd4db"><rect x="115" y="62" width="120" height="8" rx="3"/><rect x="115" y="82" width="170" height="8" rx="3"/><rect x="115" y="102" width="150" height="8" rx="3"/><rect x="115" y="122" width="170" height="8" rx="3"/></g><g transform="rotate(-14 200 190)"><rect x="115" y="160" width="170" height="62" rx="8" fill="none" stroke="${c}" stroke-width="6"/><text x="200" y="203" text-anchor="middle" font-size="30" font-weight="900" fill="${c}" letter-spacing="2">${t}</text></g>`,'IRB stamp');
+const E=(t,fix)=>['Informed consent & voluntary participation','Confidentiality & data security','Minimizing risk & debriefing','Fair participant selection'];
+Quiz($('#q-ethics'),[
+{art:art1,title:'A professor’s “extra credit” offer',text:'A professor offers extra credit only to students who take part in her study. There is no other way to earn those points. Which ethical principle is most at risk?',options:E(),answer:0,
+why:{default:'Respect for persons requires <b>voluntary</b> participation. When the only reward is tied to participating, students may feel coerced. <i>IRB asks for:</i> an equal-value alternative (e.g., a short article summary) and a clear right to withdraw.'}},
+{art:art2,title:'The upsetting memory study',text:'Participants are asked to recall and describe their most distressing memory. Afterward, they are simply thanked and sent home.',options:E(),answer:2,
+why:{default:'Beneficence means minimizing harm and maximizing benefit. Distressing tasks need a <b>debriefing</b>, mental-health resources, and a plan if someone is upset. <i>IRB asks for:</i> a debrief script and a referral list.'}},
+{art:art3,title:'Who gets the free therapy?',text:'A study offers a free new therapy program but recruits only from one private prep school, even though a nearby community clinic serves far more people with the problem.',options:E(),answer:3,
+why:{default:'Justice asks who bears the burdens <i>and</i> who receives the benefits of research. Excluding the group that needs it most is unfair. <i>IRB asks for:</i> a recruitment plan that is equitable and tied to the research question.'}},
+{art:art4,title:'The shared spreadsheet',text:'Survey responses with names and mental-health diagnoses are stored in a spreadsheet that anyone with the link can open.',options:E(),answer:1,
+why:{default:'Participants were promised privacy. Identifiable data needs <b>de-identification, encryption, and restricted access</b>. <i>IRB asks for:</i> a data-security plan and a code key stored separately.'}}
+],{label:'Case',final:(s,n)=>({art:stamp(s>=3?'APPROVED':'REVISE',s>=3?'#1c7c4d':'#d34147'),head:s>=3?'Protocol approved!':'Revisions requested',
+body:`You identified ${s} of ${n} ethical issues correctly. ${s>=3?'You are thinking like an IRB member. Remember that real review boards also check <b>mandated reporting</b> when a study involves minors or dependent adults.':'Review the four principles in the Deep Dive and try again. IRBs often send protocols back for revision, which is part of the process.'}`})});
+
+/* ---------- Target lab ---------- */
+const U=[[.2,-.5],[-.6,.1],[.7,.4],[-.3,-.8],[.5,-.2],[-.7,-.5],[.1,.75],[-.15,.3],[.85,-.45],[-.45,.7]];
+const T=$('#targetArt');
+T.innerHTML=S('0 0 360 340',`<rect width="360" height="340" fill="#fff"/>${[135,108,81,54,27].map((r,k)=>`<circle cx="180" cy="170" r="${r}" fill="${['#f4f5f7','#ffffff','#f4d3d5','#fff','#d34147'][k]}" stroke="#222" stroke-width="1.5"/>`).join('')}
+<g id="darts">${U.map((_,k)=>`<g class="dart" style="transition:transform .6s cubic-bezier(.3,1.4,.5,1)"><circle r="6.5" fill="#222" stroke="#fff" stroke-width="2"/><path d="M0 0 l9 -9" stroke="#222" stroke-width="3"/><path d="M9 -9 l7 -2 M9 -9 l2 -7" stroke="#2f5d8a" stroke-width="3"/></g>`).join('')}</g>
+<g id="avg" style="transition:transform .6s"><circle r="9" fill="none" stroke="#2f5d8a" stroke-width="2.5" stroke-dasharray="3 3"/></g>
+<text x="180" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#222">Bullseye = the true value</text>
+<text x="180" y="326" text-anchor="middle" font-size="12" fill="#2f5d8a">Dashed circle = average of the darts</text>`,'A dartboard');
+const dg=$$('.dart',T),av=$('#avg',T);
+function upd(){const sp=+$('#spread').value,bi=+$('#bias').value;$('#oSpread').textContent=sp<=18?'tight':sp<=40?'loose':'scattered';$('#oBias').textContent=bi<=12?'on target':bi<=40?'a little off':'far off';
+let sx=0,sy=0;U.forEach((u,k)=>{const x=180+bi*.72+u[0]*sp,y=170-bi*.72+u[1]*sp;sx+=x;sy+=y;dg[k].style.transform=`translate(${x}px,${y}px)`});av.style.transform=`translate(${sx/U.length}px,${sy/U.length}px)`;
+const rel=sp<=20,val=bi<=14&&sp<=45;
+$('#rIcon').textContent=rel?'🟢':'🔴';$('#rHead').innerHTML='Reliability: '+(rel?'<span class="badge g">consistent</span>':'<span class="badge r">inconsistent</span>');
+$('#rText').textContent=rel?'Repeated measures give nearly the same result.':'Repeated measures keep giving different results.';
+$('#vIcon').textContent=val?'🟢':'🔴';$('#vHead').innerHTML='Validity: '+(val?'<span class="badge g">measuring the right thing</span>':'<span class="badge r">missing the target</span>');
+$('#vText').textContent=val?'The average lands on the true value.':(rel?'Consistent, but systematically wrong. A reliable measure can still be invalid!':'Results miss the true value.')}
+$('#spread').oninput=upd;$('#bias').oninput=upd;
+$$('#target [data-p]').forEach(b=>b.onclick=()=>{const[r,i]=b.dataset.p.split(',').map(Number);$('#spread').value=r?10:62;$('#bias').value=i?72:(r?0:8);upd()});upd();
+
+/* ---------- Measurement check ---------- */
+const O=['Reliable and valid','Reliable but not valid','Not reliable'];
+const sc=(i,c='#eef3f8')=>S('0 0 400 300',`<rect width="400" height="300" fill="${c}"/><rect y="235" width="400" height="65" fill="#d8dee6"/>${i}`);
+const scale=sc(`<ellipse cx="200" cy="225" rx="120" ry="14" fill="#c3c9d2"/><rect x="85" y="190" width="230" height="34" rx="12" fill="#e9edf2" stroke="#222" stroke-width="3"/><rect x="150" y="196" width="100" height="20" rx="5" fill="#222"/><text x="200" y="212" text-anchor="middle" font-size="15" font-weight="700" fill="#7CFC9A">155.0 lb</text>${person(200,90,1.7,'#4f7cac','flat')}<text x="200" y="40" text-anchor="middle" font-size="14" fill="#444">Actual weight: 150.0 lb · Monday, Tuesday, Wednesday: 155.0 lb</text>`);
+const squig=sc(`<rect x="40" y="50" width="320" height="150" rx="10" fill="#fff" stroke="#222" stroke-width="2"/><polyline points="55,150 90,70 125,175 160,80 195,160 230,65 265,170 300,85 345,150" fill="none" stroke="#d34147" stroke-width="3.5" stroke-linejoin="round"/><text x="200" y="222" text-anchor="middle" font-size="13" fill="#444">Same person · same week · no life changes</text><text x="200" y="40" text-anchor="middle" font-size="14" font-weight="700">Daily “mood” scores</text>`);
+const good=sc(`<rect x="40" y="50" width="320" height="150" rx="10" fill="#fff" stroke="#222" stroke-width="2"/><polyline points="60,130 100,126 140,131 180,127 220,130 260,126 300,129 340,127" fill="none" stroke="#1c7c4d" stroke-width="3.5"/><polyline points="60,150 100,147 140,152 180,148 220,150 260,147 300,151 340,148" fill="none" stroke="#2f5d8a" stroke-width="3.5"/><text x="200" y="222" text-anchor="middle" font-size="13" fill="#444">Scores stable over time AND agree with clinician ratings</text><text x="200" y="40" text-anchor="middle" font-size="14" font-weight="700">Well-being scale vs. clinician rating</text>`);
+const head=sc(`${person(110,110,1.9,'#7a5aa8','flat')}<path d="M70 105 h80" stroke="#d34147" stroke-width="3" stroke-dasharray="5 4"/><rect x="225" y="75" width="150" height="90" rx="10" fill="#fff" stroke="#222" stroke-width="2"/><text x="300" y="105" text-anchor="middle" font-size="13" font-weight="700">Head size = 56.0 cm</text><text x="300" y="125" text-anchor="middle" font-size="13" font-weight="700">Head size = 56.0 cm</text><text x="300" y="145" text-anchor="middle" font-size="12" fill="#444">“Intelligence score”</text>`);
+Quiz($('#q-check'),[
+{art:scale,title:'The bathroom scale',text:'A scale reads exactly 5 lb too heavy every time. Describe this measurement of weight.',options:O,answer:1,why:{default:'Perfectly consistent (reliable) but systematically wrong (not valid). It is the dartboard cluster that is tight but off-center.'}},
+{art:squig,title:'The mood questionnaire',text:'A questionnaire gives wildly different scores for the same person from day to day, even though nothing in their life has changed.',options:O,answer:2,why:{default:'Scores that bounce around are unreliable, and a measure that is not reliable cannot be valid. Reliability is necessary (but not sufficient) for validity.'}},
+{art:head,title:'Measuring “intelligence”',text:'A researcher measures intelligence by head circumference. Two measurements of the same person always match.',options:O,answer:1,why:{default:'Head circumference is consistent, but it is not a defensible operational definition of intelligence. Reliable, but not valid.'}},
+{art:good,title:'The well-being scale',text:'A scale gives stable scores over time and the scores also agree with clinicians’ independent ratings of well-being.',options:O,answer:0,why:{default:'Stable scores show reliability. Agreement with an independent, relevant criterion is evidence of validity. This is the dartboard cluster on the bullseye.'}}
+],{label:'Scenario',final:(s,n)=>({art:S('0 0 400 300',`<rect width="400" height="300" fill="#eef3f8"/>${[120,96,72,48,24].map((r,k)=>`<circle cx="200" cy="150" r="${r}" fill="${['#f4f5f7','#fff','#f4d3d5','#fff','#d34147'][k]}" stroke="#222"/>`).join('')}<text x="200" y="160" text-anchor="middle" font-size="40" font-weight="900" fill="#fff" stroke="#222" stroke-width="1">${s}/${n}</text>`),head:s===n?'Bullseye!':'Keep aiming',body:'Remember: <b>reliability</b> = consistency, <b>validity</b> = measuring what you claim to measure. A good operational definition of a construct needs both.'})});
+
+initTabs();
+</script></body></html>

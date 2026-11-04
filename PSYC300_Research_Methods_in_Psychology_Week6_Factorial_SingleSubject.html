@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 300 Research Methods in Psychology | Week 6: Factorial & Single-Subject Methodology</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--muted:#5a6270;--line:#dcdfe4;--bg:#f4f5f7;--card:#fff;
+--good:#1c7c4d;--goodbg:#e6f4ec;--bad:#a8353a;--badbg:#fbeaea;--soft:#fdf0f0;--blue:#2f5d8a;--amber:#e0902b}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);
+font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+#app{height:100%;display:flex;flex-direction:column;min-height:0}
+header{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;background:#222;color:#fff;border-bottom:4px solid var(--red)}
+header svg{width:38px;height:38px;flex:none}
+header .wk{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#f0b3b6;font-weight:600}
+header h1{margin:0;font-size:18px;line-height:1.15;font-weight:650}
+nav{flex:none;display:flex;gap:4px;padding:6px 12px 0;background:#fff;border-bottom:1px solid var(--line);overflow:hidden}
+nav button{border:1px solid transparent;border-bottom:none;background:transparent;font:inherit;font-weight:600;font-size:14px;
+color:var(--muted);padding:7px 14px;border-radius:9px 9px 0 0;cursor:pointer;white-space:nowrap}
+nav button:hover{color:var(--ink);background:#f3f4f6}
+nav button.on{color:var(--red-d);background:var(--bg);border-color:var(--line);box-shadow:inset 0 3px 0 var(--red)}
+main{flex:1;min-height:0;position:relative}
+.panel{display:none;height:100%;padding:12px 16px;overflow-y:auto;overflow-x:hidden}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;height:100%;min-height:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-height:0;overflow:hidden}
+.art{background:#fff;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
+.art svg{width:100%;height:100%;display:block}
+h2{margin:0 0 4px;font-size:18px;line-height:1.25}
+h3{margin:0 0 4px;font-size:15px}
+p{margin:0 0 8px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red-d);background:var(--soft);padding:2px 9px;border-radius:99px}
+.qc{display:flex;flex-direction:column;gap:6px}
+.qtop{display:flex;align-items:center;justify-content:space-between}
+.dots{display:flex;gap:5px}.dots i{width:10px;height:10px;border-radius:50%;background:#d7dae0}
+.dots i.ok{background:var(--good)}.dots i.no{background:var(--red)}.dots i.cur{outline:2px solid #222;outline-offset:1px}
+.opts{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+.opt,.btn{font:inherit;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--ink);
+transition:border-color .15s,background .15s,transform .1s}
+.opt:hover:not(:disabled){border-color:var(--red);background:var(--soft)}
+.opt:focus-visible,.btn:focus-visible,nav button:focus-visible,input:focus-visible{outline:3px solid #7aa7d6;outline-offset:2px}
+.opt.right{border-color:var(--good);background:var(--goodbg);font-weight:600}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.btn{text-align:center;font-weight:650;background:#222;color:#fff;border-color:#222}
+.btn:hover:not(:disabled){background:var(--red-d);border-color:var(--red-d)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.alt{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn.alt:hover:not(:disabled){background:var(--soft);color:var(--ink);border-color:var(--red)}
+.btn.on{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.fb{font-size:14px;border-radius:10px;padding:0 12px;max-height:0;overflow:hidden;opacity:0;transition:all .25s}
+.fb.show{padding:8px 12px;max-height:200px;opacity:1}
+.fb.good{background:var(--goodbg);border-left:4px solid var(--good)}
+.fb.bad{background:var(--badbg);border-left:4px solid var(--bad)}
+.qnav{display:flex;justify-content:flex-end;margin-top:auto}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ctrl{margin:6px 0}
+.ctrl label{display:flex;justify-content:space-between;font-weight:600;font-size:14px}
+.ctrl output{font-variant-numeric:tabular-nums;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red-d);margin:4px 0}
+.stat{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;border-radius:10px;background:#f7f8fa;border:1px solid var(--line);margin-top:6px;font-size:14px}
+.stat>div>b{display:block}
+.badge{display:inline-block;font-weight:700;border-radius:8px;padding:2px 9px;font-size:13px}
+.badge.g{background:var(--goodbg);color:var(--good)}.badge.r{background:var(--badbg);color:var(--bad)}.badge.n{background:#eceef2;color:#444}
+.fadein{animation:fi .35s both}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:720px){
+ header h1{font-size:15px}header svg{width:30px;height:30px}
+ nav button{padding:7px 9px;font-size:13px}
+ .panel{padding:10px}
+ .grid{grid-template-columns:1fr;height:auto;grid-auto-rows:auto}
+ .art{height:210px}
+}
+</style></head>
+<body><div id="app">
+<header><svg viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" rx="4" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M5 20 H35 M20 5 V35" stroke="#fff" stroke-width="2"/><path d="M9 29 L17 23 M24 14 L32 9" stroke="#d34147" stroke-width="3.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#d34147"/></svg><div><div class="wk">PSYC 300 · Week 6</div><h1>Factorial & Single-Subject Methodology</h1></div></header>
+<nav role="tablist"><button role="tab" data-tab="fact">🔲 2×2 Factorial Lab</button><button role="tab" data-tab="ss">📉 Single-Subject (ABAB)</button><button role="tab" data-tab="which">🧩 Which Design?</button></nav>
+<main><style>.sl2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}#fact .card{padding:10px 14px}#fact .stat{margin-top:5px;padding:5px 10px;font-size:13.5px}#fact h2{font-size:17px}#fact .btn{padding:5px 9px;font-size:13px}#fact .ctrl{margin:3px 0}</style>
+<section class="panel" id="fact"><div class="grid">
+ <div class="art" id="fArt"></div>
+ <div class="card">
+  <span class="pill">Two independent variables</span>
+  <h2>Does caffeine help, and does it depend on sleep?</h2>
+  
+  <div class="row" style="margin-bottom:2px"><button class="btn alt" data-pre="70,50,80,60">Two main effects</button><button class="btn alt" data-pre="70,50,72,68">Interaction</button><button class="btn alt" data-pre="75,45,60,62">Crossover</button><button class="btn alt" data-pre="60,60,60,60">No effects</button></div>
+  <div class="sl2"><div class="ctrl"><label for="a">No coffee · Rested <output id="oa"></output></label><input type="range" id="a" min="20" max="100" value="70"></div>
+  <div class="ctrl"><label for="b">No coffee · Deprived <output id="ob"></output></label><input type="range" id="b" min="20" max="100" value="50"></div>
+  <div class="ctrl"><label for="c">Coffee · Rested <output id="oc"></output></label><input type="range" id="c" min="20" max="100" value="80"></div>
+  <div class="ctrl"><label for="d">Coffee · Deprived <output id="od"></output></label><input type="range" id="d" min="20" max="100" value="60"></div></div>
+  <div class="stat"><span style="font-size:18px">☕</span><div><b>Caffeine main effect: <span id="mc"></span></b></div></div>
+  <div class="stat"><span style="font-size:18px">😴</span><div><b>Sleep main effect: <span id="ms"></span></b></div></div>
+  <div class="stat"><span style="font-size:18px" id="iIco"></span><div><b>Interaction: <span id="mi"></span></b><span class="small" id="mit"></span></div></div>
+ </div></div></section>
+<section class="panel" id="ss"><div id="q-ss" style="height:100%"></div></section>
+<section class="panel" id="which"><div id="q-which" style="height:100%"></div></section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function initTabs(){const b=$$('nav button');const show=id=>{b.forEach(x=>{const on=x.dataset.tab===id;x.classList.toggle('on',on);x.setAttribute('aria-selected',on)});
+$$('.panel').forEach(p=>p.classList.toggle('on',p.id===id))};b.forEach(x=>x.addEventListener('click',()=>show(x.dataset.tab)));show(b[0].dataset.tab)}
+const S=(vb,inner,label='')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" preserveAspectRatio="xMidYMid meet" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">${inner}</svg>`;
+const MOUTH={happy:'M-4 7 Q0 11 4 7',sad:'M-4 10 Q0 6 4 10',worried:'M-4 9 Q0 7 4 9',flat:'M-4 8 L4 8'};
+function person(x,y,s=1,shirt='#4f7cac',mood='happy',hair='#3b2f2f',skin='#f1c9a5'){return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-16" y="12" width="32" height="40" rx="14" fill="${shirt}"/><circle r="14" fill="${skin}"/><path d="M-14 -2 Q-13 -18 0 -17 Q13 -18 14 -2 Q6 -9 -14 -2Z" fill="${hair}"/><circle cx="-5" cy="0" r="1.7" fill="#333"/><circle cx="5" cy="0" r="1.7" fill="#333"/><path d="${MOUTH[mood]}" stroke="#333" fill="none" stroke-width="1.6" stroke-linecap="round"/></g>`}
+function Quiz(root,items,o={}){let i=0,score=0,res=[];const lab=o.label||'Question';
+function render(){const it=items[i];root.innerHTML=`<div class="grid quiz"><div class="art"></div><div class="card qc"><div class="qtop"><span class="pill">${lab} ${i+1} of ${items.length}</span><div class="dots">${items.map((_,k)=>`<i class="${res[k]===undefined?(k===i?'cur':''):res[k]?'ok':'no'}"></i>`).join('')}</div></div><h2>${it.title}</h2><p class="muted" style="margin:0">${it.text}</p><div class="opts"></div><div class="fb" aria-live="polite"></div><div class="qnav"><button class="btn" disabled>${i<items.length-1?'Next →':'See results'}</button></div></div></div>`;
+$('.art',root).innerHTML=it.art;const opts=$('.opts',root),fb=$('.fb',root),nx=$('.qnav .btn',root);
+it.options.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{const ok=k===it.answer;res[i]=ok;if(ok)score++;
+$$('.opt',root).forEach((x,j)=>{x.disabled=true;if(j===it.answer)x.classList.add('right');else if(j===k)x.classList.add('wrong')});
+fb.className='fb show '+(ok?'good':'bad');fb.innerHTML=(ok?'<b>Yes!</b> ':'<b>Not quite.</b> ')+(it.why[k]??it.why.default??it.why);
+if(it.reveal)$('.art',root).innerHTML=it.reveal;nx.disabled=false;nx.focus({preventScroll:true})};opts.appendChild(b)});
+nx.onclick=()=>{i++;i<items.length?render():done()}}
+function done(){const m=o.final(score,items.length);root.innerHTML=`<div class="grid"><div class="art">${m.art}</div><div class="card qc fadein"><span class="pill">Results</span><h2>${m.head}</h2><p>${m.body}</p><div class="qnav"><button class="btn">Try again ↺</button></div></div></div>`;
+$('.btn',root).onclick=()=>{i=0;score=0;res=[];render()}}
+render()}
+
+
+/* ---------- 2x2 ---------- */
+const fa=$('#fArt');
+fa.innerHTML=S('0 0 400 340',`<rect width="400" height="340" fill="#fff"/>
+<path d="M60 30 V270 H370" fill="none" stroke="#222" stroke-width="2"/>
+<g stroke="#eceef2">${[20,40,60,80,100].map(v=>`<line x1="60" x2="370" y1="${270-(v-20)*3}" y2="${270-(v-20)*3}"/>`).join('')}</g>
+${[20,40,60,80,100].map(v=>`<text x="52" y="${274-(v-20)*3}" text-anchor="end" font-size="11" fill="#5a6270">${v}</text>`).join('')}
+<line id="lnN" stroke="#6c7a8c" stroke-width="4.5" stroke-linecap="round"/><line id="lnC" stroke="#d34147" stroke-width="4.5" stroke-linecap="round"/>
+<g id="dots"></g>
+<text x="130" y="296" text-anchor="middle" font-size="13" font-weight="700">😊 Rested</text><text x="300" y="296" text-anchor="middle" font-size="13" font-weight="700">🥱 Sleep-deprived</text>
+<text transform="translate(16 150) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600">Test score →</text>
+<g transform="translate(70 36)"><rect width="150" height="46" rx="8" fill="#fff" stroke="#dcdfe4"/><line x1="10" x2="34" y1="16" y2="16" stroke="#d34147" stroke-width="4.5"/><text x="42" y="20" font-size="12">☕ Coffee</text><line x1="10" x2="34" y1="34" y2="34" stroke="#6c7a8c" stroke-width="4.5"/><text x="42" y="38" font-size="12">No coffee</text></g>
+<text id="vtag" x="215" y="325" text-anchor="middle" font-size="13" font-weight="700"></text>`,'Interaction plot');
+function fUpd(){const v=['a','b','c','d'].map(k=>{const x=+$('#'+k).value;$('#o'+k).textContent=x;return x});const[a,b,c,d]=v;
+const X1=130,X2=300,Y=s=>270-(s-20)*3;
+const L=(el,y1,y2)=>{el.setAttribute('x1',X1);el.setAttribute('x2',X2);el.setAttribute('y1',Y(y1));el.setAttribute('y2',Y(y2))};
+L($('#lnN',fa),a,b);L($('#lnC',fa),c,d);
+$('#dots',fa).innerHTML=[[X1,a,'#6c7a8c'],[X2,b,'#6c7a8c'],[X1,c,'#d34147'],[X2,d,'#d34147']].map(p=>`<circle cx="${p[0]}" cy="${Y(p[1])}" r="8" fill="${p[2]}" stroke="#fff" stroke-width="2.5"/>`).join('');
+const mc=(c+d)/2-(a+b)/2,ms=(b+d)/2-(a+c)/2,it=(d-b)-(c-a);
+const f=x=>Math.abs(x)<4?'none':(x>0?'+':'−')+Math.abs(x).toFixed(0)+' pts';
+$('#mc').textContent=Math.abs(mc)<4?'none':mc>0?'raises scores ('+f(mc)+')':'lowers scores ('+f(mc)+')';
+$('#ms').textContent=Math.abs(ms)<4?'none':ms>0?'deprivation raises ('+f(ms)+')':'deprivation lowers ('+f(ms)+')';
+const has=Math.abs(it)>=4;$('#mi').textContent=has?'YES: lines are not parallel':'no: lines are parallel';$('#iIco').textContent=has?'✨':'➖';
+$('#mit').textContent=has?` Caffeine’s effect depends on sleep: ${(d-b>=0?'+':'')+(d-b)} pts when deprived vs. ${(c-a>=0?'+':'')+(c-a)} pts when rested.`:` Caffeine changes scores by about the same amount whether people are rested or deprived.`;
+$('#vtag',fa).textContent=has?'Non-parallel lines → interaction':'Parallel lines → no interaction';$('#vtag',fa).setAttribute('fill',has?'#a8353a':'#1c7c4d')}
+['a','b','c','d'].forEach(k=>$('#'+k).oninput=fUpd);
+$$('#fact [data-pre]').forEach(b=>b.onclick=()=>{b.dataset.pre.split(',').forEach((x,i)=>$('#'+'abcd'[i]).value=x);fUpd()});fUpd();
+/* (“±4 points” is a teaching threshold; real studies use inferential tests such as factorial ANOVA.) */
+
+/* ---------- ABAB charts ---------- */
+const ab=(d,title,rev)=>{const ph=['A₁ Baseline','B₁ Intervention','A₂ Withdraw','B₂ Intervention'];const col=['#eef2f7','#fdeedd','#eef2f7','#fdeedd'];
+const X=i=>50+i*16.5+8,Y=v=>250-v*21;
+return S('0 0 400 320',`<rect width="400" height="320" fill="#fff"/>
+${ph.map((p,k)=>`<rect x="${50+k*5*16.5}" y="40" width="${5*16.5}" height="210" fill="${col[k]}"/><text x="${50+k*5*16.5+41}" y="56" text-anchor="middle" font-size="10.5" font-weight="700" fill="#444">${p}</text>`).join('')}
+<path d="M50 40 V250 H382" fill="none" stroke="#222" stroke-width="2"/>
+${[0,2,4,6,8,10].map(v=>`<text x="44" y="${254-v*21}" text-anchor="end" font-size="10" fill="#5a6270">${v}</text>`).join('')}
+<polyline points="${d.map((v,i)=>X(i)+','+Y(v)).join(' ')}" fill="none" stroke="#222" stroke-width="2.5"/>
+${d.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="4.5" fill="#d34147" stroke="#fff" stroke-width="1.5"/>`).join('')}
+<text x="216" y="276" text-anchor="middle" font-size="12" font-weight="600">Days →</text>
+<text transform="translate(14 145) rotate(-90)" text-anchor="middle" font-size="12" font-weight="600">Tantrums per day →</text>
+<text x="216" y="22" text-anchor="middle" font-size="14" font-weight="800">${title}</text>
+<text x="216" y="302" text-anchor="middle" font-size="12" fill="#5a6270">${rev}</text>`,'Single-subject reversal design graph')};
+const SO=['Strong evidence the intervention works','Weak or unconvincing evidence'];
+const D1=[9,8,9,10,9,5,4,3,3,2,7,8,9,9,10,4,3,2,2,2],D2=[9,8,8,7,7,6,6,5,5,4,4,4,3,3,3,3,2,2,2,2],D3=[3,10,2,9,4,5,4,6,3,5,7,3,8,4,6,3,5,2,4,3];
+Quiz($('#q-ss'),[
+{art:ab(D1,'Child 1','Behavior changed each time the phase changed'),title:'Child 1: the behavior follows the phase',text:'Tantrums drop when the reward system starts, return when it is withdrawn, and drop again when it is reinstated. Does this design support a causal claim?',options:SO,answer:0,why:{default:'The effect was <b>replicated</b> three times: baseline→intervention (drop), withdrawal (return), reinstatement (drop). That pattern is what a reversal design is built to show.'}},
+{art:ab(D2,'Child 2','Behavior kept improving regardless of the phase'),title:'Child 2: a steady downward slide',text:'Tantrums decline gently the whole time, whether the reward system is on or off. Does this design support a causal claim?',options:SO,answer:1,why:{default:'The improvement <b>started before</b> the intervention and did not reverse during withdrawal. A pre-existing trend (e.g., maturation) is a more plausible explanation than the intervention.'}},
+{art:ab(D3,'Child 3','Baseline was too unstable to compare against'),title:'Child 3: all over the place',text:'Daily tantrum counts jump up and down in every phase, and the baseline never settles. What can we conclude?',options:SO,answer:1,why:{default:'Single-subject designs need a <b>stable baseline</b> established by repeated measurement. Without it, you cannot tell whether any change is more than normal day-to-day variation.'}}
+],{label:'Graph',final:(s,n)=>({art:ab(D1,'What strong evidence looks like','Stable baseline · change · reversal · change again'),head:`${s} of ${n} read correctly`,body:'In single-subject research, look for a <b>stable baseline</b>, a clear change when the intervention starts, and a <b>replication</b> of the effect. Results are analyzed by examining patterns over time.'})});
+
+/* ---------- Which design ---------- */
+const WO=['Factorial design','Reversal (ABAB) design','Multiple-baseline design'];
+const wk=i=>S('0 0 400 300',`<rect width="400" height="300" fill="#eef3f8"/>${i}`);
+const gFact=wk(`<rect x="90" y="50" width="220" height="180" rx="8" fill="#fff" stroke="#222" stroke-width="2.5"/><path d="M200 50 V230 M90 140 H310" stroke="#222" stroke-width="2.5"/><g font-size="24" text-anchor="middle"><text x="145" y="102">☕</text><text x="255" y="102">🚫</text><text x="145" y="194">🥱</text><text x="255" y="194">😊</text></g><text x="200" y="30" text-anchor="middle" font-size="13" font-weight="700">Factor A × Factor B</text><text x="200" y="258" text-anchor="middle" font-size="12" fill="#444">every combination of levels is tested</text>`);
+const gRev=wk(`<polyline points="30,200 60,200 90,200 110,110 150,105 190,110 220,195 260,200 290,195 310,110 350,105 375,110" fill="none" stroke="#222" stroke-width="3" stroke-linejoin="round"/><g font-size="13" font-weight="700" fill="#444"><text x="60" y="235" text-anchor="middle">A</text><text x="150" y="235" text-anchor="middle">B</text><text x="255" y="235" text-anchor="middle">A</text><text x="345" y="235" text-anchor="middle">B</text></g><text x="200" y="40" text-anchor="middle" font-size="13" font-weight="700">One participant · on / off / on / off</text>`);
+const gMB=wk(`${[0,1,2].map(k=>`<g transform="translate(0 ${k*62})"><text x="28" y="${70}" font-size="11" font-weight="700">Class ${'ABC'[k]}</text><polyline points="${[0,1,2,3,4,5,6,7,8,9,10].map(j=>`${70+j*28},${j<3+k*3?88:60}`).join(' ')}" fill="none" stroke="#222" stroke-width="3"/><path d="M${70+(3+k*3)*28-14} 44 V96" stroke="#d34147" stroke-width="3" stroke-dasharray="5 4"/></g>`).join('')}<text x="200" y="28" text-anchor="middle" font-size="13" font-weight="700">Intervention starts at different times</text>`);
+Quiz($('#q-which'),[
+{art:gFact,title:'Teaching method × learner level',text:'A researcher wants to know whether a teaching method helps, whether it works differently for novices than for experts, and tests all four combinations.',options:WO,answer:0,why:{default:'Two or more independent variables studied together, so you can see main effects <b>and</b> whether they interact.'}},
+{art:gRev,title:'Rewards on, off, on, off',text:'A therapist tracks one child’s outbursts every day while turning a reward chart on, off, on, and off again.',options:WO,answer:1,why:{default:'Withdrawing and reinstating the intervention in one participant, with repeated measurement, is a <b>reversal (ABAB)</b> design.'}},
+{art:gMB,title:'Staggered start across classrooms',text:'A school introduces a new calm-down routine in Class A in week 3, Class B in week 6, and Class C in week 9, tracking disruptions in each room.',options:WO,answer:2,why:{default:'The intervention is introduced at <b>different times</b> across settings. If behavior changes only when each class starts, it is hard to blame coincidence. Useful when reversal would be unethical or impossible.'}}
+],{label:'Scenario',final:(s,n)=>({art:gFact,head:`${s} of ${n} matched`,body:'Ethical tip: reversal designs mean <b>withdrawing</b> a helpful intervention. Multiple-baseline avoids that, a good example of applying ethics to the design of your own project.'})});
+
+initTabs();
+</script></body></html>
