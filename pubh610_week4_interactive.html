@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive | From Competency Results to a Development Plan</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.radar{width:100%;height:auto;display:block}
+.roles{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.roles button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:7px 16px;cursor:pointer}
+.roles button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff}
+.cp{background:var(--warm);border-radius:14px;padding:10px 12px;margin-bottom:8px}.cp strong{display:block;margin-bottom:4px}
+.cp .rw{display:grid;grid-template-columns:70px 1fr 28px;gap:8px;align-items:center;font-size:.85rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;font-weight:700;margin:6px 0}.legend span{display:flex;gap:6px;align-items:center}.legend i{width:16px;height:6px;border-radius:3px;display:inline-block}
+.gaps{list-style:none;margin:0;padding:0}.gaps li{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;border:2px solid #eee;border-radius:14px;padding:8px 12px;margin-bottom:8px;background:#fff;cursor:pointer}
+.gaps li.sel{border-color:var(--red);background:var(--red-l)}.gaps .n{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:800}
+.flag{font-size:.75rem;font-weight:800;background:var(--gold);color:#231f20;border-radius:999px;padding:2px 10px;margin-left:6px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:720px){.form{grid-template-columns:1fr}}
+.form label{font-weight:700;font-size:.9rem;display:block}.form input[type=text]{width:100%;font:inherit;border:2px solid #d9d4cf;border-radius:12px;padding:9px 12px}
+.sent{background:var(--gold-l);border-radius:16px;padding:16px;font-family:Georgia,serif;font-size:1.08rem;margin:12px 0;min-height:3em}
+.chk{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}@media(max-width:720px){.chk{grid-template-columns:1fr 1fr}}
+.chk div{border:2px solid #eee;border-radius:14px;padding:8px;text-align:center;font-size:.85rem;background:#fff;transition:.3s}.chk div.on{border-color:var(--ok);background:var(--ok-l)}.chk b{display:block;font-size:1.2rem}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a staircase of growth bars with a flag at the top and a gap highlighted between two bars">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 30)"><g fill="#f7dcdd"><rect x="0" y="120" width="60" height="50" rx="6" opacity=".6"/><rect x="70" y="90" width="60" height="80" rx="6" opacity=".75"/><rect x="140" y="60" width="60" height="110" rx="6" opacity=".9"/></g><g fill="none" stroke="#f6c453" stroke-width="4" stroke-dasharray="7 6"><rect x="210" y="30" width="60" height="140" rx="6"/></g><path d="M210 80H270" stroke="#fff" stroke-width="4"/><rect x="210" y="80" width="60" height="90" rx="6" fill="#f7dcdd"/><text x="240" y="70" text-anchor="middle" font-size="13" font-weight="800" fill="#f6c453" font-family="system-ui">gap</text><path d="M-6 172H290" stroke="#fff" stroke-width="3"/></g>
+<g transform="translate(470 56)" font-family="system-ui" fill="#fff"><text font-size="26" font-weight="800">Current → Target</text><text y="34" font-size="16" font-weight="600" fill="#f7dcdd">Name the gaps. Plan to grow.</text></g>
+<g transform="translate(790 40)"><path d="M0 0V150" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M0 4h70l-14 20 14 20H0z" fill="#f6c453"/></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 610 · Week 4 Interactive</div><h1>From Results to a Development Plan</h1><p>Assessment results become useful when they lead to a plan. Rate your competencies, compare them with what a role requires and how others might see you, then turn the biggest gap into a SMART goal.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Compare yourself with the target</h2>
+<p class="lead">Competencies are the knowledge, skills, and behaviors effective leaders show. Choose a role, rate yourself honestly (and how you think others see you), and watch the picture form. Compare results with the competencies your role requires, and consider how others might see the same behaviors.</p>
+<div class="roles" id="roles" role="group" aria-label="Role"></div>
+<div class="legend"><span><i style="background:#1f6f78"></i>My self-rating</span><span><i style="background:#e0a526"></i>How others might rate me</span><span><i style="background:#d34147;height:3px"></i>Role target</span></div>
+<div class="two"><div id="cps"></div><svg class="radar" id="rd" viewBox="-130 0 660 400" role="img" aria-label="Radar of self-rating, others' rating, and role target"></svg></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Name and rank the gaps</h2>
+<p class="lead">A gap is the difference between current and desired capability. Prioritize the gaps with the greatest impact, and be honest and specific. Select a competency to build a goal for it.</p>
+<ol class="gaps" id="gaps"></ol>
+<div class="note live" id="gn" aria-live="polite"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Turn the gap into a goal</h2>
+<p class="lead" id="gtitle">Select a competency in Part 2 first.</p>
+<div class="form">
+<div><label for="f1">Specific behavior to build</label><input type="text" id="f1" placeholder="e.g., give feedback to each direct report"></div>
+<div><label for="f2">Measure of progress</label><input type="text" id="f2" placeholder="e.g., 1:1 feedback sessions held, 8 per quarter"></div>
+<div><label for="f3">Deadline</label><input type="text" id="f3" placeholder="e.g., by the end of next quarter"></div>
+<div><label for="f4">Resource or mentor</label><input type="text" id="f4" placeholder="e.g., my director as mentor; a feedback workshop"></div></div>
+<div class="sent" id="sent" aria-live="polite"></div>
+<div class="chk"><div id="k1"><b>S</b>Specific</div><div id="k2"><b>M</b>Measurable</div><div id="k3"><b>T</b>Deadline</div><div id="k4"><b>R</b>Resources</div></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 610 Week 4 Deep Dive. Roles, ratings, and competencies are illustrative; your own assessment results are information, not labels.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var CP=["Communication","Ethical conduct","Strategic thinking","Team building","Data-informed decisions","Cultural responsiveness"];
+var ROLES=[{n:"Program manager",t:[4,5,3,4,4,4]},{n:"Health department director",t:[5,5,5,4,4,5]},{n:"Community health lead",t:[5,5,3,4,3,5]}];
+var role=0,me=[3,4,2,3,2,3],ot=[3,4,3,2,2,4],sel=-1;
+var rb=document.getElementById("roles");
+ROLES.forEach(function(r,i){var b=document.createElement("button");b.textContent=r.n;b.setAttribute("aria-pressed",i===0);b.onclick=function(){role=i;[].forEach.call(rb.children,function(x,k){x.setAttribute("aria-pressed",k===i)});upd()};rb.appendChild(b)});
+var cps=document.getElementById("cps");
+CP.forEach(function(c,i){var d=document.createElement("div");d.className="cp";d.innerHTML='<strong>'+c+'</strong><div class="rw"><label for="m'+i+'">Self</label><input type="range" id="m'+i+'" min="1" max="5" value="'+me[i]+'"><span id="mv'+i+'">'+me[i]+'</span></div><div class="rw"><label for="o'+i+'">Others</label><input type="range" id="o'+i+'" min="1" max="5" value="'+ot[i]+'"><span id="ov'+i+'">'+ot[i]+'</span></div>';cps.appendChild(d);
+ d.querySelector("#m"+i).oninput=function(){me[i]=+this.value;upd()};d.querySelector("#o"+i).oninput=function(){ot[i]=+this.value;upd()}});
+var rd=document.getElementById("rd");
+function upd(){
+ CP.forEach(function(c,i){document.getElementById("mv"+i).textContent=me[i];document.getElementById("ov"+i).textContent=ot[i]});
+ rd.innerHTML="";var cx=200,cy=200,R=130,T=ROLES[role].t;
+ function pt(i,v,k){var a=-Math.PI/2+i*2*Math.PI/6,r=R*v/5*(k||1);return[cx+Math.cos(a)*r,cy+Math.sin(a)*r]}
+ for(var l=1;l<=5;l++)el("polygon",{points:CP.map(function(c,i){return pt(i,l).join(",")}).join(" "),fill:l===5?"#fff":"none",stroke:"#e5dfd9"},rd);
+ CP.forEach(function(c,i){var e=pt(i,5),t=pt(i,5,1.2);el("path",{d:"M"+cx+" "+cy+"L"+e[0]+" "+e[1],stroke:"#e5dfd9"},rd);var tx=el("text",{x:t[0],y:t[1]+4,"text-anchor":t[0]<cx-10?"end":t[0]>cx+10?"start":"middle","font-size":"11.5","font-weight":"700",fill:"#231f20"},rd);tx.textContent=c});
+ [[ot,"#e0a526",3,"6 4"],[me,"#1f6f78",4,"none"],[T,"#d34147",3,"2 0"]].forEach(function(s,k){el("polygon",{points:s[0].map(function(v,i){return pt(i,v).join(",")}).join(" "),fill:k===1?"#1f6f78":"none","fill-opacity":.18,stroke:s[1],"stroke-width":s[2],"stroke-dasharray":s[3]},rd)});
+ var gs=CP.map(function(c,i){return{i:i,gap:T[i]-me[i],bs:Math.abs(me[i]-ot[i])}}).sort(function(a,b){return b.gap-a.gap||b.bs-a.bs});
+ var gh=document.getElementById("gaps");gh.innerHTML="";
+ gs.forEach(function(g,p){var li=document.createElement("li");li.className=g.i===sel?"sel":"";li.tabIndex=0;
+  li.innerHTML='<span class="n">'+(p+1)+'</span><span><strong>'+CP[g.i]+'</strong>'+(g.bs>=1.5?'<span class="flag">blind-spot check</span>':'')+'<div style="font-size:.85rem;color:#5b5557">Self '+me[g.i]+' · Others '+ot[g.i]+' · Target '+T[g.i]+'</div></span><strong style="color:'+(g.gap>0?"#b3261e":"#2d7a4b")+'">'+(g.gap>0?"gap "+g.gap:g.gap<0?"+"+(-g.gap)+" above":"on target")+'</strong>';
+  li.onclick=function(){sel=g.i;upd();goal()};li.onkeydown=function(e){if(e.key==="Enter"){sel=g.i;upd();goal()}};gh.appendChild(li)});
+ var top=gs[0],bs=gs.filter(function(g){return g.bs>=1.5});
+ document.getElementById("gn").innerHTML=top.gap>0?"<strong>Largest gap for a "+ROLES[role].n.toLowerCase()+": "+CP[top.i]+" ("+top.gap+" level"+(top.gap>1?"s":"")+" below target).</strong> Focus where the impact is greatest."+(bs.length?" You and others see "+bs.map(function(g){return CP[g.i].toLowerCase()}).join(" and ")+" differently. Seek feedback to find out why.":""):"<strong>You meet or exceed the target on every competency.</strong> Set stretch goals, and still check where others see you differently.";
+ if(sel<0)sel=top.i}
+function goal(){document.getElementById("gtitle").innerHTML="Goal for <strong>"+CP[sel]+"</strong>. Write goals that are specific and measurable, and identify resources, mentors, and deadlines.";bld()}
+function bld(){var a=f1.value.trim(),m=f2.value.trim(),d=f3.value.trim(),r=f4.value.trim(),s=document.getElementById("sent");
+ s.textContent=(a||m||d||r)?("Improve my "+CP[sel].toLowerCase()+" by working to "+(a||"[specific behavior]")+", tracked by "+(m||"[measure]")+", "+(d||"[deadline]")+", with support from "+(r||"[resource or mentor]")+"."):"Fill in the fields to build your development goal.";
+ document.getElementById("k1").classList.toggle("on",a.length>8);document.getElementById("k2").classList.toggle("on",/\d/.test(m));document.getElementById("k3").classList.toggle("on",d.length>3);document.getElementById("k4").classList.toggle("on",r.length>3)}
+["f1","f2","f3","f4"].forEach(function(i){document.getElementById(i).addEventListener("input",bld)});
+upd();goal();
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

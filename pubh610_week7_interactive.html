@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7 Interactive | Conflict Styles and Negotiation</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.grid{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.st{cursor:pointer}.st:focus{outline:none}.st:focus-visible circle{stroke:#231f20;stroke-width:4}
+.info{background:var(--warm);border-radius:16px;padding:16px 18px;min-height:230px}.info h3{margin-bottom:.3em}
+.q{border:2px solid #eee;border-radius:16px;padding:14px;margin-bottom:12px;background:#fff}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.stack{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.stack button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer}
+.stack button:hover:not(:disabled){border-color:var(--red)}.stack button.right{background:var(--ok);border-color:var(--ok);color:#fff}.stack button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}@media(max-width:720px){.sides{grid-template-columns:1fr}}
+.sides div{border-radius:16px;padding:12px 14px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of two figures facing each other with a bridge of overlapping speech bubbles between them">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(160 60)"><circle cx="0" cy="30" r="28" fill="#f6c453"/><path d="M-44 150q0-60 44-60t44 60z" fill="#f7dcdd"/></g>
+<g transform="translate(700 60)"><circle cx="0" cy="30" r="28" fill="#1f6f78"/><path d="M-44 150q0-60 44-60t44 60z" fill="#fff"/></g>
+<g><path d="M250 70h130a14 14 0 0114 14v30a14 14 0 01-14 14h-100l-20 16v-16h-10a14 14 0 01-14-14V84a14 14 0 0114-14z" fill="#f6c453" fill-opacity=".92"/><path d="M590 90H470a14 14 0 00-14 14v30a14 14 0 0014 14h10v16l20-16h90a14 14 0 0014-14v-30a14 14 0 00-14-14z" fill="#d9eeef" fill-opacity=".95"/></g>
+<g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"><path d="M395 100Q420 78 450 100"/></g>
+<g font-family="system-ui" font-weight="700" fill="#a8353a" font-size="15"><text x="272" y="106">my position</text></g><g font-family="system-ui" font-weight="700" fill="#14505a" font-size="15"><text x="490" y="132">your interests</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 610 · Week 7 Interactive</div><h1>Conflict Is Not the Problem</h1><p>Unmanaged conflict is. Explore the five conflict-management styles, choose one on purpose for different situations, and practice negotiating from interests instead of fixed positions.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Five conflict styles</h2>
+<p class="lead">People tend to use competing, collaborating, compromising, avoiding, or accommodating approaches. No style is best in every situation, and knowing your default helps you choose deliberately. Select a style on the grid.</p>
+<div class="two"><svg class="grid" id="gr" viewBox="0 0 420 420" role="group" aria-label="Grid of assertiveness and cooperativeness with five conflict styles"></svg>
+<div class="info" id="info" aria-live="polite"><h3>Choose a style</h3><p>The vertical axis shows how much you push for your own concerns; the horizontal axis shows how much you attend to the other person’s concerns.</p></div></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Choose a style on purpose</h2>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Negotiate interests, not positions</h2>
+<p class="lead">Negotiation seeks agreements that meet underlying interests. Two programs both want the one meeting room on Tuesday at 2 p.m. First, sort what each side says.</p>
+<div id="ps"></div>
+<div class="sides"><div style="background:var(--gold-l)"><strong>Parent-support group</strong><br>Position: “We need the room Tuesday at 2.”</div><div style="background:var(--teal-l)"><strong>Diabetes education class</strong><br>Position: “No, that time is ours.”</div></div>
+<h3>Now find an option that meets both interests</h3>
+<p class="lead">The support group needs a quiet, private space when school gets out. The class needs a room with a kitchen demonstration area and enough chairs for 20 people.</p>
+<div class="q" id="opt"><div class="stack"></div><div class="live" aria-live="polite" style="margin-top:8px"></div></div>
+<div class="note teal"><strong>Look past positions.</strong> Ask “why does that matter to you?” Listen as much as you speak, paraphrase to confirm understanding, and ask open questions before offering solutions. Look for options that create value for both sides.</div>
+</section>
+</div>
+<p class="foot">Source: PUBH 610 Week 7 Deep Dive. Scenarios are fictional. The grid follows the common two-dimension model of conflict-handling styles.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var ST=[
+{n:"Competing",x:.2,y:.85,c:"#d34147",d:"Pursuing your own position firmly, even at the other person’s expense.",w:"Useful in an emergency or when a quick, decisive action is needed.",r:"Overused, it damages trust and silences others."},
+{n:"Collaborating",x:.85,y:.85,c:"#3b9a63",d:"Working together to find a solution that fully meets both parties’ concerns.",w:"Best for complex problems that matter to everyone and when there is time to explore.",r:"It takes time and effort, so it is overkill for trivial issues."},
+{n:"Compromising",x:.5,y:.5,c:"#e0a526",d:"Each side gives up something to reach a middle ground.",w:"Useful when goals are moderately important, power is equal, or time is short.",r:"Both may end up only partly satisfied, and creative options may be missed."},
+{n:"Avoiding",x:.15,y:.15,c:"#6b4a3a",d:"Sidestepping or postponing the conflict.",w:"Useful when the issue is trivial or emotions need to cool down first.",r:"Chronic avoidance lets problems grow."},
+{n:"Accommodating",x:.85,y:.15,c:"#1f6f78",d:"Giving way to the other person’s concerns.",w:"Useful when the issue matters more to the other person or to preserve a relationship.",r:"Overused, your own needs and ideas get lost."}];
+var gr=document.getElementById("gr"),nodes=[];
+el("rect",{width:420,height:420,fill:"#fcfcfc"},gr);
+el("rect",{x:50,y:20,width:350,height:350,fill:"#fff",stroke:"#e5dfd9"},gr);
+el("path",{d:"M225 20V370M50 195H400",stroke:"#f0ece8"},gr);
+var xl=el("text",{x:225,y:400,"text-anchor":"middle","font-size":"12","font-weight":"700"},gr);xl.textContent="Cooperativeness (concern for the other) →";
+var yl=el("text",{x:14,y:195,"text-anchor":"middle","font-size":"12","font-weight":"700",transform:"rotate(-90 14 195)"},gr);yl.textContent="Assertiveness (concern for my own) →";
+ST.forEach(function(s,i){var x=50+s.x*350,y=20+(1-s.y)*350,g=el("g",{"class":"st",tabindex:0,role:"button","aria-label":s.n},gr);
+ var c=el("circle",{cx:x,cy:y,r:52,fill:s.c,"fill-opacity":.9,stroke:"#fff","stroke-width":3},g);var t=el("text",{x:x,y:y+4,"text-anchor":"middle","font-size":"11.5","font-weight":"800",fill:s.c==="#e0a526"?"#231f20":"#fff","pointer-events":"none"},g);t.textContent=s.n;
+ g.onclick=function(){show(i)};g.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();show(i)}};nodes.push(c)});
+function show(i){var s=ST[i];nodes.forEach(function(c,k){c.setAttribute("stroke",k===i?"#231f20":"#fff");c.setAttribute("stroke-width",k===i?5:3)});
+ document.getElementById("info").innerHTML='<h3 style="color:'+(s.c==="#e0a526"?"#8a6a10":s.c)+'">'+s.n+'</h3><p>'+s.d+'</p><p><strong>Works when:</strong> '+s.w+'</p><p><strong>Risk:</strong> '+s.r+'</p>'}
+var NM=ST.map(function(s){return s.n});
+var Q=[
+{t:"A patient-safety hazard is found. Someone must decide immediately to shut down a piece of equipment, with no time to debate.",a:0,w:"In an emergency, decisive action is warranted: competing."},
+{t:"Two departments must redesign a shared intake process that matters deeply to both. There are several weeks to work on it.",a:1,w:"A complex issue important to both, with time to explore: collaborating."},
+{t:"A colleague cares much more than you do about which font appears on a flyer.",a:4,w:"The issue matters more to them and little to you, so accommodating preserves goodwill at low cost."},
+{t:"Two equally senior managers each want a larger share of a limited budget, and the deadline is tomorrow.",a:2,w:"Moderately important goals, equal power, little time: compromising."},
+{t:"In a heated meeting, a teammate is visibly angry and about to say something they may regret.",a:3,w:"Pausing to let emotions cool before returning to the issue is a deliberate use of avoiding."}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+Q.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<div>'+x.t+'</div><div class="opts"></div><div class="live" aria-live="polite" style="margin-top:8px"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".live"),w=false;
+ NM.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(dn===Q.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Consider how much the issue matters, the time available, and the relationship.</span>'}};o.appendChild(b)});qh.appendChild(d)});
+var PI=[
+{t:"“I need the room Tuesday at 2.”",a:0,w:"A fixed demand about a specific outcome: a position."},
+{t:"“Parents need a quiet, private space right after school lets out.”",a:1,w:"The underlying need behind the demand: an interest."},
+{t:"“Our class needs a kitchen demonstration area and seating for 20.”",a:1,w:"What the group actually needs: an interest."},
+{t:"“No, that time is ours.”",a:0,w:"A fixed claim to a specific outcome: a position."}];
+var ph=document.getElementById("ps");
+PI.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<div style="font-style:italic">'+x.t+'</div><div class="opts"></div><div class="live" aria-live="polite" style="margin-top:8px"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".live");
+ ["Position","Interest"].forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>'}
+  else{b.className="wrong";b.disabled=true;f.innerHTML='<span class="badbox">Is it a demand for a specific outcome, or the need behind it?</span>'}};o.appendChild(b)});ph.appendChild(d)});
+var OP=[["Flip a coin for the room.",0,"A fair-looking tie-break, but it leaves one need unmet and creates no value."],["Hold the support group in a quiet office at 2 p.m. and the class in the kitchen room at 3.",1,"Both interests are met: privacy and quiet for one, the demonstration kitchen and seating for the other. Looking past positions created an option that works for both."],["Give the room to whichever group has more members.",0,"This decides by power, not by interests, and the smaller group’s need goes unmet."]];
+var oh=document.querySelector("#opt .stack"),of=document.querySelector("#opt .live");
+OP.forEach(function(r){var b=document.createElement("button");b.textContent=r[0];b.onclick=function(){if(r[1]){b.className="right";oh.querySelectorAll("button").forEach(function(z){z.disabled=true});of.innerHTML='<span class="good">✓ '+r[2]+'</span>'}else{b.className="wrong";b.disabled=true;of.innerHTML='<span class="badbox">'+r[2]+' Try again.</span>'}};oh.appendChild(b)});
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
