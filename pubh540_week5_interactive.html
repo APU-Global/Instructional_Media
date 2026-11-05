@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive | Outbreak Lab: R0, Immunity, and Response</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:10px 12px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.35rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.key{display:flex;gap:12px;flex-wrap:wrap;font-size:.82rem;font-weight:700;margin:8px 0}.key span{display:flex;gap:6px;align-items:center}.key i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.q{border:2px solid #eee;border-radius:16px;padding:14px;margin-bottom:12px;background:#fff}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.opts button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a network of people with a few highlighted as infected and a shield protecting others">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g stroke="#f7dcdd" stroke-width="3" opacity=".7"><path d="M200 120L300 60M300 60L420 110M420 110L320 180M320 180L200 120M300 60L320 180M420 110L560 70M560 70L650 140M650 140L420 110M650 140L760 80M760 80L560 70"/></g>
+<g><circle cx="200" cy="120" r="20" fill="#f6c453"/><circle cx="300" cy="60" r="20" fill="#fff"/><circle cx="420" cy="110" r="22" fill="#a8353a" stroke="#fff" stroke-width="4"/><circle cx="320" cy="180" r="20" fill="#fff"/><circle cx="560" cy="70" r="20" fill="#a8353a" stroke="#fff" stroke-width="4"/><circle cx="650" cy="140" r="20" fill="#1f6f78"/><circle cx="760" cy="80" r="20" fill="#1f6f78"/></g>
+<g transform="translate(820 110)"><path d="M40 0l44 14v36c0 30-20 48-44 58C16 98-4 80-4 50V14z" fill="#fff"/><path d="M20 52l14 14 28-30" stroke="#1f6f78" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 540 · Week 5 Interactive</div><h1>Outbreak Lab</h1><p>The basic reproduction number estimates how many people one case may infect in a susceptible population. Run an outbreak, raise immunity, and see why speed, accuracy, and honest communication all matter.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Run an outbreak in a town of 400</h2>
+<p class="lead">Each person is a square. Choose R₀ (how many others one case would infect if everyone were susceptible) and how many people are immune through vaccination. Then start the outbreak. Each run is random, so try it a few times.</p>
+<div class="ctl"><div><label for="r0">R₀ <span id="r0v">3</span></label><input type="range" id="r0" min="0.5" max="6" step="0.5" value="3"></div>
+<div><label for="vx">Immune (vaccinated) <span id="vxv">0%</span></label><input type="range" id="vx" min="0" max="95" step="5" value="0"></div></div>
+<div class="row"><button class="btn pri" id="go">Start outbreak</button><button class="btn" id="stp">Next generation</button></div>
+<div class="key"><span><i style="background:#e0dad4"></i>Susceptible</span><span><i style="background:#1f6f78"></i>Immune</span><span><i style="background:#d34147"></i>Infectious</span><span><i style="background:#e0a526"></i>Recovered</span></div>
+<div class="two"><svg class="chart" id="gr" viewBox="0 0 400 400" role="img" aria-label="Grid of 400 people colored by status"></svg>
+<svg class="chart" id="cv" viewBox="0 0 400 400" role="img" aria-label="New cases per generation"></svg></div>
+<div class="stats" aria-live="polite"><div><b id="e1">–</b><small>Effective R<br>(R₀ × susceptible share)</small></div><div><b id="e2">–</b><small>Herd immunity threshold<br>1 − 1/R₀</small></div><div><b id="e3">0</b><small>Total ever infected</small></div><div><b id="e4">0</b><small>Generation</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite">Choose R₀ and immunity, then start an outbreak.</div>
+<p class="lead" style="font-size:.85rem">A simplified model: random mixing, a single generation of infectiousness, and vaccination that gives complete protection. Real outbreaks depend on incubation period, mode of transmission, and how people interact.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Communicate in the crisis</h2>
+<p class="lead">Public trust depends on timely, honest information. Misinformation can spread as quickly as disease. Explain uncertainty and update guidance as evidence changes.</p>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+</div>
+<p class="foot">Source: PUBH 540 Week 5 Deep Dive. Simulation is illustrative, not a forecasting tool.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var N=400,S=[],gen=0,curve=[],active=false,total=0,cur=[];
+var COL={s:"#e0dad4",v:"#1f6f78",i:"#d34147",r:"#e0a526"};
+function pois(l){var L=Math.exp(-l),k=0,p=1;do{k++;p*=Math.random()}while(p>L&&k<60);return k-1}
+function start(){var vx=+document.getElementById("vx").value/100;S=[];for(var i=0;i<N;i++)S.push(Math.random()<vx?"v":"s");
+ var seeds=0,tries=0;cur=[];while(seeds<3&&tries<1000){var j=Math.floor(Math.random()*N);tries++;if(S[j]==="s"){S[j]="i";cur.push(j);seeds++}}
+ gen=0;curve=[seeds];total=seeds;active=true;draw()}
+function step(){if(!active||!cur.length){return}
+ var R0=+document.getElementById("r0").value,nxt=[];
+ cur.forEach(function(p){var k=pois(R0);for(var c=0;c<k;c++){var j=Math.floor(Math.random()*N);if(S[j]==="s"){S[j]="n";nxt.push(j)}}});
+ cur.forEach(function(p){S[p]="r"});nxt.forEach(function(p){S[p]="i"});
+ cur=nxt;gen++;curve.push(nxt.length);total+=nxt.length;draw()}
+function draw(){
+ var R0=+document.getElementById("r0").value,vx=+document.getElementById("vx").value/100;
+ document.getElementById("r0v").textContent=R0;document.getElementById("vxv").textContent=Math.round(vx*100)+"%";
+ var gr=document.getElementById("gr");gr.innerHTML="";var cs=20;
+ if(!S.length){for(var i=0;i<N;i++)el("rect",{x:(i%20)*cs+1,y:Math.floor(i/20)*cs+1,width:cs-2,height:cs-2,rx:4,fill:COL.s},gr)}
+ else S.forEach(function(s,i){el("rect",{x:(i%20)*cs+1,y:Math.floor(i/20)*cs+1,width:cs-2,height:cs-2,rx:4,fill:COL[s==="n"?"i":s]},gr)});
+ var cv=document.getElementById("cv");cv.innerHTML="";el("rect",{width:400,height:400,fill:"#fcfcfc"},cv);
+ var mx=Math.max.apply(null,curve.concat([5]));var bw=Math.min(36,320/Math.max(curve.length,1));
+ el("path",{d:"M40 340H380",stroke:"#5b5557","stroke-width":2},cv);
+ curve.forEach(function(c,i){var h=c/mx*270;el("rect",{x:46+i*(bw+4),y:340-h,width:bw,height:h,rx:5,fill:"#d34147"},cv);if(curve.length<=14){var t=el("text",{x:46+i*(bw+4)+bw/2,y:334-h,"text-anchor":"middle","font-size":"11","font-weight":"700"},cv);t.textContent=c;var g=el("text",{x:46+i*(bw+4)+bw/2,y:358,"text-anchor":"middle","font-size":"10",fill:"#5b5557"},cv);g.textContent=i}});
+ var t1=el("text",{x:200,y:20,"text-anchor":"middle","font-size":"13","font-weight":"700"},cv);t1.textContent="New cases by generation (epidemic curve)";
+ var t2=el("text",{x:210,y:384,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},cv);t2.textContent="Generation";
+ var reff=R0*(1-vx),hit=1-1/R0;
+ document.getElementById("e1").textContent=(Math.round(reff*100)/100);document.getElementById("e2").textContent=R0>1?Math.round(hit*100)+"%":"none";
+ document.getElementById("e3").textContent=total;document.getElementById("e4").textContent=gen;
+ var a=document.getElementById("adv");
+ if(!active)a.innerHTML="<strong>Before you run it:</strong> with R₀ = "+R0+" and "+Math.round(vx*100)+"% immune, effective R is about "+(Math.round(reff*100)/100)+". "+(reff>1?"Above 1, so an outbreak can grow.":"At or below 1, so an outbreak should fizzle.")+" The herd immunity threshold is "+(R0>1?Math.round(hit*100)+"%":"not needed")+".";
+ else if(cur.length)a.innerHTML="<strong>Generation "+gen+": "+cur.length+" infectious.</strong> Press <em>Next generation</em> to continue."+(curve.length>1&&cur.length<curve[curve.length-2]?" Cases are now falling as susceptible people run out.":"");
+ else a.innerHTML="<strong>The outbreak is over: "+total+" of "+N+" people ("+Math.round(total/N*100)+"%) were infected.</strong> "+(vx>=hit&&R0>1?"Immunity at or above the threshold stops sustained spread and also protects people who are not immune.":reff<1?"Effective R below 1 kept it small.":"Try raising immunity above the herd threshold and compare.")}
+document.getElementById("go").onclick=function(){start();};
+document.getElementById("stp").onclick=function(){if(!active){start();return}step()};
+["r0","vx"].forEach(function(i){document.getElementById(i).oninput=function(){active=false;S=[];curve=[];total=0;gen=0;cur=[];draw()}});
+draw();
+var Q=[
+{t:"Early in a new outbreak, scientists are still learning how it spreads. Which public message is best?",o:[["“There is nothing to worry about.”",0,"False reassurance can destroy trust when the situation changes."],["“Here is what we know, what we do not know yet, and what you should do today. We will update you as evidence changes.”",1,"Honest, timely, and clear about uncertainty, and it promises updates. This builds trust."],["“This is a deadly plague. Stay indoors and trust no one.”",0,"Exaggeration can cause panic and harm. Avoid exaggeration or false reassurance."]]},
+{t:"A false rumor about the outbreak is spreading on social media. What should responders do?",o:[["Ignore it, because rumors fade on their own.",0,"Misinformation can spread as quickly as disease, so leaving it alone risks harm."],["Correct it respectfully, with evidence and a trusted source.",1,"Correct errors respectfully and with evidence, in places where people will see it."],["Mock the people sharing it.",0,"Ridicule damages trust and makes people less likely to listen."]]},
+{t:"Health officials ask a group of exposed people to isolate at home. Which statement best reflects an ethical approach?",o:[["Isolation requires justification, fairness, and support for those who bear the burden.",1,"Protecting the public can limit individual freedom, so measures need justification and equity in who bears the burdens."],["Public health emergencies make fairness unnecessary.",0,"Equity matters most when freedoms are limited."],["Only decisions that cost nothing are ethical.",0,"Ethical choices involve weighing real trade-offs, not avoiding all cost."]]}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+Q.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<div>'+x.t+'</div><div class="opts"></div><div class="live" aria-live="polite" style="margin-top:8px"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".live"),w=false;
+ x.o.forEach(function(r){var b=document.createElement("button");b.textContent=r[0];b.onclick=function(){
+  if(r[1]){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+r[2]+'</span>';if(!w)sc++;dn++;if(dn===Q.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+r[2]+'</span>'}};o.appendChild(b)});qh.appendChild(d)});
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
