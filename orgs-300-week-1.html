@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 300 Week 1</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--mut:#5b5b5b;--line:#e3dfd9;--warm:#edebe8;--soft:#faf8f6;--ok:#2f7d4f;--okbg:#e8f4ec;--warn:#9a6a12;--warnbg:#fbf1dc;--badbg:#fbe9ea;--teal:#2f6f8f;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4}
+button,input{font-family:inherit}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:12px 16px;gap:8px;max-width:1100px;margin:0 auto}
+header.top{display:flex;align-items:center;gap:12px;flex:none}
+.wk{background:var(--red-d);color:#fff;font-weight:700;letter-spacing:.08em;font-size:12px;padding:7px 11px;border-radius:8px;text-transform:uppercase;white-space:nowrap}
+h1{font-size:20px;margin:0;line-height:1.15}
+.sub{font-size:13px;color:var(--mut);margin:2px 0 0}
+.tabs{display:flex;gap:4px;flex:none;border-bottom:2px solid var(--line)}
+.tab{appearance:none;border:0;background:none;padding:9px 14px;font-size:14px;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:8px 8px 0 0}
+.tab:hover{background:var(--soft)}
+.tab[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+.panel{flex:1;min-height:0;display:none;position:relative}
+.panel.on{display:flex;flex-direction:column;gap:10px}
+.cols{flex:1;min-height:0;display:grid;gap:14px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-height:0}
+.card.white{background:#fff}
+h2{font-size:15px;margin:0 0 6px;color:var(--red-d)}
+h3{font-size:13px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+p{margin:0 0 6px}
+:focus-visible{outline:3px solid #1d6fb8;outline-offset:2px}
+.btn{appearance:none;background:var(--red-d);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer}
+.btn:hover{background:#8f2c30}
+.btn.ghost{background:#fff;color:var(--red-d);border:2px solid var(--red-d)}
+.btn.ghost:hover{background:var(--badbg)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:2px 8px;background:var(--warm);color:#444;white-space:nowrap}
+.pill.g{background:var(--okbg);color:var(--ok)}.pill.r{background:var(--badbg);color:var(--red-d)}
+.quote{border-left:4px solid var(--red);padding:4px 0 4px 10px;font-style:italic;color:#333;margin:6px 0}
+svg{display:block}
+/* quiz */
+.quiz{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.qtop{display:flex;align-items:center;justify-content:space-between;flex:none}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--warm);border:2px solid var(--warm)}
+.dot.cur{border-color:var(--red-d);background:#fff}
+.dot.s2{background:var(--ok);border-color:var(--ok)}.dot.s1{background:#d9a53a;border-color:#d9a53a}.dot.s0{background:var(--red);border-color:var(--red)}
+.qcount{font-size:13px;color:var(--mut);font-weight:600}
+.qgrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.scn{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.scn-t{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red-d)}
+.scn-q{font-size:17px;line-height:1.4}
+.qside{display:flex;flex-direction:column;gap:8px;min-height:0}
+.qprompt{font-weight:700;font-size:14px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 11px;font-size:14px;line-height:1.35;cursor:pointer;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--red);background:#fffafa}
+.opt .ol{flex:none;width:22px;height:22px;border-radius:50%;background:var(--warm);font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.opt[disabled]{cursor:default}
+.opt.s2{border-color:var(--ok);background:var(--okbg)}.opt.s1{border-color:#d9a53a;background:var(--warnbg)}.opt.s0{border-color:var(--red);background:var(--badbg)}
+.opt.best:not(.s2){border-style:dashed;border-color:var(--ok)}
+.opt.dim{opacity:.55}
+.fb{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;display:none}
+.fb.on{display:block}
+.fbh{font-weight:800;margin-bottom:2px}.fbh.s2{color:var(--ok)}.fbh.s1{color:var(--warn)}.fbh.s0{color:var(--red-d)}
+.bestp{margin-top:4px;padding-top:4px;border-top:1px dashed var(--line)}
+.fb .btn{margin-top:6px}
+.done{flex:1;display:grid;place-items:center;text-align:center}
+.done .big{font-size:48px;font-weight:800;color:var(--red-d);line-height:1}
+.done ul{text-align:left;margin:8px auto 12px;padding-left:20px;max-width:560px}
+.done li{margin:3px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* small screens: allow the one page scroll instead of clipping */
+@media (max-width:700px),(max-height:560px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .panel,.panel.on,.cols,.quiz,.qgrid{min-height:auto}
+ .cols,.qgrid{display:flex;flex-direction:column}
+}
+
+.mut{color:var(--mut);font-size:13px}
+.sl{display:grid;grid-template-columns:1fr auto;gap:0 8px;margin:0 0 8px;font-size:13px}
+.sl input{grid-column:1/-1;width:100%;accent-color:var(--red-d);margin:2px 0 0}
+.sl output{font-weight:800;color:var(--red-d)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
+.btn.sm{padding:5px 10px;font-size:12px;border-width:1.5px}
+#gt-result h2{font-size:18px;margin-bottom:4px}
+.track{display:grid;grid-template-columns:repeat(5,1fr);flex:none;padding-right:8px}
+.chev{border:0;background:var(--warm);color:#333;padding:9px 4px 9px 22px;margin-left:-8px;font-size:12px;cursor:pointer;text-align:center;line-height:1.2;
+ clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%,16px 50%)}
+.chev:first-child{margin-left:0;padding-left:10px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%)}
+.chev b{display:block;font-size:14px}
+.chev:hover{background:#e0dcd6}
+.chev[aria-pressed=true]{background:var(--red-d);color:#fff}
+.chev:focus-visible{background:#1d6fb8;color:#fff;outline:none}
+.loop{flex:none;position:relative;height:18px;border:2px dashed var(--red);border-top:0;border-radius:0 0 16px 16px;margin:-2px 4% 4px;text-align:center}
+.loop span{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);background:#fff;padding:0 10px;font-size:12px;font-weight:600;color:var(--red-d);white-space:nowrap}
+.loop::before{content:"◂";position:absolute;left:-9px;top:-4px;color:var(--red);font-size:16px;transform:rotate(90deg)}
+#stage-info h2{font-size:22px;margin:0}
+#stage-info .tagline{font-size:14px;color:var(--mut);margin-bottom:8px}
+#stage-info .lbl{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--red-d);text-transform:uppercase;margin-top:8px}
+.leadbox{background:#fff;border:2px solid var(--red-d);border-radius:10px;padding:8px 11px;margin-top:4px}
+.speech{display:flex;gap:10px;align-items:center}
+.bub{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 13px;font-size:16px;position:relative}
+@media (max-width:700px){.chev{font-size:10px;padding-left:14px}.chev b{font-size:11px}}
+
+.legend{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:12.5px;line-height:1.3;color:#333;display:grid;gap:3px}
+.lg{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:4px;border-radius:50%}
+.lg.tgt{border:3px solid var(--red-d);background:radial-gradient(var(--red-d) 30%,transparent 32%)}
+.lg.ln{height:4px;border-radius:2px;background:var(--teal);vertical-align:3px}
+.lg.rg{border:3px solid var(--red-d);border-radius:50%}
+.speech svg{flex:none}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="wk">Week 1</div><div><h1>Groups, Teams, and Their Dynamics</h1><p class="sub">ORGS 300 · Dynamics of Group Behavior · Interactive Deep Dive</p></div></header>
+<nav class="tabs" role="tablist" aria-label="Activities">
+ <button class="tab" role="tab" data-p="p1">1 · Group or Team?</button>
+ <button class="tab" role="tab" data-p="p2">2 · Stages of Team Development</button>
+ <button class="tab" role="tab" data-p="p3">3 · Diagnose the Team</button>
+</nav>
+<section class="panel" id="p1" role="tabpanel">
+ <div class="cols" style="grid-template-columns:1.2fr 1fr">
+  <div class="card white" style="padding:6px"><svg id="gt-svg" viewBox="0 0 460 430" width="100%" height="100%" role="img" aria-label="Five team members; connections, shared goal and accountability ring change with the sliders" style="max-height:100%"></svg></div>
+  <div style="display:flex;flex-direction:column;gap:10px;min-height:0">
+   <div class="card">
+    <h2>Slide each dimension</h2>
+    <label class="sl"><span><b>Goals</b> — how shared &amp; aligned?</span><output id="o-g"></output><input type="range" id="r-g" min="0" max="100" value="20"></label>
+    <label class="sl"><span><b>Accountability</b> — individual ↔ collective</span><output id="o-a"></output><input type="range" id="r-a" min="0" max="100" value="20"></label>
+    <label class="sl"><span><b>Interdependence</b> — how much do we rely on each other?</span><output id="o-d"></output><input type="range" id="r-d" min="0" max="100" value="20"></label>
+    <div class="presets"><span class="mut">Try an example:</span>
+     <button class="btn ghost sm" data-g="25" data-a="15" data-d="15">Sales reps, shared office</button>
+     <button class="btn ghost sm" data-g="55" data-a="45" data-d="40">Student committee</button>
+     <button class="btn ghost sm" data-g="95" data-a="90" data-d="95">Surgical team</button></div>
+   </div>
+   <div class="card white" id="gt-result" aria-live="polite" style="flex:1"></div>
+  </div>
+ </div>
+</section>
+<section class="panel" id="p2" role="tabpanel">
+ <div class="track" id="track" role="group" aria-label="Choose a stage"></div>
+ <div class="loop"><span>Teams can move back and forth between stages as conditions change</span></div>
+ <div class="cols" style="grid-template-columns:1.05fr 1fr">
+  <div class="card white" style="padding:6px"><svg id="stage-svg" viewBox="0 0 400 320" width="100%" height="100%" role="img" style="max-height:100%"></svg></div>
+  <div class="card" id="stage-info"></div>
+ </div>
+</section>
+<section class="panel" id="p3" role="tabpanel"><div class="quiz" id="quiz1"></div></section>
+
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const SKIN=['#f2cdaa','#dca77a','#b27a50','#85553a','#f6d9c0'];
+const HAIR=['#2b1d16','#5a3a22','#d4a24a','#1f1f1f','#8a2f2f'];
+const PAL=['#a8353a','#2f6f8f','#3f7d5a','#d98e2b','#6a4c93','#3b4a5a'];
+
+/* Avatar graphic: bust centred on x, standing on baseline y. mood: smile|big|calm|neutral|frown|angry|worried|shout */
+function person(x,y,o={}){
+  const s=o.s||1,c=o.c||PAL[0],sk=o.skin||SKIN[0],hr=o.hair||HAIR[0],m=o.mood||'smile';
+  const hy=y-36*s, my=hy+6*s, st='stroke="#4a2a22" stroke-width="'+(1.6*s)+'" fill="none" stroke-linecap="round"';
+  let mouth='',brows='';
+  const P=(a,b)=>`${(x+a*s).toFixed(1)} ${(my+b*s).toFixed(1)}`;
+  if(m==='smile')mouth=`<path d="M${P(-5,-1)} Q${P(0,4.5)} ${P(5,-1)}" ${st}/>`;
+  else if(m==='calm')mouth=`<path d="M${P(-3.5,0)} Q${P(0,2.5)} ${P(3.5,0)}" ${st}/>`;
+  else if(m==='big')mouth=`<path d="M${P(-6,-2)} Q${P(0,10)} ${P(6,-2)}Z" fill="#7a2a2a"/>`;
+  else if(m==='neutral')mouth=`<path d="M${P(-4,1)} L${P(4,1)}" ${st}/>`;
+  else if(m==='frown'||m==='worried')mouth=`<path d="M${P(-5,3)} Q${P(0,-2)} ${P(5,3)}" ${st}/>`;
+  else if(m==='angry')mouth=`<path d="M${P(-5,3.5)} Q${P(0,-2.5)} ${P(5,3.5)}" ${st}/>`;
+  else if(m==='shout')mouth=`<ellipse cx="${x}" cy="${(my+2*s).toFixed(1)}" rx="${3.4*s}" ry="${4*s}" fill="#7a2a2a"/>`;
+  const B=(x1,y1,x2,y2)=>`<path d="M${(x+x1*s).toFixed(1)} ${(hy+y1*s).toFixed(1)} L${(x+x2*s).toFixed(1)} ${(hy+y2*s).toFixed(1)}" ${st}/>`;
+  if(m==='angry')brows=B(-9,-7,-2.5,-3.5)+B(9,-7,2.5,-3.5);
+  if(m==='worried')brows=B(-9,-4,-2.5,-7.5)+B(9,-4,2.5,-7.5);
+  const ey=(hy-0.5*s).toFixed(1);
+  const g=`<g class="${o.cls||''}">
+   <path d="M${x-20*s} ${y} Q${x-20*s} ${y-22*s} ${x} ${y-22*s} Q${x+20*s} ${y-22*s} ${x+20*s} ${y}Z" fill="${c}"/>
+   <circle cx="${x}" cy="${hy}" r="${13*s}" fill="${sk}"/>
+   <path d="M${x-13*s} ${hy-2*s} A${13*s} ${13*s} 0 0 1 ${x+13*s} ${hy-2*s} Q${x} ${hy-9*s} ${x-13*s} ${hy-2*s}Z" fill="${hr}"/>
+   <circle cx="${x-5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/><circle cx="${x+5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/>
+   ${brows}${mouth}
+   ${o.label?`<text x="${x}" y="${y+14*s}" text-anchor="middle" font-size="${Math.max(10,11*s)}" font-weight="700" fill="#333">${o.label}</text>`:''}
+  </g>`;
+  return g;
+}
+const avatarSVG=(o,w=64,h=72)=>`<svg viewBox="0 0 64 72" width="${w}" height="${h}" aria-hidden="true">${person(32,62,Object.assign({s:1.15},o))}</svg>`;
+
+function initTabs(){
+  const tabs=$$('.tab');
+  function show(id,focus){
+    tabs.forEach(t=>{const on=t.dataset.p===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;});
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===id));
+    document.dispatchEvent(new CustomEvent('panelshow',{detail:id}));
+  }
+  tabs.forEach((t,k)=>{
+    t.onclick=()=>show(t.dataset.p);
+    t.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(k+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];n.focus();show(n.dataset.p);}};
+  });
+  show(tabs[0].dataset.p);
+}
+
+/* Scenario quiz engine. Each option: {label, score:0|1|2, fb}. Highest score = "best fit". */
+function Quiz(root,cfg){
+  const items=cfg.items;let i=0,score=0,max=0,res=[];
+  const TITLES={2:'Best fit',1:'Workable, but not the strongest',0:'Not the best fit'};
+  const ICON={2:'✔',1:'◐',0:'✖'};
+  function render(){
+    if(i>=items.length)return done();
+    const it=items[i];
+    root.innerHTML=`<div class="qtop"><div class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="dot ${k<i?'s'+res[k]:''} ${k===i?'cur':''}"></span>`).join('')}</div><div class="qcount">${cfg.noun||'Question'} ${i+1} of ${items.length}</div></div>
+    <div class="qgrid"><div class="card scn">${it.art||''}${it.title?`<div class="scn-t">${it.title}</div>`:''}<div class="scn-q">${it.text}</div></div>
+    <div class="qside"><div class="qprompt">${it.ask||cfg.ask}</div>
+    <div class="opts">${it.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="ol">${'ABCDE'[k]}</span><span>${o.label}</span></button>`).join('')}</div>
+    <div class="fb" aria-live="polite"></div></div></div>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+  }
+  function pick(k){
+    const it=items[i],o=it.options[k],top=Math.max(...it.options.map(x=>x.score));
+    score+=o.score;max+=top;res[i]=o.score;
+    $$('.opt',root).forEach((b,j)=>{b.disabled=true;const op=it.options[j];
+      if(j===k)b.classList.add('s'+op.score);else if(op.score===top)b.classList.add('best');else b.classList.add('dim');});
+    const best=it.options.find(x=>x.score===top);
+    const fb=$('.fb',root);
+    fb.innerHTML=`<div class="fbh s${o.score}">${ICON[o.score]} ${TITLES[o.score]}</div><div>${o.fb}</div>`+
+      (o.score<top?`<div class="bestp"><b>Strongest choice:</b> ${(best.short||best.label).replace(/^["“]|["”]$/g,'')} — ${best.bfb||best.fb}</div>`:'')+
+      `<button class="btn">${i<items.length-1?'Next →':'See results'}</button>`;
+    fb.classList.add('on');
+    $('.btn',fb).onclick=()=>{i++;render()};$('.btn',fb).focus();
+  }
+  function done(){
+    const pct=max?score/max:0;
+    const msg=pct>=.85?cfg.msgHigh:pct>=.55?cfg.msgMid:cfg.msgLow;
+    root.innerHTML=`<div class="done card white"><div><div class="scn-t">${cfg.doneTitle||'Results'}</div><div class="big">${score} / ${max}</div><p style="margin-top:6px"><b>${msg}</b></p>
+    <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul><button class="btn">Try again</button></div></div>`;
+    $('.btn',root).onclick=()=>{i=0;score=0;max=0;res=[];render()};
+  }
+  render();
+}
+
+/* ---------- Tab 1: Group or Team ---------- */
+(function(){
+  const svg=$('#gt-svg'),cx=230,cy=212,R=118,Ry=100;
+  const cols=[PAL[0],PAL[1],PAL[2],PAL[3],PAL[4]];
+  const skins=[SKIN[0],SKIN[2],SKIN[1],SKIN[4],SKIN[3]],hairs=[HAIR[0],HAIR[3],HAIR[2],HAIR[1],HAIR[4]];
+  const pts=[0,1,2,3,4].map(k=>{const a=(-90+72*k)*Math.PI/180;return {x:cx+R*Math.cos(a),y:cy+Ry*Math.sin(a)+26};});
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  function draw(g,a,d){
+    g/=100;a/=100;d/=100;
+    let s='';
+    /* accountability ring */
+    s+=`<ellipse cx="${cx}" cy="${cy+2}" rx="205" ry="185" fill="${PAL[0]}" fill-opacity="${(a*.07).toFixed(3)}" stroke="${PAL[0]}" stroke-width="${(1+5*a).toFixed(1)}" stroke-opacity="${(.15+.85*a).toFixed(2)}" stroke-dasharray="${a<.5?'4 6':'none'}"/>`;
+    s+=`<text x="${cx}" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="${PAL[0]}" opacity="${a>=.5?1:0}">We answer to each other</text>`;
+    s+=`<text x="${cx}" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#777" opacity="${a<.5?1:0}">Each person answers for their own work</text>`;
+    /* interdependence lines */
+    for(let i=0;i<5;i++)for(let j=i+1;j<5;j++){
+      s+=`<line x1="${pts[i].x}" y1="${pts[i].y-34}" x2="${pts[j].x}" y2="${pts[j].y-34}" stroke="${PAL[1]}" stroke-width="${(1+4*d).toFixed(1)}" stroke-opacity="${(d*.75).toFixed(2)}" stroke-linecap="round"/>`;
+    }
+    /* goals */
+    const tr=(.55+.45*g);
+    s+=`<g opacity="${(.12+.88*g).toFixed(2)}" transform="translate(${cx} ${cy-6}) scale(${tr.toFixed(2)})"><circle r="30" fill="#fff" stroke="${PAL[0]}" stroke-width="3"/><circle r="20" fill="${PAL[0]}" fill-opacity=".18" stroke="${PAL[0]}" stroke-width="3"/><circle r="9" fill="${PAL[0]}"/></g>`;
+    pts.forEach((p,k)=>{
+      const ox=cx+(p.x-cx)*1.42,oy=cy+(p.y-cy)*1.3-12;
+      s+=`<line x1="${p.x}" y1="${p.y-34}" x2="${ox}" y2="${oy}" stroke="${cols[k]}" stroke-width="2" stroke-dasharray="4 4" opacity="${(1-g).toFixed(2)}"/>`;
+      s+=`<g transform="translate(${ox} ${oy})" opacity="${(1-g*.95).toFixed(2)}"><circle r="11" fill="#fff" stroke="${cols[k]}" stroke-width="3"/><circle r="4" fill="${cols[k]}"/></g>`;
+      s+=`<line x1="${p.x}" y1="${p.y-34}" x2="${cx+(p.x-cx)*.3}" y2="${cy-6+(p.y-cy-6)*.3}" stroke="${PAL[0]}" stroke-width="2.5" opacity="${(g*.9).toFixed(2)}"/>`;
+    });
+    pts.forEach((p,k)=>{
+      const mood=(g+a+d)/3>.66?'big':(g+a+d)/3>.33?'smile':'neutral';
+      s+=person(p.x,p.y,{s:1.15,c:cols[k],skin:skins[k],hair:hairs[k],mood});
+    });
+    svg.innerHTML=s;
+  }
+  const res=$('#gt-result');
+  function update(){
+    const g=+$('#r-g').value,a=+$('#r-a').value,d=+$('#r-d').value;
+    $('#o-g').textContent=g+'%';$('#o-a').textContent=a+'%';$('#o-d').textContent=d+'%';
+    draw(g,a,d);
+    const avg=(g+a+d)/3;
+    let h,t;
+    if(avg<35){h='A working group';t='Members mostly pursue their own tasks and answer for their own results. Coordination is light, and that is fine for some work.';}
+    else if(avg<70){h='An emerging team';t='Some shared purpose and mutual reliance are developing, but there is room to deepen both goals and accountability.';}
+    else{h='A team';t='Members share clear goals, hold each other accountable, and depend on one another’s work to succeed.';}
+    const m=[['goals',g],['accountability',a],['interdependence',d]].sort((x,y)=>x[1]-y[1])[0];
+    res.innerHTML=`<h3>What would we call this?</h3><h2>${h}</h2><p>${t}</p>`+(m[1]<85?`<p class="mut"><b>Biggest gap:</b> ${m[0]}. Raising it would move this group furthest toward a team.</p>`:'')+`<div class="legend"><div><i class="lg tgt"></i> <b>Goals:</b> separate personal targets merge into one shared target.</div><div><i class="lg ln"></i> <b>Interdependence:</b> lines show members relying on each other.</div><div><i class="lg rg"></i> <b>Accountability:</b> a solid ring shows shared responsibility.</div></div>`;
+  }
+  $$('#p1 input[type=range]').forEach(r=>r.oninput=update);
+  $$('#p1 .presets button').forEach(b=>b.onclick=()=>{$('#r-g').value=b.dataset.g;$('#r-a').value=b.dataset.a;$('#r-d').value=b.dataset.d;update();});
+  update();
+})();
+
+/* ---------- Tab 2: Stages ---------- */
+(function(){
+  const P=(x,y,k,mood,s=1)=>person(x,y,{s,c:PAL[k%6],skin:SKIN[k%5],hair:HAIR[(k+2)%5],mood});
+  const ground='<ellipse cx="200" cy="244" rx="190" ry="10" fill="#edebe8"/>';
+  const bolt=(x,y,r=0)=>`<path transform="translate(${x} ${y}) rotate(${r})" d="M0 -26 L-12 4 L-2 4 L-8 28 L14 -6 L3 -6 L10 -26Z" fill="#e8b11a" stroke="#b9820a" stroke-width="1.5"/>`;
+  const ART=[
+   /*forming*/ ()=>`${ground}<ellipse cx="200" cy="165" rx="150" ry="70" fill="none" stroke="#c7c2ba" stroke-width="2" stroke-dasharray="3 7"/>
+     ${P(55,175,0,'neutral')}${P(335,185,1,'worried')}${P(150,232,2,'worried')}${P(265,150,3,'neutral')}${P(215,225,4,'neutral',.9)}
+     ${[[55,108],[335,118],[150,165],[265,83],[240,160]].map(([x,y])=>`<g transform="translate(${x} ${y})"><circle r="12" fill="#fff" stroke="#a8353a" stroke-width="2"/><text y="5" text-anchor="middle" font-size="15" font-weight="800" fill="#a8353a">?</text></g>`).join('')}
+     <text x="200" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#666">Everyone is orienting…</text>`,
+   /*storming*/ ()=>`${ground}${P(65,210,0,'angry')}${P(135,210,1,'shout')}${P(265,210,2,'angry')}${P(335,210,3,'frown')}${P(200,150,4,'worried',.9)}
+     ${bolt(200,200)}${bolt(168,92,-18)}${bolt(240,100,18)}
+     <g transform="translate(100 120)"><rect x="-38" y="-16" width="76" height="26" rx="10" fill="#fff" stroke="#a8353a" stroke-width="2"/><text y="3" text-anchor="middle" font-size="15" font-weight="800" fill="#a8353a">My way!</text></g>
+     <g transform="translate(300 128)"><rect x="-42" y="-16" width="84" height="26" rx="10" fill="#fff" stroke="#a8353a" stroke-width="2"/><text y="3" text-anchor="middle" font-size="15" font-weight="800" fill="#a8353a">No, mine!</text></g>`,
+   /*norming*/ ()=>`${ground}<rect x="115" y="22" width="170" height="112" rx="8" fill="#fff" stroke="#8a6a45" stroke-width="4"/>
+     <text x="200" y="45" text-anchor="middle" font-size="14" font-weight="800" fill="#a8353a">OUR TEAM NORMS</text>
+     ${['Start on time','Rotate note-taking','Reply within 24 hrs'].map((t,i)=>`<g transform="translate(130 ${62+i*24})"><circle r="8" cx="6" cy="-4" fill="#e8f4ec" stroke="#2f7d4f" stroke-width="1.5"/><path d="M2 -4 L5 -1 L10 -8" stroke="#2f7d4f" stroke-width="2.2" fill="none" stroke-linecap="round"/><text x="22" y="0" font-size="12.5" fill="#222">${t}</text></g>`).join('')}
+     ${P(50,225,0,'calm')}${P(125,235,1,'smile')}${P(200,238,2,'smile')}${P(275,235,3,'calm')}${P(350,225,4,'smile')}`,
+   /*performing*/ ()=>`${ground}
+     <path d="M70 200 L135 232 L265 232 L330 200 L200 205Z" fill="none"/>
+     <polyline points="70,170 135,205 200,215 265,205 330,170" fill="none" stroke="#2f6f8f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/>
+     <line x1="200" y1="40" x2="200" y2="120" stroke="#6b5a45" stroke-width="5" stroke-linecap="round"/><path d="M203 42 L262 62 L203 84Z" fill="#a8353a"/>
+     <g transform="translate(200 128)"><circle r="26" fill="#fff" stroke="#a8353a" stroke-width="3"/><circle r="15" fill="#a8353a" fill-opacity=".2" stroke="#a8353a" stroke-width="3"/><circle r="6" fill="#a8353a"/></g>
+     ${P(70,200,0,'big',1.05)}${P(135,235,1,'big',1.05)}${P(265,235,2,'big',1.05)}${P(330,200,3,'big',1.05)}${P(200,236,4,'big',1.05)}
+     ${[[40,70],[355,60],[95,45],[310,110]].map(([x,y])=>`<path transform="translate(${x} ${y})" d="M0 -8 L2.5 -2.5 L8 0 L2.5 2.5 L0 8 L-2.5 2.5 L-8 0 L-2.5 -2.5Z" fill="#e8b11a"/>`).join('')}`,
+   /*adjourning*/ ()=>`${ground}
+     <g transform="translate(135 62)"><path d="M-105 -20 H105 L91 0 L105 20 H-105 L-91 0Z" fill="#a8353a"/><text y="5" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">Project delivered ✓</text></g>
+     ${P(50,230,0,'smile')}${P(115,238,1,'big')}${P(180,230,2,'smile')}
+     <path d="M205 150 Q250 95 300 150" fill="none" stroke="#a8353a" stroke-width="3.5" stroke-dasharray="7 5" stroke-linecap="round"/><path d="M300 150 l-12 -2 l7 -11 z" fill="#a8353a" transform="rotate(8 300 150)"/>
+     <text x="255" y="92" text-anchor="middle" font-size="13" font-weight="700" fill="#a8353a">re-form</text>
+     ${P(300,232,3,'calm',.9)}${P(350,232,4,'calm',.9)}
+     <circle cx="325" cy="175" r="22" fill="none" stroke="#c7c2ba" stroke-width="2" stroke-dasharray="3 6"/>`
+  ];
+  const S=[
+   {n:'Forming',t:'Members orient',w:'Members get oriented and the purpose is established. People are polite, cautious, and still working out who does what.',h:'“Who’s leading this? What exactly are we supposed to do?”',l:'Emphasize vision and purpose. Clarify goals, roles, and how the team will communicate.'},
+   {n:'Storming',t:'Differences surface',w:'Differing views and roles surface. Disagreements about approach, influence, and responsibility become visible.',h:'“That’s not what we agreed — I thought I owned that part.”',l:'Return to vision and purpose. Treat disagreement as normal and manage communication so it stays constructive.'},
+   {n:'Norming',t:'Norms & trust grow',w:'Shared norms and trust develop. The team settles into agreed ways of working together.',h:'“Let’s agree to send updates by Friday and rotate note-taking.”',l:'Reinforce the norms the team is creating and invite members to shape them.'},
+   {n:'Performing',t:'Team works effectively',w:'The team works effectively toward its goals. Trust is high and members rely on one another’s strengths.',h:'“You take the data, I’ll take the design — we’ve got this.”',l:'Stay out of the way, remove obstacles, and watch for changes (new members, shifting goals) that could send the team back a stage.'},
+   {n:'Adjourning',t:'Wrap up or re-form',w:'The team wraps up or is reshaped. The video calls this final stage “re-forming”; the discussion prompt uses “adjourning.”',h:'“What did we learn, and who is doing what next?”',l:'Recognize contributions, capture lessons learned, and help members transition to what comes next.'}
+  ];
+  const tr=$('#track');let cur=0;
+  tr.innerHTML=S.map((s,i)=>`<button class="chev" data-i="${i}"><b>${i+1}. ${s.n}</b>${s.t}</button>`).join('');
+  function show(i){
+    cur=i;$$('.chev',tr).forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+    const s=S[i];
+    $('#stage-svg').innerHTML='<rect width="400" height="320" rx="12" fill="#faf6f1"/><g transform="translate(0 52)">'+ART[i]()+'</g><text x="200" y="34" text-anchor="middle" font-size="20" font-weight="800" fill="#a8353a" letter-spacing="1">'+s.n.toUpperCase()+'</text>';$('#stage-svg').setAttribute('aria-label',`Illustration of the ${s.n} stage`);
+    $('#stage-info').innerHTML=`<h3>Stage ${i+1} of 5</h3><h2>${s.n}</h2><div class="tagline">${s.t}</div><p>${s.w}</p>
+     <div class="lbl">What you might hear</div><div class="quote">${s.h}</div>
+     <div class="lbl">Leader’s move</div><div class="leadbox">${s.l}</div>`;
+  }
+  $$('.chev',tr).forEach(b=>b.onclick=()=>show(+b.dataset.i));
+  document.addEventListener('panelshow',e=>{if(e.detail==='p2')show(cur)});
+  show(0);
+})();
+
+/* ---------- Tab 3: Diagnose ---------- */
+(function(){
+  const who=(k,mood,quote)=>`<div class="speech">${avatarSVG({c:PAL[k],skin:SKIN[k%5],hair:HAIR[k%5],mood},58,66)}<div class="bub">${quote}</div></div>`;
+  const stageOpts=(right,partial,lead)=>['Forming','Storming','Norming','Performing','Adjourning'].map(n=>{
+    const sc=n===right?2:n===partial?1:0;
+    return {label:n,score:sc,bfb:lead,
+      fb:sc===2?`<b>${right} fits.</b> ${lead}`:sc===1?`Partly right — some ${partial} cues are present — but the strongest signal here is <b>${right}</b>.`:`Look again: the cues here point to <b>${right}</b>, not ${n}.`};
+  });
+  Quiz($('#quiz1'),{
+    ask:'Which stage of team development is this team in?',noun:'Team',doneTitle:'Your diagnosis',
+    items:[
+     {title:'Team A · Week 1',art:who(1,'worried','“Nobody’s said what we’re actually delivering. I’ll wait to see what everyone else thinks.”'),text:'Members are polite and cautious. No one is sure who is leading or what the goal is.',options:stageOpts('Forming',null,'The leader’s best move is to emphasize vision and purpose and clarify roles.')},
+     {title:'Team B · Week 4',art:who(0,'angry','“You keep ignoring my section! I was supposed to own the budget.”'),text:'Two members clash over who is responsible for what, and others have gone quiet.',options:stageOpts('Storming',null,'Return to vision and purpose and keep communication constructive.')},
+     {title:'Team C · Week 7',art:who(2,'smile','“We agreed: meetings start on time, notes rotate, and we reply within 24 hours.”'),text:'The team has just written down how it will work together, and the mood is lighter.',options:stageOpts('Norming','Performing','Reinforce the norms the team is building and invite members to shape them.')},
+     {title:'Team D · Month 3',art:who(3,'big','“We hit the goal again. You handle the data, I’ll handle the design — we barely need meetings.”'),text:'Members trust each other’s strengths and results come steadily.',options:stageOpts('Performing','Norming','Delegate, remove obstacles, and watch for changes that could send the team backward.')},
+     {title:'Team E · Final week',art:who(4,'calm','“We shipped it! Let’s capture what we learned and talk about who’s doing what next.”'),text:'The project is delivered and members are reflecting and looking toward new assignments.',options:stageOpts('Adjourning',null,'Recognize contributions and help members transition.')},
+     {title:'Team F · A twist',art:who(5,'worried','“We were cruising — then two new people joined and the deadline moved up. Now we’re arguing about roles again.”'),text:'A high-performing team is suddenly debating roles after a change in membership and goals.',options:stageOpts('Storming','Forming','Teams can move <i>back</i> as conditions change. Name what changed and return to purpose.')}
+    ],
+    msgHigh:'Excellent — you read the stage and the leader’s move.',msgMid:'Good start — re-read the stage cues and try again.',msgLow:'Review the Stages tab, then try again.',
+    takeaways:['Identify the stage <b>before</b> choosing a leadership response.','Return to vision and purpose when a team is forming or storming.','Expect teams to move <b>back and forth</b> between stages, not only forward.'],
+  });
+})();
+initTabs();
+
+</script>
+</body>
+</html>

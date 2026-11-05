@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 300 Week 2</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--mut:#5b5b5b;--line:#e3dfd9;--warm:#edebe8;--soft:#faf8f6;--ok:#2f7d4f;--okbg:#e8f4ec;--warn:#9a6a12;--warnbg:#fbf1dc;--badbg:#fbe9ea;--teal:#2f6f8f;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4}
+button,input{font-family:inherit}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:12px 16px;gap:8px;max-width:1100px;margin:0 auto}
+header.top{display:flex;align-items:center;gap:12px;flex:none}
+.wk{background:var(--red-d);color:#fff;font-weight:700;letter-spacing:.08em;font-size:12px;padding:7px 11px;border-radius:8px;text-transform:uppercase;white-space:nowrap}
+h1{font-size:20px;margin:0;line-height:1.15}
+.sub{font-size:13px;color:var(--mut);margin:2px 0 0}
+.tabs{display:flex;gap:4px;flex:none;border-bottom:2px solid var(--line)}
+.tab{appearance:none;border:0;background:none;padding:9px 14px;font-size:14px;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:8px 8px 0 0}
+.tab:hover{background:var(--soft)}
+.tab[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+.panel{flex:1;min-height:0;display:none;position:relative}
+.panel.on{display:flex;flex-direction:column;gap:10px}
+.cols{flex:1;min-height:0;display:grid;gap:14px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-height:0}
+.card.white{background:#fff}
+h2{font-size:15px;margin:0 0 6px;color:var(--red-d)}
+h3{font-size:13px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+p{margin:0 0 6px}
+:focus-visible{outline:3px solid #1d6fb8;outline-offset:2px}
+.btn{appearance:none;background:var(--red-d);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer}
+.btn:hover{background:#8f2c30}
+.btn.ghost{background:#fff;color:var(--red-d);border:2px solid var(--red-d)}
+.btn.ghost:hover{background:var(--badbg)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:2px 8px;background:var(--warm);color:#444;white-space:nowrap}
+.pill.g{background:var(--okbg);color:var(--ok)}.pill.r{background:var(--badbg);color:var(--red-d)}
+.quote{border-left:4px solid var(--red);padding:4px 0 4px 10px;font-style:italic;color:#333;margin:6px 0}
+svg{display:block}
+/* quiz */
+.quiz{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.qtop{display:flex;align-items:center;justify-content:space-between;flex:none}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--warm);border:2px solid var(--warm)}
+.dot.cur{border-color:var(--red-d);background:#fff}
+.dot.s2{background:var(--ok);border-color:var(--ok)}.dot.s1{background:#d9a53a;border-color:#d9a53a}.dot.s0{background:var(--red);border-color:var(--red)}
+.qcount{font-size:13px;color:var(--mut);font-weight:600}
+.qgrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.scn{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.scn-t{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red-d)}
+.scn-q{font-size:17px;line-height:1.4}
+.qside{display:flex;flex-direction:column;gap:8px;min-height:0}
+.qprompt{font-weight:700;font-size:14px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 11px;font-size:14px;line-height:1.35;cursor:pointer;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--red);background:#fffafa}
+.opt .ol{flex:none;width:22px;height:22px;border-radius:50%;background:var(--warm);font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.opt[disabled]{cursor:default}
+.opt.s2{border-color:var(--ok);background:var(--okbg)}.opt.s1{border-color:#d9a53a;background:var(--warnbg)}.opt.s0{border-color:var(--red);background:var(--badbg)}
+.opt.best:not(.s2){border-style:dashed;border-color:var(--ok)}
+.opt.dim{opacity:.55}
+.fb{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;display:none}
+.fb.on{display:block}
+.fbh{font-weight:800;margin-bottom:2px}.fbh.s2{color:var(--ok)}.fbh.s1{color:var(--warn)}.fbh.s0{color:var(--red-d)}
+.bestp{margin-top:4px;padding-top:4px;border-top:1px dashed var(--line)}
+.fb .btn{margin-top:6px}
+.done{flex:1;display:grid;place-items:center;text-align:center}
+.done .big{font-size:48px;font-weight:800;color:var(--red-d);line-height:1}
+.done ul{text-align:left;margin:8px auto 12px;padding-left:20px;max-width:560px}
+.done li{margin:3px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* small screens: allow the one page scroll instead of clipping */
+@media (max-width:700px),(max-height:560px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .panel,.panel.on,.cols,.quiz,.qgrid{min-height:auto}
+ .cols,.qgrid{display:flex;flex-direction:column}
+}
+
+.brief{flex:none;font-size:14px;background:var(--warm);border-radius:10px;padding:8px 12px}
+.memcol{display:flex;flex-direction:column;gap:8px;min-height:0}
+.mem{display:flex;gap:10px;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 10px;flex:1;min-height:0}
+.mem svg{flex:none}
+.mem .mi{flex:1;min-width:0}
+.mem .mn{font-weight:800;font-size:14px}.mem .mr{font-weight:500;color:var(--mut);font-size:12px}
+.ask{display:block;width:100%;text-align:left;margin-top:4px;background:#fff;border:2px dashed #b9b2a8;border-radius:8px;padding:5px 8px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.ask:hover:not([disabled]){border-color:var(--red);background:#fffafa}
+.ask[disabled]{cursor:default}
+.ask.done{border-style:solid;border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+.ask.off{opacity:.5}
+.rightcol{display:flex;flex-direction:column;gap:8px;min-height:0}
+#clockrow{display:flex;align-items:center;gap:12px;padding:8px 12px;flex:none}
+.clk{flex:1}
+.clk b{font-size:13px}
+.ctrack{height:10px;background:var(--warm);border-radius:6px;overflow:hidden;margin-top:3px}
+.cfill{height:100%;background:var(--teal);transition:width .4s,background .4s}
+.cfill.low{background:var(--red)}
+#bars{flex:none;padding:8px 12px}
+.brow{display:grid;grid-template-columns:62px 1fr 34px;align-items:center;gap:8px;height:27px}
+.brow .bn{font-weight:700;font-size:13px}
+.btrack{position:relative;height:16px;background:var(--soft);border-radius:4px;border:1px solid var(--line)}
+.btrack::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:#999}
+.bfill{position:absolute;top:1px;bottom:1px;transition:left .5s,width .5s,background .5s;border-radius:3px}
+.bval{font-weight:800;font-size:13px;text-align:right}
+.brow.lead .bn::after{content:" ★";color:#d9a53a}
+#table{flex:1;padding:8px 12px;overflow:hidden}
+#table ul{list-style:none;margin:2px 0 0;padding:0}
+#table li{display:flex;gap:6px;align-items:center;padding:3px 0;border-bottom:1px solid #eee;font-size:13px;line-height:1.25}
+#table li .ct{flex:1}
+#table li.new{animation:pop .6s}
+@keyframes pop{0%{background:#fff3c4}100%{background:transparent}}
+#table .msg{font-size:12.5px;color:var(--red-d);font-weight:600;min-height:18px}
+.th{display:flex;justify-content:space-between;align-items:baseline}
+.decide{flex:none;display:flex;gap:8px;align-items:center;background:var(--warm);border-radius:12px;padding:8px 12px}
+.decide b{font-size:14px;margin-right:auto}
+.overlay{position:absolute;inset:0;background:#fff;display:grid;place-items:center;z-index:5;border-radius:12px}
+.overlay[hidden]{display:none}
+.ocard{max-width:680px;width:100%;padding:4px 8px}
+.ocard h2{font-size:20px;margin-bottom:2px}
+.cmp{width:100%;border-collapse:collapse;margin:6px 0;font-size:14px}
+.cmp th,.cmp td{padding:4px 8px;text-align:center;border-bottom:1px solid var(--line)}
+.cmp td:first-child,.cmp th:first-child{text-align:left}
+.cmp tr.win td{background:var(--okbg);font-weight:800}
+.ocard ul{margin:4px 0 8px;padding-left:20px;font-size:14px}
+.ocard li{margin:2px 0}
+.lesson{background:var(--soft);border-left:4px solid var(--red);padding:7px 10px;border-radius:6px;margin:6px 0;font-size:14px}
+.tbar{height:8px;background:var(--warm);border-radius:5px;overflow:hidden;flex:none}
+.tfill{height:100%;width:0;background:var(--red)}
+#bs-side h2{font-size:18px}
+.stepper{display:flex;align-items:center;gap:10px;margin:6px 0 10px}
+.stepper button{width:36px;height:36px;border-radius:50%;border:2px solid var(--red-d);background:#fff;color:var(--red-d);font-size:20px;font-weight:700;cursor:pointer}
+.stepper output{font-size:26px;font-weight:800;min-width:40px;text-align:center}
+.radio{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px}
+.radio label{display:flex;gap:8px;align-items:center;border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;cursor:pointer;font-size:14px}
+.radio input{accent-color:var(--red-d)}
+.radio label:has(input:checked){border-color:var(--red-d);background:var(--badbg)}
+@media (max-width:700px){.brow{grid-template-columns:54px 1fr 30px}.memcol .mem{flex:none}}
+
+.src{flex:none;min-width:20px;height:20px;border-radius:10px;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 5px}
+#table .msg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#table li{font-size:12.5px;padding:2px 0;min-height:25px}
+.brow{height:24px}
+#clockrow{padding:6px 12px}
+#table h3,#bars h3{margin-bottom:2px}
+.mem .mn{line-height:1.2}
+
+.clk b{white-space:nowrap}
+.brow .bn{white-space:nowrap}
+.brow{grid-template-columns:72px 1fr 34px}
+.decide .btn{padding:8px 14px}
+.decide b{white-space:nowrap}
+#bars{overflow:visible}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="wk">Week 2</div><div><h1>Stronger Together — With Eyes Open</h1><p class="sub">ORGS 300 · Dynamics of Group Behavior · Interactive Deep Dive</p></div></header>
+<nav class="tabs" role="tablist" aria-label="Activities">
+ <button class="tab" role="tab" data-p="p1">1 · The Hidden Clue</button>
+ <button class="tab" role="tab" data-p="p2">2 · Blind Spots</button>
+</nav>
+<section class="panel" id="p1" role="tabpanel">
+ <div class="brief"><b>Your role: team facilitator.</b> Your team must pick a student-records platform in 28 minutes. Each member privately knows things the others don’t. What will you bring to the table?</div>
+ <div class="cols" style="grid-template-columns:265px 1fr">
+  <div class="memcol" id="members"></div>
+  <div class="rightcol">
+   <div class="card white" id="clockrow"></div>
+   <div class="card white" id="bars"></div>
+   <div class="card" id="table"></div>
+   <div class="decide" id="decide"></div>
+  </div>
+ </div>
+ <div class="overlay" id="debrief" hidden></div>
+</section>
+<section class="panel" id="p2" role="tabpanel">
+ <div class="cols" style="grid-template-columns:1.5fr 1fr">
+  <div class="card white" style="padding:8px;display:flex;flex-direction:column;gap:6px">
+   <div class="tbar"><div class="tfill" id="tfill"></div></div>
+   <svg id="arena" viewBox="0 0 560 340" width="100%" role="img" aria-label="Arena with moving red and blue dots" style="flex:1;min-height:0"></svg>
+  </div>
+  <div class="card" id="bs-side"></div>
+ </div>
+</section>
+
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const SKIN=['#f2cdaa','#dca77a','#b27a50','#85553a','#f6d9c0'];
+const HAIR=['#2b1d16','#5a3a22','#d4a24a','#1f1f1f','#8a2f2f'];
+const PAL=['#a8353a','#2f6f8f','#3f7d5a','#d98e2b','#6a4c93','#3b4a5a'];
+
+/* Avatar graphic: bust centred on x, standing on baseline y. mood: smile|big|calm|neutral|frown|angry|worried|shout */
+function person(x,y,o={}){
+  const s=o.s||1,c=o.c||PAL[0],sk=o.skin||SKIN[0],hr=o.hair||HAIR[0],m=o.mood||'smile';
+  const hy=y-36*s, my=hy+6*s, st='stroke="#4a2a22" stroke-width="'+(1.6*s)+'" fill="none" stroke-linecap="round"';
+  let mouth='',brows='';
+  const P=(a,b)=>`${(x+a*s).toFixed(1)} ${(my+b*s).toFixed(1)}`;
+  if(m==='smile')mouth=`<path d="M${P(-5,-1)} Q${P(0,4.5)} ${P(5,-1)}" ${st}/>`;
+  else if(m==='calm')mouth=`<path d="M${P(-3.5,0)} Q${P(0,2.5)} ${P(3.5,0)}" ${st}/>`;
+  else if(m==='big')mouth=`<path d="M${P(-6,-2)} Q${P(0,10)} ${P(6,-2)}Z" fill="#7a2a2a"/>`;
+  else if(m==='neutral')mouth=`<path d="M${P(-4,1)} L${P(4,1)}" ${st}/>`;
+  else if(m==='frown'||m==='worried')mouth=`<path d="M${P(-5,3)} Q${P(0,-2)} ${P(5,3)}" ${st}/>`;
+  else if(m==='angry')mouth=`<path d="M${P(-5,3.5)} Q${P(0,-2.5)} ${P(5,3.5)}" ${st}/>`;
+  else if(m==='shout')mouth=`<ellipse cx="${x}" cy="${(my+2*s).toFixed(1)}" rx="${3.4*s}" ry="${4*s}" fill="#7a2a2a"/>`;
+  const B=(x1,y1,x2,y2)=>`<path d="M${(x+x1*s).toFixed(1)} ${(hy+y1*s).toFixed(1)} L${(x+x2*s).toFixed(1)} ${(hy+y2*s).toFixed(1)}" ${st}/>`;
+  if(m==='angry')brows=B(-9,-7,-2.5,-3.5)+B(9,-7,2.5,-3.5);
+  if(m==='worried')brows=B(-9,-4,-2.5,-7.5)+B(9,-4,2.5,-7.5);
+  const ey=(hy-0.5*s).toFixed(1);
+  const g=`<g class="${o.cls||''}">
+   <path d="M${x-20*s} ${y} Q${x-20*s} ${y-22*s} ${x} ${y-22*s} Q${x+20*s} ${y-22*s} ${x+20*s} ${y}Z" fill="${c}"/>
+   <circle cx="${x}" cy="${hy}" r="${13*s}" fill="${sk}"/>
+   <path d="M${x-13*s} ${hy-2*s} A${13*s} ${13*s} 0 0 1 ${x+13*s} ${hy-2*s} Q${x} ${hy-9*s} ${x-13*s} ${hy-2*s}Z" fill="${hr}"/>
+   <circle cx="${x-5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/><circle cx="${x+5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/>
+   ${brows}${mouth}
+   ${o.label?`<text x="${x}" y="${y+14*s}" text-anchor="middle" font-size="${Math.max(10,11*s)}" font-weight="700" fill="#333">${o.label}</text>`:''}
+  </g>`;
+  return g;
+}
+const avatarSVG=(o,w=64,h=72)=>`<svg viewBox="0 0 64 72" width="${w}" height="${h}" aria-hidden="true">${person(32,62,Object.assign({s:1.15},o))}</svg>`;
+
+function initTabs(){
+  const tabs=$$('.tab');
+  function show(id,focus){
+    tabs.forEach(t=>{const on=t.dataset.p===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;});
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===id));
+    document.dispatchEvent(new CustomEvent('panelshow',{detail:id}));
+  }
+  tabs.forEach((t,k)=>{
+    t.onclick=()=>show(t.dataset.p);
+    t.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(k+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];n.focus();show(n.dataset.p);}};
+  });
+  show(tabs[0].dataset.p);
+}
+
+/* Scenario quiz engine. Each option: {label, score:0|1|2, fb}. Highest score = "best fit". */
+function Quiz(root,cfg){
+  const items=cfg.items;let i=0,score=0,max=0,res=[];
+  const TITLES={2:'Best fit',1:'Workable, but not the strongest',0:'Not the best fit'};
+  const ICON={2:'✔',1:'◐',0:'✖'};
+  function render(){
+    if(i>=items.length)return done();
+    const it=items[i];
+    root.innerHTML=`<div class="qtop"><div class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="dot ${k<i?'s'+res[k]:''} ${k===i?'cur':''}"></span>`).join('')}</div><div class="qcount">${cfg.noun||'Question'} ${i+1} of ${items.length}</div></div>
+    <div class="qgrid"><div class="card scn">${it.art||''}${it.title?`<div class="scn-t">${it.title}</div>`:''}<div class="scn-q">${it.text}</div></div>
+    <div class="qside"><div class="qprompt">${it.ask||cfg.ask}</div>
+    <div class="opts">${it.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="ol">${'ABCDE'[k]}</span><span>${o.label}</span></button>`).join('')}</div>
+    <div class="fb" aria-live="polite"></div></div></div>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+  }
+  function pick(k){
+    const it=items[i],o=it.options[k],top=Math.max(...it.options.map(x=>x.score));
+    score+=o.score;max+=top;res[i]=o.score;
+    $$('.opt',root).forEach((b,j)=>{b.disabled=true;const op=it.options[j];
+      if(j===k)b.classList.add('s'+op.score);else if(op.score===top)b.classList.add('best');else b.classList.add('dim');});
+    const best=it.options.find(x=>x.score===top);
+    const fb=$('.fb',root);
+    fb.innerHTML=`<div class="fbh s${o.score}">${ICON[o.score]} ${TITLES[o.score]}</div><div>${o.fb}</div>`+
+      (o.score<top?`<div class="bestp"><b>Strongest choice:</b> ${(best.short||best.label).replace(/^["“]|["”]$/g,'')} — ${best.bfb||best.fb}</div>`:'')+
+      `<button class="btn">${i<items.length-1?'Next →':'See results'}</button>`;
+    fb.classList.add('on');
+    $('.btn',fb).onclick=()=>{i++;render()};$('.btn',fb).focus();
+  }
+  function done(){
+    const pct=max?score/max:0;
+    const msg=pct>=.85?cfg.msgHigh:pct>=.55?cfg.msgMid:cfg.msgLow;
+    root.innerHTML=`<div class="done card white"><div><div class="scn-t">${cfg.doneTitle||'Results'}</div><div class="big">${score} / ${max}</div><p style="margin-top:6px"><b>${msg}</b></p>
+    <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul><button class="btn">Try again</button></div></div>`;
+    $('.btn',root).onclick=()=>{i=0;score=0;max=0;res=[];render()};
+  }
+  render();
+}
+
+/* ================= Tab 1: The Hidden Clue ================= */
+(function(){
+  const OPT=[{k:'A',n:'Alpha'},{k:'B',n:'Beta'},{k:'C',n:'Gamma'}];
+  const CL={
+    s1:{t:'Alpha is the best-known platform in our industry.',e:{A:2}},
+    s2:{t:'Alpha’s demo looked polished and easy to use.',e:{A:1}},
+    s3:{t:'Gamma is newer, and few of us have used it.',e:{C:-1}},
+    u1:{t:'Alpha doesn’t connect to our records system (costly fix).',e:{A:-3}},
+    u2:{t:'Gamma connects to our records system out of the box.',e:{C:2}},
+    u3:{t:'Alpha’s contract auto-renews at double the price in year 2.',e:{A:-2}},
+    u4:{t:'Gamma’s support is rated top by schools like ours.',e:{C:2}},
+    u5:{t:'Beta crashed during last year’s peak registration week.',e:{B:-2}},
+    u6:{t:'Beta has the best reporting tools of the three.',e:{B:1}}
+  };
+  const MEM=[
+    {id:'dev',name:'Dev',role:'IT lead',look:{c:PAL[1],skin:SKIN[1],hair:HAIR[0]},clues:['u1','u2']},
+    {id:'priya',name:'Priya',role:'Finance',look:{c:PAL[3],skin:SKIN[2],hair:HAIR[3]},clues:['u3']},
+    {id:'sam',name:'Sam',role:'Student support',look:{c:PAL[2],skin:SKIN[0],hair:HAIR[2]},clues:['u4','u5']},
+    {id:'lee',name:'Lee',role:'Training',look:{c:PAL[4],skin:SKIN[3],hair:HAIR[1]},clues:['u6']}
+  ];
+  const owner={};MEM.forEach(m=>m.clues.forEach(c=>owner[c]=m));
+  const SHARED=['s1','s2','s3'],TOTAL=Object.keys(CL).length-SHARED.length,START=28,ASK=4,REPEAT=5;
+  let revealed,minutes,repeats,msg,order,lastNew;
+  function reset(){revealed=[];minutes=START;repeats=0;order=[];msg='Tap a teammate’s sealed note to ask them to share it.';lastNew=null;$('#debrief').hidden=true;render();}
+  const scores=set=>{const s={A:0,B:0,C:0};set.forEach(id=>{const e=CL[id].e;for(const k in e)s[k]+=e[k];});return s;};
+  const tableSet=()=>SHARED.concat(revealed);
+  const sign=v=>(v>0?'+':'')+v;
+
+  function render(){
+    /* members */
+    $('#members').innerHTML=MEM.map(m=>{
+      const shared=m.clues.filter(c=>revealed.includes(c)).length,mood=shared?'big':'neutral';
+      return `<div class="mem">${avatarSVG(Object.assign({mood},m.look),58,66)}<div class="mi"><div class="mn">${m.name} <span class="mr">· ${m.role}</span></div>
+        ${m.clues.map((c,k)=>revealed.includes(c)?`<button class="ask done" disabled>✓ Note ${k+1} shared</button>`:
+          `<button class="ask ${minutes<ASK?'off':''}" data-c="${c}" ${minutes<ASK?'disabled':''}>✉ Ask for note ${k+1} <i>(−${ASK} min)</i></button>`).join('')}</div></div>`;
+    }).join('');
+    $$('.ask[data-c]').forEach(b=>b.onclick=()=>share(b.dataset.c));
+    /* clock */
+    const pct=Math.max(0,minutes/START*100);
+    $('#clockrow').innerHTML=`<div class="clk"><b>⏱ ${minutes} of ${START} min left</b><div class="ctrack"><div class="cfill ${minutes<=8?'low':''}" style="width:${pct}%"></div></div></div>
+      <button class="btn ghost sm" id="rep" ${minutes<REPEAT?'disabled':''}>Rehash what we know (−${REPEAT})</button>`;
+    $('#rep').onclick=repeat;
+    /* bars */
+    const sc=scores(tableSet()),top=Math.max(sc.A,sc.B,sc.C);
+    $('#bars').innerHTML=`<h3>What the team can see so far</h3>`+OPT.map(o=>{
+      const v=sc[o.k],w=Math.min(Math.abs(v),5)/5*50;
+      return `<div class="brow ${v===top?'lead':''}"><div class="bn">${o.n}</div><div class="btrack"><div class="bfill" style="background:${v>=0?'#2f7d4f':'#d34147'};${v>=0?`left:50%;width:${w}%`:`left:${50-w}%;width:${w}%`}"></div></div><div class="bval" style="color:${v>=0?'#2f7d4f':'#a8353a'}">${sign(v)}</div></div>`;
+    }).join('');
+    /* table */
+    const rows=SHARED.map(id=>({id,m:null})).concat(order.map(id=>({id,m:owner[id]})));
+    $('#table').innerHTML=`<div class="th"><h3>On the table (${rows.length} of ${SHARED.length+TOTAL} facts)</h3></div><div class="msg" aria-live="polite">${msg}</div><ul>${rows.map(r=>`<li class="${r.id===lastNew?'new':''}"><span class="src" title="${r.m?'Shared by '+r.m.name:'Known by everyone'}" style="background:${r.m?r.m.look.c:'#8a8a8a'}">${r.m?r.m.name[0]:'All'}</span><span class="ct">${CL[r.id].t}</span>${Object.entries(CL[r.id].e).map(([k,v])=>`<span class="pill ${v>0?'g':'r'}">${OPT.find(o=>o.k===k).n} ${sign(v)}</span>`).join('')}</li>`).join('')}</ul>`;
+    /* decide */
+    $('#decide').innerHTML=`<b>${minutes<ASK&&minutes<REPEAT?'Time’s up — choose:':'Ready to decide?'}</b>`+OPT.map(o=>`<button class="btn" data-k="${o.k}">${o.n}</button>`).join('');
+    $$('#decide .btn').forEach(b=>b.onclick=()=>decide(b.dataset.k));
+  }
+  function share(id){
+    if(minutes<ASK)return;minutes-=ASK;revealed.push(id);order.push(id);lastNew=id;
+    msg=`${owner[id].name} shares a new fact — see the list below.`;render();
+  }
+  function repeat(){
+    if(minutes<REPEAT)return;minutes-=REPEAT;repeats++;lastNew=null;
+    msg=['The team revisits Alpha’s popularity. Everyone nods — and confidence in Alpha grows. Nothing new was learned.','Again the group talks about what everyone already knows. It feels productive, but the picture hasn’t changed.','More agreement on familiar facts. The hidden notes stay hidden.'][Math.min(repeats-1,2)];
+    render();
+  }
+  function decide(k){
+    const seen=scores(tableSet()),all=scores(Object.keys(CL)),opt=OPT.find(o=>o.k===k),bestK=Object.keys(all).sort((a,b)=>all[b]-all[a])[0];
+    let lesson;
+    if(k==='C'&&revealed.length>=4)lesson='You brought the unshared information onto the table, and it changed the decision. That is exactly what a good facilitator does.';
+    else if(k==='C')lesson='Gamma was the right call. You got there with only part of the hidden information, so there was some luck involved. Next time, check what each person knows before closing the discussion.';
+    else if(k==='A')lesson='The team went with what everyone already knew. Alpha looked strongest only because the facts that count against it were each held by a single person who was never asked.';
+    else lesson='Beta wasn’t the strongest option once all the facts were on the table. Its score depended on what happened to be shared, not on everything the team actually knew.';
+    const d=$('#debrief');d.hidden=false;
+    d.innerHTML=`<div class="ocard"><h3>Debrief</h3><h2>${k===bestK?`You chose ${opt.n} — and the full facts agree`:`You chose ${opt.n} — but the full facts favor ${OPT.find(o=>o.k===bestK).n}`}</h2>
+      <p class="mut">You surfaced <b>${revealed.length} of ${TOTAL}</b> private notes using <b>${START-minutes} of ${START}</b> minutes.</p>
+      <table class="cmp"><tr><th></th><th>What the team saw when you decided</th><th>With every fact on the table</th></tr>
+      ${OPT.map(o=>`<tr class="${o.k===bestK?'win':''}"><td><b>${o.n}</b></td><td>${sign(seen[o.k])}</td><td>${sign(all[o.k])}</td></tr>`).join('')}</table>
+      <div class="lesson">${lesson}</div>
+      <ul><li><b>Shared information bias:</b> teams tend to spend time on what everyone already knows.</li>
+      <li>Information held by only one member may never reach the group.</li>
+      <li><b>Facilitator moves:</b> ask “What do you know that the rest of us might not?”, and list facts by who holds them before deciding.</li></ul>
+      <button class="btn" id="again">Play again</button></div>`;
+    $('#again').onclick=reset;$('#again').focus();
+  }
+  reset();
+})();
+
+/* ================= Tab 2: Blind Spots ================= */
+(function(){
+  const svg=$('#arena'),side=$('#bs-side'),fill=$('#tfill'),W=560,H=340,DUR=14,STAR_T0=6.5,STAR_T1=10.5;
+  let dots,raf,t0,bounces,mine=0,saw=null;
+  const star=(x,y,r,c)=>{let p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;p.push((x+rr*Math.cos(a)).toFixed(1)+','+(y+rr*Math.sin(a)).toFixed(1));}return `<polygon points="${p.join(' ')}" fill="${c}"/>`;};
+  function seed(){ // deterministic pseudo-random start so everyone gets the same count
+    let s=7;const r=()=>{s=(s*9301+49297)%233280;return s/233280;};
+    dots=[];for(let i=0;i<8;i++){const a=r()*Math.PI*2,sp=95+r()*45;dots.push({red:i<4,x:60+r()*(W-120),y:40+r()*(H-80),vx:Math.cos(a)*sp,vy:Math.sin(a)*sp});}
+  }
+  function frame(extra=''){
+    svg.innerHTML=`<rect x="2" y="2" width="${W-4}" height="${H-4}" rx="10" fill="#fff" stroke="#c7c2ba" stroke-width="3"/>`+dots.map(d=>`<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="13" fill="${d.red?'#d34147':'#2f6f8f'}"/>`).join('')+extra;
+  }
+  function intro(){
+    cancelAnimationFrame(raf);seed();frame();fill.style.width='0';
+    side.innerHTML=`<h3>Attention test · 15 seconds</h3><h2>Count the red bounces</h2>
+     <p>Watch the dots. Count every time a <b style="color:#d34147">red</b> dot bounces off a wall. Ignore the <b style="color:#2f6f8f">blue</b> dots.</p>
+     <p class="mut">Why this matters: a team that is focused on a task can miss important information sitting in plain view.</p>
+     <button class="btn" id="go">Start counting</button>`;
+    $('#go').onclick=run;
+  }
+  function run(){
+    seed();bounces=0;t0=null;
+    side.innerHTML=`<h3>Counting…</h3><h2>Keep your eyes on the red dots</h2><p class="mut">Count silently. Questions come at the end.</p>`;
+    function tick(ts){
+      if(t0===null)t0=ts;const t=(ts-t0)/1000,dt=Math.min(.05,t-(tick.l||0));tick.l=t;
+      dots.forEach(d=>{d.x+=d.vx*dt;d.y+=d.vy*dt;
+        if(d.x<15){d.x=15;d.vx=Math.abs(d.vx);if(d.red)bounces++;}else if(d.x>W-15){d.x=W-15;d.vx=-Math.abs(d.vx);if(d.red)bounces++;}
+        if(d.y<15){d.y=15;d.vy=Math.abs(d.vy);if(d.red)bounces++;}else if(d.y>H-15){d.y=H-15;d.vy=-Math.abs(d.vy);if(d.red)bounces++;}});
+      let ex='';
+      if(t>=STAR_T0&&t<=STAR_T1){const p=(t-STAR_T0)/(STAR_T1-STAR_T0);ex=star(-20+p*(W+40),H*.5+Math.sin(p*6)*14,15,'#555');}
+      frame(ex);fill.style.width=Math.min(100,t/DUR*100)+'%';
+      if(t<DUR)raf=requestAnimationFrame(tick);else ask();
+    }
+    tick.l=0;raf=requestAnimationFrame(tick);
+  }
+  function ask(){
+    mine=0;saw=null;frame();
+    side.innerHTML=`<h3>Two quick questions</h3>
+     <b>1. How many times did red dots bounce off a wall?</b>
+     <div class="stepper"><button id="mn" aria-label="Fewer">−</button><output id="cnt">0</output><button id="pl" aria-label="More">+</button></div>
+     <b>2. Did you notice anything else on screen?</b>
+     <div class="radio"><label><input type="radio" name="saw" value="yes"> Yes, something unexpected</label><label><input type="radio" name="saw" value="no"> No, only the dots</label></div>
+     <button class="btn" id="sub" disabled>Reveal</button>`;
+    const cnt=$('#cnt');$('#mn').onclick=()=>{mine=Math.max(0,mine-1);cnt.textContent=mine};$('#pl').onclick=()=>{mine++;cnt.textContent=mine};
+    $$('input[name=saw]').forEach(r=>r.onchange=()=>{saw=r.value;$('#sub').disabled=false});
+    $('#sub').onclick=reveal;
+  }
+  function reveal(){
+    const trail=[0,.25,.5,.75,1].map(p=>star(-20+p*(W+40),H*.5+Math.sin(p*6)*14,15,'#555')).join('');
+    frame(`<path d="M10 ${H*.5} H${W-20}" stroke="#d34147" stroke-width="3" stroke-dasharray="8 7" fill="none"/>${trail}<rect x="${W/2-190}" y="${H*.5-80}" width="380" height="32" rx="8" fill="#a8353a"/><text x="${W/2}" y="${H*.5-59}" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">An unexpected visitor crossed the screen</text>`);
+    const head=saw==='yes'?'You spotted the star!':'A gray star crossed the screen.';
+    const first=saw==='yes'?'Nicely done. Even so, when attention is locked onto a task, it is easy to miss something unexpected in plain view.':'It was on screen for about four seconds while your attention was on the red dots. Missing it is called <b>inattentional blindness</b>, and it happens to capable people all the time.';
+    side.innerHTML=`<h3>The reveal</h3><h2>${head}</h2><p>${first}</p>
+     <p>Red-dot bounces: <b>${bounces}</b> (you counted ${mine}).</p>
+          <div class="leadbox" style="background:#fff;border:2px solid var(--red-d);border-radius:10px;padding:8px 11px;margin:6px 0"><b>Leader moves</b><ul style="margin:4px 0 0;padding-left:18px;font-size:14px"><li>Ask: “What are we <i>not</i> seeing?”</li><li>Invite someone outside the task to review.</li><li>Rotate roles so fresh eyes look at the problem.</li></ul></div>
+     <button class="btn" id="redo">Try again</button>`;
+    $('#redo').onclick=intro;
+  }
+  document.addEventListener('panelshow',e=>{if(e.detail!=='p2')cancelAnimationFrame(raf);else if(!side.innerHTML.includes('Count the red'))intro();});
+  intro();
+})();
+initTabs();
+
+</script>
+</body>
+</html>

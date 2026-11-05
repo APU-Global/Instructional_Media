@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 300 Week 6</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--mut:#5b5b5b;--line:#e3dfd9;--warm:#edebe8;--soft:#faf8f6;--ok:#2f7d4f;--okbg:#e8f4ec;--warn:#9a6a12;--warnbg:#fbf1dc;--badbg:#fbe9ea;--teal:#2f6f8f;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4}
+button,input{font-family:inherit}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:12px 16px;gap:8px;max-width:1100px;margin:0 auto}
+header.top{display:flex;align-items:center;gap:12px;flex:none}
+.wk{background:var(--red-d);color:#fff;font-weight:700;letter-spacing:.08em;font-size:12px;padding:7px 11px;border-radius:8px;text-transform:uppercase;white-space:nowrap}
+h1{font-size:20px;margin:0;line-height:1.15}
+.sub{font-size:13px;color:var(--mut);margin:2px 0 0}
+.tabs{display:flex;gap:4px;flex:none;border-bottom:2px solid var(--line)}
+.tab{appearance:none;border:0;background:none;padding:9px 14px;font-size:14px;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:8px 8px 0 0}
+.tab:hover{background:var(--soft)}
+.tab[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+.panel{flex:1;min-height:0;display:none;position:relative}
+.panel.on{display:flex;flex-direction:column;gap:10px}
+.cols{flex:1;min-height:0;display:grid;gap:14px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-height:0}
+.card.white{background:#fff}
+h2{font-size:15px;margin:0 0 6px;color:var(--red-d)}
+h3{font-size:13px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+p{margin:0 0 6px}
+:focus-visible{outline:3px solid #1d6fb8;outline-offset:2px}
+.btn{appearance:none;background:var(--red-d);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer}
+.btn:hover{background:#8f2c30}
+.btn.ghost{background:#fff;color:var(--red-d);border:2px solid var(--red-d)}
+.btn.ghost:hover{background:var(--badbg)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:2px 8px;background:var(--warm);color:#444;white-space:nowrap}
+.pill.g{background:var(--okbg);color:var(--ok)}.pill.r{background:var(--badbg);color:var(--red-d)}
+.quote{border-left:4px solid var(--red);padding:4px 0 4px 10px;font-style:italic;color:#333;margin:6px 0}
+svg{display:block}
+/* quiz */
+.quiz{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.qtop{display:flex;align-items:center;justify-content:space-between;flex:none}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--warm);border:2px solid var(--warm)}
+.dot.cur{border-color:var(--red-d);background:#fff}
+.dot.s2{background:var(--ok);border-color:var(--ok)}.dot.s1{background:#d9a53a;border-color:#d9a53a}.dot.s0{background:var(--red);border-color:var(--red)}
+.qcount{font-size:13px;color:var(--mut);font-weight:600}
+.qgrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.scn{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.scn-t{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red-d)}
+.scn-q{font-size:17px;line-height:1.4}
+.qside{display:flex;flex-direction:column;gap:8px;min-height:0}
+.qprompt{font-weight:700;font-size:14px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 11px;font-size:14px;line-height:1.35;cursor:pointer;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--red);background:#fffafa}
+.opt .ol{flex:none;width:22px;height:22px;border-radius:50%;background:var(--warm);font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.opt[disabled]{cursor:default}
+.opt.s2{border-color:var(--ok);background:var(--okbg)}.opt.s1{border-color:#d9a53a;background:var(--warnbg)}.opt.s0{border-color:var(--red);background:var(--badbg)}
+.opt.best:not(.s2){border-style:dashed;border-color:var(--ok)}
+.opt.dim{opacity:.55}
+.fb{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;display:none}
+.fb.on{display:block}
+.fbh{font-weight:800;margin-bottom:2px}.fbh.s2{color:var(--ok)}.fbh.s1{color:var(--warn)}.fbh.s0{color:var(--red-d)}
+.bestp{margin-top:4px;padding-top:4px;border-top:1px dashed var(--line)}
+.fb .btn{margin-top:6px}
+.done{flex:1;display:grid;place-items:center;text-align:center}
+.done .big{font-size:48px;font-weight:800;color:var(--red-d);line-height:1}
+.done ul{text-align:left;margin:8px auto 12px;padding-left:20px;max-width:560px}
+.done li{margin:3px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* small screens: allow the one page scroll instead of clipping */
+@media (max-width:700px),(max-height:560px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .panel,.panel.on,.cols,.quiz,.qgrid{min-height:auto}
+ .cols,.qgrid{display:flex;flex-direction:column}
+}
+
+.rightcol{display:flex;flex-direction:column;gap:8px;min-height:0}
+.verse{flex:none;background:var(--warm);border-left:5px solid var(--red-d);border-radius:8px;padding:8px 12px;font-style:italic;font-size:14px}
+.verse span{font-style:normal;font-weight:700;color:var(--red-d);white-space:nowrap}
+.chat{flex:1;display:flex;flex-direction:column;gap:8px;overflow:hidden;padding:10px 14px}
+.who{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:2px}
+.msg{max-width:86%;padding:9px 13px;border-radius:14px;font-size:14.5px;line-height:1.35;animation:in .35s}
+.msg.them{background:#fff;border:2px solid var(--line);align-self:flex-start;border-top-left-radius:4px}
+.msg.me{background:var(--red-d);color:#fff;align-self:flex-end;border-top-right-radius:4px}
+.wrap.me{align-self:flex-end;text-align:right}.wrap{display:flex;flex-direction:column;max-width:86%}
+.wrap .msg{max-width:100%}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eff{align-self:center;font-size:13px;font-weight:700;border-radius:20px;padding:4px 12px}
+.eff.up{background:var(--badbg);color:var(--red-d)}.eff.down{background:var(--okbg);color:var(--ok)}.eff.flat{background:var(--warnbg);color:var(--warn)}
+.rhead{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--red-d)}
+#replies{flex:none;display:flex;flex-direction:column;gap:6px}
+#replies .btn{align-self:flex-start}
+.endcard{margin:auto 0;text-align:center;padding:4px 8px}
+.endcard h2{font-size:22px}
+.endcard p{max-width:520px;margin:6px auto}
+.speech{display:flex;gap:10px;align-items:center}.speech svg{flex:none}
+.bub{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 13px;font-size:16px}
+.pairart{display:flex;justify-content:center}
+@media (max-width:700px){.msg,.wrap{max-width:100%}}
+
+#replies .opt.dim{display:none}
+#replies .opt{padding:7px 11px}
+.pairart svg{width:300px;height:auto}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="wk">Week 6</div><div><h1>Conflict and Controversy</h1><p class="sub">ORGS 300 · Dynamics of Group Behavior · Interactive Deep Dive</p></div></header>
+<nav class="tabs" role="tablist" aria-label="Activities">
+ <button class="tab" role="tab" data-p="p1">1 · The Gentle Answer</button>
+ <button class="tab" role="tab" data-p="p2">2 · Pick the Strategy</button>
+ <button class="tab" role="tab" data-p="p3">3 · Listen First</button>
+</nav>
+<section class="panel" id="p1" role="tabpanel">
+ <div class="cols" style="grid-template-columns:270px 1fr">
+  <div class="card white" style="padding:6px"><svg id="thermo" viewBox="0 0 260 470" width="100%" height="100%" role="img" aria-label="Escalation thermometer" style="max-height:100%"></svg></div>
+  <div class="rightcol">
+   <div class="verse">“A gentle answer turns away wrath, but a harsh word stirs up anger.” <span>— Proverbs 15:1</span></div>
+   <div class="card white chat" id="chat"></div>
+   <div id="replies"></div>
+  </div>
+ </div>
+</section>
+<section class="panel" id="p2" role="tabpanel"><div class="quiz" id="quiz2"></div></section>
+<section class="panel" id="p3" role="tabpanel"><div class="quiz" id="quiz3"></div></section>
+
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const SKIN=['#f2cdaa','#dca77a','#b27a50','#85553a','#f6d9c0'];
+const HAIR=['#2b1d16','#5a3a22','#d4a24a','#1f1f1f','#8a2f2f'];
+const PAL=['#a8353a','#2f6f8f','#3f7d5a','#d98e2b','#6a4c93','#3b4a5a'];
+
+/* Avatar graphic: bust centred on x, standing on baseline y. mood: smile|big|calm|neutral|frown|angry|worried|shout */
+function person(x,y,o={}){
+  const s=o.s||1,c=o.c||PAL[0],sk=o.skin||SKIN[0],hr=o.hair||HAIR[0],m=o.mood||'smile';
+  const hy=y-36*s, my=hy+6*s, st='stroke="#4a2a22" stroke-width="'+(1.6*s)+'" fill="none" stroke-linecap="round"';
+  let mouth='',brows='';
+  const P=(a,b)=>`${(x+a*s).toFixed(1)} ${(my+b*s).toFixed(1)}`;
+  if(m==='smile')mouth=`<path d="M${P(-5,-1)} Q${P(0,4.5)} ${P(5,-1)}" ${st}/>`;
+  else if(m==='calm')mouth=`<path d="M${P(-3.5,0)} Q${P(0,2.5)} ${P(3.5,0)}" ${st}/>`;
+  else if(m==='big')mouth=`<path d="M${P(-6,-2)} Q${P(0,10)} ${P(6,-2)}Z" fill="#7a2a2a"/>`;
+  else if(m==='neutral')mouth=`<path d="M${P(-4,1)} L${P(4,1)}" ${st}/>`;
+  else if(m==='frown'||m==='worried')mouth=`<path d="M${P(-5,3)} Q${P(0,-2)} ${P(5,3)}" ${st}/>`;
+  else if(m==='angry')mouth=`<path d="M${P(-5,3.5)} Q${P(0,-2.5)} ${P(5,3.5)}" ${st}/>`;
+  else if(m==='shout')mouth=`<ellipse cx="${x}" cy="${(my+2*s).toFixed(1)}" rx="${3.4*s}" ry="${4*s}" fill="#7a2a2a"/>`;
+  const B=(x1,y1,x2,y2)=>`<path d="M${(x+x1*s).toFixed(1)} ${(hy+y1*s).toFixed(1)} L${(x+x2*s).toFixed(1)} ${(hy+y2*s).toFixed(1)}" ${st}/>`;
+  if(m==='angry')brows=B(-9,-7,-2.5,-3.5)+B(9,-7,2.5,-3.5);
+  if(m==='worried')brows=B(-9,-4,-2.5,-7.5)+B(9,-4,2.5,-7.5);
+  const ey=(hy-0.5*s).toFixed(1);
+  const g=`<g class="${o.cls||''}">
+   <path d="M${x-20*s} ${y} Q${x-20*s} ${y-22*s} ${x} ${y-22*s} Q${x+20*s} ${y-22*s} ${x+20*s} ${y}Z" fill="${c}"/>
+   <circle cx="${x}" cy="${hy}" r="${13*s}" fill="${sk}"/>
+   <path d="M${x-13*s} ${hy-2*s} A${13*s} ${13*s} 0 0 1 ${x+13*s} ${hy-2*s} Q${x} ${hy-9*s} ${x-13*s} ${hy-2*s}Z" fill="${hr}"/>
+   <circle cx="${x-5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/><circle cx="${x+5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/>
+   ${brows}${mouth}
+   ${o.label?`<text x="${x}" y="${y+14*s}" text-anchor="middle" font-size="${Math.max(10,11*s)}" font-weight="700" fill="#333">${o.label}</text>`:''}
+  </g>`;
+  return g;
+}
+const avatarSVG=(o,w=64,h=72)=>`<svg viewBox="0 0 64 72" width="${w}" height="${h}" aria-hidden="true">${person(32,62,Object.assign({s:1.15},o))}</svg>`;
+
+function initTabs(){
+  const tabs=$$('.tab');
+  function show(id,focus){
+    tabs.forEach(t=>{const on=t.dataset.p===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;});
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===id));
+    document.dispatchEvent(new CustomEvent('panelshow',{detail:id}));
+  }
+  tabs.forEach((t,k)=>{
+    t.onclick=()=>show(t.dataset.p);
+    t.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(k+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];n.focus();show(n.dataset.p);}};
+  });
+  show(tabs[0].dataset.p);
+}
+
+/* Scenario quiz engine. Each option: {label, score:0|1|2, fb}. Highest score = "best fit". */
+function Quiz(root,cfg){
+  const items=cfg.items;let i=0,score=0,max=0,res=[];
+  const TITLES={2:'Best fit',1:'Workable, but not the strongest',0:'Not the best fit'};
+  const ICON={2:'✔',1:'◐',0:'✖'};
+  function render(){
+    if(i>=items.length)return done();
+    const it=items[i];
+    root.innerHTML=`<div class="qtop"><div class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="dot ${k<i?'s'+res[k]:''} ${k===i?'cur':''}"></span>`).join('')}</div><div class="qcount">${cfg.noun||'Question'} ${i+1} of ${items.length}</div></div>
+    <div class="qgrid"><div class="card scn">${it.art||''}${it.title?`<div class="scn-t">${it.title}</div>`:''}<div class="scn-q">${it.text}</div></div>
+    <div class="qside"><div class="qprompt">${it.ask||cfg.ask}</div>
+    <div class="opts">${it.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="ol">${'ABCDE'[k]}</span><span>${o.label}</span></button>`).join('')}</div>
+    <div class="fb" aria-live="polite"></div></div></div>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+  }
+  function pick(k){
+    const it=items[i],o=it.options[k],top=Math.max(...it.options.map(x=>x.score));
+    score+=o.score;max+=top;res[i]=o.score;
+    $$('.opt',root).forEach((b,j)=>{b.disabled=true;const op=it.options[j];
+      if(j===k)b.classList.add('s'+op.score);else if(op.score===top)b.classList.add('best');else b.classList.add('dim');});
+    const best=it.options.find(x=>x.score===top);
+    const fb=$('.fb',root);
+    fb.innerHTML=`<div class="fbh s${o.score}">${ICON[o.score]} ${TITLES[o.score]}</div><div>${o.fb}</div>`+
+      (o.score<top?`<div class="bestp"><b>Strongest choice:</b> ${(best.short||best.label).replace(/^["“]|["”]$/g,'')} — ${best.bfb||best.fb}</div>`:'')+
+      `<button class="btn">${i<items.length-1?'Next →':'See results'}</button>`;
+    fb.classList.add('on');
+    $('.btn',fb).onclick=()=>{i++;render()};$('.btn',fb).focus();
+  }
+  function done(){
+    const pct=max?score/max:0;
+    const msg=pct>=.85?cfg.msgHigh:pct>=.55?cfg.msgMid:cfg.msgLow;
+    root.innerHTML=`<div class="done card white"><div><div class="scn-t">${cfg.doneTitle||'Results'}</div><div class="big">${score} / ${max}</div><p style="margin-top:6px"><b>${msg}</b></p>
+    <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul><button class="btn">Try again</button></div></div>`;
+    $('.btn',root).onclick=()=>{i=0;score=0;max=0;res=[];render()};
+  }
+  render();
+}
+
+/* ---------- Tab 1: The Gentle Answer ---------- */
+(function(){
+  const START=6;
+  const R=[
+   {them:'“Honestly? I’m tired of doing everyone else’s part. This project is a mess because nobody read the plan.”',
+    o:{harsh:{t:'“Maybe if you didn’t take over everything, the rest of us would have room to contribute.”',r:'“Wow. So this is on me? I’m the only one who actually cares about this grade.”'},
+       gentle:{t:'“That sounds exhausting. Can you tell me which parts have landed on you?”',r:'“Mostly the research and the slides. I didn’t want to ask for help, but it’s been a lot.”'},
+       avoid:{t:'“Let’s not get into this right now. We have a deadline.”',r:'“Right — we never have time, and I keep ending up with the work.”'}},order:['harsh','gentle','avoid']},
+   {o:{harsh:{t:'“Nobody asked you to do it all. Just say what you need instead of complaining.”',r:'“Forget it. I’ll do it myself like always.”'},
+       gentle:{t:'“Thanks for telling me. I want us to split this fairly. What would help most this week?”',r:'“Honestly, if someone took the slides and someone else the references, I could breathe.”'},
+       avoid:{t:'“Okay, okay. Let’s just move on and figure it out later.”',r:'“Later never comes. I’m getting tired of this.”'}},order:['gentle','avoid','harsh']},
+   {o:{harsh:{t:'“Fine. If you can’t handle the workload, tell the professor.”',r:'“Maybe I will.”'},
+       gentle:{t:'“Let’s write the split down together, and check in Friday to see if it’s working.”',r:'“That works. Thanks for listening — I felt like I was shouting into a void.”'},
+       avoid:{t:'“Sure, whatever works. We’ll see how it goes.”',r:'“…Okay. I guess we’ll see.”'}},order:['avoid','harsh','gentle']}
+  ];
+  const D={harsh:[2,'up','Heat +2 · A harsh word stirs up anger.'],gentle:[-2,'down','Heat −2 · A gentle answer turns away wrath.'],avoid:[1,'flat','Heat +1 · Avoiding doesn’t cool things down; the issue is still there.']};
+  let round,heat,gentle,last;
+  const svg=$('#thermo'),chat=$('#chat'),rep=$('#replies');
+  const jMood=h=>h>=8?'angry':h>=6?'frown':h>=4?'neutral':h>=2?'calm':'smile';
+  function thermo(){
+    const col=['#2f6f8f','#2f7f94','#3a8a84','#4c9470','#c9a227','#e0a526','#e58a26','#e06a2c','#d9502f','#d34147','#a8262c'][heat],H=230,top=170,bottom=top+H,lvl=H*heat/10;
+    svg.innerHTML=`${person(70,128,{s:1.5,c:PAL[0],skin:SKIN[1],hair:HAIR[3],mood:heat>=7?'worried':heat<=3?'smile':'calm',label:'You'})}
+     ${person(190,128,{s:1.5,c:PAL[5],skin:SKIN[0],hair:HAIR[1],mood:jMood(heat),label:'Jordan'})}
+     <text x="130" y="30" text-anchor="middle" font-size="12" font-weight="800" fill="#777" letter-spacing="1.5">ESCALATION LEVEL</text>
+     <rect x="115" y="${top}" width="30" height="${H}" rx="15" fill="#f1eeea" stroke="#9b958c" stroke-width="3"/>
+     <circle cx="130" cy="${bottom+20}" r="28" fill="${col}" stroke="#9b958c" stroke-width="3"/>
+     <rect x="119" y="${bottom-lvl}" width="22" height="${lvl+10}" rx="${heat>0?10:0}" fill="${col}" style="transition:all .6s"/>
+     <circle cx="130" cy="${bottom+20}" r="23" fill="${col}"/>
+     ${[0,2,4,6,8,10].map(n=>`<line x1="${n%2?148:148}" y1="${bottom-H*n/10}" x2="156" y2="${bottom-H*n/10}" stroke="#9b958c" stroke-width="2"/><text x="162" y="${bottom-H*n/10+4}" font-size="11" fill="#777">${n}</text>`).join('')}
+     <text x="104" y="${top+14}" text-anchor="end" font-size="12" font-weight="800" fill="#a8353a">Boiling</text>
+     <text x="104" y="${bottom-4}" text-anchor="end" font-size="12" font-weight="800" fill="#2f6f8f">Calm</text>
+     <text x="130" y="${bottom+26}" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">${heat}</text>`;
+  }
+  function start(){round=0;heat=START;gentle=0;last=null;ask();}
+  function ask(){
+    thermo();const r=R[round],msg=round===0?r.them:last;
+    chat.innerHTML=`<div class="rhead">Round ${round+1} of 3</div><div><div class="who">Jordan</div><div class="msg them">${msg}</div></div>`;
+    rep.innerHTML=`<div class="qprompt">How do you reply?</div>`+r.order.map((k,i)=>`<button class="opt" data-k="${k}"><span class="ol">${'ABC'[i]}</span><span>${r.o[k].t}</span></button>`).join('');
+    $$('#replies .opt').forEach(b=>b.onclick=()=>pick(b.dataset.k));
+  }
+  function pick(k){
+    const r=R[round],o=r.o[k],[d,cls,txt]=D[k];
+    heat=Math.max(0,Math.min(10,heat+d));if(k==='gentle')gentle++;last=o.r;
+    $$('#replies .opt').forEach(b=>{b.disabled=true;b.classList.add('dim');});const qp=$('#replies .qprompt');if(qp)qp.style.display='none';
+    thermo();
+    chat.insertAdjacentHTML('beforeend',`<div class="wrap me"><div class="who">You</div><div class="msg me">${o.t}</div></div><div class="eff ${cls}" aria-live="polite">${txt}</div><div><div class="who">Jordan</div><div class="msg them">${o.r}</div></div>`);
+    const b=document.createElement('button');b.className='btn';b.textContent=round<2?'Next round →':'See how it went';
+    b.onclick=()=>{round++;round<3?ask():end();};rep.appendChild(b);b.focus();
+  }
+  function end(){
+    thermo();
+    const calm=heat<=2,hot=heat>=7;
+    const h=calm?'You turned the heat down.':hot?'The conflict is boiling over.':'Still simmering.';
+    const t=calm?'Jordan feels heard, and now you can work on solutions together. With the heat down, <b>active listening</b> and <b>compromise</b> (for example, a fair split of tasks) are realistic.':hot?'Harsh words and avoidance made things worse. At this level of heat, a <b>neutral mediator</b> may be needed before the two of you can talk productively.':'The heat is lower than it could be, but the issue is not settled. Keep <b>listening</b> first, then look for a <b>compromise</b> each of you can accept.';
+    chat.innerHTML=`<div class="endcard"><div class="rhead">Final heat: ${heat} / 10</div><h2>${h}</h2><p>${t}</p><p class="mut">You chose a gentle answer ${gentle} of 3 times. Words matter: the same message can calm or inflame depending on how it is said.</p></div>`;
+    rep.innerHTML=`<button class="btn" id="again">Try again with different replies</button>`;$('#again').onclick=start;
+  }
+  start();
+})();
+
+/* ---------- Tab 2: Pick the Strategy ---------- */
+(function(){
+  const pair=(m1,m2,third)=>`<div class="pairart"><svg viewBox="0 0 240 90" width="240" height="90" aria-hidden="true">${person(third?55:80,80,{s:1.2,c:PAL[1],skin:SKIN[1],hair:HAIR[0],mood:m1})}${third?person(120,80,{s:1.2,c:PAL[2],skin:SKIN[4],hair:HAIR[2],mood:'calm'}):''}${person(third?185:160,80,{s:1.2,c:PAL[3],skin:SKIN[2],hair:HAIR[3],mood:m2})}${third?'':`<path d="M105 40 h30" stroke="#a8353a" stroke-width="3" stroke-dasharray="4 4"/>`}</svg></div>`;
+  const o=(a,c,m)=>[{label:'Active listening',score:a[0],fb:a[1]},{label:'Compromise',score:c[0],fb:c[1]},{label:'Mediation',score:m[0],fb:m[1]}];
+  Quiz($('#quiz2'),{
+    ask:'Which strategy should come first?',noun:'Conflict',doneTitle:'Strategy results',
+    items:[
+     {art:pair('frown','frown'),title:'Slide deck standoff',text:'Two teammates each want their own design for the final slide deck. Both are willing to give a little, and the deadline is near.',
+      options:o([1,'Listening is always useful, but both sides already understand each other. They need a workable middle.'],[2,'Each can accept part of the other’s idea. Compromise settles this quickly.'],[0,'A neutral third party is more than this calls for. The two can solve it themselves.'])},
+     {art:pair('worried','neutral'),title:'“Nobody hears me”',text:'A teammate is upset and keeps repeating that nobody hears them. You are not sure what the real issue is.',
+      options:o([2,'Seek to understand before responding. Until you know the real issue, any solution is a guess.'],[0,'Compromising before you understand the issue risks solving the wrong problem.'],[1,'Mediation may help later, but first try understanding it yourself.'])},
+     {art:pair('angry','angry',true),title:'Stalemate',text:'Two members are no longer speaking to each other. Direct conversations keep ending in shouting and the project is stalled.',
+      options:o([1,'Listening is important, but these two cannot yet do it with each other without help.'],[0,'Neither will give ground while the temperature is this high.'],[2,'A neutral third party can lower the temperature and help both sides reach agreement.'])},
+     {art:pair('frown','calm'),title:'Splitting the budget',text:'Two team leads disagree on how to divide a shared budget. Each has a valid need, and either could accept a middle number.',
+      options:o([1,'Understanding each need helps, but the path to agreement here is a middle number.'],[2,'Both can accept a middle number, so compromise fits well.'],[0,'You would only bring in a mediator if talks stall.'])}
+    ],
+    msgHigh:'You match the tool to the conflict.',msgMid:'Good. Reconsider how heated the conflict is and how open each side is.',msgLow:'Review the three strategies and try again.',
+    takeaways:['<b>Active listening:</b> seek to understand before responding.','<b>Compromise:</b> find a solution each party can accept.','<b>Mediation:</b> involve a neutral third party to help reach agreement.']
+  });
+})();
+
+/* ---------- Tab 3: Listen First ---------- */
+(function(){
+  const who=(k,mood,q)=>`<div class="speech">${avatarSVG({c:PAL[k],skin:SKIN[k%5],hair:HAIR[k%5],mood},58,66)}<div class="bub">${q}</div></div>`;
+  Quiz($('#quiz3'),{
+    ask:'Which response shows active listening?',noun:'Teammate',doneTitle:'Listening results',
+    items:[
+     {art:who(3,'frown','“I spent all weekend on this section and nobody even said thanks.”'),title:'Feeling overlooked',text:'A teammate says this after a tense meeting. Your response should show you heard them.',
+      options:[{label:'“That sounds hard.”',score:1,fb:'Kind, but generic. It does not show you understood what they said.'},{label:'“I said thanks last week, you know.”',score:0,fb:'This is defensive and turns the focus to you.'},{label:'“You’re feeling unappreciated after putting in a lot of work. Is that right?”',short:'Reflect and check',score:2,fb:'Paraphrasing the feeling and the facts, then checking, shows real understanding.'},{label:'“You should have told us you were working on it.”',score:0,fb:'This assigns blame instead of listening.'}]},
+     {art:who(1,'worried','“I don’t think we should change the plan again. We’ve already lost two weeks.”'),title:'Resistance to change',text:'A teammate pushes back on another revision to the plan.',
+      options:[{label:'“Why are you always so negative about change?”',score:0,fb:'This attacks the person rather than hearing the concern.'},{label:'“So you’re worried another change will cost us time we can’t afford?”',short:'Reflect the worry',score:2,fb:'Reflecting the concern back lets them know you understood the real issue.'},{label:'“Tell me more about what the delay has cost.”',score:1,fb:'An open question invites more, which is good, but reflecting what you heard first would be stronger.'}]},
+     {art:who(4,'neutral','“I feel like my ideas get steamrolled in meetings.”'),title:'Not being heard',text:'A teammate shares this with you privately.',
+      options:[{label:'“I don’t think that’s true. We all listen to you.”',score:0,fb:'Denying their experience shuts the conversation down.'},{label:'“Can you give me an example from the last meeting?”',score:1,fb:'Curiosity is good, but it can sound like you doubt them unless you first acknowledge what they said.'},{label:'“It sounds like you want room to finish your ideas before others jump in. Did I get that right?”',short:'Paraphrase and check',score:2,fb:'This paraphrases the need and invites correction. That is active listening.'},{label:'“Just speak up louder.”',score:0,fb:'This is advice before understanding, and it puts the fix on them.'}]}
+    ],
+    msgHigh:'Strong listening: you reflect before you respond.',msgMid:'Good start. Try to paraphrase what you heard before offering anything else.',msgLow:'Review the strategies and try again.',
+    takeaways:['<b>Seek to understand before responding.</b>','Paraphrase the feeling and the facts, then check that you got it right.','Defensiveness, blame, and quick advice usually escalate conflict.']
+  });
+})();
+initTabs();
+
+</script>
+</body>
+</html>

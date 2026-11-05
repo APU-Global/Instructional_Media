@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 300 Week 4</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--mut:#5b5b5b;--line:#e3dfd9;--warm:#edebe8;--soft:#faf8f6;--ok:#2f7d4f;--okbg:#e8f4ec;--warn:#9a6a12;--warnbg:#fbf1dc;--badbg:#fbe9ea;--teal:#2f6f8f;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4}
+button,input{font-family:inherit}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:12px 16px;gap:8px;max-width:1100px;margin:0 auto}
+header.top{display:flex;align-items:center;gap:12px;flex:none}
+.wk{background:var(--red-d);color:#fff;font-weight:700;letter-spacing:.08em;font-size:12px;padding:7px 11px;border-radius:8px;text-transform:uppercase;white-space:nowrap}
+h1{font-size:20px;margin:0;line-height:1.15}
+.sub{font-size:13px;color:var(--mut);margin:2px 0 0}
+.tabs{display:flex;gap:4px;flex:none;border-bottom:2px solid var(--line)}
+.tab{appearance:none;border:0;background:none;padding:9px 14px;font-size:14px;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:8px 8px 0 0}
+.tab:hover{background:var(--soft)}
+.tab[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+.panel{flex:1;min-height:0;display:none;position:relative}
+.panel.on{display:flex;flex-direction:column;gap:10px}
+.cols{flex:1;min-height:0;display:grid;gap:14px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-height:0}
+.card.white{background:#fff}
+h2{font-size:15px;margin:0 0 6px;color:var(--red-d)}
+h3{font-size:13px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+p{margin:0 0 6px}
+:focus-visible{outline:3px solid #1d6fb8;outline-offset:2px}
+.btn{appearance:none;background:var(--red-d);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer}
+.btn:hover{background:#8f2c30}
+.btn.ghost{background:#fff;color:var(--red-d);border:2px solid var(--red-d)}
+.btn.ghost:hover{background:var(--badbg)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:2px 8px;background:var(--warm);color:#444;white-space:nowrap}
+.pill.g{background:var(--okbg);color:var(--ok)}.pill.r{background:var(--badbg);color:var(--red-d)}
+.quote{border-left:4px solid var(--red);padding:4px 0 4px 10px;font-style:italic;color:#333;margin:6px 0}
+svg{display:block}
+/* quiz */
+.quiz{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.qtop{display:flex;align-items:center;justify-content:space-between;flex:none}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--warm);border:2px solid var(--warm)}
+.dot.cur{border-color:var(--red-d);background:#fff}
+.dot.s2{background:var(--ok);border-color:var(--ok)}.dot.s1{background:#d9a53a;border-color:#d9a53a}.dot.s0{background:var(--red);border-color:var(--red)}
+.qcount{font-size:13px;color:var(--mut);font-weight:600}
+.qgrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.scn{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.scn-t{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red-d)}
+.scn-q{font-size:17px;line-height:1.4}
+.qside{display:flex;flex-direction:column;gap:8px;min-height:0}
+.qprompt{font-weight:700;font-size:14px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 11px;font-size:14px;line-height:1.35;cursor:pointer;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--red);background:#fffafa}
+.opt .ol{flex:none;width:22px;height:22px;border-radius:50%;background:var(--warm);font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.opt[disabled]{cursor:default}
+.opt.s2{border-color:var(--ok);background:var(--okbg)}.opt.s1{border-color:#d9a53a;background:var(--warnbg)}.opt.s0{border-color:var(--red);background:var(--badbg)}
+.opt.best:not(.s2){border-style:dashed;border-color:var(--ok)}
+.opt.dim{opacity:.55}
+.fb{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;display:none}
+.fb.on{display:block}
+.fbh{font-weight:800;margin-bottom:2px}.fbh.s2{color:var(--ok)}.fbh.s1{color:var(--warn)}.fbh.s0{color:var(--red-d)}
+.bestp{margin-top:4px;padding-top:4px;border-top:1px dashed var(--line)}
+.fb .btn{margin-top:6px}
+.done{flex:1;display:grid;place-items:center;text-align:center}
+.done .big{font-size:48px;font-weight:800;color:var(--red-d);line-height:1}
+.done ul{text-align:left;margin:8px auto 12px;padding-left:20px;max-width:560px}
+.done li{margin:3px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* small screens: allow the one page scroll instead of clipping */
+@media (max-width:700px),(max-height:560px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .panel,.panel.on,.cols,.quiz,.qgrid{min-height:auto}
+ .cols,.qgrid{display:flex;flex-direction:column}
+}
+
+.dialbar{flex:none;display:flex;align-items:center;gap:10px}
+.dialbar .end{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.stops{flex:1;display:grid;grid-template-columns:repeat(3,1fr);background:var(--warm);border-radius:30px;padding:4px;gap:4px}
+.stop{border:0;background:transparent;border-radius:26px;padding:10px 8px;font-size:15px;font-weight:800;color:#444;cursor:pointer}
+.stop:hover{background:#e0dcd6}
+.stop[aria-pressed=true]{background:var(--red-d);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.dg{opacity:0;transition:opacity .4s;pointer-events:none}.dg.on{opacity:1}
+#dial-info h2{font-size:22px;margin:0}
+#dial-info .tagline{font-size:14px;color:var(--mut);margin-bottom:8px}
+.meter{display:grid;grid-template-columns:140px 1fr;align-items:center;gap:8px;margin:5px 0;font-size:13px;font-weight:600}
+.segs{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.seg{height:13px;border-radius:3px;background:#e4e0da;transition:background .35s}
+.seg.on{background:var(--red-d)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.two div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:13px}
+.two b{display:block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px}
+.two .bw b{color:var(--ok)}.two .ww b{color:var(--red-d)}
+.fine{font-size:12px;color:var(--mut);margin-top:8px}
+.speech{display:flex;gap:10px;align-items:center}
+.speech svg{flex:none}
+.bub{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 13px;font-size:16px}
+.icon{display:flex;justify-content:center;margin-bottom:4px}
+@media (max-width:700px){.dialbar .end{display:none}.meter{grid-template-columns:110px 1fr}}
+.icon svg{width:112px;height:112px}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="wk">Week 4</div><div><h1>Leadership and Power</h1><p class="sub">ORGS 300 · Dynamics of Group Behavior · Interactive Deep Dive</p></div></header>
+<nav class="tabs" role="tablist" aria-label="Activities">
+ <button class="tab" role="tab" data-p="p1">1 · Leadership Style Dial</button>
+ <button class="tab" role="tab" data-p="p2">2 · Situation Room</button>
+ <button class="tab" role="tab" data-p="p3">3 · Power Check</button>
+</nav>
+<section class="panel" id="p1" role="tabpanel">
+ <div class="dialbar" role="group" aria-label="Leadership style">
+  <span class="end">Leader-centered</span>
+  <div class="stops" id="stops"></div>
+  <span class="end">Team-centered</span>
+ </div>
+ <div class="cols" style="grid-template-columns:1.1fr 1fr">
+  <div class="card white" style="padding:6px"><svg id="dial-svg" viewBox="0 0 440 400" width="100%" height="100%" role="img" aria-label="Diagram of the selected leadership style" style="max-height:100%"></svg></div>
+  <div class="card" id="dial-info"></div>
+ </div>
+</section>
+<section class="panel" id="p2" role="tabpanel"><div class="quiz" id="quiz2"></div></section>
+<section class="panel" id="p3" role="tabpanel"><div class="quiz" id="quiz3"></div></section>
+
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const SKIN=['#f2cdaa','#dca77a','#b27a50','#85553a','#f6d9c0'];
+const HAIR=['#2b1d16','#5a3a22','#d4a24a','#1f1f1f','#8a2f2f'];
+const PAL=['#a8353a','#2f6f8f','#3f7d5a','#d98e2b','#6a4c93','#3b4a5a'];
+
+/* Avatar graphic: bust centred on x, standing on baseline y. mood: smile|big|calm|neutral|frown|angry|worried|shout */
+function person(x,y,o={}){
+  const s=o.s||1,c=o.c||PAL[0],sk=o.skin||SKIN[0],hr=o.hair||HAIR[0],m=o.mood||'smile';
+  const hy=y-36*s, my=hy+6*s, st='stroke="#4a2a22" stroke-width="'+(1.6*s)+'" fill="none" stroke-linecap="round"';
+  let mouth='',brows='';
+  const P=(a,b)=>`${(x+a*s).toFixed(1)} ${(my+b*s).toFixed(1)}`;
+  if(m==='smile')mouth=`<path d="M${P(-5,-1)} Q${P(0,4.5)} ${P(5,-1)}" ${st}/>`;
+  else if(m==='calm')mouth=`<path d="M${P(-3.5,0)} Q${P(0,2.5)} ${P(3.5,0)}" ${st}/>`;
+  else if(m==='big')mouth=`<path d="M${P(-6,-2)} Q${P(0,10)} ${P(6,-2)}Z" fill="#7a2a2a"/>`;
+  else if(m==='neutral')mouth=`<path d="M${P(-4,1)} L${P(4,1)}" ${st}/>`;
+  else if(m==='frown'||m==='worried')mouth=`<path d="M${P(-5,3)} Q${P(0,-2)} ${P(5,3)}" ${st}/>`;
+  else if(m==='angry')mouth=`<path d="M${P(-5,3.5)} Q${P(0,-2.5)} ${P(5,3.5)}" ${st}/>`;
+  else if(m==='shout')mouth=`<ellipse cx="${x}" cy="${(my+2*s).toFixed(1)}" rx="${3.4*s}" ry="${4*s}" fill="#7a2a2a"/>`;
+  const B=(x1,y1,x2,y2)=>`<path d="M${(x+x1*s).toFixed(1)} ${(hy+y1*s).toFixed(1)} L${(x+x2*s).toFixed(1)} ${(hy+y2*s).toFixed(1)}" ${st}/>`;
+  if(m==='angry')brows=B(-9,-7,-2.5,-3.5)+B(9,-7,2.5,-3.5);
+  if(m==='worried')brows=B(-9,-4,-2.5,-7.5)+B(9,-4,2.5,-7.5);
+  const ey=(hy-0.5*s).toFixed(1);
+  const g=`<g class="${o.cls||''}">
+   <path d="M${x-20*s} ${y} Q${x-20*s} ${y-22*s} ${x} ${y-22*s} Q${x+20*s} ${y-22*s} ${x+20*s} ${y}Z" fill="${c}"/>
+   <circle cx="${x}" cy="${hy}" r="${13*s}" fill="${sk}"/>
+   <path d="M${x-13*s} ${hy-2*s} A${13*s} ${13*s} 0 0 1 ${x+13*s} ${hy-2*s} Q${x} ${hy-9*s} ${x-13*s} ${hy-2*s}Z" fill="${hr}"/>
+   <circle cx="${x-5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/><circle cx="${x+5*s}" cy="${ey}" r="${1.7*s}" fill="#222"/>
+   ${brows}${mouth}
+   ${o.label?`<text x="${x}" y="${y+14*s}" text-anchor="middle" font-size="${Math.max(10,11*s)}" font-weight="700" fill="#333">${o.label}</text>`:''}
+  </g>`;
+  return g;
+}
+const avatarSVG=(o,w=64,h=72)=>`<svg viewBox="0 0 64 72" width="${w}" height="${h}" aria-hidden="true">${person(32,62,Object.assign({s:1.15},o))}</svg>`;
+
+function initTabs(){
+  const tabs=$$('.tab');
+  function show(id,focus){
+    tabs.forEach(t=>{const on=t.dataset.p===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;});
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===id));
+    document.dispatchEvent(new CustomEvent('panelshow',{detail:id}));
+  }
+  tabs.forEach((t,k)=>{
+    t.onclick=()=>show(t.dataset.p);
+    t.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(k+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];n.focus();show(n.dataset.p);}};
+  });
+  show(tabs[0].dataset.p);
+}
+
+/* Scenario quiz engine. Each option: {label, score:0|1|2, fb}. Highest score = "best fit". */
+function Quiz(root,cfg){
+  const items=cfg.items;let i=0,score=0,max=0,res=[];
+  const TITLES={2:'Best fit',1:'Workable, but not the strongest',0:'Not the best fit'};
+  const ICON={2:'✔',1:'◐',0:'✖'};
+  function render(){
+    if(i>=items.length)return done();
+    const it=items[i];
+    root.innerHTML=`<div class="qtop"><div class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="dot ${k<i?'s'+res[k]:''} ${k===i?'cur':''}"></span>`).join('')}</div><div class="qcount">${cfg.noun||'Question'} ${i+1} of ${items.length}</div></div>
+    <div class="qgrid"><div class="card scn">${it.art||''}${it.title?`<div class="scn-t">${it.title}</div>`:''}<div class="scn-q">${it.text}</div></div>
+    <div class="qside"><div class="qprompt">${it.ask||cfg.ask}</div>
+    <div class="opts">${it.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="ol">${'ABCDE'[k]}</span><span>${o.label}</span></button>`).join('')}</div>
+    <div class="fb" aria-live="polite"></div></div></div>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+  }
+  function pick(k){
+    const it=items[i],o=it.options[k],top=Math.max(...it.options.map(x=>x.score));
+    score+=o.score;max+=top;res[i]=o.score;
+    $$('.opt',root).forEach((b,j)=>{b.disabled=true;const op=it.options[j];
+      if(j===k)b.classList.add('s'+op.score);else if(op.score===top)b.classList.add('best');else b.classList.add('dim');});
+    const best=it.options.find(x=>x.score===top);
+    const fb=$('.fb',root);
+    fb.innerHTML=`<div class="fbh s${o.score}">${ICON[o.score]} ${TITLES[o.score]}</div><div>${o.fb}</div>`+
+      (o.score<top?`<div class="bestp"><b>Strongest choice:</b> ${(best.short||best.label).replace(/^["“]|["”]$/g,'')} — ${best.bfb||best.fb}</div>`:'')+
+      `<button class="btn">${i<items.length-1?'Next →':'See results'}</button>`;
+    fb.classList.add('on');
+    $('.btn',fb).onclick=()=>{i++;render()};$('.btn',fb).focus();
+  }
+  function done(){
+    const pct=max?score/max:0;
+    const msg=pct>=.85?cfg.msgHigh:pct>=.55?cfg.msgMid:cfg.msgLow;
+    root.innerHTML=`<div class="done card white"><div><div class="scn-t">${cfg.doneTitle||'Results'}</div><div class="big">${score} / ${max}</div><p style="margin-top:6px"><b>${msg}</b></p>
+    <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul><button class="btn">Try again</button></div></div>`;
+    $('.btn',root).onclick=()=>{i=0;score=0;max=0;res=[];render()};
+  }
+  render();
+}
+
+/* ---------- Tab 1: Leadership dial ---------- */
+(function(){
+  const svg=$('#dial-svg');
+  const L=(x,y,o={})=>person(x,y,Object.assign({s:1.1,c:PAL[0],skin:SKIN[1],hair:HAIR[0],mood:'smile'},o));
+  const T=(x,y,k,o={})=>person(x,y,Object.assign({s:1.05,c:[PAL[1],PAL[2],PAL[3],PAL[4],PAL[5]][k%5],skin:SKIN[(k+2)%5],hair:HAIR[(k+1)%5],mood:'smile'},o));
+  const crown=(x,y,s=1)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M-12 0 L-14 -14 L-6 -7 L0 -17 L6 -7 L14 -14 L12 0Z" fill="#e8b11a" stroke="#b9820a" stroke-width="1.5"/>`;
+  const bubble=(x,y,w,txt)=>`<g><rect x="${x-w/2}" y="${y-16}" width="${w}" height="30" rx="12" fill="#fff" stroke="#a8353a" stroke-width="2"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="14" font-weight="800" fill="#a8353a">${txt}</text></g>`;
+  const arrow=(x1,y1,x2,y2,c='#a8353a',both=false)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="3" marker-end="url(#ah)" ${both?'marker-start="url(#ahs)"':''}/>`;
+  const defs=`<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#a8353a"/></marker><marker id="ahs" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M10 0 L0 5 L10 10z" fill="#a8353a"/></marker></defs>`;
+  const D=[
+   /*autocratic*/ `<rect x="150" y="146" width="140" height="16" rx="6" fill="#8a6a45"/>${L(220,146,{s:1.5,mood:'calm'})}${crown(220,56,1.2)}${bubble(335,70,150,'Do it my way.')}
+     ${[60,160,280,380].map((x,k)=>arrow(220+(x-220)*.35,184,x,258)+T(x,350,k,{mood:'neutral',label:''})).join('')}
+     <text x="220" y="392" text-anchor="middle" font-size="14" font-weight="700" fill="#555">Decisions flow down</text>`,
+   /*democratic*/ (()=>{const pos=[[220,112],[355,185],[318,345],[122,345],[85,185]];
+     return `<ellipse cx="220" cy="225" rx="150" ry="120" fill="#faf6f1" stroke="#e3dfd9" stroke-width="2" stroke-dasharray="4 6"/>
+     <circle cx="220" cy="225" r="42" fill="#fff" stroke="#a8353a" stroke-width="3"/><text x="220" y="222" text-anchor="middle" font-size="13" font-weight="800" fill="#a8353a">Shared</text><text x="220" y="238" text-anchor="middle" font-size="13" font-weight="800" fill="#a8353a">decision</text>
+     ${pos.map(([x,y],k)=>{const px=x,py=y-26,dx=220-px,dy=225-py,d=Math.hypot(dx,dy),ux=dx/d,uy=dy/d;return arrow(px+ux*30,py+uy*30,220-ux*46,225-uy*46,'#a8353a',true);}).join('')}
+     ${pos.map(([x,y],k)=>k===0?L(x,y,{s:1.15,mood:'smile'}):T(x,y,k,{s:1.05})).join('')}${crown(220,45,1)}
+     ${bubble(330,50,170,'What do you think?')}
+     <text x="220" y="392" text-anchor="middle" font-size="14" font-weight="700" fill="#555">Decisions are shaped together</text>`;})(),
+   /*servant*/ `${[70,165,275,370].map((x,k)=>T(x,118,k,{s:1.1,mood:'big'})).join('')}
+     <rect x="40" y="130" width="360" height="16" rx="8" fill="#8a6a45"/>
+     ${[70,165,275,370].map(x=>arrow(220+(x-220)*.4,262,x,152,'#2f7d4f')).join('')}
+     ${L(220,345,{s:1.5,mood:'calm'})}
+     ${bubble(110,260,150,'How can I help?')}
+     <text x="220" y="392" text-anchor="middle" font-size="14" font-weight="700" fill="#555">Leader lifts the team up</text>`
+  ];
+  svg.innerHTML=defs+D.map((g,i)=>`<g class="dg" data-i="${i}">${g}</g>`).join('');
+  const S=[
+   {n:'Autocratic',t:'The leader decides; the team carries it out.',m:[5,1,2,1],b:'Crises, tight deadlines, or brand-new teams who need clear direction.',w:'Low buy-in, and members may stop offering ideas.'},
+   {n:'Democratic',t:'The leader invites input and decides with the team.',m:[3,4,4,3],b:'Complex problems, skilled members, and time to talk things through.',w:'Slower decisions, and unclear ownership if no one closes the loop.'},
+   {n:'Servant',t:'The leader’s first job is the growth and well-being of others.',m:[2,5,5,5],b:'Building trust, supporting people under stress, and growing future leaders.',w:'Can be slow, and can drift without clear direction.'}
+  ];
+  const M=['Speed of decisions','Member input','Engagement & motivation','Member growth'];
+  $('#stops').innerHTML=S.map((s,i)=>`<button class="stop" data-i="${i}">${s.n}</button>`).join('');
+  function show(i){
+    $$('.stop').forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+    $$('.dg',svg).forEach((g,k)=>g.classList.toggle('on',k===i));
+    const s=S[i];
+    $('#dial-info').innerHTML=`<h3>Selected style</h3><h2>${s.n}</h2><div class="tagline">${s.t}</div>
+     ${M.map((m,k)=>`<div class="meter"><span>${m}</span><div class="segs" role="img" aria-label="${s.m[k]} out of 5">${[1,2,3,4,5].map(n=>`<i class="seg ${n<=s.m[k]?'on':''}"></i>`).join('')}</div></div>`).join('')}
+     <div class="two"><div class="bw"><b>Works best when</b>${s.b}</div><div class="ww"><b>Watch out for</b>${s.w}</div></div>
+     <div class="fine">Illustrative tendencies for discussion, not research data. The best fit depends on the people, the task, and the situation.</div>`;
+  }
+  $$('.stop').forEach(b=>b.onclick=()=>show(+b.dataset.i));
+  show(0);
+})();
+
+/* ---------- Tab 2: Situation Room ---------- */
+(function(){
+  const ic={
+   alarm:'<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><path d="M32 6c-11 0-17 8-17 19v11l-6 9h46l-6-9V25C49 14 43 6 32 6z" fill="#d34147"/><circle cx="32" cy="54" r="6" fill="#d34147"/><path d="M52 12l6-4M12 12L6 8M58 28h4M2 28h4" stroke="#e8b11a" stroke-width="3" stroke-linecap="round"/></svg>',
+   bulb:'<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="26" r="17" fill="#e8b11a"/><rect x="24" y="43" width="16" height="9" rx="3" fill="#8a6a45"/><rect x="26" y="53" width="12" height="5" rx="2.5" fill="#8a6a45"/><path d="M26 28l6 6 6-6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+   battery:'<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><rect x="6" y="18" width="46" height="28" rx="6" fill="#fff" stroke="#555" stroke-width="4"/><rect x="52" y="27" width="6" height="10" rx="2" fill="#555"/><rect x="11" y="23" width="9" height="18" rx="2" fill="#d34147"/></svg>',
+   clock:'<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="25" fill="#fff" stroke="#a8353a" stroke-width="5"/><path d="M32 16v17l11 7" stroke="#a8353a" stroke-width="4" fill="none" stroke-linecap="round"/></svg>',
+   scales:'<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><path d="M32 8v44M18 54h28M10 20h44" stroke="#555" stroke-width="4" stroke-linecap="round"/><path d="M10 20l-7 16h14zM54 20l-7 16h14z" fill="#2f6f8f"/><path d="M3 36a7 6 0 0014 0M47 36a7 6 0 0014 0" fill="#2f6f8f"/></svg>'
+  };
+  const opts=(a,d,s)=>[
+   {label:'Autocratic',score:a[0],fb:a[1]},{label:'Democratic',score:d[0],fb:d[1]},{label:'Servant',score:s[0],fb:s[1]}];
+  Quiz($('#quiz2'),{
+    ask:'Which leadership style fits best?',noun:'Situation',doneTitle:'Situation Room results',
+    items:[
+     {art:`<div class="icon">${ic.alarm}</div>`,title:'Emergency',text:'A fire alarm sounds during your team’s off-site workshop. Twenty people look at you.',
+      options:opts([2,'Clear, immediate direction saves time and keeps people safe. Style should match the moment.'],[0,'Polling the group while an alarm rings wastes seconds that matter.'],[1,'Caring for people is right, but in an emergency the care shows up as clear, firm direction first.'])},
+     {art:`<div class="icon">${ic.bulb}</div>`,title:'Redesign',text:'Your skilled marketing team must redesign the onboarding program. You have three weeks.',
+      options:opts([0,'Dictating the answer wastes the expertise in the room and kills ownership.'],[2,'Skilled members and time to talk make participation the strongest fit. Their input improves the result and buy-in.'],[1,'Supporting the team helps, but without a way to bring ideas together the work can drift.'])},
+     {art:`<div class="icon">${ic.battery}</div>`,title:'Burnout',text:'After a brutal quarter, two members mention burnout and trust in management is low.',
+      options:opts([0,'More top-down pressure would deepen the distrust and the exhaustion.'],[1,'Inviting input helps, but the team first needs to feel cared for before it can fully contribute.'],[2,'Servant leadership prioritizes well-being and rebuilds trust: listen, remove obstacles, and support recovery.'])},
+     {art:`<div class="icon">${ic.clock}</div>`,title:'Deadline',text:'A group of eager interns, new to the task, faces a client deadline tomorrow.',
+      options:opts([2,'Clear direction fits the clock and their inexperience. Explain the why so they learn as they go.'],[0,'Asking novices to vote on an approach burns the little time you have.'],[1,'Supportive coaching is valuable, but tomorrow’s deadline calls for more direction than usual.'])},
+     {art:`<div class="icon">${ic.scales}</div>`,title:'Ethics & power',text:'The team is split on an ethical call, and one dominant senior member shapes every discussion.',
+      options:opts([0,'Deciding alone would deepen the power imbalance rather than address it.'],[2,'Structured, inclusive discussion balances voices so one person does not dominate the decision.'],[2,'Drawing out quieter voices and caring about everyone’s stake also counters the imbalance.'])}
+    ],
+    msgHigh:'Strong read of the situations. You match style to context.',msgMid:'Good instincts. Revisit how people, task, and situation shape the best fit.',msgLow:'Review the Dial tab and try again. Context drives the best style.',
+    takeaways:['No single style is best. <b>People, task, and situation</b> decide the fit.','Autocratic leadership can fit a crisis; servant leadership can rebuild trust.','Whatever the style, use power with humility and care for others.']
+  });
+})();
+
+/* ---------- Tab 3: Power check ---------- */
+(function(){
+  const who=(k,mood,txt)=>`<div class="speech">${avatarSVG({c:PAL[k],skin:SKIN[k%5],hair:HAIR[k%5],mood},58,66)}<div class="bub">${txt}</div></div>`;
+  const o=(fwd,fb)=>[{label:'Moves the team forward',score:fwd?2:0,fb},{label:'Holds the team back',score:fwd?0:2,fb}];
+  Quiz($('#quiz3'),{
+    ask:'How is power being used here?',noun:'Moment',doneTitle:'Power check results',
+    items:[
+     {art:who(0,'smile','“This week you facilitate the meeting. Next week, Maya does.”'),title:'Rotating the chair',text:'A leader rotates who facilitates each meeting so influence is spread across the team.',options:o(true,'Shared leadership spreads responsibility so one or two voices do not dominate.')},
+     {art:who(1,'angry','“We’re doing it my way. I’ve been here the longest.”'),title:'Pulling rank',text:'A senior member announces the decision and moves on without asking anyone.',options:o(false,'Using position or tenure in place of input holds the team back and creates a power imbalance.')},
+     {art:who(2,'calm','“I got that wrong. How should we fix it?”'),title:'Admitting a mistake',text:'A leader openly owns an error and asks the team for ideas to repair it.',options:o(true,'Humility and empathy model the ethical use of power and build trust.')},
+     {art:who(3,'neutral','“Let me just check with the two people who always agree with me.”'),title:'Echo chamber',text:'A manager seeks feedback only from the few people who reliably agree.',options:o(false,'Selective listening protects the leader’s power but starves the team of honest perspectives.')},
+     {art:who(4,'worried','“Before we decide, I’d value your view. You haven’t had a chance to speak yet.”'),title:'Inviting the quiet voice',text:'A leader privately invites a silent member’s view before the decision.',options:o(true,'Intentional collaboration prevents power imbalances and makes it safer for members to contribute.')},
+     {art:who(5,'shout','“If you bring this up again, it will go in your review.”'),title:'Silencing a concern',text:'A leader uses authority to pressure a member into staying quiet about a concern.',options:o(false,'Pressuring someone into silence is an ethical misuse of power and destroys psychological safety.')}
+    ],
+    msgHigh:'You can spot power used well and poorly.',msgMid:'Good. Re-read the ethical risks of power and try again.',msgLow:'Review the Dial tab and try again.',
+    takeaways:['Power is present in every team. It can move a team forward or hold it back.','Humility, empathy, and care for others mark the ethical use of power.','Shared leadership and intentional collaboration help prevent power imbalances.']
+  });
+})();
+initTabs();
+
+</script>
+</body>
+</html>
