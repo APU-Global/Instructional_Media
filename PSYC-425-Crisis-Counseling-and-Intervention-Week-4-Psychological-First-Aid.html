@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 425 Crisis Counseling and Intervention | Week 4: Psychological First Aid</title>
+<style>
+:root{
+  --navy:#1d3557; --teal:#1f8a80; --teal-l:#e3f4f2; --amber:#d98a1c; --amber-l:#fdf1dc;
+  --coral:#d9534f; --coral-l:#fbe6e4; --green:#2e8b57; --green-l:#e2f4ea;
+  --bg:#f3f7fa; --card:#ffffff; --ink:#1f2a37; --mute:#5b6b7b; --line:#d7e0e8;
+}
+*{box-sizing:border-box}
+/* ---- No double scrollbar: the page itself never scrolls; only .stage does ---- */
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg)}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:16px;line-height:1.5}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 1 0;min-width:130px;border:0;background:rgba(255,255,255,.12);color:#dbe7f3;padding:9px 10px;border-radius:10px 10px 0 0;cursor:pointer;font:inherit;font-size:.88rem;text-align:left;display:flex;gap:8px;align-items:center}
+.tab svg{width:24px;height:24px;flex:0 0 24px;stroke:currentColor;fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.tab b{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.8;font-weight:600}
+.tab span{display:block;line-height:1.15;font-weight:600}
+.tab:hover{background:rgba(255,255,255,.22)}
+.tab[aria-selected=true]{background:var(--bg);color:var(--navy)}
+.tab:focus-visible,button:focus-visible{outline:3px solid #f5b83d;outline-offset:2px}
+.stage{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px;-webkit-overflow-scrolling:touch}
+.panel{max-width:1000px;margin:0 auto;display:none}
+.panel.on{display:block}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:0;border-radius:16px;overflow:hidden;background:linear-gradient(120deg,var(--navy),#2c5d8a);color:#fff;margin-bottom:14px}
+.hero .txt{padding:18px 20px}
+.hero h1{margin:0 0 4px;font-size:1.35rem;line-height:1.2}
+.hero .kick{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;opacity:.8;font-weight:700}
+.hero p{margin:8px 0 0;font-size:.95rem;opacity:.95}
+.hero svg{width:100%;height:100%;min-height:150px;display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.card h2{margin:0 0 6px;font-size:1.1rem;color:var(--navy)}
+.card h3{margin:0 0 6px;font-size:1rem;color:var(--navy)}
+.sub{color:var(--mute);font-size:.92rem;margin:0 0 12px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--navy);color:#fff}
+.btn.primary{background:var(--navy);color:#fff}
+.btn.primary:hover{background:#142744}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn[disabled]:hover{background:#fff;color:var(--navy)}
+.btn.primary[disabled]:hover{background:var(--navy);color:#fff}
+.scenario{background:var(--teal-l);border-left:5px solid var(--teal);border-radius:10px;padding:12px 14px;margin:8px 0 12px}
+.scenario small{display:block;color:var(--teal);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.72rem}
+.pager{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:#fff;font-weight:700;color:var(--mute);cursor:pointer;font-size:.85rem}
+.dot.cur{border-color:var(--navy);color:var(--navy)}
+.dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.chip{border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 8px 6px;text-align:center;cursor:pointer;font:inherit;color:var(--ink)}
+.chip svg{width:38px;height:38px;stroke:var(--navy);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 2px}
+.chip span{display:block;font-weight:700;font-size:.88rem}
+.chip small{display:block;color:var(--mute);font-size:.74rem;line-height:1.2}
+.chip[aria-pressed=true]{border-color:var(--navy);background:#eaf0f7}
+.chip.ok{border-color:var(--green);background:var(--green-l)}
+.chip.miss{border-color:var(--amber);background:var(--amber-l);border-style:dashed}
+.chip.bad{border-color:var(--coral);background:var(--coral-l)}
+.radios{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.93rem;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--green-l);border:1px solid var(--green)}
+.fb.part{background:var(--amber-l);border:1px solid var(--amber)}
+.fb.no{background:var(--coral-l);border:1px solid var(--coral)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.toggle{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:.92rem}
+.toggle:hover{background:#f0f5f9}
+.toggle input{margin-top:4px;width:18px;height:18px;flex:0 0 18px}
+.gauge{text-align:center}
+.gauge svg{width:100%;max-width:340px}
+.needle{transform-origin:150px 150px;transition:transform .7s cubic-bezier(.3,1.4,.5,1)}
+.glabel{font-weight:800;font-size:1.15rem;color:var(--navy)}
+/* Week 2 */
+.hand{min-height:64px;display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:12px;background:#fafcfd;margin-bottom:12px}
+.lcard{background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.9rem;cursor:pointer;max-width:300px;text-align:left;font-family:inherit;color:var(--ink)}
+.lcard.sel{border-color:var(--navy);box-shadow:0 0 0 3px #bcd0e6}
+.lcard.shake{animation:sh .4s}
+@keyframes sh{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.bin{border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px;text-align:center;cursor:pointer;font:inherit;color:var(--ink);min-height:110px;display:flex;flex-direction:column;align-items:center}
+.bin:hover{border-color:var(--teal);background:var(--teal-l)}
+.bin svg{width:44px;height:44px;stroke:var(--teal);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.bin b{font-size:.92rem;color:var(--navy)}
+.bin small{font-size:.72rem;color:var(--mute);line-height:1.2;margin-bottom:4px}
+.bin .placed{font-size:.76rem;background:var(--green-l);border:1px solid var(--green);border-radius:8px;padding:3px 6px;margin-top:4px;text-align:left}
+.msg{min-height:1.4em;font-weight:600;margin:6px 0}
+.msg.ok{color:var(--green)} .msg.no{color:var(--coral)}
+.domains{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.dom{border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px;cursor:pointer;font:inherit;text-align:center}
+.dom[aria-pressed=true]{border-color:var(--teal);background:var(--teal-l)}
+.dom svg{width:36px;height:36px;stroke:var(--navy);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.dom span{display:block;font-weight:700;font-size:.85rem}
+/* Week 4 */
+.steps{display:flex;gap:6px;margin-bottom:12px}
+.step{flex:1;text-align:center;padding:8px 4px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--mute);font-weight:700;font-size:.85rem}
+.step svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto}
+.step.cur{border-color:var(--navy);color:var(--navy);background:#eaf0f7}
+.step.done{border-color:var(--green);color:var(--green);background:var(--green-l)}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:#fff;font:inherit;color:var(--ink);cursor:pointer}
+.opt:hover:not([disabled]){border-color:var(--navy);background:#f0f5f9}
+.opt.ok{border-color:var(--green);background:var(--green-l)}
+.opt.no{border-color:var(--coral);background:var(--coral-l)}
+.opt small{display:block;margin-top:4px;color:var(--mute)}
+.smart{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.smart label{font-size:.8rem;font-weight:700;color:var(--navy);display:block}
+.smart label b{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;padding:0 6px;margin-right:4px}
+.smart input,.smart textarea{width:100%;font:inherit;font-size:.88rem;padding:6px 8px;border:2px solid var(--line);border-radius:8px;margin-top:3px}
+.smartout{margin-top:10px;background:#eaf0f7;border-left:5px solid var(--navy);border-radius:8px;padding:10px 12px;font-style:italic;min-height:44px}
+/* Week 7 */
+.safety{display:flex;gap:10px;align-items:center;background:var(--amber-l);border:1px solid var(--amber);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.9rem}
+.safety svg{width:34px;height:34px;flex:0 0 34px;stroke:var(--amber);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.quote{background:#fff;border:1px solid var(--line);border-left:5px solid var(--navy);border-radius:10px;padding:10px 12px;margin:8px 0 6px;font-style:italic}
+.mrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-bottom:6px}
+.mrow .opt{margin:0;text-align:center;font-weight:600;font-size:.88rem;padding:8px 6px}
+.item{border-bottom:1px solid var(--line);padding:6px 0 10px}
+.item:last-child{border-bottom:0}
+.score{font-weight:800;color:var(--navy)}
+.foot{text-align:center;color:var(--mute);font-size:.78rem;padding:6px 0 2px}
+@media(max-width:700px){
+  .hero{grid-template-columns:1fr}.hero svg{min-height:110px;max-height:150px}
+  .two{grid-template-columns:1fr}
+  .tab{min-width:112px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <main class="stage" id="stage"></main>
+</div>
+<script>
+/* ============ ICONS (64x64 line icons) ============ */
+const IC={
+ situational:'<path d="M36 6 L16 36 H30 L26 58 L48 26 H34 Z"/>',
+ developmental:'<path d="M8 54 H22 V42 H34 V30 H46 V18 H58"/><path d="M50 10 L58 18 L50 26"/>',
+ existential:'<circle cx="32" cy="32" r="23"/><path d="M24 25 C24 14 40 14 40 25 C40 32 32 31 32 40"/><circle cx="32" cy="48" r="1.5"/>',
+ interpersonal:'<circle cx="23" cy="32" r="15"/><circle cx="41" cy="32" r="15" stroke-dasharray="4 5"/>',
+ spiritual:'<rect x="25" y="32" width="14" height="24" rx="2"/><path d="M32 6 C25 15 25 22 32 27 C39 22 39 15 32 6Z"/>',
+ objective:'<path d="M8 32 L32 11 L56 32"/><path d="M15 28 V54 H49 V28"/><path d="M27 54 V38 H37 V54"/>',
+ subjective:'<path d="M32 7 L53 15 V32 C53 44 44 53 32 58 C20 53 11 44 11 32 V15 Z"/><path d="M33 10 L28 26 L37 34 L30 55"/>',
+ imagined:'<path stroke-dasharray="4 4" d="M32 7 L39 24 L57 25 L43 37 L47 55 L32 45 L17 55 L21 37 L7 25 L25 24 Z"/>',
+ threatened:'<path d="M17 7 H47 M17 57 H47 M20 7 C20 27 32 27 32 32 C32 37 20 37 20 57 M44 7 C44 27 32 27 32 32 C32 37 44 37 44 57"/><path d="M26 50 H38" />',
+ ambiguous:'<circle cx="32" cy="20" r="9"/><path stroke-dasharray="3 5" d="M12 56 C12 38 52 38 52 56"/><path d="M45 8 C45 4 53 4 53 9 C53 13 49 12 49 16"/>',
+ look:'<path d="M5 32 C15 15 49 15 59 32 C49 49 15 49 5 32Z"/><circle cx="32" cy="32" r="9"/>',
+ listen:'<path d="M9 12 H55 V42 H31 L18 55 V42 H9 Z"/><path d="M32 35 C21 27 26 20 32 26 C38 20 43 27 32 35Z"/>',
+ link:'<rect x="4" y="24" width="30" height="16" rx="8"/><rect x="30" y="24" width="30" height="16" rx="8"/>',
+ body:'<circle cx="32" cy="12" r="6"/><path d="M32 18 V40 M18 26 H46 M32 40 L22 58 M32 40 L42 58"/>',
+ heart:'<path d="M32 56 C8 38 6 22 16 15 C23 10 30 14 32 21 C34 14 41 10 48 15 C58 22 56 38 32 56Z"/>',
+ mind:'<path d="M20 50 C10 44 8 30 16 22 C18 10 36 6 44 14 C54 16 58 30 50 38 C50 46 44 52 36 50 V58"/><path d="M26 26 C30 22 36 24 34 30 C32 34 28 34 28 38"/>',
+ act:'<path d="M8 40 H20 L28 16 L38 52 L45 32 H56"/>',
+ spirit:'<circle cx="32" cy="32" r="7"/><path d="M32 6 V16 M32 48 V58 M6 32 H16 M48 32 H58 M14 14 L21 21 M43 43 L50 50 M50 14 L43 21 M21 43 L14 50"/>',
+ phone:'<rect x="19" y="5" width="26" height="54" rx="5"/><path d="M28 51 H36"/><path d="M26 18 H38 M26 26 H38" />',
+ help:'<circle cx="32" cy="32" r="24"/><path d="M32 18 V34 M32 42 V44"/>'
+};
+const svgIcon=(n,cls='')=>`<svg viewBox="0 0 64 64" aria-hidden="true" class="${cls}">${IC[n]}</svg>`;
+
+const HERO={
+w4:`<svg viewBox="0 0 440 190" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A house fire at dusk with a first-aid helper">
+<rect width="440" height="190" fill="#24324d"/><g fill="#fff" opacity=".6"><circle cx="40" cy="30" r="1.5"/><circle cx="120" cy="18" r="1.5"/><circle cx="380" cy="26" r="1.5"/><circle cx="330" cy="50" r="1.5"/></g>
+<rect y="160" width="440" height="30" fill="#17213a"/>
+<path d="M200 100 L270 48 L340 100Z" fill="#6b4a45"/><rect x="214" y="98" width="112" height="62" fill="#8a6a5f"/><rect x="262" y="124" width="22" height="36" fill="#3d2b2a"/>
+<path d="M232 128 C222 112 238 104 238 90 C250 100 256 112 248 128Z" fill="#f39c3d"/><path d="M236 128 C232 118 240 114 240 106 C246 112 248 120 244 128Z" fill="#ffd36b"/>
+<path d="M296 130 C286 116 300 108 300 96 C310 104 316 116 308 130Z" fill="#f2723a"/><path d="M300 130 C296 122 303 118 303 112 C308 118 309 124 306 130Z" fill="#ffd36b"/>
+<path d="M270 60 C262 44 278 36 270 20 C290 30 292 50 280 62Z" fill="#f39c3d" opacity=".9"/>
+<g><circle cx="120" cy="108" r="12" fill="#f2c9a0"/><path d="M96 160 C96 128 144 128 144 160Z" fill="#1f8a80"/><rect x="112" y="140" width="16" height="4" fill="#fff"/><rect x="118" y="134" width="4" height="16" fill="#fff"/></g>
+<g stroke="#fff" fill="none" stroke-width="2.5" stroke-linecap="round" opacity=".9"><path d="M165 100 C175 92 175 80 165 72" /><path d="M172 104 C186 92 186 78 172 66"/></g></svg>`
+};
+
+
+const stage=document.getElementById('stage');
+const _p=document.createElement('section');_p.className='panel on';_p.id='p-w4';stage.appendChild(_p);
+const heroHTML=(id,kick,title,txt)=>`<div class="hero"><div class="txt"><div class="kick">${kick}</div><h1>${title}</h1><p>${txt}</p></div><div>${HERO[id]}</div></div>`;
+const $=(s,r=document)=>r.querySelector(s);
+const FOOT='<div class="foot">Content adapted from PSYC 425 Deep Dive pages · Practice activity, not a clinical tool</div>';
+
+/* ============ WEEK 4 ============ */
+(function(){
+const S=[
+ {k:'look',n:'LOOK',q:'You arrive as a volunteer at the scene of a house fire. Neighbors are crying in the street, firefighters are working, and a man is standing alone near the curb. What do you do first?',
+  o:[['Rush to the nearest crying person and ask exactly what happened.',0,'Before approaching anyone, check the situation. Safety comes first, including your own.'],
+     ['Pause and scan: check for safety (including your own), people with urgent basic needs, and people with serious distress.',1,'Look means checking safety, obvious urgent basic needs, and serious distress reactions before you act.'],
+     ['Start collecting names and addresses for a report.',0,'That’s paperwork, not support. PFA focuses on safety, needs, and distress.']]},
+ {k:'listen',n:'LISTEN',q:'The man by the curb is shaking and staring at the house. How do you approach him?',
+  o:[['“Try to calm down. Everything happens for a reason.”',0,'This sounds trite and can minimize his pain. Validate the difficulty instead.'],
+     ['Approach calmly, introduce yourself, say “I’m here to help. What do you need right now?” and let silence be okay.',1,'Listen means approaching with care, asking about needs and concerns, and helping the person feel calm. Silence can communicate care.'],
+     ['Ask him to describe everything he saw and felt as the fire started.',0,'PFA does not require someone to talk about what happened. Pressing for details can add distress.']]},
+ {k:'link',n:'LINK',q:'He tells you he needs his heart medication from the house and can’t reach his sister. What do you do?',
+  o:[['Suggest he call a relief agency tomorrow.',0,'This leaves him without help when he needs it. Link means actively helping him connect.'],
+     ['Help him find out how to get his medication replaced, share information on available services, and help him contact his sister.',1,'Link means helping with basic needs, giving information, and connecting people to loved ones and social support.'],
+     ['Hand him a pamphlet and move on to the next person.',0,'Information helps, but PFA means staying involved enough to help him actually connect.']]}
+];
+const st={i:0,done:[false,false,false],right:0,tries:0};
+const P=$('#p-w4');
+P.innerHTML=heroHTML('w4','Week 4 · Deep Dive','Psychological First Aid','PFA is the emotional equivalent of physical first aid. Use the WHO action principles (Look, Listen, Link) to respond to a house fire, the scenario for Verbatim #1.')+
+`<div class="card"><h2>🔥 Activity 1: Respond at the Scene</h2><p class="sub">Work through all three action principles. Choose the response that best fits PFA.</p>
+<div class="steps" id="w4s"></div><div id="w4q"></div><div class="fb" id="w4f" aria-live="polite"></div>
+<div class="row" style="margin-top:10px"><button class="btn primary" id="w4n" disabled>Next step →</button><span class="score" id="w4sc" style="align-self:center"></span></div></div>
+<div class="card"><h2>🎯 Activity 2: Build a SMART Goal</h2><p class="sub">Turn self-awareness into a concrete step, such as improving a crisis intervention skill (body language, silence, “I” messages, validation).</p>
+<div class="smart"><div><label><b>S</b>Specific</label><input id="sg1" placeholder="What skill will you practice?"></div>
+<div><label><b>M</b>Measurable</label><input id="sg2" placeholder="How will you know? (e.g., 3 times)"></div>
+<div><label><b>A</b>Achievable</label><input id="sg3" placeholder="What makes this doable?"></div>
+<div><label><b>R</b>Relevant</label><input id="sg4" placeholder="Why does it matter for crisis work?"></div>
+<div><label><b>T</b>Time-bound</label><input id="sg5" placeholder="By when?"></div></div>
+<div class="smartout" id="sgo">Fill in the boxes to see your goal statement.</div></div>`+FOOT;
+function draw(){
+  $('#w4s',P).innerHTML=S.map((s,k)=>`<div class="step ${st.done[k]?'done':k===st.i?'cur':''}">${svgIcon(s.k)}${s.n}</div>`).join('');
+  if(st.i>=S.length){
+    $('#w4q',P).innerHTML=`<div class="scenario" style="background:var(--green-l);border-color:var(--green)"><small style="color:var(--green)">Complete</small><b>You responded with Look, Listen, Link.</b><br>You got ${st.right} of ${S.length} on the first try. Remember: PFA is for many people, from professionals to bystanders, and it is not therapy.</div>`;
+    $('#w4n',P).textContent='↺ Try again';$('#w4n',P).disabled=false;$('#w4f',P).className='fb';return}
+  const s=S[st.i];
+  $('#w4q',P).innerHTML=`<div class="scenario"><small>${s.n}</small>${s.q}</div>`+s.o.map((o,k)=>`<button class="opt" data-k="${k}">${o[0]}</button>`).join('');
+  $('#w4q',P).querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b));
+  $('#w4n',P).textContent='Next step →';$('#w4n',P).disabled=true;$('#w4f',P).className='fb';st.tries=0;
+}
+function pick(b){
+  const s=S[st.i],o=s.o[+b.dataset.k],f=$('#w4f',P);
+  if(o[1]){b.classList.add('ok');st.done[st.i]=true;if(st.tries===0)st.right++;
+    $('#w4q',P).querySelectorAll('.opt').forEach(x=>x.disabled=true);
+    f.className='fb show good';f.innerHTML='✅ <b>Best response.</b> '+o[2];$('#w4n',P).disabled=false;
+    $('#w4s',P).querySelectorAll('.step')[st.i].className='step done';}
+  else{st.tries++;b.classList.add('no');b.disabled=true;f.className='fb show no';f.innerHTML='❌ '+o[2]+' Try another option.'}
+  $('#w4sc',P).textContent=`First-try correct: ${st.right}`;
+}
+$('#w4n',P).onclick=()=>{ if(st.i>=S.length){st.i=0;st.done=[false,false,false];st.right=0;$('#w4sc',P).textContent=''}else st.i++; draw()};
+draw();
+const ids=['sg1','sg2','sg3','sg4','sg5'];
+function smart(){
+  const v=ids.map(i=>$('#'+i,P).value.trim());
+  const o=$('#sgo',P);
+  if(v.every(x=>!x)){o.textContent='Fill in the boxes to see your goal statement.';return}
+  o.innerHTML=`“I will <b>${v[0]||'…'}</b>, measured by <b>${v[1]||'…'}</b>. This is achievable because <b>${v[2]||'…'}</b>. It is relevant because <b>${v[3]||'…'}</b>, and I will accomplish it <b>${v[4]||'…'}</b>.”`;
+}
+ids.forEach(i=>$('#'+i,P).oninput=smart);
+})();
+
+
+</script>
+</body>
+</html>

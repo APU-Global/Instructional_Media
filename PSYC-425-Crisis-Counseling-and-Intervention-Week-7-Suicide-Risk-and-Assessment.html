@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 425 Crisis Counseling and Intervention | Week 7: Suicide Risk and Assessment</title>
+<style>
+:root{
+  --navy:#1d3557; --teal:#1f8a80; --teal-l:#e3f4f2; --amber:#d98a1c; --amber-l:#fdf1dc;
+  --coral:#d9534f; --coral-l:#fbe6e4; --green:#2e8b57; --green-l:#e2f4ea;
+  --bg:#f3f7fa; --card:#ffffff; --ink:#1f2a37; --mute:#5b6b7b; --line:#d7e0e8;
+}
+*{box-sizing:border-box}
+/* ---- No double scrollbar: the page itself never scrolls; only .stage does ---- */
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg)}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:16px;line-height:1.5}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 1 0;min-width:130px;border:0;background:rgba(255,255,255,.12);color:#dbe7f3;padding:9px 10px;border-radius:10px 10px 0 0;cursor:pointer;font:inherit;font-size:.88rem;text-align:left;display:flex;gap:8px;align-items:center}
+.tab svg{width:24px;height:24px;flex:0 0 24px;stroke:currentColor;fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.tab b{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.8;font-weight:600}
+.tab span{display:block;line-height:1.15;font-weight:600}
+.tab:hover{background:rgba(255,255,255,.22)}
+.tab[aria-selected=true]{background:var(--bg);color:var(--navy)}
+.tab:focus-visible,button:focus-visible{outline:3px solid #f5b83d;outline-offset:2px}
+.stage{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px;-webkit-overflow-scrolling:touch}
+.panel{max-width:1000px;margin:0 auto;display:none}
+.panel.on{display:block}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:0;border-radius:16px;overflow:hidden;background:linear-gradient(120deg,var(--navy),#2c5d8a);color:#fff;margin-bottom:14px}
+.hero .txt{padding:18px 20px}
+.hero h1{margin:0 0 4px;font-size:1.35rem;line-height:1.2}
+.hero .kick{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;opacity:.8;font-weight:700}
+.hero p{margin:8px 0 0;font-size:.95rem;opacity:.95}
+.hero svg{width:100%;height:100%;min-height:150px;display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.card h2{margin:0 0 6px;font-size:1.1rem;color:var(--navy)}
+.card h3{margin:0 0 6px;font-size:1rem;color:var(--navy)}
+.sub{color:var(--mute);font-size:.92rem;margin:0 0 12px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--navy);color:#fff}
+.btn.primary{background:var(--navy);color:#fff}
+.btn.primary:hover{background:#142744}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn[disabled]:hover{background:#fff;color:var(--navy)}
+.btn.primary[disabled]:hover{background:var(--navy);color:#fff}
+.scenario{background:var(--teal-l);border-left:5px solid var(--teal);border-radius:10px;padding:12px 14px;margin:8px 0 12px}
+.scenario small{display:block;color:var(--teal);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.72rem}
+.pager{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:#fff;font-weight:700;color:var(--mute);cursor:pointer;font-size:.85rem}
+.dot.cur{border-color:var(--navy);color:var(--navy)}
+.dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.chip{border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 8px 6px;text-align:center;cursor:pointer;font:inherit;color:var(--ink)}
+.chip svg{width:38px;height:38px;stroke:var(--navy);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 2px}
+.chip span{display:block;font-weight:700;font-size:.88rem}
+.chip small{display:block;color:var(--mute);font-size:.74rem;line-height:1.2}
+.chip[aria-pressed=true]{border-color:var(--navy);background:#eaf0f7}
+.chip.ok{border-color:var(--green);background:var(--green-l)}
+.chip.miss{border-color:var(--amber);background:var(--amber-l);border-style:dashed}
+.chip.bad{border-color:var(--coral);background:var(--coral-l)}
+.radios{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.93rem;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--green-l);border:1px solid var(--green)}
+.fb.part{background:var(--amber-l);border:1px solid var(--amber)}
+.fb.no{background:var(--coral-l);border:1px solid var(--coral)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.toggle{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:.92rem}
+.toggle:hover{background:#f0f5f9}
+.toggle input{margin-top:4px;width:18px;height:18px;flex:0 0 18px}
+.gauge{text-align:center}
+.gauge svg{width:100%;max-width:340px}
+.needle{transform-origin:150px 150px;transition:transform .7s cubic-bezier(.3,1.4,.5,1)}
+.glabel{font-weight:800;font-size:1.15rem;color:var(--navy)}
+/* Week 2 */
+.hand{min-height:64px;display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:12px;background:#fafcfd;margin-bottom:12px}
+.lcard{background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.9rem;cursor:pointer;max-width:300px;text-align:left;font-family:inherit;color:var(--ink)}
+.lcard.sel{border-color:var(--navy);box-shadow:0 0 0 3px #bcd0e6}
+.lcard.shake{animation:sh .4s}
+@keyframes sh{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.bin{border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px;text-align:center;cursor:pointer;font:inherit;color:var(--ink);min-height:110px;display:flex;flex-direction:column;align-items:center}
+.bin:hover{border-color:var(--teal);background:var(--teal-l)}
+.bin svg{width:44px;height:44px;stroke:var(--teal);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.bin b{font-size:.92rem;color:var(--navy)}
+.bin small{font-size:.72rem;color:var(--mute);line-height:1.2;margin-bottom:4px}
+.bin .placed{font-size:.76rem;background:var(--green-l);border:1px solid var(--green);border-radius:8px;padding:3px 6px;margin-top:4px;text-align:left}
+.msg{min-height:1.4em;font-weight:600;margin:6px 0}
+.msg.ok{color:var(--green)} .msg.no{color:var(--coral)}
+.domains{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.dom{border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px;cursor:pointer;font:inherit;text-align:center}
+.dom[aria-pressed=true]{border-color:var(--teal);background:var(--teal-l)}
+.dom svg{width:36px;height:36px;stroke:var(--navy);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.dom span{display:block;font-weight:700;font-size:.85rem}
+/* Week 4 */
+.steps{display:flex;gap:6px;margin-bottom:12px}
+.step{flex:1;text-align:center;padding:8px 4px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--mute);font-weight:700;font-size:.85rem}
+.step svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto}
+.step.cur{border-color:var(--navy);color:var(--navy);background:#eaf0f7}
+.step.done{border-color:var(--green);color:var(--green);background:var(--green-l)}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:#fff;font:inherit;color:var(--ink);cursor:pointer}
+.opt:hover:not([disabled]){border-color:var(--navy);background:#f0f5f9}
+.opt.ok{border-color:var(--green);background:var(--green-l)}
+.opt.no{border-color:var(--coral);background:var(--coral-l)}
+.opt small{display:block;margin-top:4px;color:var(--mute)}
+.smart{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.smart label{font-size:.8rem;font-weight:700;color:var(--navy);display:block}
+.smart label b{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;padding:0 6px;margin-right:4px}
+.smart input,.smart textarea{width:100%;font:inherit;font-size:.88rem;padding:6px 8px;border:2px solid var(--line);border-radius:8px;margin-top:3px}
+.smartout{margin-top:10px;background:#eaf0f7;border-left:5px solid var(--navy);border-radius:8px;padding:10px 12px;font-style:italic;min-height:44px}
+/* Week 7 */
+.safety{display:flex;gap:10px;align-items:center;background:var(--amber-l);border:1px solid var(--amber);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.9rem}
+.safety svg{width:34px;height:34px;flex:0 0 34px;stroke:var(--amber);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.quote{background:#fff;border:1px solid var(--line);border-left:5px solid var(--navy);border-radius:10px;padding:10px 12px;margin:8px 0 6px;font-style:italic}
+.mrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-bottom:6px}
+.mrow .opt{margin:0;text-align:center;font-weight:600;font-size:.88rem;padding:8px 6px}
+.item{border-bottom:1px solid var(--line);padding:6px 0 10px}
+.item:last-child{border-bottom:0}
+.score{font-weight:800;color:var(--navy)}
+.foot{text-align:center;color:var(--mute);font-size:.78rem;padding:6px 0 2px}
+@media(max-width:700px){
+  .hero{grid-template-columns:1fr}.hero svg{min-height:110px;max-height:150px}
+  .two{grid-template-columns:1fr}
+  .tab{min-width:112px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <main class="stage" id="stage"></main>
+</div>
+<script>
+/* ============ ICONS (64x64 line icons) ============ */
+const IC={
+ situational:'<path d="M36 6 L16 36 H30 L26 58 L48 26 H34 Z"/>',
+ developmental:'<path d="M8 54 H22 V42 H34 V30 H46 V18 H58"/><path d="M50 10 L58 18 L50 26"/>',
+ existential:'<circle cx="32" cy="32" r="23"/><path d="M24 25 C24 14 40 14 40 25 C40 32 32 31 32 40"/><circle cx="32" cy="48" r="1.5"/>',
+ interpersonal:'<circle cx="23" cy="32" r="15"/><circle cx="41" cy="32" r="15" stroke-dasharray="4 5"/>',
+ spiritual:'<rect x="25" y="32" width="14" height="24" rx="2"/><path d="M32 6 C25 15 25 22 32 27 C39 22 39 15 32 6Z"/>',
+ objective:'<path d="M8 32 L32 11 L56 32"/><path d="M15 28 V54 H49 V28"/><path d="M27 54 V38 H37 V54"/>',
+ subjective:'<path d="M32 7 L53 15 V32 C53 44 44 53 32 58 C20 53 11 44 11 32 V15 Z"/><path d="M33 10 L28 26 L37 34 L30 55"/>',
+ imagined:'<path stroke-dasharray="4 4" d="M32 7 L39 24 L57 25 L43 37 L47 55 L32 45 L17 55 L21 37 L7 25 L25 24 Z"/>',
+ threatened:'<path d="M17 7 H47 M17 57 H47 M20 7 C20 27 32 27 32 32 C32 37 20 37 20 57 M44 7 C44 27 32 27 32 32 C32 37 44 37 44 57"/><path d="M26 50 H38" />',
+ ambiguous:'<circle cx="32" cy="20" r="9"/><path stroke-dasharray="3 5" d="M12 56 C12 38 52 38 52 56"/><path d="M45 8 C45 4 53 4 53 9 C53 13 49 12 49 16"/>',
+ look:'<path d="M5 32 C15 15 49 15 59 32 C49 49 15 49 5 32Z"/><circle cx="32" cy="32" r="9"/>',
+ listen:'<path d="M9 12 H55 V42 H31 L18 55 V42 H9 Z"/><path d="M32 35 C21 27 26 20 32 26 C38 20 43 27 32 35Z"/>',
+ link:'<rect x="4" y="24" width="30" height="16" rx="8"/><rect x="30" y="24" width="30" height="16" rx="8"/>',
+ body:'<circle cx="32" cy="12" r="6"/><path d="M32 18 V40 M18 26 H46 M32 40 L22 58 M32 40 L42 58"/>',
+ heart:'<path d="M32 56 C8 38 6 22 16 15 C23 10 30 14 32 21 C34 14 41 10 48 15 C58 22 56 38 32 56Z"/>',
+ mind:'<path d="M20 50 C10 44 8 30 16 22 C18 10 36 6 44 14 C54 16 58 30 50 38 C50 46 44 52 36 50 V58"/><path d="M26 26 C30 22 36 24 34 30 C32 34 28 34 28 38"/>',
+ act:'<path d="M8 40 H20 L28 16 L38 52 L45 32 H56"/>',
+ spirit:'<circle cx="32" cy="32" r="7"/><path d="M32 6 V16 M32 48 V58 M6 32 H16 M48 32 H58 M14 14 L21 21 M43 43 L50 50 M50 14 L43 21 M21 43 L14 50"/>',
+ phone:'<rect x="19" y="5" width="26" height="54" rx="5"/><path d="M28 51 H36"/><path d="M26 18 H38 M26 26 H38" />',
+ help:'<circle cx="32" cy="32" r="24"/><path d="M32 18 V34 M32 42 V44"/>'
+};
+const svgIcon=(n,cls='')=>`<svg viewBox="0 0 64 64" aria-hidden="true" class="${cls}">${IC[n]}</svg>`;
+
+const HERO={
+w7:`<svg viewBox="0 0 440 190" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A lighthouse beam cutting through night sky beside two speech bubbles">
+<defs><linearGradient id="g7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2a4a"/><stop offset="1" stop-color="#3b5a86"/></linearGradient></defs>
+<rect width="440" height="190" fill="url(#g7)"/>
+<g fill="#fff" opacity=".7"><circle cx="40" cy="26" r="1.6"/><circle cx="90" cy="60" r="1.4"/><circle cx="180" cy="22" r="1.6"/><circle cx="400" cy="30" r="1.6"/><circle cx="350" cy="70" r="1.3"/></g>
+<path d="M300 66 L440 20 V110Z" fill="#ffe9a8" opacity=".25"/><path d="M300 66 L0 30 V100Z" fill="#ffe9a8" opacity=".18"/>
+<path d="M292 170 L298 82 H320 L326 170Z" fill="#f4efe6"/><path d="M296 110 H322 L321 124 H295Z M294 146 H324 L323 158 H293Z" fill="#d9534f"/><rect x="293" y="68" width="34" height="14" fill="#33425f"/><circle cx="310" cy="60" r="8" fill="#ffd36b"/>
+<path d="M0 170 Q60 158 120 170 T240 170 T360 170 T440 170 V190 H0Z" fill="#14233f"/>
+<g><rect x="40" y="86" width="130" height="42" rx="12" fill="#e3f4f2"/><path d="M60 128 L56 142 L76 128Z" fill="#e3f4f2"/><text x="105" y="104" text-anchor="middle" font-size="11" font-family="system-ui" fill="#1d3557" font-weight="700">Are you thinking</text><text x="105" y="119" text-anchor="middle" font-size="11" font-family="system-ui" fill="#1d3557" font-weight="700">of suicide?</text></g>
+<g><rect x="130" y="40" width="100" height="34" rx="12" fill="#fdf1dc"/><text x="180" y="62" text-anchor="middle" font-size="12" font-family="system-ui" fill="#8a5a0c" font-weight="800">Call or text 988</text></g></svg>`
+};
+
+
+const stage=document.getElementById('stage');
+const _p=document.createElement('section');_p.className='panel on';_p.id='p-w7';stage.appendChild(_p);
+const heroHTML=(id,kick,title,txt)=>`<div class="hero"><div class="txt"><div class="kick">${kick}</div><h1>${title}</h1><p>${txt}</p></div><div>${HERO[id]}</div></div>`;
+const $=(s,r=document)=>r.querySelector(s);
+const FOOT='<div class="foot">Content adapted from PSYC 425 Deep Dive pages · Practice activity, not a clinical tool</div>';
+
+/* ============ WEEK 7 ============ */
+(function(){
+const T=[['bi','Behavior incident'],['ga','Gentle assumption'],['sa','Symptom amplification'],['ds','Denial of the specific']];
+const Q=[
+ {q:'“Walk me through last Saturday night, from when you got home until you went to bed. What were you doing, and what was going through your mind?”',a:'bi',
+  ex:'<b>Behavior incident:</b> you anchor on a specific, recent time period and ask for a concrete walk-through, which often brings thoughts or actions to the surface naturally.'},
+ {q:'“How many times this week have thoughts of ending your life crossed your mind?”',a:'ga',
+  ex:'<b>Gentle assumption:</b> you gently assume the behavior or thought is present, so the client doesn’t have to be the first to confess it. It asks “how many,” not “whether.”'},
+ {q:'“Sometimes when people feel this trapped, the thoughts get so loud they think about not being here at all. Has it ever gotten that bad for you?”',a:'sa',
+  ex:'<b>Symptom amplification:</b> you name a more intense version of the symptom, which makes the client’s own experience feel less shameful to admit.'},
+ {q:'“You said you’re not suicidal. So there hasn’t been even one moment this month when you thought about ending your life, not even for a second?”',a:'ds',
+  ex:'<b>Denial of the specific:</b> after a general denial, you check it by asking about specific times or thoughts, giving the client a chance to correct the record.'}
+];
+const R=[
+ ['“It sounds like you’re overreacting. Lots of people feel this way.”',0,'Minimizing makes people stop talking.'],
+ ['“Thank you for trusting me with this. I’m here, and I want to understand. Can you tell me more?”',1,'Warm, non-judgmental, and invites more. This builds the safe space that encourages honest disclosure.'],
+ ['“You have so much to live for. You shouldn’t think like that.”',0,'Well-meaning, but it shuts down disclosure and can feel like judgment.']
+];
+const P=$('#p-w7');
+P.innerHTML=heroHTML('w7','Week 7 · Deep Dive','Suicide Risk and Assessment','Asking directly and gently about suicide is a learned skill. Practice recognizing the four CASE techniques you will use in Verbatim #2.')+
+`<div class="safety">${svgIcon('phone')}<div><b>Take care while you practice.</b> This topic can be hard, so take breaks when you need to. If you or someone you know is in immediate danger, call 911. In the U.S., call or text <b>988</b> (Suicide &amp; Crisis Lifeline) any time.</div></div>
+<div class="card"><h2>🗣️ Activity 1: Which CASE Technique?</h2><p class="sub">Read each sample question and identify the technique. Sample wording is illustrative; your course readings define each technique.</p><div id="w7q"></div><div class="score" id="w7s" style="margin-top:8px"></div></div>
+<div class="card"><h2>🛟 Activity 2: Create a Safe Space</h2><p class="sub">A client quietly says, “Honestly, I’ve been thinking it would be easier if I just weren’t around.” Which response best encourages honest disclosure?</p><div id="w7r"></div><div class="fb" id="w7f" aria-live="polite"></div>
+<p class="sub" style="margin-top:10px">💡 Remember: use a structure (CASE and SLAP), plan with the client, and match the safety plan to the assessed risk level. Look after yourself too.</p></div>`+FOOT;
+let score=0,answered=0;
+$('#w7q',P).innerHTML=Q.map((x,i)=>`<div class="item" data-i="${i}"><div class="quote">${x.q}</div><div class="mrow">${T.map(t=>`<button class="opt" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div class="fb"></div></div>`).join('');
+$('#w7q',P).querySelectorAll('.item').forEach(it=>{
+  const x=Q[+it.dataset.i];let tried=0;
+  it.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const fb=it.querySelector('.fb');
+    if(b.dataset.t===x.a){b.classList.add('ok');it.querySelectorAll('.opt').forEach(o=>o.disabled=true);fb.className='fb show good';fb.innerHTML='✅ '+x.ex;answered++;if(!tried)score++;$('#w7s',P).textContent=`First-try correct: ${score} / ${Q.length}`+(answered===Q.length?' 🎉 All matched!':'')}
+    else{tried++;b.classList.add('no');b.disabled=true;fb.className='fb show no';fb.textContent='❌ Not that one. Think about what the interviewer is doing: anchoring on an event, assuming, intensifying, or testing a denial. Try again.'}
+  })});
+$('#w7r',P).innerHTML=R.map((r,k)=>`<button class="opt" data-k="${k}">${r[0]}</button>`).join('');
+$('#w7r',P).querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+  const r=R[+b.dataset.k],f=$('#w7f',P);
+  if(r[1]){b.classList.add('ok');$('#w7r',P).querySelectorAll('.opt').forEach(o=>o.disabled=true);f.className='fb show good';f.innerHTML='✅ '+r[2]}
+  else{b.classList.add('no');b.disabled=true;f.className='fb show no';f.innerHTML='❌ '+r[2]+' Try another.'}
+});
+})();
+
+
+</script>
+</body>
+</html>
