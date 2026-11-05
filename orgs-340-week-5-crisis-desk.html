@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 340 Week 5 | The Crisis Desk</title>
+<style>
+:root{--ink:#222;--muted:#5a5a5a;--red:#d34147;--red-d:#a8353a;--red-l:#fbe9ea;--bg:#faf7f3;--card:#fff;--line:#e2dbd3;--teal:#1f7a8c;--teal-l:#e3f2f5;--gold:#e9a23b;--gold-l:#fdf3df;--ok:#2e7d4f;--ok-l:#e5f4ea;--bad:#b3261e;--bad-l:#fdecea}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);color-scheme:light;font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column}
+.top{flex:none;display:flex;align-items:center;gap:14px;padding:8px 18px;background:#222;color:#fff;border-bottom:4px solid var(--red)}
+.top svg{width:84px;height:52px;flex:none}
+.kicker{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#f3b0b3;font-weight:700}
+h1{font-size:20px;margin:0;line-height:1.2}
+h2{font-size:19px;margin:0 0 4px;line-height:1.25}
+h3{font-size:16px;margin:0 0 4px}
+.steps{margin-left:auto;display:flex;gap:6px}
+.dot{width:24px;height:6px;border-radius:3px;background:#5b5b5b}
+.dot.on{background:var(--red)}.dot.done{background:#fff}
+.stage{flex:1;min-height:0;overflow:auto;padding:14px 18px 16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.lead{color:var(--muted);margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.btn{font:inherit;font-weight:600;cursor:pointer;border:2px solid var(--red);background:var(--red);color:#fff;border-radius:999px;padding:8px 20px}
+.btn:hover{background:var(--red-d);border-color:var(--red-d)}
+.btn.ghost{background:#fff;color:var(--red-d)}
+.btn.ghost:hover{background:var(--red-l)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;font:inherit;cursor:pointer;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 8px;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--teal);background:var(--teal-l)}
+.opt.ok{border-color:var(--ok);background:var(--ok-l)}
+.opt.no{border-color:var(--bad);background:var(--bad-l)}
+.opt.sel{border-color:var(--teal);background:var(--teal-l)}
+.opt[disabled]{cursor:default}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.fb{border-radius:10px;padding:8px 12px;margin:2px 0 10px;font-size:15px;border-left:5px solid}
+.fb.ok{background:var(--ok-l);border-color:var(--ok)}
+.fb.no{background:var(--bad-l);border-color:var(--bad)}
+.fb.info{background:var(--gold-l);border-color:var(--gold)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.intro{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center;height:100%}
+.intro svg{width:100%;height:auto;max-height:100%}
+.chip{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--red-l);color:var(--red-d);border-radius:999px;padding:2px 10px;margin-bottom:6px}
+.meter{height:12px;border-radius:6px;background:#e9e4de;overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:6px;transition:width .4s}
+.score{font-size:42px;font-weight:800;color:var(--red-d);line-height:1}
+.fade{animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fade{animation:none}.meter>i{transition:none}}
+@media (max-width:720px){
+ .grid2,.intro{grid-template-columns:1fr}
+ .intro svg{max-height:150px}
+ h1{font-size:17px}.top svg{display:none}.stage{padding:10px 12px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div id="hero-mini"></div>
+    <div><div class="kicker">ORGS 340 · Week 5</div><h1>The Crisis Desk</h1></div>
+    <div class="steps" id="steps" aria-hidden="true"></div>
+  </header>
+  <main class="stage" id="stage" aria-live="polite"></main>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const stage=$('#stage');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+$('#hero-mini').innerHTML=`<svg viewBox="0 0 84 52" role="img" aria-label="Warning sign"><path d="M42 4L78 46H6z" fill="#e9a23b" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><rect x="39.5" y="18" width="5" height="16" rx="2.5" fill="#222"/><circle cx="42" cy="39" r="3" fill="#222"/></svg>`;
+const R={m:0,mT:0,b:0,bT:0,c:0,cT:0};
+function steps(c){$('#steps').innerHTML=[0,1,2,3,4].map(k=>`<i class="dot ${k<c?'done':k===c?'on':''}"></i>`).join('')}
+const AV={
+ emp:`<svg viewBox="0 0 60 60" style="width:44px;height:44px;flex:none"><circle cx="30" cy="30" r="29" fill="#e3f2f5"/><circle cx="30" cy="24" r="9" fill="#f3d2b3"/><path d="M12 52a18 16 0 0 1 36 0z" fill="#1f7a8c"/></svg>`,
+ inv:`<svg viewBox="0 0 60 60" style="width:44px;height:44px;flex:none"><circle cx="30" cy="30" r="29" fill="#fdf3df"/><rect x="14" y="34" width="8" height="14" fill="#e9a23b"/><rect x="26" y="26" width="8" height="22" fill="#d34147"/><rect x="38" y="16" width="8" height="32" fill="#1f7a8c"/></svg>`,
+ pub:`<svg viewBox="0 0 60 60" style="width:44px;height:44px;flex:none"><circle cx="30" cy="30" r="29" fill="#fbe9ea"/><path d="M10 24h10l18-9v30l-18-9H10z" fill="#d34147"/><path d="M44 22c4 4 4 12 0 16" fill="none" stroke="#222" stroke-width="3" stroke-linecap="round"/></svg>`
+};
+
+function intro(){
+ Object.assign(R,{m:0,mT:0,b:0,bT:0,c:0,cT:0});steps(0);
+ stage.innerHTML=`<div class="intro fade">
+ <svg viewBox="0 0 440 300" role="img" aria-label="One announcement reaching three audiences: employees, shareholders, and the public">
+  <rect width="440" height="300" rx="18" fill="#fff" stroke="#e2dbd3"/>
+  <rect x="18" y="98" width="140" height="92" rx="14" fill="#a8353a"/><path d="M52 190l-8 26 34-26z" fill="#a8353a"/>
+  <text x="88" y="124" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">ANNOUNCEMENT</text>
+  <text x="88" y="146" text-anchor="middle" font-size="12" fill="#fff">Distribution center</text><text x="88" y="162" text-anchor="middle" font-size="12" fill="#fff">closing in 90 days</text><text x="88" y="178" text-anchor="middle" font-size="12" fill="#fff">120 jobs affected</text>
+  <g stroke="#cfc7bf" stroke-width="3" fill="none" stroke-dasharray="6 6"><path d="M160 144 C190 144 200 56 232 56"/><path d="M160 144 H232"/><path d="M160 144 C190 144 200 232 232 232"/></g>
+  <g font-size="14" font-weight="800">
+   <circle cx="264" cy="56" r="30" fill="#e3f2f5" stroke="#1f7a8c" stroke-width="3"/><circle cx="264" cy="48" r="9" fill="#f3d2b3"/><path d="M248 72a16 13 0 0 1 32 0z" fill="#1f7a8c"/><text x="306" y="52">Employees</text><text x="306" y="70" font-size="12" font-weight="500" fill="#5a5a5a">Timeline, pay, support</text>
+   <circle cx="264" cy="144" r="30" fill="#fdf3df" stroke="#e9a23b" stroke-width="3"/><rect x="249" y="146" width="7" height="12" fill="#e9a23b"/><rect x="260" y="136" width="7" height="22" fill="#d34147"/><rect x="271" y="128" width="7" height="30" fill="#1f7a8c"/><text x="306" y="140">Shareholders</text><text x="306" y="158" font-size="12" font-weight="500" fill="#5a5a5a">Financial impact</text>
+   <circle cx="264" cy="232" r="30" fill="#fbe9ea" stroke="#d34147" stroke-width="3"/><path d="M248 226h8l16-8v28l-16-8h-8z" fill="#d34147"/><text x="306" y="228">The public</text><text x="306" y="246" font-size="12" font-weight="500" fill="#5a5a5a">Community impact</text></g>
+ </svg>
+ <div>
+  <span class="chip">Interactive · 3 rounds</span>
+  <h2>Bad news needs clarity and care.</h2>
+  <p class="lead">Midland Foods is closing a distribution center, and 120 jobs are affected. Match each audience to what it needs, build the message to employees, then make it work for a global audience.</p>
+  <p class="small muted" style="margin:0 0 14px">Think about it: How would your message change if your audience spanned several cultures and time zones?</p>
+  <button class="btn" id="go">Open the Crisis Desk</button></div></div>`;
+ $('#go').onclick=match;
+}
+
+/* ROUND 1: stakeholder match */
+const ST=[
+{av:'emp',name:"Employees",needs:["How the stock price will react","What happens to me: timeline, pay, and support","Which competitors are expanding"],modes:["A one-line email titled “Update”","An all-hands meeting, followed by a personal letter","A post on the company’s social media page"]},
+{av:'inv',name:"Shareholders",needs:["Financial impact and the strategic reason","The names of affected employees","How long each employee has worked there"],modes:["A formal investor statement and a Q&A call","A casual team chat","A flyer posted in the break room"]},
+{av:'pub',name:"The local community",needs:["Which team will win the next company award","Impact on local jobs and what help is available","The company’s office color scheme"],modes:["A press release, local media statement, and a web FAQ","A private memo to the board","An internal-only email"]}
+];
+// correct indices
+const NEEDOK=[1,0,1],MODEOK=[1,0,0];
+function match(){
+ steps(1);const pick=[[null,null],[null,null],[null,null]];
+ const draw=(done)=>{
+  $('#mm').innerHTML=ST.map((s,i)=>`<div class="card" style="margin-bottom:6px;padding:5px 12px 3px"><div class="row" style="flex-wrap:nowrap;margin-bottom:2px;gap:8px">${AV[s.av].replace(/44px/g,"28px")}<b>${s.name}</b></div>
+   <div class="grid2" style="gap:10px"><div><div class="small muted">Needs most</div>${s.needs.map((t,k)=>`<button class="opt small ${done?(k===NEEDOK[i]?'ok':pick[i][0]===k?'no':''):pick[i][0]===k?'sel':''}" data-i="${i}" data-w="0" data-k="${k}" style="padding:2px 8px;margin-bottom:3px;font-size:13px;line-height:1.2" ${done?'disabled':''}>${t}</button>`).join('')}</div>
+   <div><div class="small muted">Best mode</div>${s.modes.map((t,k)=>`<button class="opt small ${done?(k===MODEOK[i]?'ok':pick[i][1]===k?'no':''):pick[i][1]===k?'sel':''}" data-i="${i}" data-w="1" data-k="${k}" style="padding:2px 8px;margin-bottom:3px;font-size:13px;line-height:1.2" ${done?'disabled':''}>${t}</button>`).join('')}</div></div></div>`).join('');
+  document.querySelectorAll('#mm .opt').forEach(b=>b.onclick=()=>{pick[+b.dataset.i][+b.dataset.w]=+b.dataset.k;draw(false);chk()});
+ };
+ const chk=()=>{const all=pick.every(p=>p[0]!==null&&p[1]!==null);$('#act').innerHTML=all?`<button class="btn" id="chk">Check my matches</button>`:`<span class="small muted">Choose one need and one mode for each audience.</span>`;if(all)$('#chk').onclick=()=>{
+   let c=0;pick.forEach((p,i)=>{if(p[0]===NEEDOK[i])c++;if(p[1]===MODEOK[i])c++});R.m=c;R.mT=6;draw(true);
+   $('#act').innerHTML=`<div class="fb ${c===6?'ok':'info'}" style="margin:0"><b>${c} of 6 correct.</b> Keep the core facts consistent, but change the level of detail and the mode for each group.</div><button class="btn" id="n" style="margin-top:6px">Continue to Round 2</button>`;$('#n').onclick=build;}};
+ stage.innerHTML=`<div class="fade"><span class="chip">Round 1 · Different stakeholders, different needs</span>
+ <h2 style="margin:0 0 6px;font-size:17px">Match each audience to what it needs and how to reach it.</h2>
+ <div class="grid2" style="grid-template-columns:2fr 1fr;gap:12px"><div id="mm"></div><div><div class="card" style="background:var(--gold-l);border-color:var(--gold)"><b>Scenario</b><p class="small" style="margin:4px 0 0">Midland Foods will close its Dayton distribution center in 90 days. 120 jobs are affected. Severance and job placement help will be offered.</p></div><div id="act" style="margin-top:10px"></div></div></div></div>`;
+ draw(false);chk();
+}
+
+/* ROUND 2: build the message */
+const SL=[
+{n:"Opening",o:[
+ ["Today we are sharing difficult news: the Dayton distribution center will close in 90 days.",3,3,"Plain and honest. It states the news at the start."],
+ ["As we continue to optimize our footprint, certain strategic realignments will be occurring.",0,0,"Corporate fog. Readers cannot tell what is happening."],
+ ["We are thrilled to announce an exciting new chapter for our supply network!",0,1,"Tone-deaf. It spins bad news as good."]]},
+{n:"Reason",o:[
+ ["Shipping volume in the region has fallen 35% over two years, and we can no longer sustain the site.",3,2,"Honest, specific reasoning without blaming anyone."],
+ ["This is simply what the market demanded, and it is out of our hands.",1,0,"Defensive. It avoids ownership."],
+ ["Several factors led to this decision.",0,1,"Vague. People deserve the reasons."]]},
+{n:"Impact",o:[
+ ["We know this affects 120 colleagues and their families, and we are sorry for the hardship this brings.",2,3,"Acknowledges the human impact with empathy."],
+ ["Impacted headcount will be reduced per plan.",1,0,"Treats people as numbers."],
+ ["We hope everyone sees the silver lining.",0,0,"Dismisses real pain."]]},
+{n:"Next steps",o:[
+ ["Each person will meet one-on-one by Friday. Severance, benefits through December, and job-placement help are available. Questions: HR at 555-0142.",3,3,"Concrete next steps and where to get support."],
+ ["More information will be shared at some point in the future.",0,0,"Leaves people anxious and without a plan."],
+ ["Don’t worry. Everyone who wants a job here will have one.",1,2,"A false promise. It damages trust when it fails."]]}
+];
+function build(){
+ steps(2);const ch=[null,null,null,null];let cur=0;
+ const draw=()=>{
+  const s=SL[cur];
+  $('#bb').innerHTML=`<h3>${cur+1}. ${s.n}</h3>`+s.o.map((o,k)=>`<button class="opt ${ch[cur]===k?'sel':''}" data-k="${k}" style="padding:6px 10px;font-size:14.5px;line-height:1.3">${o[0]}</button>`).join('')+`<div id="fbk"></div>`;
+  document.querySelectorAll('#bb .opt').forEach(b=>b.onclick=()=>{ch[cur]=+b.dataset.k;draw();prev();$('#fbk').innerHTML=`<div class="fb info" style="margin:0"><b>Coach:</b> ${SL[cur].o[ch[cur]][3]}</div>`;nav()});
+  $('#tabs').innerHTML=SL.map((x,k)=>`<button class="btn ${k===cur?'':'ghost'}" data-t="${k}" style="padding:3px 12px;font-size:14px">${x.n}${ch[k]!==null?' ✓':''}</button>`).join('');
+  document.querySelectorAll('#tabs .btn').forEach(b=>b.onclick=()=>{cur=+b.dataset.t;draw();prev();nav()});
+ };
+ const prev=()=>{
+  $('#pv').innerHTML=SL.map((s,k)=>ch[k]!==null?`<p style="margin:0 0 6px">${s.o[ch[k]][0]}</p>`:`<p style="margin:0 0 6px;color:#aaa">[${s.n}]</p>`).join('');
+  let c=0,e=0;SL.forEach((s,k)=>{if(ch[k]!==null){c+=s.o[ch[k]][1];e+=s.o[ch[k]][2]}});
+  $('#mc').style.width=c/11*100+'%';$('#me').style.width=e/11*100+'%';
+ };
+ const nav=()=>{const all=ch.every(x=>x!==null);$('#fin').innerHTML=all?`<button class="btn" id="send">Send the message</button>`:'<span class="small muted">Choose a sentence for each part.</span>';
+  if(all)$('#send').onclick=()=>{let c=0,e=0;SL.forEach((s,k)=>{c+=s.o[ch[k]][1];e+=s.o[ch[k]][2]});R.b=c+e;R.bT=22;
+   const msg=c+e>=20?"Clear, honest, and caring. This is how bad news earns trust.":c+e>=13?"A decent start. Revisit the parts that were vague, defensive, or cold.":"This message would likely harm trust. Be honest and empathetic, and give real next steps.";
+   $('#fin').innerHTML=`<div class="fb ${c+e>=20?'ok':'info'}" style="margin:0"><b>${c+e} of 22.</b> ${msg}</div><button class="btn" id="n" style="margin-top:6px">Continue to Round 3</button>`;$('#n').onclick=global}};
+ stage.innerHTML=`<div class="fade"><span class="chip">Round 2 · Deliver the news to employees</span>
+ <div class="grid2" style="grid-template-columns:1.2fr 1fr;gap:12px;margin-top:2px"><div><div id="tabs" class="row" style="gap:6px;margin-bottom:8px"></div><div id="bb"></div></div>
+ <div><div class="card" style="background:#fff"><div class="row" style="margin-bottom:6px">${AV.emp}<b>Letter to employees</b></div><div id="pv" class="small"></div>
+  <div class="small" style="margin-top:6px">Clarity<div class="meter"><i id="mc" style="background:var(--teal)"></i></div></div><div class="small" style="margin-top:4px">Empathy<div class="meter"><i id="me" style="background:var(--red)"></i></div></div></div>
+  <div id="fin" style="margin-top:8px"></div></div></div></div>`;
+ draw();prev();nav();
+}
+
+/* ROUND 3: global check */
+const ID=[
+["We need to bite the bullet and close the site.","make this difficult decision",["make this difficult decision","pull the trigger on it","hit the ground running"],"The idiom “bite the bullet” may not translate. Say it plainly."],
+["Let’s touch base next week.","Let’s meet by video call next Tuesday.",["Let’s circle back at some point.","Let’s meet by video call next Tuesday.","Let’s ping each other."],"A clear day and format works in every time zone and culture."],
+["This decision is not a slam dunk for anyone.","This decision is difficult for everyone.",["This was no walk in the park.","This is a tough nut to crack.","This decision is difficult for everyone."],"Replace sports and food idioms with direct language."],
+["We will go the extra mile to support you.","We will provide career coaching and extended benefits.",["We will move heaven and earth for you.","We will have your back.","We will provide career coaching and extended benefits."],"Specific support beats a figure of speech."]
+];
+function global(){
+ steps(3);let i=0;
+ const show=()=>{
+  const q=ID[i];const opts=shuffle(q[2]);
+  stage.innerHTML=`<div class="fade"><span class="chip">Round 3 · Cultural check · ${i+1} of ${ID.length}</span><h2>Replace the idiom so a global audience will understand.</h2>
+  <div class="grid2" style="margin-top:8px"><div><div class="card" style="font-size:18px;margin-bottom:10px;border-left:6px solid var(--gold)">“${q[0]}”</div><div id="oo">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div><div id="fb"></div><div id="nx"></div></div>
+  <svg viewBox="0 0 240 170" style="width:100%;max-width:320px" role="img" aria-label="Globe with speech bubbles in different time zones"><circle cx="120" cy="90" r="62" fill="#e3f2f5" stroke="#1f7a8c" stroke-width="3"/><ellipse cx="120" cy="90" rx="26" ry="62" fill="none" stroke="#1f7a8c" stroke-width="2"/><path d="M58 90h124M68 62h104M68 118h104" stroke="#1f7a8c" stroke-width="2" fill="none"/>
+  <rect x="6" y="10" width="64" height="30" rx="10" fill="#fbe9ea" stroke="#d34147" stroke-width="2"/><text x="38" y="30" text-anchor="middle" font-size="11" font-weight="800">Hello</text>
+  <rect x="170" y="14" width="64" height="30" rx="10" fill="#fdf3df" stroke="#e9a23b" stroke-width="2"/><text x="202" y="34" text-anchor="middle" font-size="11" font-weight="800">こんにちは</text>
+  <rect x="172" y="132" width="62" height="30" rx="10" fill="#e5f4ea" stroke="#2e7d4f" stroke-width="2"/><text x="203" y="152" text-anchor="middle" font-size="11" font-weight="800">Hola</text>
+  <rect x="4" y="132" width="62" height="30" rx="10" fill="#fff" stroke="#222" stroke-width="2"/><text x="35" y="152" text-anchor="middle" font-size="11" font-weight="800">Bonjour</text></svg></div></div>`;
+  document.querySelectorAll('#oo .opt').forEach(b=>b.onclick=()=>{
+   const ok=opts[+b.dataset.k]===q[1];R.cT++;if(ok)R.c++;
+   document.querySelectorAll('#oo .opt').forEach((x,k)=>{x.disabled=true;if(opts[k]===q[1])x.classList.add('ok')});if(!ok)b.classList.add('no');
+   $('#fb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><b>${ok?'Clear.':'Still an idiom or too vague.'}</b> ${q[3]}</div>`;
+   $('#nx').innerHTML=`<button class="btn" id="n">${i<ID.length-1?'Next sentence':'See my results'}</button>`;
+   $('#n').onclick=()=>{i++;i<ID.length?show():end()};
+  });
+ };show();
+}
+
+function end(){
+ steps(4);
+ const row=(n,a,b,c)=>`<div class="row small" style="margin-bottom:6px"><span style="width:140px">${n}</span><div class="meter spacer"><i style="width:${a/b*100}%;background:${c}"></i></div><b>${a}/${b}</b></div>`;
+ stage.innerHTML=`<div class="grid2 fade"><div class="card" style="text-align:center"><div class="score">${R.m+R.b+R.c}<span style="font-size:22px;color:#5a5a5a">/${R.mT+R.bT+R.cT}</span></div><div class="muted" style="margin:4px 0 10px">points earned</div>
+  <div style="text-align:left">${row('Stakeholders',R.m,R.mT,'var(--gold)')}${row('Delivering the news',R.b,R.bT,'var(--red)')}${row('Cultural check',R.c,R.cT,'var(--teal)')}</div><button class="btn ghost" id="again" style="margin-top:8px">Play again</button></div>
+  <div><h2>Takeaways</h2><ul style="padding-left:20px;margin:6px 0 10px"><li><b>Be honest and empathetic.</b> Bad news needs both clarity and care.</li><li><b>Tailor to the stakeholder.</b> Different groups need different details and modes.</li><li><b>Plan for cultural differences.</b> Research norms and avoid idioms.</li><li><b>Lead with humility.</b> Seek to understand reactions before defending your message.</li></ul>
+  <div class="fb info"><b>A Christian framework</b> calls leaders to communicate truth with compassion, and to listen to the people affected, even when the news is hard.</div></div></div>`;
+ $('#again').onclick=intro;
+}
+intro();
+</script>
+
+</body>
+</html>

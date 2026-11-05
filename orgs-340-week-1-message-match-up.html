@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 340 Week 1 | Message Match-Up</title>
+<style>
+:root{--ink:#222;--muted:#5a5a5a;--red:#d34147;--red-d:#a8353a;--red-l:#fbe9ea;--bg:#faf7f3;--card:#fff;--line:#e2dbd3;--teal:#1f7a8c;--teal-l:#e3f2f5;--gold:#e9a23b;--gold-l:#fdf3df;--ok:#2e7d4f;--ok-l:#e5f4ea;--bad:#b3261e;--bad-l:#fdecea}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);color-scheme:light;font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column}
+.top{flex:none;display:flex;align-items:center;gap:14px;padding:8px 18px;background:#222;color:#fff;border-bottom:4px solid var(--red)}
+.top svg{width:84px;height:52px;flex:none}
+.kicker{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#f3b0b3;font-weight:700}
+h1{font-size:20px;margin:0;line-height:1.2}
+h2{font-size:19px;margin:0 0 4px;line-height:1.25}
+h3{font-size:16px;margin:0 0 4px}
+.steps{margin-left:auto;display:flex;gap:6px}
+.dot{width:24px;height:6px;border-radius:3px;background:#5b5b5b}
+.dot.on{background:var(--red)}.dot.done{background:#fff}
+.stage{flex:1;min-height:0;overflow:auto;padding:14px 18px 16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.lead{color:var(--muted);margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.btn{font:inherit;font-weight:600;cursor:pointer;border:2px solid var(--red);background:var(--red);color:#fff;border-radius:999px;padding:8px 20px}
+.btn:hover{background:var(--red-d);border-color:var(--red-d)}
+.btn.ghost{background:#fff;color:var(--red-d)}
+.btn.ghost:hover{background:var(--red-l)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;font:inherit;cursor:pointer;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 8px;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--teal);background:var(--teal-l)}
+.opt.ok{border-color:var(--ok);background:var(--ok-l)}
+.opt.no{border-color:var(--bad);background:var(--bad-l)}
+.opt.sel{border-color:var(--teal);background:var(--teal-l)}
+.opt[disabled]{cursor:default}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.fb{border-radius:10px;padding:8px 12px;margin:2px 0 10px;font-size:15px;border-left:5px solid}
+.fb.ok{background:var(--ok-l);border-color:var(--ok)}
+.fb.no{background:var(--bad-l);border-color:var(--bad)}
+.fb.info{background:var(--gold-l);border-color:var(--gold)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.intro{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center;height:100%}
+.intro svg{width:100%;height:auto;max-height:100%}
+.chip{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--red-l);color:var(--red-d);border-radius:999px;padding:2px 10px;margin-bottom:6px}
+.meter{height:12px;border-radius:6px;background:#e9e4de;overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:6px;transition:width .4s}
+.score{font-size:42px;font-weight:800;color:var(--red-d);line-height:1}
+.fade{animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fade{animation:none}.meter>i{transition:none}}
+@media (max-width:720px){
+ .grid2,.intro{grid-template-columns:1fr}
+ .intro svg{max-height:150px}
+ h1{font-size:17px}.top svg{display:none}.stage{padding:10px 12px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div id="hero-mini"></div>
+    <div><div class="kicker">ORGS 340 · Week 1</div><h1>Message Match-Up</h1></div>
+    <div class="steps" id="steps" aria-hidden="true"></div>
+  </header>
+  <main class="stage" id="stage" aria-live="polite"></main>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const stage=$('#stage');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+$('#hero-mini').innerHTML=`<svg viewBox="0 0 84 52" role="img" aria-label="Two speech bubbles"><rect x="4" y="4" width="46" height="28" rx="9" fill="#d34147"/><path d="M14 32 L12 44 L26 32Z" fill="#d34147"/><rect x="34" y="18" width="46" height="26" rx="9" fill="#fff"/><path d="M68 44 L72 51 L60 44Z" fill="#fff"/><circle cx="18" cy="18" r="3" fill="#fff"/><circle cx="27" cy="18" r="3" fill="#fff"/><circle cx="36" cy="18" r="3" fill="#fff"/><rect x="42" y="26" width="28" height="3" rx="1.5" fill="#d34147"/><rect x="42" y="33" width="18" height="3" rx="1.5" fill="#d34147"/></svg>`;
+
+const ICON={
+cal:`<svg viewBox="0 0 64 64"><rect x="8" y="12" width="48" height="44" rx="8" fill="#fff" stroke="#1f7a8c" stroke-width="3"/><rect x="8" y="12" width="48" height="14" rx="8" fill="#1f7a8c"/><rect x="18" y="6" width="5" height="12" rx="2.5" fill="#222"/><rect x="41" y="6" width="5" height="12" rx="2.5" fill="#222"/><circle cx="22" cy="38" r="3.5" fill="#d34147"/><circle cx="32" cy="38" r="3.5" fill="#cfc7bf"/><circle cx="42" cy="38" r="3.5" fill="#cfc7bf"/><circle cx="22" cy="48" r="3.5" fill="#cfc7bf"/><circle cx="32" cy="48" r="3.5" fill="#cfc7bf"/></svg>`,
+chart:`<svg viewBox="0 0 64 64"><rect x="6" y="8" width="52" height="48" rx="8" fill="#fff" stroke="#d34147" stroke-width="3"/><rect x="14" y="36" width="8" height="14" rx="2" fill="#e9a23b"/><rect x="28" y="28" width="8" height="22" rx="2" fill="#1f7a8c"/><rect x="42" y="18" width="8" height="32" rx="2" fill="#d34147"/><path d="M14 26 L28 18 L38 22 L50 12" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+clip:`<svg viewBox="0 0 64 64"><rect x="10" y="10" width="44" height="48" rx="7" fill="#fff" stroke="#1f7a8c" stroke-width="3"/><rect x="22" y="5" width="20" height="10" rx="4" fill="#222"/><path d="M17 28l4 4 7-8" fill="none" stroke="#2e7d4f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="33" y="27" width="14" height="4" rx="2" fill="#cfc7bf"/><path d="M17 42l4 4 7-8" fill="none" stroke="#2e7d4f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="33" y="41" width="14" height="4" rx="2" fill="#cfc7bf"/></svg>`,
+heart:`<svg viewBox="0 0 64 64"><path d="M32 56 C8 40 6 22 18 14 C25 10 30 14 32 19 C34 14 39 10 46 14 C58 22 56 40 32 56Z" fill="#d34147"/><path d="M20 22c3-3 7-2 9 2" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/></svg>`,
+mega:`<svg viewBox="0 0 64 64"><path d="M10 26h12l24-12v36L22 38H10z" fill="#e9a23b" stroke="#222" stroke-width="2.5" stroke-linejoin="round"/><rect x="22" y="38" width="9" height="14" rx="3" fill="#d34147"/><path d="M52 24c4 4 4 12 0 16M56 18c7 8 7 20 0 28" fill="none" stroke="#1f7a8c" stroke-width="3" stroke-linecap="round"/></svg>`
+};
+
+const PURPOSES=[["inform","Inform"],["persuade","Persuade"],["instruct","Instruct"],["goodwill","Build goodwill"]];
+const SC=[
+{icon:"cal",text:"The Friday staff meeting has moved to 10 a.m. in Room 204. Your team needs to know.",purpose:"inform",why:"The goal is simply to make sure people know a fact. Nothing needs to be argued or taught.",aud:"A busy team that already knows the meeting exists.",opts:[
+ ["Friday’s staff meeting moves to 10 a.m. in Room 204. Please update your calendar.",1,"Direct, specific, and respects busy readers: the change comes first."],
+ ["As you know, communication is vital to team success, so we are making some changes…",0,"This buries the news. The audience has to wait to learn what changed."],
+ ["I hope this finds you well. There has been some discussion about scheduling lately…",0,"Vague and slow. The reader still does not know what to do."]]},
+{icon:"chart",text:"You want your director to approve $4,000 for a customer-feedback tool.",purpose:"persuade",why:"You want a decision. The message must give reasons and evidence that move this reader to act.",aud:"A director who values cost data and has little time.",opts:[
+ ["I think we should buy a tool because everyone else has one.",0,"This has no evidence and does not speak to what a director values."],
+ ["Our team has been feeling frustrated with how feedback is collected.",0,"This leads with your feelings, not the director’s priorities."],
+ ["A $4,000 feedback tool could cut customer churn by an estimated 5%. Here is the case in three points.",1,"It leads with cost and results, the things this audience values most."]]},
+{icon:"clip",text:"New hires need to learn how to submit a travel reimbursement.",purpose:"instruct",why:"The reader must be able to do something afterward, so the message teaches steps.",aud:"New hires who do not know company jargon yet.",opts:[
+ ["Submit a T&E via the ERP per policy 7.4.",0,"Jargon and acronyms the audience has not learned yet."],
+ ["Step 1: Save your receipts. Step 2: Log in to the expense portal and click “New Report.”",1,"Plain language and numbered steps fit a first-time audience."],
+ ["Travel reimbursement is a complex process with many considerations.",0,"This describes the topic but never tells the reader what to do."]]},
+{icon:"heart",text:"Your volunteer team just helped run a successful fundraiser. You want to thank them.",purpose:"goodwill",why:"The main goal is to strengthen the relationship and show respect and appreciation.",aud:"Volunteers who gave up their Saturday.",opts:[
+ ["Per our records, the event concluded with total revenue of $18,200.",0,"Accurate, but cold. It reports results and never thanks anyone."],
+ ["Thank you. Because you gave your Saturday, 212 families will have groceries this winter.",1,"Personal and specific. It connects their effort to the people they helped."],
+ ["Good job, everyone. See you next month.",0,"Too generic to feel sincere."]]},
+{icon:"mega",text:"You are asking cautious donors to sign up for a monthly giving program.",purpose:"persuade",why:"You want donors to take an action, so the message needs a benefit and a clear, respectful ask.",aud:"Donors who have given once and are careful with money.",opts:[
+ ["Your gift this year helped 40 students. A small monthly gift lets us plan scholarships ahead. Would you consider $15 a month?",1,"Shows impact, explains the benefit, and makes a clear, modest ask."],
+ ["Give monthly. It’s easy. Click here now!",0,"Pushy and gives no reason to act."],
+ ["We desperately need money to survive.",0,"Puts the organization’s needs ahead of what the donor values."]]}
+];
+
+const state={i:-1,score:0,total:0,phase:0};
+function steps(cur){$('#steps').innerHTML=Array.from({length:SC.length+1},(_,k)=>`<i class="dot ${k<cur?'done':k===cur?'on':''}"></i>`).join('')}
+
+function intro(){
+ steps(0);
+ stage.innerHTML=`<div class="intro fade">
+ <svg viewBox="0 0 440 300" role="img" aria-label="A sender passes a message to a receiver. Purpose and audience shape the message.">
+  <rect width="440" height="300" rx="18" fill="#fff" stroke="#e2dbd3"/>
+  <circle cx="70" cy="120" r="30" fill="#222"/><circle cx="70" cy="108" r="11" fill="#f3d2b3"/><path d="M48 142a22 16 0 0 1 44 0v8H48z" fill="#d34147"/>
+  <text x="70" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#222">Messenger</text>
+  <circle cx="370" cy="120" r="30" fill="#1f7a8c"/><circle cx="370" cy="108" r="11" fill="#f3d2b3"/><path d="M348 142a22 16 0 0 1 44 0v8H348z" fill="#fff"/>
+  <text x="370" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#222">Audience</text>
+  <path d="M110 118 C150 80 290 80 330 118" fill="none" stroke="#cfc7bf" stroke-width="3" stroke-dasharray="7 7"/>
+  <polygon points="330,118 318,116 324,106" fill="#cfc7bf"/>
+  <rect x="160" y="84" width="120" height="76" rx="14" fill="#d34147"/><path d="M190 160 L184 182 L214 160Z" fill="#d34147"/>
+  <rect x="176" y="100" width="88" height="8" rx="4" fill="#fff"/><rect x="176" y="116" width="70" height="8" rx="4" fill="#fff" opacity=".85"/><rect x="176" y="132" width="52" height="8" rx="4" fill="#fff" opacity=".7"/>
+  <rect x="24" y="206" width="124" height="70" rx="12" fill="#fdf3df" stroke="#e9a23b" stroke-width="2"/><text x="86" y="232" text-anchor="middle" font-size="14" font-weight="800" fill="#222">1 · Purpose</text><text x="86" y="252" text-anchor="middle" font-size="12" fill="#5a5a5a">Why am I writing?</text><text x="86" y="267" text-anchor="middle" font-size="12" fill="#5a5a5a">Inform · Persuade · …</text>
+  <rect x="158" y="206" width="124" height="70" rx="12" fill="#e3f2f5" stroke="#1f7a8c" stroke-width="2"/><text x="220" y="232" text-anchor="middle" font-size="14" font-weight="800" fill="#222">2 · Audience</text><text x="220" y="252" text-anchor="middle" font-size="12" fill="#5a5a5a">Who needs it?</text><text x="220" y="267" text-anchor="middle" font-size="12" fill="#5a5a5a">What do they value?</text>
+  <rect x="292" y="206" width="124" height="70" rx="12" fill="#fbe9ea" stroke="#d34147" stroke-width="2"/><text x="354" y="232" text-anchor="middle" font-size="14" font-weight="800" fill="#222">3 · Message</text><text x="354" y="252" text-anchor="middle" font-size="12" fill="#5a5a5a">Clear, concise,</text><text x="354" y="267" text-anchor="middle" font-size="12" fill="#5a5a5a">and respectful</text>
+ </svg>
+ <div>
+  <span class="chip">Interactive · 5 scenarios</span>
+  <h2>Name the purpose. Know the audience. Then write.</h2>
+  <p class="lead">Every message misfires or lands based on two choices: why you are writing and who is reading. For each workplace scenario, pick the purpose, then choose the opening line that best fits the audience.</p>
+  <p class="small muted" style="margin:0 0 14px">Think about it: Remember a message that misfired. Was the problem its purpose, its audience, or its delivery?</p>
+  <button class="btn" id="go">Start the scenarios</button>
+ </div></div>`;
+ $('#go').onclick=()=>{state.i=0;state.score=0;state.total=0;scene()};
+}
+
+function scene(){
+ const s=SC[state.i];steps(state.i+1);
+ const opts=shuffle(s.opts);
+ stage.innerHTML=`<div class="grid2 fade">
+  <div>
+   <div class="card row" style="margin-bottom:10px;flex-wrap:nowrap"><div style="width:64px;height:64px;flex:none">${ICON[s.icon]}</div><div><span class="chip">Scenario ${state.i+1} of ${SC.length}</span><div>${s.text}</div></div></div>
+   <h3>Step 1. What is the main purpose?</h3>
+   <div id="pp" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${PURPOSES.map(p=>`<button class="opt" style="margin:0;text-align:center;font-weight:600" data-p="${p[0]}">${p[1]}</button>`).join('')}</div>
+   <div id="pfb"></div>
+  </div>
+  <div id="right" style="opacity:.45">
+   <h3>Step 2. Choose the opening that fits the audience</h3>
+   <p class="small muted" style="margin:0 0 8px"><b>Audience:</b> ${s.aud}</p>
+   <div id="oo">${opts.map((o,k)=>`<button class="opt" disabled data-k="${k}">“${o[0]}”</button>`).join('')}</div>
+   <div id="ofb"></div>
+   <div id="nx"></div>
+  </div></div>`;
+ document.querySelectorAll('#pp .opt').forEach(b=>b.onclick=()=>{
+  const ok=b.dataset.p===s.purpose;state.total++;if(ok)state.score++;
+  document.querySelectorAll('#pp .opt').forEach(x=>{x.disabled=true;if(x.dataset.p===s.purpose)x.classList.add('ok')});
+  if(!ok)b.classList.add('no');
+  $('#pfb').innerHTML=`<div class="fb ${ok?'ok':'no'}" style="margin-top:10px"><b>${ok?'Yes.':'Not quite.'}</b> The purpose is to <b>${PURPOSES.find(p=>p[0]===s.purpose)[1].toLowerCase()}</b>. ${s.why}</div>`;
+  $('#right').style.opacity=1;document.querySelectorAll('#oo .opt').forEach(x=>x.disabled=false);
+ });
+ document.querySelectorAll('#oo .opt').forEach(b=>b.onclick=()=>{
+  const o=opts[+b.dataset.k];const ok=!!o[1];state.total++;if(ok)state.score++;
+  document.querySelectorAll('#oo .opt').forEach((x,k)=>{x.disabled=true;if(opts[k][1])x.classList.add('ok')});
+  if(!ok)b.classList.add('no');
+  $('#ofb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><b>${ok?'Good fit.':'Try another lens.'}</b> ${o[2]}</div>`;
+  $('#nx').innerHTML=`<button class="btn" id="next">${state.i<SC.length-1?'Next scenario':'See my results'}</button>`;
+  $('#next').onclick=()=>{state.i++;state.i<SC.length?scene():results()};
+ });
+}
+
+function results(){
+ steps(SC.length+1);
+ const pct=Math.round(state.score/state.total*100);
+ const msg=pct>=90?"You are reading purpose and audience like a pro.":pct>=70?"Strong instincts. Revisit the scenarios where the audience’s values were the deciding factor.":"Keep practicing: name the purpose in one sentence before you write anything.";
+ stage.innerHTML=`<div class="grid2 fade">
+  <div class="card" style="text-align:center">
+   <div class="score">${state.score}<span style="font-size:22px;color:#5a5a5a">/${state.total}</span></div>
+   <div class="muted" style="margin:4px 0 8px">correct decisions</div>
+   <div class="meter" style="margin:0 8px 10px"><i style="width:${pct}%;background:var(--ok)"></i></div>
+   <p style="margin:0 0 12px">${msg}</p>
+   <button class="btn ghost" id="again">Try again</button>
+  </div>
+  <div>
+   <h2>The messenger’s checklist</h2>
+   <svg viewBox="0 0 400 110" style="width:100%;height:auto" role="img" aria-label="Plan, draft, revise">
+    <g font-family="inherit" font-weight="800" font-size="15" text-anchor="middle">
+    <circle cx="60" cy="40" r="30" fill="#fdf3df" stroke="#e9a23b" stroke-width="3"/><text x="60" y="46" fill="#222">Plan</text>
+    <circle cx="200" cy="40" r="30" fill="#e3f2f5" stroke="#1f7a8c" stroke-width="3"/><text x="200" y="46" fill="#222">Draft</text>
+    <circle cx="340" cy="40" r="30" fill="#fbe9ea" stroke="#d34147" stroke-width="3"/><text x="340" y="46" fill="#222">Revise</text></g>
+    <path d="M94 40h72M234 40h72" stroke="#222" stroke-width="3" stroke-linecap="round"/><polygon points="166,40 156,34 156,46" fill="#222"/><polygon points="306,40 296,34 296,46" fill="#222"/>
+    <g font-size="12" fill="#5a5a5a" text-anchor="middle"><text x="60" y="92">Purpose, audience,</text><text x="60" y="106">main point</text><text x="200" y="92">Organize ideas so</text><text x="200" y="106">readers find them</text><text x="340" y="92">Cut, clarify,</text><text x="340" y="106">proofread</text></g>
+   </svg>
+   <ul class="small" style="margin:6px 0 0;padding-left:20px">
+    <li>Name your purpose before you write.</li>
+    <li>Direct the message to the people who most influence your objective.</li>
+    <li>Own the message: you are accountable for clarity, accuracy, and respect.</li>
+    <li>Read it from the receiver’s point of view before you send.</li>
+   </ul>
+  </div></div>`;
+ $('#again').onclick=intro;
+}
+intro();
+</script>
+
+</body>
+</html>

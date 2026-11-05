@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 340 Week 4 | Executive Summary Lab</title>
+<style>
+:root{--ink:#222;--muted:#5a5a5a;--red:#d34147;--red-d:#a8353a;--red-l:#fbe9ea;--bg:#faf7f3;--card:#fff;--line:#e2dbd3;--teal:#1f7a8c;--teal-l:#e3f2f5;--gold:#e9a23b;--gold-l:#fdf3df;--ok:#2e7d4f;--ok-l:#e5f4ea;--bad:#b3261e;--bad-l:#fdecea}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);color-scheme:light;font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column}
+.top{flex:none;display:flex;align-items:center;gap:14px;padding:8px 18px;background:#222;color:#fff;border-bottom:4px solid var(--red)}
+.top svg{width:84px;height:52px;flex:none}
+.kicker{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#f3b0b3;font-weight:700}
+h1{font-size:20px;margin:0;line-height:1.2}
+h2{font-size:19px;margin:0 0 4px;line-height:1.25}
+h3{font-size:16px;margin:0 0 4px}
+.steps{margin-left:auto;display:flex;gap:6px}
+.dot{width:24px;height:6px;border-radius:3px;background:#5b5b5b}
+.dot.on{background:var(--red)}.dot.done{background:#fff}
+.stage{flex:1;min-height:0;overflow:auto;padding:14px 18px 16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.lead{color:var(--muted);margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.btn{font:inherit;font-weight:600;cursor:pointer;border:2px solid var(--red);background:var(--red);color:#fff;border-radius:999px;padding:8px 20px}
+.btn:hover{background:var(--red-d);border-color:var(--red-d)}
+.btn.ghost{background:#fff;color:var(--red-d)}
+.btn.ghost:hover{background:var(--red-l)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;font:inherit;cursor:pointer;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 8px;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--teal);background:var(--teal-l)}
+.opt.ok{border-color:var(--ok);background:var(--ok-l)}
+.opt.no{border-color:var(--bad);background:var(--bad-l)}
+.opt.sel{border-color:var(--teal);background:var(--teal-l)}
+.opt[disabled]{cursor:default}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.fb{border-radius:10px;padding:8px 12px;margin:2px 0 10px;font-size:15px;border-left:5px solid}
+.fb.ok{background:var(--ok-l);border-color:var(--ok)}
+.fb.no{background:var(--bad-l);border-color:var(--bad)}
+.fb.info{background:var(--gold-l);border-color:var(--gold)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.intro{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center;height:100%}
+.intro svg{width:100%;height:auto;max-height:100%}
+.chip{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--red-l);color:var(--red-d);border-radius:999px;padding:2px 10px;margin-bottom:6px}
+.meter{height:12px;border-radius:6px;background:#e9e4de;overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:6px;transition:width .4s}
+.score{font-size:42px;font-weight:800;color:var(--red-d);line-height:1}
+.fade{animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fade{animation:none}.meter>i{transition:none}}
+@media (max-width:720px){
+ .grid2,.intro{grid-template-columns:1fr}
+ .intro svg{max-height:150px}
+ h1{font-size:17px}.top svg{display:none}.stage{padding:10px 12px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div id="hero-mini"></div>
+    <div><div class="kicker">ORGS 340 · Week 4</div><h1>Executive Summary Lab</h1></div>
+    <div class="steps" id="steps" aria-hidden="true"></div>
+  </header>
+  <main class="stage" id="stage" aria-live="polite"></main>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const stage=$('#stage');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const wc=t=>t.trim().split(/\s+/).length;
+$('#hero-mini').innerHTML=`<svg viewBox="0 0 84 52" role="img" aria-label="A document and scissors"><rect x="10" y="4" width="40" height="46" rx="5" fill="#fff"/><rect x="16" y="12" width="28" height="4" rx="2" fill="#d34147"/><rect x="16" y="21" width="22" height="3" rx="1.5" fill="#bbb"/><rect x="16" y="28" width="26" height="3" rx="1.5" fill="#bbb"/><rect x="16" y="35" width="16" height="3" rx="1.5" fill="#bbb"/><circle cx="58" cy="36" r="6" fill="none" stroke="#e9a23b" stroke-width="3"/><circle cx="58" cy="18" r="6" fill="none" stroke="#e9a23b" stroke-width="3"/><path d="M62 21L80 40M62 33L80 14" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`;
+const R={cut:0,cutT:0,ord:0,ordT:0,inc:0,incT:0};
+function steps(c){$('#steps').innerHTML=[0,1,2,3,4].map(k=>`<i class="dot ${k<c?'done':k===c?'on':''}"></i>`).join('')}
+
+function intro(){
+ Object.assign(R,{cut:0,cutT:0,ord:0,ordT:0,inc:0,incT:0});steps(0);
+ stage.innerHTML=`<div class="intro fade">
+ <svg viewBox="0 0 440 300" role="img" aria-label="A long, messy document is trimmed by scissors into a short executive summary with three parts: issue, findings, recommendation">
+  <rect width="440" height="300" rx="18" fill="#fff" stroke="#e2dbd3"/>
+  <g transform="rotate(-5 90 130)"><rect x="30" y="36" width="130" height="180" rx="8" fill="#f1ebe4" stroke="#cfc7bf" stroke-width="2"/>
+   <g fill="#cfc7bf"><rect x="44" y="54" width="100" height="6" rx="3"/><rect x="44" y="68" width="82" height="6" rx="3"/><rect x="44" y="82" width="98" height="6" rx="3"/><rect x="44" y="96" width="70" height="6" rx="3"/><rect x="44" y="110" width="100" height="6" rx="3"/><rect x="44" y="124" width="88" height="6" rx="3"/><rect x="44" y="138" width="96" height="6" rx="3"/><rect x="44" y="152" width="60" height="6" rx="3"/><rect x="44" y="166" width="92" height="6" rx="3"/><rect x="44" y="180" width="76" height="6" rx="3"/></g></g>
+  <text x="95" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#5a5a5a">The bloated draft</text>
+  <g transform="translate(176 118)"><circle cx="14" cy="34" r="11" fill="none" stroke="#e9a23b" stroke-width="5"/><circle cx="14" cy="-2" r="11" fill="none" stroke="#e9a23b" stroke-width="5"/><path d="M22 6L66 42M22 26L66 -10" stroke="#222" stroke-width="5" stroke-linecap="round"/></g>
+  <rect x="270" y="36" width="140" height="180" rx="10" fill="#fff" stroke="#d34147" stroke-width="3"/>
+  <rect x="270" y="36" width="140" height="28" rx="10" fill="#d34147"/><text x="340" y="56" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">Executive Summary</text>
+  <g font-size="12" font-weight="800" fill="#222"><rect x="282" y="76" width="116" height="38" rx="8" fill="#fdf3df"/><text x="290" y="92">1 · The issue</text><rect x="290" y="99" width="70" height="5" rx="2.5" fill="#e9a23b"/>
+  <rect x="282" y="122" width="116" height="38" rx="8" fill="#e3f2f5"/><text x="290" y="138">2 · Key findings</text><rect x="290" y="145" width="84" height="5" rx="2.5" fill="#1f7a8c"/>
+  <rect x="282" y="168" width="116" height="38" rx="8" fill="#fbe9ea"/><text x="290" y="184">3 · Recommendation</text><rect x="290" y="191" width="60" height="5" rx="2.5" fill="#d34147"/></g>
+  <text x="340" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#a8353a">Brief. Bright. Be gone.</text>
+ </svg>
+ <div>
+  <span class="chip">Interactive · 3 rounds</span>
+  <h2>Respect the reader’s time.</h2>
+  <p class="lead">An executive summary gives decision-makers the essentials in a short space. Cut a bloated draft, put the pieces in order, and choose language that includes your whole audience.</p>
+  <p class="small muted" style="margin:0 0 14px">Think about it: If your reader had only sixty seconds, what is the one thing they must take away?</p>
+  <button class="btn" id="go">Open the lab</button></div></div>`;
+ $('#go').onclick=cut;
+}
+
+/* ROUND 1 */
+const SENT=[
+["Thanks to everyone for the hard work on this review over the past few months.",0,"Pleasant, but it does not help a decision-maker."],
+["Our call-center wait times have doubled since March, and customer satisfaction has fallen from 86% to 71%.",1,"The issue: it states the problem with numbers."],
+["As many people know, communication has always been a cornerstone of business, and much has changed over the years.",0,"Filler. It could open any document ever written."],
+["Exit surveys show 62% of unhappy callers cite long holds and repeated transfers.",1,"A key finding that explains the problem."],
+["Staffing is 18% below target, and 40% of calls are routed to the wrong department.",1,"A key finding that points to causes."],
+["The team also had a lovely holiday party in December with a great turnout.",0,"Not relevant to the decision."],
+["We recommend hiring 12 agents and installing a call-routing system by September at a cost of $310,000.",1,"The recommended action, with timing and cost."],
+["We believe this is probably something that could potentially be considered in the near future if budget allows.",0,"Hedging weakens the recommendation and wastes words."],
+["Please feel free to reach out if you have any questions, concerns, or thoughts of any kind.",0,"A polite closer, but not summary content."]
+];
+const LIMIT=75;
+function cut(){
+ steps(1);const keep=SENT.map(()=>true);
+ const upd=()=>{
+  const w=wc(SENT.filter((_,i)=>keep[i]).map(s=>s[0]).join(' '));
+  const pct=Math.min(100,w/150*100);
+  $('#wc').textContent=w;$('#bar').style.width=pct+'%';$('#bar').style.background=w<=LIMIT?'var(--ok)':'var(--red)';
+  $('#lim').textContent=w<=LIMIT?'Within the limit.':`Cut ${w-LIMIT} or more words.`;
+ };
+ stage.innerHTML=`<div class="fade"><div class="row" style="margin-bottom:6px"><div><span class="chip">Round 1 · Cut to the summary</span><h2 style="margin:0">Click a sentence to cut it. Keep only what a decision-maker needs.</h2></div></div>
+ <div class="grid2" style="grid-template-columns:1.7fr 1fr;gap:12px">
+  <div id="doc" class="card" style="padding:6px 8px 3px">${SENT.map((s,i)=>`<button class="opt" data-i="${i}" style="margin-bottom:4px;padding:3px 9px;font-size:14px;line-height:1.3">${s[0]}</button>`).join('')}</div>
+  <div><div class="card"><div class="small muted">Word count</div><div class="score"><span id="wc">0</span><span style="font-size:18px;color:#5a5a5a"> / ${LIMIT} max</span></div>
+   <div class="meter" style="margin:8px 0 4px"><i id="bar"></i></div><div class="small" id="lim"></div>
+   <p class="small muted" style="margin:8px 0 0">Aim for the issue, the key findings, and the recommended action.</p></div>
+   <div id="res" style="margin-top:8px"><button class="btn" id="chk">Check my summary</button></div></div></div></div>`;
+ document.querySelectorAll('#doc .opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;keep[i]=!keep[i];b.style.textDecoration=keep[i]?'none':'line-through';b.style.opacity=keep[i]?1:.45;b.classList.toggle('sel',keep[i]);upd()});
+ document.querySelectorAll('#doc .opt').forEach(b=>b.classList.add('sel'));
+ upd();
+ $('#chk').onclick=()=>{
+  let c=0;const notes=[];
+  SENT.forEach((s,i)=>{const good=(keep[i]===!!s[1]);if(good)c++;else notes.push(`<li>${keep[i]?'Cut':'Keep'}: “${s[0].slice(0,46)}…” ${s[2]}</li>`)});
+  R.cut=c;R.cutT=SENT.length;
+  document.querySelectorAll('#doc .opt').forEach((b,i)=>{b.disabled=true;b.classList.remove('sel');const good=keep[i]===!!SENT[i][1];b.classList.add(good?'ok':'no')});
+  $('#res').innerHTML=`<div class="fb ${c===SENT.length?'ok':'info'}"><b>${c} of ${SENT.length} decisions correct.</b>${notes.length?'<ul class="small" style="margin:4px 0 0;padding-left:18px">'+notes.join('')+'</ul>':' Every sentence earns its place.'}</div><button class="btn" id="n">Continue to Round 2</button>`;
+  $('#n').onclick=order;
+ };
+}
+
+/* ROUND 2 */
+const BL=[["The issue","State the problem and why it matters now.",1],["Key findings","Give the two or three facts that support your case.",2],["Recommended action","Say what the reader should decide or do, with cost and date.",3]];
+function order(){
+ steps(2);let arr=shuffle(BL);if(arr.map(a=>a[2]).join('')==='123')arr=[BL[2],BL[0],BL[1]];
+ const colors=['#fdf3df|#e9a23b','#e3f2f5|#1f7a8c','#fbe9ea|#d34147'];
+ const draw=(locked)=>{
+  $('#ol').innerHTML=arr.map((b,i)=>{const [bg,bd]=colors[b[2]-1].split('|');return `<div class="card row" style="background:${bg};border:2px solid ${bd};margin-bottom:8px;flex-wrap:nowrap"><b style="font-size:22px;width:24px">${i+1}</b><div style="flex:1"><b>${b[0]}</b><div class="small muted">${b[1]}</div></div>${locked?'':`<button class="btn ghost" data-m="-1" data-i="${i}" style="padding:2px 12px" aria-label="Move up">▲</button><button class="btn ghost" data-m="1" data-i="${i}" style="padding:2px 12px" aria-label="Move down">▼</button>`}</div>`}).join('');
+  document.querySelectorAll('#ol button').forEach(x=>x.onclick=()=>{const i=+x.dataset.i,j=i+ +x.dataset.m;if(j<0||j>2)return;[arr[i],arr[j]]=[arr[j],arr[i]];draw(false)});
+ };
+ stage.innerHTML=`<div class="fade"><span class="chip">Round 2 · Organize for the reader</span><h2>Put the executive summary in the order a busy reader needs.</h2>
+ <p class="lead" style="margin-bottom:8px">Write it last, but place it first. Use the arrows to reorder the three parts.</p>
+ <div class="grid2"><div id="ol"></div><div id="side"><svg viewBox="0 0 220 150" style="width:100%;max-width:300px" role="img" aria-label="Pyramid showing the most important point first"><polygon points="110,10 210,140 10,140" fill="#fbe9ea" stroke="#d34147" stroke-width="3"/><line x1="60" y1="75" x2="160" y2="75" stroke="#d34147" stroke-width="2"/><line x1="35" y1="108" x2="185" y2="108" stroke="#d34147" stroke-width="2"/><g font-size="11" font-weight="800" text-anchor="middle"><text x="110" y="62">Lead with it</text><text x="110" y="96">Support it</text><text x="110" y="130">Detail lives in the report</text></g></svg>
+ <div id="res"><button class="btn" id="chk">Check the order</button></div></div></div></div>`;
+ draw(false);
+ $('#chk').onclick=()=>{
+  const ok=arr.every((b,i)=>b[2]===i+1);R.ord=ok?3:arr.filter((b,i)=>b[2]===i+1).length;R.ordT=3;
+  if(!ok){arr=BL.slice();}draw(true);
+  $('#res').innerHTML=`<div class="fb ${ok?'ok':'info'}"><b>${ok?'Correct.':'Here is the order that works.'}</b> Issue first so the reader knows why it matters, then the findings that support the case, then the action you want.</div><button class="btn" id="n">Continue to Round 3</button>`;
+  $('#n').onclick=inclusive;
+ };
+}
+
+/* ROUND 3 */
+const IN=[
+["Hey guys, let’s get started.","Hi everyone, let’s get started.","“Guys” can leave out women and non-binary colleagues."],
+["We need a man-hour estimate for the project.","We need a staff-hour estimate for the project.","Gender-neutral terms fit everyone on the team."],
+["The elderly struggle with the new app.","Older adults may find the app hard to use, so we will add larger text.","People-first wording avoids stereotypes and moves to a solution."],
+["Please send this to the chairman.","Please send this to the chair.","A neutral title works for any person in the role."]
+];
+function inclusive(){
+ steps(3);let i=0;
+ const show=()=>{
+  const q=IN[i];const opts=shuffle([[q[0],0],[q[1],1]]);
+  stage.innerHTML=`<div class="fade"><span class="chip">Round 3 · Inclusive language · ${i+1} of ${IN.length}</span><h2>Which version builds rapport with a diverse audience?</h2>
+  <div class="grid2" style="margin-top:8px"><div id="oo">${opts.map((o,k)=>`<button class="opt" data-k="${k}" style="padding:12px">“${o[0]}”</button>`).join('')}<div id="fb"></div><div id="nx"></div></div>
+  <svg viewBox="0 0 240 150" style="width:100%;max-width:320px" role="img" aria-label="Diverse group of people under one speech bubble"><rect x="20" y="8" width="200" height="50" rx="14" fill="#e3f2f5" stroke="#1f7a8c" stroke-width="3"/><path d="M110 58l10 16 10-16z" fill="#e3f2f5" stroke="#1f7a8c" stroke-width="3" stroke-linejoin="round"/><text x="120" y="38" text-anchor="middle" font-size="14" font-weight="800" fill="#222">Language includes…</text>
+  <g><circle cx="40" cy="108" r="14" fill="#f3d2b3"/><path d="M18 146a22 20 0 0 1 44 0z" fill="#d34147"/><circle cx="85" cy="108" r="14" fill="#c68e63"/><path d="M63 146a22 20 0 0 1 44 0z" fill="#e9a23b"/><circle cx="130" cy="108" r="14" fill="#8d5a3b"/><path d="M108 146a22 20 0 0 1 44 0z" fill="#1f7a8c"/><circle cx="175" cy="108" r="14" fill="#e8c29a"/><path d="M153 146a22 20 0 0 1 44 0z" fill="#222"/><circle cx="215" cy="108" r="12" fill="#f3d2b3"/><path d="M196 146a19 18 0 0 1 38 0z" fill="#a8353a"/></g></svg></div></div>`;
+  document.querySelectorAll('#oo .opt').forEach(b=>b.onclick=()=>{
+   const o=opts[+b.dataset.k];R.incT++;if(o[1])R.inc++;
+   document.querySelectorAll('#oo .opt').forEach((x,k)=>{x.disabled=true;if(opts[k][1])x.classList.add('ok')});if(!o[1])b.classList.add('no');
+   $('#fb').innerHTML=`<div class="fb ${o[1]?'ok':'no'}"><b>${o[1]?'Yes.':'Not quite.'}</b> ${q[2]}</div>`;
+   $('#nx').innerHTML=`<button class="btn" id="n">${i<IN.length-1?'Next phrase':'See my results'}</button>`;
+   $('#n').onclick=()=>{i++;i<IN.length?show():end()};
+  });
+ };show();
+}
+
+function end(){
+ steps(4);const tot=R.cut+R.ord+R.inc,max=R.cutT+R.ordT+R.incT;
+ const row=(n,a,b,c)=>`<div class="row small" style="margin-bottom:6px"><span style="width:150px">${n}</span><div class="meter spacer"><i style="width:${a/b*100}%;background:${c}"></i></div><b>${a}/${b}</b></div>`;
+ stage.innerHTML=`<div class="grid2 fade"><div class="card" style="text-align:center"><div class="score">${tot}<span style="font-size:22px;color:#5a5a5a">/${max}</span></div><div class="muted" style="margin:4px 0 10px">correct choices</div>
+ <div style="text-align:left">${row('Cut the fluff',R.cut,R.cutT,'var(--gold)')}${row('Organize',R.ord,R.ordT,'var(--teal)')}${row('Inclusive language',R.inc,R.incT,'var(--red)')}</div>
+ <button class="btn ghost" id="again" style="margin-top:8px">Play again</button></div>
+ <div><h2>Takeaways</h2><ul style="padding-left:20px;margin:6px 0 10px"><li><b>Purpose and audience together.</b> Know what you want and what your audience needs.</li><li><b>Organization is a service.</b> A well-organized message saves readers time and builds trust.</li><li><b>Brevity takes work.</b> Choose carefully what matters most.</li><li><b>Language includes or excludes.</b> Inclusive wording supports trust.</li></ul>
+ <div class="fb info"><b>Next step:</b> Apply this to your Communications Campaign Part 1 – Executive Summary. State the issue, the key findings, and the recommended action. Be brief, be bright, be gone.</div></div></div>`;
+ $('#again').onclick=intro;
+}
+intro();
+</script>
+
+</body>
+</html>
