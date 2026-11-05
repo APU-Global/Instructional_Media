@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!--OUT:PSYC-450_Week-3_Context-and-Roles.html-->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 450 | Week 3: Context and Roles</title>
+<style>
+:root{--red:#a8353a;--red2:#d34147;--ink:#1f1f23;--cream:#f4f0ea;--line:#e2dbcf;--muted:#5a5a62;--teal:#2f6f73;--gold:#b7791f;--plum:#6b4fa0;--rose:#c0457a;--green:#2f8a6a;--blue:#3b5b8c}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--cream);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid #2f6fdc;outline-offset:2px}
+.app{height:100vh;display:flex;flex-direction:column;min-height:0}
+.hd{flex:0 0 auto;background:linear-gradient(100deg,#8f2a30,#d34147);color:#fff;padding:8px 18px;display:flex;align-items:center;gap:12px}
+.hd svg{flex:0 0 auto}
+.hd .eb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.88}
+.hd h1{margin:0;font:700 19px/1.15 Georgia,"Times New Roman",serif}
+.tabs{flex:0 0 auto;display:flex;gap:6px;padding:9px 14px 0;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 15px;font-weight:600;font-size:13px}
+.tab:hover{border-color:#bbb}
+.tab[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stage{flex:1 1 auto;min-height:0;padding:10px 14px 12px;display:flex}
+.view{display:none;flex:1;min-height:0;gap:12px;width:100%}
+.view.on{display:flex}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:0;min-width:0}
+.col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+h2{margin:0 0 4px;font:700 17px/1.2 Georgia,serif}
+h3{margin:0 0 2px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+p{margin:0}
+.sec{margin-top:9px}
+.sec p{font-size:13.5px}
+.btn{border:1.5px solid var(--ink);background:#fff;border-radius:10px;padding:7px 13px;font-weight:600;font-size:13px}
+.btn:hover{background:#f2eee7}
+.btn.pri{background:var(--red);border-color:var(--red);color:#fff}
+.btn.pri:hover{background:#8f2a30}
+.btn[disabled]{opacity:.45;cursor:default}
+.note{font-size:12.5px;color:var(--muted)}
+svg text{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.fb{border-radius:10px;padding:8px 11px;font-size:13.5px;margin-top:8px}
+.fb.ok{background:#e6f4ec;border:1px solid #9fd3b6}
+.fb.no{background:#fdeceb;border:1px solid #f0aaa6}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:700px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .stage{display:block}
+ .view.on{flex-direction:column}
+ .card{overflow:visible}
+}
+
+#roles.on{flex-direction:column}
+.ringc{flex:0 0 min(46%,520px);display:flex;align-items:center;justify-content:center;padding:6px}
+.ringc svg{width:100%;height:100%;max-height:100%}
+.ring{cursor:pointer;transition:opacity .3s,stroke-width .3s}
+.ring:focus-visible{outline:none;stroke:#2f6fdc;stroke-width:5}
+.ring.sel{stroke:#1f1f23;stroke-width:4}
+.ring.hi{stroke:#d34147;stroke-width:6}
+.ring.dim{opacity:.5}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font-weight:700;font-size:12.5px}
+.chip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,#fff)}
+.steps{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.steps li{display:flex;gap:9px;font-size:13px;animation:in .4s}
+.steps b.n{flex:0 0 22px;height:22px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:12px}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.rc{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;flex:0 0 auto}
+.role{background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px 4px 8px;text-align:center;font-weight:700;font-size:13px}
+.role svg{width:100%;height:auto;max-height:150px;display:block}
+.role[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,#fff)}
+.rd{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px 18px;align-content:start;font-size:15px}.rd p{font-size:15px}.reflect{background:#f1f6f6;border-radius:10px;padding:8px 12px;order:5}.reflect p{font:italic 16px/1.4 Georgia,serif}
+.rd .full{grid-column:1/-1}
+.banner{background:#faf6f0;border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:6px 11px;font-size:13px}
+.hid{filter:blur(5px);user-select:none}
+@media (max-width:700px){.ringc{flex:none}.rc{grid-template-columns:repeat(3,1fr)}.rd{grid-template-columns:1fr}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="p" viewBox="0 0 60 100"><path d="M6 100V64Q6 42 30 42Q54 42 54 64V100Z" fill="currentColor"/><circle cx="30" cy="22" r="15" fill="var(--skin,#f0c9a0)"/><path d="M14 21Q13 4 30 4Q47 4 46 21Q39 11 30 11Q21 11 14 21Z" fill="var(--hair,#3a2a20)"/><circle cx="24.5" cy="24" r="1.7" fill="#333"/><circle cx="35.5" cy="24" r="1.7" fill="#333"/><path d="M25 30Q30 34 35 30" stroke="#333" fill="none" stroke-width="1.7" stroke-linecap="round"/></symbol></defs></svg>
+<div class="app">
+<header class="hd">
+ <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="2.5"><circle cx="20" cy="20" r="17" opacity=".5"/><circle cx="20" cy="20" r="12" opacity=".75"/><circle cx="20" cy="20" r="7"/></g><circle cx="20" cy="20" r="3" fill="#fff"/></svg>
+ <div><div class="eb">PSYC 450 | Week 3</div><h1>Context and Roles: Families in Their Worlds</h1></div>
+</header>
+<div class="tabs" role="tablist">
+ <button class="tab" role="tab" data-view="rings" aria-selected="true">Ecological rings</button>
+ <button class="tab" role="tab" data-view="roles" aria-selected="false">Family roles</button>
+</div>
+<div class="stage">
+ <div class="view on" id="rings">
+  <div class="card ringc">
+   <svg viewBox="0 0 460 460" role="img" aria-label="Bronfenbrenner's ecological systems as concentric rings around a child and family">
+    <circle id="rg-chrono" class="ring" data-k="chrono" tabindex="0" role="button" aria-label="Chronosystem" cx="230" cy="230" r="218" fill="#fbeaea" stroke="#d34147" stroke-width="3" stroke-dasharray="9 6"/>
+    <circle id="rg-macro" class="ring" data-k="macro" tabindex="0" role="button" aria-label="Macrosystem" cx="230" cy="230" r="196" fill="#e9e2f4" stroke="#6b4fa0" stroke-width="2"/>
+    <circle id="rg-exo" class="ring" data-k="exo" tabindex="0" role="button" aria-label="Exosystem" cx="230" cy="230" r="158" fill="#dbe8f0" stroke="#3b5b8c" stroke-width="2"/>
+    <circle id="rg-meso" class="ring" data-k="meso" tabindex="0" role="button" aria-label="Mesosystem" cx="230" cy="230" r="120" fill="#e0efe6" stroke="#2f8a6a" stroke-width="2"/>
+    <circle id="rg-micro" class="ring" data-k="micro" tabindex="0" role="button" aria-label="Microsystem" cx="230" cy="230" r="82" fill="#fbe6c9" stroke="#b7791f" stroke-width="2"/>
+    <circle cx="230" cy="230" r="40" fill="#fff" stroke="#e2dbcf" stroke-width="2" pointer-events="none"/>
+    <use href="#p" x="204" y="206" width="26" height="43" style="color:#e0a030;--skin:#d9a679;--hair:#2b1b14" pointer-events="none"/>
+    <use href="#p" x="228" y="214" width="22" height="36" style="color:#d98aa0;--skin:#e8b88a;--hair:#4a2f22" pointer-events="none"/>
+    <g font-size="11.5" font-weight="700" text-anchor="middle" pointer-events="none">
+     <text x="230" y="174" fill="#7a5410">Microsystem</text>
+     <text x="230" y="133" fill="#1f5c46">Mesosystem</text>
+     <text x="230" y="95" fill="#2c4770">Exosystem</text>
+     <text x="230" y="57" fill="#4d3880">Macrosystem</text>
+     <text x="230" y="27" fill="#a8353a" font-size="10">Chronosystem · time</text>
+    </g>
+    <g pointer-events="none" stroke-linejoin="round">
+     <!-- micro: house -->
+     <g transform="translate(219,272)"><path d="M0 11L11 1L22 11V21H0Z" fill="#fff" stroke="#7a5410" stroke-width="2"/></g>
+     <!-- meso: linked circles -->
+     <g transform="translate(219,318)" fill="none" stroke="#1f5c46" stroke-width="2.5"><circle cx="6" cy="8" r="6"/><circle cx="16" cy="8" r="6"/></g>
+     <!-- exo: briefcase -->
+     <g transform="translate(218,356)"><rect x="0" y="4" width="24" height="16" rx="3" fill="#fff" stroke="#2c4770" stroke-width="2"/><path d="M8 4V1H16V4" fill="none" stroke="#2c4770" stroke-width="2"/></g>
+     <!-- macro: globe -->
+     <g transform="translate(219,394)" fill="none" stroke="#4d3880" stroke-width="2"><circle cx="11" cy="11" r="10"/><ellipse cx="11" cy="11" rx="4.5" ry="10"/><path d="M1 11H21"/></g>
+     <!-- chrono: arrow -->
+     <path d="M358 56A190 190 0 0 1 404 112" fill="none" stroke="#d34147" stroke-width="2.5" marker-end="url(#ah)"/>
+    </g>
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d34147"/></marker></defs>
+   </svg>
+  </div>
+  <div class="col" style="flex:1">
+   <div class="card">
+    <div class="chips" id="chips" role="group" aria-label="Layers"></div>
+    <div id="detail" aria-live="polite"></div>
+   </div>
+   <div class="card" style="flex:1;overflow:hidden">
+    <h2>Trace the ripple</h2>
+    <p class="note">What happens to a child when a stressor starts in a setting he never enters? Follow it through the rings.</p>
+    <div class="sec" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="go">Dad’s employer cuts his hours</button><button class="btn" id="reset" disabled>Reset</button></div>
+    <ol class="steps" id="steps"></ol>
+   </div>
+  </div>
+ </div>
+
+ <div class="view" id="roles">
+  <div class="rc" id="rc" role="group" aria-label="Family roles"></div>
+  <div class="card rd" id="rd" aria-live="polite"></div>
+ </div>
+</div>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function initTabs(onChange){
+  const tabs=$$('.tabs .tab'), views=$$('.view');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.setAttribute('aria-selected',x===t));
+    views.forEach(v=>v.classList.toggle('on',v.id===t.dataset.view));
+    onChange&&onChange(t.dataset.view); postH();
+  }));
+}
+function postH(){try{parent.postMessage({type:'psyc450-height',height:document.documentElement.scrollHeight},'*')}catch(e){}}
+addEventListener('load',postH);addEventListener('resize',postH);
+
+initTabs();
+const R={
+ micro:{n:'Microsystem',c:'#b7791f',d:'The relationships and settings the child experiences directly: family, peers, classroom, faith community.',e:'Daniel’s daily interactions with his parents, his sister, and his teacher.'},
+ meso:{n:'Mesosystem',c:'#2f8a6a',d:'The connections between microsystems, such as how home and school relate to each other.',e:'Daniel’s parents and his teacher talk about his homework, or they never connect.'},
+ exo:{n:'Exosystem',c:'#3b5b8c',d:'Settings that affect the child even though he does not take part in them.',e:'A parent’s work schedule, school board budget decisions, a parent’s support network.'},
+ macro:{n:'Macrosystem',c:'#6b4fa0',d:'Culture, values, laws, the economy, and broad beliefs that color every other layer.',e:'Expectations about “good parents,” healthcare policy, faith traditions, economic conditions.'},
+ chrono:{n:'Chronosystem',c:'#a8353a',d:'Change over time: life transitions and the historical period a family lives through.',e:'Daniel changes schools, his parents separate, or a pandemic reshapes daily life.'}
+};
+const order=['micro','meso','exo','macro','chrono'];
+$('#chips').innerHTML=order.map(k=>`<button class="chip" data-k="${k}" style="--c:${R[k].c}" aria-pressed="false">${R[k].n}</button>`).join('');
+let sel=null;
+function pick(k){sel=k;$$('.ring').forEach(r=>r.classList.toggle('sel',r.dataset.k===k));$$('.chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===k));
+ const d=R[k];$('#detail').innerHTML=`<h2 style="color:${d.c}">${d.n}</h2><p>${d.d}</p><p class="sec"><b>Example:</b> ${d.e}</p>`}
+$$('.ring').forEach(r=>{r.onclick=()=>pick(r.dataset.k);r.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(r.dataset.k)}}});
+$('#chips').onclick=e=>{const c=e.target.closest('.chip');if(c)pick(c.dataset.k)};
+$('#detail').innerHTML='<h2>Select a ring</h2><p>Click any ring in the diagram, or a layer name above, to see what it covers. The family sits at the center.</p>';
+const S=[['exo','<b>Exosystem.</b> Dad’s employer cuts his hours. Daniel is not there, but the decision reaches him.'],['micro','<b>Microsystem.</b> Money gets tight, Dad is stressed, and home feels tense. Daniel hears more arguments.'],['meso','<b>Mesosystem.</b> Dad misses the parent-teacher conference, so the teacher’s concern about Daniel’s grades never reaches home.'],['macro','<b>Macrosystem.</b> Cultural messages about a father as “provider” add shame, so Dad hides the stress.'],['chrono','<b>Chronosystem.</b> Over months, Daniel’s mood and grades shift. The stress becomes part of the family story unless someone addresses it.']];
+let si=0;
+function ripple(){ if(si>=S.length)return; $$('.ring').forEach(r=>{r.classList.remove('hi','sel');r.classList.add('dim')});
+ const [k,t]=S[si];const r=$('#rg-'+k);r.classList.remove('dim');r.classList.add('hi');
+ $('#steps').insertAdjacentHTML('beforeend',`<li><b class="n">${si+1}</b><span>${t}</span></li>`);
+ si++;$('#reset').disabled=false;
+ $('#go').textContent=si<S.length?'Next ripple':'Ripple complete';$('#go').disabled=si>=S.length;
+ if(si>=S.length)$('#steps').insertAdjacentHTML('beforeend','<li><b class="n" style="background:#2f8a6a">✓</b><span><b>Takeaway:</b> a problem “in” one family member is often a response to forces across many layers.</span></li>');postH()}
+$('#go').onclick=ripple;
+$('#reset').onclick=()=>{si=0;$('#steps').innerHTML='';$$('.ring').forEach(r=>r.classList.remove('hi','dim','sel'));$('#go').textContent='Dad’s employer cuts his hours';$('#go').disabled=false;$('#reset').disabled=true;sel&&pick(sel)};
+
+/* roles */
+const P=(x,y,w,h,col,skin,hair,extra='')=>`<use href="#p" x="${x}" y="${y}" width="${w}" height="${h}" style="color:${col};--skin:${skin};--hair:${hair}" ${extra}/>`;
+const heart=(x,y,s,c)=>`<path transform="translate(${x},${y}) scale(${s})" d="M0 6c-6-10-20-4-12 8l12 11l12-11c8-12-6-18-12-8z" fill="${c}"/>`;
+const ROLES={
+ caretaker:{n:'The Caretaker',c:'#c0457a',art:P(38,52,54,90,'#d98aa0','#e8b88a','#4a2f22')+heart(65,18,.9,'#c0457a')+'<circle cx="65" cy="112" r="8" fill="#fff"/><path d="M65 107V117M60 112H70" stroke="#c0457a" stroke-width="3" stroke-linecap="round"/><path d="M96 100Q112 96 118 108" fill="none" stroke="#c0457a" stroke-width="2.5" stroke-dasharray="3 5" stroke-linecap="round"/>',
+  does:'Takes responsibility for everyone’s feelings and needs, fixing problems and covering for others.',cost:'Burnout and resentment. Rescuing can enable the very problem it tries to solve (codependency).',shift:'Offer support without rescuing, and practice asking for help.'},
+ hero:{n:'The Hero',c:'#b7791f',art:P(38,52,54,90,'#e0a030','#d9a679','#2b1b14')+'<path transform="translate(65,24)" d="M0-14L4-4L15-4L6 3L9 14L0 7L-9 14L-6 3L-15-4L-4-4Z" fill="#f4c542" stroke="#b7791f" stroke-width="1.5"/><circle cx="65" cy="112" r="7" fill="#fff" stroke="#b7791f" stroke-width="2"/>',
+  does:'Gives the family a sense of worth through achievement, responsibility, and “doing it right.”',cost:'Pressure to be perfect, hidden struggles, loneliness, and fear of failing.',shift:'Be valued for who they are, not only for what they achieve.'},
+ scapegoat:{n:'The Scapegoat',c:'#3b5b8c',art:P(38,52,54,90,'#7f93ad','#c98f64','#222')+'<g stroke="#d34147" stroke-width="3.5" stroke-linecap="round" fill="none"><path d="M8 58L32 78"/><path d="M122 58L98 78"/><path d="M8 124L34 112"/><path d="M122 124L96 112"/></g><g fill="#d34147"><circle cx="32" cy="78" r="3.5"/><circle cx="98" cy="78" r="3.5"/></g>',
+  does:'Draws the blame, which can pull attention away from deeper problems in the family.',cost:'Shame, anger, and an identity built around being “the problem.”',shift:'Ask what the behavior is signaling about the whole system.'},
+ lost:{n:'The Lost Child',c:'#5a7d8c',art:'<g opacity=".62">'+P(14,76,44,72,'#8fa4b8','#e8b88a','#6b4a2a')+'</g><path d="M22 96Q36 80 50 96" fill="none" stroke="#555" stroke-width="3" stroke-linecap="round"/><rect x="17" y="94" width="7" height="11" rx="3" fill="#555"/><rect x="48" y="94" width="7" height="11" rx="3" fill="#555"/><g fill="#8fa4b8"><circle cx="78" cy="56" r="3.5"/><circle cx="90" cy="56" r="3.5"/><circle cx="102" cy="56" r="3.5"/></g><path d="M70 40H112a8 8 0 0 1 8 8V64a8 8 0 0 1-8 8H84L72 80V72H70a8 8 0 0 1-8-8V48a8 8 0 0 1 8-8Z" fill="none" stroke="#8fa4b8" stroke-width="2" stroke-dasharray="4 4"/>',
+  does:'Stays quiet and out of the way to avoid adding to family tension.',cost:'Unmet needs, isolation, and difficulty building closeness later on.',shift:'Invite their voice, and notice and name their strengths.'},
+ mascot:{n:'The Mascot',c:'#2f8a6a',art:P(38,52,54,90,'#5aa07f','#d9a679','#2b1b14')+'<path d="M52 63L65 30L78 63Z" fill="#d34147" stroke="#a8353a" stroke-width="2" stroke-linejoin="round"/><circle cx="65" cy="28" r="5" fill="#f4c542"/><g><circle cx="22" cy="40" r="4" fill="#e0a030"/><circle cx="108" cy="46" r="4" fill="#5aa07f"/><rect x="20" y="86" width="8" height="4" fill="#c0457a" transform="rotate(30 24 88)"/><rect x="100" y="90" width="8" height="4" fill="#3b5b8c" transform="rotate(-25 104 92)"/><circle cx="112" cy="20" r="3" fill="#d34147"/></g>',
+  does:'Uses humor and charm to relieve tension and keep everyone smiling.',cost:'Real feelings go unspoken, and anxiety can sit under the jokes.',shift:'Make room for serious feelings, and let humor be a choice.'}
+};
+const ASK={'caretaker': 'What would happen in this family if the Caretaker stopped fixing things for a week?', 'hero': 'Who in the family would notice if the Hero stumbled, and how would they respond?', 'scapegoat': 'What might the family be avoiding by keeping the focus on this person?', 'lost': 'What need might staying invisible meet, and who could gently draw this person in?', 'mascot': 'What would the family hear if the jokes paused for a moment?'};
+const rk=Object.keys(ROLES);
+$('#rc').innerHTML=rk.map(k=>`<button class="role" data-k="${k}" style="--c:${ROLES[k].c}" aria-pressed="false"><svg viewBox="0 0 130 150" aria-hidden="true">${ROLES[k].art}</svg>${ROLES[k].n}</button>`).join('');
+function role(k){$$('.role').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));const d=ROLES[k];
+ $('#rd').innerHTML=`<div class="full banner" style="order:-1"><b>Patterns are not personalities.</b> A role describes how someone functions in the system, not who they are.</div>
+ <div><h3>What it looks like</h3><p>${d.does}</p></div><div><h3>What it costs</h3><p>${d.cost}</p></div>
+ <div class="full reflect"><h3>Reflect</h3><p>${ASK[k]}</p></div>
+ <div><h3>A healthier shift</h3><p id="sh" class="hid">${d.shift}</p><button class="btn" id="rv" style="margin-top:6px">Reveal</button></div>`;
+ $('#rv').onclick=()=>{$('#sh').classList.remove('hid');$('#rv').style.display='none'}}
+$('#rc').onclick=e=>{const b=e.target.closest('.role');if(b)role(b.dataset.k)};
+$('#rd').innerHTML='<div class="full banner" style="order:-1"><b>Patterns are not personalities.</b> A role describes how someone functions in the system, not who they are.</div><div class="full"><p>Select a role above to see what it looks like, what it costs, and how a family can shift it.</p></div>';
+</script></body></html>

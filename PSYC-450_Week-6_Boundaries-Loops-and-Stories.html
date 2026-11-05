@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<!--OUT:PSYC-450_Week-6_Boundaries-Loops-and-Stories.html-->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 450 | Week 6: Boundaries, Loops, and Stories</title>
+<style>
+:root{--red:#a8353a;--red2:#d34147;--ink:#1f1f23;--cream:#f4f0ea;--line:#e2dbcf;--muted:#5a5a62;--teal:#2f6f73;--gold:#b7791f;--plum:#6b4fa0;--rose:#c0457a;--green:#2f8a6a;--blue:#3b5b8c}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--cream);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid #2f6fdc;outline-offset:2px}
+.app{height:100vh;display:flex;flex-direction:column;min-height:0}
+.hd{flex:0 0 auto;background:linear-gradient(100deg,#8f2a30,#d34147);color:#fff;padding:8px 18px;display:flex;align-items:center;gap:12px}
+.hd svg{flex:0 0 auto}
+.hd .eb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.88}
+.hd h1{margin:0;font:700 19px/1.15 Georgia,"Times New Roman",serif}
+.tabs{flex:0 0 auto;display:flex;gap:6px;padding:9px 14px 0;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 15px;font-weight:600;font-size:13px}
+.tab:hover{border-color:#bbb}
+.tab[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stage{flex:1 1 auto;min-height:0;padding:10px 14px 12px;display:flex}
+.view{display:none;flex:1;min-height:0;gap:12px;width:100%}
+.view.on{display:flex}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:0;min-width:0}
+.col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+h2{margin:0 0 4px;font:700 17px/1.2 Georgia,serif}
+h3{margin:0 0 2px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+p{margin:0}
+.sec{margin-top:9px}
+.sec p{font-size:13.5px}
+.btn{border:1.5px solid var(--ink);background:#fff;border-radius:10px;padding:7px 13px;font-weight:600;font-size:13px}
+.btn:hover{background:#f2eee7}
+.btn.pri{background:var(--red);border-color:var(--red);color:#fff}
+.btn.pri:hover{background:#8f2a30}
+.btn[disabled]{opacity:.45;cursor:default}
+.note{font-size:12.5px;color:var(--muted)}
+svg text{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.fb{border-radius:10px;padding:8px 11px;font-size:13.5px;margin-top:8px}
+.fb.ok{background:#e6f4ec;border:1px solid #9fd3b6}
+.fb.no{background:#fdeceb;border:1px solid #f0aaa6}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:700px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .stage{display:block}
+ .view.on{flex-direction:column}
+ .card{overflow:visible}
+}
+
+#bnd.on{flex-direction:column}
+.zone{font:700 15px/1 Georgia,serif;padding:6px 14px;border-radius:99px;color:#fff;display:inline-block;transition:background .3s}
+.sl{width:100%;accent-color:var(--red);height:28px}
+.sll{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted)}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:8px}
+.three p{font-size:14px}
+.pill{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:3px 11px;font-size:12.5px;font-weight:600}
+.pill[aria-pressed=true]{border-color:var(--ink);background:#f2eee7}
+.svgcard{flex:1;display:flex;align-items:center;justify-content:center;padding:6px}
+.svgcard svg{width:100%;height:100%;max-height:100%}
+.bubble{background:#faf6f0;border:2px solid var(--line);border-radius:12px;padding:7px 11px;font:italic 14.5px/1.35 Georgia,serif;margin-top:6px}
+.meter{height:14px;border-radius:99px;background:#eee;overflow:hidden;margin:4px 0 8px}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#e0a030,#d34147);transition:width .5s}
+.book{display:grid;grid-template-columns:1fr 1fr;flex:1;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.12);min-height:0}
+.pg{padding:18px 20px;position:relative;display:flex;flex-direction:column;gap:8px}
+.pg.l{background:linear-gradient(90deg,#e9e6ee,#f1eff4)}
+.pg.r{background:linear-gradient(90deg,#f6efe2,#fffaf0)}
+.pg h3{color:#777}
+.pg .st{font:italic 20px/1.35 Georgia,serif}
+.pg.l .st.done{text-decoration:line-through;color:#9a98a6}
+.pg .lines i{display:block;height:6px;border-radius:3px;background:#e7dfcf;margin:10px 0}
+.pg.r .st{color:#3b2a6e}
+.stepdots{display:flex;gap:6px;margin-bottom:6px}
+.stepdots b{flex:1;height:6px;border-radius:3px;background:#e2dbcf}.stepdots b.on{background:var(--plum)}
+.opt{display:flex;gap:8px;align-items:flex-start;border:2px solid var(--line);border-radius:10px;padding:6px 10px;background:#fff;text-align:left;width:100%;margin-top:6px;font-size:13.5px}
+.opt.good{border-color:var(--green);background:#e6f4ec}.opt.bad{border-color:#d9a0a0;background:#fbefef}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-weight:700;font-size:13px}
+.chip[aria-pressed=true]{border-color:var(--plum);background:#efe8fa}
+@media (max-width:700px){.three{grid-template-columns:1fr}.book{grid-template-columns:1fr}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="p" viewBox="0 0 60 100"><path d="M6 100V64Q6 42 30 42Q54 42 54 64V100Z" fill="currentColor"/><circle cx="30" cy="22" r="15" fill="var(--skin,#f0c9a0)"/><path d="M14 21Q13 4 30 4Q47 4 46 21Q39 11 30 11Q21 11 14 21Z" fill="var(--hair,#3a2a20)"/><circle cx="24.5" cy="24" r="1.7" fill="#333"/><circle cx="35.5" cy="24" r="1.7" fill="#333"/><path d="M25 30Q30 34 35 30" stroke="#333" fill="none" stroke-width="1.7" stroke-linecap="round"/></symbol></defs></svg>
+<div class="app">
+<header class="hd">
+ <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="12" cy="20" r="8" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="2.5"/><circle cx="28" cy="20" r="8" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="2.5"/><path d="M20 8V32" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 3"/></svg>
+ <div><div class="eb">PSYC 450 | Week 6</div><h1>Boundaries, Loops, and Stories</h1></div>
+</header>
+<div class="tabs" role="tablist">
+ <button class="tab" role="tab" data-view="bnd" aria-selected="true">Boundary dial</button>
+ <button class="tab" role="tab" data-view="lp" aria-selected="false">Circular causality</button>
+ <button class="tab" role="tab" data-view="nar" aria-selected="false">Re-author the story</button>
+</div>
+<div class="stage">
+
+ <div class="view on" id="bnd">
+  <div class="card svgcard">
+   <svg viewBox="0 0 640 270" role="img" aria-label="A parent and a teen with a boundary between them that changes from rigid to clear to diffuse">
+    <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2f8a6a"/></marker></defs>
+    <rect x="2" y="2" width="636" height="266" rx="16" fill="#fbf8f3" stroke="#e2dbcf"/>
+    <rect x="2" y="228" width="636" height="40" fill="#efe8dc"/>
+    <rect id="wall" x="311" y="24" width="18" height="204" rx="4" fill="#333"/>
+    <line id="gate" x1="320" y1="24" x2="320" y2="228" stroke="#2f8a6a" stroke-width="5" stroke-dasharray="16 12" stroke-linecap="round"/>
+    <path id="arrows" d="M215 120H425" stroke="#2f8a6a" stroke-width="3.5" marker-start="url(#ag)" marker-end="url(#ag)" fill="none"/>
+    <line id="melt" x1="320" y1="24" x2="320" y2="228" stroke="#999" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <ellipse id="blend" cx="320" cy="150" rx="70" ry="80" fill="#9b72cf" opacity="0"/>
+    <g id="tangle" opacity="0" fill="none" stroke="#9b72cf" stroke-width="2.5" stroke-linecap="round"><path d="M250 90q30 -30 60 0t60 0"/><path d="M250 150q30 -30 60 0t60 0"/><path d="M250 200q30 -30 60 0t60 0"/></g>
+    <use id="par" href="#p" x="30" y="95" width="80" height="133" style="color:#4d6f9c;--skin:#c98f64;--hair:#222"/>
+    <use id="teen" href="#p" x="530" y="105" width="72" height="120" style="color:#e0a030;--skin:#d9a679;--hair:#2b1b14"/>
+    <g font-size="13" font-weight="700" fill="#444" text-anchor="middle"><text id="lp1" x="70" y="250">Parent</text><text id="lt1" x="566" y="250">Teen</text></g>
+    <text id="xmark" x="320" y="124" font-size="30" font-weight="700" fill="#d34147" text-anchor="middle">×</text>
+   </svg>
+  </div>
+  <div class="card" style="flex:0 0 auto">
+   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="zone" id="zone">Clear</span><div style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap"><span class="note" style="align-self:center">Related patterns:</span><button class="pill" id="pCoal" aria-pressed="false">Cross-generational coalition</button><button class="pill" id="pTri" aria-pressed="false">Triangulation</button></div></div>
+   <input class="sl" id="sl" type="range" min="0" max="100" value="50" aria-label="Boundary from rigid to diffuse">
+   <div class="sll"><span>Rigid (disengaged)</span><span>Clear</span><span>Diffuse (enmeshed)</span></div>
+   <div class="three" id="three"></div>
+   <div class="note" id="pnote" style="margin-top:6px;min-height:18px"></div>
+  </div>
+ </div>
+
+ <div class="view" id="lp">
+  <div class="card svgcard" style="flex:2">
+   <svg viewBox="0 0 640 330" role="img" aria-label="A pursuer and a distancer locked in a loop; the loop tightens as tension rises">
+    <rect x="2" y="2" width="636" height="326" rx="16" fill="#fbf8f3" stroke="#e2dbcf"/>
+    <rect x="2" y="290" width="636" height="38" fill="#efe8dc"/>
+    <defs></defs>
+    <path id="top" d="M150 130C220 30 400 30 490 130" fill="none" stroke="#d34147" stroke-width="4" stroke-linecap="round"/>
+    <path id="bot" d="M490 190C400 290 220 290 150 190" fill="none" stroke="#3b5b8c" stroke-width="4" stroke-linecap="round"/>
+    <path id="ht" d="M0 0" fill="#d34147"/><path id="hb" d="M0 0" fill="#3b5b8c"/>
+    <text x="320" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#a8353a">A pursues: “Talk to me!”</text>
+    <text x="320" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#2c4770">B withdraws: “I need space.”</text>
+    <use id="A" href="#p" x="70" y="140" width="64" height="106" style="color:#d9776f;--skin:#e8b88a;--hair:#4a2f22"/>
+    <use id="B" href="#p" x="510" y="140" width="64" height="106" style="color:#4d6f9c;--skin:#c98f64;--hair:#222"/>
+    <g font-size="13" font-weight="700" fill="#444" text-anchor="middle"><text x="102" y="266">A</text><text id="Bl" x="542" y="266">B</text></g>
+    <text id="mid" x="320" y="168" text-anchor="middle" font-size="46" font-weight="700" fill="#d34147" opacity="0">↻</text>
+   </svg>
+  </div>
+  <div class="col" style="flex:1">
+   <div class="card">
+    <h2>Pursue, withdraw, repeat</h2>
+    <p class="note">A pursues, B withdraws; B withdraws, A pursues harder. Run rounds, then change one move.</p>
+    <div class="sec"><h3>Tension in the loop</h3><div class="meter" aria-hidden="true"><i id="mt"></i></div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn pri" id="run">Run a round</button><button class="btn" id="chA">A pauses and invites</button><button class="btn" id="chB">B reconnects</button><button class="btn" id="rs">Reset</button></div>
+   </div>
+   <div class="card" style="flex:1;overflow:hidden" aria-live="polite" id="lg"></div>
+  </div>
+ </div>
+
+ <div class="view" id="nar">
+  <div class="col" style="flex:1.35">
+   <div class="book" aria-label="Storybook: old story on the left, preferred story on the right">
+    <div class="pg l"><h3>The dominant story</h3><div class="st" id="old">“We’re a family that’s always fighting.”</div>
+     <div class="lines" aria-hidden="true"><i style="width:90%"></i><i style="width:70%"></i><i style="width:80%"></i></div>
+     <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="margin-top:auto;opacity:.5"><circle cx="32" cy="32" r="26" fill="#bbb"/><circle cx="23" cy="28" r="3" fill="#fff"/><circle cx="41" cy="28" r="3" fill="#fff"/><path d="M22 44q10-8 20 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="pg r"><h3 style="color:#6b4fa0">The preferred story</h3><div class="st" id="nw" style="color:#bbb">Your story begins here…</div>
+     <div class="lines" aria-hidden="true"><i style="width:85%"></i><i style="width:60%"></i><i style="width:75%"></i></div>
+     <svg width="70" height="70" viewBox="0 0 70 70" aria-hidden="true" style="margin-top:auto;align-self:flex-end"><path d="M10 60L16 44L48 12a6 6 0 0 1 8 8L24 52Z" fill="#6b4fa0"/><path d="M10 60L16 44L24 52Z" fill="#f4c542"/><path d="M44 16l8 8" stroke="#fff" stroke-width="2"/></svg></div>
+   </div>
+  </div>
+  <div class="card" style="flex:1;overflow:hidden" id="stp" aria-live="polite"></div>
+ </div>
+</div></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function initTabs(onChange){
+  const tabs=$$('.tabs .tab'), views=$$('.view');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.setAttribute('aria-selected',x===t));
+    views.forEach(v=>v.classList.toggle('on',v.id===t.dataset.view));
+    onChange&&onChange(t.dataset.view); postH();
+  }));
+}
+function postH(){try{parent.postMessage({type:'psyc450-height',height:document.documentElement.scrollHeight},'*')}catch(e){}}
+addEventListener('load',postH);addEventListener('resize',postH);
+
+initTabs();
+/* ---------- boundaries ---------- */
+const lerp=(a,b,t)=>a+(b-a)*t;
+const Z=[
+ {n:'Rigid: disengaged',c:'#4a4a52',par:'“I don’t want to hear about it. Figure it out yourself.”',teen:'“Nobody notices me. I stop sharing anything.”',risk:'Safety and belonging are hard to find. Needs go unmet and distance grows.'},
+ {n:'Clear: connected and respected',c:'#2f8a6a',par:'“I care what’s going on. You get privacy, and I’ll step in if you’re unsafe.”',teen:'“I can go to them and still get to be me.”',risk:'Closeness and individuality coexist. Boundaries are firm but flexible.'},
+ {n:'Diffuse: enmeshed',c:'#7e57b0',par:'“I read your texts, pick your friends, and your problems are mine.”',teen:'“I can’t tell where I end and my parent begins.”',risk:'Individual needs are lost. Independence and identity struggle to develop.'}
+];
+function dial(s){s=+s;const rig=Math.max(0,(50-s)/50),dif=Math.max(0,(s-50)/50),clr=1-Math.abs(s-50)/50;
+ let px,tx; if(s<=50){const t=s/50;px=lerp(30,150,t);tx=lerp(530,410,t)}else{const t=(s-50)/50;px=lerp(150,255,t);tx=lerp(410,315,t)}
+ $('#par').setAttribute('x',px);$('#teen').setAttribute('x',tx);$('#lp1').setAttribute('x',px+40);$('#lt1').setAttribute('x',tx+36);
+ $('#wall').setAttribute('opacity',rig);$('#wall').setAttribute('width',6+12*rig);$('#wall').setAttribute('x',320-(6+12*rig)/2);
+ $('#gate').setAttribute('opacity',clr>.05?clr:0);$('#arrows').setAttribute('opacity',Math.max(0,clr*1.2-.1));
+ $('#arrows').setAttribute('d',`M${px+85} 120H${tx-8}`);
+ $('#melt').setAttribute('opacity',dif*.7);$('#blend').setAttribute('opacity',dif*.28);$('#tangle').setAttribute('opacity',dif);
+ $('#xmark').setAttribute('opacity',rig>.6?1:0);
+ const i=s<34?0:s<67?1:2,z=Z[i];$('#zone').textContent=z.n;$('#zone').style.background=z.c;
+ $('#three').innerHTML=`<div><h3>Parent might say</h3><div class="bubble">${z.par}</div></div><div><h3>Teen experiences</h3><div class="bubble">${z.teen}</div></div><div><h3>What it means</h3><p style="margin-top:6px">${z.risk}</p></div>`}
+$('#sl').oninput=e=>dial(e.target.value);dial(50);
+const PN={pCoal:'<b>Cross-generational coalition:</b> a parent and a child align against the other parent, blurring the line between generations.',pTri:'<b>Triangulation:</b> a third person is drawn into a conflict between two others to reduce tension.'};
+['pCoal','pTri'].forEach(id=>$('#'+id).onclick=()=>{const on=$('#'+id).getAttribute('aria-pressed')!=='true';['pCoal','pTri'].forEach(x=>$('#'+x).setAttribute('aria-pressed',false));$('#'+id).setAttribute('aria-pressed',on);$('#pnote').innerHTML=on?PN[id]:''});
+
+/* ---------- loop ---------- */
+const AL=['“We need to talk.”','“Why won’t you answer me?”','“You never care about this family!”','“I’m not stopping until you tell me what’s wrong!”'];
+const BL=['“Not now, I’m busy.”','“I just need some space.”','(Walks out of the room.)','(Puts on headphones and says nothing.)'];
+let I=0,rd=0,good=false,log=[];
+function drawLoop(){$('#mt').style.width=I+'%';
+ const w=2+I/100*9,col1=good?'#2f8a6a':'#d34147',col2=good?'#2f8a6a':'#3b5b8c';
+ $('#top').setAttribute('stroke-width',w);$('#bot').setAttribute('stroke-width',w);$('#top').setAttribute('stroke',col1);$('#bot').setAttribute('stroke',col2);
+ const off=I/100*34;$('#B').setAttribute('x',510+off);$('#Bl').setAttribute('x',542+off);$('#A').setAttribute('x',70+off*.35);
+ $('#mid').setAttribute('opacity',good?0:Math.min(1,I/50));
+ let status=I>=100?'The loop is locked in. Both people feel unheard.':I>=50?'Each move makes the other’s move more likely.':I>0?'The pattern is warming up.':'Calm. Try running a round.';
+ if(good&&I<=20)status='The loop has softened. One changed move shifted the whole cycle.';
+ $('#lg').innerHTML=`<h3>What just happened</h3>${log.slice(-2).map(l=>`<div class="bubble" style="border-color:${l.c}"><b>${l.w}:</b> ${l.t}</div>`).join('')||'<p class="note" style="margin-top:6px">Nothing yet. Run a round.</p>'}<div class="sec fb ${good&&I<=20?'ok':''}" style="${good&&I<=20?'':'background:#f4f1ec;border:1px solid #e2dbcf'}"><b>${status}</b>${good&&I<=20?' Circular causality means no single person “caused” it, and any one person can change their part.':''}</div>`;postH()}
+$('#run').onclick=()=>{good=false;const k=rd%4;rd++;I=Math.min(100,I+22);log.push({w:'A',t:AL[k],c:'#e9b0ad'},{w:'B',t:BL[k],c:'#b4c4de'});drawLoop()};
+$('#chA').onclick=()=>{good=true;I=Math.max(0,I-40);log.push({w:'A (new move)',t:'“I’m here when you’re ready. Can we talk after dinner?”',c:'#9fd3b6'});drawLoop()};
+$('#chB').onclick=()=>{good=true;I=Math.max(0,I-40);log.push({w:'B (new move)',t:'“I’m overwhelmed. Give me 20 minutes and I’ll come back to talk.”',c:'#9fd3b6'});drawLoop()};
+$('#rs').onclick=()=>{I=0;rd=0;good=false;log=[];drawLoop()};drawLoop();
+
+/* ---------- narrative ---------- */
+const NAMES=['The Blow-up','The Pressure Cooker','Static'];
+const EX=[['Last Sunday, all five of us cooked together and laughed.',true],['Thursday’s argument over the car keys got loud.',false],['When Grandpa was in the hospital, everyone took turns and no one argued.',true],['Tuesday: a door slammed and no one talked at dinner.',false],['Mia and Dad worked out the ride schedule calmly on their own.',true]];
+const VAL=['shows up in a crisis','shares food and traditions','tells the truth','cares deeply','is learning to repair','sticks together'];
+let step=0,pname='The Blow-up',picked=new Set(),vals=[];
+function nar(){const el=$('#stp');
+ const dots=`<div class="stepdots">${[0,1,2].map(i=>`<b class="${i<=step?'on':''}"></b>`).join('')}</div>`;
+ if(step===0){el.innerHTML=dots+`<h2>1. Name the problem</h2><p class="note">Narrative therapists externalize: the problem is the problem, and the family is not. Give it a name.</p><div class="chips" id="ch">${NAMES.map(n=>`<button class="chip" data-n="${n}" aria-pressed="${n===pname}">${n}</button>`).join('')}</div><div class="fb ok"><b>${pname}</b> visits the family. It is something they can respond to together, not who they are.</div><div class="sec"><button class="btn pri" id="nx">Next: find exceptions</button></div>`;
+  $('#ch').onclick=e=>{const b=e.target.closest('.chip');if(b){pname=b.dataset.n;nar()}};$('#nx').onclick=()=>{step=1;nar()}}
+ else if(step===1){el.innerHTML=dots+`<h2>2. Find the exceptions</h2><p class="note">Tap the moments that <b>contradict</b> “always fighting.”</p>${EX.map((x,i)=>`<button class="opt ${picked.has(i)?(x[1]?'good':'bad'):''}" data-i="${i}"><span>${picked.has(i)?(x[1]?'✓':'•'):'○'}</span><span>${x[0]}${picked.has(i)?`<br><i class="note">${x[1]?'An exception: evidence for a different story.':'That fits the old story; keep looking.'}</i>`:''}</span></button>`).join('')}<div class="sec"><button class="btn pri" id="nx" ${[...picked].filter(i=>EX[i][1]).length>=2?'':'disabled'}>Next: re-author</button></div>`;
+  $$('.opt').forEach(b=>b.onclick=()=>{picked.add(+b.dataset.i);nar()});$('#nx').onclick=()=>{step=2;nar()}}
+ else{const nOK=vals.length>=2;
+  el.innerHTML=dots+`<h2>3. Re-author</h2><p class="note">Choose 2 or 3 values the exceptions reveal about this family.</p><div class="chips" id="ch">${VAL.map(v=>`<button class="chip" data-v="${v}" aria-pressed="${vals.includes(v)}">${v}</button>`).join('')}</div>${nOK?`<div class="fb ok"><b>Re-authored.</b> The old story no longer fits the evidence. The family can now relate to each other through this one.</div>`:''}<div class="sec"><button class="btn" id="rs2">Start over</button></div>`;
+  $('#ch').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const v=b.dataset.v;if(vals.includes(v))vals=vals.filter(x=>x!==v);else if(vals.length<3)vals.push(v);nar()};
+  $('#rs2').onclick=()=>{step=0;picked=new Set();vals=[];pname='The Blow-up';nar()}}
+ const old=$('#old'),nw=$('#nw');
+ old.classList.toggle('done',step===2&&vals.length>=2);
+ if(step===2&&vals.length>=1){const list=vals.length===1?vals[0]:vals.length===2?vals.join(' and '):vals.slice(0,-1).join(', ')+', and '+vals[vals.length-1];
+  nw.style.color='#3b2a6e';nw.innerHTML=`“We’re a family that ${list}. Sometimes ${pname} visits, but it doesn’t define us.”`}
+ else{nw.style.color='#bbb';nw.textContent='Your story begins here…'}
+ postH()}
+nar();
+</script></body></html>
