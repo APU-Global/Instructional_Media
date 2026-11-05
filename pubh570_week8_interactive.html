@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 8 Interactive | Ethics, Belief, and Public Health</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.stack{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.stack button{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer}
+.stack button:hover:not(:disabled){border-color:var(--red)}.stack button.right{background:var(--ok);border-color:var(--ok);color:#fff}.stack button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.w{background:var(--warm);border-radius:14px;padding:10px 12px;margin-bottom:8px}.w label{font-weight:700;display:flex;justify-content:space-between}
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.opt{border:2px solid #eee;border-radius:14px;padding:10px 14px;margin-bottom:8px;background:#fff}.opt.top{border-color:var(--teal);background:var(--teal-l)}
+.opt .bar2{height:10px;background:var(--warm);border-radius:6px;overflow:hidden;margin-top:6px}.opt .bar2 i{display:block;height:100%;transition:width .5s}
+.vo{border-left:6px solid var(--gold);background:var(--gold-l);border-radius:0 14px 14px 0;padding:10px 14px;margin-bottom:8px;font-size:.95rem}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a balanced scale with four weights labeled autonomy, beneficence, nonmaleficence and justice">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(250 40)" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"><path d="M0 170h110M55 170V20M-60 40h230"/><path d="M-60 40l-34 74h68zM170 40l-34 74h68z" stroke-width="3"/><path d="M-94 114q34 28 68 0M136 114q34 28 68 0" fill="#f6c453"/><circle cx="55" cy="14" r="9" fill="#f6c453" stroke="none"/></g>
+<g font-family="system-ui" font-weight="700" fill="#fff" font-size="16"><text x="500" y="70">Autonomy</text><text x="500" y="104">Beneficence</text><text x="500" y="138">Nonmaleficence</text><text x="500" y="172">Justice</text></g>
+<g fill="#f6c453"><circle cx="478" cy="64" r="7"/><circle cx="478" cy="98" r="7" fill="#f7dcdd"/><circle cx="478" cy="132" r="7" fill="#fff"/><circle cx="478" cy="166" r="7" fill="#1f6f78"/></g>
+<g transform="translate(740 60)" fill="#f7dcdd" fill-opacity=".9"><circle cx="30" cy="20" r="14"/><path d="M6 80q0-40 24-40t24 40z"/><circle cx="90" cy="20" r="14"/><path d="M66 80q0-40 24-40t24 40z" fill="#fff"/></g>
+<path d="M758 70Q800 40 844 70" stroke="#f6c453" stroke-width="4" fill="none" stroke-dasharray="6 6"/>
+</svg>
+<div class="txt"><div class="kick">PUBH 570 · Week 8 Interactive</div><h1>Ethics, Belief, and Public Health</h1><p>Public health professionals often work where communities disagree. Ethical reasoning helps them respond with integrity. Name the principles, weigh them against each other, and practice speaking with respect across disagreement.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Name the principle</h2>
+<p class="lead">Common principles include autonomy, beneficence, nonmaleficence, and justice. Use them to analyze difficult cases. Which principle does each statement express most directly?</p>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · When principles conflict</h2>
+<p class="lead">A county plans to expand adolescent health education. Two designs are on the table. Principles can conflict, requiring judgment, and thoughtful people weigh them differently. Set how much each principle matters to <em>you</em> and see how the comparison shifts.</p>
+<div class="two"><div id="wts"></div><div><svg class="chart" id="ch" viewBox="0 0 360 230" role="img" aria-label="Scores of the two options by principle"></svg></div></div>
+<div id="opts" style="margin-top:12px" aria-live="polite"></div>
+<div class="note teal live" id="adv" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">Ratings (1 to 5) are illustrative simplifications, not research findings. The point is to practice noticing trade-offs, not to settle the debate.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Speak with respect</h2>
+<p class="lead">Leaders must speak to diverse audiences. Listen first and present evidence clearly. Maintain respect even when views differ. At a town meeting, some parents from a faith community have voiced concern about the program.</p>
+<div class="vo">“We care about our children’s health, but we do not want the school to replace our values.”</div>
+<div class="q" id="s1"><strong>How do you open your response?</strong><div class="stack"></div><div class="live" aria-live="polite" style="margin-top:8px"></div></div>
+<div class="q" id="s2"><strong>Which approach best looks for common ground while staying honest?</strong><div class="stack"></div><div class="live" aria-live="polite" style="margin-top:8px"></div></div>
+<div class="note"><strong>Beliefs shape health decisions.</strong> Understand religious and cultural beliefs before proposing programs, seek common ground, and be honest about disagreements. Ask who benefits and who is left out, and apply the same frameworks consistently.</div>
+</section>
+</div>
+<p class="foot">Source: PUBH 570 Week 8 Deep Dive. Scenarios are fictional and presented even-handedly.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var PR=["Autonomy","Beneficence","Nonmaleficence","Justice"];
+var Q=[
+{t:"People should be able to make informed choices about matters that affect their own lives.",a:0,w:"Respect for self-determination and informed choice: autonomy."},
+{t:"A program should aim to do good and improve the health of the community.",a:1,w:"Acting to benefit others: beneficence."},
+{t:"Before launching, we must make sure the program will not cause harm, including stigma.",a:2,w:"Avoiding harm: nonmaleficence."},
+{t:"Resources and services should be shared fairly, and we should ask who is being left out.",a:3,w:"Fair distribution of benefits and burdens: justice."},
+{t:"Families should be told clearly what will be taught and have a voice in the decision.",a:0,w:"Informed participation: autonomy."}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+Q.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<div>'+x.t+'</div><div class="opts"></div><div class="live" aria-live="polite" style="margin-top:8px"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".live"),w=false;
+ PR.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(dn===Q.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Not quite. Which value is most directly being protected?</span>'}};o.appendChild(b)});qh.appendChild(d)});
+var OP=[{n:"Option A: opt-in program",d:"Families receive a full description and a chance to review materials; students take part with a parent’s consent.",c:"#1f6f78",s:[5,3,4,3]},
+{n:"Option B: universal required curriculum",d:"Every student receives the same curriculum, with no opt-out.",c:"#d34147",s:[2,4,3,4]}];
+var W=[3,3,3,3];
+var wh=document.getElementById("wts");
+PR.forEach(function(p,i){var d=document.createElement("div");d.className="w";d.innerHTML='<label for="w'+i+'">'+p+' <span id="wv'+i+'">3</span></label><input type="range" id="w'+i+'" min="0" max="5" value="3">';wh.appendChild(d);d.querySelector("input").oninput=function(){W[i]=+this.value;upd()}});
+function sc2(o){var t=W.reduce(function(a,b){return a+b},0)||1;return Math.round(o.s.reduce(function(a,v,i){return a+v*W[i]},0)/t/5*100)}
+function upd(){W.forEach(function(v,i){document.getElementById("wv"+i).textContent=v});
+ var ch=document.getElementById("ch");ch.innerHTML="";el("rect",{width:360,height:230,fill:"#fcfcfc"},ch);
+ PR.forEach(function(p,i){var x=20+i*84;OP.forEach(function(o,k){var h=o.s[i]/5*140;el("rect",{x:x+k*34,y:170-h,width:30,height:h,rx:5,fill:o.c,"fill-opacity":W[i]===0?.25:.9},ch)});
+  var t=el("text",{x:x+34,y:192,"text-anchor":"middle","font-size":"10.5","font-weight":"700"},ch);t.textContent=p;var w=el("text",{x:x+34,y:208,"text-anchor":"middle","font-size":"10",fill:"#5b5557"},ch);w.textContent="weight "+W[i]});
+ var a=sc2(OP[0]),b=sc2(OP[1]),oh=document.getElementById("opts");oh.innerHTML="";
+ OP.forEach(function(o,k){var s=k?b:a,d=document.createElement("div");d.className="opt"+((k===0?a>=b:b>a)?" top":"");d.innerHTML="<strong>"+o.n+"</strong> · weighted score "+s+"<div style='font-size:.88rem;color:#5b5557'>"+o.d+"</div><div class='bar2'><i style='width:"+s+"%;background:"+o.c+"'></i></div>";oh.appendChild(d)});
+ var diff=Math.abs(a-b);
+ document.getElementById("adv").innerHTML=diff<6?"<strong>The options are close under your weights.</strong> That is common: when principles conflict, the ethics lie in the reasoning, the process, and who is included in deciding.":"<strong>Under your weights, "+(a>b?"Option A":"Option B")+" scores higher.</strong> Someone who weights the principles differently, for example putting more weight on "+(a>b?"beneficence and justice":"autonomy")+", could reasonably reach the other answer. Neither weighting is a mistake by itself; what matters is making the reasoning explicit and listening to those affected."}
+upd();
+function conv(id,opts){var h=document.querySelector("#"+id+" .stack"),f=document.querySelector("#"+id+" .live");
+ opts.forEach(function(r){var b=document.createElement("button");b.textContent=r[0];b.onclick=function(){if(r[1]){b.className="right";h.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+r[2]+'</span>'}else{b.className="wrong";b.disabled=true;f.innerHTML='<span class="badbox">'+r[2]+'</span>'}};h.appendChild(b)})}
+conv("s1",[["“The data show that this program is clearly needed, so concerns about values are misplaced.”",0,"Dismissing the concern before listening damages trust, and it ignores that beliefs shape health decisions."],["“Thank you for raising that. Family values matter, and I want to make sure I understand your concerns before I explain what the program includes.”",1,"Listening first and naming what you share, care for children’s health, opens the door to respectful dialogue."],["“We cannot please everyone, so we will proceed.”",0,"This ends the conversation and signals that the community’s voice does not count."]]);
+conv("s2",[["Share the curriculum openly, invite parents to review it, and ask how the program could better respect family roles. Be honest about the parts where views may still differ.",1,"Open information, an invitation to shape the work, and honesty about remaining disagreement. Common ground without pretending the disagreement away."],["Say everyone agrees on everything important.",0,"Overstating agreement is not honest and will be noticed."],["Keep the curriculum private until it is finalized.",0,"Withholding information undermines trust and informed participation."]]);
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

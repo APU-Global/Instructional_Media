@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7 Interactive | Silent Infections: Testing, Stigma, and Prevention</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.ctl{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:10px 12px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.lev{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.lev label{display:flex;gap:8px;align-items:center;border:2px solid #d9d4cf;border-radius:14px;padding:8px 14px;cursor:pointer;font-weight:600;background:#fff}
+.lev label:has(input:checked){border-color:var(--teal);background:var(--teal-l)}
+.key{display:flex;gap:12px;flex-wrap:wrap;font-size:.82rem;font-weight:700;margin:8px 0}.key span{display:flex;gap:6px;align-items:center}.key i{width:14px;height:14px;border-radius:50%;display:inline-block}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.35rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a microscope-style magnifier over a grid of dots, a test tube, and a shield">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 40)" fill="#f7dcdd" fill-opacity=".8"><g id="dots"></g></g>
+<script>(function(){var g=document.getElementById("dots"),ns="http://www.w3.org/2000/svg";for(var r=0;r<7;r++)for(var c=0;c<14;c++){var e=document.createElementNS(ns,"circle");e.setAttribute("cx",c*20+8);e.setAttribute("cy",r*20+8);e.setAttribute("r",6);var hit=(r*14+c)%11===0||(r*14+c)%17===0;e.setAttribute("fill",hit?"#f6c453":"#f7dcdd");g.appendChild(e)}})()</script>
+<g transform="translate(320 80)" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"><circle cx="40" cy="40" r="44"/><path d="M72 72l44 46"/></g>
+<g transform="translate(560 40)"><rect x="30" y="0" width="34" height="130" rx="17" fill="#fff"/><rect x="30" y="64" width="34" height="66" rx="17" fill="#f6c453"/><rect x="24" y="-6" width="46" height="12" rx="6" fill="#f7dcdd"/></g>
+<g transform="translate(720 56)"><path d="M70 0l66 20v52c0 42-30 70-66 84C34 142 4 114 4 72V20z" fill="#f7dcdd"/><path d="M42 74l22 22 44-48" stroke="#a8353a" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 570 · Week 7 Interactive</div><h1>Silent Infections</h1><p>Many infections have no symptoms, so testing is key, and stigma discourages testing and treatment. See how screening, access, and respectful care change how many infections go undiagnosed, then match prevention strategies and check key facts.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · How many infections are missed?</h2>
+<p class="lead">Imagine 1,000 people and an infection that often has no symptoms. Each dot is a person. Set the situation, then try two levers: making screening easy and reducing stigma. Prevention works best when it combines accurate information, access to services, and reduced stigma.</p>
+<div class="ctl">
+<div><label for="pv">People infected <span id="pvv">10%</span></label><input type="range" id="pv" min="2" max="25" value="10"></div>
+<div><label for="as">Infections with no symptoms <span id="asv">70%</span></label><input type="range" id="as" min="30" max="90" step="5" value="70"></div>
+<div><label for="sg">Stigma in the community <span id="sgv">70%</span></label><input type="range" id="sg" min="0" max="100" step="10" value="70"></div></div>
+<div class="lev"><label><input type="checkbox" id="l1"> Free, walk-in screening at community sites</label><label><input type="checkbox" id="l2"> Staff trained in respectful, nonjudgmental care</label></div>
+<div class="key"><span><i style="background:#1f6f78"></i>Infected and diagnosed (can get treatment)</span><span><i style="background:#d34147"></i>Infected, not diagnosed</span><span><i style="background:#e0dad4"></i>Not infected</span></div>
+<svg class="chart" id="ch" viewBox="0 0 800 250" role="img" aria-label="Grid of 1,000 people colored by infection and diagnosis"></svg>
+<div class="stats" aria-live="polite"><div><b id="s1">–</b><small>Infected</small></div><div><b id="s2">–</b><small>Diagnosed</small></div><div><b id="s3">–</b><small>Not diagnosed</small></div><div><b id="s4">–</b><small>Share who get tested when well</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">Illustrative model: people with symptoms seek testing 80% of the time; people without symptoms are tested only through screening. Real numbers vary by infection and community.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Match the prevention strategy</h2>
+<p class="lead">Prevention uses multiple approaches, including testing, vaccination, partner services, and condom use. Education and access to care support all of them.</p>
+<div id="ps"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · True or false?</h2>
+<div id="tf"></div>
+<div class="note"><strong>Reduce stigma.</strong> Stigma discourages testing and treatment, and infection rates differ across populations because of social factors. Respectful, nonjudgmental care improves outcomes.</div>
+</section>
+</div>
+<p class="foot">Source: PUBH 570 Week 7 Deep Dive. For questions about your own health or testing, a clinician or local health department can help.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var ch=document.getElementById("ch");
+function upd(){
+ var pv=+document.getElementById("pv").value/100,as=+document.getElementById("as").value/100,sg=+document.getElementById("sg").value/100,f1=document.getElementById("l1").checked,f2=document.getElementById("l2").checked;
+ document.getElementById("pvv").textContent=Math.round(pv*100)+"%";document.getElementById("asv").textContent=Math.round(as*100)+"%";document.getElementById("sgv").textContent=Math.round(sg*100)+"%";
+ var st=f2?sg*.5:sg,uptake=Math.min(.9,.5*(1-.6*st)+(f1?.25:0));
+ var I=Math.round(1000*pv),asy=I*as,sym=I-asy,diag=Math.round(sym*.8*(1-.3*st)+asy*uptake),und=I-diag;
+ ch.innerHTML="";var cols=50;
+ for(var i=0;i<1000;i++){var c=i<diag?"#1f6f78":i<I?"#d34147":"#e0dad4";el("circle",{cx:14+(i%cols)*15.6,cy:14+Math.floor(i/cols)*11.6,r:4.6,fill:c},ch)}
+ document.getElementById("s1").textContent=I;document.getElementById("s2").textContent=diag;document.getElementById("s3").textContent=und;document.getElementById("s4").textContent=Math.round(uptake*100)+"%";
+ document.getElementById("adv").innerHTML="<strong>"+Math.round(und/I*100)+"% of infections are undiagnosed.</strong> "+(as>=.6?"Because most infections here have no symptoms, people cannot tell they are infected, so testing is the only way to find them. ":"")+(sg>=.6&&!f2?"High stigma discourages testing and treatment. Try the respectful-care lever. ":"")+(f1||f2?"Easier access and less stigma find more infections, and people who are diagnosed can be treated, which reduces onward spread: treatment is prevention, and early care benefits everyone. ":"")+"Use several strategies together."}
+["pv","as","sg","l1","l2"].forEach(function(i){var e=document.getElementById(i);e.addEventListener("input",upd);e.addEventListener("change",upd)});upd();
+function quiz(host,list,labels){var h=document.getElementById(host);list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<div>'+x.t+'</div><div class="opts"></div><div class="live" aria-live="polite" style="margin-top:8px"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".live");
+ labels.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>'}
+  else{b.className="wrong";b.disabled=true;f.innerHTML='<span class="badbox">Not quite. Think about what this approach is designed to do.</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("ps",[
+{t:"Offering a vaccine that protects against certain infections before a person is ever exposed.",a:0,w:"Vaccination prevents infection from occurring."},
+{t:"Regular screening for people at risk, even when they feel well.",a:1,w:"Because many infections are silent, testing finds them so they can be treated."},
+{t:"A health department contacting the partners of a person who was diagnosed so they can be offered testing and treatment.",a:2,w:"That is partner services, which extends testing and care to people who may not know they were exposed."},
+{t:"Using barrier protection such as condoms consistently and correctly.",a:3,w:"Barrier methods reduce the chance of passing on infection."}],["Vaccination","Testing and screening","Partner services","Barrier methods"]);
+quiz("tf",[
+{t:"Many sexually transmitted infections cause no symptoms.",a:1,w:"True. This is why testing matters."},
+{t:"All STIs can be cured with a short course of treatment.",a:0,w:"False. Some are curable; others are managed over time."},
+{t:"Stigma encourages people to get tested and treated.",a:0,w:"False. Stigma discourages testing and treatment."},
+{t:"HIV prevention includes testing, treatment, and preventive medication.",a:1,w:"True. Early treatment also improves health and reduces transmission."},
+{t:"Community-based programs can extend the reach of prevention and care.",a:1,w:"True. They meet people where they are."}],["False","True"]);
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
