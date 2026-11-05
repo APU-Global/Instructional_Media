@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 430 Cultural Psychology - Week 4 Display Rules Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--s:1;--ink:#1d2433;--ink2:#4d576d;--line:#d6dcea;--wash:#f1f4fa;--red:#c8333f;--redd:#a3262f;--gold:#f2b84b;--plum:#5b3f8c;--teal:#0f7a7a;--ok:#1b7248;--okbg:#e5f4ec;--warn:#8a5200;--warnbg:#fff2dc;--bad:#a3262f;--badbg:#fbe8ea}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{font-size:calc(16px*var(--s));height:100%;overflow:hidden}
+body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:.95rem;line-height:1.38}
+h1,h2,h3{font-family:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;margin:0;line-height:1.12;letter-spacing:-.01em}
+p{margin:0}
+.app{height:100%;display:flex;flex-direction:column;gap:.6rem;padding:.7rem .9rem .8rem}
+.top{flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;border-bottom:3px solid var(--red);padding-bottom:.5rem}
+.top h1{font-size:1.5rem;font-weight:800}
+.top .wk{font-size:.82rem;color:var(--ink2);margin-top:.15rem}
+.top .tag{font-size:.78rem;color:var(--ink2);text-align:right;white-space:nowrap}
+.stage{flex:1;min-height:0;display:grid;gap:.9rem}
+.card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:.85rem 1rem;min-height:0;display:flex;flex-direction:column;gap:.55rem}
+.btn{border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:700;padding:.55rem 1rem;min-height:2.4rem;transition:background .15s}
+.btn:hover{background:var(--redd)}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.btn.ghost:hover{background:var(--wash)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.note{font-size:.8rem;color:var(--ink2)}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.fb{border-left:5px solid var(--ink2);background:var(--wash);border-radius:0 10px 10px 0;padding:.5rem .75rem;font-size:.9rem}
+.fb.good{border-color:var(--ok);background:var(--okbg)}
+.fb.try{border-color:var(--warn);background:var(--warnbg)}
+.fb b{display:block;margin-bottom:.1rem}
+@media (max-width:640px){.top .tag{display:none}.top h1{font-size:1.25rem}.app{padding:.55rem .6rem .6rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.stage{display:flex;flex-direction:column;gap:.6rem}
+.tabs{flex:none;display:flex;gap:.4rem}
+.tab{border:2px solid var(--ink);background:#fff;color:var(--ink);border-radius:99px;padding:.35rem 1rem;font-weight:700;font-size:.9rem}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff}
+.pane{flex:1;min-height:0;display:grid;gap:.8rem}
+#lab{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)}
+#read{grid-template-columns:minmax(0,1fr)}
+.grp{display:flex;flex-direction:column;gap:.3rem}
+.grp h3{font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:99px;padding:.3rem .8rem;font-weight:700;font-size:.86rem;transition:border-color .15s,background .15s}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-checked="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+.slider{display:flex;align-items:center;gap:.6rem}
+.slider input{flex:1;accent-color:var(--red);height:1.4rem;min-width:0}
+.slider output{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;min-width:2.8rem;text-align:right}
+.faces{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:.4rem;min-height:0;flex:1}
+.fcol{display:flex;flex-direction:column;align-items:center;gap:.25rem;min-height:0;min-width:0;height:100%}
+.fcol .fsvg{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+.fcol svg{max-width:100%;max-height:100%;width:100%;height:100%}
+.fcap{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:.95rem;text-align:center}
+.bar{width:100%;max-width:11rem;height:.65rem;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .3s}
+.bar.in i{background:var(--plum)}.bar.out i{background:var(--red)}
+.fval{font-size:.82rem;color:var(--ink2);text-align:center}
+.arrow{font-size:1.6rem;color:var(--ink2);padding:0 .1rem}
+.ask{background:var(--wash);border-radius:10px;padding:.5rem .75rem;font-size:.9rem}
+.meta{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.pills{display:flex;gap:.25rem}
+.pill{width:1.5rem;height:.42rem;border-radius:99px;background:var(--line)}
+.pill.done{background:var(--teal)}.pill.now{background:var(--red)}
+.topic{font-weight:700;color:var(--teal);font-size:.9rem}
+.scn{background:var(--wash);border-radius:12px;padding:.7rem .9rem;font-size:1.02rem}
+.opts{display:flex;flex-direction:column;gap:.45rem}
+.opt{text-align:left;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:.55rem .75rem;line-height:1.3}
+.opt:hover:not([disabled]){border-color:var(--ink);background:var(--wash)}
+.opt.ok{border-color:var(--ok);background:var(--okbg);font-weight:700}
+.opt.no{border-color:var(--warn);background:var(--warnbg);color:var(--ink2)}
+.opt.dim{opacity:.55}
+.opt[disabled]{cursor:default}
+.score{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.05rem}
+.take{display:grid;gap:.4rem;margin:0;padding:0;list-style:none}
+.take li{display:grid;grid-template-columns:1.1rem 1fr;gap:.45rem;font-size:.92rem}
+.take li:before{content:"";width:.7rem;height:.7rem;margin-top:.3rem;border-radius:50%;background:var(--red)}
+@media (min-width:701px){#read h2{font-size:1.3rem}.opt{font-size:1.02rem;padding:.65rem .85rem}}
+@media (max-width:700px){
+  #lab{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,41%) minmax(0,1fr);gap:.45rem}
+  .card{padding:.55rem .7rem;gap:.35rem}
+  .chip{padding:.22rem .6rem;font-size:.78rem}
+  .tab{padding:.28rem .8rem;font-size:.82rem}
+  .grp h3{font-size:.84rem}.ask{font-size:.8rem;padding:.35rem .55rem}
+  .fval{font-size:.74rem}.fcap{font-size:.82rem}
+  .scn{font-size:.92rem;padding:.5rem .7rem}.opt{padding:.45rem .6rem;font-size:.88rem}
+  .fb{font-size:.84rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <h1>Display Rules Lab</h1>
+      <div class="wk">Week 4 &middot; Emotion and Motivation</div>
+    </div>
+    <div class="tag">PSYC 430<br>Cultural Psychology</div>
+  </header>
+  <main class="stage">
+    <div class="tabs" role="tablist" aria-label="Choose an activity">
+      <button class="tab" role="tab" id="t1" aria-selected="true" aria-controls="lab">Face lab</button>
+      <button class="tab" role="tab" id="t2" aria-selected="false" aria-controls="read">Read the room</button>
+    </div>
+
+    <div class="pane" id="lab" role="tabpanel" aria-labelledby="t1">
+      <section class="card" aria-label="Controls">
+        <div class="grp"><h3>Feeling inside</h3>
+          <div class="chips" role="radiogroup" aria-label="Emotion" id="g-emo"></div>
+          <label class="note" for="inten">How strongly is it felt?</label>
+          <div class="slider"><input type="range" id="inten" min="5" max="100" value="85" aria-label="How strongly the feeling is felt"><output id="intenv" for="inten">85%</output></div>
+        </div>
+        <div class="grp"><h3>Who is present</h3><div class="chips" role="radiogroup" aria-label="Audience" id="g-aud"></div></div>
+        <div class="grp"><h3>What the community expects</h3><div class="chips" role="radiogroup" aria-label="Display rule" id="g-norm"></div></div>
+        <p class="note" style="margin-top:auto">Teaching model only. The percentages are illustrative, not research findings, and people differ within every culture.</p>
+      </section>
+      <section class="card" aria-live="polite" aria-label="Result">
+        <div class="faces" id="faces"></div>
+        <p id="insight" class="fb"></p>
+        <div class="ask"><b>Ask instead of assuming:</b> &ldquo;Can you tell me, in your own words, what this has been like?&rdquo;</div>
+      </section>
+    </div>
+
+    <div class="pane" id="read" role="tabpanel" aria-labelledby="t2" hidden>
+      <section class="card" id="rcard" aria-live="polite"></section>
+    </div>
+  </main>
+</div>
+
+<script>
+function lerp(a,b,t){return a+(b-a)*t}
+var N0={bl:[88,112,126,112],br:[174,112,212,112],eye:11,mc:208,mw:44,op:0,tear:0,sweat:0,flush:0,cheek:0};
+var T={
+ joy:{bl:[88,106,126,102],br:[174,102,212,106],eye:6,mc:248,mw:56,op:0,tear:0,sweat:0,flush:0,cheek:.65},
+ sadness:{bl:[88,114,126,98],br:[174,98,212,114],eye:9,mc:178,mw:36,op:0,tear:1,sweat:0,flush:0,cheek:0},
+ anger:{bl:[88,96,126,118],br:[174,118,212,96],eye:6.5,mc:194,mw:42,op:0,tear:0,sweat:0,flush:.8,cheek:0},
+ fear:{bl:[88,100,126,86],br:[174,86,212,100],eye:15,mc:212,mw:34,op:17,tear:0,sweat:1,flush:0,cheek:0}
+};
+var EMO=[['joy','Joy'],['sadness','Sadness'],['anger','Anger'],['fear','Fear']];
+var AUD=[['alone','Alone'],['family','With family'],['auth','With a respected authority']];
+var NORM=[['full','Express fully'],['soften','Soften it'],['hold','Hold it in'],['mask','Mask with a polite smile']];
+var st={emo:'sadness',aud:'family',norm:'hold',inten:85};
+function params(emo,t){var b=T[emo],o={};
+  ['bl','br'].forEach(function(k){o[k]=b[k].map(function(v,i){return lerp(N0[k][i],v,t)})});
+  ['eye','mc','mw','op','tear','sweat','flush','cheek'].forEach(function(k){o[k]=lerp(N0[k],b[k],t)});
+  o.tear=Math.max(0,(t-.45)*1.8)*b.tear;o.sweat=Math.max(0,(t-.45)*1.8)*b.sweat;return o}
+function polite(){return {bl:N0.bl.slice(),br:N0.br.slice(),eye:11,mc:232,mw:48,op:0,tear:0,sweat:0,flush:0,cheek:.12}}
+function face(p){
+  var h='<svg viewBox="0 0 300 300" role="img" aria-hidden="true"><circle cx="150" cy="150" r="118" fill="#f5c76b" stroke="#1d2433" stroke-width="6"/>'+
+   '<circle cx="150" cy="150" r="115" fill="#e5484d" opacity="'+(p.flush*.5).toFixed(2)+'"/>'+
+   '<circle cx="80" cy="192" r="17" fill="#ef7d57" opacity="'+p.cheek.toFixed(2)+'"/><circle cx="220" cy="192" r="17" fill="#ef7d57" opacity="'+p.cheek.toFixed(2)+'"/>'+
+   '<g stroke="#1d2433" stroke-width="9" stroke-linecap="round"><line x1="'+p.bl[0]+'" y1="'+p.bl[1]+'" x2="'+p.bl[2]+'" y2="'+p.bl[3]+'"/><line x1="'+p.br[0]+'" y1="'+p.br[1]+'" x2="'+p.br[2]+'" y2="'+p.br[3]+'"/></g>'+
+   '<ellipse cx="108" cy="142" rx="11" ry="'+Math.max(2.5,p.eye).toFixed(1)+'" fill="#1d2433"/><ellipse cx="192" cy="142" rx="11" ry="'+Math.max(2.5,p.eye).toFixed(1)+'" fill="#1d2433"/>'+
+   '<circle cx="111" cy="'+(142-Math.min(p.eye,9)*.45).toFixed(1)+'" r="3" fill="#fff"/><circle cx="195" cy="'+(142-Math.min(p.eye,9)*.45).toFixed(1)+'" r="3" fill="#fff"/>';
+  if(p.op>2)h+='<ellipse cx="150" cy="216" rx="'+(p.mw*.5).toFixed(1)+'" ry="'+p.op.toFixed(1)+'" fill="#7a1f2a" stroke="#1d2433" stroke-width="7"/>';
+  else h+='<path d="M'+(150-p.mw)+' 208 Q150 '+p.mc.toFixed(1)+' '+(150+p.mw)+' 208" fill="none" stroke="#1d2433" stroke-width="9" stroke-linecap="round"/>';
+  h+='<path d="M96 170 q-11 17 0 27 q11 -10 0 -27z" fill="#6fb7e8" stroke="#1d2433" stroke-width="3" opacity="'+Math.min(1,p.tear).toFixed(2)+'"/>'+
+     '<path d="M246 84 q-10 15 0 24 q10 -9 0 -24z" fill="#6fb7e8" stroke="#1d2433" stroke-width="3" opacity="'+Math.min(1,p.sweat).toFixed(2)+'"/></svg>';
+  return h}
+function word(v){return v<10?'barely visible':v<35?'mild':v<65?'moderate':'strong'}
+function compute(){
+  var felt=st.inten/100, shown, isMask=false;
+  if(st.aud==='alone')shown=felt;
+  else if(st.norm==='mask'){isMask=true;shown=.45}
+  else{shown=felt*({full:1,soften:.6,hold:.25}[st.norm])*({family:.85,auth:.6}[st.aud])}
+  return {felt:felt,shown:Math.min(1,shown),mask:isMask}}
+function update(){
+  var c=compute(), fp=params(st.emo,c.felt), sp=c.mask?polite():params(st.emo,c.shown);
+  var fv=Math.round(c.felt*100), sv=c.mask?null:Math.round(c.shown*100);
+  document.getElementById('faces').innerHTML=
+   '<div class="fcol"><div class="fcap">Felt inside</div><div class="fsvg">'+face(fp)+'</div><div class="bar in"><i style="width:'+fv+'%"></i></div><div class="fval">'+word(fv)+' ('+fv+'%)</div></div>'+
+   '<div class="arrow" aria-hidden="true">\u2192</div>'+
+   '<div class="fcol"><div class="fcap">What others see</div><div class="fsvg">'+face(sp)+'</div><div class="bar out"><i style="width:'+(c.mask?30:sv)+'%"></i></div><div class="fval">'+(c.mask?'a polite smile':word(sv)+' ('+sv+'%)')+'</div></div>';
+  var gap=c.mask?100:fv-sv, m;
+  var nm=EMO.filter(function(e){return e[0]===st.emo})[0][1].toLowerCase();
+  if(c.mask)m='<b>Masked.</b> The polite smile covers '+nm+'. An observer could easily read this person as content.';
+  else if(st.aud==='alone')m='<b>Alone, the face matches the feeling.</b> Display rules mostly come into play when other people are present. Try changing who is in the room.';
+  else if(gap>=35)m='<b>Large gap.</b> The face understates the feeling. A clinician who relies on expression alone would likely underestimate it.';
+  else if(gap>=12)m='<b>Some gap.</b> The face shows only part of the feeling.';
+  else m='<b>Little gap.</b> Face and feeling match here. Still ask, because a match is never guaranteed.';
+  var el=document.getElementById('insight');el.innerHTML=m;el.className='fb '+(gap>=35?'try':'good');
+  fit();
+}
+function chipGroup(id,list,key){
+  var g=document.getElementById(id);
+  g.innerHTML=list.map(function(x){return '<button class="chip" role="radio" data-v="'+x[0]+'" aria-checked="'+(st[key]===x[0])+'">'+x[1]+'</button>'}).join('');
+  g.onclick=function(e){var b=e.target.closest('.chip');if(!b)return;st[key]=b.dataset.v;
+    g.querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-checked',c===b)});update()}}
+chipGroup('g-emo',EMO,'emo');chipGroup('g-aud',AUD,'aud');chipGroup('g-norm',NORM,'norm');
+var sl=document.getElementById('inten');
+sl.oninput=function(){st.inten=+sl.value;document.getElementById('intenv').textContent=sl.value+'%';update()};
+
+/* Tabs */
+var t1=document.getElementById('t1'),t2=document.getElementById('t2');
+function tab(n){t1.setAttribute('aria-selected',n===1);t2.setAttribute('aria-selected',n===2);
+  document.getElementById('lab').hidden=n!==1;document.getElementById('read').hidden=n!==2;
+  if(n===2&&!rstarted){rstarted=true;rround(0)} fit()}
+t1.onclick=function(){tab(1)};t2.onclick=function(){tab(2)};
+
+/* Read the room */
+var SC=[
+ {topic:'Restraint',s:'A client describes her father\u2019s death in a steady voice with no tears, then thanks you for your time.',
+  o:[{t:'She seems detached. I will note possible emotional blunting.',h:'Reading the face as the feeling',f:'Display rules may shape how she shows grief. Calm is not the same as detached.'},
+     {t:'Her calm may reflect what her community expects. I will ask what the loss has meant to her.',ok:1,f:'You treat expression as one clue and invite her to describe her own experience.'},
+     {t:'I will encourage her to cry so she can process the grief.',h:'Imposing your own norm',f:'Assuming that tears are the healthy way to grieve applies your culture\u2019s rule to her.'}]},
+ {topic:'Honour and audience',s:'A client explains that he shoved a coworker who insulted him in front of the whole team. He says staying silent would have cost him his reputation.',
+  o:[{t:'Explore what the insult meant, who was watching, and what honour means to him, then consider anger skills in that context.',ok:1,f:'In honour-oriented settings, reputation and who is watching shape responses. Context comes first, skills second.'},
+     {t:'This is an anger-control problem. I will start anger management.',h:'Skipping the context',f:'It may be an expected response where reputation is at stake. Labeling it only as anger misses that.'},
+     {t:'I will tell him reputation should not matter that much.',h:'Dismissing his values',f:'Telling him what he should value ends the conversation and damages rapport.'}]},
+ {topic:'Expression is not the whole story',s:'A client smiles while describing being laid off, and you feel confused.',
+  o:[{t:'The smile means he is fine.',h:'Assuming',f:'A smile can carry many meanings, including politeness, nerves, or covering pain.'},
+     {t:'The smile means he is hiding something.',h:'Assuming the opposite',f:'Reading a smile as deceit is just another guess from one cue.'},
+     {t:'I will not decide from the smile. I will ask him what this has been like, in his own words.',ok:1,f:'Combine what you observe with open questions, and let the client name the feeling.'}]},
+ {topic:'Motivation',s:'A young woman says she wants to finish college for her family, not just for herself. Her friends say she lacks personal drive.',
+  o:[{t:'I will help her find her \u201creal\u201d personal goals first.',h:'Treating family goals as less real',f:'Cultures differ in how much they emphasize personal goals versus family obligations. Hers is not a lesser kind of motivation.'},
+     {t:'Her motivation is only external, so it will not last.',h:'Assuming',f:'Extrinsic and intrinsic motives often mix, and there is no evidence here that hers will fade.'},
+     {t:'I will ask who is affected by her choices, then build treatment goals around what she and her community value.',ok:1,f:'Treatment goals work best when they match what the client and community value.'}]}
+];
+var rstarted=false,ri=0,rtried={},rfirst=0,rans=false,rc=document.getElementById('rcard');
+function rpills(){var h='<div class="pills" aria-hidden="true">';for(var i=0;i<SC.length;i++)h+='<span class="pill '+(i<ri?'done':(i===ri?'now':''))+'"></span>';return h+'</div>'}
+function rround(i){ri=i;rans=false;var S=SC[i];
+  rc.innerHTML='<div class="meta">'+rpills()+'<span class="topic">Scenario '+(i+1)+' of '+SC.length+': '+S.topic+'</span></div>'+
+   '<div class="scn">'+S.s+'</div><h2>What would you do as the clinician?</h2><div class="opts">'+
+   S.o.map(function(o,k){return '<button class="opt" data-k="'+k+'">'+o.t+'</button>'}).join('')+'</div><div id="rfb"></div><div class="row" id="ract" style="margin-top:auto"></div>';
+  rc.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){rchoose(+b.dataset.k,b)}});fit()}
+function rchoose(k,btn){if(rans)return;var o=SC[ri].o[k],w=rc.querySelector('#rfb');
+  if(o.ok){rans=true;if(!rtried[ri])rfirst++;
+    rc.querySelectorAll('.opt').forEach(function(b,j){b.disabled=true;if(j===k)b.classList.add('ok');else if(!b.classList.contains('no'))b.classList.add('dim')});
+    w.innerHTML='<div class="fb good"><b>Well chosen</b>'+o.f+'</div>';
+    var last=ri===SC.length-1;
+    rc.querySelector('#ract').innerHTML='<button class="btn" id="rnx">'+(last?'See summary':'Next scenario')+'</button>';
+    rc.querySelector('#rnx').onclick=function(){last?rfinish():rround(ri+1)};rc.querySelector('#rnx').focus();
+  }else{rtried[ri]=1;btn.disabled=true;btn.classList.add('no');
+    w.innerHTML='<div class="fb try"><b>'+o.h+'</b>'+o.f+' Try another response.</div>'}
+  fit()}
+function rfinish(){ri=SC.length;
+  rc.innerHTML='<h2>Read the room: summary</h2><p class="score">'+rfirst+' of '+SC.length+' best responses on your first try</p><ul class="take">'+
+   '<li><span><b>Emotions are learned in context.</b> Culture shapes which feelings are valued and when they are shown.</span></li>'+
+   '<li><span><b>Display rules vary with the audience.</b> Who is present changes what shows on the face.</span></li>'+
+   '<li><span><b>Do not rely on the face alone.</b> Ask clients to describe their emotions in their own words.</span></li>'+
+   '<li><span><b>Motivation has cultural roots.</b> Ask what motivates the client and who is affected by their choices.</span></li></ul>'+
+   '<div class="row" style="margin-top:auto"><button class="btn ghost" id="rag">Practice again</button></div>';
+  rc.querySelector('#rag').onclick=function(){rtried={};rfirst=0;rround(0)};fit()}
+
+update();
+</script>
+<script>
+/* Keeps everything inside the iframe so only the Canvas page scrolls (no double scroll bar). */
+(function(){
+  var STEPS=[1,.95,.9,.85,.8,.75,.7,.66];
+  var root=document.documentElement;
+  function over(){
+    var app=document.querySelector('.app'); if(!app) return false;
+    var H=window.innerHeight,W=window.innerWidth;
+    if(app.scrollHeight>app.clientHeight+1||app.scrollWidth>app.clientWidth+1) return true;
+    var all=app.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var el=all[i],tag=el.tagName.toLowerCase();
+      if(el.closest('svg')&&tag!=='svg') continue;
+      var cs=getComputedStyle(el);
+      if(cs.display==='none'||cs.display==='inline'||cs.position==='absolute'&&el.classList.contains('sr')) continue;
+      var r=el.getBoundingClientRect(); if(!r.width&&!r.height) continue;
+      if(r.bottom>H+1||r.right>W+1||r.left<-1) return true;
+      if(tag!=='svg'&&el.clientHeight&&el.scrollHeight>el.clientHeight+1) return true;
+      if(tag!=='svg'&&el.clientWidth&&el.scrollWidth>el.clientWidth+1) return true;
+    }
+    return false;
+  }
+  window.fit=function(){
+    for(var i=0;i<STEPS.length;i++){root.style.setProperty('--s',STEPS[i]); if(!over()) return;}
+  };
+  var t; function later(){clearTimeout(t);t=setTimeout(window.fit,60)}
+  window.addEventListener('resize',later);
+  window.addEventListener('load',function(){window.fit();later()});
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(window.fit);
+})();
+
+</script>
+</body>
+</html>
