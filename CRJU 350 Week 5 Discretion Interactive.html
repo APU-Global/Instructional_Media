@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRJU 350 Week 5 Discretion Interactive</title>
+<style>
+*{box-sizing:border-box}
+:root{--red:#d34147;--red-d:#a9282e;--red-t:#b2323a;--ink:#1f2328;--mut:#555b63;--bg:#edebe8;--ok:#1d7647;--okbg:#e8f5ee;--bad:#a8261f;--badbg:#fdecea;--warnbg:#fff4de;--warn:#8a5300;--line:#e2dfda}
+html,body{margin:0;padding:0;background:#fff;color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;line-height:1.5;font-size:16px;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}
+.app{max-width:1000px;margin:0 auto;padding:10px}
+.hero{display:flex;gap:18px;align-items:center;background:linear-gradient(135deg,#d34147 0%,#a9282e 100%);color:#fff;border-radius:20px;padding:16px 22px;overflow:hidden}
+.hero .txt{flex:1;min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.92}
+.hero h1{margin:2px 0 4px;font-size:1.65rem;line-height:1.2}
+.hero p{margin:0;font-size:.95rem;opacity:.97}
+.hero svg{flex:0 0 140px;width:140px;height:auto}
+.tabs{display:flex;gap:8px;margin:12px 0 0;flex-wrap:wrap}
+.tab{appearance:none;border:2px solid var(--red);background:#fff;color:var(--red-t);font:inherit;font-weight:700;font-size:.95rem;padding:9px 16px;min-height:44px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--red);color:#fff}
+.tab:hover{background:#fbe9ea}.tab[aria-selected="true"]:hover{background:var(--red-d)}
+:focus-visible{outline:3px solid #1b5fd1;outline-offset:2px}
+.panel{background:var(--bg);border-radius:20px;padding:14px;margin-top:10px}
+.panel[hidden]{display:none}
+.card{background:#fff;border-radius:16px;padding:16px 18px;border-left:6px solid var(--red)}
+.card h2,.card h3{margin:0 0 6px;line-height:1.25}
+.card h2{font-size:1.2rem}.card h3{font-size:1.02rem}
+.rule{width:80px;height:5px;background:var(--red);border-radius:5px;margin:0 0 8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+.grid.wide-left{grid-template-columns:1.15fr 1fr}
+@media(max-width:720px){.grid,.grid.wide-left{grid-template-columns:1fr}.hero svg{display:none}.hero h1{font-size:1.4rem}}
+.btn{appearance:none;font:inherit;font-weight:600;border:2px solid #cfcac3;background:#fff;color:var(--ink);padding:9px 14px;min-height:44px;border-radius:12px;cursor:pointer;text-align:left}
+.btn:hover:not(:disabled){border-color:var(--red);background:#fff7f7}
+.btn.sel{border-color:var(--red);background:#fdeaea}
+.btn.good{border-color:var(--ok);background:var(--okbg)}
+.btn.bad{border-color:var(--bad);background:var(--badbg)}
+.btn:disabled{cursor:default;opacity:.95}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff;text-align:center}
+.btn.primary:hover:not(:disabled){background:var(--red-d);border-color:var(--red-d)}
+.btn.primary:disabled{background:#c9c4be;border-color:#c9c4be;color:#fff}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.stack{display:flex;flex-direction:column;gap:8px}
+.fb{margin-top:10px;padding:10px 14px;border-radius:12px;border-left:6px solid var(--mut);background:#f4f2ef;font-size:.95rem}
+.fb.good{background:var(--okbg);border-color:var(--ok)}
+.fb.bad{background:var(--badbg);border-color:var(--bad)}
+.fb.warn{background:var(--warnbg);border-color:#d98a00}
+.fb strong:first-child{display:block}
+.fb[hidden]{display:none}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem;color:var(--mut);font-weight:600;margin-bottom:8px;flex-wrap:wrap}
+.pill{display:inline-block;background:#fdeaea;color:var(--red-d);border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700}
+.scripture{margin-top:10px;font-size:.88rem;color:#3d434a;background:#f7f5f2;border-radius:10px;padding:8px 12px;font-style:italic}
+.scripture b{font-style:normal;color:var(--red-d)}
+.svgbox{background:#fff;border-radius:16px;padding:8px}
+.svgbox svg{display:block;width:100%;height:auto}
+.small{font-size:.85rem;color:var(--mut)}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.node{cursor:pointer}
+.node:focus-visible{outline:none}
+.node:focus-visible circle.ring,.node:focus-visible .ring{stroke:#1b5fd1;stroke-width:4}
+@media(prefers-reduced-motion:no-preference){.anim{transition:all .6s ease}}
+textarea{width:100%;font:inherit;border:2px solid #cfcac3;border-radius:10px;padding:8px;min-height:70px;resize:vertical}
+.foot{font-size:.78rem;color:var(--mut);text-align:center;margin:10px 0 2px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="hero">
+ <div class="txt"><div class="eyebrow">CRJU 350 &middot; Week 5</div><h1>The Discretion Desk</h1><p>Step into the courtroom roles, see how guardrails narrow arbitrary outcomes, and spot misconduct that can change a person&rsquo;s life.</p></div>
+ <svg viewBox="0 0 150 120" role="img" aria-label="Illustration of a judge's gavel resting on a sound block"><circle cx="75" cy="60" r="54" fill="#fff" opacity=".15"/><g transform="rotate(-35 70 52)"><rect x="40" y="30" width="56" height="26" rx="6" fill="#fff"/><rect x="34" y="34" width="8" height="18" rx="3" fill="#fff" opacity=".8"/><rect x="94" y="34" width="8" height="18" rx="3" fill="#fff" opacity=".8"/><rect x="64" y="56" width="8" height="52" rx="4" fill="#fff"/></g><rect x="24" y="96" width="102" height="10" rx="5" fill="#fff"/><rect x="40" y="86" width="70" height="12" rx="5" fill="#fff" opacity=".85"/></svg>
+</header>
+<div class="tabs" role="tablist" aria-label="Week 5 activities">
+ <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">1 &middot; Courtroom Roles</button>
+ <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">2 &middot; Discretion Guardrails</button>
+ <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">3 &middot; Spot the Misconduct</button>
+</div>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+ <div class="grid wide-left">
+  <div class="card">
+   <div class="rule"></div><h2>Concepts 1&ndash;3: Role-Specific Duties</h2>
+   <p class="small" style="margin:0 0 8px">Pick a role and make the call. Each carries distinct ethical duties.</p>
+   <div class="btns" id="roles" role="group" aria-label="Choose a courtroom role"></div>
+   <div id="r-box" hidden style="margin-top:12px">
+    <div class="meta"><span id="r-count"></span><span class="pill" id="r-duty"></span></div>
+    <p id="r-text" style="font-weight:600;margin:0 0 10px"></p>
+    <div class="stack" id="r-opts"></div>
+    <div class="fb" id="r-fb" hidden aria-live="polite"></div>
+    <div class="btns" style="margin-top:10px"><button class="btn primary" id="r-next" hidden>Next</button></div>
+   </div>
+  </div>
+  <div class="svgbox">
+   <svg viewBox="0 0 320 280" role="img" aria-label="Scales of justice. The pans tip toward fairness when you make a justice-seeking choice.">
+    <rect x="152" y="50" width="16" height="190" rx="4" fill="#555b63"/><rect x="100" y="238" width="120" height="16" rx="6" fill="#555b63"/>
+    <circle cx="160" cy="46" r="12" fill="#d34147"/>
+    <g id="sbeam" class="anim" style="transform-origin:160px 50px;transform:rotate(0deg)">
+     <rect x="30" y="44" width="260" height="10" rx="5" fill="#1f2328"/>
+     <g><line x1="52" y1="52" x2="22" y2="124" stroke="#555b63" stroke-width="2"/><line x1="52" y1="52" x2="82" y2="124" stroke="#555b63" stroke-width="2"/><path d="M14 124 H90 Q86 150 52 150 Q18 150 14 124Z" fill="#2b6cb0"/><text x="52" y="143" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">JUSTICE</text></g>
+     <g><line x1="268" y1="52" x2="238" y2="124" stroke="#555b63" stroke-width="2"/><line x1="268" y1="52" x2="298" y2="124" stroke="#555b63" stroke-width="2"/><path d="M230 124 H306 Q302 150 268 150 Q234 150 230 124Z" fill="#b7791f"/><text x="268" y="143" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">WINNING</text></g>
+    </g>
+    <text x="160" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2328">Seeking justice, not merely winning</text>
+    <text id="s-note" x="160" y="274" text-anchor="middle" font-size="12" fill="#555b63">Make a choice to move the scale</text>
+   </svg>
+   <div class="scripture" style="margin:0 6px 6px"><b>Isaiah 56:1</b> &ldquo;This is what the Lord says: &lsquo;Maintain justice and do what is right.&rsquo;&rdquo;</div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+ <div class="grid wide-left">
+  <div class="card">
+   <div class="rule"></div><h2>Takeaway 2: Discretion Needs Guardrails</h2>
+   <p class="small" style="margin:0 0 8px">Imagine twelve judges each sentencing the <i>same</i> kind of case. Switch on guardrails and watch the outcomes cluster.</p>
+   <div class="stack" id="rails"></div>
+   <div class="fb warn" style="margin-top:12px"><strong>Guardrails help, but bias can still operate</strong>Even people who intend to be fair can be influenced by implicit bias. Recognizing bias is the first step toward addressing it, and justice calls for kindness, compassion, and the dignity of every person (Ephesians 4:32; Luke 6:36).</div>
+  </div>
+  <div class="svgbox">
+   <svg viewBox="0 0 320 300" role="img" aria-label="Dot plot of twelve hypothetical sentences. The spread narrows as guardrails are turned on.">
+    <text x="160" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Twelve hypothetical sentences</text>
+    <rect x="20" y="40" width="280" height="190" rx="10" fill="#faf8f6" stroke="#e2dfda"/>
+    <line x1="160" y1="40" x2="160" y2="230" stroke="#d9d4cd" stroke-dasharray="4 4"/>
+    <g id="dots"></g>
+    <text x="24" y="250" font-size="11" fill="#555b63">Lenient</text><text x="296" y="250" text-anchor="end" font-size="11" fill="#555b63">Severe</text>
+    <text x="160" y="250" text-anchor="middle" font-size="11" fill="#555b63">Typical</text>
+    <text id="spread-lbl" x="160" y="282" text-anchor="middle" font-size="14" font-weight="700" fill="#a9282e">Consistency: 0%</text>
+   </svg>
+   <p class="small" style="text-align:center;margin:0 0 4px">Illustrative model, not real data.</p>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+ <div class="grid wide-left">
+  <div class="card">
+   <div class="rule"></div><h2>Concept 4: Misconduct in the Courts</h2>
+   <div class="meta"><span id="m-count">Conduct 1 of 5</span><span class="pill" id="m-score">Score: 0</span></div>
+   <p id="m-text" style="font-weight:600;margin:0 0 10px"></p>
+   <div class="btns" id="m-btns"><button class="btn" data-v="1">Misconduct</button><button class="btn" data-v="0">Proper conduct</button></div>
+   <div class="fb" id="m-fb" hidden aria-live="polite"></div>
+   <div class="btns" style="margin-top:10px"><button class="btn primary" id="m-next" hidden>Next</button></div>
+  </div>
+  <div class="svgbox">
+   <svg viewBox="0 0 320 250" role="img" aria-label="Flow from courtroom misconduct to wrongful conviction to responses such as appeals, discipline, and conduct review">
+    <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#555b63"/></marker></defs>
+    <rect x="70" y="14" width="180" height="46" rx="12" fill="#b3261e"/><text x="160" y="42" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Courtroom misconduct</text>
+    <line x1="160" y1="60" x2="160" y2="86" stroke="#555b63" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="70" y="90" width="180" height="46" rx="12" fill="#e07b1a"/><text x="160" y="118" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Unfair trial / wrongful outcome</text>
+    <line x1="160" y1="136" x2="160" y2="150" stroke="#555b63" stroke-width="3"/><line x1="55" y1="150" x2="265" y2="150" stroke="#555b63" stroke-width="3"/>
+    <line x1="55" y1="150" x2="55" y2="172" stroke="#555b63" stroke-width="3" marker-end="url(#arr)"/><line x1="160" y1="150" x2="160" y2="172" stroke="#555b63" stroke-width="3" marker-end="url(#arr)"/><line x1="265" y1="150" x2="265" y2="172" stroke="#555b63" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="12" y="176" width="86" height="54" rx="10" fill="#2b6cb0"/><text x="55" y="207" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Appeals</text>
+    <rect x="117" y="176" width="86" height="54" rx="10" fill="#2f855a"/><text x="160" y="198" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Professional</text><text x="160" y="214" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">discipline</text>
+    <rect x="222" y="176" width="86" height="54" rx="10" fill="#7b4fa3"/><text x="265" y="198" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Judicial conduct</text><text x="265" y="214" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">review</text>
+   </svg>
+  </div>
+ </div>
+</section>
+
+<p class="foot">CRJU 350 Criminal Justice Ethics &middot; Learning activity based on the Week 5 Deep Dive. Scripture: NIV.</p>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+/* ---- Auto-resize: removes inner scrollbar when the parent page listens for it ---- */
+let lastH=0;
+function report(){const h=Math.ceil(document.body.getBoundingClientRect().height+20);if(h===lastH)return;lastH=h;
+ try{parent.postMessage({subject:'lti.frameResize',height:h},'*');parent.postMessage({type:'crju350-resize',height:h},'*');}catch(e){}}
+if('ResizeObserver' in window)new ResizeObserver(report).observe(document.body);
+addEventListener('load',report);addEventListener('resize',report);
+/* ---- Tabs ---- */
+(function(){const tabs=$$('.tab');
+ function sel(t){tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;$('#'+x.getAttribute('aria-controls')).hidden=!on});report()}
+ tabs.forEach((t,i)=>{t.addEventListener('click',()=>sel(t));t.addEventListener('keydown',e=>{
+  let n=null;if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+  if(n){e.preventDefault();n.focus();sel(n)}})});})();
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+const RS={};
+/* ---------- Tab 1: Roles ---------- */
+const ROLES={
+ Prosecutor:{duty:'Seek justice, not merely convictions',sc:[
+  {t:'A first-time, low-harm offender is accused of an offense. Your office is judged on conviction rates, and a supervisor suggests filing the most severe charges to force a quick plea. What is the most ethical approach?',o:[
+   ['File the most severe charges to maximize leverage.',0,'This uses charging power as a bargaining chip rather than to reflect the case. It risks arbitrary and unjust outcomes.'],
+   ['Apply consistent, documented charging factors and consider alternatives such as diversion.',1,'Consistent, documented factors guard against arbitrary or biased decisions, and fit the duty to seek justice.'],
+   ['Decline the case without review because the caseload is heavy.',0,'Discretion should be exercised thoughtfully. Skipping review can leave victims and the public without a considered decision.']]},
+  {t:'After charging, you notice a detail in a police report that points toward the defendant\u2019s innocence. It is not clear it would be admissible. What do you do?',o:[
+   ['Hold it back until trial to see if it matters.',0,'Withholding evidence favorable to the accused is misconduct and can contribute to wrongful convictions.'],
+   ['Promptly disclose it to the defense and review the case.',1,'Disclosing favorable evidence is a core duty and protects the fairness of the trial.'],
+   ['Ignore it because it may be inadmissible.',0,'The duty to disclose does not depend on whether you think the evidence will win or lose the case.']]}]},
+ Judge:{duty:'Impartiality and reasoned decisions',sc:[
+  {t:'Two defendants have similar offenses and records. The guidelines allow a range of sentences. Your docket is full. Which approach reflects ethical discretion?',o:[
+   ['Go with a quick gut feeling and move on.',0,'Gut decisions invite inconsistency and bias, and leave nothing to review.'],
+   ['Apply the guidelines, weigh each person\u2019s circumstances, and state reasons on the record.',1,'Written reasoning supports transparency and review, and balances consistency with individual circumstances.'],
+   ['Give the top of the range to everyone as a deterrent.',0,'Ignoring individual circumstances replaces judgment with a blanket rule and may be disproportionate.']]},
+  {t:'You realize a party before you is a close friend\u2019s business partner. No one has raised it. What is the best course?',o:[
+   ['Say nothing. You can be impartial.',0,'Impartiality requires awareness of conflicts of interest, and the appearance of fairness matters too.'],
+   ['Disclose the relationship and consider recusal under the applicable rules.',1,'Transparency about conflicts protects trust and the fairness of the proceeding.'],
+   ['Rule for the other side to prove you are fair.',0,'Overcorrecting is also bias. The solution is disclosure and recusal, not tilting the outcome.']]}]},
+ 'Defense Attorney':{duty:'Zealous, honest, competent representation',sc:[
+  {t:'Your client tells you he plans to testify to a story you know is false. What should you do?',o:[
+   ['Let him testify and say nothing.',0,'Defense attorneys must be honest with the court, so staying silent can violate duties of candor.'],
+   ['Counsel him about the consequences and follow the rules of professional conduct in your jurisdiction.',1,'You balance loyalty and confidentiality with candor to the court, and use the professional rules to guide you.'],
+   ['Tell the press so the truth comes out.',0,'Confidentiality and loyalty to the client are core duties. A public disclosure is not the answer.']]},
+  {t:'As appointed counsel you have far more cases than you can prepare competently. What do you do?',o:[
+   ['Take every case and hope it works out.',0,'Competence is a core duty. Overload can make effective defense impossible.'],
+   ['Raise the problem with your supervisor or the court and seek relief.',1,'Access to effective defense is a matter of justice, so speaking up protects clients.'],
+   ['Plead everyone out quickly to clear the backlog.',0,'Clients\u2019 choices must be informed and theirs. Speed should not replace representation.']]}]}};
+let role=null,ri=0,rs=0;const rb=$('#roles');
+Object.keys(ROLES).forEach(k=>{const b=document.createElement('button');b.className='btn';b.textContent=k;b.addEventListener('click',()=>{role=k;ri=0;rs=0;$$('#roles .btn').forEach(x=>x.classList.toggle('sel',x===b));rLoad();$('#r-box').hidden=false;report()});rb.appendChild(b)});
+function tilt(deg,msg){$('#sbeam').style.transform='rotate('+deg+'deg)';$('#s-note').textContent=msg}
+function rLoad(){const R=ROLES[role],s=R.sc[ri];$('#r-count').textContent=role+' \u00b7 Situation '+(ri+1)+' of '+R.sc.length;$('#r-duty').textContent=R.duty;$('#r-text').textContent=s.t;
+ const o=$('#r-opts');o.innerHTML='';s.o.forEach(x=>{const b=document.createElement('button');b.className='btn';b.textContent=x[0];b.addEventListener('click',()=>rPick(x,b));o.appendChild(b)});
+ $('#r-fb').hidden=true;$('#r-next').hidden=true;tilt(0,'Make a choice to move the scale');report()}
+function rPick(x,b){$$('#r-opts .btn').forEach((e,i)=>{e.disabled=true;if(ROLES[role].sc[ri].o[i][1])e.classList.add('good')});if(!x[1]){b.classList.add('bad');}else rs++;
+ tilt(x[1]?-8:8,x[1]?'The scale tips toward justice':'The scale tips toward winning');
+ const f=$('#r-fb');f.className='fb '+(x[1]?'good':'bad');f.innerHTML='<strong>'+(x[1]?'Justice-seeking choice':'Ethical risk')+'</strong>'+x[2];f.hidden=false;
+ const n=$('#r-next');n.hidden=false;n.textContent=ri===ROLES[role].sc.length-1?'Finish this role':'Next situation';report()}
+$('#r-next').addEventListener('click',()=>{const R=ROLES[role];if(ri===R.sc.length-1){$('#r-opts').innerHTML='';$('#r-next').hidden=true;
+  const f=$('#r-fb');f.className='fb';f.innerHTML='<strong>'+role+': '+rs+' of '+R.sc.length+' justice-seeking choices</strong>Courtroom roles carry distinct ethical duties. Choose another role above to see a different perspective.';f.hidden=false;tilt(0,'Choose another role to continue');report();return}ri++;rLoad()});
+
+/* ---------- Tab 2: Guardrails ---------- */
+const RAILS=[['Sentencing guidelines','Narrow the range of acceptable outcomes.'],['Documented decision factors','Make the reasoning for each choice consistent.'],['Written reasoning on the record','Support transparency and make decisions reviewable.'],['Appellate and conduct review','Provide a check when a decision goes astray.']];
+const BASEO=[.25,-.7,.6,-.15,.95,-.5,.08,-.95,.4,-.05,.78,-.3];
+const YS=[0,1,2,3,4,5,6,7,8,9,10,11].map(i=>[2,7,4,9,0,5,10,3,8,1,6,11].indexOf(i));
+let on=[0,0,0,0];const NS='http://www.w3.org/2000/svg',dg=$('#dots');
+const dotEls=BASEO.map((v,i)=>{const c=document.createElementNS(NS,'circle');c.setAttribute('r',9);c.setAttribute('class','anim');c.setAttribute('fill','#d34147');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width',2);c.setAttribute('cy',58+i*14.5);dg.appendChild(c);return c});
+function draw(){const n=on.reduce((a,b)=>a+b,0),sp=1-.2*n;dotEls.forEach((c,i)=>c.setAttribute('cx',160+BASEO[i]*130*sp));
+ $('#spread-lbl').textContent='Consistency: '+(n*25)+'%'+(n===4?' (not 100%: bias can remain)':'')}
+const rl=$('#rails');RAILS.forEach((r,i)=>{const b=document.createElement('button');b.className='btn';b.setAttribute('aria-pressed','false');b.innerHTML='<b>'+r[0]+'</b><br><span class="small">'+r[1]+'</span>';
+ b.addEventListener('click',()=>{on[i]=on[i]?0:1;b.classList.toggle('sel',!!on[i]);b.setAttribute('aria-pressed',!!on[i]);draw()});rl.appendChild(b)});draw();
+
+/* ---------- Tab 3: Misconduct ---------- */
+const MC=[
+ {t:'A prosecutor withholds evidence favorable to the accused.',a:1,x:'Misconduct. Withholding favorable evidence can contribute to wrongful convictions.'},
+ {t:'An attorney presents testimony from a witness that the attorney knows is false.',a:1,x:'Misconduct. Presenting false testimony undermines the fairness of a trial.'},
+ {t:'A defense attorney vigorously argues that the prosecution has not proven its case, even though privately believing the client is guilty.',a:0,x:'Proper conduct. Zealous representation, within the rules of candor, is a core role of defense counsel.'},
+ {t:'A judge discloses a conflict of interest and steps aside from a case.',a:0,x:'Proper conduct. Disclosure and recusal protect impartiality.'},
+ {t:'A judge makes demeaning remarks about a defendant\u2019s ethnicity while ruling.',a:1,x:'Misconduct. Biased conduct from the bench undermines fairness and may lead to judicial conduct review.'}];
+let mi=0,ms=0;
+function mLoad(){$('#m-count').textContent='Conduct '+(mi+1)+' of '+MC.length;$('#m-text').textContent=MC[mi].t;$$('#m-btns .btn').forEach(b=>{b.className='btn';b.disabled=false});$('#m-fb').hidden=true;$('#m-next').hidden=true;report()}
+$$('#m-btns .btn').forEach(b=>b.addEventListener('click',()=>{const c=MC[mi],ok=(+b.dataset.v)===c.a;if(ok)ms++;$('#m-score').textContent='Score: '+ms;
+ $$('#m-btns .btn').forEach(x=>{x.disabled=true;if((+x.dataset.v)===c.a)x.classList.add('good')});if(!ok)b.classList.add('bad');
+ const f=$('#m-fb');f.className='fb '+(ok?'good':'warn');f.innerHTML='<strong>'+(ok?'Correct.':'Not quite.')+'</strong>'+c.x;f.hidden=false;
+ const n=$('#m-next');n.hidden=false;n.textContent=mi===MC.length-1?'See my result':'Next';report()}));
+$('#m-next').addEventListener('click',()=>{if(RS['m-next']){const r=RS['m-next'];RS['m-next']=null;r();return}
+ if(mi===MC.length-1){const f=$('#m-fb');f.className='fb';f.innerHTML='<strong>You scored '+ms+' of '+MC.length+'.</strong>Misconduct has real consequences. It can change the outcome of a case and a person\u2019s life, which is why responses include appeals, professional discipline, and judicial conduct review.';$$('#m-btns .btn').forEach(b=>b.disabled=true);$('#m-next').textContent='Try again';RS['m-next']=()=>{mi=0;ms=0;$('#m-score').textContent='Score: 0';mLoad()};report();return}mi++;mLoad()});
+mLoad();
+
+</script>
+</body>
+</html>
