@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 460 Motivation | Week 2 Needs Lab</title>
+<style>:root{--red:#b5303a;--red2:#d34147;--ink:#222;--mut:#5b5b5b;--soft:#f7f4f0;--line:#e4dfd9;--teal:#1f7a8c;--gold:#d9a21f;--green:#2c8a6e;--navy:#4a5a78;--orange:#d9703c}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;color:var(--ink);background:#fff;font-size:14px;line-height:1.4}
+.app{height:100vh;display:flex;flex-direction:column}
+.top{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(95deg,#8f232c,#d34147);color:#fff}
+.top h1{font-size:17px;margin:0;font-weight:700}
+.top .pill{background:rgba(255,255,255,.22);border-radius:99px;padding:2px 10px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.top .sub{font-size:12px;opacity:.92;margin-left:auto;white-space:nowrap}
+.tabs{flex:none;display:flex;gap:4px;padding:6px 16px 0;border-bottom:2px solid var(--line);background:var(--soft)}
+.tab{border:0;background:transparent;padding:8px 14px;font-family:inherit;font-size:14px;font-weight:600;color:var(--mut);cursor:pointer;border-radius:8px 8px 0 0;margin-bottom:-2px;border-bottom:3px solid transparent}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--red);background:#fff;border-bottom-color:var(--red)}
+.tab:focus-visible,.btn:focus-visible,.seg button:focus-visible,[tabindex]:focus-visible{outline:3px solid #1f7a8c;outline-offset:2px}
+.panel{display:none;flex:1;min-height:0;padding:10px 16px 12px;gap:16px}
+.panel.active{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr)}
+.col{min-height:0;min-width:0;display:flex;flex-direction:column;gap:8px}
+.stage{flex:1;min-height:0;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:6px;display:flex}
+.stage svg{width:100%;height:100%;display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card.fill{flex:1;min-height:0}
+.card h2{font-size:19px;margin:6px 0 4px}
+.card p{margin:0 0 8px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 9px;border-radius:99px;color:#fff;background:var(--red)}
+.mut{color:var(--mut)}
+.small{font-size:12.5px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)}
+.seg button:hover{border-color:var(--red)}
+.seg button.on{background:var(--red);border-color:var(--red);color:#fff}
+.btn{border:0;background:var(--red);color:#fff;border-radius:8px;padding:8px 16px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.btn:hover{background:#9c2630}
+.btn.ghost{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.ghost:hover{background:#fbeeee}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;margin:0 0 6px;font-family:inherit;font-size:14px;color:var(--ink);cursor:pointer;line-height:1.35}
+.opt:hover:not(:disabled){border-color:var(--red);background:#fdf6f6}
+.opt:disabled{cursor:default}
+.opt.good{border-color:var(--green);background:#e9f6f0}
+.opt.bad{border-color:var(--red);background:#fdeceb}
+.fb{border-left:4px solid var(--teal);background:#eef6f8;padding:7px 11px;border-radius:0 8px 8px 0;margin:6px 0;font-size:13.5px}
+.fb.good{border-color:var(--green);background:#e9f6f0}
+.fb.bad{border-color:var(--red);background:#fdeceb}
+.row{display:grid;grid-template-columns:118px 1fr 30px;align-items:center;gap:8px;margin:5px 0}
+.row label{font-weight:600;font-size:13.5px}
+.row output{font-weight:700;text-align:right}
+input[type=range]{width:100%;accent-color:var(--red)}
+.hot{cursor:pointer}
+.hot:hover .hl{filter:brightness(1.1)}
+.meter{height:12px;border-radius:99px;background:#ece7e1;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:99px;transition:width .5s}
+.steps{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+.scorebar{display:flex;gap:10px;align-items:center;justify-content:space-between}
+@media (max-width:760px){
+ .panel.active{display:flex;flex-direction:column;overflow-y:auto}
+ .stage{flex:none;height:300px}
+ .col{min-height:auto}
+ .top .sub{display:none}
+ .tabs{overflow-x:auto}
+ .tab{white-space:nowrap}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.lens{display:flex;flex-direction:column;gap:4px}
+.lens p{margin:0}
+.eg{display:grid;grid-template-columns:78px 1fr;gap:2px 8px;font-size:13.5px;margin:4px 0 8px}
+.eg b{color:var(--red);font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.limit{background:var(--soft);border-radius:8px;padding:7px 10px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="top"><span class="pill">Week 2</span><h1>Content Theories: Needs Lab</h1><span class="sub">PSYC 460 · Motivation</span></header>
+ <nav class="tabs" role="tablist">
+  <button class="tab on" role="tab" data-p="p1">Explore the Theories</button>
+  <button class="tab" role="tab" data-p="p2">Spot the Unmet Need</button>
+ </nav>
+ <section class="panel active" id="p1">
+  <div class="col">
+   <div class="lens"><div class="seg" id="lensBtns"></div><p class="small mut" id="lensTxt"></p></div>
+   <div class="stage" id="stage1"></div>
+  </div>
+  <div class="col"><div class="card fill" id="info"></div></div>
+ </section>
+ <section class="panel" id="p2">
+  <div class="col"><div class="stage" id="stage2"></div></div>
+  <div class="col"><div class="card fill" id="quiz" aria-live="polite"></div></div>
+ </section>
+</div>
+<script>
+const ICONS={
+ drop:'<path d="M12 2.5C12 2.5 5.5 10 5.5 15a6.5 6.5 0 0 0 13 0C18.5 10 12 2.5 12 2.5Z"/>',
+ shield:'<path d="M12 2.5 20 5.5V11c0 5-3.5 8.6-8 10.5C7.5 19.6 4 16 4 11V5.5Z"/>',
+ heart:'<path d="M12 21S3 14.8 3 8.800A4.6 4.6 0 0 1 12 6.8 4.6 4.6 0 0 1 21 8.800C21 14.8 12 21 12 21Z"/>',
+ star:'<path d="M12 2.5 14.9 8.8 21.8 9.5 16.6 14.1 18.2 21 12 17.4 5.8 21 7.4 14.1 2.2 9.5 9.1 8.800Z"/>',
+ medal:'<circle cx="12" cy="9" r="6"/><path d="M8.5 14 6.5 22 12 19.5 17.5 22 15.5 14"/>',
+ trophy:'<path d="M7 3h10v5.500a5 5 0 0 1-10 0V3Z"/><path d="M7 5H3v2a4 4 0 0 0 4 4M17 5h4v2a4 4 0 0 1-4 4M12 13.500V17M8 21h8M9.5 17h5v4h-5z"/>',
+ people:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 2.8-6 6.5-6s6.5 2 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14c3 0 5 1.5 5 5"/>',
+ person:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7"/>',
+ crown:'<path d="M3 18 2.5 7 8 11.5 12 5l4 6.500L21.5 7 21 18Z"/>',
+ gear:'<circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8" stroke-width="3.5" stroke-dasharray="2.6 2.470"/>',
+ bolt:'<path d="M13 2 4 14h7l-1 8 10-13h-7Z"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+ target:'<circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="1.5"/>',
+ chat:'<path d="M4 4h16v12H10l-5 4v-4H4Z"/>',
+ help:'<circle cx="12" cy="12" r="9.5"/><path d="M9.5 9.500a2.6 2.6 0 1 1 3.6 2.400c-.8.4-1.1 1-1.1 1.800M12 17.300v.2"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.1M3.5 12h.1M3.5 18h.1"/>',
+ echo:'<path d="M4 8v8M8 5v14M12 9v6"/><path d="M16 8.500a5 5 0 0 1 0 7M19 5.500a9 9 0 0 1 0 13"/>',
+ hand:'<path d="M12 21c-5-3.5-8-6.5-8-10.500A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 8 2.500c0 4-3 7-8 10.500Z"/>',
+ check:'<path d="M4 12.5 9.5 18 20 6.5"/>',
+ coin:'<circle cx="12" cy="12" r="9.5"/><path d="M14.5 9a2.5 2 0 0 0-2.5-1.500c-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2A2.6 2 0 0 1 9.5 15M12 6v1.500M12 16.500V18"/>',
+ book:'<path d="M4 4.500A2 2 0 0 1 6 3h13v16H6a2 2 0 0 0-2 2ZM4 20.500V4.5"/>',
+ scale:'<path d="M12 3v18M6 21h12M5 7h14"/><path d="M5 7 2.5 14a3 3 0 0 0 5 0ZM19 7l-2.5 7a3 3 0 0 0 5 0Z"/>'
+};
+function icon(n,x,y,s,c,sw){return `<g transform="translate(${x-s/2},${y-s/2}) scale(${s/24})" fill="none" stroke="${c||'#fff'}" stroke-width="${sw||2}" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</g>`}
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>[...(r||document).querySelectorAll(s)];
+function press(el,fn){el.addEventListener('click',fn);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fn(e)}})}
+function initTabs(){const tabs=$$('.tab'),panels=$$('.panel');tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>{x.classList.toggle('on',x===t);x.setAttribute('aria-selected',x===t)});panels.forEach(p=>p.classList.toggle('active',p.id===t.dataset.p))}))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function wrap(t,n){const w=t.split(' ');const L=[];let c='';w.forEach(x=>{if((c+' '+x).trim().length>n){L.push(c);c=x}else c=(c+' '+x).trim()});if(c)L.push(c);return L}
+function person(x,y,o){o=o||{};const s=o.s||1,sh=o.shirt||'#b5303a',hr=o.hair||'#3b2a20',sk=o.skin||'#f1c9a5',m=o.mood||'neutral';
+ const mouth=m==='happy'?'M-8 8Q0 18 8 8':m==='sad'?'M-8 15Q0 7 8 15':'M-7 11H7';
+ return `<g transform="translate(${x},${y}) scale(${s})"><path d="M-36 104Q-36 42 0 40Q36 42 36 104Z" fill="${sh}"/><rect x="-8" y="26" width="16" height="18" rx="6" fill="${sk}"/><circle r="27" fill="${sk}"/><path d="M-28-2Q-30-32 0-32Q30-32 28-2Q19-17 0-17Q-19-17-28-2Z" fill="${hr}"/><circle cx="-9" cy="1" r="2.7" fill="#222"/><circle cx="9" cy="1" r="2.7" fill="#222"/><path d="${mouth}" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/></g>`}
+function bubble(x,y,w,lines,o){o=o||{};const lh=o.lh||19,fs=o.fs||14,h=lines.length*lh+18;const tx=o.tail!=null?o.tail:x+w/2;
+ const tail=`<path d="M${tx-9} ${y+h-1.5}L${tx+4} ${y+h+16}L${tx+12} ${y+h-1.5}Z" fill="#fff"/><path d="M${tx-9} ${y+h}L${tx+4} ${y+h+16}L${tx+12} ${y+h}" fill="none" stroke="#c9c2ba" stroke-width="1.5" stroke-linejoin="round"/>`;
+ return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="#fff" stroke="#c9c2ba" stroke-width="1.5"/>${tail}<text font-size="${fs}" fill="#222" text-anchor="middle">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${y+22+i*lh}">${l}</tspan>`).join('')}</text></g>`}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+initTabs();
+/* ---------- DATA ---------- */
+const LENSES={
+maslow:{label:'Maslow',txt:'Needs form a hierarchy: lower needs must be reasonably met before higher ones drive behavior.',kind:'pyr',items:[
+ {id:'self',name:'Self-Actualization',sub:'Growth · creativity · purpose',color:'#2c8a6e',icon:'star',tag:'Level 5 · Top',desc:'The drive to become everything one is capable of becoming: learning, creating, and living out personal purpose.',eg:['Offer an autonomous project built on the person’s own question','Independent study or creative design work','Goals that reflect the client’s own values and strengths'],limit:'Few people reach this level consistently, and it looks different for every individual and culture.'},
+ {id:'esteem',name:'Esteem',sub:'Respect · achievement · status',color:'#d9a21f',icon:'medal',tag:'Level 4',desc:'The need to feel capable, respected, and valued by self and others, through achievement, recognition, and confidence.',eg:['Public credit, promotions, meaningful titles','Specific praise and visible achievements','Noting progress and strengths in treatment'],limit:'Recognition that feels hollow or unearned does not satisfy this need.'},
+ {id:'belong',name:'Love & Belonging',sub:'Friendship · connection · family',color:'#d9703c',icon:'people',tag:'Level 3',desc:'The need for affection, friendship, and a sense of being part of a group.',eg:['Team rituals, mentoring, cross-team projects','Group work and a welcoming class culture','Peer support groups and family involvement'],limit:'Introverts and some cultures may meet this need very differently.'},
+ {id:'safety',name:'Safety & Security',sub:'Stability · health · predictability',color:'#b5303a',icon:'shield',tag:'Level 2',desc:'The need for a stable, predictable, and secure environment free from threat.',eg:['Job security, fair policies, clear expectations','Safe classroom, predictable routines','A calm, trustworthy treatment setting'],limit:'Perceived threat matters as much as actual threat.'},
+ {id:'physio',name:'Physiological',sub:'Food · water · sleep · comfort',color:'#8c2f39',icon:'drop',tag:'Level 1 · Foundation',desc:'The body’s basic requirements for survival: food, water, sleep, warmth, and physical comfort.',eg:['Real breaks, reasonable hours, a decent workspace','Hungry or sleepless students struggle to learn','Pain, hunger, or poor sleep can derail treatment'],limit:'Needs don’t always unfold in strict order, and people often pursue several at once.'}]},
+erg:{label:'Alderfer ERG',txt:'Three needs, pursued at the same time. People can progress upward, or regress when higher needs are frustrated.',kind:'pyr',arrows:true,items:[
+ {id:'g',name:'Growth',sub:'Self-development · creativity',color:'#2c8a6e',icon:'star',tag:'G · Growth needs',desc:'The desire to develop personal potential, which blends Maslow’s esteem and self-actualization.',eg:['Stretch assignments and skill building','Challenging, creative learning tasks','Setting personal development goals'],limit:'Growth can’t be forced: people choose it.'},
+ {id:'r',name:'Relatedness',sub:'Relationships · belonging',color:'#d9703c',icon:'people',tag:'R · Relatedness needs',desc:'The need for meaningful social relationships, including belonging and the respect of others.',eg:['Supportive supervisors and teams','Peer study groups and mentors','Therapeutic alliance and peer support'],limit:'Frustrated growth can push people to seek more relatedness instead.'},
+ {id:'e',name:'Existence',sub:'Physical and material needs',color:'#8c2f39',icon:'drop',tag:'E · Existence needs',desc:'Material and physical well-being: Maslow’s physiological and safety needs combined.',eg:['Pay, benefits, safe conditions','Food security, a safe campus','Housing, health, and physical stability'],limit:'Unlike Maslow, people may regress to existence needs if higher needs stay unmet.'}]},
+herz:{label:'Herzberg',txt:'Satisfaction and dissatisfaction are two separate scales, each driven by different factors.',kind:'herz',items:[
+ {id:'hyg',name:'Hygiene Factors',color:'#4a5a78',icon:'gear',tag:'Prevent dissatisfaction',desc:'Pay, working conditions, policies, and supervision. When they are poor, people are unhappy; when they are fine, people are simply not unhappy, but not motivated.',eg:['Fair salary, safe equipment, clear policies','Adequate facilities, fair grading rules','Safe, clean, well-staffed clinic'],limit:'Raising hygiene factors stops complaints but rarely boosts motivation.'},
+ {id:'mot',name:'Motivators',color:'#d9a21f',icon:'bolt',tag:'Create satisfaction',desc:'Achievement, recognition, responsibility, meaningful work, and advancement are the factors that actually increase satisfaction and motivation.',eg:['Ownership of a project, real credit','Challenging, meaningful assignments','Visible progress toward personal goals'],limit:'Research findings have been challenged, and individuals differ in what counts as a motivator.'}]},
+mcc:{label:'McClelland',txt:'Everyone has all three needs, but one usually dominates, and that shapes what energizes them.',kind:'mcc',items:[
+ {id:'ach',name:'Achievement',color:'#d9703c',icon:'trophy',tag:'Need for achievement',desc:'A drive to excel, solve problems, and meet challenging goals, with a preference for moderate risk and clear feedback.',eg:['Measurable goals and frequent feedback','Mastery-based tasks and clear rubrics','Concrete milestones in a treatment plan'],limit:'High achievers may neglect teamwork or burn out.'},
+ {id:'aff',name:'Affiliation',color:'#2c8a6e',icon:'people',tag:'Need for affiliation',desc:'A desire for warm relationships, acceptance, and cooperation. These people prefer collaboration over competition.',eg:['Team-based work, friendly culture','Cooperative learning and peer teaching','Group therapy and supportive relationships'],limit:'May avoid necessary conflict or tough feedback.'},
+ {id:'pow',name:'Power',color:'#4a5a78',icon:'crown',tag:'Need for power',desc:'A desire to influence others and to have impact, either for personal status or for the good of the group.',eg:['Leadership roles, influence on decisions','Class leader, peer tutor, project lead','Self-advocacy and shared decision-making'],limit:'Personal power seeking can become manipulative; “social power” serves the group.'}]}
+};
+/* ---------- GRAPHICS ---------- */
+function pyramid(items,sel,arrows){
+ const n=items.length,H=380/n,cx=150,top=24,hw=y=>140*(y-top)/380;let o='<svg viewBox="0 0 560 430" role="img" aria-label="Interactive needs pyramid">';
+ items.forEach((it,i)=>{const y0=top+H*i,y1=y0+H,a=hw(y0),b=hw(y1),yc=y0+H/2;const on=it.id===sel;
+  const pts=`${cx-a},${y0} ${cx+a},${y0} ${cx+b},${y1} ${cx-b},${y1}`;
+  const ic=i===0&&n>3?y0+H*0.66:yc;
+  o+=`<g class="hot" data-id="${it.id}" tabindex="0" role="button" aria-label="${it.name}"><polygon class="hl" points="${pts}" fill="${it.color}" opacity="${on?1:.72}" stroke="${on?'#222':'#fff'}" stroke-width="${on?4:3}" stroke-linejoin="round"/>${icon(it.icon,cx,ic,n>3?(i===0?22:28):34,'#fff')}
+  <line x1="${cx+hw(yc)+6}" y1="${yc}" x2="296" y2="${yc}" stroke="${it.color}" stroke-width="2" stroke-dasharray="3 4"/>
+  <text x="304" y="${yc-2}" font-size="${n>3?16:18}" font-weight="700" fill="${on?it.color:'#333'}">${it.name}</text><text x="304" y="${yc+17}" font-size="12.5" fill="#666">${it.sub}</text></g>`});
+ if(arrows)o+=`<g font-size="11" fill="#555" text-anchor="middle"><path d="M522 330V90" stroke="#2c8a6e" stroke-width="4" marker-end="url(#ah1)"/><path d="M546 90v240" stroke="#b5303a" stroke-width="4" stroke-dasharray="1 7" stroke-linecap="round" marker-end="url(#ah2)"/><text x="522" y="352">satisfied</text><text x="522" y="366">→ move up</text><text x="546" y="388">frustrated</text><text x="546" y="402">→ fall back</text></g><defs><marker id="ah1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#2c8a6e"/></marker><marker id="ah2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#b5303a"/></marker></defs>`;
+ return o+'</svg>'}
+function herz(items,sel){
+ let o='<svg viewBox="0 0 560 430" role="img" aria-label="Herzberg two-factor graphic">';
+ const cfg={hyg:{y:18,l:'Dissatisfied',r:'Not dissatisfied',c1:'#b5303a',c2:'#b9b2a8',chips:['Salary','Working conditions','Policies','Supervision']},mot:{y:226,l:'Not satisfied',r:'Satisfied',c1:'#b9b2a8',c2:'#2c8a6e',chips:['Achievement','Recognition','Responsibility','Growth']}};
+ items.forEach(it=>{const c=cfg[it.id],on=it.id===sel,y=c.y;
+  o+=`<g class="hot" data-id="${it.id}" tabindex="0" role="button" aria-label="${it.name}"><rect class="hl" x="14" y="${y}" width="532" height="190" rx="16" fill="${on?'#fff':'#fbf9f6'}" stroke="${it.color}" stroke-width="${on?4:1.5}"/>
+  <circle cx="58" cy="${y+46}" r="28" fill="${it.color}"/>${icon(it.icon,58,y+46,32,'#fff')}
+  <text x="100" y="${y+42}" font-size="21" font-weight="700" fill="${it.color}">${it.name}</text><text x="100" y="${y+62}" font-size="13" fill="#666">${it.tag}</text>
+  <defs><linearGradient id="g${it.id}"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs>
+  <rect x="40" y="${y+96}" width="480" height="14" rx="7" fill="url(#g${it.id})"/><text x="40" y="${y+130}" font-size="13" font-weight="600" fill="#444">${c.l}</text><text x="520" y="${y+130}" font-size="13" font-weight="600" fill="#444" text-anchor="end">${c.r}</text>
+  ${c.chips.map((t,i)=>`<g><rect x="${40+i*122}" y="${y+146}" width="114" height="28" rx="14" fill="${it.color}" opacity=".14"/><text x="${97+i*122}" y="${y+165}" font-size="12.5" font-weight="600" fill="#333" text-anchor="middle">${t}</text></g>`).join('')}</g>`});
+ return o+'</svg>'}
+function mcc(items,sel){
+ const pos={ach:[280,140],aff:[185,290],pow:[375,290]};
+ let o='<svg viewBox="0 0 560 430" role="img" aria-label="McClelland three needs"><g style="isolation:isolate">';
+ items.forEach(it=>{const [x,y]=pos[it.id],on=it.id===sel;
+  o+=`<g class="hot" data-id="${it.id}" tabindex="0" role="button" aria-label="${it.name}"><circle class="hl" cx="${x}" cy="${y}" r="108" fill="${it.color}" fill-opacity="${on?.85:.55}" stroke="${on?'#222':'#fff'}" stroke-width="${on?4:2}" style="mix-blend-mode:multiply"/></g>`});
+ items.forEach(it=>{const [x,y]=pos[it.id],dx=(x-280)*0.42,dy=(y-215)*0.42;const tx=x+dx*.55,ty=y+dy*.55;
+  o+=`<g pointer-events="none">${icon(it.icon,tx,ty-16,34,'#fff')}<text x="${tx}" y="${ty+30}" font-size="15" font-weight="700" fill="#fff" text-anchor="middle" stroke="rgba(0,0,0,.25)" stroke-width=".5">${it.name}</text></g>`});
+ o+=`</g><text x="280" y="418" font-size="12.5" fill="#666" text-anchor="middle">Everyone has all three, but one tends to dominate</text></svg>`;return o}
+/* ---------- EXPLORE ---------- */
+let lens='maslow',sel=LENSES.maslow.items[0].id;
+function renderExplore(){
+ const L=LENSES[lens];
+ $('#lensBtns').innerHTML=Object.keys(LENSES).map(k=>`<button class="${k===lens?'on':''}" data-l="${k}">${LENSES[k].label}</button>`).join('');
+ $('#lensTxt').textContent=L.txt;
+ $('#stage1').innerHTML=L.kind==='pyr'?pyramid(L.items,sel,L.arrows):L.kind==='herz'?herz(L.items,sel):mcc(L.items,sel);
+ const it=L.items.find(x=>x.id===sel);
+ $('#info').innerHTML=`<span class="tag" style="background:${it.color}">${it.tag}</span><h2>${it.name}</h2><p>${it.desc}</p><div class="eg"><b>Workplace</b><span>${it.eg[0]}</span><b>Classroom</b><span>${it.eg[1]}</span><b>Clinical</b><span>${it.eg[2]}</span></div><div class="limit"><b>Keep in mind:</b> ${it.limit}</div><p class="small mut" style="margin:10px 0 0">Tip: switch theories above to see how each one organizes needs differently.</p>`;
+ $$('#lensBtns button').forEach(b=>b.onclick=()=>{lens=b.dataset.l;sel=LENSES[lens].items[0].id;renderExplore()});
+ $$('#stage1 .hot').forEach(g=>press(g,()=>{sel=g.dataset.id;renderExplore()}));
+}
+renderExplore();
+/* ---------- PRACTICE ---------- */
+const LV=LENSES.maslow.items;const lvName=id=>LV.find(x=>x.id===id).name;
+const SC=[
+{k:'class',who:'Dev',mood:'sad',shirt:'#4a5a78',set:'Classroom',text:'Dev is a first-year student who works overnight and skips meals to afford tuition. In class he is exhausted, can’t focus, and keeps nodding off.',need:'physio',strat:[['Connect Dev with a campus food pantry and flexible deadlines','physio'],['Award a “most improved” certificate','esteem'],['Invite him to design his own research project','self']]},
+{k:'work',who:'Marisol',mood:'sad',shirt:'#d9703c',set:'Workplace',text:'Marisol’s company just announced possible layoffs. She is capable and well liked, but she’s distracted, updating her résumé at her desk, and avoiding new projects.',need:'safety',strat:[['Share clear, honest information about job stability and next steps','safety'],['Plan a team social to build friendships','belong'],['Offer a stretch assignment with more autonomy','self']]},
+{k:'clinic',who:'Tom',mood:'sad',shirt:'#2c8a6e',set:'Clinical Setting',text:'Tom recently entered a residential treatment program. He eats well and feels physically safe, but sits alone, skips group, and says, “Nobody here knows me.”',need:'belong',strat:[['Pair Tom with a peer buddy and invite family to visit','belong'],['Give him a title as unit “mentor”','esteem'],['Upgrade his meal plan','physio']]},
+{k:'work',who:'Jordan',mood:'neutral',shirt:'#b5303a',set:'Workplace',text:'Jordan delivers top results, gets along with everyone, and feels secure in the job. But a manager keeps presenting Jordan’s ideas as their own, and Jordan is withdrawing.',need:'esteem',strat:[['Credit Jordan publicly and give formal recognition','esteem'],['Increase health benefits','safety'],['Schedule more team lunches','belong']]},
+{k:'class',who:'Priya',mood:'neutral',shirt:'#8c2f39',set:'Classroom',text:'Priya earns top grades, has close friends, and feels supported. Lately she seems restless: “I’m acing everything, but I’m not growing. I want to explore my own ideas.”',need:'self',strat:[['Offer an independent project built around her own question','self'],['Move her seat near her friends','belong'],['Add another honor-roll award','esteem']]}
+];
+let qi=0,phase='need',score=0,tries={need:0,strat:0},picked=[],stratOrder=[],fb='';
+function scene(s,wrong,right){
+ const bg={class:'#e6eff6',work:'#f3ece3',clinic:'#e5f2ec'}[s.k];
+ let o=`<svg viewBox="0 0 560 430" role="img" aria-label="Scenario illustration"><rect width="560" height="236" fill="${bg}"/><rect y="196" width="560" height="40" fill="#000" opacity=".07"/>`;
+ if(s.k==='class')o+=`<rect x="34" y="26" width="190" height="104" rx="6" fill="#2f5d50" stroke="#a07b52" stroke-width="6"/><path d="M52 58h90M52 80h130M52 102h60" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/><rect x="330" y="160" width="190" height="12" rx="3" fill="#a07b52"/><rect x="342" y="172" width="8" height="40" fill="#8a6743"/><rect x="500" y="172" width="8" height="40" fill="#8a6743"/><rect x="380" y="140" width="60" height="20" rx="2" fill="#fff" stroke="#bbb"/>`;
+ if(s.k==='work')o+=`<rect x="370" y="104" width="120" height="76" rx="6" fill="#33384a"/><rect x="378" y="111" width="104" height="60" fill="#9cc7e6"/><path d="M386 130h50M386 144h70M386 158h40" stroke="#fff" stroke-width="3" opacity=".8" stroke-linecap="round"/><rect x="424" y="180" width="12" height="14" fill="#33384a"/><rect x="330" y="194" width="200" height="12" rx="3" fill="#a07b52"/><rect x="34" y="30" width="110" height="90" rx="4" fill="#cfe5f3" stroke="#fff" stroke-width="6"/><path d="M89 30v90M34 75h110" stroke="#fff" stroke-width="4"/>`;
+ if(s.k==='clinic')o+=`<rect x="40" y="34" width="84" height="84" rx="14" fill="#2c8a6e"/><path d="M82 52v48M58 76h48" stroke="#fff" stroke-width="14" stroke-linecap="round"/><rect x="330" y="150" width="200" height="34" rx="8" fill="#fff" stroke="#bbb" stroke-width="2"/><rect x="336" y="136" width="60" height="18" rx="9" fill="#dfe9f3"/><rect x="330" y="184" width="8" height="26" fill="#999"/><rect x="522" y="184" width="8" height="26" fill="#999"/>`;
+ o+=person(200,96,{shirt:s.shirt,mood:s.mood,s:1.25});
+ o+=`<g><circle cx="318" cy="76" r="5" fill="#fff" stroke="#c9c2ba"/><circle cx="302" cy="92" r="3" fill="#fff" stroke="#c9c2ba"/><ellipse cx="368" cy="46" rx="40" ry="26" fill="#fff" stroke="#c9c2ba"/><text x="368" y="56" font-size="28" font-weight="700" fill="#b5303a" text-anchor="middle">?</text></g>`;
+ o+=`<text x="16" y="224" font-size="13" font-weight="700" fill="#444">${s.who} · ${s.set}</text>`;
+ const ph=phase==='need';
+ o+=`<text x="280" y="258" font-size="12.5" fill="#666" text-anchor="middle">${ph?'Click the level that is most clearly unmet':'Unmet need identified: '+lvName(s.need)}</text>`;
+ LV.forEach((l,i)=>{const y=268+i*32,w=wrong.includes(l.id),r=right===l.id;
+  o+=`<g class="${ph?'hot':''}" data-id="${l.id}" ${ph?'tabindex="0" role="button"':''} aria-label="${l.name}"><rect class="hl" x="60" y="${y}" width="440" height="28" rx="14" fill="${r?l.color:'#fff'}" stroke="${r?'#222':w?'#bbb':l.color}" stroke-width="${r?3:2}" opacity="${w?.45:1}"/><circle cx="76" cy="${y+14}" r="11" fill="${l.color}"/>${icon(l.icon,76,y+14,14,'#fff')}<text x="98" y="${y+19}" font-size="14" font-weight="700" fill="${r?'#fff':'#333'}">${l.name}</text>${w?`<text x="486" y="${y+19}" font-size="13" fill="#b5303a" text-anchor="end">not quite</text>`:''}</g>`});
+ return o+'</svg>'}
+function renderQuiz(){
+ const q=$('#quiz');
+ if(qi>=SC.length){
+  const pct=Math.round(score/(SC.length*2)*100);
+  q.innerHTML=`<span class="tag" style="background:var(--green)">Complete</span><h2>You scored ${score} of ${SC.length*2}</h2><p>${pct>=80?'Excellent. You can read needs and match a strategy to them.':'Good start. Review the pyramid and notice how each strategy targets a specific level.'}</p><div class="limit"><b>Remember:</b> a strategy works when it matches the person’s <em>current</em> unmet need. A trophy can’t fix an empty stomach.</div><p style="margin-top:14px"><button class="btn" id="again">Try again</button></p>`;
+  $('#stage2').innerHTML=scene(SC[SC.length-1],[],SC[SC.length-1].need);
+  $('#again').onclick=()=>{qi=0;score=0;startQ();};return;}
+ const s=SC[qi];
+ let h=`<div class="scorebar"><span class="steps">Scenario ${qi+1} of ${SC.length} · ${s.set}</span><span class="steps">Score ${score}</span></div><p style="margin:8px 0 6px"><b>${s.who}:</b> ${s.text}</p>`;
+ if(phase==='need'){h+=`<div class="steps" style="margin-top:8px">Step 1 · Diagnose</div><p class="mut">Which of Maslow’s levels is <em>most clearly unmet</em>? Click a level on the left.</p>${fb}`;}
+ else{h+=`<div class="steps" style="margin-top:6px">Step 2 · Respond</div><p style="margin-bottom:6px">Which strategy best matches the unmet need of <b>${lvName(s.need)}</b>?</p>`;
+  h+=stratOrder.map((o,i)=>`<button class="opt ${picked.includes(i)?(o[1]===s.need?'good':'bad'):''}" data-i="${i}" ${phase==='done'?'disabled':''}>${o[0]}</button>`).join('');
+  h+=fb;if(phase==='done')h+=`<p style="margin:8px 0 0"><button class="btn" id="next">${qi===SC.length-1?'See results':'Next scenario'}</button></p>`;}
+ q.innerHTML=h;
+ $('#stage2').innerHTML=scene(s,phase==='need'?picked:[],phase==='need'?null:s.need);
+ if(phase==='need')$$('#stage2 .hot').forEach(g=>press(g,()=>pickNeed(g.dataset.id)));
+ else $$('#quiz .opt').forEach(b=>b.onclick=()=>pickStrat(+b.dataset.i));
+ const nx=$('#next');if(nx)nx.onclick=()=>{qi++;startQ()};
+}
+function startQ(){phase='need';picked=[];fb='';tries={need:0,strat:0};if(qi<SC.length)stratOrder=shuffle(SC[qi].strat);renderQuiz()}
+function pickNeed(id){const s=SC[qi];
+ if(id===s.need){if(tries.need===0)score++;phase='strat';picked=[];fb=`<div class="fb good"><b>Correct.</b> ${lvName(id)} is the unmet need. ${s.who}’s lower needs are being met, so this is what is driving behavior now.</div>`;}
+ else{tries.need++;picked.push(id);fb=`<div class="fb bad"><b>Not quite.</b> ${lvName(id)} doesn’t seem to be the main gap here. Reread the scenario for what ${s.who} is missing, then try again.</div>`;}
+ renderQuiz()}
+function pickStrat(i){const s=SC[qi],o=stratOrder[i];picked.push(i);
+ if(o[1]===s.need){if(tries.strat===0)score++;phase='done';fb=`<div class="fb good"><b>Great match.</b> This strategy speaks directly to ${lvName(s.need)}, so it can actually move ${s.who}.</div>`;}
+ else{tries.strat++;fb=`<div class="fb bad"><b>Mismatch.</b> That one targets ${lvName(o[1])}, but ${s.who}’s unmet need is ${lvName(s.need)}. Try another.</div>`;}
+ renderQuiz()}
+startQ();
+</script>
+</body>
+</html>
