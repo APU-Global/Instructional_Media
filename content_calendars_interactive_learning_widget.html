@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Calendars — Interactive Learning Widget</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#4f46e5',
+              600: '#4338ca',
+              700: '#3730a3',
+            }
+          },
+          boxShadow: {
+            'widget': '0 20px 45px -15px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(226, 232, 240, 0.9)',
+            'panel': '0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-900 font-sans p-3 sm:p-6 lg:p-10 flex flex-col justify-between selection:bg-indigo-600 selection:text-white">
+
+  <!-- Main Widget Container -->
+  <main class="max-w-6xl w-full mx-auto bg-white rounded-3xl shadow-widget border border-slate-200/90 overflow-hidden flex flex-col my-auto">
+    
+    <!-- Widget Header Banner -->
+    <header class="p-5 sm:p-7 border-b border-slate-200 bg-gradient-to-r from-slate-50 via-white to-indigo-50/40">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+              <svg class="w-3.5 h-3.5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+              Interactive Guide
+            </span>
+            <span class="text-xs text-slate-500 font-medium hidden sm:inline">• 7 Key Modules</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-display tracking-tight">
+            Content Calendars
+          </h1>
+        </div>
+
+        <!-- Action Utility -->
+        <div class="flex items-center gap-2">
+          <button id="copySummaryBtn" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white hover:bg-slate-100 text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm" title="Copy guide outline">
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <span id="copyBtnText">Copy Outline</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Introduction note -->
+      <div class="mt-4 p-3.5 sm:p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100/90 text-slate-800 text-xs sm:text-sm leading-relaxed">
+        <strong class="font-bold text-indigo-900">Introduction:</strong> A social media content calendar sounds like a big commitment at first, but you can be rest assured it’ll pay that time back in the future. Your calendar can be as simple or complex as your brand needs it to be.
+      </div>
+    </header>
+
+    <!-- Main Content Area: Split Sidebar + Rich Active Pane -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
+      
+      <!-- Left Column: Stepper Roadmap / Table of Contents (5 Cols) -->
+      <aside class="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-slate-200 bg-slate-50/70 p-4 sm:p-5 flex flex-col justify-between">
+        <div>
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 px-1 flex items-center justify-between">
+            <span>Modules Roadmap</span>
+            <span class="text-[11px] font-semibold text-slate-400">Click to inspect</span>
+          </div>
+
+          <!-- Step Navigation List -->
+          <nav id="stepperList" class="space-y-2 custom-scroll max-h-[380px] lg:max-h-[520px] overflow-y-auto pr-1">
+            <!-- Dynamically generated module cards -->
+          </nav>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-200 text-xs text-slate-500 font-medium px-1 flex items-center justify-between">
+          <span>Manual navigation</span>
+          <span class="text-indigo-600 font-bold">No autoplay</span>
+        </div>
+      </aside>
+
+      <!-- Right Column: Interactive Detail Stage (7 Cols) -->
+      <section id="detailPane" class="lg:col-span-7 p-5 sm:p-7 lg:p-8 flex flex-col justify-between bg-white">
+        <!-- Injected via JavaScript based on selected item -->
+      </section>
+
+    </div>
+
+    <!-- Widget Bottom Control Bar -->
+    <footer class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50/90 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span id="stepCounterLabel" class="text-xs sm:text-sm font-semibold text-slate-600 font-mono">
+          <!-- Step counter injected here -->
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <button id="prevBtn" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold border border-slate-200 shadow-sm transition flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+          Previous
+        </button>
+        <button id="nextBtn" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold border border-indigo-700 shadow-sm transition flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+          Next
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </footer>
+
+  </main>
+
+  <p class="text-center text-xs text-slate-500 font-medium mt-4">
+    Embeddable Learning Widget • Zero involuntary movement
+  </p>
+
+  <script>
+    // Detailed curriculum data with dedicated graphics, photos, and micro-graphics
+    const modules = [
+      {
+        id: 0,
+        number: "01",
+        title: "Save time by being organized",
+        summary: "Batch creation & creative brainwave backlog",
+        body: "Maintaining a social media calendar lets you plan ahead, batch your work, avoid multitasking, and note down all your creative brainwaves for later.",
+        photo: "https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=900&q=80",
+        photoAlt: "Structured schedule workspace",
+        badge: "Efficiency Pillar",
+        benefit: "Up to 4 hours saved per week",
+        graphicType: "batching"
+      },
+      {
+        id: 1,
+        number: "02",
+        title: "Post consistently",
+        summary: "Consistent cadence drives algorithm engagement",
+        body: "Whether you’re trying to increase your Instagram likes, your YouTube subscribers, or you’ve implemented social media KPIs, the first tip from experts will always be “post consistently.” There’s just no shortcut around it. Why? Consistently showing up in your audience’s feed is the key to engaging them on social media.",
+        photo: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=900&q=80",
+        photoAlt: "Social media feed metrics and likes",
+        badge: "Growth Engine",
+        benefit: "+142% average follower retention",
+        graphicType: "consistency"
+      },
+      {
+        id: 2,
+        number: "03",
+        title: "Make fewer typos and mistakes",
+        summary: "Pre-flight proofing, QA & stakeholder alignment",
+        body: "Planning your posts ahead of time means that you can build failsafes into your workflow. Copy-editing the text, fact-checking information, or even vetting it with organizational stakeholders are all a lot easier when you’re working days or weeks in advance.",
+        photo: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80",
+        photoAlt: "Copy-editing and proofreading desk",
+        badge: "Quality Assurance",
+        benefit: "Zero live corrections",
+        graphicType: "qa"
+      },
+      {
+        id: 3,
+        number: "04",
+        title: "Get more ambitious with your strategy",
+        summary: "Multi-tier campaigns: long, short, paid & organic",
+        body: "The world’s biggest social media brands are often running multiple campaigns at once—long, medium and short-term, paid and organic.",
+        photo: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80",
+        photoAlt: "Strategic multi-channel dashboard",
+        badge: "Scale & Ambition",
+        benefit: "Balanced paid and organic pipeline",
+        graphicType: "strategy"
+      },
+      {
+        id: 4,
+        number: "05",
+        title: "Don’t miss relevant moments",
+        summary: "Observe worldwide dates with room for breaking trends",
+        body: "A social media calendar allows you to strategically observe worldwide global moments that are relevant to your brand’s audience. With your day-to-day schedule covered, if something topical comes up you have the bandwidth to engage with the moment in an on-brand way.",
+        photo: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80",
+        photoAlt: "Live cultural event and trending topic",
+        badge: "Cultural Agility",
+        benefit: "Instant bandwidth for topical trends",
+        graphicType: "trends"
+      },
+      {
+        id: 5,
+        number: "06",
+        title: "Establish a workflow",
+        summary: "Bones of your daily, weekly, and monthly cadence",
+        body: "Start sketching in the bones of your daily, weekly and monthly social media cadence. You’ll want to think about how often you want to post to each channel; the best time to post to each channel; what your content ratio will look like; who needs to approve posts; what the process is for brainstorming new content and then creating it.",
+        photo: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80",
+        photoAlt: "Team collaborative production framework",
+        badge: "Operations Blueprint",
+        benefit: "Streamlined stakeholder approvals",
+        graphicType: "workflow"
+      },
+      {
+        id: 6,
+        number: "07",
+        title: "Start crafting your posts",
+        summary: "Execute, measure what works, and refine continuously",
+        body: "Follow the calendar you’ve set up and note what works and what doesn’t. Improve as you go.",
+        photo: "https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=900&q=80",
+        photoAlt: "High craft post designing and publishing",
+        badge: "Continuous Polish",
+        benefit: "Data-driven creative iteration",
+        graphicType: "iteration"
+      }
+    ];
+
+    // State: strictly track if step 1 was clicked/completed
+    let activeIndex = 0;
+    const completedSet = new Set();
+
+    // DOM References
+    const stepperList = document.getElementById('stepperList');
+    const detailPane = document.getElementById('detailPane');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stepCounterLabel = document.getElementById('stepCounterLabel');
+    const copySummaryBtn = document.getElementById('copySummaryBtn');
+    const copyBtnText = document.getElementById('copyBtnText');
+
+    // UI Graphic Mockup Builder
+    function getGraphicHTML(type) {
+      if (type === 'batching') {
+        return `
+          <div class="bg-white/95 border border-slate-200/90 rounded-2xl p-4 shadow-sm w-full max-w-sm">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>4-DAY BATCH MATRIX</span>
+              <span class="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded font-mono font-bold text-[11px]">ALL PLANNED</span>
+            </div>
+            <div class="grid grid-cols-4 gap-2 mt-3 text-center text-xs">
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200"><span class="text-slate-500 font-semibold block text-[10px]">MON</span><strong class="text-indigo-600 font-bold">Reel</strong></div>
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200"><span class="text-slate-500 font-semibold block text-[10px]">WED</span><strong class="text-indigo-600 font-bold">Guide</strong></div>
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200"><span class="text-slate-500 font-semibold block text-[10px]">FRI</span><strong class="text-indigo-600 font-bold">Story</strong></div>
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200"><span class="text-slate-500 font-semibold block text-[10px]">SUN</span><strong class="text-indigo-600 font-bold">Poll</strong></div>
+            </div>
+          </div>
+        `;
+      } else if (type === 'consistency') {
+        return `
+          <div class="bg-white/95 border border-slate-200/90 rounded-2xl p-4 shadow-sm w-full max-w-sm">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
+              <span>ENGAGEMENT VELOCITY</span>
+              <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-mono font-bold text-[11px]">+320% STREAK</span>
+            </div>
+            <div class="flex items-end gap-2 h-14 mt-3 pt-2 px-1 border-b border-slate-100">
+              <div class="w-1/6 bg-emerald-100 rounded-t h-[25%]"></div>
+              <div class="w-1/6 bg-emerald-200 rounded-t h-[40%]"></div>
+              <div class="w-1/6 bg-emerald-300 rounded-t h-[60%]"></div>
+              <div class="w-1/6 bg-emerald-400 rounded-t h-[75%]"></div>
+              <div class="w-1/6 bg-emerald-500 rounded-t h-[90%]"></div>
+              <div class="w-1/6 bg-emerald-600 rounded-t h-[100%] shadow-sm"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-600 mt-2 font-medium">
+              <span>Day 1</span>
+              <span class="font-bold text-slate-800">Day 30 (Active Feed)</span>
+            </div>
+          </div>
+        `;
+      } else if (type === 'qa') {
+        return `
+          <div class="bg-white/95 border border-slate-200/90 rounded-2xl p-4 shadow-sm w-full max-w-sm">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
+              <span>PRE-FLIGHT EDITORIAL QA</span>
+              <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-bold text-[10px]">3/3 PASSED</span>
+            </div>
+            <div class="space-y-2 mt-3 text-xs text-slate-700 font-medium">
+              <div class="flex items-center gap-2 p-1.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="text-emerald-600 font-extrabold">✓</span> Copy-edited & spellcheck verified
+              </div>
+              <div class="flex items-center gap-2 p-1.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="text-emerald-600 font-extrabold">✓</span> Fact-checked links & visual assets
+              </div>
+              <div class="flex items-center gap-2 p-1.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="text-emerald-600 font-extrabold">✓</span> Vetted by lead stakeholders
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (type === 'strategy') {
+        return `
+          <div class="bg-white/95 border border-slate-200/90 rounded-2xl p-4 shadow-sm w-full max-w-sm">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
+              <span>CAMPAIGN ARCHITECTURE</span>
+              <span class="text-purple-700 bg-purple-50 px-2 py-0.5 rounded font-mono text-[11px] font-bold">MULTI-TIER</span>
+            </div>
+            <div class="space-y-2 mt-3 text-xs">
+              <div class="p-2 rounded-xl bg-purple-50/80 border border-purple-200 flex items-center justify-between">
+                <div>
+                  <strong class="font-bold text-slate-900 block">Q4 Evergreen Pipeline</strong>
+                  <span class="text-purple-700 text-[11px]">Organic Community Focus</span>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-purple-600 text-white font-bold text-[10px]">Long-Term</span>
+              </div>
+              <div class="p-2 rounded-xl bg-indigo-50/80 border border-indigo-200 flex items-center justify-between">
+                <div>
+                  <strong class="font-bold text-slate-900 block">Product Drop Sprint</strong>
+                  <span class="text-indigo-700 text-[11px]">Paid Ads + Influencers</span>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold text-[10px]">Short-Term</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (type === 'trends') {
+        return `
+          <div class="bg-white/95 border border-slate-200/90 rounded-2xl p-4 shadow-sm w-full max-w-sm">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>CULTURAL RADAR</span>
+              <span class="text-rose-700 bg-rose-50 px-2 py-0.5 rounded text-[11px] font-bold">READY</span>
+            </div>
+            <div class="space-y-2 mt-3 text-xs">
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <span class="font-medium text-slate-800"># EarthDay (Global Holiday)</span>
+                <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold text-[10px]">Scheduled</span>
+              </div>
+              <div class="p-2 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between">
+                <span class="font-bold text-slate-900">⚡ Topical Meme / Audio</span>
+                <span class="text-white bg-rose-600 px-2 py-0.5 rounded font-bold text-[10px]">Bandwidth Free</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (type === 'workflow') {
+        return `
+          <div class="bg-white/95 border border-slate-200/90 rounded-2xl p-4 shadow-sm w-full max-w-sm">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
+              <span>CADENCE PIPELINE</span>
+              <span class="text-teal-700 font-mono text-[11px] font-bold">3 PHASES</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5 mt-3 text-center text-xs">
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 font-medium text-[10px] block">MON</span>
+                <strong class="font-extrabold text-slate-800">Ideate</strong>
+              </div>
+              <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 font-medium text-[10px] block">WED</span>
+                <strong class="font-extrabold text-slate-800">Review</strong>
+              </div>
+              <div class="p-2 rounded-xl bg-teal-50 border border-teal-300">
+                <span class="text-teal-700 font-medium text-[10px] block">FRI-SUN</span>
+                <strong class="font-extrabold text-teal-800">Publish</strong>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="bg-white/95 border border-slate-200/90 rounded-2xl p-4 shadow-sm w-full max-w-sm">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
+              <span>CREATIVE ITERATION CYCLE</span>
+              <span class="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded text-[11px] font-bold">CONTINUOUS</span>
+            </div>
+            <div class="flex items-center justify-around my-3 text-xs font-bold">
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200">Draft</span>
+              <span class="text-slate-400">→</span>
+              <span class="px-2.5 py-1 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">Measure</span>
+              <span class="text-slate-400">→</span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">Refine</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Render the Stepper list items
+    function renderStepper() {
+      stepperList.innerHTML = modules.map((item, idx) => {
+        const isActive = idx === activeIndex;
+        const isDone = completedSet.has(idx);
+
+        return `
+          <button
+            onclick="handleStepClick(${idx})"
+            class="w-full text-left p-3 sm:p-3.5 rounded-2xl transition-all flex items-start gap-3 border ${
+              isActive 
+                ? 'bg-white border-indigo-400 shadow-sm ring-2 ring-indigo-500/10' 
+                : 'bg-white/70 hover:bg-white border-slate-200 text-slate-700'
+            }"
+          >
+            <!-- Checkmark if completed, regular step number otherwise -->
+            <div class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold transition-colors ${
+              isDone 
+                ? 'bg-emerald-600 text-white' 
+                : isActive 
+                  ? 'bg-indigo-600 text-white' 
+                  : 'bg-slate-100 text-slate-500 border border-slate-200'
+            }">
+              ${isDone ? '✓' : item.number}
+            </div>
+
+            <!-- Content preview -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] font-mono font-bold uppercase tracking-wider ${isActive ? 'text-indigo-600' : 'text-slate-400'}">
+                  Step ${item.number}
+                </span>
+                ${isDone ? '<span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Completed</span>' : ''}
+              </div>
+              <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate mt-0.5">
+                ${item.title}
+              </h3>
+              <p class="text-[11px] text-slate-500 truncate mt-0.5">
+                ${item.summary}
+              </p>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    // Render active detailed pane
+    function renderDetail() {
+      const active = modules[activeIndex];
+
+      detailPane.innerHTML = `
+        <div class="space-y-6">
+          
+          <!-- Top Tags -->
+          <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+              <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+              ${active.badge}
+            </span>
+            <span class="text-xs font-bold font-mono text-slate-400">
+              MODULE ${active.number} OF 07
+            </span>
+          </div>
+
+          <!-- Title and Description -->
+          <div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-display tracking-tight leading-snug">
+              ${active.title}
+            </h2>
+            <p class="mt-3 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+              ${active.body}
+            </p>
+          </div>
+
+          <!-- Graphic & Photo Visual Showcase Card -->
+          <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-100 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2">
+              
+              <!-- Left: Curated High-Definition Photo -->
+              <div class="relative h-48 md:h-auto min-h-[190px]">
+                <img 
+                  src="${active.photo}" 
+                  alt="${active.photoAlt}"
+                  loading="lazy"
+                  class="w-full h-full object-cover"
+                  onerror="this.src='https://placehold.co/600x400/f1f5f9/334155?text=Module+Visual'"
+                />
+                <div class="absolute inset-0 bg-slate-900/20"></div>
+                <div class="absolute bottom-3 left-3">
+                  <span class="bg-white/95 backdrop-blur-sm border border-slate-200 text-slate-800 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm">
+                    ⚡ ${active.benefit}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Right: Interactive Graphic UI Mockup -->
+              <div class="p-4 bg-slate-50 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-200">
+                ${getGraphicHTML(active.graphicType)}
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+          <span>Navigate using the modules list or the Previous/Next buttons.</span>
+        </div>
+      `;
+
+      // Update footer label
+      stepCounterLabel.textContent = `Viewing Module ${active.number} of 07`;
+
+      // Prev/Next buttons status
+      prevBtn.disabled = activeIndex === 0;
+      nextBtn.disabled = activeIndex === modules.length - 1;
+    }
+
+    // Select module without marking as completed (used for initial render)
+    function selectModule(index) {
+      activeIndex = index;
+      renderStepper();
+      renderDetail();
+    }
+
+    // Explicit user click handler: marks as completed upon user action
+    function handleStepClick(index) {
+      completedSet.add(index);
+      selectModule(index);
+    }
+
+    // Navigation buttons
+    prevBtn.addEventListener('click', () => {
+      if (activeIndex > 0) {
+        handleStepClick(activeIndex - 1);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (activeIndex < modules.length - 1) {
+        handleStepClick(activeIndex + 1);
+      }
+    });
+
+    // Copy Outline function
+    copySummaryBtn.addEventListener('click', () => {
+      const summaryText = modules.map(m => `${m.number}. ${m.title}: ${m.body}`).join('\n\n');
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = `Content Calendars Guide:\n\n${summaryText}`;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      try {
+        document.execCommand('copy');
+        copyBtnText.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtnText.textContent = "Copy Outline";
+        }, 2200);
+      } catch (e) {
+        copyBtnText.textContent = "Failed";
+      }
+      document.body.removeChild(tempTextArea);
+    });
+
+    // Initialize Widget
+    window.onload = function() {
+      // Load Step 1 as viewable on start, but do NOT mark as completed until clicked
+      selectModule(0);
+    };
+  </script>
+</body>
+</html>
