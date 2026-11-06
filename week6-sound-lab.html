@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 | Sound Lab</title>
+<style>:root{--red:#d34147;--dred:#a8353a;--gray:#edebe8;--ink:#222;--mute:#5d5d5d;--ok:#2e7d4f;--okbg:#e6f4ea;--badbg:#fdecea;--blue:#2f6f9f;--gold:#f4b860}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--gray);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.4}
+.app{height:100vh;display:flex;flex-direction:column;gap:8px;padding:10px;max-width:1100px;margin:0 auto}
+header.top{flex:none;display:flex;align-items:center;gap:12px;background:#000;color:#fff;border-radius:14px;padding:8px 14px;min-height:56px;border-bottom:5px solid var(--red)}
+header.top svg{flex:none;width:44px;height:44px}
+header.top h1{margin:0;font-size:1.1rem;line-height:1.2}
+header.top p{margin:0;font-size:.78rem;color:#d8d8d8}
+nav.tabs{flex:none;display:flex;gap:6px}
+nav.tabs button{flex:1;border:0;border-radius:12px;padding:9px 8px;font:inherit;font-weight:600;background:#fff;color:var(--ink);cursor:pointer;min-height:40px;border:2px solid transparent}
+nav.tabs button[aria-selected=true]{background:var(--red);color:#fff}
+nav.tabs button:focus-visible,.btn:focus-visible,.opt:focus-visible,[tabindex]:focus-visible{outline:3px solid #1b5fd1;outline-offset:2px}
+main.card{flex:1;min-height:0;background:#fff;border-radius:14px;padding:12px;overflow:hidden;display:flex}
+.panel{display:none;flex:1;min-width:0;min-height:0}
+.panel.on{display:flex}
+.split{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;flex:1;min-height:0;min-width:0}
+.gfx{min-height:0;min-width:0;display:flex;flex-direction:column;background:#fcfcfc;border:1px solid #eee;border-radius:12px;padding:6px}
+.gfx svg{width:100%;flex:1;min-height:0;display:block}
+.cap{font-size:.78rem;color:var(--mute);text-align:center;margin:2px 0 0}
+.side{min-height:0;min-width:0;display:flex;flex-direction:column;gap:8px}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin-bottom:2px;flex:none}
+.side h2{margin:0;font-size:1.15rem}
+.box{background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:12px;padding:8px 12px;font-size:.92rem}
+.box b.k{display:block;color:var(--dred);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.box.alt{border-left-color:var(--blue)}.box.alt b.k{color:var(--blue)}
+.btn{font:inherit;font-weight:600;border:0;border-radius:10px;background:var(--red);color:#fff;padding:9px 14px;min-height:40px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid #ccc}
+.btn:disabled{opacity:.45;cursor:default}
+.opts{display:grid;gap:6px}
+.opt{font:inherit;text-align:left;border:2px solid #ddd;background:#fff;border-radius:10px;padding:8px 10px;min-height:40px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--red)}
+.opt.good{background:var(--okbg);border-color:var(--ok)}
+.opt.bad{background:var(--badbg);border-color:var(--red)}
+.fb{min-height:2.6em;font-size:.92rem}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--dred)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.hint{font-size:.82rem;color:var(--mute)}
+.prog{height:8px;background:var(--gray);border-radius:6px;overflow:hidden;flex:none}
+.prog i{display:block;height:100%;background:var(--red);width:0;transition:width .3s}
+.hs{cursor:pointer}
+.hs:focus{outline:none}
+.hs:focus-visible .ring{stroke:#1b5fd1;stroke-width:4}
+@media (max-width:700px){
+ html,body{font-size:14px}
+ .app{padding:6px;gap:6px}
+ header.top{min-height:44px;padding:5px 10px}header.top svg{width:32px;height:32px}header.top h1{font-size:.95rem}header.top p{display:none}
+ nav.tabs button{padding:6px 4px;font-size:.85rem;min-height:36px}
+ main.card{padding:8px}
+ .split{grid-template-columns:1fr;grid-template-rows:minmax(0,.9fr) minmax(0,1.1fr);gap:8px}
+ .box{padding:6px 10px;font-size:.85rem}.side{gap:6px}.side h2{font-size:1rem}.bar{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg .opt{flex:1;text-align:center;font-weight:600;padding:7px 6px;font-size:.86rem;min-width:0}
+.seg .opt[aria-pressed=true]{background:var(--red);color:#fff;border-color:var(--red)}
+.tog{font:inherit;font-weight:700;border:2px solid #ccc;background:#fff;border-radius:10px;padding:7px 10px;cursor:pointer;min-height:40px;display:flex;align-items:center;gap:8px;color:var(--ink);font-size:.88rem}
+.tog i{width:14px;height:14px;border-radius:4px;flex:none;background:#ccc}
+.tog[aria-pressed=true]{border-color:var(--ink);background:#faf8f5}
+.togs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.verse{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:4px 10px;font-family:Georgia,"Times New Roman",serif;font-size:1.3rem}
+.ln{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-left:6px solid transparent;padding-left:8px;transition:all .3s}
+.ln .tag{font-family:"Segoe UI",system-ui,sans-serif;font-size:.7rem;font-weight:700;border-radius:12px;padding:1px 8px;color:#fff;display:none}
+.w{border-radius:4px;padding:0 1px}
+.show-al .d-al{background:#f7c9cc}
+.show-as .d-as{text-decoration:underline wavy #2f6f9f 3px;text-underline-offset:5px}
+.show-co .d-co{box-shadow:inset 0 -7px 0 #fbdca0}
+.show-on .d-on{color:#1f7a45;font-weight:800}
+.show-mood .ln.h{border-left-color:var(--red);background:#fdf1f1}.show-mood .ln.s{border-left-color:var(--blue);background:#eef5fb}
+.show-mood .ln .tag{display:inline-block}.show-mood .ln.h .tag{background:var(--red)}.show-mood .ln.s .tag{background:var(--blue)}
+.wave{flex:none;width:100%;height:96px}
+.wave rect{fill:var(--red);transform-origin:center;transform-box:fill-box;transform:scaleY(.25)}
+.playing .wave rect{animation:bob .6s ease-in-out infinite alternate}
+@keyframes bob{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
+.syl{font:inherit;font-weight:700;border:2px solid #ccc;background:#fff;border-radius:10px;padding:6px 9px;cursor:pointer;min-height:40px;font-size:1rem;color:var(--ink)}
+.syl.st{background:var(--red);border-color:var(--red);color:#fff;text-decoration:underline}
+.syl.wrong{box-shadow:0 0 0 3px #1b5fd1}
+.sylrow{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+@media (max-width:700px){.verse{font-size:1rem;gap:3px}.wave{height:56px}.tog{padding:4px 6px;min-height:34px;font-size:.78rem}.syl{padding:4px 7px;min-height:36px;font-size:.9rem}.togs{gap:4px}.seg .opt{font-size:.75rem;padding:4px 2px;min-height:34px}}
+</style></head><body>
+<div class="app">
+<header class="top">
+ <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="22" fill="#d34147"/><g fill="#fff"><rect x="9" y="19" width="4" height="8" rx="2"/><rect x="16" y="13" width="4" height="20" rx="2"/><rect x="23" y="9" width="4" height="26" rx="2"/><rect x="30" y="16" width="4" height="12" rx="2"/></g></svg>
+ <div><h1>Week 6 | The Poetry Sound Lab</h1><p>ENGL 115 &middot; Sound, Rhythm, and Close Reading</p></div>
+</header>
+<nav class="tabs" role="tablist">
+ <button role="tab" data-tab="sound" aria-selected="true">1 &middot; Sound Devices</button>
+ <button role="tab" data-tab="meter" aria-selected="false">2 &middot; Tap the Rhythm</button>
+</nav>
+<main class="card">
+<section id="sound" class="panel on">
+ <div class="split">
+  <div class="gfx" id="soundgfx">
+   <svg class="wave" viewBox="0 0 640 96" preserveAspectRatio="none" role="img" aria-label="Sound wave graphic that moves while the poem is read aloud" id="wavesvg"></svg>
+   <div class="verse" id="verse"></div>
+   <p class="cap">An original practice poem written for this activity.</p>
+  </div>
+  <div class="side" aria-live="polite">
+   <div class="bar"></div>
+   <h2>Turn on a device and find it</h2>
+   <div class="togs" id="togs"></div>
+   <div class="box" id="s-desc"><b class="k">Tip</b>Select one or more devices to highlight them in the poem.</div>
+   <div class="row"><button class="btn" id="read">&#9654; Read it aloud</button><span class="hint">Hearing a poem reveals patterns your eyes can miss.</span></div>
+  </div>
+ </div>
+</section>
+
+<section id="meter" class="panel">
+ <div class="split">
+  <div class="gfx" style="gap:8px;padding:8px">
+   <div class="seg" id="lines" role="group" aria-label="Choose a line"></div>
+   <div class="hint" id="m-src" style="text-align:center"></div>
+   <div class="sylrow" id="syls"></div>
+   <svg id="beats" viewBox="0 0 640 150" role="img" aria-label="Beat pattern: large red circles mark stressed syllables, small hollow circles mark unstressed ones"></svg>
+  </div>
+  <div class="side" aria-live="polite">
+   <div class="bar"></div>
+   <h2>Mark the stressed syllables</h2>
+   <div class="box"><b class="k">How</b>Say the line aloud. Select each syllable your voice leans on. Then check your pattern.</div>
+   <div class="box alt fb" id="m-fb" style="min-height:70px"></div>
+   <div class="row"><button class="btn" id="m-check">Check</button><button class="btn ghost" id="m-play">&#9835; Play the beat</button><button class="btn ghost" id="m-reset">Reset</button></div>
+  </div>
+ </div>
+</section>
+</main>
+</div>
+<script>(function(){
+ var tabs=document.querySelectorAll('nav.tabs button'),panels=document.querySelectorAll('.panel');
+ tabs.forEach(function(b){b.addEventListener('click',function(){
+  tabs.forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  panels.forEach(function(p){p.classList.toggle('on',p.id===b.dataset.tab)});
+ })});
+ window.act=function(el,fn){el.addEventListener('click',fn);el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();fn(e)}})};
+ window.$=function(s,r){return (r||document).querySelector(s)};
+ window.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+})();
+</script>
+<script>
+(function(){
+ /* ---------- Tab 1 ---------- */
+ var svg=$('#wavesvg'),h='';
+ for(var i=0;i<48;i++){var x=6+i*13.2,bh=20+Math.abs(Math.sin(i*.7))*60;h+='<rect x="'+x+'" y="'+(48-bh/2)+'" width="7" height="'+bh+'" rx="3.5" style="animation-delay:'+((i%12)*.07)+'s"/>'}
+ svg.innerHTML=h;
+ var V=[
+  {m:'h',t:'harsh \u00b7 cacophony',w:[['Cold','al'],['coins','al'],['clink','al on'],['in',''],['the',''],['coffee','al'],['can','al']]},
+  {m:'h',t:'harsh \u00b7 cacophony',w:[['rain',''],['taps,','co on'],['taps','co on'],['on',''],['the',''],['tin-roofed','co'],['barn;','']]},
+  {m:'s',t:'smooth \u00b7 euphony',w:[['a',''],['low','as'],['moon','al'],['moans','as al'],['through',''],['the',''],['lonesome','as'],['pines,','']]},
+  {m:'s',t:'smooth \u00b7 euphony',w:[['and',''],['the',''],['long',''],['night',''],['hums','co on'],['its',''],['sleepy',''],['hymn.','co']]}
+ ];
+ var vh='';
+ V.forEach(function(l){vh+='<div class="ln '+l.m+'"><span>'+l.w.map(function(x){return '<span class="w '+x[1].split(' ').map(function(c){return c?'d-'+c:''}).join(' ')+'">'+x[0]+'</span>'}).join(' ')+'</span><span class="tag">'+l.t+'</span></div>'});
+ $('#verse').innerHTML=vh;
+ var D=[
+  ['al','#f7c9cc','Alliteration','Alliteration','Repeated consonant sounds at the start of nearby words, as in \u201cCold coins clink.\u201d'],
+  ['as','#2f6f9f','Assonance','Assonance','Repeated vowel sounds inside nearby words, like the long o in \u201clow,\u201d \u201cmoans,\u201d and \u201clonesome.\u201d'],
+  ['co','#fbdca0','Consonance','Consonance','Repeated consonant sounds anywhere in nearby words, like the t in \u201ctaps\u201d and \u201ctin-roofed.\u201d'],
+  ['on','#1f7a45','Onomatopoeia','Onomatopoeia','Words that imitate the sound they name: \u201cclink,\u201d \u201ctaps,\u201d \u201chums.\u201d'],
+  ['mood','#d34147','Harsh vs. smooth','Cacophony and euphony','Cacophony uses harsh, clashing sounds (k, t, p). Euphony uses soft, flowing ones (m, n, l). Notice how each changes the mood.']
+ ];
+ var tg=$('#togs'),box=$('#soundgfx');
+ D.forEach(function(d){var b=document.createElement('button');b.className='tog';b.setAttribute('aria-pressed','false');b.innerHTML='<i style="background:'+d[1]+'"></i>'+d[2];
+  b.onclick=function(){var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);box.classList.toggle('show-'+d[0],on);
+   if(on)$('#s-desc').innerHTML='<b class="k">'+d[3]+'</b>'+d[4]};
+  tg.appendChild(b)});
+ var reading=false;
+ $('#read').onclick=function(){
+  if(reading)return;reading=true;box.classList.add('playing');
+  var done=function(){reading=false;box.classList.remove('playing')};
+  var txt=V.map(function(l){return l.w.map(function(x){return x[0]}).join(' ')}).join(' ');
+  try{if('speechSynthesis' in window){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.rate=.8;u.onend=done;u.onerror=done;speechSynthesis.speak(u);setTimeout(function(){if(reading)done()},20000);return}}catch(e){}
+  setTimeout(done,4000);
+ };
+
+ /* ---------- Tab 2 ---------- */
+ var L=[
+  {b:'Shakespeare',src:'Sonnet 18 (Shakespeare)',s:['Shall','I','com','pare','thee','to','a','sum','mer\u2019s','day'],p:'0101010101',name:'Iambic pentameter',why:'Five iambs (unstressed \u2192 stressed). This is the heartbeat rhythm of much English poetry.',f:2},
+  {b:'Blake',src:'\u201cThe Tyger\u201d (Blake)',s:['Ty','ger','Ty','ger','burn','ing','bright'],p:'1010101',name:'Trochaic (final syllable dropped)',why:'Trochees run stressed \u2192 unstressed. Dropping the last unstressed syllable gives the line a hammering, forceful ending.',f:2},
+  {b:'Moore',src:'\u201cA Visit from St. Nicholas\u201d (Moore)',s:['\u2019Twas','the','night','be','fore','Christ','mas','when','all','through','the','house'],p:'001001001001',name:'Anapestic tetrameter',why:'Four anapests (unstressed, unstressed, stressed). The rolling pattern feels quick and bouncy.',f:3},
+  {b:'Tennyson',src:'\u201cThe Charge of the Light Brigade\u201d (Tennyson)',s:['Half','a','league','half','a','league'],p:'100100',name:'Dactylic dimeter',why:'Two dactyls (stressed, unstressed, unstressed). The galloping pattern echoes the charge of horses.',f:3}
+ ];
+ var li=0,mark=[],checked=false;
+ var lb=$('#lines');
+ L.forEach(function(l,i){var b=document.createElement('button');b.className='opt';b.textContent=l.b;b.setAttribute('aria-pressed','false');b.onclick=function(){setLine(i)};lb.appendChild(b)});
+ function draw(hi){
+  var l=L[li],n=l.s.length,sp=Math.min(56,600/n),x0=320-(n-1)*sp/2,h='';
+  for(var i=0;i<n;i++){var x=x0+i*sp,st=mark[i];
+   h+='<circle cx="'+x+'" cy="75" r="'+(st?20:9)+'" fill="'+(st?'#d34147':'#fff')+'" stroke="'+(st?'#a8353a':'#888')+'" stroke-width="3" id="bd'+i+'" style="transition:r .25s"/>'}
+  h+='<line x1="'+(x0-20)+'" y1="75" x2="'+(x0+(n-1)*sp+20)+'" y2="75" stroke="#ddd" stroke-width="2" stroke-dasharray="4 6"/>';
+  if(hi){var f=l.f,k=0;for(var s=0;s<n;s+=f){var e=Math.min(n-1,s+f-1);var a=x0+s*sp-24,bw=(e-s)*sp+48;h+='<rect x="'+a+'" y="20" width="'+bw+'" height="110" rx="18" fill="none" stroke="#2f6f9f" stroke-width="3" stroke-dasharray="6 5"/>';k++}}
+  var el=$('#beats');el.innerHTML=h;
+  el.setAttribute('viewBox','0 0 640 150');
+  // keep circles on top of line
+  var cs=$$('#beats circle');cs.forEach(function(c){el.appendChild(c)});
+ }
+ function setLine(i){
+  li=i;var l=L[i];mark=l.s.map(function(){return false});checked=false;
+  $$('#lines .opt').forEach(function(b,j){b.setAttribute('aria-pressed',j===i)});
+  $('#m-src').textContent=l.src;
+  var sy=$('#syls');sy.innerHTML='';
+  l.s.forEach(function(w,k){var b=document.createElement('button');b.className='syl';b.textContent=w;b.setAttribute('aria-pressed','false');
+   b.onclick=function(){mark[k]=!mark[k];b.classList.toggle('st',mark[k]);b.classList.remove('wrong');b.setAttribute('aria-pressed',mark[k]);draw(false);$('#m-fb').textContent=''};sy.appendChild(b)});
+  $('#m-fb').innerHTML='<span class="hint">Your result will appear here.</span>';draw(false);
+ }
+ $('#m-check').onclick=function(){
+  var l=L[li],bad=[];
+  l.s.forEach(function(w,k){var want=l.p[k]==='1';if(mark[k]!==want)bad.push(k)});
+  $$('#syls .syl').forEach(function(b,k){b.classList.toggle('wrong',bad.indexOf(k)>-1)});
+  var fb=$('#m-fb');
+  if(!bad.length){fb.className='box alt fb good';fb.innerHTML='<b>\u2713 '+l.name+'.</b> '+l.why;draw(true)}
+  else{fb.className='box alt fb bad';fb.innerHTML='Blue outlines show syllables to reconsider ('+bad.length+'). Say the line again and feel where the voice leans.';draw(false)}
+ };
+ $('#m-reset').onclick=function(){setLine(li)};
+ var playing=false;
+ $('#m-play').onclick=function(){
+  if(playing)return;playing=true;var n=L[li].s.length,i=0;
+  var t=setInterval(function(){
+   $$('#beats circle').forEach(function(c,k){c.style.opacity=(k===i)?1:.35});
+   i++;if(i>n){clearInterval(t);$$('#beats circle').forEach(function(c){c.style.opacity=1});playing=false}
+  },380);
+ };
+ setLine(0);
+})();
+</script></body></html>
