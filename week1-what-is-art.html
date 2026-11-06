@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exploring and Expanding the Definition of Art</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#faf6ef;font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;color:#2b2a33;-webkit-text-size-adjust:100%}
+#stage{position:absolute;left:0;top:0;width:800px;height:600px;transform-origin:0 0;display:flex;flex-direction:column;background:#faf6ef;overflow:hidden}
+header{height:62px;flex:none;display:flex;align-items:center;gap:12px;padding:0 0 0 18px;background:var(--hd);color:#fff;overflow:hidden}
+header .ttl{flex:1;min-width:0}
+header h1{font-size:19px;margin:2px 0 0;line-height:1.15;font-weight:700}
+.wk{display:inline-block;background:rgba(255,255,255,.22);padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+header svg.hero{flex:none;display:block}
+nav.tabs{display:flex;gap:6px;padding:8px 14px 0;flex:none;border-bottom:3px solid var(--ac)}
+nav.tabs button{font:inherit;font-size:13.5px;font-weight:600;padding:8px 14px;border:2px solid #e3d8c4;border-bottom:none;border-radius:10px 10px 0 0;background:#f0e8d8;color:#5a5666;cursor:pointer}
+nav.tabs button:hover{background:#fff}
+nav.tabs button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;padding:12px 16px;display:none}
+.panel.on{display:block}
+.row{display:flex}
+.card{background:#fff;border:1px solid #e6dccb;border-radius:12px;box-shadow:0 2px 6px rgba(60,40,20,.08)}
+h2{font-size:16px;margin:0 0 4px}
+h3{font-size:13px;margin:0 0 5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac)}
+.note{font-size:13px;color:#55525e;line-height:1.4}
+.btn{font:inherit;font-size:13px;font-weight:600;padding:6px 12px;min-height:32px;border-radius:8px;border:2px solid var(--ac);background:#fff;color:var(--ac);cursor:pointer;line-height:1.2}
+.btn:hover:not(:disabled){background:var(--ac);color:#fff}
+.btn.on{background:var(--ac);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,nav.tabs button:focus-visible,.chip:focus-visible{outline:3px solid #1b6ec2;outline-offset:2px}
+.chip{font:inherit;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:99px;border:2px solid var(--ac);background:#fff;color:#2b2a33;cursor:pointer}
+.chip:hover{background:#f3ead9}
+.chip.on{background:var(--ac);color:#fff}
+.chip.done::after{content:" ✓"}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.fb{min-height:54px;padding:8px 10px;border-radius:10px;font-size:13px;line-height:1.4;background:#f3ead9}
+.fb.good{background:#dff3e3;border:1px solid #8cc99a}
+.fb.try{background:#fdeacc;border:1px solid #e5b56b}
+.stack{display:flex;flex-direction:column;gap:6px}
+.stack .btn{text-align:left}
+svg{display:block;user-select:none;-webkit-user-select:none}
+canvas{user-select:none;-webkit-user-select:none}
+@keyframes dash{to{stroke-dashoffset:-18}}
+.pulse{stroke:#fff;stroke-width:3;stroke-dasharray:6 5;fill:rgba(255,255,255,.18);animation:dash 1s linear infinite;filter:drop-shadow(0 0 2px #000)}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+</style></head>
+<body>
+<div id="stage" style="--ac:#c8553d;--hd:#8a2f3d">
+<header><div class="ttl"><span class="wk">Week 1</span><h1>Exploring and Expanding the Definition of Art</h1></div><svg class="hero" width="250" height="62" viewBox="0 0 250 62" aria-hidden="true">
+<rect x="150" y="-4" width="110" height="70" fill="#ffffff18" transform="rotate(12 200 30)"/>
+<circle cx="205" cy="31" r="21" fill="#f7c873"/><circle cx="205" cy="31" r="11" fill="#e4572e"/>
+<path d="M130 62 L168 14 L206 62Z" fill="#ffffff2a"/><rect x="222" y="10" width="14" height="42" fill="#2a9d8f"/>
+<circle cx="150" cy="18" r="7" fill="#fff" opacity=".8"/></svg></header>
+<nav class="tabs" role="tablist"><button role="tab" data-tab="p-sort" aria-selected="false">1 · Sort the Art</button><button role="tab" data-tab="p-elem" aria-selected="false">2 · Elements Detective</button></nav>
+<main>
+<section class="panel" id="p-sort" aria-label="Sort the art">
+ <div class="row" style="height:100%;gap:16px">
+  <div class="card" style="width:404px;padding:10px;align-self:flex-start">
+   <div id="sortArt" style="border-radius:8px;overflow:hidden;width:384px;height:288px"></div>
+   <div id="sortTitle" class="note" style="margin-top:6px;text-align:center"></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:0">
+   <div class="note">Artwork <b id="sortProg"></b> &nbsp;·&nbsp; Score <b id="sortScore"></b></div>
+   <h2>How would you describe this artwork?</h2>
+   <div id="sortBtns" class="stack"></div>
+   <div id="sortFb" class="fb" aria-live="polite">Pick a category. Look first for a recognizable subject.</div>
+   <button id="sortNext" class="btn" style="align-self:flex-end" disabled>Next artwork →</button>
+  </div>
+ </div>
+ <div class="note" style="position:absolute;left:16px;bottom:10px;width:404px">
+  <b>Representational</b> shows the visible world · <b>Abstract</b> simplifies or alters a subject · <b>Nonrepresentational</b> has no recognizable subject.</div>
+</section>
+
+<section class="panel" id="p-elem" aria-label="Elements detective">
+ <div class="row" style="height:100%;gap:14px">
+  <div class="card" style="width:484px;height:364px;padding:2px;flex:none;overflow:hidden"><div id="elArt" style="width:480px;height:360px"></div></div>
+  <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:0">
+   <div class="row" style="gap:6px"><button class="btn on" id="modeE">Elements</button><button class="btn" id="modeP">Principles</button></div>
+   <div id="elChips" class="chips"></div>
+   <div class="card" style="padding:10px;flex:none">
+    <h3 id="elName">Start here</h3>
+    <div id="elDef" class="note">Choose a word above. A dashed outline will show you where it appears in the painting.</div>
+    <div id="elLook" class="note" style="margin-top:6px"></div>
+   </div>
+   <div class="note" id="elProg"></div>
+  </div>
+ </div>
+ <div class="note" style="position:absolute;left:16px;bottom:10px;width:480px"><b>Try it:</b> Describe what you see first, then analyze, then interpret. Use the sentence stems to practice formal analysis.</div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+var st=document.getElementById('stage');
+function fit(){var s=Math.min(innerWidth/800,innerHeight/600);if(!isFinite(s)||s<=0)s=1;st.style.transform='scale('+s+')';st.style.left=Math.max(0,(innerWidth-800*s)/2)+'px';st.style.top=Math.max(0,(innerHeight-600*s)/2)+'px';}
+addEventListener('resize',fit);fit();
+var tabs=[].slice.call(document.querySelectorAll('.tabs button'));
+function show(id){tabs.forEach(function(b){var on=b.dataset.tab===id;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});[].forEach.call(document.querySelectorAll('.panel'),function(p){p.classList.toggle('on',p.id===id);});}
+tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab);});});
+show(tabs[0].dataset.tab);
+})();
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return [].slice.call((r||document).querySelectorAll(s));}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function svgPt(svg,e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+function rnd(a,b){return a+Math.random()*(b-a);}
+
+
+function mk(inner){return '<svg viewBox="0 0 200 150" width="100%" height="100%" role="img" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>';}
+var ART={
+ village:mk('<rect width="200" height="150" fill="#a9d6f5"/><circle cx="160" cy="30" r="16" fill="#ffd34d"/><path d="M0 100 Q60 70 120 95 T200 90 V150 H0Z" fill="#6bb36b"/><rect x="50" y="70" width="44" height="36" fill="#e8b48a"/><path d="M44 72 L72 48 L100 72Z" fill="#9b3d2e"/><rect x="66" y="88" width="12" height="18" fill="#5b3a29"/><rect x="56" y="80" width="8" height="8" fill="#a9d6f5"/><rect x="82" y="80" width="8" height="8" fill="#a9d6f5"/><rect x="148" y="88" width="7" height="32" fill="#6b4a2f"/><circle cx="151" cy="80" r="19" fill="#3f8f4a"/><circle cx="145" cy="74" r="7" fill="#58a860"/>'),
+ fruit:mk('<rect width="200" height="150" fill="#f3e6cf"/><rect y="100" width="200" height="50" fill="#b98a5e"/><ellipse cx="100" cy="114" rx="64" ry="10" fill="#0002"/><path d="M45 85 Q100 150 155 85Z" fill="#3b6ea5"/><ellipse cx="100" cy="85" rx="55" ry="9" fill="#5b8ec4"/><circle cx="78" cy="72" r="17" fill="#d63a2f"/><circle cx="72" cy="66" r="5" fill="#fff6"/><rect x="77" y="52" width="2" height="8" fill="#4a3320"/><circle cx="114" cy="70" r="18" fill="#e9a62b"/><circle cx="108" cy="63" r="5" fill="#fff6"/><path d="M122 82 Q152 62 160 78 Q148 80 124 90Z" fill="#f2d649"/><ellipse cx="98" cy="64" rx="9" ry="7" fill="#7bb04a"/>'),
+ tree:mk('<rect width="200" height="150" fill="#f4e9d4"/><circle cx="156" cy="32" r="18" fill="#e4572e"/><rect x="94" y="104" width="12" height="36" fill="#5b3a29"/><path d="M100 26 L136 68 H64Z" fill="#1f7a8c"/><path d="M100 48 L144 92 H56Z" fill="#2a9d8f"/><path d="M100 70 L152 114 H48Z" fill="#43b8a6"/><rect y="138" width="200" height="12" fill="#d9c7a3"/>'),
+ city:(function(){var r='<rect width="200" height="150" fill="#2b2d5a"/><circle cx="100" cy="58" r="36" fill="#f9a03f"/>';var b=[[8,72,34,78,'#e4572e'],[38,48,30,102,'#7a4aa0'],[64,86,42,64,'#1f7a8c'],[102,38,28,112,'#f4d35e'],[126,76,34,74,'#c1440e'],[156,58,36,92,'#3a86c8']];b.forEach(function(q){r+='<rect x="'+q[0]+'" y="'+q[1]+'" width="'+q[2]+'" height="'+q[3]+'" fill="'+q[4]+'"/>';for(var y=q[1]+8;y<146;y+=16){for(var x=q[0]+6;x<q[0]+q[2]-6;x+=11){r+='<rect x="'+x+'" y="'+y+'" width="5" height="7" fill="#fff4b8" opacity=".75"/>';}}});return mk(r);})(),
+ color:mk('<rect width="200" height="150" fill="#1b2a49"/><rect x="22" y="14" width="156" height="122" fill="#e4572e"/><rect x="44" y="28" width="112" height="94" fill="#f7c873"/><rect x="64" y="42" width="72" height="66" fill="#2a9d8f"/><rect x="82" y="56" width="36" height="38" fill="#faf6ef"/><rect x="94" y="66" width="12" height="18" fill="#6b3f69"/>'),
+ lines:(function(){var r='<rect width="200" height="150" fill="#1d1d2e"/>';r+='<path d="M10 120 C50 20 90 140 130 40 S190 100 192 20" stroke="#f7c873" stroke-width="3" fill="none"/><path d="M0 70 C40 100 80 10 120 80 S170 130 200 60" stroke="#e4572e" stroke-width="2.5" fill="none"/><path d="M20 20 L60 50 L30 80Z" fill="#2a9d8f"/><circle cx="150" cy="105" r="22" fill="none" stroke="#fff" stroke-width="3"/><circle cx="150" cy="105" r="8" fill="#e4572e"/><circle cx="60" cy="110" r="6" fill="#f7c873"/><circle cx="88" cy="30" r="4" fill="#fff"/><circle cx="110" cy="124" r="4" fill="#2a9d8f"/><path d="M20 135 H80 M20 142 H60" stroke="#6b3f69" stroke-width="3"/>';return mk(r);})()
+};
+var ITEMS=[
+ {art:'village',t:'Village Hillside',cat:'rep',why:'You can recognize a house, a sun and a tree as they look in the visible world. That is representational art.'},
+ {art:'fruit',t:'Still Life with Fruit',cat:'rep',why:'A bowl and fruit are shown with realistic color and shape. That is representational art.'},
+ {art:'tree',t:'Tree in Triangles',cat:'abs',why:'A tree is still recognizable, but it has been simplified into geometric shapes. Simplifying or altering a subject is abstraction.'},
+ {art:'city',t:'City in Blocks',cat:'abs',why:'The skyline and sun are simplified into flat blocks and bold color. The subject is still hinted at, so it is abstract.'},
+ {art:'color',t:'Nested Squares',cat:'non',why:'There is no recognizable subject. The artist explores color and shape for their own sake: nonrepresentational art.'},
+ {art:'lines',t:'Lines in Motion',cat:'non',why:'Line, shape and color move across the page without depicting anything from the visible world: nonrepresentational art.'}
+];
+var CATS=[['rep','Representational'],['abs','Abstract'],['non','Nonrepresentational']];
+var order=shuffle(ITEMS.slice()),idx=0,score=0,done=false;
+function sortRender(){
+  if(idx>=order.length){
+    $('#sortArt').innerHTML=mk('<rect width="200" height="150" fill="#fdf3e1"/><circle cx="100" cy="60" r="34" fill="#f7c873"/><path d="M82 60 l14 14 l26 -30" stroke="#2a7f4a" stroke-width="8" fill="none" stroke-linecap="round"/><text x="100" y="124" text-anchor="middle" font-size="14" font-weight="700" fill="#2b2a33">All sorted!</text>');
+    $('#sortTitle').textContent='';$('#sortBtns').innerHTML='<button class="btn" id="again">Play again</button>';
+    $('#sortFb').className='fb good';$('#sortFb').textContent='You sorted '+score+' of '+order.length+' correctly. Remember: representational, abstract and nonrepresentational are points on a spectrum, so artists and viewers sometimes debate where a work lands.';
+    $('#again').onclick=function(){order=shuffle(ITEMS.slice());idx=0;score=0;sortRender();};
+    $('#sortNext').disabled=true;return;}
+  var it=order[idx];done=false;
+  $('#sortArt').innerHTML=ART[it.art];$('#sortTitle').textContent='“'+it.t+'” (illustration made for this activity)';
+  $('#sortProg').textContent=(idx+1)+' / '+order.length;$('#sortScore').textContent=score;
+  $('#sortBtns').innerHTML='';
+  CATS.forEach(function(c){var b=document.createElement('button');b.className='btn';b.textContent=c[1];b.onclick=function(){answer(c[0],b);};$('#sortBtns').appendChild(b);});
+  $('#sortFb').className='fb';$('#sortFb').textContent='Pick a category. Look first for a recognizable subject.';$('#sortNext').disabled=true;
+}
+function answer(c,btn){
+  if(done)return;var it=order[idx];
+  if(c===it.cat){done=true;score++;$('#sortScore').textContent=score;$('#sortFb').className='fb good';$('#sortFb').textContent='✓ Yes! '+it.why;$('#sortNext').disabled=false;btn.classList.add('on');}
+  else{$('#sortFb').className='fb try';$('#sortFb').textContent='Not quite. Ask: can I recognize a subject? Is it realistic or changed? Try another category.';btn.disabled=true;
+    if($$('#sortBtns .btn:not(:disabled)').length===1){done=true;$('#sortFb').textContent='The answer is '+CATS.filter(function(x){return x[0]===it.cat;})[0][1]+'. '+it.why;$('#sortNext').disabled=false;}}
+}
+$('#sortNext').onclick=function(){idx++;sortRender();};
+sortRender();
+
+/* ---------- Elements Detective ---------- */
+(function(){
+var s='<svg viewBox="0 0 480 360" width="480" height="360" id="elSvg" role="img" aria-label="A landscape painting used to find the elements of art and principles of design"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6a85f"/><stop offset="1" stop-color="#fde8c0"/></linearGradient><radialGradient id="ball" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fbe3c8"/><stop offset=".55" stop-color="#c8553d"/><stop offset="1" stop-color="#5e241a"/></radialGradient></defs>';
+s+='<rect width="480" height="360" fill="url(#sky)"/><circle cx="350" cy="95" r="46" fill="#e4572e"/><circle cx="350" cy="95" r="30" fill="#f7c873"/>';
+s+='<path d="M0 190 Q80 150 170 185 T340 175 T480 180 V270 H0Z" fill="#d7b6c4"/><path d="M0 232 Q110 182 230 226 T480 216 V310 H0Z" fill="#8d5a7a"/><path d="M0 285 Q140 238 300 272 T480 262 V360 H0Z" fill="#4a2c4f"/>';
+s+='<rect x="120" y="192" width="40" height="32" fill="#f3e3c3"/><path d="M114 194 L140 168 L166 194Z" fill="#c8553d"/><rect x="134" y="206" width="12" height="18" fill="#4a2c4f"/>';
+[200,232,264,296].forEach(function(x){s+='<rect x="'+(x-2)+'" y="214" width="4" height="12" fill="#4a3320"/><path d="M'+x+' 184 l14 34 h-28z" fill="#2f5d50"/>';});
+s+='<path d="M250 360 C228 322 300 302 272 274 S334 252 322 232" stroke="#8ed1e6" stroke-width="11" fill="none" stroke-linecap="round"/>';
+for(var i=0;i<46;i++){var x=14+(i%12)*9+Math.floor(i/12)*3,y=318+Math.floor(i/12)*10;s+='<path d="M'+x+' '+y+' l5 -9" stroke="#b98fc2" stroke-width="1.4"/>';}
+s+='<circle cx="104" cy="316" r="27" fill="url(#ball)"/><g id="hl"></g></svg>';
+$('#elArt').innerHTML=s;
+var EL=[
+ {id:'line',n:'Line',d:'A mark that moves through space. It can be thick or thin, straight or curved, and it can show edges and direction.',l:'The curving river is a line that leads your eye through the painting.',sh:[[285,300,55,52]],stem:'The line of the river ____.'},
+ {id:'color',n:'Color',d:'The hue, brightness and intensity of what we see. Color sets mood and draws attention.',l:'Warm orange and gold in the sun against cool, dark purples.',sh:[[350,95,56,56]],stem:'The artist uses warm colors to ____.'},
+ {id:'value',n:'Value',d:'How light or dark something is. Changes in value create depth, drama and the look of volume.',l:'The far hills are pale; the near hill is very dark.',sh:[[330,250,160,70]],stem:'The dark values in the foreground make me feel ____.'},
+ {id:'space',n:'Space',d:'The area around, between and within things. Artists suggest depth with overlap, size and position.',l:'Hills overlap, and small distant trees seem farther away.',sh:[[240,215,100,36]],stem:'I can tell something is far away because ____.'},
+ {id:'texture',n:'Texture',d:'How a surface feels, or looks like it would feel. It can be real or implied.',l:'Short hatching marks suggest rough grass.',sh:[[62,330,56,26]],stem:'The marks in the grass make it look ____.'},
+ {id:'shape',n:'Shape',d:'A flat area enclosed by line, color or value. Shapes can be geometric or organic.',l:'The house is a square topped by a triangle.',sh:[[140,196,44,34]],stem:'The shapes I see most are ____.'},
+ {id:'form',n:'Form',d:'A shape that looks three-dimensional, with height, width and depth. Shading helps make form.',l:'The boulder looks round because its shading goes from light to dark.',sh:[[104,316,32,32]],stem:'The shading makes this object look ____.'}
+];
+var PR=[
+ {id:'balance',n:'Balance',d:'How visual weight is distributed. Balance can be symmetrical or asymmetrical.',l:'The house on the left and the large sun on the right balance each other.',sh:[[140,196,44,36],[350,95,56,56]],stem:'The painting feels balanced because ____.'},
+ {id:'emphasis',n:'Emphasis',d:'The part of a work that grabs your attention first, often through contrast, size or color.',l:'The bright sun is the focal point.',sh:[[350,95,56,56]],stem:'My eye goes first to ____ because ____.'},
+ {id:'movement',n:'Movement',d:'The way the eye travels through a work, guided by lines, shapes and edges.',l:'The river leads you from the foreground up into the hills.',sh:[[285,300,55,52]],stem:'My eye moves from ____ to ____.'},
+ {id:'pattern',n:'Pattern',d:'A design made by repeating an element in a planned way.',l:'A row of trees repeats the same triangle shape.',sh:[[248,205,62,32]],stem:'The pattern is made by repeating ____.'},
+ {id:'repetition',n:'Repetition',d:'Using the same element more than once to create unity or rhythm.',l:'Repeated hill curves and triangle trees echo each other.',sh:[[248,205,62,32],[240,240,225,22]],stem:'The repeated ____ help the painting feel ____.'},
+ {id:'proportion',n:'Proportion',d:'The size relationship between parts of a work, or between a part and the whole.',l:'The house is small compared to the sun and the hills.',sh:[[140,196,44,36],[350,95,56,56]],stem:'The proportion of ____ to ____ makes me feel ____.'},
+ {id:'rhythm',n:'Rhythm',d:'A visual beat created by repeated elements with intervals between them.',l:'Hills rise and fall like waves; trees pop up at regular intervals.',sh:[[240,240,225,22],[248,205,62,32]],stem:'The rhythm of the ____ feels ____.'},
+ {id:'variety',n:'Variety',d:'Using different elements to hold interest.',l:'Round, triangular and square shapes; smooth and hatched textures.',sh:[[140,196,44,36],[104,316,32,32],[248,205,62,32],[62,330,56,26]],stem:'Variety shows up in the different ____.'},
+ {id:'unity',n:'Unity',d:'The sense that all parts belong together.',l:'A limited warm and purple palette ties everything together.',sh:[[240,180,236,176]],stem:'The painting feels unified because ____.'}
+];
+var mode='E',found={E:{},P:{}};
+function chips(){
+  var L=mode==='E'?EL:PR;var box=$('#elChips');box.innerHTML='';
+  L.forEach(function(o){var b=document.createElement('button');b.className='chip'+(found[mode][o.id]?' done':'');b.textContent=o.n;b.onclick=function(){pick(o,b);};box.appendChild(b);});
+  prog();$('#hl').innerHTML='';
+  $('#elName').textContent=mode==='E'?'Elements of art':'Principles of design';
+  $('#elDef').textContent=mode==='E'?'The building blocks artists use. Choose one to see where it appears.':'The strategies artists use to organize the elements. Choose one to see where it appears.';
+  $('#elLook').textContent='';
+}
+function prog(){var L=mode==='E'?EL:PR;var n=Object.keys(found[mode]).length;$('#elProg').textContent='Found '+n+' of '+L.length+(n===L.length?' — great detective work!':'');}
+function pick(o,b){
+  $$('#elChips .chip').forEach(function(c){c.classList.remove('on');});b.classList.add('on');
+  found[mode][o.id]=1;b.classList.add('done');
+  $('#elName').textContent=o.n;$('#elDef').textContent=o.d;$('#elLook').innerHTML='<b>Look for it:</b> '+o.l+'<br><b>Sentence stem:</b> <i>'+o.stem+'</i>';
+  var h='';o.sh.forEach(function(e){h+='<ellipse class="pulse" cx="'+e[0]+'" cy="'+e[1]+'" rx="'+e[2]+'" ry="'+e[3]+'"/>';});$('#hl').innerHTML=h;prog();
+}
+$('#modeE').onclick=function(){mode='E';$('#modeE').classList.add('on');$('#modeP').classList.remove('on');chips();};
+$('#modeP').onclick=function(){mode='P';$('#modeP').classList.add('on');$('#modeE').classList.remove('on');chips();};
+chips();
+})();
+</script>
+</body></html>

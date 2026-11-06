@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drawing and Printmaking</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#faf6ef;font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;color:#2b2a33;-webkit-text-size-adjust:100%}
+#stage{position:absolute;left:0;top:0;width:800px;height:600px;transform-origin:0 0;display:flex;flex-direction:column;background:#faf6ef;overflow:hidden}
+header{height:62px;flex:none;display:flex;align-items:center;gap:12px;padding:0 0 0 18px;background:var(--hd);color:#fff;overflow:hidden}
+header .ttl{flex:1;min-width:0}
+header h1{font-size:19px;margin:2px 0 0;line-height:1.15;font-weight:700}
+.wk{display:inline-block;background:rgba(255,255,255,.22);padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+header svg.hero{flex:none;display:block}
+nav.tabs{display:flex;gap:6px;padding:8px 14px 0;flex:none;border-bottom:3px solid var(--ac)}
+nav.tabs button{font:inherit;font-size:13.5px;font-weight:600;padding:8px 14px;border:2px solid #e3d8c4;border-bottom:none;border-radius:10px 10px 0 0;background:#f0e8d8;color:#5a5666;cursor:pointer}
+nav.tabs button:hover{background:#fff}
+nav.tabs button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;padding:12px 16px;display:none}
+.panel.on{display:block}
+.row{display:flex}
+.card{background:#fff;border:1px solid #e6dccb;border-radius:12px;box-shadow:0 2px 6px rgba(60,40,20,.08)}
+h2{font-size:16px;margin:0 0 4px}
+h3{font-size:13px;margin:0 0 5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac)}
+.note{font-size:13px;color:#55525e;line-height:1.4}
+.btn{font:inherit;font-size:13px;font-weight:600;padding:6px 12px;min-height:32px;border-radius:8px;border:2px solid var(--ac);background:#fff;color:var(--ac);cursor:pointer;line-height:1.2}
+.btn:hover:not(:disabled){background:var(--ac);color:#fff}
+.btn.on{background:var(--ac);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,nav.tabs button:focus-visible,.chip:focus-visible{outline:3px solid #1b6ec2;outline-offset:2px}
+.chip{font:inherit;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:99px;border:2px solid var(--ac);background:#fff;color:#2b2a33;cursor:pointer}
+.chip:hover{background:#f3ead9}
+.chip.on{background:var(--ac);color:#fff}
+.chip.done::after{content:" ✓"}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.fb{min-height:54px;padding:8px 10px;border-radius:10px;font-size:13px;line-height:1.4;background:#f3ead9}
+.fb.good{background:#dff3e3;border:1px solid #8cc99a}
+.fb.try{background:#fdeacc;border:1px solid #e5b56b}
+.stack{display:flex;flex-direction:column;gap:6px}
+.stack .btn{text-align:left}
+svg{display:block;user-select:none;-webkit-user-select:none}
+canvas{user-select:none;-webkit-user-select:none}
+@keyframes dash{to{stroke-dashoffset:-18}}
+.pulse{stroke:#fff;stroke-width:3;stroke-dasharray:6 5;fill:rgba(255,255,255,.18);animation:dash 1s linear infinite;filter:drop-shadow(0 0 2px #000)}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+
+.stp{flex:1;text-align:center;font-size:11.5px;font-weight:700;padding:5px 2px;border-radius:8px;background:#efe6d6;color:#6a6573;border:2px solid transparent}
+.stp.on{background:var(--ac);color:#fff}
+.stp.ok{background:#dff3e3;color:#2a7a43;border-color:#8cc99a}
+.pd{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #cfc4b0;cursor:pointer;padding:0}
+.pd.on{box-shadow:0 0 0 3px var(--ac)}
+.gt{width:84px;height:84px;border:2px solid #e3d8c4;border-radius:6px;display:block}
+</style></head>
+<body>
+<div id="stage" style="--ac:#6b3f69;--hd:#4a2c5e">
+<header><div class="ttl"><span class="wk">Week 4</span><h1>Drawing and Printmaking</h1></div><svg class="hero" width="250" height="62" viewBox="0 0 250 62" aria-hidden="true">
+<rect x="150" y="10" width="40" height="42" rx="4" fill="#ffffffcc"/><path d="M158 44 C164 20 176 20 182 44" stroke="#6b3f69" stroke-width="3" fill="none"/>
+<rect x="198" y="10" width="40" height="42" rx="4" fill="#e4572e"/><path d="M206 44 C212 20 224 20 230 44" stroke="#ffffffcc" stroke-width="3" fill="none"/>
+<path d="M120 54 L136 20 L142 24 L126 58Z" fill="#f7c873"/></svg></header>
+<nav class="tabs" role="tablist"><button role="tab" data-tab="p-print" aria-selected="false">1 · Print Studio</button><button role="tab" data-tab="p-shade" aria-selected="false">2 · Shade the Forms</button><button role="tab" data-tab="p-persp" aria-selected="false">3 · One-Point Perspective</button></nav>
+<main>
+<section class="panel" id="p-print" aria-label="Print studio">
+ <div class="row" style="gap:10px;align-items:flex-start">
+  <div style="width:252px;flex:none"><h3>Plate</h3>
+   <div class="card" style="padding:2px;width:256px;height:256px"><canvas id="plate" width="500" height="500" style="width:250px;height:250px;touch-action:none;cursor:crosshair;display:block"></canvas></div></div>
+  <div style="width:72px;flex:none;padding-top:100px;text-align:center">
+   <button class="btn" id="press" style="width:70px;padding:6px 2px" disabled>Press &amp; peel</button>
+   <svg width="60" height="24" viewBox="0 0 60 24" style="margin:8px auto"><path d="M4 12 H46 M36 4 L48 12 L36 20" stroke="#6b3f69" stroke-width="3" fill="none"/></svg>
+   <div class="note" style="font-size:11px">flip &amp; press</div></div>
+  <div style="width:252px;flex:none"><h3>Paper</h3>
+   <div class="card" style="padding:2px;width:256px;height:256px"><canvas id="paper" width="500" height="500" style="width:250px;height:250px;display:block"></canvas></div></div>
+  <div style="flex:1;min-width:0"><h3>My prints</h3><div id="gal" style="display:flex;flex-direction:column;gap:6px"></div><div class="note" id="galN" style="margin-top:4px"></div></div>
+ </div>
+ <div class="row" style="gap:12px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+  <div><h3>Plate shape</h3><div class="row" style="gap:5px"><button class="chip on" data-sh="circle">Circle</button><button class="chip" data-sh="square">Square</button></div></div>
+  <div><h3>Line</h3><div class="row" style="gap:5px"><button class="chip on" data-w="6">Fine</button><button class="chip" data-w="14">Bold</button></div></div>
+  <div><h3>Paint</h3><div id="paints" class="row" style="gap:5px"></div></div>
+  <div class="row" style="gap:5px"><button class="btn" id="roll">🖌 Apply paint</button><button class="btn" id="wipe">Redraw plate</button></div>
+ </div>
+ <div id="steps" class="row" style="gap:4px;margin-top:8px"></div>
+ <div class="note" id="stepTxt" style="margin-top:4px;min-height:34px"></div>
+</section>
+
+<section class="panel" id="p-shade" aria-label="Shade the forms">
+ <div class="row" style="gap:12px;height:100%">
+  <div class="card" style="width:500px;height:360px;padding:2px;flex:none"><svg id="forms" viewBox="0 0 500 360" width="496" height="356" role="img" aria-label="A sphere, cylinder and cube shaded by a light you can move"></svg></div>
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+   <h3>Move the light</h3>
+   <input type="range" id="ang" min="0" max="360" value="45" style="width:100%" aria-label="Light direction">
+   <div class="note" id="angTxt"></div>
+   <div class="row" style="gap:5px;flex-wrap:wrap"><button class="chip on" id="tCont">Contour lines</button><button class="chip on" id="tShad">Cast shadows</button></div>
+   <div class="card" style="padding:8px"><h3>Value scale</h3>
+    <div class="row" id="scale" style="height:20px;border-radius:5px;overflow:hidden"></div>
+    <div class="row" style="justify-content:space-between;font-size:11px;margin-top:2px"><span>highlight</span><span>core shadow</span></div></div>
+   <div class="note"><b>Drawing is seeing.</b> Contour lines wrap around a form and show its shape. Shading shows which way it faces the light. Practice at least one shape technique and one shading technique in every drawing.</div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="p-persp" aria-label="One-point perspective">
+ <div class="row" style="gap:12px;height:100%">
+  <div class="card" style="width:500px;height:400px;padding:2px;flex:none"><svg id="ps" viewBox="0 0 500 400" width="496" height="396" style="touch-action:none" role="img" aria-label="Street scene in one-point perspective with a draggable vanishing point"></svg></div>
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+   <h3>Drag the red dot</h3>
+   <div class="note">That is the <b>vanishing point</b>. Receding lines (orthogonals) all aim at it. It sits on the <b>horizon line</b>, at the viewer’s eye level.</div>
+   <div class="row" style="gap:5px;flex-wrap:wrap"><button class="chip" data-v="70">Bird’s-eye</button><button class="chip on" data-v="200">Eye level</button><button class="chip" data-v="330">Worm’s-eye</button></div>
+   <button class="chip on" id="tOrth" style="align-self:flex-start">Guide lines: on</button>
+   <div id="pTxt" class="fb" aria-live="polite"></div>
+  </div>
+ </div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+var st=document.getElementById('stage');
+function fit(){var s=Math.min(innerWidth/800,innerHeight/600);if(!isFinite(s)||s<=0)s=1;st.style.transform='scale('+s+')';st.style.left=Math.max(0,(innerWidth-800*s)/2)+'px';st.style.top=Math.max(0,(innerHeight-600*s)/2)+'px';}
+addEventListener('resize',fit);fit();
+var tabs=[].slice.call(document.querySelectorAll('.tabs button'));
+function show(id){tabs.forEach(function(b){var on=b.dataset.tab===id;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});[].forEach.call(document.querySelectorAll('.panel'),function(p){p.classList.toggle('on',p.id===id);});}
+tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab);});});
+show(tabs[0].dataset.tab);
+})();
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return [].slice.call((r||document).querySelectorAll(s));}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function svgPt(svg,e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+function rnd(a,b){return a+Math.random()*(b-a);}
+
+
+/* ---------- Print studio ---------- */
+var plate=$('#plate'),pc=plate.getContext('2d'),paper=$('#paper'),qc=paper.getContext('2d');
+var strokes=[],cur=null,shape='circle',lw=6,color='#c8553d',painted=false,prints=0,drew=false;
+var COLS=['#c8553d','#1d4e89','#2d6a4f','#6b3f69','#1b1b1b'];
+var STEPS=['Cut the plate','Draw with a dull pencil','Mix your paint','Apply paint thinly','Press down firmly','Peel up to reveal'];
+var STEXT=[
+ 'Step 1 — Cut out the center of a styrofoam plate. It can be a circle or a square. Choose a shape.',
+ 'Step 2 — Use a dull pencil to draw a scene on the cutout, filling the whole surface. Press firmly to make grooves. Draw on the plate!',
+ 'Step 3 — Mix the color you want. If paint is thick, add water. Choose a paint color.',
+ 'Step 4 — Spread paint across the plate thinly and evenly. Click “Apply paint”.',
+ 'Step 5 — Turn the plate over and press it onto the paper firmly and evenly. Click “Press & peel”.',
+ 'Step 6 — Peel up the plate. Your drawing is now a print — and it is a mirror image! Change colors and print again.'
+];
+var step=0;
+function paths(ctx,mirror,S){ctx.lineCap='round';ctx.lineJoin='round';strokes.forEach(function(s){ctx.lineWidth=s.w*(S||1);ctx.beginPath();s.p.forEach(function(q,i){var x=mirror?500-q[0]:q[0];i?ctx.lineTo(x,q[1]):ctx.moveTo(x,q[1]);});if(s.p.length===1)ctx.lineTo((mirror?500-s.p[0][0]:s.p[0][0])+.1,s.p[0][1]);ctx.stroke();});}
+function clip(ctx){ctx.beginPath();if(shape==='circle')ctx.arc(250,250,230,0,6.2832);else ctx.rect(20,20,460,460);ctx.clip();}
+function drawPlate(){
+  pc.clearRect(0,0,500,500);pc.fillStyle='#faf6ef';pc.fillRect(0,0,500,500);
+  pc.save();clip(pc);pc.fillStyle=painted?color:'#e5f1ec';pc.fillRect(0,0,500,500);
+  if(!painted){for(var i=0;i<900;i++){pc.fillStyle='rgba(255,255,255,'+(Math.random()*.5)+')';pc.fillRect(Math.random()*500,Math.random()*500,2,2);}}
+  else{for(var j=0;j<500;j++){pc.fillStyle='rgba(255,255,255,'+(Math.random()*.18)+')';pc.fillRect(Math.random()*500,Math.random()*500,3,1);}}
+  pc.strokeStyle=painted?'#e5f1ec':'#7ba89a';paths(pc,false);
+  if(!painted){pc.strokeStyle='rgba(255,255,255,.9)';pc.translate(2,2);paths(pc,false,.35);}
+  pc.restore();pc.strokeStyle='#b9ad98';pc.lineWidth=3;pc.beginPath();if(shape==='circle')pc.arc(250,250,230,0,6.2832);else pc.rect(20,20,460,460);pc.stroke();
+}
+function emptyPaper(){qc.fillStyle='#fffdf8';qc.fillRect(0,0,500,500);for(var i=0;i<700;i++){qc.fillStyle='rgba(120,100,70,'+(Math.random()*.06)+')';qc.fillRect(Math.random()*500,Math.random()*500,2,2);}
+  qc.fillStyle='#b9ad98';qc.font='bold 22px Segoe UI,Arial';qc.textAlign='center';qc.fillText('Your print will appear here',250,255);}
+function setStep(n){step=n;var h='';STEPS.forEach(function(s,i){h+='<div class="stp'+(i<n?' ok':i===n?' on':'')+'">'+(i+1)+'. '+s+'</div>';});$('#steps').innerHTML=h;$('#stepTxt').textContent=STEXT[Math.min(n,5)];}
+function ptr(e){var r=plate.getBoundingClientRect();return [(e.clientX-r.left)*500/r.width,(e.clientY-r.top)*500/r.height];}
+plate.addEventListener('pointerdown',function(e){if(painted)return;plate.setPointerCapture(e.pointerId);cur={w:lw,p:[ptr(e)]};strokes.push(cur);drawPlate();
+  function mv(ev){cur.p.push(ptr(ev));drawPlate();}
+  function up(){plate.removeEventListener('pointermove',mv);plate.removeEventListener('pointerup',up);plate.removeEventListener('pointercancel',up);if(!drew){drew=true;if(step<2)setStep(2);}checkPress();}
+  plate.addEventListener('pointermove',mv);plate.addEventListener('pointerup',up);plate.addEventListener('pointercancel',up);});
+function checkPress(){$('#press').disabled=!painted;}
+$$('[data-sh]').forEach(function(b){b.onclick=function(){shape=b.dataset.sh;$$('[data-sh]').forEach(function(x){x.classList.toggle('on',x===b);});painted=false;checkPress();drawPlate();if(step===0)setStep(1);};});
+$$('[data-w]').forEach(function(b){b.onclick=function(){lw=+b.dataset.w;$$('[data-w]').forEach(function(x){x.classList.toggle('on',x===b);});};});
+(function(){var p=$('#paints');COLS.forEach(function(c,i){var b=document.createElement('button');b.className='pd'+(i===0?' on':'');b.style.background=c;b.setAttribute('aria-label','Paint color '+(i+1));b.onclick=function(){color=c;$$('.pd').forEach(function(x){x.classList.remove('on');});b.classList.add('on');if(painted)drawPlate();if(step===2)setStep(3);};p.appendChild(b);});})();
+$('#roll').onclick=function(){if(!strokes.length){$('#stepTxt').textContent='Draw something on the plate first (step 2)!';return;}painted=true;drawPlate();setStep(4);checkPress();};
+$('#wipe').onclick=function(){strokes=[];painted=false;drew=false;drawPlate();setStep(1);checkPress();};
+$('#press').onclick=function(){
+  if(!painted)return;prints++;var c=color,t0=null;
+  var snap=document.createElement('canvas');snap.width=snap.height=500;var sx=snap.getContext('2d');
+  sx.save();(function(){sx.beginPath();if(shape==='circle')sx.arc(250,250,230,0,6.2832);else sx.rect(20,20,460,460);sx.clip();})();
+  sx.fillStyle=c;sx.fillRect(0,0,500,500);sx.strokeStyle='#fffdf8';paths(sx,true);
+  for(var i=0;i<1500;i++){sx.fillStyle='rgba(255,253,248,'+(Math.random()*.5)+')';sx.fillRect(Math.random()*500,Math.random()*500,2+Math.random()*3,1+Math.random()*2);}sx.restore();
+  setStep(5);
+  function frame(ts){if(!t0)t0=ts;var a=Math.min(1,(ts-t0)/550);emptyPaper();qc.globalAlpha=a;qc.drawImage(snap,0,0);qc.globalAlpha=1;if(a<1)requestAnimationFrame(frame);else done();}
+  function done(){var t=document.createElement('canvas');t.width=t.height=84;t.className='gt';t.getContext('2d').drawImage(paper,0,0,84,84);var g=$('#gal');g.insertBefore(t,g.firstChild);while(g.children.length>3)g.removeChild(g.lastChild);
+    $('#galN').textContent=prints+' print'+(prints>1?'s':'')+' from one drawing. Notice the mirror image!';painted=false;drawPlate();checkPress();$('#stepTxt').textContent=STEXT[5];}
+  requestAnimationFrame(frame);
+};
+drawPlate();emptyPaper();setStep(0);
+
+/* ---------- Shade the forms ---------- */
+(function(){
+var svg=$('#forms'),cont=true,shad=true;
+function hsl(l){return 'hsl(28,14%,'+Math.max(10,Math.min(96,l)).toFixed(0)+'%)';}
+function render(){
+  var a=+$('#ang').value*Math.PI/180,cx=Math.cos(a),cy=-Math.sin(a);
+  var dir=Math.abs(cx)<.3?(cy>0?'from the top':'from below'):(cx>0?'from the right':'from the left');
+  $('#angTxt').textContent='Light comes '+dir+'. The side facing the light is the brightest; the opposite side holds the core shadow.';
+  var h='<defs>';
+  h+='<radialGradient id="sg" cx="'+(0.5+cx*0.22).toFixed(2)+'" cy="'+(0.5+cy*0.22+(-0.12)).toFixed(2)+'" r=".78"><stop offset="0" stop-color="'+hsl(94)+'"/><stop offset=".45" stop-color="'+hsl(66)+'"/><stop offset=".85" stop-color="'+hsl(28)+'"/><stop offset="1" stop-color="'+hsl(16)+'"/></radialGradient>';
+  var hp=Math.max(.1,Math.min(.9,.5+cx*.38)).toFixed(2);
+  h+='<linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="'+hsl(cx<0?90:20)+'"/><stop offset="'+hp+'" stop-color="'+hsl(78)+'"/><stop offset="1" stop-color="'+hsl(cx>0?90:20)+'"/></linearGradient>';
+  h+='<linearGradient id="cg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="'+hsl(cx<0?92:22)+'"/><stop offset="'+hp+'" stop-color="'+hsl(70)+'"/><stop offset="1" stop-color="'+hsl(cx>0?92:22)+'"/></linearGradient></defs>';
+  h+='<rect width="500" height="360" fill="#f6efe2"/><path d="M0 285 H500" stroke="#d9ccb6" stroke-width="2"/>';
+  var sh=shad?'<ellipse cx="'+(-cx*38)+'" cy="12" rx="'+(52+Math.abs(cx)*26)+'" ry="13" fill="#2b2233" opacity=".25"/>':'';
+  /* sphere */
+  h+='<g transform="translate(95,215)">'+(shad?sh.replace('cy="12"','cy="68"').replace(/rx="\d+(\.\d+)?"/,'rx="60"'):'')+'<circle r="62" fill="url(#sg)"/>';
+  if(cont)h+='<g fill="none" stroke="#2b2233" stroke-opacity=".35" stroke-width="1.4"><ellipse rx="62" ry="18"/><ellipse rx="62" ry="40"/><ellipse rx="22" ry="62"/><ellipse rx="46" ry="62"/></g>';
+  h+='</g>';
+  /* cylinder */
+  h+='<g transform="translate(255,215)">'+(shad?'<ellipse cx="'+(-cx*40)+'" cy="73" rx="'+(46+Math.abs(cx)*20)+'" ry="10" fill="#2b2233" opacity=".25"/>':'')+'<path d="M-44 -62 V62 A44 14 0 0 0 44 62 V-62Z" fill="url(#cg)"/><ellipse cy="-62" rx="44" ry="14" fill="'+hsl(cy>0?96:80)+'"/>';
+  if(cont)h+='<g fill="none" stroke="#2b2233" stroke-opacity=".35" stroke-width="1.4"><path d="M-44 -30 A44 14 0 0 0 44 -30"/><path d="M-44 0 A44 14 0 0 0 44 0"/><path d="M-44 30 A44 14 0 0 0 44 30"/></g>';
+  h+='</g>';
+  /* cube */
+  var top=hsl(88),lf=hsl(60-cx*28),rt=hsl(60+cx*28);
+  h+='<g transform="translate(405,215)">'+(shad?'<path d="M-50 70 L'+(-cx*70-10)+' 92 L'+(50)+' 70 L'+(cx*10)+' 56Z" fill="#2b2233" opacity=".22"/>':'')+'<path d="M0 -62 L50 -34 L0 -6 L-50 -34Z" fill="'+top+'"/><path d="M-50 -34 L0 -6 V58 L-50 30Z" fill="'+lf+'"/><path d="M50 -34 L0 -6 V58 L50 30Z" fill="'+rt+'"/>';
+  if(cont)h+='<g fill="none" stroke="#2b2233" stroke-opacity=".5" stroke-width="1.6"><path d="M0 -62 L50 -34 L0 -6 L-50 -34Z"/><path d="M-50 -34 V30 L0 58 L50 30 V-34"/><path d="M0 -6 V58"/></g>';
+  h+='</g>';
+  /* sun */
+  h+='<g transform="translate('+(250+cx*215)+','+(150+cy*120)+')"><circle r="16" fill="#f7c873" stroke="#e08a1e" stroke-width="3"/><g stroke="#e08a1e" stroke-width="3"><path d="M0 -24 V-30 M0 24 V30 M-24 0 H-30 M24 0 H30"/></g></g>';
+  h+='<text x="95" y="345" text-anchor="middle" font-size="14" fill="#55525e">Sphere</text><text x="255" y="345" text-anchor="middle" font-size="14" fill="#55525e">Cylinder</text><text x="405" y="345" text-anchor="middle" font-size="14" fill="#55525e">Cube</text>';
+  svg.innerHTML=h;
+}
+$('#ang').oninput=render;
+$('#tCont').onclick=function(){cont=!cont;this.classList.toggle('on',cont);render();};
+$('#tShad').onclick=function(){shad=!shad;this.classList.toggle('on',shad);render();};
+var sc='';[96,80,62,46,30,16].forEach(function(l){sc+='<div style="flex:1;background:'+hsl(l)+'"></div>';});$('#scale').innerHTML=sc;
+render();
+})();
+
+/* ---------- One-point perspective ---------- */
+(function(){
+var ps=$('#ps'),vp={x:250,y:200},guides=true;
+var BOX=[[24,100,120,252,.62,'#d9b38c'],[154,214,56,138,.34,'#c2a07a'],[356,120,120,232,.58,'#8fb8c9'],[290,230,56,122,.32,'#7ea3b5'],[210,258,80,94,.18,'#e4c76f']];
+function lerp(a,b,t){return a+(b-a)*t;}
+function box(b){
+  var x=b[0],y=b[1],w=b[2],h=b[3],d=b[4];
+  var C=[[x,y],[x+w,y],[x+w,y+h],[x,y+h]];
+  var B=C.map(function(c){return [lerp(c[0],vp.x,d),lerp(c[1],vp.y,d)];});
+  var s='<polygon points="'+B.map(function(p){return p.join(',');}).join(' ')+'" fill="'+b[5]+'" stroke="#2b2233" stroke-width="1.6"/>';
+  for(var i=0;i<4;i++){var j=(i+1)%4;var f=[C[i],C[j],B[j],B[i]];var shade=i%2?0.82:0.68;
+    s+='<polygon points="'+f.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'" fill="'+b[5]+'" stroke="#2b2233" stroke-width="1.6"/><polygon points="'+f.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'" fill="#2b2233" opacity="'+(1-shade)*0.6+'"/>';}
+  s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+b[5]+'" stroke="#2b2233" stroke-width="2"/>';
+  for(var wy=y+14;wy<y+h-20;wy+=28)for(var wx=x+10;wx<x+w-14;wx+=26)s+='<rect x="'+wx+'" y="'+wy+'" width="14" height="16" fill="#fdf3c8" stroke="#2b2233" stroke-width="1"/>';
+  return s;
+}
+function render(){
+  var h='<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ec5e8"/><stop offset="1" stop-color="#e9f4fa"/></linearGradient></defs>';
+  h+='<rect width="500" height="400" fill="url(#sk)"/>';
+  h+='<rect y="'+vp.y+'" width="500" height="'+(400-vp.y)+'" fill="#8cc272"/>';
+  h+='<polygon points="'+vp.x+','+vp.y+' 140,400 360,400" fill="#7d7d88"/>';
+  for(var t=.15;t<1;t+=.2){var a=t,b=t+.09;h+='<polygon points="'+[lerp(250,vp.x,1-a),lerp(400,vp.y,1-a)].join(',')+' '+[lerp(250,vp.x,1-b),lerp(400,vp.y,1-b)].join(',')+' '+[lerp(250,vp.x,1-b)+3*(1-b)*1,lerp(400,vp.y,1-b)].join(',')+' '+[lerp(250,vp.x,1-a)+3,lerp(400,vp.y,1-a)].join(',')+'" fill="#fff" opacity=".0"/>';}
+  var order=BOX.slice().sort(function(p,q){return (q[4]*q[2]*q[3])-(p[4]*p[2]*p[3]);});
+  BOX.slice().sort(function(p,q){return (p[2]*p[3])-(q[2]*q[3]);}).reverse().forEach(function(b){h+=box(b);});
+  h+='<line x1="0" y1="'+vp.y+'" x2="500" y2="'+vp.y+'" stroke="#2b2233" stroke-width="2" stroke-dasharray="8 5"/><text x="8" y="'+(vp.y-6)+'" font-size="12" font-weight="700" fill="#2b2233" stroke="#fff" stroke-width="3" paint-order="stroke">horizon line (eye level)</text>';
+  if(guides){var pts=[[0,0],[500,0],[0,400],[500,400],[0,150],[500,150],[0,330],[500,330],[140,400],[360,400],[250,0]];
+    pts.forEach(function(p){h+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+vp.x+'" y2="'+vp.y+'" stroke="#c0392b" stroke-width="1" opacity=".55" stroke-dasharray="4 4"/>';});}
+  h+='<circle id="vpd" cx="'+vp.x+'" cy="'+vp.y+'" r="11" fill="#e4572e" stroke="#fff" stroke-width="3" style="cursor:grab"/><circle cx="'+vp.x+'" cy="'+vp.y+'" r="4" fill="#fff"/><text x="'+(vp.x+16)+'" y="'+(vp.y+22)+'" font-size="12" font-weight="700" fill="#8a1d1d" stroke="#fff" stroke-width="3" paint-order="stroke">vanishing point</text>';
+  ps.innerHTML=h;
+  var m=vp.y<150?'Bird’s-eye view: the horizon is high, so you look down on the scene and see the tops of the buildings.':vp.y>280?'Worm’s-eye view: the horizon is low, so you look up and the buildings loom over you.':'Eye-level view: the horizon sits at the viewer’s eye height. Notice how every receding line points to the same spot.';
+  $('#pTxt').textContent=m;
+}
+var drag=false;
+ps.addEventListener('pointerdown',function(e){var p=svgPt(ps,e);if(Math.hypot(p.x-vp.x,p.y-vp.y)<28){drag=true;ps.setPointerCapture(e.pointerId);}});
+ps.addEventListener('pointermove',function(e){if(!drag)return;var p=svgPt(ps,e);vp.x=Math.max(30,Math.min(470,p.x));vp.y=Math.max(40,Math.min(360,p.y));$$('[data-v]').forEach(function(x){x.classList.remove('on');});render();});
+ps.addEventListener('pointerup',function(){drag=false;});ps.addEventListener('pointercancel',function(){drag=false;});
+$$('[data-v]').forEach(function(b){b.onclick=function(){vp.y=+b.dataset.v;$$('[data-v]').forEach(function(x){x.classList.toggle('on',x===b);});render();};});
+$('#tOrth').onclick=function(){guides=!guides;this.classList.toggle('on',guides);this.textContent=guides?'Guide lines: on':'Guide lines: off';render();};
+render();
+})();
+</script>
+</body></html>
