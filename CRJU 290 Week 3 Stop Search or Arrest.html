@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRJU 290 Week 3 | Stop, Search, or Arrest?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#000;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--sand-d:#d6d1ca;--white:#fff;
+  --grey:#55514d;--ok:#2f7d57;--ok-bg:#e8f4ed;--warn:#a86a00;--warn-bg:#fbf1dc;--blue:#34506e;--sky:#cfdbe6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#fff;color:var(--ink);
+  font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.45}
+/* Fallback only: if the iframe is shorter than the content, allow ONE scrollbar (inside the iframe). */
+html.scroll,html.scroll body{overflow:auto;height:auto}
+button{font:inherit;color:inherit}
+.app{height:100vh;display:flex;flex-direction:column}
+html.scroll .app{height:auto;min-height:100vh}
+
+/* Hero band — echoes the course "Deep Dive" banner */
+.hero{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:10px 24px;flex:0 0 auto}
+.hero .rule{width:64px;height:4px;background:var(--red);border-radius:2px;margin-bottom:7px}
+.hero h1{font-size:clamp(18px,2.6vw,25px);font-weight:800;line-height:1.1;letter-spacing:-.2px}
+.hero p{font-size:12.5px;color:#d9d6d2;margin-top:4px;max-width:620px}
+.hero svg{height:62px;width:auto;flex:0 0 auto}
+
+main{flex:1 1 auto;min-height:0;padding:12px 24px 16px;display:flex;flex-direction:column;gap:12px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--sand);flex:0 0 auto;flex-wrap:wrap}
+.tab{font-weight:700;font-size:13.5px;padding:8px 14px;border:0;background:none;color:var(--grey);cursor:pointer;
+  border-bottom:4px solid transparent;margin-bottom:-2px}
+.tab:hover{color:#000}
+.tab[aria-selected=true]{color:#000;border-bottom-color:var(--red)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.panel{flex:1 1 auto;min-height:0;display:none}
+.panel.on{display:flex;flex-direction:column;gap:12px}
+
+/* Buttons */
+.btn{font-weight:700;font-size:14px;background:var(--red-d);color:#fff;border:2px solid var(--red-d);padding:9px 20px;border-radius:999px;cursor:pointer}
+.btn:hover{background:#000;border-color:#000}
+.btn.ghost{background:#fff;color:#000;border-color:#000}
+.btn.ghost:hover{background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Quiz engine */
+.quiz{display:grid;grid-template-columns:minmax(220px,38%) 1fr;gap:20px;flex:1 1 auto;min-height:0}
+.scene{background:var(--sand);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:8px;min-height:0;overflow:hidden}
+.scene svg{width:100%;height:100%;max-height:330px}
+.qa{display:flex;flex-direction:column;gap:9px;min-height:0}
+.qmeta{font-size:12px;font-weight:700;color:var(--grey);display:flex;justify-content:space-between;align-items:center}
+.dots span{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--sand-d);margin-left:5px}
+.dots .done{background:var(--ok)}.dots .miss{background:var(--warn)}.dots .cur{background:#000}
+.prompt{font-size:15.5px;font-weight:600;line-height:1.4}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{text-align:left;padding:9px 14px;border:2px solid var(--sand-d);background:#fff;border-radius:10px;cursor:pointer;font-weight:600;font-size:13.5px;line-height:1.35}
+.opt:hover:not([disabled]){border-color:#000}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.no{border-color:var(--warn);background:var(--warn-bg)}
+.opt[disabled]{cursor:default}
+.fb{min-height:80px;font-size:13px;border-left:5px solid var(--sand-d);padding:7px 12px;background:#faf9f7;border-radius:0 8px 8px 0;color:#222}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--warn)}
+.fb strong{display:block;margin-bottom:2px}
+
+/* Summary */
+.summary{display:grid;grid-template-columns:minmax(200px,34%) 1fr;gap:22px;flex:1 1 auto;min-height:0;align-items:center}
+.summary h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.summary ul{margin:8px 0 14px 18px;font-size:13.5px}
+.summary li{margin-bottom:4px}
+
+/* SVG palette classes */
+.fk{fill:#000}.fr{fill:var(--red)}.fd{fill:var(--red-d)}.fs{fill:var(--sand)}.fw{fill:#fff}
+.fg{fill:#8d8781}.fl{fill:#c9c4bd}.fb2{fill:var(--blue)}.fsky{fill:var(--sky)}.fyl{fill:#f2c14e}.fgr{fill:#5f8f6e}
+.sk{stroke:#000;fill:none}.sr{stroke:var(--red);fill:none}.sg{stroke:#8d8781;fill:none}.sw{stroke:#fff;fill:none}
+svg text{font-family:'Montserrat',system-ui,Arial,sans-serif;font-weight:700}
+
+@media (max-width:680px){
+  main{padding:10px 14px 12px}
+  .hero{padding:10px 14px}.hero svg{display:none}
+  .quiz,.summary{grid-template-columns:1fr;gap:10px}
+  .scene{max-height:130px}
+  .tab{padding:7px 10px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.qroot{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.qroot>.quiz,.qroot>.summary{flex:1 1 auto}
+.quiz .scene{align-self:center}
+
+.fn{fill:#2d3340}
+.ladderwrap{display:grid;grid-template-columns:minmax(300px,46%) 1fr;gap:20px;flex:1 1 auto;min-height:0}
+.ladder{display:flex;align-items:flex-end;gap:8px;background:var(--sand);border-radius:16px;padding:12px 12px 0;position:relative;overflow:hidden}
+.step{flex:1;border:0;border-radius:12px 12px 0 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:10px 6px;background:#fff;
+  border-top:6px solid var(--sand-d);text-align:center;position:relative}
+.step:nth-child(1){height:44%}.step:nth-child(2){height:68%}.step:nth-child(3){height:92%}
+.step b{font-size:13.5px;font-weight:800;line-height:1.2}
+.step small{font-size:11.5px;color:var(--grey);font-weight:600;margin-top:4px}
+.step svg{width:46px;height:46px;margin-top:auto;margin-bottom:6px}
+.step:hover{background:#faf9f7}
+.step[aria-pressed=true]{background:#000;color:#fff;border-top-color:var(--red)}
+.step[aria-pressed=true] small{color:#d9d6d2}
+.ldetail{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.ldetail h2{font-size:19px;font-weight:800;line-height:1.2}
+.ldetail div{border-left:5px solid var(--red);padding:2px 0 2px 12px;font-size:13.5px}
+.ldetail div b{display:block;font-size:12.5px}
+.exc{flex:0 0 auto;border-top:2px solid var(--sand);padding-top:10px}
+.exchead{font-weight:800;font-size:13px;margin-bottom:6px}
+.excrow{display:flex;gap:7px;flex-wrap:wrap}
+.xb{padding:7px 14px;border-radius:999px;border:2px solid var(--sand-d);background:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.xb:hover{border-color:#000}
+.xb[aria-pressed=true]{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.excbox{margin-top:8px;font-size:13.5px;background:#faf9f7;border-left:5px solid var(--red);padding:8px 12px;border-radius:0 8px 8px 0;min-height:58px}
+@media (max-width:680px){.ladderwrap{grid-template-columns:1fr}.ladder{min-height:150px}.step small{display:none}.step svg{display:none}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div>
+      <div class="rule"></div>
+      <h1>Week 3 | Stop, Search, or Arrest?</h1>
+      <p>Match the facts to the legal standard: what could the officer lawfully do?</p>
+    </div>
+    <div id="heroArt" aria-hidden="true"></div>
+  </header>
+  <main>
+    <div class="tabs" role="tablist" aria-label="Week 3 activities">
+      <button class="tab" role="tab" id="t1" aria-controls="p1">1. Learn the ladder</button>
+      <button class="tab" role="tab" id="t2" aria-controls="p2">2. Make the call</button>
+    </div>
+
+    <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+      <div class="ladderwrap">
+        <div class="ladder" id="ladder" role="group" aria-label="Levels of proof. Select a step."></div>
+        <div class="ldetail" id="ldetail" aria-live="polite"></div>
+      </div>
+      <div class="exc">
+        <div class="exchead">Exceptions and protections. Select one:</div>
+        <div class="excrow" id="excRow" role="group" aria-label="Warrant exceptions and protections"></div>
+        <p class="excbox" id="excBox" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2"><div class="qroot" id="q2"></div></section>
+
+  </main>
+</div>
+<script>
+/* ---------- Single-scrollbar guard ---------- */
+function fit(){
+  const root=document.documentElement;
+  root.classList.remove('scroll');
+  const m=document.querySelector('main');
+  if(m && m.scrollHeight>m.clientHeight+2) root.classList.add('scroll');
+}
+window.addEventListener('resize',fit);
+window.addEventListener('load',()=>{fit();setTimeout(fit,300);});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+
+/* ---------- Tabs ---------- */
+function initTabs(onChange){
+  const tabs=[...document.querySelectorAll('.tab')];
+  function select(t){
+    tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+      document.getElementById(x.getAttribute('aria-controls')).classList.toggle('on',on);});
+    if(onChange) onChange(t.getAttribute('aria-controls'));
+    fit();
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>select(t));
+    t.addEventListener('keydown',e=>{
+      let n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];
+      if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+      if(n){e.preventDefault();n.focus();select(n);}
+    });
+  });
+  select(tabs[0]);
+}
+
+/* ---------- Quiz engine ---------- */
+function Quiz(root,items,cfg){
+  let i=0,score=0,res=[];
+  function render(){
+    if(i>=items.length) return summary();
+    const it=items[i];
+    root.innerHTML=`<div class="quiz">
+      <div class="scene" role="img" aria-label="${it.alt||'Illustration for this question'}">${it.scene}</div>
+      <div class="qa">
+        <div class="qmeta"><span>Question ${i+1} of ${items.length}</span>
+          <span class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="${k<i?(res[k]?'done':'miss'):(k===i?'cur':'')}"></span>`).join('')}</span></div>
+        <p class="prompt">${it.prompt}</p>
+        <div class="opts" role="group" aria-label="Answer choices">${it.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div>
+        <div class="fb" aria-live="polite"></div>
+        <div class="row"></div>
+      </div></div>`;
+    const btns=[...root.querySelectorAll('.opt')],fb=root.querySelector('.fb'),row=root.querySelector('.row');
+    btns.forEach(b=>b.addEventListener('click',()=>{
+      const k=+b.dataset.k,right=k===it.answer;
+      btns.forEach(x=>x.disabled=true);
+      btns[it.answer].classList.add('ok');
+      if(!right)b.classList.add('no');
+      res[i]=right;if(right)score++;
+      fb.className='fb '+(right?'ok':'no');
+      fb.innerHTML=`<strong>${right?'Correct.':'Not quite.'}</strong>${right?'':'Best answer: '+it.options[it.answer].replace(/<[^>]+>/g,'')+'. '}${it.explain}`;
+      const n=document.createElement('button');n.className='btn';
+      n.textContent=i===items.length-1?'See results':'Next question';
+      n.addEventListener('click',()=>{i++;render();const f=root.querySelector('.opt,.btn');if(f)f.focus();});
+      row.appendChild(n);n.focus();fit();
+    }));
+    fit();
+  }
+  function summary(){
+    const pct=score/items.length;
+    const msg=pct===1?'Perfect round.':pct>=.7?'Strong work.':'Good start — review and try again.';
+    root.innerHTML=`<div class="summary">
+      <div class="scene" role="img" aria-label="Results graphic">${cfg.endScene}</div>
+      <div><h2>${msg} ${score} of ${items.length} correct.</h2>
+        <p style="font-size:13.5px">Key ideas from this activity:</p>
+        <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul>
+        <button class="btn">Play again</button></div></div>`;
+    root.querySelector('.btn').addEventListener('click',()=>{i=0;score=0;res=[];render();});
+    fit();
+  }
+  render();
+}
+
+/* ---------- Art helpers (inline SVG, brand palette) ---------- */
+const A={
+  svg:(vb,inner,extra='')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" ${extra}>${inner}</svg>`,
+  person:(x,y,c='fk',s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="${c}" cx="0" cy="-34" r="9"/><rect class="${c}" x="-12" y="-23" width="24" height="38" rx="11"/></g>`,
+  officer:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="fs" cx="0" cy="-34" r="9" stroke="#000" stroke-width="1.5"/><rect class="fb2" x="-12" y="-23" width="24" height="38" rx="11"/><rect class="fk" x="-11" y="-47" width="22" height="7" rx="3"/><rect class="fk" x="-7" y="-44" width="14" height="10" rx="2" opacity="0"/><path class="fyl" d="M-6 -12 l3 2 l-1 -3 l3 -2 l-3 0 l-1 -3 l-1 3 l-3 0 l3 2z"/></g>`,
+  star:(x,y,r,c='fyl')=>{let p='';for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,rr=k%2?r*.45:r;p+=(k?'L':'M')+(x+rr*Math.cos(a)).toFixed(1)+' '+(y+rr*Math.sin(a)).toFixed(1)}return `<path class="${c}" d="${p}Z"/>`},
+  car:(x,y,s=1,lights=true)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-46" y="-22" width="92" height="22" rx="8"/><path class="fk" d="M-26 -22 l10 -16 h32 l10 16z"/><path class="fsky" d="M-20 -24 l7 -11 h12 v11z M3 -24 v-11 h10 l7 11z"/><rect class="fw" x="-46" y="-14" width="92" height="7"/>${lights?'<rect class="fr" x="-8" y="-43" width="7" height="5" rx="1"/><rect class="fb2" x="1" y="-43" width="7" height="5" rx="1"/>':''}<circle class="fk" cx="-26" cy="1" r="9"/><circle class="fg" cx="-26" cy="1" r="4"/><circle class="fk" cx="26" cy="1" r="9"/><circle class="fg" cx="26" cy="1" r="4"/></g>`,
+  house:(x,y,w=70,h=50,c='fl')=>`<g transform="translate(${x} ${y})"><rect class="${c}" x="0" y="${-h}" width="${w}" height="${h}"/><path class="fd" d="M-6 ${-h} L${w/2} ${-h-26} L${w+6} ${-h}Z"/><rect class="fk" x="${w/2-8}" y="-26" width="16" height="26"/><rect class="fyl" x="8" y="${-h+12}" width="14" height="14"/><rect class="fyl" x="${w-22}" y="${-h+12}" width="14" height="14"/></g>`,
+  lamp:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-2" y="-70" width="4" height="70"/><rect class="fk" x="-8" y="-82" width="16" height="12" rx="2"/><rect class="fyl" x="-5" y="-79" width="10" height="7"/><circle cx="0" cy="-75" r="26" fill="#f2c14e" opacity=".18"/></g>`,
+  bubble:(x,y,w,h,t,c='fw')=>`<g><rect class="${c}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10" stroke="#000" stroke-width="1.5"/><text x="${x+w/2}" y="${y+h/2+4}" text-anchor="middle" font-size="11" class="fk">${t}</text></g>`,
+  ground:(y,c='fl')=>`<rect class="${c}" x="0" y="${y}" width="400" height="${300-y}"/>`
+};
+
+</script>
+<script>
+const VB='0 0 400 260';
+const night=(inner)=>A.svg(VB,`<rect class="fn" width="400" height="260"/>${inner}`);
+const day=(inner)=>A.svg(VB,`<rect class="fsky" width="400" height="260"/>${inner}`);
+
+const SC={
+ casing:night(`<circle class="fl" cx="340" cy="40" r="16"/><rect fill="#1b1f27" y="208" width="400" height="52"/>
+   <rect class="fg" x="110" y="80" width="190" height="128"/><rect class="fk" x="110" y="70" width="190" height="22"/>
+   <text x="205" y="86" text-anchor="middle" font-size="12" class="fyl">JEWELRY</text>
+   <rect fill="#1b1f27" x="126" y="106" width="100" height="70" stroke="#c9c4bd" stroke-width="3"/>
+   <path d="M126 106 L226 176 M226 106 L126 176" stroke="#c9c4bd" stroke-width="1.5" opacity=".5"/>
+   <rect class="fyl" x="140" y="150" width="14" height="10"/><rect class="fyl" x="170" y="150" width="14" height="10"/>
+   <rect class="fk" x="248" y="120" width="34" height="88"/><text x="265" y="170" text-anchor="middle" font-size="9" class="fw">CLOSED</text>
+   ${A.person(100,208,'fd',1.15)}${A.person(330,208,'fl',1.15)}
+   ${A.lamp(60,208,1.1)}${A.car(50,254,.7)}
+   <path d="M114 190 q10 -6 18 -2" class="sw" stroke-width="2" stroke-dasharray="3 4"/>`),
+ hunch:day(`<rect class="fl" y="200" width="400" height="60"/><rect class="fg" y="200" width="400" height="6"/>
+   <rect class="fk" x="0" y="232" width="400" height="28"/><path d="M0 246 H400" stroke="#f2c14e" stroke-width="3" stroke-dasharray="20 14"/>
+   ${A.house(240,200,100,70,'fs')}${A.house(20,200,86,56,'fs')}
+   ${A.person(190,200,'fb2',1.2)}
+   ${A.car(90,252,1.0)}<circle class="fw" cx="90" cy="190" r="0"/>
+   <g transform="translate(40 80)"><circle class="fw" cx="14" cy="78" r="5" stroke="#000" stroke-width="1.5"/><circle class="fw" cx="26" cy="64" r="8" stroke="#000" stroke-width="1.5"/>
+   <rect class="fw" x="24" y="0" width="156" height="56" rx="14" stroke="#000" stroke-width="1.5"/>
+   <text x="102" y="24" text-anchor="middle" font-size="12" class="fk">He looks nervous…</text><text x="102" y="42" text-anchor="middle" font-size="11" class="fg">(nothing else)</text></g>`),
+ frisk:day(`<rect class="fl" y="206" width="400" height="54"/>${A.officer(110,208,1.5)}
+   ${A.person(265,208,'fk',1.5)}<rect class="fr" x="272" y="182" width="22" height="9" rx="3"/><rect class="fr" x="283" y="189" width="8" height="14" rx="2"/>
+   <rect class="sr" x="264" y="176" width="40" height="34" rx="6" stroke-width="2.5" stroke-dasharray="5 4"/>
+   ${A.bubble(60,40,128,30,'Shape of a handgun?','fw')}`),
+ window:day(`<rect class="fl" y="206" width="400" height="54"/>
+   ${A.car(120,206,1.9,false)}<g class="sk" stroke-width="2"><path d="M96 144 L112 160 L102 176 M112 160 L132 154 M112 160 L120 180" style="stroke:#fff"/></g>
+   <path d="M90 150 l8 8 l-10 4z" class="fw"/>
+   ${A.person(260,208,'fd',1.2)}<rect class="fyl" x="270" y="190" width="22" height="16" rx="4"/>
+   <path d="M286 190 l16 0 m-6 -6 l6 6 l-6 6" class="sk" stroke-width="3"/>
+   ${A.officer(360,208,1.2)}${A.bubble(250,30,134,30,'Saw it happen','fw')}`),
+ exigent:night(`<rect class="fk" y="210" width="400" height="50" opacity=".6"/>
+   <rect class="fs" x="130" y="80" width="190" height="130"/><path class="fd" d="M118 80 L225 30 L332 80Z"/>
+   <rect class="fyl" x="190" y="120" width="70" height="90"/>
+   ${A.person(210,208,'fk',1.2)}${A.person(242,208,'fr',1.2)}
+   <path class="sr" d="M222 150 l8 -6 M226 160 l10 0" stroke-width="3"/>
+   <rect class="fw" x="140" y="110" width="30" height="30"/><rect class="fw" x="280" y="110" width="30" height="30"/>
+   ${A.officer(80,210,1.4)}${A.bubble(30,60,86,28,'“Help!”','fw')}`),
+ room:A.svg(VB,`<rect class="fs" width="400" height="260"/><rect class="fg" y="190" width="400" height="70"/>
+   <rect class="fk" x="198" y="0" width="3" height="52"/><path class="fk" d="M170 52 H230 L218 72 H182Z"/><path d="M190 72 L130 190 H270 L210 72Z" fill="#f2c14e" opacity=".25"/>
+   <rect class="fk" x="120" y="160" width="160" height="12" rx="3"/><rect class="fk" x="130" y="172" width="8" height="38"/><rect class="fk" x="262" y="172" width="8" height="38"/>
+   ${A.person(80,206,'fr',1.4)}${A.officer(320,206,1.4)}
+   <rect class="fw" x="176" y="146" width="48" height="14" stroke="#000" stroke-width="1.5"/>
+   ${A.bubble(222,30,150,30,'No warning given yet','fw')}`),
+ scale:A.svg(VB,`<rect class="fs" width="400" height="260"/><rect class="fk" x="196" y="50" width="8" height="150"/><rect class="fk" x="150" y="196" width="100" height="14" rx="4"/>
+   <rect class="fk" x="90" y="60" width="220" height="8" rx="4"/><circle class="fr" cx="200" cy="50" r="12"/>
+   <path class="sk" d="M110 68 L80 150 M110 68 L140 150 M290 68 L260 150 M290 68 L320 150" stroke-width="3"/>
+   <path class="fd" d="M70 150 H150 a40 28 0 0 1 -80 0Z"/><path class="fd" d="M250 150 H330 a40 28 0 0 1 -80 0Z"/>`)
+};
+
+/* ---------- Ladder ---------- */
+const LAD=[
+ {n:'Hunch',s:'Not enough',
+  icon:A.svg('0 0 46 46',`<circle cx="23" cy="23" r="18" class="sk" stroke-width="3"/><text x="23" y="31" text-anchor="middle" font-size="24" class="fk">?</text>`),
+  title:'A hunch is not enough',
+  rows:[['What it is','A feeling or vague impression with no specific facts, such as “he looked nervous.”'],
+        ['What officers can do','Talk voluntarily with a person or keep observing. They cannot stop or search.'],
+        ['Key idea','Hunches alone do not satisfy either legal standard.']]},
+ {n:'Reasonable suspicion',s:'Brief stop',
+  icon:A.svg('0 0 46 46',`<circle cx="19" cy="19" r="12" class="sr" stroke-width="4"/><path d="M28 28 L40 40" class="sr" stroke-width="5" stroke-linecap="round"/>`),
+  title:'Reasonable suspicion',
+  rows:[['What it is','A specific, articulable basis to believe criminal activity may be occurring.'],
+        ['What officers can do','A brief investigative stop. If they reasonably believe the person is armed and dangerous, a limited pat-down for weapons.'],
+        ['Key case','Terry v. Ohio (1968).']]},
+ {n:'Probable cause',s:'Arrest and warrants',
+  icon:A.svg('0 0 46 46',`<rect x="8" y="6" width="30" height="34" rx="4" class="fk"/><path d="M14 22 l7 7 l12 -14" class="sw" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`),
+  title:'Probable cause',
+  rows:[['What it is','A fair probability that a crime occurred or that evidence will be found.'],
+        ['What officers can do','Make an arrest, conduct most searches, and obtain warrants that describe the place and the items or person.'],
+        ['Key idea','The Fourth Amendment asks whether police action was reasonable under the circumstances.']]}
+];
+(function(){
+  const el=document.getElementById('ladder'),dt=document.getElementById('ldetail');
+  el.innerHTML=LAD.map((l,i)=>`<button class="step" data-i="${i}" aria-pressed="false"><b>${l.n}</b><small>${l.s}</small>${l.icon}</button>`).join('');
+  function show(i){
+    [...el.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+    const l=LAD[i];
+    dt.innerHTML=`<h2>${l.title}</h2>`+l.rows.map(r=>`<div><b>${r[0]}</b>${r[1]}</div>`).join('');
+    fit();
+  }
+  el.addEventListener('click',e=>{const b=e.target.closest('.step');if(b)show(+b.dataset.i)});
+  show(1);
+})();
+
+/* ---------- Exceptions and protections ---------- */
+const EXC=[
+ ['Consent','A search can proceed if the person agrees voluntarily. Consent must be voluntary.'],
+ ['Exigent circumstances','Urgent situations, such as imminent danger or destruction of evidence, can justify acting without a warrant.'],
+ ['Search incident to arrest','After a lawful arrest, officers may conduct a limited search connected to that arrest.'],
+ ['Plain view','Items in plain view of an officer who is lawfully present can be seized when they are clearly evidence of a crime.'],
+ ['Exclusionary rule','Under Mapp v. Ohio (1961), evidence from an unconstitutional search cannot be used in state criminal trials.'],
+ ['Miranda','Under Miranda v. Arizona (1966), suspects in custody must be warned of their rights before interrogation.']
+];
+(function(){
+  const row=document.getElementById('excRow'),box=document.getElementById('excBox');
+  row.innerHTML=EXC.map((x,i)=>`<button class="xb" data-i="${i}" aria-pressed="false">${x[0]}</button>`).join('');
+  function show(i){[...row.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));box.innerHTML=`<b>${EXC[i][0]}.</b> ${EXC[i][1]}<br><small>Officers should document the specific facts that support the exception they rely on.</small>`;fit();}
+  row.addEventListener('click',e=>{const b=e.target.closest('.xb');if(b)show(+b.dataset.i)});
+  show(1);
+})();
+
+/* ---------- Scenarios ---------- */
+const LV=['No lawful basis yet','Reasonable suspicion: a brief stop','Probable cause: arrest or warrant'];
+const items=[
+ {s:'casing',prompt:'At 2 a.m., an officer watches two men take turns walking past a closed jewelry store, peering inside and conferring each time. They repeat this about a dozen times. What level of proof does the officer have?',
+  options:LV,answer:1,explain:'Specific, articulable facts suggest criminal activity may be afoot (Terry v. Ohio). That supports a brief stop, but not yet an arrest.'},
+ {s:'hunch',prompt:'An officer sees a man walking down a quiet street and thinks he “looks nervous.” There are no other facts. What does the officer have?',
+  options:LV,answer:0,explain:'A hunch alone does not meet reasonable suspicion or probable cause. The officer may talk with him voluntarily but cannot detain him.'},
+ {s:'frisk',prompt:'During a lawful stop, an officer sees a bulge shaped like a handgun at the person’s waistband, and the person keeps reaching toward it. What may the officer do?',
+  options:['Nothing: any pat-down would be unconstitutional','A limited pat-down for weapons','A full search of the person’s car and belongings'],answer:1,
+  explain:'When an officer reasonably believes a person is armed and dangerous, a limited frisk for weapons is allowed. It is not a license for a full search.'},
+ {s:'window',prompt:'An officer sees a person smash a car window, grab a bag from the seat, and run. After catching the person, what level of proof supports an arrest?',
+  options:LV,answer:2,explain:'Directly witnessing the crime gives a fair probability that the person committed it. That is probable cause, which supports an arrest.'},
+ {s:'exigent',prompt:'An officer hears screams and sees through an open door a man attacking someone inside a home. The officer enters without a warrant. Which idea best fits?',
+  options:['Unlawful entry: a warrant is always required','Likely lawful: exigent circumstances','Lawful only if the owner consents afterward'],answer:1,
+  explain:'Imminent danger is the classic exigent circumstance. The officer should document the facts that justified entering.'},
+ {s:'room',prompt:'A suspect is in custody at the station. A detective starts asking questions about a robbery without reading any rights. What is the issue?',
+  options:['Miranda warnings are required before questioning','No warnings are needed because the suspect is at the station','A warrant is required before asking any question'],answer:0,
+  explain:'Miranda v. Arizona applies to custodial interrogation. Statements taken without warnings can be kept out of court.'}
+].map(it=>({scene:SC[it.s],alt:'Illustration of the situation described in the question',prompt:it.prompt,options:it.options,answer:it.answer,explain:it.explain}));
+
+Quiz(document.getElementById('q2'),items,{endScene:SC.scale,takeaways:[
+ 'Reasonableness is the core question under the Fourth Amendment.',
+ 'Reasonable suspicion supports brief stops; probable cause supports arrests and warrants.',
+ 'Exceptions such as consent and exigency must be justified by specific facts.',
+ 'Exclusion of evidence and Miranda warnings help enforce constitutional protections.']});
+
+document.getElementById('heroArt').innerHTML=A.svg('0 0 120 70',`<rect class="fw" x="58" y="12" width="4" height="48"/><rect class="fw" x="36" y="58" width="48" height="6" rx="2"/><rect class="fw" x="14" y="16" width="92" height="4" rx="2"/><circle class="fr" cx="60" cy="12" r="6"/><path class="sw" d="M24 20 L12 42 M24 20 L36 42 M96 20 L84 42 M96 20 L108 42" stroke-width="2"/><path class="fr" d="M10 42 H38 a14 10 0 0 1 -28 0Z"/><path class="fr" d="M82 42 H110 a14 10 0 0 1 -28 0Z"/>`);
+initTabs();
+
+</script>
+</body>
+</html>

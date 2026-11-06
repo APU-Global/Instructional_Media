@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRJU 290 Week 4 | Decision Under Pressure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#000;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--sand-d:#d6d1ca;--white:#fff;
+  --grey:#55514d;--ok:#2f7d57;--ok-bg:#e8f4ed;--warn:#a86a00;--warn-bg:#fbf1dc;--blue:#34506e;--sky:#cfdbe6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#fff;color:var(--ink);
+  font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.45}
+/* Fallback only: if the iframe is shorter than the content, allow ONE scrollbar (inside the iframe). */
+html.scroll,html.scroll body{overflow:auto;height:auto}
+button{font:inherit;color:inherit}
+.app{height:100vh;display:flex;flex-direction:column}
+html.scroll .app{height:auto;min-height:100vh}
+
+/* Hero band — echoes the course "Deep Dive" banner */
+.hero{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:10px 24px;flex:0 0 auto}
+.hero .rule{width:64px;height:4px;background:var(--red);border-radius:2px;margin-bottom:7px}
+.hero h1{font-size:clamp(18px,2.6vw,25px);font-weight:800;line-height:1.1;letter-spacing:-.2px}
+.hero p{font-size:12.5px;color:#d9d6d2;margin-top:4px;max-width:620px}
+.hero svg{height:62px;width:auto;flex:0 0 auto}
+
+main{flex:1 1 auto;min-height:0;padding:12px 24px 16px;display:flex;flex-direction:column;gap:12px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--sand);flex:0 0 auto;flex-wrap:wrap}
+.tab{font-weight:700;font-size:13.5px;padding:8px 14px;border:0;background:none;color:var(--grey);cursor:pointer;
+  border-bottom:4px solid transparent;margin-bottom:-2px}
+.tab:hover{color:#000}
+.tab[aria-selected=true]{color:#000;border-bottom-color:var(--red)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.panel{flex:1 1 auto;min-height:0;display:none}
+.panel.on{display:flex;flex-direction:column;gap:12px}
+
+/* Buttons */
+.btn{font-weight:700;font-size:14px;background:var(--red-d);color:#fff;border:2px solid var(--red-d);padding:9px 20px;border-radius:999px;cursor:pointer}
+.btn:hover{background:#000;border-color:#000}
+.btn.ghost{background:#fff;color:#000;border-color:#000}
+.btn.ghost:hover{background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Quiz engine */
+.quiz{display:grid;grid-template-columns:minmax(220px,38%) 1fr;gap:20px;flex:1 1 auto;min-height:0}
+.scene{background:var(--sand);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:8px;min-height:0;overflow:hidden}
+.scene svg{width:100%;height:100%;max-height:330px}
+.qa{display:flex;flex-direction:column;gap:9px;min-height:0}
+.qmeta{font-size:12px;font-weight:700;color:var(--grey);display:flex;justify-content:space-between;align-items:center}
+.dots span{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--sand-d);margin-left:5px}
+.dots .done{background:var(--ok)}.dots .miss{background:var(--warn)}.dots .cur{background:#000}
+.prompt{font-size:15.5px;font-weight:600;line-height:1.4}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{text-align:left;padding:9px 14px;border:2px solid var(--sand-d);background:#fff;border-radius:10px;cursor:pointer;font-weight:600;font-size:13.5px;line-height:1.35}
+.opt:hover:not([disabled]){border-color:#000}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.no{border-color:var(--warn);background:var(--warn-bg)}
+.opt[disabled]{cursor:default}
+.fb{min-height:80px;font-size:13px;border-left:5px solid var(--sand-d);padding:7px 12px;background:#faf9f7;border-radius:0 8px 8px 0;color:#222}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--warn)}
+.fb strong{display:block;margin-bottom:2px}
+
+/* Summary */
+.summary{display:grid;grid-template-columns:minmax(200px,34%) 1fr;gap:22px;flex:1 1 auto;min-height:0;align-items:center}
+.summary h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.summary ul{margin:8px 0 14px 18px;font-size:13.5px}
+.summary li{margin-bottom:4px}
+
+/* SVG palette classes */
+.fk{fill:#000}.fr{fill:var(--red)}.fd{fill:var(--red-d)}.fs{fill:var(--sand)}.fw{fill:#fff}
+.fg{fill:#8d8781}.fl{fill:#c9c4bd}.fb2{fill:var(--blue)}.fsky{fill:var(--sky)}.fyl{fill:#f2c14e}.fgr{fill:#5f8f6e}
+.sk{stroke:#000;fill:none}.sr{stroke:var(--red);fill:none}.sg{stroke:#8d8781;fill:none}.sw{stroke:#fff;fill:none}
+svg text{font-family:'Montserrat',system-ui,Arial,sans-serif;font-weight:700}
+
+@media (max-width:680px){
+  main{padding:10px 14px 12px}
+  .hero{padding:10px 14px}.hero svg{display:none}
+  .quiz,.summary{grid-template-columns:1fr;gap:10px}
+  .scene{max-height:130px}
+  .tab{padding:7px 10px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.qroot{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.qroot>.quiz,.qroot>.summary{flex:1 1 auto}
+.quiz .scene{align-self:center}
+
+.sim{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(260px,42%) 1fr;gap:20px}
+.stage{display:flex;flex-direction:column;gap:8px;min-height:0}
+.stage .scene{flex:1 1 auto;padding:6px}
+.gauge{background:#000;color:#fff;border-radius:14px;display:flex;align-items:center;gap:12px;padding:6px 14px;flex:0 0 auto}
+.gauge svg{width:120px;height:68px;flex:0 0 auto}
+.gauge b{font-size:14px;display:block}
+.gauge span{font-size:12px;color:#d9d6d2}
+.needle{transform-origin:100px 100px;transition:transform .7s cubic-bezier(.3,1.4,.5,1)}
+.pcar{transition:transform .8s ease}
+.sstep{display:flex;flex-direction:column;gap:9px;min-height:0}
+.sstep h2{font-size:12.5px;color:var(--grey);font-weight:700}
+.story{font-size:14px;background:var(--sand);padding:9px 13px;border-radius:10px}
+.sstep .opt small{display:block;font-weight:500;color:var(--grey);margin-top:2px}
+.review{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:12px}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rcard{border:2px solid var(--sand-d);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.rcard svg{width:44px;height:44px}
+.rcard b{font-size:14px;font-weight:800}
+.rcard p{font-size:13px}
+.rcard .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--sand);width:max-content}
+.callout{border-left:5px solid var(--red);background:#faf9f7;padding:10px 14px;border-radius:0 10px 10px 0;font-size:13.5px}
+.callout b{display:block;margin-bottom:2px}
+.rtoggle{display:flex;gap:7px;flex-wrap:wrap}
+.endrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media (max-width:680px){.sim{grid-template-columns:1fr;gap:8px}.rgrid{grid-template-columns:1fr}.gauge svg{width:80px;height:46px}.stage .scene{max-height:120px}}
+.xb{padding:7px 14px;border-radius:999px;border:2px solid var(--sand-d);background:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.xb:hover{border-color:#000}
+.xb[aria-pressed=true]{background:var(--red-d);border-color:var(--red-d);color:#fff}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div>
+      <div class="rule"></div>
+      <h1>Week 4 | Decision Under Pressure</h1>
+      <p>Make four calls on a tense scene and watch how time, distance, and words change the outcome.</p>
+    </div>
+    <div id="heroArt" aria-hidden="true"></div>
+  </header>
+  <main>
+    <div class="tabs" role="tablist" aria-label="Week 4 activities">
+      <button class="tab" role="tab" id="t1" aria-controls="p1">1. Make the calls</button>
+      <button class="tab" role="tab" id="t2" aria-controls="p2">2. Review the factors</button>
+    </div>
+
+    <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+      <div class="sim" id="sim"></div>
+    </section>
+
+    <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2">
+      <div class="review" id="review"></div>
+    </section>
+
+  </main>
+</div>
+<script>
+/* ---------- Single-scrollbar guard ---------- */
+function fit(){
+  const root=document.documentElement;
+  root.classList.remove('scroll');
+  const m=document.querySelector('main');
+  if(m && m.scrollHeight>m.clientHeight+2) root.classList.add('scroll');
+}
+window.addEventListener('resize',fit);
+window.addEventListener('load',()=>{fit();setTimeout(fit,300);});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+
+/* ---------- Tabs ---------- */
+function initTabs(onChange){
+  const tabs=[...document.querySelectorAll('.tab')];
+  function select(t){
+    tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+      document.getElementById(x.getAttribute('aria-controls')).classList.toggle('on',on);});
+    if(onChange) onChange(t.getAttribute('aria-controls'));
+    fit();
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>select(t));
+    t.addEventListener('keydown',e=>{
+      let n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];
+      if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+      if(n){e.preventDefault();n.focus();select(n);}
+    });
+  });
+  select(tabs[0]);
+}
+
+/* ---------- Quiz engine ---------- */
+function Quiz(root,items,cfg){
+  let i=0,score=0,res=[];
+  function render(){
+    if(i>=items.length) return summary();
+    const it=items[i];
+    root.innerHTML=`<div class="quiz">
+      <div class="scene" role="img" aria-label="${it.alt||'Illustration for this question'}">${it.scene}</div>
+      <div class="qa">
+        <div class="qmeta"><span>Question ${i+1} of ${items.length}</span>
+          <span class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="${k<i?(res[k]?'done':'miss'):(k===i?'cur':'')}"></span>`).join('')}</span></div>
+        <p class="prompt">${it.prompt}</p>
+        <div class="opts" role="group" aria-label="Answer choices">${it.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div>
+        <div class="fb" aria-live="polite"></div>
+        <div class="row"></div>
+      </div></div>`;
+    const btns=[...root.querySelectorAll('.opt')],fb=root.querySelector('.fb'),row=root.querySelector('.row');
+    btns.forEach(b=>b.addEventListener('click',()=>{
+      const k=+b.dataset.k,right=k===it.answer;
+      btns.forEach(x=>x.disabled=true);
+      btns[it.answer].classList.add('ok');
+      if(!right)b.classList.add('no');
+      res[i]=right;if(right)score++;
+      fb.className='fb '+(right?'ok':'no');
+      fb.innerHTML=`<strong>${right?'Correct.':'Not quite.'}</strong>${right?'':'Best answer: '+it.options[it.answer].replace(/<[^>]+>/g,'')+'. '}${it.explain}`;
+      const n=document.createElement('button');n.className='btn';
+      n.textContent=i===items.length-1?'See results':'Next question';
+      n.addEventListener('click',()=>{i++;render();const f=root.querySelector('.opt,.btn');if(f)f.focus();});
+      row.appendChild(n);n.focus();fit();
+    }));
+    fit();
+  }
+  function summary(){
+    const pct=score/items.length;
+    const msg=pct===1?'Perfect round.':pct>=.7?'Strong work.':'Good start — review and try again.';
+    root.innerHTML=`<div class="summary">
+      <div class="scene" role="img" aria-label="Results graphic">${cfg.endScene}</div>
+      <div><h2>${msg} ${score} of ${items.length} correct.</h2>
+        <p style="font-size:13.5px">Key ideas from this activity:</p>
+        <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul>
+        <button class="btn">Play again</button></div></div>`;
+    root.querySelector('.btn').addEventListener('click',()=>{i=0;score=0;res=[];render();});
+    fit();
+  }
+  render();
+}
+
+/* ---------- Art helpers (inline SVG, brand palette) ---------- */
+const A={
+  svg:(vb,inner,extra='')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" ${extra}>${inner}</svg>`,
+  person:(x,y,c='fk',s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="${c}" cx="0" cy="-34" r="9"/><rect class="${c}" x="-12" y="-23" width="24" height="38" rx="11"/></g>`,
+  officer:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="fs" cx="0" cy="-34" r="9" stroke="#000" stroke-width="1.5"/><rect class="fb2" x="-12" y="-23" width="24" height="38" rx="11"/><rect class="fk" x="-11" y="-47" width="22" height="7" rx="3"/><rect class="fk" x="-7" y="-44" width="14" height="10" rx="2" opacity="0"/><path class="fyl" d="M-6 -12 l3 2 l-1 -3 l3 -2 l-3 0 l-1 -3 l-1 3 l-3 0 l3 2z"/></g>`,
+  star:(x,y,r,c='fyl')=>{let p='';for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,rr=k%2?r*.45:r;p+=(k?'L':'M')+(x+rr*Math.cos(a)).toFixed(1)+' '+(y+rr*Math.sin(a)).toFixed(1)}return `<path class="${c}" d="${p}Z"/>`},
+  car:(x,y,s=1,lights=true)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-46" y="-22" width="92" height="22" rx="8"/><path class="fk" d="M-26 -22 l10 -16 h32 l10 16z"/><path class="fsky" d="M-20 -24 l7 -11 h12 v11z M3 -24 v-11 h10 l7 11z"/><rect class="fw" x="-46" y="-14" width="92" height="7"/>${lights?'<rect class="fr" x="-8" y="-43" width="7" height="5" rx="1"/><rect class="fb2" x="1" y="-43" width="7" height="5" rx="1"/>':''}<circle class="fk" cx="-26" cy="1" r="9"/><circle class="fg" cx="-26" cy="1" r="4"/><circle class="fk" cx="26" cy="1" r="9"/><circle class="fg" cx="26" cy="1" r="4"/></g>`,
+  house:(x,y,w=70,h=50,c='fl')=>`<g transform="translate(${x} ${y})"><rect class="${c}" x="0" y="${-h}" width="${w}" height="${h}"/><path class="fd" d="M-6 ${-h} L${w/2} ${-h-26} L${w+6} ${-h}Z"/><rect class="fk" x="${w/2-8}" y="-26" width="16" height="26"/><rect class="fyl" x="8" y="${-h+12}" width="14" height="14"/><rect class="fyl" x="${w-22}" y="${-h+12}" width="14" height="14"/></g>`,
+  lamp:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-2" y="-70" width="4" height="70"/><rect class="fk" x="-8" y="-82" width="16" height="12" rx="2"/><rect class="fyl" x="-5" y="-79" width="10" height="7"/><circle cx="0" cy="-75" r="26" fill="#f2c14e" opacity=".18"/></g>`,
+  bubble:(x,y,w,h,t,c='fw')=>`<g><rect class="${c}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10" stroke="#000" stroke-width="1.5"/><text x="${x+w/2}" y="${y+h/2+4}" text-anchor="middle" font-size="11" class="fk">${t}</text></g>`,
+  ground:(y,c='fl')=>`<rect class="${c}" x="0" y="${y}" width="400" height="${300-y}"/>`
+};
+
+</script>
+<script>
+const sim=document.getElementById('sim');
+const STEPS=[
+ {h:'Decision 1 of 4: Approach',
+  story:'Dispatch: a man is shouting at passersby outside a convenience store. He is holding a metal pipe down at his side. No one has reported being hit. You arrive.',
+  q:'How do you approach?',
+  o:[
+   {t:'Pull up close, jump out, and give loud commands.',dt:20,dd:-30,fb:'Closing distance fast removes time and options, and raises the pressure for everyone.'},
+   {t:'Park at a distance, use the car for cover, observe, and request backup.',dt:-10,dd:-5,bk:1,fb:'Distance and cover buy time. Time creates options.'},
+   {t:'Drive past and hope it resolves on its own.',dt:10,dd:0,fb:'The call goes unresolved and the risk to the public remains.'}
+  ]},
+ {h:'Decision 2 of 4: Communication',
+  story:'He notices you and yells, “Everybody wants something from me!”',
+  q:'What do you say?',
+  o:[
+   {t:'“Drop it now or I will use force!”',dt:15,dd:0,fb:'A threat can feel like a challenge to someone already in crisis.'},
+   {t:'“I’m Officer Lee. I’m here to help. What’s going on?”',dt:-15,dd:0,fb:'Calm, respectful communication and active listening lower tension.'},
+   {t:'Say nothing and stare, with your hand on your weapon.',dt:10,dd:0,fb:'Silence and a threatening posture communicate hostility, not help.'}
+  ]},
+ {h:'Decision 3 of 4: Movement',
+  story:'He takes a step toward you. The pipe is still low and not raised. Backup is a few minutes away.',
+  q:'What do you do?',
+  o:[
+   {t:'Back up to add distance and keep talking.',dt:-10,dd:10,fb:'Creating space slows the situation down and keeps your options open.'},
+   {t:'Rush forward to grab his arm and take control.',dt:20,dd:-12,fb:'Closing in on someone who has not raised the pipe cuts off alternatives and invites a struggle.'},
+   {t:'Hold your position, stay calm, and ask dispatch to send the crisis team.',dt:-5,dd:0,bk:1,fb:'Specialized help can be the best response to a mental health crisis.'}
+  ]},
+ {h:'Decision 4 of 4: Resolution',
+  dyn:true}
+];
+const STEP4_CALM={story:'He lowers himself onto the curb, shoulders slumped. The pipe is beside him.',q:'What is your next move?',
+ o:[{t:'Keep your distance, ask him to set the pipe down, and wait for the crisis team.',dt:-10,dd:0,fb:'Patience and clear, simple requests keep the situation calm.'},
+    {t:'Rush in to handcuff him immediately.',dt:15,dd:-15,fb:'Sudden movement can re-escalate a situation that was settling.'},
+    {t:'Order him to stand and come to you right now.',dt:10,dd:-10,fb:'Rapid-fire orders can overwhelm someone who is already distressed.'}]};
+const STEP4_TENSE={story:'He starts pacing and raises his voice again, gripping the pipe tighter.',q:'What is your next move?',
+ o:[{t:'Create more space, stay behind cover, speak slowly, and ask the crisis team to hurry.',dt:-10,dd:8,fb:'Space, cover, and time are still your best tools.'},
+    {t:'Escalate your commands and move in.',dt:15,dd:-12,fb:'Closing in and shouting orders raises the risk to everyone.'},
+    {t:'Give a clear warning, ready a less-lethal option, and still give him room.',dt:5,dd:0,fb:'Preparing options while keeping distance can be reasonable, but it does not replace de-escalation.'}]};
+
+let S;
+function reset(){S={i:0,t:50,d:45,bk:0,log:[]};}
+const gaugeSVG=`<svg viewBox="0 0 200 110" aria-hidden="true">
+ <path d="M20 100 A80 80 0 0 1 73 25" fill="none" stroke="#5f8f6e" stroke-width="16"/>
+ <path d="M73 25 A80 80 0 0 1 127 25" fill="none" stroke="#f2c14e" stroke-width="16"/>
+ <path d="M127 25 A80 80 0 0 1 180 100" fill="none" stroke="#d34147" stroke-width="16"/>
+ <g class="needle" id="needle"><path d="M100 100 L100 30" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>
+ <circle cx="100" cy="100" r="8" fill="#fff"/></svg>`;
+const sceneSVG=A.svg('0 0 400 260',`
+ <rect class="fsky" width="400" height="260"/>
+ <rect class="fl" y="210" width="400" height="50"/>
+ <rect class="fg" x="230" y="70" width="170" height="140"/><rect class="fr" x="230" y="62" width="170" height="20"/>
+ <text x="315" y="77" text-anchor="middle" font-size="11" class="fw">CORNER MART</text>
+ <rect class="fsky" x="246" y="100" width="70" height="50"/><rect class="fk" x="330" y="120" width="36" height="90"/>
+ <rect class="fk" x="0" y="226" width="400" height="34"/><path d="M0 243 H400" stroke="#f2c14e" stroke-width="3" stroke-dasharray="18 14"/>
+ <line id="dline" x1="120" y1="196" x2="330" y2="196" stroke="#000" stroke-width="2" stroke-dasharray="6 5"/>
+ <g id="dlab"><rect class="fw" x="190" y="177" width="60" height="22" rx="11" stroke="#000" stroke-width="1.5"/><text id="dtxt" x="220" y="192" text-anchor="middle" font-size="12" class="fk">45 ft</text></g>
+ <g id="subj">${A.person(344,212,'fd',1.2)}<rect class="fg" x="356" y="196" width="5" height="34" rx="2"/></g>
+ <g id="og" class="pcar" style="transform:translateX(65px)">${A.car(0,222,1.0)}${A.officer(62,212,1.15)}</g>
+ <g id="bk" opacity="0"><g style="transform:translateX(0px)">${A.car(40,120,.6)}</g><text x="40" y="146" text-anchor="middle" font-size="9" class="fk">Backup</text></g>
+`);
+function band(t){return t<=33?'Low':t<=66?'Moderate':'High';}
+function stageHTML(){
+  return `<div class="stage"><div class="scene" role="img" aria-label="Street scene showing an officer, a patrol car, and a man outside a store. A dashed line shows the distance between them.">${sceneSVG}</div>
+   <div class="gauge"><div style="flex:0 0 auto">${gaugeSVG}</div><div><b id="gtxt">Tension: Moderate</b><span id="gdist">Distance: 45 ft</span></div></div></div>`;
+}
+function paintStage(){
+  const t=S.t,d=S.d;
+  const oX=330-d*4.5;
+  document.getElementById('og').style.transform=`translateX(${oX-62}px)`;
+  document.getElementById('dline').setAttribute('x1',oX+14);
+  document.getElementById('dlab').setAttribute('transform',`translate(${(oX+14+330)/2-220} 0)`);
+  document.getElementById('dtxt').textContent=Math.round(d)+' ft';
+  document.getElementById('needle').style.transform=`rotate(${-90+t*1.8}deg)`;
+  document.getElementById('gtxt').textContent='Tension: '+band(t);
+  document.getElementById('gdist').textContent='Distance: '+Math.round(d)+' ft'+(S.bk?'  •  Backup requested':'');
+  document.getElementById('bk').setAttribute('opacity',S.bk?1:0);
+}
+function mountFresh(){
+  sim.innerHTML=stageHTML()+'<div class="sstep" id="sstep"></div>';
+  paintStage();
+}
+function showStep(){
+  const box=document.getElementById('sstep');
+  if(S.i>=STEPS.length) return finish();
+  let st=STEPS[S.i];
+  if(st.dyn) st=Object.assign({h:st.h},S.t<=45?STEP4_CALM:STEP4_TENSE);
+  box.innerHTML=`<h2>${st.h}</h2><p class="story">${st.story}</p><p class="prompt">${st.q}</p>
+   <div class="opts">${st.o.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join('')}</div>
+   <div class="fb" aria-live="polite"></div><div class="row"></div>`;
+  const btns=[...box.querySelectorAll('.opt')],fb=box.querySelector('.fb'),row=box.querySelector('.row');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    const o=st.o[+b.dataset.k];
+    btns.forEach(x=>x.disabled=true);
+    b.classList.add(o.dt<=0?'ok':'no');
+    S.t=Math.max(0,Math.min(100,S.t+o.dt));S.d=Math.max(8,Math.min(45,S.d+o.dd));if(o.bk)S.bk=1;
+    S.log.push(o.t);paintStage();
+    fb.className='fb '+(o.dt<=0?'ok':'no');
+    fb.innerHTML=`<strong>${o.dt<=0?'Tension goes down.':'Tension goes up.'}</strong>${o.fb}`;
+    const n=document.createElement('button');n.className='btn';n.textContent=S.i===STEPS.length-1?'See the outcome':'Next decision';
+    n.addEventListener('click',()=>{S.i++;showStep();const f=document.querySelector('#sstep .opt,#sstep .btn');if(f)f.focus();});
+    row.appendChild(n);n.focus();fit();
+  }));
+  fit();
+}
+function finish(){
+  const t=S.t;let title,body;
+  if(t<=30){title='Peaceful resolution';body='He sets the pipe down and agrees to talk with the crisis team. No force was needed, and the call was resolved by listening and patience.';}
+  else if(t<=60){title='Controlled, but not settled';body='The scene is stable for now, but several choices raised tension. Officers will need to keep adapting, and a review would ask what could have been done sooner.';}
+  else{title='High risk, with force likely';body='Tension is high and options are shrinking. If force is used, it will be reviewed for objective reasonableness, and also for whether earlier choices created the danger.';}
+  document.getElementById('sstep').innerHTML=`<h2>Outcome</h2><p class="prompt" style="font-size:19px;font-weight:800">${title}</p><p class="story">${body}</p>
+   <p style="font-size:13.5px">Final tension: <b>${band(t)}</b> (${t}/100). Distance: <b>${Math.round(S.d)} ft</b>.</p>
+   <div class="endrow"><button class="btn" id="toRev">Review the factors</button><button class="btn ghost" id="again">Try again</button></div>`;
+  document.getElementById('toRev').addEventListener('click',()=>{document.getElementById('t2').click();document.getElementById('t2').focus();});
+  document.getElementById('again').addEventListener('click',()=>{reset();mountFresh();showStep();});
+  fit();
+}
+reset();mountFresh();showStep();
+
+/* ---------- Review tab ---------- */
+const I=(inner)=>A.svg('0 0 44 44',inner);
+const GR=[
+ {n:'Severity of the crime',ic:I(`<rect x="6" y="6" width="32" height="32" rx="6" class="fk"/><path d="M13 22 H31 M22 13 V31" class="sw" stroke-width="4" stroke-linecap="round" opacity="0"/><text x="22" y="29" text-anchor="middle" font-size="22" class="fw">!</text>`),
+  tag:'In this scenario: no crime reported',p:'A man shouting with a pipe at his side is a disturbance, and no one has been hit. Lower severity generally supports a lower level of force.'},
+ {n:'Immediate threat',ic:I(`<circle cx="22" cy="22" r="16" class="sr" stroke-width="4"/><circle cx="22" cy="22" r="6" class="fr"/>`),
+  tag:'In this scenario: unclear and changing',p:'He is agitated but has not raised the pipe. Judge from the view of a reasonable officer on the scene, and remember that tactics can change how threatening the moment becomes.'},
+ {n:'Resisting or fleeing',ic:I(`<path d="M8 30 L36 14 M28 12 L37 14 L33 22" class="sk" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`),
+  tag:'In this scenario: not resisting arrest',p:'No arrest has been attempted, so there is no active resistance or flight. Officers still weigh totality of circumstances, including split-second decisions.'}
+];
+const CH=[
+ {n:'Rush in and grab his arm',l:'Graham factors: low severity and no raised weapon make this force hard to justify. Policy may be stricter than the constitutional minimum.',e:'Was it proportionate? Closing in could create the danger it was meant to prevent.'},
+ {n:'Back up and keep talking',l:'Using time, distance, and communication reduces the need for force and is consistent with training and policy.',e:'Was it fair and trustworthy? It protects the officer, the public, and the person in crisis.'},
+ {n:'Call the crisis team',l:'Co-responder and crisis models connect people with services and can lower the chance of force.',e:'Was it the right responder? Matching the responder to the need serves both safety and dignity.'}
+];
+document.getElementById('review').innerHTML=`
+ <p style="font-size:14px">In <b>Graham v. Connor</b> (1989), force is judged by <b>objective reasonableness</b> from the view of a reasonable officer at the scene. Three factors guide the review:</p>
+ <div class="rgrid">${GR.map(g=>`<div class="rcard">${g.ic}<b>${g.n}</b><span class="tag">${g.tag}</span><p>${g.p}</p></div>`).join('')}</div>
+ <div><p style="font-size:13px;font-weight:800;margin-bottom:6px">Legal does not always mean right. Select an action:</p>
+  <div class="rtoggle" id="rt" role="group">${CH.map((c,i)=>`<button class="xb" data-i="${i}" aria-pressed="false">${c.n}</button>`).join('')}</div></div>
+ <div class="callout" id="rc" aria-live="polite"></div>
+ <p style="font-size:12.5px;color:var(--grey)">Accountability supports trust: supervisory review, internal investigations, public reporting of use-of-force data, and civilian oversight. Tennessee v. Garner (1985) limits deadly force against a fleeing suspect.</p>`;
+(function(){
+  const rt=document.getElementById('rt'),rc=document.getElementById('rc');
+  function show(i){[...rt.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));rc.innerHTML=`<b>Legal question</b>${CH[i].l}<b style="margin-top:6px">Ethical question</b>${CH[i].e}`;fit();}
+  rt.addEventListener('click',e=>{const b=e.target.closest('.xb');if(b)show(+b.dataset.i)});show(0);
+})();
+document.getElementById('heroArt').innerHTML=A.svg('0 0 130 70',`<path d="M10 62 A55 55 0 0 1 65 7" fill="none" stroke="#5f8f6e" stroke-width="10"/><path d="M65 7 A55 55 0 0 1 120 62" fill="none" stroke="#d34147" stroke-width="10"/><path d="M65 62 L92 22" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="65" cy="62" r="6" fill="#fff"/>`);
+initTabs();
+
+</script>
+</body>
+</html>

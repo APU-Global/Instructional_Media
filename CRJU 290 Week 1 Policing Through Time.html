@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRJU 290 Week 1 | Policing Through Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#000;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--sand-d:#d6d1ca;--white:#fff;
+  --grey:#55514d;--ok:#2f7d57;--ok-bg:#e8f4ed;--warn:#a86a00;--warn-bg:#fbf1dc;--blue:#34506e;--sky:#cfdbe6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#fff;color:var(--ink);
+  font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.45}
+/* Fallback only: if the iframe is shorter than the content, allow ONE scrollbar (inside the iframe). */
+html.scroll,html.scroll body{overflow:auto;height:auto}
+button{font:inherit;color:inherit}
+.app{height:100vh;display:flex;flex-direction:column}
+html.scroll .app{height:auto;min-height:100vh}
+
+/* Hero band — echoes the course "Deep Dive" banner */
+.hero{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:10px 24px;flex:0 0 auto}
+.hero .rule{width:64px;height:4px;background:var(--red);border-radius:2px;margin-bottom:7px}
+.hero h1{font-size:clamp(18px,2.6vw,25px);font-weight:800;line-height:1.1;letter-spacing:-.2px}
+.hero p{font-size:12.5px;color:#d9d6d2;margin-top:4px;max-width:620px}
+.hero svg{height:62px;width:auto;flex:0 0 auto}
+
+main{flex:1 1 auto;min-height:0;padding:12px 24px 16px;display:flex;flex-direction:column;gap:12px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--sand);flex:0 0 auto;flex-wrap:wrap}
+.tab{font-weight:700;font-size:13.5px;padding:8px 14px;border:0;background:none;color:var(--grey);cursor:pointer;
+  border-bottom:4px solid transparent;margin-bottom:-2px}
+.tab:hover{color:#000}
+.tab[aria-selected=true]{color:#000;border-bottom-color:var(--red)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.panel{flex:1 1 auto;min-height:0;display:none}
+.panel.on{display:flex;flex-direction:column;gap:12px}
+
+/* Buttons */
+.btn{font-weight:700;font-size:14px;background:var(--red-d);color:#fff;border:2px solid var(--red-d);padding:9px 20px;border-radius:999px;cursor:pointer}
+.btn:hover{background:#000;border-color:#000}
+.btn.ghost{background:#fff;color:#000;border-color:#000}
+.btn.ghost:hover{background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Quiz engine */
+.quiz{display:grid;grid-template-columns:minmax(220px,38%) 1fr;gap:20px;flex:1 1 auto;min-height:0}
+.scene{background:var(--sand);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:8px;min-height:0;overflow:hidden}
+.scene svg{width:100%;height:100%;max-height:330px}
+.qa{display:flex;flex-direction:column;gap:9px;min-height:0}
+.qmeta{font-size:12px;font-weight:700;color:var(--grey);display:flex;justify-content:space-between;align-items:center}
+.dots span{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--sand-d);margin-left:5px}
+.dots .done{background:var(--ok)}.dots .miss{background:var(--warn)}.dots .cur{background:#000}
+.prompt{font-size:15.5px;font-weight:600;line-height:1.4}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{text-align:left;padding:9px 14px;border:2px solid var(--sand-d);background:#fff;border-radius:10px;cursor:pointer;font-weight:600;font-size:13.5px;line-height:1.35}
+.opt:hover:not([disabled]){border-color:#000}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.no{border-color:var(--warn);background:var(--warn-bg)}
+.opt[disabled]{cursor:default}
+.fb{min-height:80px;font-size:13px;border-left:5px solid var(--sand-d);padding:7px 12px;background:#faf9f7;border-radius:0 8px 8px 0;color:#222}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--warn)}
+.fb strong{display:block;margin-bottom:2px}
+
+/* Summary */
+.summary{display:grid;grid-template-columns:minmax(200px,34%) 1fr;gap:22px;flex:1 1 auto;min-height:0;align-items:center}
+.summary h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.summary ul{margin:8px 0 14px 18px;font-size:13.5px}
+.summary li{margin-bottom:4px}
+
+/* SVG palette classes */
+.fk{fill:#000}.fr{fill:var(--red)}.fd{fill:var(--red-d)}.fs{fill:var(--sand)}.fw{fill:#fff}
+.fg{fill:#8d8781}.fl{fill:#c9c4bd}.fb2{fill:var(--blue)}.fsky{fill:var(--sky)}.fyl{fill:#f2c14e}.fgr{fill:#5f8f6e}
+.sk{stroke:#000;fill:none}.sr{stroke:var(--red);fill:none}.sg{stroke:#8d8781;fill:none}.sw{stroke:#fff;fill:none}
+svg text{font-family:'Montserrat',system-ui,Arial,sans-serif;font-weight:700}
+
+@media (max-width:680px){
+  main{padding:10px 14px 12px}
+  .hero{padding:10px 14px}.hero svg{display:none}
+  .quiz,.summary{grid-template-columns:1fr;gap:10px}
+  .scene{max-height:130px}
+  .tab{padding:7px 10px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.qroot{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.qroot>.quiz,.qroot>.summary{flex:1 1 auto}
+.quiz .scene{align-self:center}
+
+.fn{fill:#2d3340}
+.roots{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;flex:0 0 auto}
+.roots i{width:22px;height:2px;background:var(--red);display:inline-block}
+.chip{background:var(--sand);padding:5px 12px;border-radius:999px;font-weight:600}
+.eras{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:0 0 auto;position:relative}
+.era{display:flex;align-items:center;gap:12px;text-align:left;padding:10px 14px;border:2px solid var(--sand-d);border-radius:14px;background:#fff;cursor:pointer;border-top:6px solid var(--sand-d)}
+.era:hover{border-color:#000}
+.era svg{width:44px;height:44px;flex:0 0 auto}
+.era b{display:block;font-size:14.5px;font-weight:800;line-height:1.15}
+.era span{font-size:12px;color:var(--grey);font-weight:600}
+.era[aria-pressed=true]{background:#000;color:#fff;border-color:#000;border-top-color:var(--red)}
+.era[aria-pressed=true] span{color:#d9d6d2}
+.eradetail{display:grid;grid-template-columns:minmax(240px,40%) 1fr;gap:20px;flex:1 1 auto;min-height:0}
+.eradl{display:flex;flex-direction:column;gap:9px;justify-content:center}
+.eradl div{border-left:5px solid var(--red);padding:3px 0 3px 12px}
+.eradl dt{font-weight:800;font-size:13px}
+.eradl dd{font-size:13.5px}
+.eradl .big{font-size:16px;font-weight:700;border-left-color:#000;margin-bottom:2px}
+@media (max-width:680px){.eras{grid-template-columns:1fr}.era{padding:6px 10px}.eradetail{grid-template-columns:1fr}.roots{display:none}}
+.eradetail .scene{align-self:center}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div>
+      <div class="rule"></div>
+      <h1>Week 1 | Policing Through Time</h1>
+      <p>Trace the eras of American policing, then match real situations to the right agency.</p>
+    </div>
+    <div id="heroArt" aria-hidden="true"></div>
+  </header>
+  <main>
+    <div class="tabs" role="tablist" aria-label="Week 1 activities">
+      <button class="tab" role="tab" id="t1" aria-controls="p1">1. Explore the eras</button>
+      <button class="tab" role="tab" id="t2" aria-controls="p2">2. Spot the era</button>
+      <button class="tab" role="tab" id="t3" aria-controls="p3">3. Who responds?</button>
+    </div>
+
+    <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+      <div class="roots" aria-label="Before the eras">
+        <span class="chip">Colonial sheriffs &amp; night watches</span><i></i>
+        <span class="chip">1829: London Metropolitan Police</span><i></i>
+        <span class="chip">1800s: U.S. municipal departments</span>
+      </div>
+      <div class="eras" id="eraBtns" role="group" aria-label="Choose an era"></div>
+      <div class="eradetail">
+        <div class="scene" id="eraScene" role="img"></div>
+        <dl class="eradl" id="eraInfo" aria-live="polite"></dl>
+      </div>
+    </section>
+
+    <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2"><div class="qroot" id="q2"></div></section>
+    <section class="panel" id="p3" role="tabpanel" aria-labelledby="t3"><div class="qroot" id="q3"></div></section>
+
+  </main>
+</div>
+<script>
+/* ---------- Single-scrollbar guard ---------- */
+function fit(){
+  const root=document.documentElement;
+  root.classList.remove('scroll');
+  const m=document.querySelector('main');
+  if(m && m.scrollHeight>m.clientHeight+2) root.classList.add('scroll');
+}
+window.addEventListener('resize',fit);
+window.addEventListener('load',()=>{fit();setTimeout(fit,300);});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+
+/* ---------- Tabs ---------- */
+function initTabs(onChange){
+  const tabs=[...document.querySelectorAll('.tab')];
+  function select(t){
+    tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+      document.getElementById(x.getAttribute('aria-controls')).classList.toggle('on',on);});
+    if(onChange) onChange(t.getAttribute('aria-controls'));
+    fit();
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>select(t));
+    t.addEventListener('keydown',e=>{
+      let n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];
+      if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+      if(n){e.preventDefault();n.focus();select(n);}
+    });
+  });
+  select(tabs[0]);
+}
+
+/* ---------- Quiz engine ---------- */
+function Quiz(root,items,cfg){
+  let i=0,score=0,res=[];
+  function render(){
+    if(i>=items.length) return summary();
+    const it=items[i];
+    root.innerHTML=`<div class="quiz">
+      <div class="scene" role="img" aria-label="${it.alt||'Illustration for this question'}">${it.scene}</div>
+      <div class="qa">
+        <div class="qmeta"><span>Question ${i+1} of ${items.length}</span>
+          <span class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="${k<i?(res[k]?'done':'miss'):(k===i?'cur':'')}"></span>`).join('')}</span></div>
+        <p class="prompt">${it.prompt}</p>
+        <div class="opts" role="group" aria-label="Answer choices">${it.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div>
+        <div class="fb" aria-live="polite"></div>
+        <div class="row"></div>
+      </div></div>`;
+    const btns=[...root.querySelectorAll('.opt')],fb=root.querySelector('.fb'),row=root.querySelector('.row');
+    btns.forEach(b=>b.addEventListener('click',()=>{
+      const k=+b.dataset.k,right=k===it.answer;
+      btns.forEach(x=>x.disabled=true);
+      btns[it.answer].classList.add('ok');
+      if(!right)b.classList.add('no');
+      res[i]=right;if(right)score++;
+      fb.className='fb '+(right?'ok':'no');
+      fb.innerHTML=`<strong>${right?'Correct.':'Not quite.'}</strong>${right?'':'Best answer: '+it.options[it.answer].replace(/<[^>]+>/g,'')+'. '}${it.explain}`;
+      const n=document.createElement('button');n.className='btn';
+      n.textContent=i===items.length-1?'See results':'Next question';
+      n.addEventListener('click',()=>{i++;render();const f=root.querySelector('.opt,.btn');if(f)f.focus();});
+      row.appendChild(n);n.focus();fit();
+    }));
+    fit();
+  }
+  function summary(){
+    const pct=score/items.length;
+    const msg=pct===1?'Perfect round.':pct>=.7?'Strong work.':'Good start — review and try again.';
+    root.innerHTML=`<div class="summary">
+      <div class="scene" role="img" aria-label="Results graphic">${cfg.endScene}</div>
+      <div><h2>${msg} ${score} of ${items.length} correct.</h2>
+        <p style="font-size:13.5px">Key ideas from this activity:</p>
+        <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul>
+        <button class="btn">Play again</button></div></div>`;
+    root.querySelector('.btn').addEventListener('click',()=>{i=0;score=0;res=[];render();});
+    fit();
+  }
+  render();
+}
+
+/* ---------- Art helpers (inline SVG, brand palette) ---------- */
+const A={
+  svg:(vb,inner,extra='')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" ${extra}>${inner}</svg>`,
+  person:(x,y,c='fk',s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="${c}" cx="0" cy="-34" r="9"/><rect class="${c}" x="-12" y="-23" width="24" height="38" rx="11"/></g>`,
+  officer:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="fs" cx="0" cy="-34" r="9" stroke="#000" stroke-width="1.5"/><rect class="fb2" x="-12" y="-23" width="24" height="38" rx="11"/><rect class="fk" x="-11" y="-47" width="22" height="7" rx="3"/><rect class="fk" x="-7" y="-44" width="14" height="10" rx="2" opacity="0"/><path class="fyl" d="M-6 -12 l3 2 l-1 -3 l3 -2 l-3 0 l-1 -3 l-1 3 l-3 0 l3 2z"/></g>`,
+  star:(x,y,r,c='fyl')=>{let p='';for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,rr=k%2?r*.45:r;p+=(k?'L':'M')+(x+rr*Math.cos(a)).toFixed(1)+' '+(y+rr*Math.sin(a)).toFixed(1)}return `<path class="${c}" d="${p}Z"/>`},
+  car:(x,y,s=1,lights=true)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-46" y="-22" width="92" height="22" rx="8"/><path class="fk" d="M-26 -22 l10 -16 h32 l10 16z"/><path class="fsky" d="M-20 -24 l7 -11 h12 v11z M3 -24 v-11 h10 l7 11z"/><rect class="fw" x="-46" y="-14" width="92" height="7"/>${lights?'<rect class="fr" x="-8" y="-43" width="7" height="5" rx="1"/><rect class="fb2" x="1" y="-43" width="7" height="5" rx="1"/>':''}<circle class="fk" cx="-26" cy="1" r="9"/><circle class="fg" cx="-26" cy="1" r="4"/><circle class="fk" cx="26" cy="1" r="9"/><circle class="fg" cx="26" cy="1" r="4"/></g>`,
+  house:(x,y,w=70,h=50,c='fl')=>`<g transform="translate(${x} ${y})"><rect class="${c}" x="0" y="${-h}" width="${w}" height="${h}"/><path class="fd" d="M-6 ${-h} L${w/2} ${-h-26} L${w+6} ${-h}Z"/><rect class="fk" x="${w/2-8}" y="-26" width="16" height="26"/><rect class="fyl" x="8" y="${-h+12}" width="14" height="14"/><rect class="fyl" x="${w-22}" y="${-h+12}" width="14" height="14"/></g>`,
+  lamp:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-2" y="-70" width="4" height="70"/><rect class="fk" x="-8" y="-82" width="16" height="12" rx="2"/><rect class="fyl" x="-5" y="-79" width="10" height="7"/><circle cx="0" cy="-75" r="26" fill="#f2c14e" opacity=".18"/></g>`,
+  bubble:(x,y,w,h,t,c='fw')=>`<g><rect class="${c}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10" stroke="#000" stroke-width="1.5"/><text x="${x+w/2}" y="${y+h/2+4}" text-anchor="middle" font-size="11" class="fk">${t}</text></g>`,
+  ground:(y,c='fl')=>`<rect class="${c}" x="0" y="${y}" width="400" height="${300-y}"/>`
+};
+
+</script>
+<script>
+/* ---------- Era scenes ---------- */
+const VB='0 0 400 260';
+const hat=(x,y)=>`<g transform="translate(${x} ${y})"><rect class="fk" x="-9" y="-60" width="18" height="14" rx="2"/><rect class="fk" x="-15" y="-48" width="30" height="4" rx="2"/></g>`;
+const ERA_SCENE={
+  political:A.svg(VB,`
+    <rect class="fn" width="400" height="260"/>
+    <circle class="fl" cx="330" cy="46" r="18" opacity=".9"/>
+    <rect fill="#1b1f27" y="206" width="400" height="54"/>
+    ${A.house(16,206,86,66,'fg')}${A.house(290,206,92,76,'fg')}
+    <rect class="fw" x="30" y="150" width="58" height="16" rx="3"/><text x="59" y="162" text-anchor="middle" font-size="10" class="fk">WARD 7</text>
+    ${A.lamp(205,206,1.35)}
+    ${A.officer(138,206,1.15)}
+    <g transform="translate(160 176)"><rect class="fk" x="0" y="0" width="2" height="12"/><rect class="fyl" x="-5" y="12" width="12" height="16" rx="2"/></g>
+    ${A.person(250,206,'fd',1.15)}${hat(250,206+4)}
+    <rect class="fd" x="268" y="170" width="22" height="8" rx="4"/>
+    ${A.person(300,206,'fl',1.1)}
+    ${A.bubble(214,92,96,28,'“Vote right.”')}
+  `),
+  reform:A.svg(VB,`
+    <rect class="fsky" width="400" height="260"/>
+    <rect class="fl" x="0" y="206" width="400" height="54"/>
+    <rect class="fg" x="0" y="214" width="400" height="6" opacity=".4"/>
+    <g><rect class="fk" x="322" y="40" width="6" height="166"/><path class="sk" d="M325 40 L300 206 M325 40 L350 206 M311 120 H339" stroke-width="3"/>
+      <path class="sr" d="M338 36 q14 -10 0 -22 M348 40 q22 -16 0 -36" stroke-width="3"/></g>
+    ${A.car(150,200,1.9)}
+    ${A.officer(305,206,1.2)}
+    ${A.bubble(40,36,150,30,'Radio dispatch')}
+    <g transform="translate(36 84)"><rect class="fw" x="0" y="0" width="108" height="34" rx="8" stroke="#000" stroke-width="1.5"/><text x="54" y="21" text-anchor="middle" font-size="11" class="fk">Response time: 4 min</text></g>
+  `),
+  community:A.svg(VB,`
+    <rect class="fsky" width="400" height="260"/>
+    <circle class="fyl" cx="60" cy="48" r="22"/>
+    <rect class="fgr" x="0" y="206" width="400" height="54"/>
+    ${A.house(14,206,76,56,'fs')}${A.house(306,206,80,62,'fs')}
+    ${A.person(120,206,'fd',1.1)}${A.person(160,206,'fb2',1.1)}
+    ${A.officer(205,206,1.2)}
+    ${A.person(248,206,'fr',1.1)}${A.person(284,206,'fk',.85)}
+    ${A.bubble(100,70,92,28,'Our block…')}
+    ${A.bubble(214,56,116,28,'Let’s solve it.')}
+    <path class="fr" d="M200 124 c-8-14-26-2-14 10 l14 14 l14-14 c12-12-6-24-14-10z" opacity="0"/>
+  `)
+};
+const ERA_ICON={
+  political:A.svg('0 0 48 48',`<rect x="22" y="4" width="4" height="40" class="fk"/><rect x="14" y="8" width="20" height="14" rx="3" class="fk"/><rect x="18" y="11" width="12" height="8" class="fyl"/><circle cx="24" cy="15" r="20" fill="#f2c14e" opacity=".2"/>`),
+  reform:A.svg('0 0 48 48',`<rect x="4" y="22" width="40" height="12" rx="5" class="fr"/><path d="M13 22 l5 -9 h14 l5 9z" class="fr"/><circle cx="14" cy="36" r="5" class="fk"/><circle cx="34" cy="36" r="5" class="fk"/><path d="M20 21 l4-6 h5 l3 6z" class="fsky" fill="#cfdbe6"/>`),
+  community:A.svg('0 0 48 48',`<circle cx="14" cy="14" r="5" class="fr"/><rect x="8" y="21" width="12" height="18" rx="6" class="fr"/><circle cx="34" cy="14" r="5" class="fk"/><rect x="28" y="21" width="12" height="18" rx="6" class="fk"/><path d="M19 29 h10" stroke="#000" stroke-width="3" stroke-linecap="round"/>`)
+};
+const ERAS=[
+  {k:'political',name:'Political era',dates:'about 1840s–1920s',
+   alt:'Night street with a watchman holding a lantern and a ward politician shaking hands with an officer',
+   info:[['Big idea','Police answered to local politicians, and the job was a political reward.'],
+         ['Focus','Order maintenance and a wide range of services for the neighborhood and the ward.'],
+         ['Control','Decentralized. Politicians influenced hiring, promotion, and day-to-day decisions.'],
+         ['Tradeoff','Close ties to neighborhoods, but weak training, uneven standards, and risk of favoritism.']]},
+  {k:'reform',name:'Reform (professional) era',dates:'about 1920s–1970s',
+   alt:'Patrol car with radio tower and an officer; speech bubble reads radio dispatch',
+   info:[['Big idea','Professionalize the police and separate them from politics.'],
+         ['Focus','Crime fighting: law enforcement, rapid response, and arrests.'],
+         ['Control','Centralized command, strict rules, and formal training.'],
+         ['Tradeoff','More efficient and consistent, but officers became more distant from the people they served.']]},
+  {k:'community',name:'Community problem-solving era',dates:'about 1970s–today',
+   alt:'Officer and residents talking together on a neighborhood street',
+   info:[['Big idea','Legitimacy comes from partnership with the community.'],
+         ['Focus','Problem solving, prevention, and quality of life, not only crimes and calls.'],
+         ['Control','Officers have more discretion; accountability runs through partnerships and results.'],
+         ['Tradeoff','Builds trust and tackles root causes, but needs time, training, and buy-in across the agency.']]}
+];
+/* Explore tab */
+(function(){
+  const btns=document.getElementById('eraBtns'),sc=document.getElementById('eraScene'),inf=document.getElementById('eraInfo');
+  btns.innerHTML=ERAS.map((e,i)=>`<button class="era" data-i="${i}" aria-pressed="${i===0}">${ERA_ICON[e.k]}<div><b>${e.name}</b><span>${e.dates}</span></div></button>`).join('');
+  function show(i){
+    const e=ERAS[i];
+    [...btns.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+    sc.innerHTML=ERA_SCENE[e.k];sc.setAttribute('aria-label',e.alt);
+    inf.innerHTML=`<div class="big">${e.info[0][1]}</div>`+e.info.slice(1).map(r=>`<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join('');
+    fit();
+  }
+  btns.addEventListener('click',ev=>{const b=ev.target.closest('.era');if(b)show(+b.dataset.i)});
+  show(0);
+})();
+
+/* ---------- Spot the era ---------- */
+const eraOpts=['Political era','Reform (professional) era','Community problem-solving era'];
+const eraItems=[
+ {k:'political',prompt:'A ward leader helps a friend get hired onto the force, and officers know that promotions depend on keeping local politicians happy. Which era is this?',answer:0,
+  explain:'Close ties between local politicians and police define the political era.'},
+ {k:'reform',prompt:'A chief centralizes command, adds patrol cars and radios, and judges success by crime rates and response times. Which era is this?',answer:1,
+  explain:'The reform era stressed professionalization, centralized control, and a crime-fighting focus.'},
+ {k:'community',prompt:'Officers meet with schools, churches, and residents to find out why the same calls keep coming from one block. Which era is this?',answer:2,
+  explain:'Partnerships, problem solving, and legitimacy are the hallmarks of the community era.'},
+ {k:'reform',prompt:'A department adopts strict written rules and standardized training to reduce political interference in policing. Which era is this?',answer:1,
+  explain:'Rules, training, and insulation from politics were central reform-era goals.'},
+ {k:'political',prompt:'Beat officers know every shop owner, but jobs and assignments are handed out through neighborhood political machines. Which era is this?',answer:0,
+  explain:'Neighborhood closeness paired with political control is typical of the political era.'}
+].map(it=>({scene:ERA_SCENE[it.k],alt:'Illustration of an era of policing',prompt:it.prompt,options:eraOpts,answer:it.answer,explain:it.explain}));
+
+const END1=A.svg(VB,`<rect class="fs" width="400" height="260"/>${A.star(200,110,70)}<circle cx="200" cy="110" r="84" class="sk" stroke-width="5"/><text x="200" y="228" text-anchor="middle" font-size="22" class="fk">Law &amp; policing co-evolve</text>`);
+
+/* ---------- Who responds? ---------- */
+const P=(inner)=>A.svg(VB,`<rect class="fsky" width="400" height="260"/>${inner}`);
+const PLACE={
+ highway:P(`<rect class="fgr" y="150" width="400" height="110"/><path class="fk" d="M0 260 L150 150 H250 L400 260Z"/><path d="M200 255 V158" stroke="#f2c14e" stroke-width="5" stroke-dasharray="14 10"/>
+   ${A.car(150,225,1.4,false)}${A.car(262,196,.9)}<rect class="fgr" x="40" y="80" width="64" height="40" rx="6"/><rect class="fw" x="46" y="86" width="52" height="28" rx="4"/><text x="72" y="105" text-anchor="middle" font-size="12" class="fk">I-81</text><rect class="fk" x="70" y="120" width="4" height="40"/>`),
+ campus:P(`<rect class="fgr" y="210" width="400" height="50"/><rect class="fd" x="90" y="70" width="220" height="140"/><path class="fk" d="M80 70 L200 24 L320 70Z"/>
+   ${[110,150,190,230,270].map(x=>`<rect class="fw" x="${x}" y="90" width="14" height="110"/>`).join('')}<rect class="fk" x="182" y="150" width="36" height="60"/>
+   <text x="200" y="64" text-anchor="middle" font-size="12" class="fw">UNIVERSITY</text>${A.person(60,210,'fk',.9)}${A.person(345,210,'fr',.9)}`),
+ courthouse:P(`<rect class="fl" y="210" width="400" height="50"/><rect class="fs" x="80" y="80" width="240" height="130"/><path class="fk" d="M70 80 L200 28 L330 80Z"/>
+   ${[100,140,180,220,260,290].map(x=>`<rect class="fg" x="${x}" y="92" width="14" height="108"/>`).join('')}
+   <rect class="fk" x="70" y="200" width="260" height="10"/><text x="200" y="68" text-anchor="middle" font-size="12" class="fw">COUNTY COURTHOUSE</text>${A.officer(40,210,1)}`),
+ downtown:P(`<rect class="fl" y="210" width="400" height="50"/><rect class="fg" x="20" y="60" width="90" height="150"/><rect class="fk" x="260" y="40" width="110" height="170"/>
+   <rect class="fw" x="130" y="110" width="110" height="100"/><rect class="fr" x="130" y="94" width="110" height="20"/><text x="185" y="109" text-anchor="middle" font-size="12" class="fw">PHARMACY</text>
+   <rect class="fsky" x="142" y="130" width="40" height="50"/><rect class="fk" x="196" y="140" width="32" height="70"/>
+   ${[0,1,2].map(r=>[0,1,2].map(c=>`<rect class="fyl" x="${34+c*26}" y="${76+r*34}" width="14" height="18"/>`).join('')).join('')}
+   <circle class="fyl" cx="110" cy="120" r="9"/><path class="sr" d="M96 106 l-8 -8 M124 106 l8 -8" stroke-width="3"/>${A.car(330,250,.6)}`),
+ federal:P(`<rect class="fl" y="214" width="400" height="46"/><rect class="fs" x="110" y="90" width="180" height="124"/><path class="fk" d="M100 90 L200 50 L300 90Z"/>
+   ${[126,160,194,228,262].map(x=>`<rect class="fg" x="${x}" y="100" width="12" height="104"/>`).join('')}
+   <rect class="fk" x="199" y="14" width="3" height="36"/><rect class="fb2" x="202" y="14" width="26" height="16"/>
+   <g transform="translate(18 120)"><rect class="fgr" x="0" y="0" width="70" height="36" rx="4"/><text x="35" y="24" text-anchor="middle" font-size="16" class="fw">$20</text></g>
+   <g transform="translate(316 150) rotate(8)"><rect class="fgr" x="0" y="0" width="70" height="36" rx="4"/><text x="35" y="24" text-anchor="middle" font-size="16" class="fw">$20</text></g>`),
+ tribal:P(`<path class="fgr" d="M0 200 Q100 130 200 190 T400 170 V260 H0Z"/><path class="fl" d="M0 230 Q120 200 240 225 T400 215 V260 H0Z"/>
+   <rect class="fk" x="70" y="120" width="5" height="90"/><rect class="fw" x="40" y="96" width="76" height="34" rx="5" stroke="#000" stroke-width="2"/><text x="78" y="111" text-anchor="middle" font-size="10" class="fk">TRIBAL</text><text x="78" y="124" text-anchor="middle" font-size="10" class="fk">LAND</text>
+   <rect class="fs" x="230" y="140" width="110" height="70"/><path class="fd" d="M222 140 L285 100 L348 140Z"/><rect class="fk" x="275" y="170" width="20" height="40"/>${A.officer(190,226,1)}`)
+};
+const placeItems=[
+ {s:'highway',prompt:'A multi-car crash with injuries blocks an interstate far from any town. Which agency typically takes the lead?',options:['City police department','State police / highway patrol','Federal agency','School police'],answer:1,explain:'State police and highway patrol focus on highway safety and statewide support.'},
+ {s:'campus',prompt:'A fight breaks out in a university student center. Which type of agency is built for this setting?',options:['Specialized campus police','Tribal police','County sheriff only','Federal marshals'],answer:0,explain:'Specialized agencies such as campus, school, transit, airport, and park police serve a single setting.'},
+ {s:'courthouse',prompt:'Someone needs courthouse security, jail operations, and service of civil papers in a county. Who handles these duties?',options:['City police department','State police','County sheriff’s office','Transit police'],answer:2,explain:'Sheriffs often run county patrol, jails, courthouse security, and legal process.'},
+ {s:'downtown',prompt:'A burglar alarm goes off at a pharmacy on a downtown street within city limits. Who responds first?',options:['City police department','Federal agency','Tribal police','State police'],answer:0,explain:'City departments handle patrol, emergency response, and investigations within city limits.'},
+ {s:'federal',prompt:'A counterfeit-currency operation spreads across several states. Which level has the primary authority?',options:['A school police force','Federal agency','City police department','County sheriff'],answer:1,explain:'Federal agencies handle federal law violations and national or interstate crimes.'},
+ {s:'tribal',prompt:'A disturbance happens on tribal lands. Which agency enforces tribal law there?',options:['Tribal police','State police','City police department','Park police'],answer:0,explain:'Tribal law is enforced on tribal lands, with each agency having its own jurisdiction and leadership.'}
+].map(it=>({scene:PLACE[it.s],alt:'Illustration of the scene: '+it.s,prompt:it.prompt,options:it.options,answer:it.answer,explain:it.explain}));
+
+Quiz(document.getElementById('q2'),eraItems,{endScene:END1,takeaways:[
+ 'Political era: close ties between local politicians and police.',
+ 'Reform era: professionalization, centralized control, crime fighting.',
+ 'Community era: partnerships, problem solving, and legitimacy.']});
+Quiz(document.getElementById('q3'),placeItems,{endScene:END1,takeaways:[
+ 'Jurisdiction matters: city, county, state, tribal, federal, and specialized agencies differ.',
+ 'Each has its own leadership, authority, and accountability structure.']});
+
+document.getElementById('heroArt').innerHTML=A.svg('-6 -18 160 84',`${A.lamp(24,62,.75)}${A.car(82,58,.8)}${A.star(128,28,16)}`);
+initTabs();
+
+</script>
+</body>
+</html>

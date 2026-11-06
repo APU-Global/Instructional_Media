@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRJU 290 Week 5 | Solve the Problem, Not Just the Call</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#000;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--sand-d:#d6d1ca;--white:#fff;
+  --grey:#55514d;--ok:#2f7d57;--ok-bg:#e8f4ed;--warn:#a86a00;--warn-bg:#fbf1dc;--blue:#34506e;--sky:#cfdbe6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#fff;color:var(--ink);
+  font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.45}
+/* Fallback only: if the iframe is shorter than the content, allow ONE scrollbar (inside the iframe). */
+html.scroll,html.scroll body{overflow:auto;height:auto}
+button{font:inherit;color:inherit}
+.app{height:100vh;display:flex;flex-direction:column}
+html.scroll .app{height:auto;min-height:100vh}
+
+/* Hero band — echoes the course "Deep Dive" banner */
+.hero{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:10px 24px;flex:0 0 auto}
+.hero .rule{width:64px;height:4px;background:var(--red);border-radius:2px;margin-bottom:7px}
+.hero h1{font-size:clamp(18px,2.6vw,25px);font-weight:800;line-height:1.1;letter-spacing:-.2px}
+.hero p{font-size:12.5px;color:#d9d6d2;margin-top:4px;max-width:620px}
+.hero svg{height:62px;width:auto;flex:0 0 auto}
+
+main{flex:1 1 auto;min-height:0;padding:12px 24px 16px;display:flex;flex-direction:column;gap:12px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--sand);flex:0 0 auto;flex-wrap:wrap}
+.tab{font-weight:700;font-size:13.5px;padding:8px 14px;border:0;background:none;color:var(--grey);cursor:pointer;
+  border-bottom:4px solid transparent;margin-bottom:-2px}
+.tab:hover{color:#000}
+.tab[aria-selected=true]{color:#000;border-bottom-color:var(--red)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.panel{flex:1 1 auto;min-height:0;display:none}
+.panel.on{display:flex;flex-direction:column;gap:12px}
+
+/* Buttons */
+.btn{font-weight:700;font-size:14px;background:var(--red-d);color:#fff;border:2px solid var(--red-d);padding:9px 20px;border-radius:999px;cursor:pointer}
+.btn:hover{background:#000;border-color:#000}
+.btn.ghost{background:#fff;color:#000;border-color:#000}
+.btn.ghost:hover{background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Quiz engine */
+.quiz{display:grid;grid-template-columns:minmax(220px,38%) 1fr;gap:20px;flex:1 1 auto;min-height:0}
+.scene{background:var(--sand);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:8px;min-height:0;overflow:hidden}
+.scene svg{width:100%;height:100%;max-height:330px}
+.qa{display:flex;flex-direction:column;gap:9px;min-height:0}
+.qmeta{font-size:12px;font-weight:700;color:var(--grey);display:flex;justify-content:space-between;align-items:center}
+.dots span{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--sand-d);margin-left:5px}
+.dots .done{background:var(--ok)}.dots .miss{background:var(--warn)}.dots .cur{background:#000}
+.prompt{font-size:15.5px;font-weight:600;line-height:1.4}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{text-align:left;padding:9px 14px;border:2px solid var(--sand-d);background:#fff;border-radius:10px;cursor:pointer;font-weight:600;font-size:13.5px;line-height:1.35}
+.opt:hover:not([disabled]){border-color:#000}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.no{border-color:var(--warn);background:var(--warn-bg)}
+.opt[disabled]{cursor:default}
+.fb{min-height:80px;font-size:13px;border-left:5px solid var(--sand-d);padding:7px 12px;background:#faf9f7;border-radius:0 8px 8px 0;color:#222}
+.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--warn)}
+.fb strong{display:block;margin-bottom:2px}
+
+/* Summary */
+.summary{display:grid;grid-template-columns:minmax(200px,34%) 1fr;gap:22px;flex:1 1 auto;min-height:0;align-items:center}
+.summary h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.summary ul{margin:8px 0 14px 18px;font-size:13.5px}
+.summary li{margin-bottom:4px}
+
+/* SVG palette classes */
+.fk{fill:#000}.fr{fill:var(--red)}.fd{fill:var(--red-d)}.fs{fill:var(--sand)}.fw{fill:#fff}
+.fg{fill:#8d8781}.fl{fill:#c9c4bd}.fb2{fill:var(--blue)}.fsky{fill:var(--sky)}.fyl{fill:#f2c14e}.fgr{fill:#5f8f6e}
+.sk{stroke:#000;fill:none}.sr{stroke:var(--red);fill:none}.sg{stroke:#8d8781;fill:none}.sw{stroke:#fff;fill:none}
+svg text{font-family:'Montserrat',system-ui,Arial,sans-serif;font-weight:700}
+
+@media (max-width:680px){
+  main{padding:10px 14px 12px}
+  .hero{padding:10px 14px}.hero svg{display:none}
+  .quiz,.summary{grid-template-columns:1fr;gap:10px}
+  .scene{max-height:130px}
+  .tab{padding:7px 10px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.qroot{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.qroot>.quiz,.qroot>.summary{flex:1 1 auto}
+.quiz .scene{align-self:center}
+
+.sara{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(250px,36%) 1fr;gap:22px}
+.left{display:flex;flex-direction:column;gap:10px;min-height:0}
+.loopbox{background:var(--sand);border-radius:16px;padding:6px;display:flex;justify-content:center;flex:1 1 auto;min-height:0}
+.loopbox svg{width:100%;height:100%;max-height:300px}
+.case{background:#000;color:#fff;border-radius:14px;padding:10px 14px;font-size:12.5px;flex:0 0 auto}
+.case b{display:block;font-size:14px;margin-bottom:2px}
+.right{display:flex;flex-direction:column;gap:9px;min-height:0}
+.right h2{font-size:20px;font-weight:800;line-height:1.15}
+.right h2 small{display:block;font-size:12.5px;font-weight:600;color:var(--grey);margin-top:3px}
+.chartbox{border:2px solid var(--sand-d);border-radius:14px;padding:6px 8px 2px;flex:0 0 auto}
+.chartbox svg{width:100%;height:auto;max-height:190px;display:block}
+.bar{cursor:pointer}
+.bar:focus-visible rect.bb{stroke:var(--blue);stroke-width:3}
+.clues{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.clue{border:2px solid var(--sand-d);background:#fff;border-radius:12px;padding:9px 12px;text-align:left;cursor:pointer;min-height:70px;font-size:13px}
+.clue b{display:block;font-size:13.5px;font-weight:800}
+.clue.open{background:#faf9f7;border-color:#000;cursor:default}
+.clue .hid{color:var(--grey);font-weight:600}
+.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.plan{border:2px solid var(--sand-d);background:#fff;border-radius:12px;padding:8px 12px;text-align:left;cursor:pointer;font-size:13px;font-weight:600;display:flex;gap:10px;align-items:flex-start}
+.plan i{flex:0 0 22px;height:22px;border-radius:6px;border:2px solid #000;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:14px;margin-top:1px}
+.plan[aria-pressed=true]{border-color:var(--red-d);background:#fbeeee}
+.plan[aria-pressed=true] i{background:var(--red-d);border-color:var(--red-d);color:#fff}
+.plan:disabled{opacity:.5;cursor:default}
+.plan small{display:block;font-weight:500;color:var(--grey)}
+.meter{display:flex;gap:10px}
+.mbox{flex:1;border-radius:12px;background:var(--sand);padding:8px 12px;font-size:12.5px}
+.mbox b{display:block;font-size:20px;font-weight:800}
+.note{font-size:12.5px;color:var(--grey)}
+@media (max-width:680px){.sara{grid-template-columns:1fr;gap:8px}.loopbox{max-height:120px}.clues,.plans{grid-template-columns:1fr}.case{display:none}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div>
+      <div class="rule"></div>
+      <h1>Week 5 | Solve the Problem, Not Just the Call</h1>
+      <p>Work a recurring-call problem through the SARA model: scan, analyze, respond, assess.</p>
+    </div>
+    <div id="heroArt" aria-hidden="true"></div>
+  </header>
+  <main>
+    <div class="sara" id="sara"></div>
+
+  </main>
+</div>
+<script>
+/* ---------- Single-scrollbar guard ---------- */
+function fit(){
+  const root=document.documentElement;
+  root.classList.remove('scroll');
+  const m=document.querySelector('main');
+  if(m && m.scrollHeight>m.clientHeight+2) root.classList.add('scroll');
+}
+window.addEventListener('resize',fit);
+window.addEventListener('load',()=>{fit();setTimeout(fit,300);});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+
+/* ---------- Tabs ---------- */
+function initTabs(onChange){
+  const tabs=[...document.querySelectorAll('.tab')];
+  function select(t){
+    tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+      document.getElementById(x.getAttribute('aria-controls')).classList.toggle('on',on);});
+    if(onChange) onChange(t.getAttribute('aria-controls'));
+    fit();
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>select(t));
+    t.addEventListener('keydown',e=>{
+      let n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];
+      if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+      if(n){e.preventDefault();n.focus();select(n);}
+    });
+  });
+  select(tabs[0]);
+}
+
+/* ---------- Quiz engine ---------- */
+function Quiz(root,items,cfg){
+  let i=0,score=0,res=[];
+  function render(){
+    if(i>=items.length) return summary();
+    const it=items[i];
+    root.innerHTML=`<div class="quiz">
+      <div class="scene" role="img" aria-label="${it.alt||'Illustration for this question'}">${it.scene}</div>
+      <div class="qa">
+        <div class="qmeta"><span>Question ${i+1} of ${items.length}</span>
+          <span class="dots" aria-hidden="true">${items.map((_,k)=>`<span class="${k<i?(res[k]?'done':'miss'):(k===i?'cur':'')}"></span>`).join('')}</span></div>
+        <p class="prompt">${it.prompt}</p>
+        <div class="opts" role="group" aria-label="Answer choices">${it.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div>
+        <div class="fb" aria-live="polite"></div>
+        <div class="row"></div>
+      </div></div>`;
+    const btns=[...root.querySelectorAll('.opt')],fb=root.querySelector('.fb'),row=root.querySelector('.row');
+    btns.forEach(b=>b.addEventListener('click',()=>{
+      const k=+b.dataset.k,right=k===it.answer;
+      btns.forEach(x=>x.disabled=true);
+      btns[it.answer].classList.add('ok');
+      if(!right)b.classList.add('no');
+      res[i]=right;if(right)score++;
+      fb.className='fb '+(right?'ok':'no');
+      fb.innerHTML=`<strong>${right?'Correct.':'Not quite.'}</strong>${right?'':'Best answer: '+it.options[it.answer].replace(/<[^>]+>/g,'')+'. '}${it.explain}`;
+      const n=document.createElement('button');n.className='btn';
+      n.textContent=i===items.length-1?'See results':'Next question';
+      n.addEventListener('click',()=>{i++;render();const f=root.querySelector('.opt,.btn');if(f)f.focus();});
+      row.appendChild(n);n.focus();fit();
+    }));
+    fit();
+  }
+  function summary(){
+    const pct=score/items.length;
+    const msg=pct===1?'Perfect round.':pct>=.7?'Strong work.':'Good start — review and try again.';
+    root.innerHTML=`<div class="summary">
+      <div class="scene" role="img" aria-label="Results graphic">${cfg.endScene}</div>
+      <div><h2>${msg} ${score} of ${items.length} correct.</h2>
+        <p style="font-size:13.5px">Key ideas from this activity:</p>
+        <ul>${cfg.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul>
+        <button class="btn">Play again</button></div></div>`;
+    root.querySelector('.btn').addEventListener('click',()=>{i=0;score=0;res=[];render();});
+    fit();
+  }
+  render();
+}
+
+/* ---------- Art helpers (inline SVG, brand palette) ---------- */
+const A={
+  svg:(vb,inner,extra='')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" ${extra}>${inner}</svg>`,
+  person:(x,y,c='fk',s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="${c}" cx="0" cy="-34" r="9"/><rect class="${c}" x="-12" y="-23" width="24" height="38" rx="11"/></g>`,
+  officer:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle class="fs" cx="0" cy="-34" r="9" stroke="#000" stroke-width="1.5"/><rect class="fb2" x="-12" y="-23" width="24" height="38" rx="11"/><rect class="fk" x="-11" y="-47" width="22" height="7" rx="3"/><rect class="fk" x="-7" y="-44" width="14" height="10" rx="2" opacity="0"/><path class="fyl" d="M-6 -12 l3 2 l-1 -3 l3 -2 l-3 0 l-1 -3 l-1 3 l-3 0 l3 2z"/></g>`,
+  star:(x,y,r,c='fyl')=>{let p='';for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,rr=k%2?r*.45:r;p+=(k?'L':'M')+(x+rr*Math.cos(a)).toFixed(1)+' '+(y+rr*Math.sin(a)).toFixed(1)}return `<path class="${c}" d="${p}Z"/>`},
+  car:(x,y,s=1,lights=true)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-46" y="-22" width="92" height="22" rx="8"/><path class="fk" d="M-26 -22 l10 -16 h32 l10 16z"/><path class="fsky" d="M-20 -24 l7 -11 h12 v11z M3 -24 v-11 h10 l7 11z"/><rect class="fw" x="-46" y="-14" width="92" height="7"/>${lights?'<rect class="fr" x="-8" y="-43" width="7" height="5" rx="1"/><rect class="fb2" x="1" y="-43" width="7" height="5" rx="1"/>':''}<circle class="fk" cx="-26" cy="1" r="9"/><circle class="fg" cx="-26" cy="1" r="4"/><circle class="fk" cx="26" cy="1" r="9"/><circle class="fg" cx="26" cy="1" r="4"/></g>`,
+  house:(x,y,w=70,h=50,c='fl')=>`<g transform="translate(${x} ${y})"><rect class="${c}" x="0" y="${-h}" width="${w}" height="${h}"/><path class="fd" d="M-6 ${-h} L${w/2} ${-h-26} L${w+6} ${-h}Z"/><rect class="fk" x="${w/2-8}" y="-26" width="16" height="26"/><rect class="fyl" x="8" y="${-h+12}" width="14" height="14"/><rect class="fyl" x="${w-22}" y="${-h+12}" width="14" height="14"/></g>`,
+  lamp:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect class="fk" x="-2" y="-70" width="4" height="70"/><rect class="fk" x="-8" y="-82" width="16" height="12" rx="2"/><rect class="fyl" x="-5" y="-79" width="10" height="7"/><circle cx="0" cy="-75" r="26" fill="#f2c14e" opacity=".18"/></g>`,
+  bubble:(x,y,w,h,t,c='fw')=>`<g><rect class="${c}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10" stroke="#000" stroke-width="1.5"/><text x="${x+w/2}" y="${y+h/2+4}" text-anchor="middle" font-size="11" class="fk">${t}</text></g>`,
+  ground:(y,c='fl')=>`<rect class="${c}" x="0" y="${y}" width="400" height="${300-y}"/>`
+};
+
+</script>
+<script>
+const root=document.getElementById('sara');
+const BLOCKS=['6–9a','9a–12p','12–3p','3–6p','6–9p','9p–12a','12–3a','3–6a'];
+const BASE=[2,3,4,6,12,24,9,3];           // 63 calls, illustrative case data
+const STAGE=['Scan','Analyze','Respond','Assess'];
+const CLUES=[
+ ['Lighting','Three of the five lights near the east entrance have been out since spring.'],
+ ['Activity','The rec center closes at 6 p.m. Nothing else is open nearby for teens.'],
+ ['Residents','Neighbors say they rarely call in. They have never met the patrol officer.'],
+ ['Past response','Drive-by patrols after each call. The same problems return within weeks.']
+];
+const PLANS=[
+ {t:'Repair the east entrance lighting with Public Works',s:'Partnership with the city',d:-12,trust:1,good:1},
+ {t:'Extend rec-center hours with an evening youth program',s:'Partnership with the community center',d:-14,trust:1,good:1},
+ {t:'Hold neighborhood meetings and assign a beat officer to the park',s:'Residents get a voice',d:-10,trust:2,good:1},
+ {t:'Run late-night zero-tolerance enforcement sweeps',s:'Enforcement only',d:-6,trust:-2,good:0},
+ {t:'Close and fence the park at 6 p.m.',s:'Removes the space',d:-8,trust:-1,good:0},
+ {t:'Do nothing new and keep responding to calls',s:'Status quo',d:0,trust:0,good:0}
+];
+let S;
+function reset(){S={st:0,hot:false,clues:new Set(),cause:false,plan:new Set(),tested:false};}
+
+function loopSVG(){
+  const cx=130,cy=122,R=82;
+  const pos=[[130,48],[206,122],[130,196],[54,122]];
+  let arcs='';
+  for(let i=0;i<4;i++){
+    const a1=(-90+90*i+34)*Math.PI/180,a2=(-90+90*i+56)*Math.PI/180;
+    arcs+=`<path d="M${(cx+R*Math.cos(a1)).toFixed(1)} ${(cy+R*Math.sin(a1)).toFixed(1)} A${R} ${R} 0 0 1 ${(cx+R*Math.cos(a2)).toFixed(1)} ${(cy+R*Math.sin(a2)).toFixed(1)}" fill="none" stroke="#000" stroke-width="3" marker-end="url(#ah)"/>`;
+  }
+  const nodes=pos.map((p,i)=>{
+    const cls=i===S.st?'fr':(i<S.st?'fk':'fl'),tc=i<=S.st?'fw':'fk';
+    return `<circle class="${cls}" cx="${p[0]}" cy="${p[1]}" r="31"/><text x="${p[0]}" y="${p[1]+3}" text-anchor="middle" font-size="${i<S.st?18:20}" class="${tc}">${i<S.st?'✓':STAGE[i][0]}</text><text x="${p[0]}" y="${p[1]+18}" text-anchor="middle" font-size="10" class="${tc}">${STAGE[i]}</text>`;
+  }).join('');
+  return A.svg('0 0 260 244',`<defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#000"/></marker></defs>${arcs}${nodes}<text x="130" y="128" text-anchor="middle" font-size="24" class="fk">SARA</text>`);
+}
+function chart(before,after,hl,clickable){
+  const max=26,W=400,H=190,bw=(after?16:34),gx=48,base=150;
+  const x0=18;let g='';
+  before.forEach((v,i)=>{
+    const cx=x0+i*(W-x0*2)/8+ (W-x0*2)/16;
+    const h=v/max*120,ha=after?after[i]/max*120:0;
+    const isHot=hl===i;
+    if(after){
+      g+=`<rect class="fl" x="${cx-bw-1}" y="${base-h}" width="${bw}" height="${h}" rx="3"/><rect class="fr" x="${cx+1}" y="${base-ha}" width="${bw}" height="${ha}" rx="3"/>`;
+      g+=`<text x="${cx-bw/2-1}" y="${base-h-4}" text-anchor="middle" font-size="10" class="fk">${v}</text><text x="${cx+bw/2+1}" y="${base-ha-4}" text-anchor="middle" font-size="10" class="fd">${after[i]}</text>`;
+    }else{
+      g+=`<g class="${clickable?'bar':''}" ${clickable?`tabindex="0" role="button" aria-label="${BLOCKS[i]}, ${v} calls" data-i="${i}"`:''}><rect class="bb ${isHot?'fr':'fk'}" x="${cx-bw/2}" y="${base-h}" width="${bw}" height="${h}" rx="3" ${isHot?'':'opacity=".85"'}/><rect x="${cx-bw/2-4}" y="20" width="${bw+8}" height="${base-20}" fill="transparent"/></g>
+      <text x="${cx}" y="${base-h-4}" text-anchor="middle" font-size="11" class="fk">${v}</text>`;
+    }
+    g+=`<text x="${cx}" y="${base+16}" text-anchor="middle" font-size="9.5" class="fg">${BLOCKS[i]}</text>`;
+  });
+  const leg=after?`<rect class="fl" x="250" y="6" width="10" height="10" rx="2"/><text x="265" y="15" font-size="10" class="fk">Before</text><rect class="fr" x="315" y="6" width="10" height="10" rx="2"/><text x="330" y="15" font-size="10" class="fk">After 6 months</text>`:'';
+  return A.svg(`0 0 ${W} ${H}`,`<line x1="10" x2="390" y1="${base}" y2="${base}" class="sg" stroke-width="2"/>${g}${leg}<text x="10" y="${H-4}" font-size="9" class="fg">Calls for service by time of day (illustrative data)</text>`);
+}
+const sumA=a=>a.reduce((x,y)=>x+y,0);
+
+function render(){
+  const caseHTML=`<div class="case"><b>Case file: Elm Street Park</b>63 calls in six months: disturbances, vandalism, and minor theft. Patrol keeps responding, but the calls keep coming back.</div>`;
+  root.innerHTML=`<div class="left"><div class="loopbox" role="img" aria-label="The SARA cycle: scan, analyze, respond, assess. Current step: ${STAGE[S.st]}.">${loopSVG()}</div>${caseHTML}</div><div class="right" id="right"></div>`;
+  const R=document.getElementById('right');
+  [scan,analyze,respond,assess][S.st](R);
+  fit();
+}
+function nextBtn(R,label,enabled,fn){
+  const b=document.createElement('button');b.className='btn';b.textContent=label;b.disabled=!enabled;
+  if(!enabled){b.style.opacity='.4';b.style.cursor='default';}
+  b.addEventListener('click',fn);const w=document.createElement('div');w.className='row';w.appendChild(b);R.appendChild(w);return b;
+}
+function fbBox(R,cls,html){const f=document.createElement('div');f.className='fb '+cls;f.setAttribute('aria-live','polite');f.innerHTML=html;R.appendChild(f);return f;}
+
+/* S: Scan */
+function scan(R){
+  R.innerHTML=`<h2>Scan<small>Look for patterns in calls, locations, or victims.</small></h2>
+   <p class="prompt" style="font-size:14px">Select the time of day where the problem is concentrated.</p>
+   <div class="chartbox">${chart(BASE,null,S.hot?5:-1,!S.hot)}</div>`;
+  if(S.hot){
+    fbBox(R,'ok','<strong>Pattern found.</strong>The 9 p.m.–midnight block holds 24 of 63 calls (38%). Between 6 p.m. and 3 a.m., 45 calls (71%) come in, and most mention the east entrance. This is a recurring problem, not random incidents.');
+    nextBtn(R,'Continue to Analyze',true,()=>{S.st=1;render();});
+  }else{
+    fbBox(R,'','Hint: scanning means looking for where calls cluster, then asking why.');
+    nextBtn(R,'Continue to Analyze',false,()=>{});
+    R.querySelectorAll('.bar').forEach(b=>{
+      const pick=()=>{
+        const i=+b.dataset.i;
+        if(i===5){S.hot=true;render();}
+        else{const f=R.querySelector('.fb');f.className='fb no';f.innerHTML=`<strong>Not the peak.</strong>${BLOCKS[i]} has ${BASE[i]} calls. Look for the block with the most.`;fit();}
+      };
+      b.addEventListener('click',pick);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick();}});
+    });
+  }
+}
+/* A: Analyze */
+function analyze(R){
+  const all=S.clues.size===CLUES.length;
+  R.innerHTML=`<h2>Analyze<small>Find causes, actors, and context behind the pattern.</small></h2>
+   <p class="prompt" style="font-size:14px">Open all four clues. Then name the root cause.</p>
+   <div class="clues">${CLUES.map((c,i)=>S.clues.has(i)?`<div class="clue open"><b>${c[0]}</b>${c[1]}</div>`:`<button class="clue" data-i="${i}"><b>${c[0]}</b><span class="hid">Select to investigate</span></button>`).join('')}</div>`;
+  R.querySelectorAll('button.clue').forEach(b=>b.addEventListener('click',()=>{S.clues.add(+b.dataset.i);render();const nb=document.querySelector('button.clue');if(nb)nb.focus();}));
+  if(all){
+    const q=document.createElement('div');
+    q.innerHTML=`<p class="prompt" style="font-size:14px;margin-bottom:6px">Which statement best describes the root cause?</p><div class="opts" id="co"></div>`;
+    R.appendChild(q);
+    const opts=['A few troublemakers need to be arrested.','A dark, unsupervised space with nothing positive to do after 6 p.m., and little contact between police and residents.','People just do not respect the park.'];
+    const co=q.querySelector('#co');
+    co.innerHTML=opts.map((o,i)=>`<button class="opt" data-k="${i}">${o}</button>`).join('');
+    if(S.cause){[...co.children].forEach((b,i)=>{b.disabled=true;if(i===1)b.classList.add('ok');});
+      fbBox(R,'ok','<strong>Correct.</strong>Problem-oriented policing targets conditions, not only individual incidents. Lighting, activity, and relationships are all things a response can change.');
+      nextBtn(R,'Continue to Respond',true,()=>{S.st=2;render();});}
+    else{
+      co.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+        const k=+b.dataset.k;
+        if(k===1){S.cause=true;render();}
+        else{b.classList.add('no');b.disabled=true;let f=R.querySelector('.fb');if(!f)f=fbBox(R,'','');f.className='fb no';f.innerHTML='<strong>Not quite.</strong>That blames individuals or attitudes. Look back at the clues: what conditions make the problem likely here?';fit();}
+      }));
+    }
+  }else{nextBtn(R,'Continue to Respond',false,()=>{});}
+}
+/* R: Respond */
+function respond(R){
+  const n=S.plan.size;
+  R.innerHTML=`<h2>Respond<small>Design tailored strategies that fit the causes.</small></h2>
+   <p class="prompt" style="font-size:14px">Choose exactly three actions for your plan (${n} of 3 chosen).</p>
+   <div class="plans">${PLANS.map((p,i)=>`<button class="plan" data-i="${i}" aria-pressed="${S.plan.has(i)}" ${(!S.plan.has(i)&&n>=3)?'disabled':''}><i>${S.plan.has(i)?'✓':''}</i><span>${p.t}<small>${p.s}</small></span></button>`).join('')}</div>
+   <p class="note">Tip: strong responses address the causes you found and involve partners and residents.</p>`;
+  R.querySelectorAll('.plan').forEach(b=>b.addEventListener('click',()=>{
+    const i=+b.dataset.i;if(S.plan.has(i))S.plan.delete(i);else if(S.plan.size<3)S.plan.add(i);
+    render();const f=document.querySelector(`.plan[data-i="${i}"]`);if(f)f.focus();}));
+  nextBtn(R,'Put the plan into action',n===3,()=>{S.st=3;render();});
+}
+/* A: Assess */
+function assess(R){
+  const picks=[...S.plan].map(i=>PLANS[i]);
+  const red=Math.min(-picks.reduce((a,p)=>a+p.d,0),43);
+  const goodN=picks.filter(p=>p.good).length;
+  const trust=picks.reduce((a,p)=>a+p.trust,0);
+  // spread reduction mostly across the three evening blocks
+  const w=[0,0,0,.05,.25,.5,.2,0];const after=BASE.map((v,i)=>Math.max(0,Math.round(v-red*w[i])));
+  const tot=sumA(after);
+  const tlabel=trust>=3?'Rising':trust>=0?'Flat':'Falling';
+  let verdict;
+  if(goodN===3)verdict='Your plan matched the causes: lighting, positive activity, and relationships. It also gives residents a voice, which supports legitimacy.';
+  else if(goodN>=1)verdict='Partly effective. Some actions target causes, but others lean on enforcement or removal and leave root conditions or trust unaddressed.';
+  else verdict='Calls may move or dip briefly, but the conditions that create the problem remain, and the community is left out of the solution.';
+  R.innerHTML=`<h2>Assess<small>Did it work? Measure results and adjust.</small></h2>
+   <div class="chartbox">${chart(BASE,after,-1,false)}</div>
+   <div class="meter"><div class="mbox">Total calls<b>63 → ${tot}</b>over six months</div><div class="mbox">Resident trust<b>${tlabel}</b>based on partnership level</div></div>
+   <div class="fb ${goodN===3?'ok':'no'}"><strong>${goodN===3?'Strong plan.':'Room to improve.'}</strong>${verdict}</div>
+   <p class="note">Assessment questions: Did calls drop in the hot spot? Do residents feel safer? Will the change last? Share results openly with the community.</p>`;
+  nextBtn(R,'Try a different plan',true,()=>{reset();S.hot=true;S.cause=true;CLUES.forEach((_,i)=>S.clues.add(i));S.st=2;render();});
+}
+document.getElementById('heroArt').innerHTML=A.svg('0 0 80 70',`<circle cx="40" cy="35" r="26" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="30 10"/><circle cx="40" cy="9" r="6" class="fr"/><circle cx="66" cy="35" r="6" class="fr"/><circle cx="40" cy="61" r="6" class="fr"/><circle cx="14" cy="35" r="6" class="fr"/>`);
+reset();render();
+
+</script>
+</body>
+</html>
