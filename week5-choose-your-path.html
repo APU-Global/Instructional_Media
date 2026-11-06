@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 5 Interactive: Which Path Fits?</title>
+<style>
+:root{
+  --crimson:#d34147; --crimson-d:#a8353a; --crimson-t:#f7dcdd;
+  --ink:#1f2430; --ink-2:#4a5160; --paper:#fbf9f6; --sand:#edebe8; --line:#d8d3ca;
+  --brass:#b78a2f; --brass-t:#f3e8cc; --slate:#32506b; --slate-t:#dce6ef;
+  --ok:#2c7a58; --ok-t:#d9efe4; --bad:#b3362f; --bad-t:#f8dcd9;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.5 var(--sans);-webkit-text-size-adjust:100%}
+body{padding:14px 16px 16px}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--slate);outline-offset:2px;border-radius:4px}
+.app{max-width:1040px;margin:0 auto}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
+.stamp{flex:none;background:var(--crimson);color:#fff;font:700 13px/1 var(--sans);padding:8px 10px;border-radius:3px;letter-spacing:.02em}
+.top>div{flex:1;min-width:0}
+.top h1{font:700 clamp(19px,3.2vw,26px)/1.15 var(--serif)}
+.top p{font-size:13px;color:var(--ink-2);margin-top:2px;font-family:var(--sans);font-weight:400}
+.top svg{flex:none;width:44px;height:44px}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--ink)}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--ink);color:#fff}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px}
+.btn{border:2px solid var(--ink);background:#fff;border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+.btn:hover{background:var(--sand)}
+.btn.primary{background:var(--crimson);border-color:var(--crimson-d);color:#fff}
+.btn.primary:hover{background:var(--crimson-d)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.muted{color:var(--ink-2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.shake{animation:shake .35s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.presets{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.presets .lab{font-weight:700;font-size:14px;margin-right:2px}
+.chip{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:5px 12px;font-weight:600;font-size:13.5px}
+.chip:hover{background:var(--sand)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:14px;align-items:start}
+.card h2{font:700 18px/1.2 var(--serif);margin-bottom:6px}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) 22px;gap:0 8px;align-items:center;margin-bottom:6px}
+.sl label{grid-column:1/-1;font-size:13.5px;font-weight:600}
+.sl input{width:100%;accent-color:var(--crimson);margin:2px 0}
+.sl output{font:700 14px var(--sans);text-align:right}
+.paths{display:flex;flex-direction:column;gap:8px}
+.path{display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 10px;transition:border-color .3s,background .3s}
+.path.best{border-color:var(--crimson);background:#fff8f8}
+.path .art{background:var(--sand);border-radius:8px;padding:2px}
+.path .art svg{width:100%;height:auto;display:block}
+.path h3{font:700 17px/1.2 var(--serif);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge{background:var(--crimson);color:#fff;font:700 11.5px var(--sans);padding:2px 8px;border-radius:999px}
+.dec{font-size:13px;color:var(--ink-2);margin:1px 0 4px}
+.meter{display:flex;align-items:center;gap:8px}
+.meter .bar{flex:1;height:14px;background:var(--sand);border-radius:7px;overflow:hidden}
+.meter .bar i{display:block;height:100%;width:0;border-radius:7px;background:var(--c);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.meter b{min-width:42px;text-align:right;font-size:14px}
+.str{font-size:12.5px;margin-top:3px}
+.verdict{margin-top:8px;border-left:4px solid var(--brass);background:var(--brass-t);padding:8px 10px;border-radius:0 6px 6px 0;font-size:14px;min-height:62px}
+.rule{margin-top:8px;font:700 14px var(--serif);text-align:center;padding:6px;background:var(--ink);color:#fff;border-radius:8px}
+@media (max-width:600px){
+  body{padding:10px}
+  .top svg{display:none}
+  .grid{grid-template-columns:1fr;gap:10px}
+  .card{padding:10px}
+  .path{grid-template-columns:76px minmax(0,1fr);padding:6px 8px}
+  .path h3{font-size:15.5px}
+  .verdict{min-height:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="stamp">Week 5</span>
+    <div>
+      <h1>Which Path Fits?</h1>
+      <p>Set what matters most in a dispute and compare mediation, arbitration, and litigation.</p>
+    </div>
+    <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="8" fill="#b78a2f"/><circle cx="8" cy="12" r="5" fill="#d34147"/><circle cx="40" cy="12" r="5" fill="#32506b"/><path d="M12 15l8 6M36 15l-8 6" stroke="#1f2430" stroke-width="2.5" stroke-linecap="round"/><path d="M8 40h32" stroke="#1f2430" stroke-width="3" stroke-linecap="round"/></svg>
+  </header>
+
+  <div class="presets" id="presets" role="group" aria-label="Example disputes">
+    <span class="lab">Try a dispute:</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>What matters most? (0 to 5)</h2>
+      <div id="sliders"></div>
+      <div class="rule">Mediators facilitate. Arbitrators decide.</div>
+    </div>
+    <div>
+      <div class="paths" id="paths"></div>
+      <div class="verdict" id="verdict" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CRIT=[
+ {k:"speed",l:"Speed"},
+ {k:"cost",l:"Low cost"},
+ {k:"privacy",l:"Privacy"},
+ {k:"control",l:"Control over the outcome"},
+ {k:"final",l:"A final answer"},
+ {k:"prec",l:"A public ruling that sets precedent"},
+ {k:"rel",l:"Keeping the relationship"}
+];
+const PATHS=[
+ {id:"med",name:"Mediation",c:"#2c7a58",dec:"Who decides: the parties. The mediator only helps.",s:{speed:4,cost:4,privacy:5,control:5,final:2,prec:0,rel:5},
+  svg:`<svg viewBox="0 0 120 80" aria-hidden="true"><ellipse cx="60" cy="46" rx="30" ry="16" fill="#8a6b3d"/><circle cx="22" cy="46" r="10" fill="#d34147" stroke="#fff" stroke-width="3"/><circle cx="98" cy="46" r="10" fill="#32506b" stroke="#fff" stroke-width="3"/><circle cx="60" cy="20" r="10" fill="#b78a2f" stroke="#fff" stroke-width="3"/><path d="M36 46h12M72 46h12" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M28 30q8-8 20-8M92 30q-8-8-20-8" stroke="#1f2430" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="2 4"/><path d="M52 66h16" stroke="#1f2430" stroke-width="3" stroke-linecap="round"/><path d="M60 62v-6" stroke="#1f2430" stroke-width="3"/></svg>`},
+ {id:"arb",name:"Arbitration",c:"#32506b",dec:"Who decides: the arbitrator, who issues an award.",s:{speed:3,cost:3,privacy:4,control:2,final:4,prec:1,rel:2},
+  svg:`<svg viewBox="0 0 120 80" aria-hidden="true"><rect x="26" y="26" width="68" height="14" rx="3" fill="#8a6b3d"/><circle cx="60" cy="14" r="10" fill="#b78a2f" stroke="#fff" stroke-width="3"/><circle cx="34" cy="58" r="10" fill="#d34147" stroke="#fff" stroke-width="3"/><circle cx="86" cy="58" r="10" fill="#32506b" stroke="#fff" stroke-width="3"/><rect x="52" y="46" width="16" height="22" rx="2" fill="#fff" stroke="#1f2430" stroke-width="2"/><path d="M56 53h8M56 58h8" stroke="#1f2430" stroke-width="2"/><circle cx="60" cy="65" r="3" fill="#d34147"/></svg>`},
+ {id:"lit",name:"Litigation",c:"#a8353a",dec:"Who decides: a judge or jury, in public court.",s:{speed:1,cost:1,privacy:1,control:1,final:4,prec:5,rel:1},
+  svg:`<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M14 30L60 6l46 24z" fill="#d34147"/><rect x="18" y="30" width="84" height="6" fill="#b78a2f"/><g fill="#fff" stroke="#1f2430" stroke-width="2"><rect x="24" y="38" width="9" height="26"/><rect x="42" y="38" width="9" height="26"/><rect x="69" y="38" width="9" height="26"/><rect x="87" y="38" width="9" height="26"/></g><rect x="12" y="64" width="96" height="6" fill="#1f2430"/><rect x="6" y="70" width="108" height="6" fill="#4a5160"/></svg>`}
+];
+const PRESETS=[
+ {n:"Neighbors and a fence",w:[2,4,2,5,2,0,5]},
+ {n:"Vendor contract dispute",w:[4,3,5,2,5,0,2]},
+ {n:"Change the law",w:[1,1,0,1,4,5,0]},
+ {n:"Co-founders splitting up",w:[3,3,5,5,3,0,4]}
+];
+const $=s=>document.querySelector(s);
+let W=CRIT.map(()=>3), activePreset=-1;
+
+$('#sliders').innerHTML=CRIT.map((c,i)=>`<div class="sl"><label for="s${i}">${c.l}</label><input type="range" id="s${i}" min="0" max="5" step="1" value="3" data-i="${i}" aria-valuetext="3 of 5"><output id="o${i}" for="s${i}">3</output></div>`).join('');
+$('#paths').innerHTML=PATHS.map(p=>`<div class="path" id="p-${p.id}"><div class="art">${p.svg}</div><div><h3>${p.name}<span class="badge" hidden>Best fit</span></h3><p class="dec">${p.dec}</p><div class="meter" style="--c:${p.c}"><div class="bar"><i></i></div><b>0%</b></div><p class="str"></p></div></div>`).join('');
+
+const pb=$('#presets');
+PRESETS.forEach((p,i)=>{const b=document.createElement('button');b.className='chip';b.textContent=p.n;b.setAttribute('aria-pressed','false');b.onclick=()=>{W=p.w.slice();activePreset=i;sync(true)};pb.appendChild(b)});
+const rb=document.createElement('button');rb.className='chip';rb.textContent='Reset';rb.style.borderStyle='dashed';rb.onclick=()=>{W=CRIT.map(()=>3);activePreset=-1;sync(true)};pb.appendChild(rb);
+
+document.querySelectorAll('.sl input').forEach(inp=>inp.addEventListener('input',()=>{W[+inp.dataset.i]=+inp.value;activePreset=-1;sync(false)}));
+
+function sync(setInputs){
+  if(setInputs)W.forEach((v,i)=>{$('#s'+i).value=v});
+  W.forEach((v,i)=>{$('#o'+i).textContent=v;$('#s'+i).setAttribute('aria-valuetext',v+' of 5')});
+  [...pb.querySelectorAll('.chip')].slice(0,PRESETS.length).forEach((b,i)=>b.setAttribute('aria-pressed',i===activePreset));
+  const tot=W.reduce((a,b)=>a+b,0);
+  const res=PATHS.map(p=>{
+    const sc=CRIT.reduce((a,c,i)=>a+W[i]*p.s[c.k],0);
+    const contrib=CRIT.map((c,i)=>({l:c.l,v:W[i]*p.s[c.k],ok:W[i]>=3&&p.s[c.k]>=4})).filter(x=>x.ok).sort((a,b)=>b.v-a.v).slice(0,2);
+    return {p,pct:tot?Math.round(sc/(tot*5)*100):0,contrib};
+  });
+  const max=Math.max(...res.map(r=>r.pct));
+  const bests=res.filter(r=>tot&&r.pct===max);
+  res.forEach(r=>{
+    const el=$('#p-'+r.p.id); const best=tot&&r.pct===max;
+    el.classList.toggle('best',!!best); el.querySelector('.badge').hidden=!best;
+    el.querySelector('.bar i').style.width=r.pct+'%'; el.querySelector('b').textContent=r.pct+'%';
+    el.querySelector('.str').textContent=r.contrib.length?'Strong on: '+r.contrib.map(x=>x.l.toLowerCase()).join(' and '):'';
+  });
+  const v=$('#verdict');
+  if(!tot){v.textContent="Raise at least one slider to see how the paths compare.";return}
+  if(bests.length>1){v.innerHTML=`<b>Close call.</b> ${bests.map(b=>b.p.name).join(' and ')} fit your priorities equally well. Look at who decides and how much control you want to give up.`;return}
+  const b=bests[0], top=b.contrib.map(x=>x.l.toLowerCase());
+  const why=top.length?`You rated ${top.join(' and ')} highly, and ${b.p.name.toLowerCase()} does well on ${top.length>1?'both':'that'}.`:`It balances your priorities best.`;
+  const note={med:"Mediation only works if both sides agree to the result.",arb:"Arbitration rules are often set by agreement, and review of the result is limited.",lit:"Litigation offers formal procedure and a public record."}[b.p.id];
+  v.innerHTML=`<b>${b.p.name} fits best (${b.pct}%).</b> ${why} ${note}`;
+}
+sync(false);
+</script>
+</body>
+</html>

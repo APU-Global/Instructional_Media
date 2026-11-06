@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Revise, Edit, Proofread</title>
+<style>
+:root{--navy:#1f3a5f;--teal:#17808a;--teal-d:#0f5f67;--amber:#f2a93b;--ink:#1d2733;--muted:#5b6876;--bg:#f4f7fb;--card:#fff;--line:#d9e1ea;--good:#1c7f4d;--goodbg:#e4f5ec;--bad:#b3362b;--badbg:#fbe9e7;--c1:#c0392b;--c2:#1b6fb5;--c3:#7b4bb0;--c4:#d2800f;--c5:#17808a}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:1000px;margin:0 auto;background:var(--bg)}
+header{flex:none;display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(120deg,var(--navy),var(--teal-d));color:#fff}
+header svg{flex:none;width:58px;height:58px}
+header h1{margin:0;font-size:1.28rem;line-height:1.2}
+header p{margin:2px 0 0;font-size:.9rem;opacity:.92}
+.wk{display:inline-block;background:var(--amber);color:#2b1d00;font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 8px;border-radius:99px;margin-bottom:3px}
+nav[role=tablist]{flex:none;display:flex;gap:4px;padding:8px 14px 0;background:#e8eef5;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:9px 14px;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{background:var(--bg);color:var(--navy);box-shadow:inset 0 3px 0 var(--amber)}
+nav button:hover{color:var(--navy)}
+.stage{flex:1;min-height:0;overflow:auto;padding:16px 18px 20px;-webkit-overflow-scrolling:touch}
+.panel[hidden]{display:none}
+.lead{margin:0 0 12px;color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 2px rgba(20,40,70,.05)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:680px){.grid2{grid-template-columns:1fr}header svg{width:44px;height:44px}header h1{font-size:1.1rem}}
+button.btn{font:inherit;font-weight:600;border:2px solid var(--teal);background:var(--teal);color:#fff;padding:7px 16px;border-radius:10px;cursor:pointer}
+button.btn:hover{background:var(--teal-d);border-color:var(--teal-d)}
+button.btn.ghost{background:#fff;color:var(--teal-d)}
+button.btn.ghost:hover{background:#eaf6f7}
+button.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #ffb703;outline-offset:2px}
+.chip{font:inherit;font-weight:600;font-size:.9rem;border:2px solid var(--line);background:#fff;border-radius:99px;padding:4px 13px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{border-color:var(--navy);background:var(--navy);color:#fff}
+.fb{margin-top:12px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;min-height:44px}
+.fb.good{background:var(--goodbg);border-color:#9fd5b6}
+.fb.bad{background:var(--badbg);border-color:#efb3ab}
+.fb.info{background:#eef5ff;border-color:#bcd3f2}
+.bar{height:10px;border-radius:99px;background:#dfe7f0;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),#47b6a0);transition:width .4s}
+.small{font-size:.88rem;color:var(--muted)}
+h2{font-size:1.1rem;margin:0 0 6px;color:var(--navy)}
+h3{font-size:1rem;margin:0 0 4px;color:var(--navy)}
+footer{flex:none;padding:5px 14px;font-size:.76rem;color:var(--muted);background:#e8eef5;border-top:1px solid var(--line)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.tk{padding:1px 3px;border-radius:6px;cursor:pointer;border:2px solid transparent}
+.tk:hover{background:#d8e6f6}.tk.on{background:#ffe9a8;border-color:var(--amber)}
+.tk.ok{background:var(--goodbg);border-color:var(--good)}.tk.no{background:var(--badbg);border-color:var(--bad);text-decoration:line-through}
+.tk.miss{background:#fff3f1;border:2px dashed var(--bad)}
+.tk .fx{font-weight:700;color:var(--good);font-size:.7rem}
+</style></head>
+<body><div class="app">
+<header><svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="14" cy="36" r="9" fill="#f2a93b"/><circle cx="36" cy="36" r="9" fill="#fff"/><circle cx="58" cy="36" r="9" fill="#9bd3d8"/><path d="M23 36h4M45 36h4" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M10 36l3 3 6-7" stroke="#2b1d00" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M32 36h8M36 32v8" stroke="#1f3a5f" stroke-width="2.5" stroke-linecap="round"/><circle cx="58" cy="36" r="4" fill="none" stroke="#0f5f67" stroke-width="2"/><path d="M8 58h56" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/></svg><div><span class="wk">Week 7</span><h1>Revise, Edit, Proofread</h1><p>Three separate passes for stronger writing</p></div></header>
+<nav role="tablist" aria-label="Activities"><button role="tab" id="t0" aria-controls="p0" aria-selected="true">Which Pass?</button><button role="tab" id="t1" aria-controls="p1" aria-selected="false">Proofreading Hunt</button></nav>
+<main class="stage" id="stage">
+<section class="panel" id="p0">
+<p class="lead"><b>Three passes, three jobs.</b> Revising looks at the big picture, editing polishes sentences, proofreading catches surface errors. Sort each problem into the pass where you would fix it.</p>
+<svg viewBox="0 0 600 70" width="100%" style="max-width:640px;display:block;margin:0 auto 10px" role="img" aria-label="Three steps: 1 Revise, 2 Edit, 3 Proofread">
+ <g font-family="-apple-system,Segoe UI,Arial,sans-serif" font-weight="700" font-size="15">
+  <path d="M5 8h170l22 27-22 27H5z" fill="#f2a93b"/><text x="95" y="40" text-anchor="middle" fill="#2b1d00">1 Revise · ideas</text>
+  <path d="M205 8h170l22 27-22 27H205z" fill="#17808a"/><text x="295" y="40" text-anchor="middle" fill="#fff">2 Edit · sentences</text>
+  <path d="M405 8h170l22 27-22 27H405z" fill="#1f3a5f"/><text x="495" y="40" text-anchor="middle" fill="#fff">3 Proofread · surface</text></g></svg>
+<div class="row" style="margin-bottom:10px"><div class="bar" style="flex:1"><i id="pg"></i></div><b id="sc" class="small">0 / 10</b></div>
+<div id="items"></div>
+<div class="fb info" id="fb0" aria-live="polite">Choose a pass for each problem. You get instant feedback.</div>
+<div class="row" style="margin-top:10px"><button class="btn ghost" id="rs">Start over</button></div>
+</section>
+
+<section class="panel" id="p1" hidden>
+<p class="lead"><b>Proofreading hunt.</b> This paragraph contains <b>7 surface errors</b>. Click each word or phrase you think is wrong, then press <b>Check</b>.</p>
+<div class="card"><div id="para" style="font-size:1.12rem;line-height:2.2"></div></div>
+<div class="row" style="margin-top:12px"><button class="btn" id="ck">Check</button><button class="btn ghost" id="rv">Reveal fixes</button><button class="btn ghost" id="rs2">Start over</button></div>
+<div class="fb info" id="fb1" aria-live="polite">Flagged: 0</div>
+</section>
+</main>
+<footer>ENGL 101 &middot; Introduction to Composition &middot; Week 7 Deep Dive interactive</footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function el(t,c,txt){const e=document.createElement(t);if(c)e.className=c;if(txt!==undefined)e.textContent=txt;return e}
+$$('nav button').forEach(b=>b.addEventListener('click',()=>{
+ $$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ $$('.panel').forEach(p=>p.hidden=p.id!==b.getAttribute('aria-controls'));
+ $('#stage').scrollTop=0;}));
+$$('nav button').forEach((b,i,a)=>b.addEventListener('keydown',e=>{
+ if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=a[(i+(e.key==='ArrowRight'?1:-1)+a.length)%a.length];n.focus();n.click()}}));
+
+const PASS=['Revise','Edit','Proofread'];const PC=['#f2a93b','#17808a','#1f3a5f'];
+const IT=[
+['The thesis no longer matches what the body paragraphs argue.',0,'Thesis and support must align. That is a big-picture revision.'],
+['“Their” should be “there.”',2,'A wrong word at the surface level is a proofreading fix.'],
+['This sentence says the same thing three different ways.',1,'Cutting wordiness is sentence-level editing.'],
+['Paragraph 3 makes a claim but offers no evidence.',0,'Missing development is a revision problem.'],
+['A comma is missing after an introductory phrase.',2,'Punctuation errors are caught while proofreading.'],
+['Five sentences in a row begin with “The.”',1,'Varying sentence structure is editing.'],
+['The body paragraphs would be stronger in a different order.',0,'Organization belongs to revision.'],
+['“Very good” could be a more precise word.',1,'Choosing precise words is editing.'],
+['The reference list entry is missing its hanging indent.',2,'Checking APA formatting is part of the final proofread.'],
+['The conclusion only repeats the introduction instead of leaving readers with something new.',0,'Developing the ending is a big-picture revision.']];
+let done=0,got=0;const box=$('#items'),f0=$('#fb0');
+function build(){
+ box.innerHTML='';done=0;got=0;$('#sc').textContent='0 / '+IT.length;$('#pg').style.width='0';f0.className='fb info';f0.textContent='Choose a pass for each problem. You get instant feedback.';
+ IT.forEach(it=>{
+  const c=el('div','card');c.style.cssText='margin-bottom:8px;padding:9px 12px';
+  const r=el('div','row');const t=el('div','',it[0]);t.style.cssText='flex:1;min-width:220px';
+  const b=el('div','row');
+  PASS.forEach((p,j)=>{const x=el('button','chip',p);x.onclick=()=>{
+   if(c.dataset.d)return;c.dataset.d=1;done++;const ok=j===it[1];if(ok)got++;
+   $$('button',b).forEach((y,k)=>{y.disabled=true;if(k===it[1]){y.style.cssText='background:'+PC[k]+';border-color:'+PC[k]+';color:'+(k===0?'#2b1d00':'#fff')}else if(k===j){y.style.cssText='background:var(--badbg);border-color:var(--bad);text-decoration:line-through'}});
+   c.style.borderColor=ok?'#9fd5b6':'#efb3ab';c.style.background=ok?'#f4fbf7':'#fff8f7';
+   const m=el('div','small',(ok?'✓ ':'✗ ')+it[2]);m.style.cssText='width:100%;color:'+(ok?'var(--good)':'var(--bad)');r.append(m);
+   $('#sc').textContent=got+' / '+IT.length;$('#pg').style.width=(done/IT.length*100)+'%';
+   if(done===IT.length){f0.className='fb '+(got>=8?'good':'info');f0.innerHTML='<b>You sorted '+got+' of '+IT.length+' correctly.</b> Remember the order: revise first, edit second, proofread last, so you never polish sentences you may delete.'}};b.append(x)});
+  r.append(t,b);c.append(r);box.append(c)});
+}
+$('#rs').onclick=build;build();
+
+const SRC='Writing {{a|an}} essay can feel overwhelming, but a clear process makes it manageable. First, writers should gather {{there|their}} ideas and decide on a position. {{Next|Next,}} they draft {{with out|without}} worrying about perfection. After setting the draft aside, they revise for the big picture. Then they edit each {{sentences|sentence}} for clarity and concision. Finally, writers proofread {{they’re|their}} work carefully for spelling and {{punctuaton|punctuation}} errors.';
+const toks=(SRC.match(/\{\{.*?\}\}|\S+/g)||[]).map(t=>{const m=t.match(/^\{\{(.*?)\|(.*?)\}\}(.*)$/);return m?{w:m[1],fix:m[2],tail:m[3],err:true,on:false}:{w:t,err:false,on:false}});
+const para=$('#para');let state='play';
+function rp(){
+ para.innerHTML='';
+ toks.forEach((t,i)=>{
+  const s=el('span','tk',t.w+(t.tail||''));s.tabIndex=0;s.setAttribute('role','button');s.setAttribute('aria-pressed',t.on);
+  if(t.on)s.classList.add('on');
+  if(state!=='play'){
+   if(t.on&&t.err)s.classList.add('ok');
+   else if(t.on&&!t.err)s.classList.add('no');
+   else if(!t.on&&t.err&&state==='rev')s.classList.add('miss');
+   if(t.err&&state==='rev'){s.append(el('sup','fx',' → '+t.fix))}
+  }
+  const act=()=>{t.on=!t.on;state='play';rp();const n=$$('.tk')[i];if(n)n.focus()};
+  s.onclick=act;s.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act()}};
+  para.append(s,document.createTextNode(' '));
+ });
+ const n=toks.filter(t=>t.on).length;$('#fb1').className='fb info';$('#fb1').textContent='Flagged: '+n;
+}
+function res(rev){
+ state=rev?'rev':'chk';rp();
+ const hit=toks.filter(t=>t.on&&t.err).length,fp=toks.filter(t=>t.on&&!t.err).length,tot=toks.filter(t=>t.err).length;
+ const f=$('#fb1');const perfect=hit===tot&&fp===0;f.className='fb '+(perfect?'good':'bad');
+ f.innerHTML=perfect?'<b>All 7 found with no false alarms!</b> Reading slowly, word by word, is the proofreader’s secret.':'<b>Found '+hit+' of '+tot+'.</b> '+(fp?fp+' flagged word'+(fp>1?'s are':' is')+' actually correct (struck through). ':'')+(rev?'Red dashed words are the ones you missed, with the fix shown.':'Keep hunting, or press Reveal fixes.')+' <span class="small">Tip: read it aloud, or backward, to slow your eyes down.</span>';
+}
+$('#ck').onclick=()=>res(false);$('#rv').onclick=()=>res(true);
+$('#rs2').onclick=()=>{toks.forEach(t=>t.on=false);state='play';rp()};
+rp();
+
+</script></body></html>

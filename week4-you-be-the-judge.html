@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 4 Interactive: You Be the Judge</title>
+<style>
+:root{
+  --crimson:#d34147; --crimson-d:#a8353a; --crimson-t:#f7dcdd;
+  --ink:#1f2430; --ink-2:#4a5160; --paper:#fbf9f6; --sand:#edebe8; --line:#d8d3ca;
+  --brass:#b78a2f; --brass-t:#f3e8cc; --slate:#32506b; --slate-t:#dce6ef;
+  --ok:#2c7a58; --ok-t:#d9efe4; --bad:#b3362f; --bad-t:#f8dcd9;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.5 var(--sans);-webkit-text-size-adjust:100%}
+body{padding:14px 16px 16px}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--slate);outline-offset:2px;border-radius:4px}
+.app{max-width:1040px;margin:0 auto}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
+.stamp{flex:none;background:var(--crimson);color:#fff;font:700 13px/1 var(--sans);padding:8px 10px;border-radius:3px;letter-spacing:.02em}
+.top>div{flex:1;min-width:0}
+.top h1{font:700 clamp(19px,3.2vw,26px)/1.15 var(--serif)}
+.top p{font-size:13px;color:var(--ink-2);margin-top:2px;font-family:var(--sans);font-weight:400}
+.top svg{flex:none;width:44px;height:44px}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--ink)}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--ink);color:#fff}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px}
+.btn{border:2px solid var(--ink);background:#fff;border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+.btn:hover{background:var(--sand)}
+.btn.primary{background:var(--crimson);border-color:var(--crimson-d);color:#fff}
+.btn.primary:hover{background:var(--crimson-d)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.muted{color:var(--ink-2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.shake{animation:shake .35s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.controls .hint{font-size:13px;color:var(--ink-2)}
+.grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;align-items:start}
+.story{font-size:14.5px;margin-bottom:10px}
+.story b{font-family:var(--serif);font-size:17px;display:block;margin-bottom:2px}
+.facts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.fact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;background:var(--paper);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;font-size:14px;line-height:1.35}
+.fact .tg{display:flex;gap:4px}
+.tg button{border:1.5px solid var(--ink);background:#fff;border-radius:6px;padding:3px 9px;font-size:12.5px;font-weight:700}
+.tg button[aria-pressed="true"].a{background:var(--ok);border-color:var(--ok);color:#fff}
+.tg button[aria-pressed="true"].e{background:var(--bad);border-color:var(--bad);color:#fff}
+.tg button[disabled]{cursor:default}
+.fact .why{grid-column:1/-1;font-size:13px;margin:0;padding:5px 8px;border-radius:6px}
+.tg button.w{border-style:dashed;background:var(--paper)}
+.tg button.w[aria-expanded="true"]{background:var(--ink);color:#fff;border-style:solid}
+.fact.pa{border-left:5px solid var(--ok)} .fact.pe{border-left:5px solid var(--bad)}
+.fact .why.a{background:var(--ok-t)} .fact .why.e{background:var(--bad-t)}
+.rside{display:flex;flex-direction:column;gap:10px}
+.scale-wrap{background:var(--sand);border-radius:10px;padding:4px 8px 0}
+.scale-wrap svg{width:100%;height:auto;display:block;max-height:210px}
+.beam,.pan{transition:transform .8s cubic-bezier(.3,1.3,.5,1)}
+.beam{transform-origin:150px 40px}
+.sum{font-size:13px;text-align:center;color:var(--ink-2);padding:4px 0 8px;min-height:30px}
+.ruling{display:flex;gap:8px;flex-wrap:wrap}
+.ruling .btn{flex:1;min-width:140px}
+.ruling .btn.admit{border-color:var(--ok);color:#1d5a40}.ruling .btn.admit:hover{background:var(--ok-t)}
+.ruling .btn.excl{border-color:var(--bad);color:#8a2620}.ruling .btn.excl:hover{background:var(--bad-t)}
+.q{font:700 16px/1.3 var(--serif);margin-bottom:6px}
+.verdict{border-radius:10px;padding:10px 12px;border:2px solid}
+.verdict.ok{background:var(--ok-t);border-color:var(--ok)}
+.verdict.no{background:var(--bad-t);border-color:var(--bad)}
+.verdict h2{font:700 18px/1.2 var(--serif);margin-bottom:4px}
+.verdict p{font-size:14px}
+.rules{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.rules span{background:#fff;border:1.5px solid var(--ink);border-radius:999px;font-size:12px;font-weight:600;padding:2px 9px}
+.small{font-size:12px;color:var(--ink-2);margin-top:6px}
+[hidden]{display:none!important}
+@media (max-width:600px){
+  body{padding:10px}
+  .top svg{display:none}
+  .grid{grid-template-columns:1fr;gap:10px}
+  .card{padding:10px}
+  .fact{font-size:13.5px;grid-template-columns:1fr}
+  .fact .tg{justify-content:flex-start}
+  .scale-wrap svg{max-height:150px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="stamp">Week 4</span>
+    <div>
+      <h1>You Be the Judge</h1>
+      <p>Weigh the facts, then rule: admit the statement or keep it from the jury?</p>
+    </div>
+    <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="40" width="26" height="5" rx="2" fill="#1f2430"/><g transform="rotate(-35 24 20)"><rect x="12" y="10" width="26" height="12" rx="3" fill="#b78a2f"/><rect x="9" y="8" width="6" height="16" rx="2" fill="#5b3f1f"/><rect x="35" y="8" width="6" height="16" rx="2" fill="#5b3f1f"/></g><path d="M22 26l-12 14" stroke="#5b3f1f" stroke-width="5" stroke-linecap="round"/></svg>
+  </header>
+
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Choose a case">
+      <button id="c0" aria-pressed="true">Case 1: State v. Reed</button>
+      <button id="c1" aria-pressed="false">Case 2: State v. Okafor</button>
+    </div>
+    <span class="hint">Fictional cases written for practice.</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="story" id="story"></div>
+      <ul class="facts" id="facts"></ul>
+    </div>
+    <div class="rside">
+      <div>
+        <div class="scale-wrap">
+          <svg viewBox="0 0 300 200" role="img" aria-label="Scales that tip toward admit or exclude as you tag facts" id="scale">
+            <rect x="110" y="182" width="80" height="10" rx="4" fill="#1f2430"/>
+            <rect x="145" y="40" width="10" height="144" fill="#5b3f1f"/>
+            <g class="beam" id="beam"><rect x="40" y="36" width="220" height="8" rx="4" fill="#b78a2f" stroke="#7d5c18"/></g>
+            <circle cx="150" cy="40" r="9" fill="#d34147" stroke="#fff" stroke-width="3"/>
+            <g class="pan" id="panL" style="transform:translate(40px,40px)">
+              <path d="M0 0L-30 62M0 0L30 62" stroke="#5b3f1f" stroke-width="2" fill="none"/>
+              <path d="M-38 62h76a38 22 0 0 1-76 0z" fill="#2c7a58"/>
+              <text x="0" y="76" text-anchor="middle" fill="#fff" font-size="15" font-weight="700" font-family="system-ui,sans-serif" id="nL">0</text>
+              <text x="0" y="104" text-anchor="middle" fill="#1f2430" font-size="13" font-weight="700" font-family="system-ui,sans-serif">Admit</text>
+            </g>
+            <g class="pan" id="panR" style="transform:translate(260px,40px)">
+              <path d="M0 0L-30 62M0 0L30 62" stroke="#5b3f1f" stroke-width="2" fill="none"/>
+              <path d="M-38 62h76a38 22 0 0 1-76 0z" fill="#b3362f"/>
+              <text x="0" y="76" text-anchor="middle" fill="#fff" font-size="15" font-weight="700" font-family="system-ui,sans-serif" id="nR">0</text>
+              <text x="0" y="104" text-anchor="middle" fill="#1f2430" font-size="13" font-weight="700" font-family="system-ui,sans-serif">Exclude</text>
+            </g>
+          </svg>
+          <p class="sum" id="sum" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="card" id="ask">
+        <p class="q" id="ask-q"></p>
+        <div class="ruling">
+          <button class="btn admit" id="r-admit">Admit it</button>
+          <button class="btn excl" id="r-excl">Exclude it</button>
+        </div>
+        <p class="small">Tag any facts you want first. Your ruling is final once you click.</p>
+      </div>
+      <div class="verdict" id="verdict" hidden>
+        <h2 id="v-h"></h2>
+        <p id="v-p"></p>
+        <div class="rules" id="v-rules"></div>
+        <p class="small">Select “Why?” beside any fact to see how it weighs.</p>
+        <div class="ruling" style="margin-top:10px"><button class="btn primary" id="again">Try this case again</button><button class="btn" id="other">Try the other case</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CASES=[
+ {
+  story:"<b>State v. Reed</b>Dana Reed, 19, was arrested for burglary. The prosecution wants to use Reed's written confession at trial. The defense asks the judge to exclude it.",
+  ask:"Should the jury hear Reed's written confession?",
+  facts:[
+   {t:"Reed was questioned for six hours in a locked interview room.",l:"e",w:2,n:"Custody plus interrogation means Miranda applies. The length and setting add pressure."},
+   {t:"Officers never read Reed the Miranda warnings.",l:"e",w:3,n:"Warnings are required before custodial questioning. This alone usually leads to exclusion."},
+   {t:"Two hours in, Reed said, “I want a lawyer.” Questioning continued.",l:"e",w:3,n:"Once a suspect asks for counsel, questioning must generally stop."},
+   {t:"Officers offered Reed water and a meal break.",l:"a",w:1,n:"Humane treatment helps show voluntariness but cannot cure missing warnings."},
+   {t:"The confession matches details only the burglar would know.",l:"a",w:1,n:"Reliability matters, but a confession obtained unlawfully can still be excluded."},
+   {t:"Reed signed the confession form.",l:"a",w:1,n:"A signature is not a valid waiver when no warnings were given and counsel was requested."}
+  ],
+  right:"e", vh:"Exclude the confession",
+  vp:"A confession is admissible only if it was lawfully obtained. Police must give Miranda warnings before custodial interrogation, and once a suspect requests counsel, questioning must generally stop. Courts look at the totality of the circumstances, but the missing warnings and the ignored request for a lawyer are decisive. Under the exclusionary rule the confession stays out. Counting facts can mislead: the heavy ones are legal violations.",
+  rules:["Miranda v. Arizona","Fifth Amendment","Right to counsel","Exclusionary rule","Totality of circumstances"]
+ },
+ {
+  story:"<b>State v. Okafor</b>Minutes after an armed robbery, officers arrested Sam Okafor in a crowded grocery store. The prosecution wants to use his answer to one question. The defense asks the judge to exclude it.",
+  ask:"Should the jury hear Okafor's answer: “In the dumpster behind the store”?",
+  facts:[
+   {t:"Okafor was arrested in a busy store minutes after an armed robbery nearby.",l:"a",w:2,n:"Shoppers were close by, so the danger to the public was immediate."},
+   {t:"He was wearing an empty shoulder holster.",l:"a",w:2,n:"A loaded gun might be hidden where a customer or employee could find it."},
+   {t:"Before any warnings, an officer asked one question: “Where is the gun?”",l:"e",w:1,n:"Normally custodial questioning requires warnings. This is the exception being tested."},
+   {t:"Okafor was handcuffed when asked.",l:"e",w:1,n:"Handcuffs mean custody, so Miranda normally applies, but they do not erase the exception."},
+   {t:"The question was only about finding the weapon, not about confessing to the robbery.",l:"a",w:3,n:"A narrow, safety-focused question fits the public safety exception."},
+   {t:"Detectives later read Miranda warnings before asking about the robbery.",l:"a",w:1,n:"Later questions about the crime itself followed the normal rules."}
+  ],
+  right:"a", vh:"Admit the answer about the gun",
+  vp:"The public safety exception lets officers ask questions reasonably prompted by an immediate danger to the public without giving Miranda warnings first. This one question was narrow and aimed at finding the weapon, so the answer is admissible. The exception covers that statement only: questions about the robbery itself needed warnings, and the detectives gave them.",
+  rules:["Miranda v. Arizona","Public safety exception","Fifth Amendment"]
+ }
+];
+const $=s=>document.querySelector(s);
+let ci=0, tags=[], done=false, mine=null, open=new Set();
+
+function load(i){
+  ci=i; const C=CASES[i]; tags=C.facts.map(()=>null); done=false; mine=null; open=new Set();
+  $('#c0').setAttribute('aria-pressed',i===0); $('#c1').setAttribute('aria-pressed',i===1);
+  $('#story').innerHTML=C.story; $('#ask-q').textContent=C.ask;
+  $('#verdict').hidden=true; $('#ask').hidden=false;
+  drawFacts(); updateScale();
+}
+function drawFacts(){
+  const C=CASES[ci];
+  $('#facts').innerHTML=C.facts.map((f,i)=>{
+    const t=tags[i];
+    let cls='fact', why='';
+    let more='';
+    if(done){
+      cls+=' p'+f.l;
+      const ok=t===f.l, lab=f.l==='a'?'Points toward admitting':'Points toward excluding';
+      const isOpen=open.has(i);
+      more=`<button class="w" data-w="${i}" aria-expanded="${isOpen}">Why?</button>`;
+      if(isOpen) why=`<p class="why ${f.l}"><b>${lab}${t===null?'':ok?' (you agreed)':' (you tagged it the other way)'}.</b> ${f.n}</p>`;
+    }
+    return `<li class="${cls}"><span>${f.t}</span><span class="tg"><button class="a" data-i="${i}" data-v="a" aria-pressed="${t==='a'}" aria-label="Tag as supporting admit" ${done?'disabled':''}>Admit</button><button class="e" data-i="${i}" data-v="e" aria-pressed="${t==='e'}" aria-label="Tag as supporting exclude" ${done?'disabled':''}>Exclude</button>${more}</span>${why}</li>`;
+  }).join('');
+  $('#facts').querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{const i=+b.dataset.w;const was=open.has(i);open=new Set(was?[]:[i]);drawFacts();});
+  $('#facts').querySelectorAll('.tg button[data-v]').forEach(b=>b.onclick=()=>{
+    if(done)return; const i=+b.dataset.i,v=b.dataset.v;
+    tags[i]=tags[i]===v?null:v; drawFacts(); updateScale();
+  });
+}
+function setScale(a,e,nA,nE,text){
+  const theta=Math.max(-18,Math.min(18,(e-a)*5)); // clockwise => right side down
+  $('#beam').style.transform=`rotate(${theta}deg)`;
+  const r=theta*Math.PI/180, L=110;
+  $('#panL').style.transform=`translate(${150-L*Math.cos(r)}px,${40-L*Math.sin(r)}px)`;
+  $('#panR').style.transform=`translate(${150+L*Math.cos(r)}px,${40+L*Math.sin(r)}px)`;
+  $('#nL').textContent=nA; $('#nR').textContent=nE; $('#sum').textContent=text;
+}
+function updateScale(){
+  const a=tags.filter(t=>t==='a').length, e=tags.filter(t=>t==='e').length;
+  const txt=(a+e)===0?"Tag the facts to start weighing.":`You tagged ${a} for admitting and ${e} for excluding.`;
+  setScale(a,e,a,e,txt);
+}
+function rule(v){
+  if(done)return; done=true; mine=v; const C=CASES[ci], ok=v===C.right;
+  $('#ask').hidden=true; const V=$('#verdict'); V.hidden=false; V.className='verdict '+(ok?'ok':'no');
+  $('#v-h').textContent=(ok?"Your ruling matches: ":"Reconsider: ")+C.vh;
+  $('#v-p').textContent=C.vp;
+  $('#v-rules').innerHTML=C.rules.map(r=>`<span>${r}</span>`).join('');
+  const wa=C.facts.filter(f=>f.l==='a').reduce((s,f)=>s+f.w,0), we=C.facts.filter(f=>f.l==='e').reduce((s,f)=>s+f.w,0);
+  setScale(wa,we,wa,we,`Legal weight: ${wa} toward admitting, ${we} toward excluding.`);
+  drawFacts();
+}
+$('#r-admit').onclick=()=>rule('a'); $('#r-excl').onclick=()=>rule('e');
+$('#c0').onclick=()=>load(0); $('#c1').onclick=()=>load(1);
+$('#again').onclick=()=>load(ci); $('#other').onclick=()=>load(1-ci);
+load(0);
+</script>
+</body>
+</html>

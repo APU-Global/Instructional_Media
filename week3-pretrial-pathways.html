@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 3 Interactive: Pretrial Pathways</title>
+<style>
+:root{
+  --crimson:#d34147; --crimson-d:#a8353a; --crimson-t:#f7dcdd;
+  --ink:#1f2430; --ink-2:#4a5160; --paper:#fbf9f6; --sand:#edebe8; --line:#d8d3ca;
+  --brass:#b78a2f; --brass-t:#f3e8cc; --slate:#32506b; --slate-t:#dce6ef;
+  --ok:#2c7a58; --ok-t:#d9efe4; --bad:#b3362f; --bad-t:#f8dcd9;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.5 var(--sans);-webkit-text-size-adjust:100%}
+body{padding:14px 16px 16px}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--slate);outline-offset:2px;border-radius:4px}
+.app{max-width:1040px;margin:0 auto}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
+.stamp{flex:none;background:var(--crimson);color:#fff;font:700 13px/1 var(--sans);padding:8px 10px;border-radius:3px;letter-spacing:.02em}
+.top>div{flex:1;min-width:0}
+.top h1{font:700 clamp(19px,3.2vw,26px)/1.15 var(--serif)}
+.top p{font-size:13px;color:var(--ink-2);margin-top:2px;font-family:var(--sans);font-weight:400}
+.top svg{flex:none;width:44px;height:44px}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--ink)}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--ink);color:#fff}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px}
+.btn{border:2px solid var(--ink);background:#fff;border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+.btn:hover{background:var(--sand)}
+.btn.primary{background:var(--crimson);border-color:var(--crimson-d);color:#fff}
+.btn.primary:hover{background:var(--crimson-d)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.muted{color:var(--ink-2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.shake{animation:shake .35s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.seg.crim button[aria-pressed="true"]{background:var(--crimson)}
+.seg.civ button[aria-pressed="true"]{background:var(--slate)}
+body.civil .seg.crim button[aria-pressed="true"]{background:var(--ink)}
+.track{position:relative;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;margin-bottom:12px;padding:12px 6px 8px;background:var(--sand);border-radius:10px}
+.track::before{content:"";position:absolute;left:6%;right:6%;top:46px;height:4px;background:#bdb6aa;border-radius:2px}
+.st{position:relative;background:transparent;border:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px 2px 4px;text-align:center;border-radius:8px}
+.st .dot{width:68px;height:68px;border-radius:50%;background:#fff;border:3px solid var(--ink);display:grid;place-items:center;color:var(--ink);transition:background .2s,color .2s,transform .2s}
+.st .dot svg{width:34px;height:34px}
+.st .name{font-weight:600;font-size:12.5px;line-height:1.25;max-width:104px}
+.st .num{position:absolute;top:0;left:calc(50% + 18px);width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font:700 12px/22px var(--sans);text-align:center}
+.st:hover .dot{transform:translateY(-2px)}
+.st.on .dot{background:var(--accent);color:#fff;border-color:var(--accent-d)}
+.st.done .dot{background:var(--ok-t);border-color:var(--ok);color:var(--ok)}
+.st.hidden .dot{background:#e5e1da;border-style:dashed;border-color:#a39d92;color:#a39d92}
+.st.hidden .name{visibility:hidden}
+body{--accent:var(--crimson);--accent-d:var(--crimson-d);--accent-t:var(--crimson-t)}
+body.civil{--accent:var(--slate);--accent-d:#223a50;--accent-t:var(--slate-t)}
+.lower{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+.card h2{font:700 20px/1.2 var(--serif);margin:0 0 6px}
+.tag{display:inline-block;background:var(--accent-t);color:var(--accent-d);font-weight:700;font-size:13px;padding:2px 10px;border-radius:999px}
+.protect{margin-top:10px;border-left:4px solid var(--brass);background:var(--brass-t);padding:8px 10px;border-radius:0 6px 6px 0;font-size:14px}
+.protect b{display:block;font-size:13px}
+.nav{display:flex;gap:8px;margin-top:10px}
+.meter-h{font:700 16px var(--serif);margin-bottom:8px}
+.bar{position:relative;height:24px;background:var(--sand);border-radius:12px;overflow:hidden;margin:6px 0 4px}
+.bar i{position:absolute;inset:0 auto 0 0;width:52%;background:var(--accent);border-radius:12px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.ticks{position:relative;height:34px;font-size:11.5px;color:var(--ink-2)}
+.ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:none;left:auto;right:0;top:17px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin-top:10px;font-size:14px}
+.facts dt{font-weight:700}.facts dd{margin:0}
+.note{font-size:12px;color:var(--ink-2);margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;font-size:13.5px}
+.chip:hover{background:var(--sand)}
+.chip.gone{display:none}
+.prompt{font:700 18px/1.3 var(--serif)}
+.fb{font-size:14px;min-height:42px}.fb.ok{color:var(--ok)}.fb.no{color:var(--bad)}
+.stats{display:flex;gap:14px;font-size:13px;color:var(--ink-2)}
+[hidden]{display:none!important}
+@media (max-width:860px) and (min-width:601px){
+  .st .dot{width:54px;height:54px}.st .dot svg{width:28px;height:28px}
+  .track::before{top:40px}
+  .st .num{left:calc(50% + 12px)}
+}
+@media (max-width:600px){
+  body{padding:10px}
+  .top svg{display:none}
+  .track{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:6px;padding:8px 4px}
+  .track::before{display:none}
+  .st .dot{width:50px;height:50px}.st .dot svg{width:26px;height:26px}
+  .st .num{left:calc(50% + 12px);width:20px;height:20px;line-height:20px;font-size:11px}
+  .st .name{font-size:11.5px}
+  .lower{grid-template-columns:1fr;gap:10px}
+  .card{padding:10px}
+  .card h2{font-size:17px}
+  .facts{margin-top:6px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="stamp">Week 3</span>
+    <div>
+      <h1>Pretrial Pathways</h1>
+      <p>Follow a case from first contact to trial, settlement, or plea.</p>
+    </div>
+    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 36h32M24 10v26M12 14h24" stroke="#1f2430" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M6 26l6-12 6 12z" fill="#d34147"/><path d="M30 26l6-12 6 12z" fill="#32506b"/><path d="M5 26h14M29 26h14" stroke="#1f2430" stroke-width="3"/></svg>
+  </header>
+
+  <div class="controls">
+    <div class="seg crim" role="group" aria-label="Type of case" id="kind">
+      <button id="k-crim" aria-pressed="true">Criminal case</button>
+      <button id="k-civ" aria-pressed="false">Civil case</button>
+    </div>
+    <div class="seg" role="group" aria-label="Activity" id="act">
+      <button id="a-explore" aria-pressed="true">Explore the steps</button>
+      <button id="a-order" aria-pressed="false">Put them in order</button>
+    </div>
+  </div>
+
+  <div class="track" id="track" role="list"></div>
+
+  <div class="lower">
+    <div class="card" id="detail">
+      <span class="tag" id="d-tag"></span>
+      <h2 id="d-title"></h2>
+      <p id="d-text"></p>
+      <div class="protect"><b>What it protects</b><span id="d-prot"></span></div>
+      <div class="nav"><button class="btn" id="prev">Previous</button><button class="btn primary" id="next">Next step</button></div>
+    </div>
+    <div class="card" id="quiz" hidden>
+      <p class="prompt" id="q-prompt">What happens next?</p>
+      <div class="chips" id="chips"></div>
+      <p class="fb" id="q-fb" aria-live="polite"></p>
+      <div class="stats"><span id="q-prog"></span><span id="q-miss"></span><button class="btn" id="q-reset" style="margin-left:auto;padding:4px 10px">Shuffle again</button></div>
+    </div>
+    <div class="card" id="meter">
+      <div class="meter-h">How sure must the fact-finder be?</div>
+      <div class="bar" aria-hidden="true"><i id="m-fill"></i></div>
+      <div class="ticks" aria-hidden="true"><span style="left:0">less sure</span><span style="left:50%">more likely than not</span><span>beyond a reasonable doubt</span></div>
+      <dl class="facts">
+        <dt>Standard</dt><dd id="m-std"></dd>
+        <dt>Who brings it</dt><dd id="m-who"></dd>
+        <dt>What is at stake</dt><dd id="m-stake"></dd>
+      </dl>
+      <p class="note">The bar is illustrative. Courts do not assign a percentage to either standard.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const IC={
+ search:'<circle cx="17" cy="17" r="9"/><path d="M24 24l10 10"/>',
+ doc:'<path d="M10 4h14l8 8v24H10z"/><path d="M24 4v8h8M15 20h12M15 26h12M15 32h8"/>',
+ gavel:'<rect x="6" y="8" width="16" height="9" rx="2" transform="rotate(35 14 12)"/><path d="M19 22l13 13M5 36h16"/>',
+ people:'<circle cx="20" cy="12" r="5"/><circle cx="8" cy="16" r="4"/><circle cx="32" cy="16" r="4"/><path d="M10 32c0-7 5-10 10-10s10 3 10 10zM2 30c0-5 3-8 6-8M38 30c0-5-3-8-6-8"/>',
+ speech:'<path d="M5 8h30v20H18l-8 7v-7H5z"/><path d="M11 16h18M11 22h12"/>',
+ folder:'<path d="M4 10h12l4 5h16v19H4z"/><path d="M4 18h32"/>',
+ scales:'<path d="M20 6v28M10 34h20M8 12h24"/><path d="M4 24l4-12 4 12zM28 24l4-12 4 12z"/><path d="M3 24h10M27 24h10"/>',
+ envelope:'<rect x="4" y="9" width="32" height="22" rx="2"/><path d="M4 11l16 12 16-12"/>',
+ reply:'<path d="M12 14L5 21l7 7"/><path d="M5 21h18a10 10 0 0 1 10 10v2"/><path d="M12 6h20v10"/>',
+ check:'<path d="M8 6h20l6 6v22H8z"/><path d="M14 22l5 5 9-10"/>'
+};
+const icon=k=>`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+const DATA={
+ crim:{n:7,steps:[
+  {t:"Investigation and arrest",i:"search",x:"Police investigate and may make an arrest. From the start, the Constitution limits searches and arrests.",p:"Protects against unreasonable searches and arrests."},
+  {t:"Charging decision",i:"doc",x:"Prosecutors decide whether to charge. Charges are filed by complaint, information, or indictment.",p:"A neutral decision-point keeps weak cases from moving forward automatically."},
+  {t:"First appearance and bail",i:"gavel",x:"The accused is brought before a judge, learns the charges, and the court sets bail or release conditions.",p:"Makes sure a judge, not just the police, reviews the detention."},
+  {t:"Preliminary hearing or grand jury",i:"people",x:"A judge or grand jury checks whether the evidence is strong enough to move the case forward.",p:"A check on the government's power to bring serious charges."},
+  {t:"Arraignment and plea",i:"speech",x:"The defendant is formally told of the charges and enters a plea, such as guilty or not guilty.",p:"Gives formal notice of the charges and the chance to respond."},
+  {t:"Discovery and motions",i:"folder",x:"Criminal discovery is narrower than civil discovery, but prosecutors must disclose evidence favorable to the defendant. Pretrial motions and conferences narrow the issues.",p:"Limits surprise and supports a fair trial."},
+  {t:"Plea bargain or trial",i:"scales",x:"Most criminal cases end in a negotiated plea rather than a trial. If there is no plea, the case goes to trial.",p:"Any plea must be voluntary and informed."}
+ ],std:"Beyond a reasonable doubt",who:"The government (a prosecutor)",stake:"Jail, prison, or other punishment",fill:96},
+ civ:{n:6,steps:[
+  {t:"Complaint filed",i:"doc",x:"The plaintiff files a complaint stating the facts, the legal claims, and the relief sought. Pleadings define what the dispute is about.",p:"Puts the claims in writing so everyone knows what is at issue."},
+  {t:"Service of process",i:"envelope",x:"The defendant is formally notified that a lawsuit has been filed.",p:"Due process: no one should be sued without notice."},
+  {t:"Answer or motion to dismiss",i:"reply",x:"The defendant files an answer responding to each claim, and may ask the court to dismiss the case for a legal defect.",p:"Gives the defendant a chance to respond before going further."},
+  {t:"Discovery",i:"folder",x:"Both sides exchange information through depositions (sworn testimony), interrogatories (written questions under oath), and requests for documents.",p:"Reduces surprise so cases can be decided on their merits."},
+  {t:"Pretrial motions and conferences",i:"check",x:"Judges and attorneys narrow the issues and explore resolution before trial.",p:"Saves time and cost for the parties and the court."},
+  {t:"Settlement, arbitration, or trial",i:"scales",x:"Civil cases often settle. Parties may also agree to arbitration, or the case goes to trial.",p:"Agreements to settle must be voluntary and informed."}
+ ],std:"Preponderance of the evidence",who:"A private party (the plaintiff)",stake:"Usually money or a court order",fill:52}
+};
+const $=s=>document.querySelector(s);
+let kind="crim",act="explore",sel=0,placed=0,miss=0,pool=[];
+const cur=()=>DATA[kind];
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function drawTrack(){
+  const tr=$('#track'); tr.style.setProperty('--n',cur().n);
+  tr.innerHTML=cur().steps.map((s,i)=>{
+    let cls='st';
+    if(act==="explore"){ if(i===sel)cls+=' on'; }
+    else cls+= i<placed?' done':' hidden';
+    const label=(act==="order"&&i>=placed)?'Hidden step':s.t;
+    return `<button class="${cls}" data-i="${i}" role="listitem" aria-label="Step ${i+1}: ${label}" ${act==="order"?'tabindex="-1"':''}><span class="dot">${act==="order"&&i>=placed?'<b style="font:700 24px var(--serif)">?</b>':icon(s.i)}</span><span class="num">${i+1}</span><span class="name">${s.t}</span></button>`;
+  }).join('');
+  tr.querySelectorAll('.st').forEach(b=>b.onclick=()=>{ if(act==="explore"){sel=+b.dataset.i;drawDetail();drawTrack();} });
+}
+function drawDetail(){
+  const s=cur().steps[sel];
+  $('#d-tag').textContent=`Step ${sel+1} of ${cur().n}`; $('#d-title').textContent=s.t; $('#d-text').textContent=s.x; $('#d-prot').textContent=s.p;
+  $('#prev').disabled=sel===0; $('#next').disabled=sel===cur().n-1;
+}
+function drawMeter(){
+  $('#m-fill').style.width=cur().fill+'%'; $('#m-std').textContent=cur().std; $('#m-who').textContent=cur().who; $('#m-stake').textContent=cur().stake;
+}
+function startOrder(){
+  placed=0;miss=0; pool=shuffle(cur().steps.map((_,i)=>i));
+  $('#q-fb').textContent="";$('#q-fb').className="fb";$('#q-prompt').textContent="What happens first?";
+  drawChips(); drawTrack(); drawStats();
+}
+function drawChips(){
+  $('#chips').innerHTML=pool.map(i=>`<button class="chip ${i<placed?'gone':''}" data-i="${i}">${cur().steps[i].t}</button>`).join('');
+  $('#chips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>pick(c));
+}
+function drawStats(){ $('#q-prog').textContent=`${placed} of ${cur().n} placed`; $('#q-miss').textContent=`Misses: ${miss}`; }
+function pick(c){
+  const i=+c.dataset.i, steps=cur().steps;
+  if(placed>=steps.length)return;
+  if(i===placed){
+    placed++; $('#q-fb').className="fb ok";
+    if(placed===steps.length){
+      $('#q-prompt').textContent="Case ready for resolution.";
+      $('#q-fb').textContent=miss===0?"Perfect order with no misses.":`All steps in order, with ${miss} miss${miss>1?'es':''}.`;
+    } else {
+      $('#q-fb').textContent=`Yes: ${steps[i].t}. ${steps[i].x.split('. ')[0].replace(/\.$/,'')}.`;
+      $('#q-prompt').textContent="What happens next?";
+    }
+    drawChips();
+  } else {
+    miss++; c.classList.add('shake'); setTimeout(()=>c.classList.remove('shake'),400);
+    $('#q-fb').className="fb no"; $('#q-fb').textContent="Not yet. Think about what must already have happened before that step.";
+  }
+  drawTrack(); drawStats();
+}
+function setKind(k){
+  kind=k; sel=0; document.body.classList.toggle('civil',k==="civ");
+  $('#k-crim').setAttribute('aria-pressed',k==="crim"); $('#k-civ').setAttribute('aria-pressed',k==="civ");
+  drawMeter(); if(act==="order")startOrder(); else{drawTrack();drawDetail();}
+}
+function setAct(a){
+  act=a; $('#a-explore').setAttribute('aria-pressed',a==="explore"); $('#a-order').setAttribute('aria-pressed',a==="order");
+  $('#detail').hidden=a!=="explore"; $('#quiz').hidden=a!=="order";
+  if(a==="order")startOrder(); else{drawTrack();drawDetail();}
+}
+$('#k-crim').onclick=()=>setKind("crim"); $('#k-civ').onclick=()=>setKind("civ");
+$('#a-explore').onclick=()=>setAct("explore"); $('#a-order').onclick=()=>setAct("order");
+$('#prev').onclick=()=>{if(sel>0){sel--;drawDetail();drawTrack()}};
+$('#next').onclick=()=>{if(sel<cur().n-1){sel++;drawDetail();drawTrack()}};
+$('#q-reset').onclick=startOrder;
+drawMeter(); drawTrack(); drawDetail();
+</script>
+</body>
+</html>

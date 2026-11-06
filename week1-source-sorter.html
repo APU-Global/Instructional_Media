@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 1: Source Sorter</title><style>
+:root{--navy:#14274e;--teal:#0e7c7b;--gold:#f4b400;--ink:#1f2937;--muted:#566074;--bg:#f4f7fb;--card:#fff;--line:#d5dcea;
+--good:#136c3a;--goodbg:#e4f4ea;--bad:#a8261b;--badbg:#fdeceb;--accent:#0e7c7b;--accentbg:#e3f3f2}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column}
+header{position:relative;flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--navy);color:#fff;padding:10px 18px 12px}
+.hl{min-width:0}
+.wk{display:inline-block;background:var(--gold);color:#14274e;font-weight:700;font-size:12px;letter-spacing:.08em;padding:2px 8px;border-radius:99px}
+h1{margin:4px 0 0;font-size:clamp(18px,3.2vw,24px);line-height:1.15}
+header p{margin:2px 0 0;font-size:14px;color:#d6def0}
+.bn{flex:none;width:150px;height:62px}.bn svg{width:100%;height:100%;display:block}
+.prog{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.18)}
+.prog span{display:block;height:100%;width:0;background:var(--gold);transition:width .35s}
+#stage{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 18px 18px;scrollbar-width:thin}
+.wrap{max-width:880px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(20,39,78,.07)}
+.meta{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);margin-bottom:8px;gap:8px}
+.pill{background:var(--accentbg);color:#0a5958;border-radius:99px;padding:2px 10px;font-weight:600;font-size:13px}
+h2{margin:0 0 6px;font-size:19px;color:var(--navy)}
+.lead{margin:0 0 10px;color:var(--muted)}
+.btns{display:grid;gap:8px;margin-top:12px}
+.btns.c3{grid-template-columns:repeat(3,1fr)}.btns.c2{grid-template-columns:repeat(2,1fr)}.btns.c4{grid-template-columns:repeat(4,1fr)}
+button{font:inherit;cursor:pointer}
+.opt{min-height:46px;padding:8px 10px;border:2px solid var(--line);background:#fff;border-radius:12px;color:var(--navy);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--teal);background:var(--accentbg)}
+.opt:focus-visible,.primary:focus-visible,.ghost:focus-visible,.blk:focus-visible,.slot:focus-visible{outline:3px solid #1a5fd0;outline-offset:2px}
+.opt.right{border-color:var(--good);background:var(--goodbg);color:var(--good)}
+.opt.wrong{border-color:var(--bad);background:var(--badbg);color:var(--bad)}
+.opt:disabled{cursor:default}
+.primary{min-height:44px;padding:8px 20px;border:0;border-radius:99px;background:var(--navy);color:#fff;font-weight:700}
+.primary:hover:not(:disabled){background:#0d1b38}.primary:disabled{opacity:.45;cursor:not-allowed}
+.ghost{min-height:40px;padding:6px 16px;border:2px solid var(--navy);border-radius:99px;background:#fff;color:var(--navy);font-weight:700}
+.fb{margin-top:12px;border-radius:12px;padding:10px 14px;border-left:6px solid var(--good);background:var(--goodbg)}
+.fb.no{border-left-color:var(--bad);background:var(--badbg)}
+.fb b{display:block;margin-bottom:2px}
+.row{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.res{text-align:center}.res .big{font-size:44px;font-weight:800;color:var(--navy);line-height:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.chip{background:var(--accentbg);border-radius:12px;padding:6px 12px;font-weight:600;color:#0a5958;font-size:14px}
+mark{background:#ffe08a;border-radius:3px;padding:0 1px}
+@media (max-width:620px){.bn{display:none}.btns.c3,.btns.c4{grid-template-columns:1fr}#stage{padding:12px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head>
+<body><div class="app">
+<header><div class="hl"><span class="wk">WEEK 1</span><h1>Source Sorter</h1><p>Is it scholarly? Read the clues, then classify each source.</p></div>
+<div class="bn" aria-hidden="true"><svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
+<rect x="6" y="30" width="46" height="26" rx="3" fill="#2a4a8a"/><rect x="10" y="22" width="46" height="26" rx="3" fill="#f4b400"/><rect x="14" y="14" width="46" height="26" rx="3" fill="#0e7c7b"/>
+<line x1="22" y1="22" x2="52" y2="22" stroke="#fff" stroke-width="2"/><line x1="22" y1="28" x2="46" y2="28" stroke="#fff" stroke-width="2"/>
+<circle cx="104" cy="28" r="20" fill="rgba(255,255,255,.12)" stroke="#fff" stroke-width="5"/><line x1="119" y1="43" x2="140" y2="58" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+<path d="M92 29l8 8 14-16" fill="none" stroke="#f4b400" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<div class="prog" id="progbox" role="progressbar" aria-label="Activity progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="pbar"></span></div></header>
+<main id="stage"></main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const stage=$('#stage');
+function setProg(n,t){$('#pbar').style.width=Math.round(100*n/t)+'%';$('#progbox').setAttribute('aria-valuenow',Math.round(100*n/t));}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function toTop(){stage.scrollTop=0;}
+
+const I={
+journal:'<svg viewBox="0 0 64 64"><rect x="10" y="6" width="40" height="52" rx="4" fill="#14274e"/><rect x="14" y="10" width="32" height="10" fill="#f4b400"/><g stroke="#cfd8ee" stroke-width="2"><line x1="16" y1="28" x2="44" y2="28"/><line x1="16" y1="34" x2="44" y2="34"/><line x1="16" y1="40" x2="38" y2="40"/></g><circle cx="46" cy="46" r="10" fill="#0e7c7b" stroke="#fff" stroke-width="2"/><path d="M41 46l4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>',
+blog:'<svg viewBox="0 0 64 64"><rect x="6" y="10" width="52" height="44" rx="5" fill="#fff" stroke="#14274e" stroke-width="3"/><rect x="6" y="10" width="52" height="11" rx="5" fill="#14274e"/><circle cx="13" cy="15.5" r="2" fill="#f4b400"/><circle cx="20" cy="15.5" r="2" fill="#fff"/><rect x="12" y="27" width="22" height="14" fill="#f4b400"/><g stroke="#8a94ab" stroke-width="3"><line x1="38" y1="29" x2="52" y2="29"/><line x1="38" y1="36" x2="52" y2="36"/><line x1="12" y1="47" x2="52" y2="47"/></g></svg>',
+news:'<svg viewBox="0 0 64 64"><rect x="8" y="10" width="48" height="44" rx="3" fill="#fff" stroke="#14274e" stroke-width="3"/><rect x="13" y="15" width="38" height="8" fill="#14274e"/><rect x="13" y="28" width="16" height="12" fill="#0e7c7b"/><g stroke="#8a94ab" stroke-width="3"><line x1="33" y1="30" x2="51" y2="30"/><line x1="33" y1="37" x2="51" y2="37"/><line x1="13" y1="46" x2="51" y2="46"/></g></svg>',
+book:'<svg viewBox="0 0 64 64"><rect x="8" y="38" width="48" height="14" rx="2" fill="#0e7c7b"/><rect x="12" y="24" width="42" height="14" rx="2" fill="#f4b400"/><rect x="8" y="10" width="44" height="14" rx="2" fill="#14274e"/><g stroke="#fff" stroke-width="2"><line x1="14" y1="17" x2="38" y2="17"/><line x1="14" y1="45" x2="40" y2="45"/></g><circle cx="48" cy="31" r="3" fill="#14274e"/></svg>',
+gov:'<svg viewBox="0 0 64 64"><polygon points="32,6 58,20 6,20" fill="#14274e"/><g fill="#0e7c7b"><rect x="12" y="24" width="7" height="24"/><rect x="24" y="24" width="7" height="24"/><rect x="36" y="24" width="7" height="24"/><rect x="48" y="24" width="7" height="24"/></g><rect x="6" y="48" width="52" height="8" fill="#f4b400"/></svg>',
+social:'<svg viewBox="0 0 64 64"><path d="M8 12h48a4 4 0 0 1 4 4v24a4 4 0 0 1-4 4H30l-12 11v-11H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" fill="#14274e"/><g stroke="#f4b400" stroke-width="3" stroke-linecap="round"><line x1="26" y1="18" x2="22" y2="38"/><line x1="38" y1="18" x2="34" y2="38"/><line x1="18" y1="25" x2="44" y2="25"/><line x1="16" y1="32" x2="42" y2="32"/></g></svg>',
+mag:'<svg viewBox="0 0 64 64"><rect x="12" y="6" width="38" height="52" rx="3" fill="#fff" stroke="#14274e" stroke-width="3"/><rect x="16" y="10" width="30" height="18" fill="#0e7c7b"/><circle cx="31" cy="19" r="5" fill="#f4b400"/><g stroke="#8a94ab" stroke-width="3"><line x1="17" y1="35" x2="45" y2="35"/><line x1="17" y1="42" x2="45" y2="42"/><line x1="17" y1="49" x2="35" y2="49"/></g></svg>',
+wiki:'<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#fff" stroke="#14274e" stroke-width="3"/><ellipse cx="32" cy="32" rx="10" ry="24" fill="none" stroke="#14274e" stroke-width="3"/><line x1="8" y1="32" x2="56" y2="32" stroke="#14274e" stroke-width="3"/><path d="M12 20h40M12 44h40" stroke="#0e7c7b" stroke-width="3"/><circle cx="48" cy="16" r="7" fill="#f4b400"/><text x="48" y="20" font-size="11" font-weight="700" text-anchor="middle" fill="#14274e">?</text></svg>'
+};
+const CAT={scholarly:'Scholarly',credible:'Credible, not scholarly',caution:'Not suitable alone'};
+const items=[
+{ic:'journal',t:'“Feedback Timing and Revision in Remote Teams”',k:'Article in the Journal of Workplace Communication',c:['Professor of organizational communication','Researchers and other scholars','Peer reviewed by outside experts','42 sources in a reference list'],a:'scholarly',w:'All four clues line up: expert author, scholarly audience, peer review, and full citations. This is a scholarly source.'},
+{ic:'blog',t:'“10 Career Hacks That Changed My Life”',k:'Personal blog post',c:['Anonymous; no credentials listed','General readers, to attract clicks','None; the author publishes it directly','No sources; links to a paid course'],a:'caution',w:'No identifiable expertise, no review, no citations, and a sales motive. Not suitable as evidence on its own.'},
+{ic:'news',t:'“Study: Quick Feedback Boosts Rewrites”',k:'Article in a major national newspaper',c:['Staff reporter','General public','Editor-reviewed, not peer reviewed','Names the study but gives no reference list'],a:'credible',w:'Reputable reporting, but it is a second-hand summary. Use it to find the original study, and cite that instead.'},
+{ic:'book',t:'“Writing in the Workplace,” chapter 6',k:'Chapter in an academic press book',c:['University researcher','Students and scholars in the field','Reviewed by the press’s editorial board','Extensive notes and bibliography'],a:'scholarly',w:'Written by an expert, reviewed before publication, and fully documented. Scholarly books and chapters count.'},
+{ic:'gov',t:'“Employment Trends Report”',k:'Report from a federal labor agency',c:['Government statisticians (named)','Policymakers and the public','Agency review, not peer review','Methods and data tables included'],a:'credible',w:'Authoritative and transparent about data, but not peer reviewed. A solid professional source, though not a scholarly one.'},
+{ic:'social',t:'“THREAD: why everyone is quitting 🧵”',k:'Viral social media thread',c:['Username only','Followers; written to be shared','No review at all','Screenshots with no source'],a:'caution',w:'Anonymous, unreviewed, and unsourced. It may point you toward a topic, but it cannot support a claim.'},
+{ic:'mag',t:'“Giving Feedback Managers Actually Use”',k:'Article in a professional HR magazine',c:['HR consultant with listed credentials','Working professionals','Reviewed by magazine editors','A few linked sources'],a:'credible',w:'Written by a practitioner for professionals, with some sourcing. Credible, but not peer reviewed.'},
+{ic:'wiki',t:'“Peer Review” encyclopedia entry',k:'Open online encyclopedia',c:['Many anonymous volunteer editors','Everyone','Community editing, not expert review','Footnotes you can follow'],a:'caution',w:'Great for background, but anyone can edit it. Follow its footnotes to the original sources and cite those.'}
+];
+let i=0,score=0,miss=[];
+function show(){
+ if(i>=items.length)return done();
+ const it=items[i];setProg(i,items.length);
+ const labels=['Author','Audience','Review process','References'];
+ stage.innerHTML=`<div class="wrap"><div class="card">
+ <div class="meta"><span class="pill">Source ${i+1} of ${items.length}</span><span>Score: ${score}</span></div>
+ <div style="display:flex;gap:14px;align-items:center"><div style="width:72px;flex:none">${I[it.ic]}</div><div><h2>${esc(it.t)}</h2><div class="lead" style="margin:0">${esc(it.k)}</div></div></div>
+ <table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:15px">${labels.map((l,n)=>`<tr><th scope="row" style="text-align:left;width:128px;padding:5px 8px;background:var(--accentbg);color:#0a5958;border-bottom:2px solid #fff">${l}</th><td style="padding:5px 8px;border-bottom:1px solid var(--line)">${esc(it.c[n])}</td></tr>`).join('')}</table>
+ <p style="margin:12px 0 0;font-weight:700;color:var(--navy)">How would you classify this source?</p>
+ <div class="btns c3">${Object.keys(CAT).map(k=>`<button class="opt" data-k="${k}">${CAT[k]}</button>`).join('')}</div>
+ <div id="fb" aria-live="polite"></div></div></div>`;
+ stage.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b.dataset.k));toTop();
+}
+function pick(k){
+ const it=items[i],ok=k===it.a;if(ok)score++;else miss.push(it);
+ stage.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.dataset.k===it.a)b.classList.add('right');else if(b.dataset.k===k)b.classList.add('wrong');});
+ $('#fb').innerHTML=`<div class="fb ${ok?'':'no'}"><b>${ok?'✓ Correct':'✗ Not quite — this one is '+CAT[it.a]}</b>${esc(it.w)}</div><div class="row"><button class="primary" id="nx">${i+1<items.length?'Next source →':'See results →'}</button></div>`;
+ $('#nx').onclick=()=>{i++;show();};$('#nx').focus();
+ $('#fb').scrollIntoView({block:'nearest'});
+}
+function done(){
+ setProg(1,1);
+ const msg=score>=7?'Excellent source detective!':score>=5?'Solid instincts. Review the clues you missed.':'Keep practicing. The four clues below will help.';
+ stage.innerHTML=`<div class="wrap"><div class="card res"><h2>Activity complete</h2><div class="big">${score}/${items.length}</div><p class="lead">${msg}</p>
+ <p style="margin:6px 0;font-weight:700;color:var(--navy)">Before you rely on any source, ask four questions:</p>
+ <div class="chips"><span class="chip">1 · Who wrote it?</span><span class="chip">2 · Who is it for?</span><span class="chip">3 · Was it reviewed?</span><span class="chip">4 · Does it cite sources?</span></div>
+ ${miss.length?`<p class="lead">To revisit: ${miss.map(m=>esc(m.k.toLowerCase())).join('; ')}.</p>`:''}
+ <button class="ghost" id="rs">Try again</button></div></div>`;
+ $('#rs').onclick=()=>{i=0;score=0;miss=[];show();};
+}
+show();
+</script></body></html>

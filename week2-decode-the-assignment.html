@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Decode the Assignment</title>
+<style>
+:root{--navy:#1f3a5f;--teal:#17808a;--teal-d:#0f5f67;--amber:#f2a93b;--ink:#1d2733;--muted:#5b6876;--bg:#f4f7fb;--card:#fff;--line:#d9e1ea;--good:#1c7f4d;--goodbg:#e4f5ec;--bad:#b3362b;--badbg:#fbe9e7;--c1:#c0392b;--c2:#1b6fb5;--c3:#7b4bb0;--c4:#d2800f;--c5:#17808a}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:1000px;margin:0 auto;background:var(--bg)}
+header{flex:none;display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(120deg,var(--navy),var(--teal-d));color:#fff}
+header svg{flex:none;width:58px;height:58px}
+header h1{margin:0;font-size:1.28rem;line-height:1.2}
+header p{margin:2px 0 0;font-size:.9rem;opacity:.92}
+.wk{display:inline-block;background:var(--amber);color:#2b1d00;font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 8px;border-radius:99px;margin-bottom:3px}
+nav[role=tablist]{flex:none;display:flex;gap:4px;padding:8px 14px 0;background:#e8eef5;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:9px 14px;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{background:var(--bg);color:var(--navy);box-shadow:inset 0 3px 0 var(--amber)}
+nav button:hover{color:var(--navy)}
+.stage{flex:1;min-height:0;overflow:auto;padding:16px 18px 20px;-webkit-overflow-scrolling:touch}
+.panel[hidden]{display:none}
+.lead{margin:0 0 12px;color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 2px rgba(20,40,70,.05)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:680px){.grid2{grid-template-columns:1fr}header svg{width:44px;height:44px}header h1{font-size:1.1rem}}
+button.btn{font:inherit;font-weight:600;border:2px solid var(--teal);background:var(--teal);color:#fff;padding:7px 16px;border-radius:10px;cursor:pointer}
+button.btn:hover{background:var(--teal-d);border-color:var(--teal-d)}
+button.btn.ghost{background:#fff;color:var(--teal-d)}
+button.btn.ghost:hover{background:#eaf6f7}
+button.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #ffb703;outline-offset:2px}
+.chip{font:inherit;font-weight:600;font-size:.9rem;border:2px solid var(--line);background:#fff;border-radius:99px;padding:4px 13px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{border-color:var(--navy);background:var(--navy);color:#fff}
+.fb{margin-top:12px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;min-height:44px}
+.fb.good{background:var(--goodbg);border-color:#9fd5b6}
+.fb.bad{background:var(--badbg);border-color:#efb3ab}
+.fb.info{background:#eef5ff;border-color:#bcd3f2}
+.bar{height:10px;border-radius:99px;background:#dfe7f0;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),#47b6a0);transition:width .4s}
+.small{font-size:.88rem;color:var(--muted)}
+h2{font-size:1.1rem;margin:0 0 6px;color:var(--navy)}
+h3{font-size:1rem;margin:0 0 4px;color:var(--navy)}
+footer{flex:none;padding:5px 14px;font-size:.76rem;color:var(--muted);background:#e8eef5;border-top:1px solid var(--line)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.seg{padding:2px 4px;margin:0 1px;border-radius:7px;cursor:pointer;background:#eef2f7;border:2px solid transparent;transition:background .15s}
+.seg:hover{background:#d8e6f6}
+.seg .tg{font-size:.62rem;font-weight:700;margin-left:4px;letter-spacing:.03em;text-transform:uppercase}
+.seg.ok{border-color:#1c7f4d}.seg.no{border-color:#b3362b;text-decoration:line-through}
+.seg.miss{border:2px dashed #b3362b;background:#fff3f1}
+.flip{perspective:900px;border:0;background:none;padding:0;height:190px;cursor:pointer;font:inherit;text-align:left}
+.flip .in{position:relative;display:block;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px;text-align:center}
+.flip .front{color:#fff;font-size:1.1rem}.flip .front small{opacity:.9}
+.flip .back{transform:rotateY(180deg);background:#fff;border:2px solid var(--line);color:var(--ink);font-size:.95rem}
+</style></head>
+<body><div class="app">
+<header><svg viewBox="0 0 72 72" aria-hidden="true"><rect x="8" y="8" width="38" height="50" rx="4" fill="#fff"/><rect x="14" y="16" width="26" height="3" rx="1.5" fill="#9bb0c7"/><rect x="14" y="24" width="20" height="3" rx="1.5" fill="#9bb0c7"/><rect x="14" y="32" width="26" height="3" rx="1.5" fill="#f2a93b"/><rect x="14" y="40" width="16" height="3" rx="1.5" fill="#9bb0c7"/><circle cx="44" cy="42" r="14" fill="rgba(255,255,255,.35)" stroke="#f2a93b" stroke-width="5"/><line x1="54" y1="52" x2="66" y2="65" stroke="#f2a93b" stroke-width="7" stroke-linecap="round"/></svg><div><span class="wk">Week 2</span><h1>Decode the Assignment</h1><p>Determining assignment expectations</p></div></header>
+<nav role="tablist" aria-label="Activities"><button role="tab" id="t0" aria-controls="p0" aria-selected="true">Prompt Detective</button><button role="tab" id="t1" aria-controls="p1" aria-selected="false">Know Your Genre</button></nav>
+<main class="stage" id="stage">
+<section class="panel" id="p0">
+<p class="lead"><b>Read like a detective.</b> Pick a highlighter, then click the phrases in the prompt that match. Press <b>Check my work</b> to see how you did and to build your assignment checklist.</p>
+<div class="row" id="prSel" style="margin-bottom:10px"></div>
+<div class="card">
+ <div class="row" id="tools" role="toolbar" aria-label="Highlighters" style="margin-bottom:12px"></div>
+ <div id="prompt" style="font-size:1.08rem;line-height:2.3"></div>
+</div>
+<div class="row" style="margin-top:12px"><button class="btn" id="check">Check my work</button><button class="btn ghost" id="reset">Start over</button></div>
+<div class="fb info" id="fb" aria-live="polite">Select a highlighter above, then click a phrase.</div>
+<div class="card" id="list" hidden style="margin-top:12px"></div>
+</section>
+
+<section class="panel" id="p1" hidden>
+<p class="lead">Every paper has a <b>purpose</b>. Click a card to flip it and see what readers expect from each genre you will meet in this course.</p>
+<div class="grid2" id="genres"></div>
+</section>
+</main>
+<footer>ENGL 101 &middot; Introduction to Composition &middot; Week 2 Deep Dive interactive</footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function el(t,c,txt){const e=document.createElement(t);if(c)e.className=c;if(txt!==undefined)e.textContent=txt;return e}
+$$('nav button').forEach(b=>b.addEventListener('click',()=>{
+ $$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ $$('.panel').forEach(p=>p.hidden=p.id!==b.getAttribute('aria-controls'));
+ $('#stage').scrollTop=0;}));
+$$('nav button').forEach((b,i,a)=>b.addEventListener('keydown',e=>{
+ if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=a[(i+(e.key==='ArrowRight'?1:-1)+a.length)%a.length];n.focus();n.click()}}));
+
+const CATS={task:{n:'Task word',c:'var(--c1)',d:'What you are being asked to DO'},topic:{n:'Topic',c:'var(--c2)',d:'What you are writing ABOUT'},req:{n:'Requirement',c:'var(--c3)',d:'Length, format, sources, parts'},aud:{n:'Audience',c:'var(--c4)',d:'Who will read it'},due:{n:'Deadline',c:'var(--c5)',d:'When and where to submit'}};
+// g = glue (not clickable), n = decoy (clickable but no category)
+const PROMPTS=[
+{t:'Illustration essay',s:[['In a ','g'],['750–1,000 word essay','req'],[' in ','g'],['APA format','req'],[', ','g'],['illustrate','task'],[' how ','g'],['one habit has shaped your life as a student','topic'],['. Use ','g'],['at least three specific examples','req'],[' and ','g'],['sensory details','req'],['. Write for ','g'],['classmates in an academic setting','aud'],['. ','g'],['Submit your draft to the Week 3 dropbox','n'],[' ','g'],['by Sunday at 11:59 p.m.','due'],['. ','g'],['Be thoughtful.','n']]},
+{t:'Persuasive essay',s:[['Write a ','g'],['persuasive essay','task'],[' of ','g'],['1,000–1,250 words','req'],[' ','g'],['arguing for or against','task'],[' ','g'],['requiring first-year students to take a financial literacy course','topic'],['. Support your position with ','g'],['at least two credible sources','req'],[' cited in ','g'],['APA style','req'],[' and ','g'],['address one opposing viewpoint','req'],['. Your readers are ','g'],["the college's curriculum committee",'aud'],['. This is an important assignment.','n'],[' The final draft is due ','g'],['Friday at 5:00 p.m.','due'],['.','g']]}
+];
+let cur=0,tool='task',tags=[{},{}],checked=[false,false];
+const prSel=$('#prSel'),tools=$('#tools'),prompt_=$('#prompt'),fb=$('#fb'),list=$('#list');
+PROMPTS.forEach((p,i)=>{const b=el('button','chip',p.t);b.setAttribute('aria-pressed',i===0);b.onclick=()=>{cur=i;$$('#prSel .chip').forEach((x,j)=>x.setAttribute('aria-pressed',j===i));render()};prSel.append(b)});
+Object.entries(CATS).forEach(([k,v])=>{const b=el('button','chip',v.n);b.dataset.k=k;b.title=v.d;b.style.borderColor=v.c;b.setAttribute('aria-pressed',k===tool);b.onclick=()=>{tool=k;paintTools()};tools.append(b)});
+const er=el('button','chip','Eraser');er.dataset.k='erase';er.onclick=()=>{tool='erase';paintTools()};tools.append(er);
+function paintTools(){$$('#tools .chip').forEach(b=>{const on=b.dataset.k===tool;b.setAttribute('aria-pressed',on);const c=CATS[b.dataset.k];if(c){b.style.background=on?c.c:'#fff';b.style.color=on?'#fff':'var(--ink)';b.style.borderColor=c.c}})}
+function render(){
+ prompt_.innerHTML='';const P=PROMPTS[cur];
+ P.s.forEach(([txt,cat],i)=>{
+  if(cat==='g'){prompt_.append(document.createTextNode(txt));return}
+  const sp=el('span','seg',txt);sp.tabIndex=0;sp.setAttribute('role','button');
+  const t=tags[cur][i];
+  if(t){sp.style.background=CATS[t].c;sp.style.color='#fff';sp.title=CATS[t].n}
+  if(checked[cur]){
+   const ok=(cat==='n'?!t:t===cat);
+   if(t&&ok){sp.classList.add('ok')}
+   else if(t&&!ok){sp.classList.add('no')}
+   else if(!t&&cat!=='n'){sp.classList.add('miss');sp.title='Missed: '+CATS[cat].n}
+  }
+  if(t){const tg=el('sup','tg',(checked[cur]&&t&&((cat==='n'?false:t===cat))?'✓ ':checked[cur]&&t?'✗ ':'')+CATS[t].n);sp.append(tg)}
+  const act=()=>{const x=tags[cur];if(tool==='erase')delete x[i];else x[i]=(x[i]===tool?undefined:tool);if(x[i]===undefined)delete x[i];checked[cur]=false;list.hidden=true;fb.className='fb info';fb.textContent='Keep highlighting, then press Check my work.';render()};
+  sp.onclick=act;sp.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();setTimeout(()=>{const n=$$('.seg')[$$('.seg').indexOf(sp)];},0)}};
+  prompt_.append(sp);
+ });
+ if(checked[cur])showResult(false);
+}
+function showResult(first){
+ const P=PROMPTS[cur];let right=0,total=0,wrong=0,missed=[];
+ P.s.forEach(([txt,cat],i)=>{if(cat==='g')return;const t=tags[cur][i];
+  if(cat!=='n'){total++;if(t===cat)right++;else missed.push(CATS[cat].n+': “'+txt+'”')}
+  if(t&&t!==cat)wrong++});
+ const perfect=right===total&&wrong===0;
+ fb.className='fb '+(perfect?'good':'bad');
+ fb.innerHTML=perfect?'<b>Perfect read!</b> You found all '+total+' key parts and nothing extra. Your checklist is below.':'<b>'+right+' of '+total+' correct'+(wrong?', '+wrong+' misplaced highlight'+(wrong>1?'s':''):'')+'.</b> Dashed outlines show what you missed; ✗ marks a highlight that does not fit. Adjust and check again.';
+ buildList();
+}
+function buildList(){
+ const P=PROMPTS[cur];list.hidden=false;list.innerHTML='<h2>Your assignment checklist</h2><p class="small" style="margin:0 0 8px">Built from the key parts of this prompt. Tick each item as you plan.</p>';
+ ['task','topic','req','aud','due'].forEach(k=>{
+  P.s.filter(s=>s[1]===k).forEach(s=>{
+   const l=el('label');l.style.cssText='display:flex;gap:8px;align-items:flex-start;padding:3px 0';
+   const cb=el('input');cb.type='checkbox';cb.style.marginTop='6px';
+   const sw=el('span','',CATS[k].n);sw.style.cssText='flex:none;background:'+CATS[k].c+';color:#fff;border-radius:99px;font-size:.72rem;font-weight:700;padding:1px 9px;margin-top:4px';
+   l.append(cb,sw,el('span','',s[0]));list.append(l)})});
+}
+$('#check').onclick=()=>{if(!Object.keys(tags[cur]).length){fb.className='fb bad';fb.textContent='Highlight at least one phrase first.';return}checked[cur]=true;render();$('#stage').scrollTo({top:$('#stage').scrollHeight,behavior:'smooth'})};
+$('#reset').onclick=()=>{tags[cur]={};checked[cur]=false;list.hidden=true;fb.className='fb info';fb.textContent='Select a highlighter above, then click a phrase.';render()};
+paintTools();render();
+
+const GEN=[
+['Illustration / Example','To show','#17808a','Makes one point with specific, concrete examples.','Readers expect: a clear main point, varied examples, sensory detail.','<g fill="none" stroke="#fff" stroke-width="3"><circle cx="30" cy="30" r="12"/><circle cx="60" cy="30" r="12"/><circle cx="45" cy="52" r="12"/></g>'],
+['Persuasive','To convince','#c0392b','Takes a side and defends it with reasons and evidence.','Readers expect: a clear position, credible sources, a response to the opposition.','<path d="M20 55 L45 20 L70 55 Z M45 20 L45 10" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>'],
+['Informative / Explanatory','To explain','#1b6fb5','Helps readers understand a topic or process.','Readers expect: accuracy, logical order, clear definitions.','<g fill="none" stroke="#fff" stroke-width="3"><rect x="22" y="18" width="46" height="38" rx="4"/><path d="M30 30h30M30 38h30M30 46h18"/></g>'],
+['Reflective','To think back','#7b4bb0','Examines your own experience and what you learned.','Readers expect: honest insight, specific moments, a clear takeaway.','<g fill="none" stroke="#fff" stroke-width="3"><path d="M45 15c-14 0-24 9-24 20s10 20 24 20 24-9 24-20-10-20-24-20z"/><path d="M45 28v14l9 5"/></g>']
+];
+const gp=$('#genres');
+GEN.forEach(g=>{
+ const c=el('button','flip');c.setAttribute('aria-label',g[0]+' – activate to flip');
+ c.innerHTML='<span class="in"><span class="f front" style="background:'+g[2]+'"><svg viewBox="0 0 90 70" width="90" height="70" aria-hidden="true">'+g[5]+'</svg><b>'+g[0]+'</b><small>'+g[1]+'</small></span><span class="f back"><b style="color:'+g[2]+'">'+g[0]+'</b><span>'+g[3]+'</span><span class="small">'+g[4]+'</span></span></span>';
+ c.onclick=()=>c.classList.toggle('on');gp.append(c)});
+
+</script></body></html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 2 Interactive: Inside the Courtroom</title>
+<style>
+:root{
+  --crimson:#d34147; --crimson-d:#a8353a; --crimson-t:#f7dcdd;
+  --ink:#1f2430; --ink-2:#4a5160; --paper:#fbf9f6; --sand:#edebe8; --line:#d8d3ca;
+  --brass:#b78a2f; --brass-t:#f3e8cc; --slate:#32506b; --slate-t:#dce6ef;
+  --ok:#2c7a58; --ok-t:#d9efe4; --bad:#b3362f; --bad-t:#f8dcd9;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.5 var(--sans);-webkit-text-size-adjust:100%}
+body{padding:14px 16px 16px}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--slate);outline-offset:2px;border-radius:4px}
+.app{max-width:1040px;margin:0 auto}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
+.stamp{flex:none;background:var(--crimson);color:#fff;font:700 13px/1 var(--sans);padding:8px 10px;border-radius:3px;letter-spacing:.02em}
+.top>div{flex:1;min-width:0}
+.top h1{font:700 clamp(19px,3.2vw,26px)/1.15 var(--serif)}
+.top p{font-size:13px;color:var(--ink-2);margin-top:2px;font-family:var(--sans);font-weight:400}
+.top svg{flex:none;width:44px;height:44px}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--ink)}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--ink);color:#fff}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px}
+.btn{border:2px solid var(--ink);background:#fff;border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+.btn:hover{background:var(--sand)}
+.btn.primary{background:var(--crimson);border-color:var(--crimson-d);color:#fff}
+.btn.primary:hover{background:var(--crimson-d)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.muted{color:var(--ink-2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.shake{animation:shake .35s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px;align-items:stretch}
+.stage{background:var(--sand);border-radius:10px;padding:8px;display:flex;align-items:center}
+.stage svg{width:100%;height:auto;display:block}
+.tabs{margin-bottom:12px}
+.panel[hidden]{display:none}
+.spot{cursor:pointer;outline:none}
+.spot .hl{fill:none;stroke:transparent;stroke-width:3;stroke-dasharray:6 4;rx:8}
+.spot:hover .hl{stroke:var(--slate)}
+.spot:focus-visible .hl{stroke:var(--slate);stroke-width:4}
+.spot.on .hl{stroke:var(--crimson);stroke-width:3.5}
+.spot.right .hl{stroke:var(--ok);stroke-width:4;fill:rgba(44,122,88,.15)}
+.spot.wrong .hl{stroke:var(--bad);stroke-width:4;fill:rgba(179,54,47,.15)}
+.lbl{font:600 12px var(--sans);fill:var(--ink);pointer-events:none}
+.lbl.w{fill:#fff}
+.side{display:flex;flex-direction:column;gap:10px;min-width:0}
+.who{display:inline-block;background:var(--crimson-t);color:var(--crimson-d);font-weight:700;font-size:13px;padding:2px 10px;border-radius:999px}
+.side h2{font:700 21px/1.2 var(--serif);margin:6px 0 6px}
+.fair{margin-top:10px;border-left:4px solid var(--brass);background:var(--brass-t);padding:8px 10px;border-radius:0 6px 6px 0;font-size:14px}
+.fair b{display:block;font-size:13px}
+.hint{font-size:13px;color:var(--ink-2)}
+.qbox{font:700 19px/1.3 var(--serif);min-height:75px}
+.score{display:flex;gap:6px;margin:8px 0}
+.pip{width:100%;height:8px;border-radius:4px;background:var(--line)}
+.pip.ok{background:var(--ok)}.pip.no{background:var(--bad)}
+.fb{min-height:44px;font-size:14px;margin-top:6px}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tier{cursor:pointer;outline:none}
+.tier .shape{transition:fill .2s;fill:#7b8797}
+.tier:hover .shape{fill:#5d6b7d}
+.tier.on .shape{fill:var(--crimson)}
+.tier.on text{fill:#fff}
+.yn{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}
+.yn span{font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;border:1.5px solid var(--line)}
+.yn .y{background:var(--ok-t);border-color:var(--ok);color:#1d5a40}
+.yn .n{background:var(--bad-t);border-color:var(--bad);color:#8a2620}
+@media (max-width:600px){
+  body{padding:10px}
+  .layout{grid-template-columns:1fr}
+  .top svg{display:none}
+  .qbox{min-height:0}
+  .card{padding:10px}
+  .side h2{font-size:18px;margin:4px 0}
+  .fair{margin-top:6px;padding:6px 8px;font-size:13px}
+  .fb{min-height:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="stamp">Week 2</span>
+    <div>
+      <h1>Inside the Courtroom</h1>
+      <p>Every role protects fairness. Find out who does what.</p>
+    </div>
+    <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="38" width="40" height="6" rx="2" fill="#1f2430"/><rect x="8" y="22" width="32" height="5" fill="#b78a2f"/><path d="M6 22 24 7l18 15z" fill="#d34147"/><rect x="11" y="27" width="4" height="11" fill="#1f2430"/><rect x="22" y="27" width="4" height="11" fill="#1f2430"/><rect x="33" y="27" width="4" height="11" fill="#1f2430"/></svg>
+  </header>
+
+  <div class="tabs seg" role="tablist" aria-label="Activity">
+    <button role="tab" id="t-explore" aria-selected="true" aria-controls="p-room">Explore the courtroom</button>
+    <button role="tab" id="t-quiz" aria-selected="false" aria-controls="p-room">Test yourself</button>
+    <button role="tab" id="t-levels" aria-selected="false" aria-controls="p-levels">Court levels</button>
+  </div>
+
+  <section class="panel" id="p-room">
+    <div class="layout">
+      <div class="stage">
+<svg viewBox="0 0 640 420" role="group" aria-label="Top-down floor plan of a courtroom with seven clickable places">
+  <rect x="4" y="4" width="632" height="412" rx="10" fill="#efe4d0" stroke="#b9a98a" stroke-width="2"/>
+  <!-- floor planks -->
+  <g stroke="#e0d2b8" stroke-width="1"><path d="M4 120H636M4 200H636M4 280H636M4 360H636"/></g>
+  <!-- rail -->
+  <path d="M40 300H235M285 300H500" stroke="#6b4f2a" stroke-width="6" stroke-linecap="round"/>
+  <text class="lbl" x="262" y="304" text-anchor="middle" style="font-size:10px;fill:#6b4f2a">gate</text>
+  <!-- gallery -->
+  <g fill="#c9b48c" stroke="#a48d62"><rect x="60" y="326" width="170" height="20" rx="4"/><rect x="290" y="326" width="170" height="20" rx="4"/><rect x="60" y="356" width="170" height="20" rx="4"/><rect x="290" y="356" width="170" height="20" rx="4"/><rect x="60" y="386" width="170" height="20" rx="4"/><rect x="290" y="386" width="170" height="20" rx="4"/></g>
+  <text class="lbl" x="262" y="366" text-anchor="middle" style="fill:#6b4f2a;font-size:10px" transform="rotate(-90 262 366)">public gallery</text>
+
+  <!-- Judge -->
+  <g class="spot" id="s-judge" data-id="judge" tabindex="0" role="button" aria-label="Judge's bench">
+    <rect class="hl" x="228" y="14" width="184" height="78"/>
+    <rect x="240" y="24" width="160" height="56" rx="6" fill="#5b3f1f"/>
+    <rect x="240" y="24" width="160" height="12" rx="6" fill="#b78a2f"/>
+    <circle cx="320" cy="56" r="16" fill="#d34147" stroke="#fff" stroke-width="3"/>
+    <path d="M311 56h18M320 47v18" stroke="#fff" stroke-width="0"/>
+    <text class="lbl w" x="320" y="60" text-anchor="middle" style="font-size:11px">J</text>
+    <text class="lbl" x="320" y="108" text-anchor="middle">Judge</text>
+  </g>
+  <!-- Reporter -->
+  <g class="spot" id="s-reporter" data-id="reporter" tabindex="0" role="button" aria-label="Court reporter">
+    <rect class="hl" x="136" y="40" width="92" height="76"/>
+    <rect x="146" y="50" width="72" height="34" rx="5" fill="#8a6b3d"/>
+    <rect x="160" y="56" width="26" height="14" rx="2" fill="#2a2f3a"/>
+    <circle cx="182" cy="96" r="11" fill="#32506b" stroke="#fff" stroke-width="3"/>
+    <text class="lbl" x="182" y="130" text-anchor="middle">Court reporter</text>
+  </g>
+  <!-- Witness -->
+  <g class="spot" id="s-witness" data-id="witness" tabindex="0" role="button" aria-label="Witness stand">
+    <rect class="hl" x="414" y="40" width="108" height="86"/>
+    <rect x="428" y="50" width="76" height="52" rx="6" fill="#8a6b3d"/>
+    <circle cx="466" cy="76" r="13" fill="#b78a2f" stroke="#fff" stroke-width="3"/>
+    <text class="lbl" x="468" y="120" text-anchor="middle">Witness stand</text>
+  </g>
+  <!-- Jury -->
+  <g class="spot" id="s-jury" data-id="jury" tabindex="0" role="button" aria-label="Jury box">
+    <rect class="hl" x="522" y="132" width="106" height="200"/>
+    <rect x="532" y="142" width="86" height="180" rx="8" fill="#d9c9a6" stroke="#8a6b3d" stroke-width="2"/>
+    <g fill="#6f7f93" stroke="#fff" stroke-width="2">
+      <circle cx="555" cy="166" r="10"/><circle cx="595" cy="166" r="10"/>
+      <circle cx="555" cy="196" r="10"/><circle cx="595" cy="196" r="10"/>
+      <circle cx="555" cy="226" r="10"/><circle cx="595" cy="226" r="10"/>
+      <circle cx="555" cy="256" r="10"/><circle cx="595" cy="256" r="10"/>
+      <circle cx="555" cy="286" r="10"/><circle cx="595" cy="286" r="10"/>
+    </g>
+    <text class="lbl" x="575" y="326" text-anchor="middle" style="font-size:11px">Jury box</text>
+  </g>
+  <!-- Prosecutor -->
+  <g class="spot" id="s-prosecutor" data-id="prosecutor" tabindex="0" role="button" aria-label="Prosecution table">
+    <rect class="hl" x="60" y="156" width="170" height="120"/>
+    <rect x="74" y="176" width="142" height="44" rx="5" fill="#8a6b3d"/>
+    <circle cx="112" cy="238" r="13" fill="#d34147" stroke="#fff" stroke-width="3"/>
+    <circle cx="176" cy="238" r="13" fill="#e8a0a3" stroke="#fff" stroke-width="3"/>
+    <text class="lbl" x="145" y="268" text-anchor="middle">Prosecutor</text>
+  </g>
+  <!-- Defense -->
+  <g class="spot" id="s-defense" data-id="defense" tabindex="0" role="button" aria-label="Defense attorney">
+    <rect class="hl" x="262" y="156" width="104" height="120"/>
+    <rect x="272" y="176" width="84" height="44" rx="5" fill="#8a6b3d"/>
+    <circle cx="314" cy="238" r="13" fill="#32506b" stroke="#fff" stroke-width="3"/>
+    <text class="lbl" x="314" y="268" text-anchor="middle">Defense attorney</text>
+  </g>
+  <!-- Defendant -->
+  <g class="spot" id="s-defendant" data-id="defendant" tabindex="0" role="button" aria-label="Defendant">
+    <rect class="hl" x="372" y="156" width="104" height="120"/>
+    <rect x="384" y="176" width="80" height="44" rx="5" fill="#8a6b3d"/>
+    <circle cx="424" cy="238" r="13" fill="#b78a2f" stroke="#fff" stroke-width="3"/>
+    <text class="lbl" x="424" y="268" text-anchor="middle">Defendant</text>
+  </g>
+</svg>
+      </div>
+      <div class="side">
+        <div class="card" id="explore-card">
+          <span class="who" id="e-who"></span>
+          <h2 id="e-title"></h2>
+          <p id="e-job"></p>
+          <div class="fair"><b>How this role protects fairness</b><span id="e-fair"></span></div>
+        </div>
+        <div class="card" id="quiz-card" hidden>
+          <p class="hint" id="q-count"></p>
+          <p class="qbox" id="q-text" aria-live="polite"></p>
+          <div class="score" id="q-score" aria-hidden="true"></div>
+          <p class="fb" id="q-fb" aria-live="polite"></p>
+          <div class="row"><button class="btn primary" id="q-next" hidden>Next question</button><button class="btn" id="q-again" hidden>Play again</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-levels" hidden>
+    <div class="layout">
+      <div class="stage">
+<svg viewBox="0 0 640 380" role="group" aria-label="Three levels of courts">
+  <rect x="4" y="4" width="632" height="372" rx="10" fill="#efe9de"/>
+  <g class="tier" data-i="2" tabindex="0" role="button" aria-label="Highest court"><path class="shape" d="M250 30h140l24 90H226z" fill="#b78a2f"/><text class="lbl w" x="320" y="62" text-anchor="middle" style="font-size:14px;fill:#fff">Highest court</text><text class="lbl w" x="320" y="82" text-anchor="middle" style="font-size:11px;fill:#fff">final word on the law</text><text x="320" y="102" text-anchor="middle" style="font-size:11px;fill:#fff;font-family:var(--sans)">&#9878;</text></g>
+  <g class="tier" data-i="1" tabindex="0" role="button" aria-label="Appellate courts"><path class="shape" d="M222 130h196l30 100H192z" fill="#32506b"/><text class="lbl w" x="320" y="168" text-anchor="middle" style="font-size:14px;fill:#fff">Appellate courts</text><text class="lbl w" x="320" y="190" text-anchor="middle" style="font-size:11px;fill:#fff">review the record for legal error</text></g>
+  <g class="tier" data-i="0" tabindex="0" role="button" aria-label="Trial courts"><path class="shape" d="M188 240h264l40 112H148z" fill="#d34147"/><text class="lbl w" x="320" y="286" text-anchor="middle" style="font-size:14px;fill:#fff">Trial courts</text><text class="lbl w" x="320" y="308" text-anchor="middle" style="font-size:11px;fill:#fff">hear evidence and decide the facts</text></g>
+  <g stroke="#1f2430" stroke-width="2" fill="none" stroke-linecap="round"><path d="M96 330V140" marker-end="url(#ar)"/><path d="M560 140V330" marker-end="url(#ar)"/></g>
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#1f2430"/></marker></defs>
+  <text class="lbl" x="86" y="236" transform="rotate(-90 86 236)" text-anchor="middle" style="font-size:11px">appeal goes up</text>
+  <text class="lbl" x="582" y="236" transform="rotate(90 582 236)" text-anchor="middle" style="font-size:11px">precedent binds downward</text>
+</svg>
+      </div>
+      <div class="side">
+        <div class="card">
+          <span class="who" id="l-who"></span>
+          <h2 id="l-title"></h2>
+          <div class="yn" id="l-yn"></div>
+          <p id="l-job"></p>
+          <div class="fair"><b>Where you will see it</b><span id="l-ex"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const ROLES={
+ judge:{who:"Judge Harper",title:"The judge",job:"Manages the proceedings, rules on legal questions and objections, instructs the jury on the law, and in a bench trial also decides the facts.",fair:"Independence lets the judge rule without pressure, while accountability to the law and to public trust keeps that power in check."},
+ prosecutor:{who:"District Attorney Lopez",title:"The prosecutor",job:"Represents the government in a criminal case. Decides whether to bring charges, presents the evidence, and carries the burden of proving guilt beyond a reasonable doubt.",fair:"A prosecutor is an adversary but still owes honesty to the court and must disclose evidence that favors the defendant."},
+ defense:{who:"Defense Attorney Kim",title:"The defense attorney",job:"Represents the accused, tests the government's evidence, raises objections, and protects the defendant's constitutional rights at every stage.",fair:"The right to counsel keeps the contest balanced. Defense lawyers also owe honesty to the court."},
+ defendant:{who:"The accused",title:"The defendant",job:"The person charged with the offense. The defendant is presumed innocent, may stay silent under the Fifth Amendment, and decides key matters such as the plea and whether to testify.",fair:"The presumption of innocence puts the entire burden on the government, which protects individuals against the power of the state."},
+ jury:{who:"Twelve community members",title:"The jury",job:"Listens to the evidence and decides the facts in many cases, then returns a verdict. Jurors apply the law as the judge explains it.",fair:"Ordinary citizens deciding the facts spread power beyond any one official and bring community judgment into the process."},
+ reporter:{who:"Court Reporter Chen",title:"The court reporter",job:"Creates the official, word-for-word record of everything said in court. That record is what an appellate court reviews.",fair:"Without an accurate record, an appeal could not check whether the law was applied correctly."},
+ witness:{who:"Any person with knowledge",title:"The witness",job:"Answers questions under oath about what they saw, heard, or know. Witnesses are examined directly by one side and cross-examined by the other.",fair:"Cross-examination tests credibility, so decisions rest on reliable testimony rather than rumor."}
+};
+const LEVELS=[
+ {who:"Original jurisdiction",title:"Trial courts",yes:["Hears new evidence","Decides the facts"],no:[],job:"The court where a case begins. Judges and juries hold hearings and trials, listen to witnesses, and decide what happened.",ex:"Federal: U.S. district courts. California: superior courts."},
+ {who:"Appellate jurisdiction",title:"Appellate courts",yes:["Reviews for legal error"],no:["No new evidence"],job:"Reviews the trial record to decide whether the law was applied correctly. Appellate courts do not retry the case or hear witnesses.",ex:"Federal: circuit courts of appeals. California: courts of appeal."},
+ {who:"Final word",title:"The highest court",yes:["Final word on the law","Sets binding precedent"],no:["No new evidence"],job:"The last stop within a system. Its decisions bind every lower court in that system, which is why precedent from higher courts matters.",ex:"Federal: U.S. Supreme Court. California: Supreme Court of California."}
+];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let mode="explore", sel="judge";
+const spots=$$('.spot');
+
+function showRole(id){
+  sel=id; const r=ROLES[id];
+  $('#e-who').textContent=r.who; $('#e-title').textContent=r.title; $('#e-job').textContent=r.job; $('#e-fair').textContent=r.fair;
+  spots.forEach(s=>s.classList.toggle('on',s.dataset.id===id && mode==="explore"));
+}
+/* Quiz */
+const QS=[
+ ["Creates the official word-for-word record of the trial.","reporter"],
+ ["Represents the government in a criminal case.","prosecutor"],
+ ["Decides the facts in a jury trial.","jury"],
+ ["Rules on objections and manages the courtroom.","judge"],
+ ["Is presumed innocent and may remain silent.","defendant"],
+ ["Protects the accused's constitutional rights.","defense"],
+ ["Answers questions under oath about what they saw.","witness"],
+ ["Decides the facts when there is no jury (a bench trial).","judge"]
+];
+let order=[],qi=0,score=[],locked=false;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startQuiz(){order=shuffle(QS);qi=0;score=[];renderQ();}
+function renderQ(){
+  spots.forEach(s=>s.classList.remove('on','right','wrong'));
+  locked=false; $('#q-fb').textContent=""; $('#q-fb').className="fb";
+  $('#q-next').hidden=true; $('#q-again').hidden=true;
+  if(qi>=order.length){
+    const n=score.filter(Boolean).length;
+    $('#q-count').textContent="Finished";
+    $('#q-text').textContent=`You placed ${n} of ${order.length} correctly.`;
+    $('#q-fb').textContent=n===order.length?"Perfect. You know who does what in the courtroom.":"Review the roles in Explore, then try again.";
+    $('#q-again').hidden=false; drawScore(); return;
+  }
+  $('#q-count').textContent=`Question ${qi+1} of ${order.length}. Click the place in the courtroom.`;
+  $('#q-text').textContent=order[qi][0]; drawScore();
+}
+function drawScore(){$('#q-score').innerHTML=order.map((_,i)=>`<div class="pip ${score[i]===true?'ok':score[i]===false?'no':''}"></div>`).join('')}
+function answer(id){
+  if(locked||qi>=order.length)return; locked=true;
+  const want=order[qi][1], el=s=>spots.find(x=>x.dataset.id===s);
+  const ok=id===want; score[qi]=ok; drawScore();
+  el(want).classList.add('right');
+  if(!ok){el(id).classList.add('wrong');el(id).classList.add('shake')}
+  const r=ROLES[want];
+  $('#q-fb').className="fb "+(ok?'ok':'no');
+  $('#q-fb').textContent=(ok?"Correct. ":"Not quite. ")+`That is the ${r.title.replace('The ','')}.`;
+  qi++; $('#q-next').hidden=false; $('#q-next').textContent=qi>=order.length?"See results":"Next question"; $('#q-next').focus();
+}
+spots.forEach(s=>{
+  const go=()=>{mode==="quiz"?answer(s.dataset.id):showRole(s.dataset.id)};
+  s.addEventListener('click',go);
+  s.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}});
+});
+$('#q-next').onclick=renderQ; $('#q-again').onclick=startQuiz;
+
+/* Tabs */
+const tabs={explore:$('#t-explore'),quiz:$('#t-quiz'),levels:$('#t-levels')};
+function setMode(m){
+  mode=m; Object.entries(tabs).forEach(([k,b])=>b.setAttribute('aria-selected',k===m));
+  const room=m!=="levels";
+  $('#p-room').hidden=!room; $('#p-levels').hidden=room;
+  $('#explore-card').hidden=m!=="explore"; $('#quiz-card').hidden=m!=="quiz";
+  spots.forEach(s=>s.classList.remove('on','right','wrong'));
+  if(m==="explore")showRole(sel); if(m==="quiz")startQuiz();
+}
+Object.entries(tabs).forEach(([k,b])=>b.onclick=()=>setMode(k));
+
+/* Levels */
+const tiers=$$('.tier');
+function showLevel(i){
+  const L=LEVELS[i]; tiers.forEach(t=>t.classList.toggle('on',+t.dataset.i===i));
+  $('#l-who').textContent=L.who; $('#l-title').textContent=L.title; $('#l-job').textContent=L.job; $('#l-ex').textContent=L.ex;
+  $('#l-yn').innerHTML=L.yes.map(t=>`<span class="y">${t}</span>`).join('')+L.no.map(t=>`<span class="n">${t}</span>`).join('');
+}
+tiers.forEach(t=>{const go=()=>showLevel(+t.dataset.i);t.addEventListener('click',go);t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+showRole("judge"); showLevel(0);
+</script>
+</body>
+</html>
