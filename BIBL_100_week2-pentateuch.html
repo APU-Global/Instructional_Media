@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 2 Interactive: The Pentateuch</title>
+<style>
+:root{--red:#a8353a;--red-d:#82272b;--ink:#2b2622;--muted:#5d554d;--paper:#fbf6ee;--sand:#f0e4cf;--sand-d:#e2d0ae;--gold:#b9831a;--sea:#2b6a8a;--green:#2f6b4a;--card:#fff;--line:#dccfb8}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0}
+.app{max-width:980px;margin:0 auto;padding:0 0 14px}
+.hd{background:linear-gradient(100deg,var(--red-d),var(--red));color:#fff;padding:14px 20px 12px;display:flex;align-items:center;gap:14px}
+.hd .badge{background:#fff;color:var(--red);font-weight:700;border-radius:999px;padding:3px 12px;font-size:.8rem;letter-spacing:.04em;white-space:nowrap}
+.hd h1{font-size:1.35rem;line-height:1.2}
+.hd p{margin:2px 0 0;font-size:.85rem;opacity:.95}
+.tabs{display:flex;gap:4px;padding:10px 16px 0;border-bottom:2px solid var(--sand-d);flex-wrap:wrap}
+.tab{appearance:none;border:2px solid var(--sand-d);border-bottom:none;background:var(--sand);color:var(--ink);font:inherit;font-weight:600;font-size:.92rem;padding:8px 14px;border-radius:10px 10px 0 0;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--card);color:var(--red-d);border-color:var(--red);margin-bottom:-2px;padding-bottom:10px}
+.tab:hover{background:#fff}
+:focus-visible{outline:3px solid #1b4fd6;outline-offset:2px}
+.panel{display:none;padding:14px 16px 0}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+.art{background:var(--card);border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.art svg{display:block;width:100%;height:auto}
+.art svg.ic{width:44px;height:44px;flex:none}
+.art svg.rg{width:190px;height:190px;margin:0 auto}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;min-height:350px}
+.card h2{font-size:1.2rem;color:var(--red-d);margin-bottom:4px}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 10px;background:var(--sand);color:var(--red-d);margin-bottom:8px}
+.card p{margin:6px 0}
+.ref{color:var(--muted);font-size:.85rem}
+.notice{background:#fff8e6;border-left:5px solid var(--gold);padding:8px 12px;border-radius:6px;margin-top:10px;font-size:.95rem}
+.btn{appearance:none;border:2px solid var(--red);background:var(--red);color:#fff;font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn:hover{background:var(--red-d);border-color:var(--red-d)}
+.btn.alt{background:#fff;color:var(--red-d)}
+.btn.alt:hover{background:var(--sand)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.sp{flex:1}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--sand-d);border:2px solid var(--sand-d);padding:0;cursor:pointer}
+.dot.on{background:var(--red);border-color:var(--red)}
+.dot.done{border-color:var(--red)}
+.fb{margin-top:10px;padding:8px 12px;border-radius:8px;font-weight:600;min-height:1px}
+.fb.ok{background:#e5f3ea;color:#1f5238;border:2px solid #9fcfb2}
+.fb.no{background:#fdeaea;color:#7a1f24;border:2px solid #e7a9ac}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{appearance:none;font:inherit;font-weight:600;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"],.chip[aria-checked="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hot{cursor:pointer}
+.hot:focus-visible{outline:3px solid #1b4fd6;outline-offset:3px}
+@media (max-width:620px){.grid{grid-template-columns:1fr}.card{min-height:0}.hd h1{font-size:1.1rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hd">
+    <span class="badge">WEEK 2</span>
+    <div><h1>The Pentateuch: Five Scrolls, One Story</h1><p>Explore the five books, then sort the story into creation, fall, and redemption.</p></div>
+  </header>
+  <div class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" aria-selected="false" tabindex="-1">Explore the Five Books</button><button class="tab" role="tab" aria-selected="false" tabindex="-1">Sort the Story</button></div>
+  <div class="panel" role="tabpanel"><div class="grid">
+<div class="art"><svg viewBox="0 0 700 320" role="group" aria-label="Five scrolls: Genesis, Exodus, Leviticus, Numbers, Deuteronomy">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdf3dc"/><stop offset="1" stop-color="#f3e2bd"/></linearGradient></defs>
+<rect width="700" height="320" fill="url(#sky)"/>
+<path d="M40 70 Q 350 -10 660 70" fill="none" stroke="#a8353a" stroke-width="3" stroke-dasharray="3 8" stroke-linecap="round"/>
+<text x="40" y="34" font-family="Georgia,serif" font-size="15" fill="#82272b" font-weight="700">Creation</text>
+<text x="300" y="22" font-family="Georgia,serif" font-size="15" fill="#82272b" font-weight="700">Fall</text>
+<text x="560" y="34" font-family="Georgia,serif" font-size="15" fill="#82272b" font-weight="700">Redemption</text>
+<text x="350" y="310" text-anchor="middle" font-size="13" fill="#5d554d">Select a scroll to open that book</text>
+<g class="hot scroll" data-i="0" tabindex="0" role="button" aria-label="Genesis: Beginnings" transform="translate(40,0)">
+ <rect x="0" y="92" width="112" height="150" rx="8" fill="#fff7e4" stroke="#a8353a" stroke-width="3"/>
+ <rect x="-6" y="82" width="124" height="22" rx="11" fill="#a8353a"/>
+ <rect x="-6" y="230" width="124" height="22" rx="11" fill="#a8353a"/>
+ <line x1="16" y1="130" x2="96" y2="130" stroke="#a8353a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="150" x2="96" y2="150" stroke="#a8353a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="170" x2="70" y2="170" stroke="#a8353a" stroke-opacity=".45" stroke-width="3"/>
+ <text x="56" y="206" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#a8353a">1</text>
+ <text x="56" y="276" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#2b2622">Genesis</text>
+ <rect class="sel" x="-10" y="76" width="132" height="206" rx="14" fill="none" stroke="#a8353a" stroke-width="4" stroke-dasharray="7 5" opacity="0"/>
+</g><g class="hot scroll" data-i="1" tabindex="0" role="button" aria-label="Exodus: Going Out" transform="translate(172,0)">
+ <rect x="0" y="92" width="112" height="150" rx="8" fill="#fff7e4" stroke="#2b6a8a" stroke-width="3"/>
+ <rect x="-6" y="82" width="124" height="22" rx="11" fill="#2b6a8a"/>
+ <rect x="-6" y="230" width="124" height="22" rx="11" fill="#2b6a8a"/>
+ <line x1="16" y1="130" x2="96" y2="130" stroke="#2b6a8a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="150" x2="96" y2="150" stroke="#2b6a8a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="170" x2="70" y2="170" stroke="#2b6a8a" stroke-opacity=".45" stroke-width="3"/>
+ <text x="56" y="206" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#2b6a8a">2</text>
+ <text x="56" y="276" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#2b2622">Exodus</text>
+ <rect class="sel" x="-10" y="76" width="132" height="206" rx="14" fill="none" stroke="#2b6a8a" stroke-width="4" stroke-dasharray="7 5" opacity="0"/>
+</g><g class="hot scroll" data-i="2" tabindex="0" role="button" aria-label="Leviticus: Life with God" transform="translate(304,0)">
+ <rect x="0" y="92" width="112" height="150" rx="8" fill="#fff7e4" stroke="#b9831a" stroke-width="3"/>
+ <rect x="-6" y="82" width="124" height="22" rx="11" fill="#b9831a"/>
+ <rect x="-6" y="230" width="124" height="22" rx="11" fill="#b9831a"/>
+ <line x1="16" y1="130" x2="96" y2="130" stroke="#b9831a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="150" x2="96" y2="150" stroke="#b9831a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="170" x2="70" y2="170" stroke="#b9831a" stroke-opacity=".45" stroke-width="3"/>
+ <text x="56" y="206" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#b9831a">3</text>
+ <text x="56" y="276" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#2b2622">Leviticus</text>
+ <rect class="sel" x="-10" y="76" width="132" height="206" rx="14" fill="none" stroke="#b9831a" stroke-width="4" stroke-dasharray="7 5" opacity="0"/>
+</g><g class="hot scroll" data-i="3" tabindex="0" role="button" aria-label="Numbers: In the Wilderness" transform="translate(436,0)">
+ <rect x="0" y="92" width="112" height="150" rx="8" fill="#fff7e4" stroke="#2f6b4a" stroke-width="3"/>
+ <rect x="-6" y="82" width="124" height="22" rx="11" fill="#2f6b4a"/>
+ <rect x="-6" y="230" width="124" height="22" rx="11" fill="#2f6b4a"/>
+ <line x1="16" y1="130" x2="96" y2="130" stroke="#2f6b4a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="150" x2="96" y2="150" stroke="#2f6b4a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="170" x2="70" y2="170" stroke="#2f6b4a" stroke-opacity=".45" stroke-width="3"/>
+ <text x="56" y="206" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#2f6b4a">4</text>
+ <text x="56" y="276" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#2b2622">Numbers</text>
+ <rect class="sel" x="-10" y="76" width="132" height="206" rx="14" fill="none" stroke="#2f6b4a" stroke-width="4" stroke-dasharray="7 5" opacity="0"/>
+</g><g class="hot scroll" data-i="4" tabindex="0" role="button" aria-label="Deuteronomy: Second Law" transform="translate(568,0)">
+ <rect x="0" y="92" width="112" height="150" rx="8" fill="#fff7e4" stroke="#6b4a8a" stroke-width="3"/>
+ <rect x="-6" y="82" width="124" height="22" rx="11" fill="#6b4a8a"/>
+ <rect x="-6" y="230" width="124" height="22" rx="11" fill="#6b4a8a"/>
+ <line x1="16" y1="130" x2="96" y2="130" stroke="#6b4a8a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="150" x2="96" y2="150" stroke="#6b4a8a" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="16" y1="170" x2="70" y2="170" stroke="#6b4a8a" stroke-opacity=".45" stroke-width="3"/>
+ <text x="56" y="206" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#6b4a8a">5</text>
+ <text x="56" y="276" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#2b2622">Deuteronomy</text>
+ <rect class="sel" x="-10" y="76" width="132" height="206" rx="14" fill="none" stroke="#6b4a8a" stroke-width="4" stroke-dasharray="7 5" opacity="0"/>
+</g>
+</svg></div>
+<div class="card" aria-live="polite"><span class="tag" id="bTag"></span><h2 id="bName"></h2><p id="bMean" class="ref"></p><p id="bDesc"></p>
+<div class="notice"><strong>Think about it:</strong> <span id="bAsk"></span></div>
+<div class="row"><button class="btn alt" id="bPrev">&larr; Previous</button><span class="sp"></span><button class="btn" id="bNext">Next book &rarr;</button></div></div>
+</div></div><div class="panel" role="tabpanel"><div class="grid">
+<div class="card" style="min-height:300px"><span class="tag">Sort the story</span><p class="ref" id="sCount"></p>
+<h2 id="sText" style="color:var(--ink);font-size:1.25rem;margin:8px 0 12px"></h2>
+<div class="row" id="sBtns" style="margin-top:6px">
+<button class="btn alt" data-a="C">Creation</button><button class="btn alt" data-a="F">Fall</button><button class="btn alt" data-a="R">Redemption</button></div>
+<div class="fb" id="sFb" aria-live="polite"></div>
+<div class="row"><button class="btn" id="sNext" style="display:none">Next &rarr;</button><button class="btn alt" id="sAgain" style="display:none">Try again</button></div></div>
+<div class="art" style="padding:14px;background:#fffaf0"><div style="display:grid;gap:12px">
+<div style="display:flex;gap:12px;align-items:center"><svg class="ic" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#e5f3ea"/><rect x="29" y="30" width="6" height="22" fill="#6b4a2a"/><circle cx="32" cy="24" r="14" fill="#2f6b4a"/><circle cx="23" cy="30" r="8" fill="#3c8a5f"/><circle cx="42" cy="30" r="8" fill="#3c8a5f"/></svg><div><strong>Creation</strong><br><span class="ref">God made a good world and a purposeful humanity.</span></div></div>
+<div style="display:flex;gap:12px;align-items:center"><svg class="ic" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fdeaea"/><path d="M32 8 L38 26 L30 32 L40 42 L33 58" fill="none" stroke="#a8353a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg><div><strong>Fall</strong><br><span class="ref">Rebellion fractures the relationship between God, people, and creation.</span></div></div>
+<div style="display:flex;gap:12px;align-items:center"><svg class="ic" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#e3eef5"/><path d="M12 44 Q32 52 52 44" fill="none" stroke="#2b6a8a" stroke-width="5" stroke-linecap="round"/><path d="M32 40 V14 M22 24 L32 14 L42 24" fill="none" stroke="#2b6a8a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Redemption</strong><br><span class="ref">God’s work to buy back, rescue, and restore.</span></div></div>
+<div style="background:var(--sand);border-radius:10px;padding:8px 12px;font-size:.9rem"><strong>Score:</strong> <span id="sScore">0</span> / 8</div>
+</div></div></div></div>
+</div>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+  function show(i){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});panels.forEach(function(p,k){p.classList.toggle('on',k===i)});post();}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(n!==null){show(n);tabs[n].focus();e.preventDefault()}})});
+  function post(){try{var h=document.querySelector('.app').offsetHeight;parent.postMessage({subject:'lti.frameResize',height:h},'*');}catch(e){}}
+  window.addEventListener('resize',post);window.addEventListener('load',post);
+  window.__post=post;
+  show(0);
+})();
+</script>
+<script>
+
+(function(){
+var B=[["Genesis", "Beginnings", "Creation, the fall, and the call of Abraham. Genesis opens with God making a good world, shows human rebellion fracturing it, and ends with promises to Abraham that point toward redemption.", "Creation · Fall · Promise"], ["Exodus", "Going Out", "Deliverance from Egypt and the covenant at Sinai. Redemption reaches a defining moment as God rescues a people from slavery and enters a covenant relationship with them.", "Redemption"], ["Leviticus", "Life with God", "Life with God in the wilderness. After the rescue, Israel learns how a redeemed people live close to a holy God.", "Covenant life"], ["Numbers", "In the Wilderness", "The journey through the wilderness. The people travel toward the promised land and the story keeps tracing both faithfulness and rebellion.", "Journey"], ["Deuteronomy", "Second Law", "On the edge of the land. Moses retells the story and the law to a new generation so they will remember who God is.", "Remember"]];
+var cur=0;
+var sc=[].slice.call(document.querySelectorAll('.scroll'));
+var asks=["Where do you see the first signs of creation, fall, and redemption in this book?","Why might the Bible open the whole story with a good world?","Which theme does the exodus show most clearly?","How does Israel’s journey show both rescue and struggle?","Why does Moses retell the story to a new generation?"];
+function sel(i){cur=i;sc.forEach(function(g,k){g.querySelector('.sel').setAttribute('opacity',k===i?1:0);g.setAttribute('aria-pressed',k===i);g.style.transform='translate('+(40+k*132)+'px,'+(k===i?-6:0)+'px)'});
+document.getElementById('bTag').textContent=B[i][3];document.getElementById('bName').textContent=(i+1)+'. '+B[i][0];document.getElementById('bMean').textContent='"'+B[i][1]+'"';document.getElementById('bDesc').textContent=B[i][2];document.getElementById('bAsk').textContent=asks[i];}
+sc.forEach(function(g,k){g.addEventListener('click',function(){sel(k)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){sel(k);e.preventDefault()}})});
+document.getElementById('bPrev').onclick=function(){sel((cur+4)%5)};document.getElementById('bNext').onclick=function(){sel((cur+1)%5)};
+sel(0);
+var Q=[["God makes a good, ordered world.","C","Creation: the world was meant to be good and ordered."],["Humanity is made in God’s image.","C","Creation: humanity is purposeful image-bearers."],["God is the source of all that exists.","C","Creation: everything begins with God."],["Rebellion fractures the relationship between God, people, and creation.","F","Fall: sin breaks what God made."],["The effects of sin spread through the early chapters of Genesis.","F","Fall: the brokenness explains why the rest of the story is God’s response."],["God makes promises to Abraham.","R","Redemption: it begins with promises to Abraham."],["Israel is rescued from slavery in Egypt.","R","Redemption: the exodus is a defining example."],["God enters a covenant relationship with a people.","R","Redemption: rescue leads to covenant relationship."]];
+var n=0,score=0,locked=false;
+var T=document.getElementById('sText'),F=document.getElementById('sFb'),btns=[].slice.call(document.querySelectorAll('#sBtns .btn'));
+function load(){locked=false;F.className='fb';F.textContent='';document.getElementById('sNext').style.display='none';document.getElementById('sAgain').style.display='none';btns.forEach(function(b){b.disabled=false});
+if(n>=Q.length){T.textContent='You scored '+score+' out of '+Q.length+'.';document.getElementById('sCount').textContent='Finished';btns.forEach(function(b){b.disabled=true});F.className='fb ok';F.textContent=score>=7?'Strong grasp of the story arc.':'Review the Explore tab, then try again.';document.getElementById('sAgain').style.display='';return}
+document.getElementById('sCount').textContent='Statement '+(n+1)+' of '+Q.length;T.textContent=Q[n][0];}
+btns.forEach(function(b){b.onclick=function(){if(locked)return;locked=true;var ok=b.getAttribute('data-a')===Q[n][1];if(ok)score++;document.getElementById('sScore').textContent=score;F.className='fb '+(ok?'ok':'no');F.textContent=(ok?'Correct. ':'Not quite. ')+Q[n][2];btns.forEach(function(x){x.disabled=true});var nx=document.getElementById('sNext');nx.style.display='';nx.focus();}});
+document.getElementById('sNext').onclick=function(){n++;load()};
+document.getElementById('sAgain').onclick=function(){n=0;score=0;document.getElementById('sScore').textContent=0;load()};
+load();
+})();
+
+</script>
+</body>
+</html>

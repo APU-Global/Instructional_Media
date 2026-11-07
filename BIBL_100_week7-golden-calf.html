@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 7 Interactive: Rebellion and the Golden Calf</title>
+<style>
+:root{--red:#a8353a;--red-d:#82272b;--ink:#2b2622;--muted:#5d554d;--paper:#fbf6ee;--sand:#f0e4cf;--sand-d:#e2d0ae;--gold:#b9831a;--sea:#2b6a8a;--green:#2f6b4a;--card:#fff;--line:#dccfb8}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0}
+.app{max-width:980px;margin:0 auto;padding:0 0 14px}
+.hd{background:linear-gradient(100deg,var(--red-d),var(--red));color:#fff;padding:14px 20px 12px;display:flex;align-items:center;gap:14px}
+.hd .badge{background:#fff;color:var(--red);font-weight:700;border-radius:999px;padding:3px 12px;font-size:.8rem;letter-spacing:.04em;white-space:nowrap}
+.hd h1{font-size:1.35rem;line-height:1.2}
+.hd p{margin:2px 0 0;font-size:.85rem;opacity:.95}
+.tabs{display:flex;gap:4px;padding:10px 16px 0;border-bottom:2px solid var(--sand-d);flex-wrap:wrap}
+.tab{appearance:none;border:2px solid var(--sand-d);border-bottom:none;background:var(--sand);color:var(--ink);font:inherit;font-weight:600;font-size:.92rem;padding:8px 14px;border-radius:10px 10px 0 0;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--card);color:var(--red-d);border-color:var(--red);margin-bottom:-2px;padding-bottom:10px}
+.tab:hover{background:#fff}
+:focus-visible{outline:3px solid #1b4fd6;outline-offset:2px}
+.panel{display:none;padding:14px 16px 0}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+.art{background:var(--card);border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.art svg{display:block;width:100%;height:auto}
+.art svg.ic{width:44px;height:44px;flex:none}
+.art svg.rg{width:190px;height:190px;margin:0 auto}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;min-height:350px}
+.card h2{font-size:1.2rem;color:var(--red-d);margin-bottom:4px}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 10px;background:var(--sand);color:var(--red-d);margin-bottom:8px}
+.card p{margin:6px 0}
+.ref{color:var(--muted);font-size:.85rem}
+.notice{background:#fff8e6;border-left:5px solid var(--gold);padding:8px 12px;border-radius:6px;margin-top:10px;font-size:.95rem}
+.btn{appearance:none;border:2px solid var(--red);background:var(--red);color:#fff;font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn:hover{background:var(--red-d);border-color:var(--red-d)}
+.btn.alt{background:#fff;color:var(--red-d)}
+.btn.alt:hover{background:var(--sand)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.sp{flex:1}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--sand-d);border:2px solid var(--sand-d);padding:0;cursor:pointer}
+.dot.on{background:var(--red);border-color:var(--red)}
+.dot.done{border-color:var(--red)}
+.fb{margin-top:10px;padding:8px 12px;border-radius:8px;font-weight:600;min-height:1px}
+.fb.ok{background:#e5f3ea;color:#1f5238;border:2px solid #9fcfb2}
+.fb.no{background:#fdeaea;color:#7a1f24;border:2px solid #e7a9ac}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{appearance:none;font:inherit;font-weight:600;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"],.chip[aria-checked="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hot{cursor:pointer}
+.hot:focus-visible{outline:3px solid #1b4fd6;outline-offset:3px}
+@media (max-width:620px){.grid{grid-template-columns:1fr}.card{min-height:0}.hd h1{font-size:1.1rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.flips{display:none;gap:6px;flex-wrap:wrap;margin-top:10px}.flips.on{display:flex}
+.flip{appearance:none;font:inherit;font-weight:700;border:2px solid var(--gold);background:#fff8e6;border-radius:10px;padding:8px 10px;cursor:pointer;min-width:86px;color:var(--ink)}
+.flip .f2{display:none}.flip[aria-pressed="true"]{background:var(--gold);color:#fff}.flip[aria-pressed="true"] .f1{display:none}.flip[aria-pressed="true"] .f2{display:inline}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:2px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fff;cursor:pointer}
+.chk input{width:20px;height:20px;margin-top:2px;accent-color:var(--red)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hd">
+    <span class="badge">WEEK 7</span>
+    <div><h1>Rebellion and the Golden Calf</h1><p>Follow the story, trace the thread of rebellion, and finish your Storybook.</p></div>
+  </header>
+  <div class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" aria-selected="false" tabindex="-1">The Story</button><button class="tab" role="tab" aria-selected="false" tabindex="-1">Missing the Mark</button><button class="tab" role="tab" aria-selected="false" tabindex="-1">Storybook Final Check</button></div>
+  <div class="panel" role="tabpanel"><div class="grid">
+<div class="art"><svg viewBox="0 0 700 380" role="img" aria-labelledby="gt"><title id="gt">Illustration for the current step of the golden calf story</title><g class="scene" style="display:none"><rect width="700" height="380" fill="#f3d9a4"/><path d="M170 300 L350 40 L530 300Z" fill="#8a6b3f"/><path d="M350 40 L376 80 L338 92Z" fill="#a98a58"/><g class="cl" fill="#6b6b78"><ellipse cx="350" cy="70" rx="80" ry="26"/><ellipse cx="300" cy="86" rx="50" ry="20"/><ellipse cx="404" cy="88" rx="54" ry="20"/></g><rect y="300" width="700" height="80" fill="#c9a25f"/><g fill="#b4915c"><path d="M40 330 L90 270 L140 330Z"/><path d="M160 340 L215 280 L270 340Z"/><path d="M430 335 L485 275 L540 335Z"/><path d="M560 330 L610 270 L660 330Z"/></g><g fill="#2b2622" opacity=".85"><circle cx="300" cy="332" r="6"/><rect x="295" y="338" width="10" height="24" rx="4"/><circle cx="330" cy="338" r="6"/><rect x="325" y="344" width="10" height="22" rx="4"/><circle cx="388" cy="334" r="6"/><rect x="383" y="340" width="10" height="24" rx="4"/></g><rect x="0" y="0" width="700" height="38" fill="#fff" opacity=".88"/><text x="350" y="27" text-anchor="middle" font-size="21" font-weight="700" fill="#2b2622" font-family="Georgia,serif">Waiting below the mountain</text></g><g class="scene" style="display:none"><rect width="700" height="380" fill="#f3d9a4"/><path d="M170 300 L350 40 L530 300Z" fill="#8a6b3f"/><path d="M350 40 L376 80 L338 92Z" fill="#a98a58"/><g class="cl" fill="#6b6b78"><ellipse cx="350" cy="70" rx="80" ry="26"/><ellipse cx="300" cy="86" rx="50" ry="20"/><ellipse cx="404" cy="88" rx="54" ry="20"/></g><rect y="300" width="700" height="80" fill="#c9a25f"/><g fill="#b4915c"><path d="M40 330 L90 270 L140 330Z"/><path d="M160 340 L215 280 L270 340Z"/><path d="M430 335 L485 275 L540 335Z"/><path d="M560 330 L610 270 L660 330Z"/></g><g fill="#2b2622" opacity=".85"><circle cx="300" cy="332" r="6"/><rect x="295" y="338" width="10" height="24" rx="4"/><circle cx="330" cy="338" r="6"/><rect x="325" y="344" width="10" height="22" rx="4"/><circle cx="388" cy="334" r="6"/><rect x="383" y="340" width="10" height="24" rx="4"/></g><g fill="#a8353a" opacity=".9"><path d="M280 250 q10 -22 20 0" /></g><text x="270" y="290" font-size="26" fill="#2b2622">?</text><text x="340" y="296" font-size="26" fill="#2b2622">?</text><rect x="0" y="0" width="700" height="38" fill="#fff" opacity=".88"/><text x="350" y="27" text-anchor="middle" font-size="21" font-weight="700" fill="#2b2622" font-family="Georgia,serif">“Make us a god”</text></g><g class="scene" style="display:none"><rect width="700" height="380" fill="#f3d9a4"/><path d="M170 300 L350 40 L530 300Z" fill="#8a6b3f"/><path d="M350 40 L376 80 L338 92Z" fill="#a98a58"/><g class="cl" fill="#6b6b78"><ellipse cx="350" cy="70" rx="80" ry="26"/><ellipse cx="300" cy="86" rx="50" ry="20"/><ellipse cx="404" cy="88" rx="54" ry="20"/></g><rect y="300" width="700" height="80" fill="#c9a25f"/><g fill="#b4915c"><path d="M40 330 L90 270 L140 330Z"/><path d="M160 340 L215 280 L270 340Z"/><path d="M430 335 L485 275 L540 335Z"/><path d="M560 330 L610 270 L660 330Z"/></g><g fill="#2b2622" opacity=".85"><circle cx="300" cy="332" r="6"/><rect x="295" y="338" width="10" height="24" rx="4"/><circle cx="330" cy="338" r="6"/><rect x="325" y="344" width="10" height="22" rx="4"/><circle cx="388" cy="334" r="6"/><rect x="383" y="340" width="10" height="24" rx="4"/></g><g transform="translate(540,262)"><rect x="-6" y="30" width="86" height="12" rx="3" fill="#7a5c25"/><ellipse cx="38" cy="14" rx="34" ry="20" fill="#d9a82a" stroke="#8d6a12" stroke-width="3"/><circle cx="78" cy="2" r="14" fill="#d9a82a" stroke="#8d6a12" stroke-width="3"/><path d="M70 -10 q-4 -14 -12 -14 M86 -10 q4 -14 12 -14" stroke="#8d6a12" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="10" y="28" width="9" height="14" fill="#d9a82a"/><rect x="52" y="28" width="9" height="14" fill="#d9a82a"/></g><rect x="0" y="0" width="700" height="38" fill="#fff" opacity=".88"/><text x="350" y="27" text-anchor="middle" font-size="21" font-weight="700" fill="#2b2622" font-family="Georgia,serif">The golden calf</text></g><g class="scene" style="display:none"><rect width="700" height="380" fill="#f3d9a4"/><path d="M170 300 L350 40 L530 300Z" fill="#8a6b3f"/><path d="M350 40 L376 80 L338 92Z" fill="#a98a58"/><g class="cl" fill="#6b6b78"><ellipse cx="350" cy="70" rx="80" ry="26"/><ellipse cx="300" cy="86" rx="50" ry="20"/><ellipse cx="404" cy="88" rx="54" ry="20"/></g><rect y="300" width="700" height="80" fill="#c9a25f"/><g fill="#b4915c"><path d="M40 330 L90 270 L140 330Z"/><path d="M160 340 L215 280 L270 340Z"/><path d="M430 335 L485 275 L540 335Z"/><path d="M560 330 L610 270 L660 330Z"/></g><g fill="#2b2622" opacity=".85"><circle cx="300" cy="332" r="6"/><rect x="295" y="338" width="10" height="24" rx="4"/><circle cx="330" cy="338" r="6"/><rect x="325" y="344" width="10" height="22" rx="4"/><circle cx="388" cy="334" r="6"/><rect x="383" y="340" width="10" height="24" rx="4"/></g><g transform="translate(540,262)"><rect x="-6" y="30" width="86" height="12" rx="3" fill="#7a5c25"/><ellipse cx="38" cy="14" rx="34" ry="20" fill="#d9a82a" stroke="#8d6a12" stroke-width="3"/><circle cx="78" cy="2" r="14" fill="#d9a82a" stroke="#8d6a12" stroke-width="3"/><path d="M70 -10 q-4 -14 -12 -14 M86 -10 q4 -14 12 -14" stroke="#8d6a12" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="10" y="28" width="9" height="14" fill="#d9a82a"/><rect x="52" y="28" width="9" height="14" fill="#d9a82a"/></g><g fill="#2b2622"><circle cx="330" cy="150" r="9"/><rect x="321" y="160" width="18" height="46" rx="8"/></g><rect x="0" y="0" width="700" height="38" fill="#fff" opacity=".88"/><text x="350" y="27" text-anchor="middle" font-size="21" font-weight="700" fill="#2b2622" font-family="Georgia,serif">Moses pleads on the mountain</text></g><g class="scene" style="display:none"><rect width="700" height="380" fill="#f3d9a4"/><path d="M170 300 L350 40 L530 300Z" fill="#8a6b3f"/><path d="M350 40 L376 80 L338 92Z" fill="#a98a58"/><g class="cl" fill="#6b6b78"><ellipse cx="350" cy="70" rx="80" ry="26"/><ellipse cx="300" cy="86" rx="50" ry="20"/><ellipse cx="404" cy="88" rx="54" ry="20"/></g><rect y="300" width="700" height="80" fill="#c9a25f"/><g fill="#b4915c"><path d="M40 330 L90 270 L140 330Z"/><path d="M160 340 L215 280 L270 340Z"/><path d="M430 335 L485 275 L540 335Z"/><path d="M560 330 L610 270 L660 330Z"/></g><g fill="#2b2622" opacity=".85"><circle cx="300" cy="332" r="6"/><rect x="295" y="338" width="10" height="24" rx="4"/><circle cx="330" cy="338" r="6"/><rect x="325" y="344" width="10" height="22" rx="4"/><circle cx="388" cy="334" r="6"/><rect x="383" y="340" width="10" height="24" rx="4"/></g><g transform="translate(540,262)"><rect x="-6" y="30" width="86" height="12" rx="3" fill="#7a5c25"/><ellipse cx="38" cy="14" rx="34" ry="20" fill="#d9a82a" stroke="#8d6a12" stroke-width="3"/><circle cx="78" cy="2" r="14" fill="#d9a82a" stroke="#8d6a12" stroke-width="3"/><path d="M70 -10 q-4 -14 -12 -14 M86 -10 q4 -14 12 -14" stroke="#8d6a12" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="10" y="28" width="9" height="14" fill="#d9a82a"/><rect x="52" y="28" width="9" height="14" fill="#d9a82a"/></g><g transform="translate(300,160)"><rect width="30" height="40" rx="12" fill="#c9c1b2" stroke="#8a8070" stroke-width="3"/><rect x="36" width="30" height="40" rx="12" fill="#c9c1b2" stroke="#8a8070" stroke-width="3"/></g><g stroke="#a8353a" stroke-width="5" stroke-linecap="round"><path d="M365 206 l16 18"/></g><rect x="0" y="0" width="700" height="38" fill="#fff" opacity=".88"/><text x="350" y="27" text-anchor="middle" font-size="21" font-weight="700" fill="#2b2622" font-family="Georgia,serif">Moses in the camp</text></g><g class="scene" style="display:none"><rect width="700" height="380" fill="#f3d9a4"/><path d="M170 300 L350 40 L530 300Z" fill="#8a6b3f"/><path d="M350 40 L376 80 L338 92Z" fill="#a98a58"/><g stroke="#fff3b8" stroke-width="6" stroke-linecap="round" opacity=".9"><path d="M350 36 V44"/><path d="M310 56 L290 46"/><path d="M390 56 L410 46"/><path d="M280 84 L240 70"/><path d="M420 84 L460 70"/></g><rect y="300" width="700" height="80" fill="#c9a25f"/><g fill="#b4915c"><path d="M40 330 L90 270 L140 330Z"/><path d="M160 340 L215 280 L270 340Z"/><path d="M430 335 L485 275 L540 335Z"/><path d="M560 330 L610 270 L660 330Z"/></g><g fill="#2b2622" opacity=".85"><circle cx="300" cy="332" r="6"/><rect x="295" y="338" width="10" height="24" rx="4"/><circle cx="330" cy="338" r="6"/><rect x="325" y="344" width="10" height="22" rx="4"/><circle cx="388" cy="334" r="6"/><rect x="383" y="340" width="10" height="24" rx="4"/></g><g transform="translate(316,110)"><rect width="30" height="40" rx="12" fill="#c9c1b2" stroke="#8a8070" stroke-width="3"/><rect x="36" width="30" height="40" rx="12" fill="#c9c1b2" stroke="#8a8070" stroke-width="3"/></g><rect x="0" y="0" width="700" height="38" fill="#fff" opacity=".88"/><text x="350" y="27" text-anchor="middle" font-size="21" font-weight="700" fill="#2b2622" font-family="Georgia,serif">The covenant is renewed</text></g></svg></div>
+<div class="card" aria-live="polite"><span class="tag" id="gStep"></span><h2 id="gTitle"></h2><p class="ref" id="gRef"></p><p id="gDesc"></p>
+<div class="notice"><strong>Ask yourself:</strong> <span id="gAsk"></span></div>
+<div class="flips" id="gFlips"><button class="flip" aria-pressed="false"><span class="f1">Compassion</span><span class="f2">Merciful</span></button><button class="flip" aria-pressed="false"><span class="f1">Grace</span><span class="f2">Gracious</span></button><button class="flip" aria-pressed="false"><span class="f1">Slow to anger</span><span class="f2">Patient</span></button><button class="flip" aria-pressed="false"><span class="f1">Loyal love</span><span class="f2">Steadfast love</span></button><button class="flip" aria-pressed="false"><span class="f1">Faithfulness</span><span class="f2">Can be trusted</span></button></div>
+<div class="row"><button class="btn alt" id="gPrev">&larr; Back</button><div class="dots" id="gDots" role="group" aria-label="Steps"></div><span class="sp"></span><button class="btn" id="gNext">Next &rarr;</button></div></div></div></div><div class="panel" role="tabpanel"><div class="grid">
+<div class="art"><svg viewBox="0 0 700 380" role="img" aria-label="An archery target. The bullseye is covenant relationship with God. Arrows land outside the bullseye.">
+<rect width="700" height="380" fill="#fbe9bd"/>
+<circle cx="350" cy="190" r="170" fill="#fff" stroke="#2b2622" stroke-width="3"/><circle cx="350" cy="190" r="130" fill="#2b6a8a"/><circle cx="350" cy="190" r="90" fill="#fff"/><circle cx="350" cy="190" r="50" fill="#a8353a"/><circle cx="350" cy="190" r="16" fill="#b9831a"/>
+<text x="350" y="194" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">COVENANT</text>
+<g id="arrows"></g></svg></div>
+<div class="card" aria-live="polite"><span class="tag">Khata: missing the mark</span><h2>Rebellion is a thread in the story</h2>
+<p>The bullseye is life in covenant relationship with God. Fire an arrow to follow the thread.</p>
+<div class="chips" id="mBtns" role="group" aria-label="Moments in the story"><button class="chip" data-i="0">Genesis 3</button><button class="chip" data-i="1">Exodus 32</button><button class="chip" data-i="2">Deuteronomy 9</button></div>
+<div class="notice" id="mTxt" style="min-height:120px">Choose a moment to see where the arrow lands.</div></div></div></div><div class="panel" role="tabpanel"><div class="grid">
+<div class="card" style="min-height:0"><span class="tag">Finishing your Storybook</span><h2 style="margin-bottom:8px">Final check</h2>
+<label class="chk"><input type="checkbox"><span>I reviewed my instructor’s feedback on my Project Plan.</span></label>
+<label class="chk"><input type="checkbox"><span>All four chapters are complete.</span></label>
+<label class="chk"><input type="checkbox"><span>The fall, including the golden calf and Israel’s rebellion in the wilderness, is told with care.</span></label>
+<label class="chk"><input type="checkbox"><span>My central message is clear for my chosen audience.</span></label>
+<label class="chk"><input type="checkbox"><span>Sources are credited and my share link works.</span></label></div>
+<div class="art" style="padding:14px;background:#fffaf0;text-align:center"><svg class="rg" viewBox="0 0 220 220" width="190" role="img" aria-label="Checklist progress ring"><circle cx="110" cy="110" r="86" fill="none" stroke="#e2d0ae" stroke-width="18"/><circle id="ring" cx="110" cy="110" r="86" fill="none" stroke="#a8353a" stroke-width="18" stroke-linecap="round" stroke-dasharray="540.4" stroke-dashoffset="540.4" transform="rotate(-90 110 110)"/><text id="rt" x="110" y="120" text-anchor="middle" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#82272b">0 / 5</text></svg>
+<p id="rm" style="font-weight:600;margin:6px 0 0" aria-live="polite">Check each item as you finish it.</p></div></div></div>
+</div>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+  function show(i){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});panels.forEach(function(p,k){p.classList.toggle('on',k===i)});post();}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(n!==null){show(n);tabs[n].focus();e.preventDefault()}})});
+  function post(){try{var h=document.querySelector('.app').offsetHeight;parent.postMessage({subject:'lti.frameResize',height:h},'*');}catch(e){}}
+  window.addEventListener('resize',post);window.addEventListener('load',post);
+  window.__post=post;
+  show(0);
+})();
+</script>
+<script>
+
+(function(){
+var S=[["Waiting", "Exodus 32", "Moses is on the mountain receiving instruction from God. Below, the people have been rescued, have seen God’s power, and have just made a covenant at Sinai.", "How could a people who had just seen God’s power turn to an idol?"], ["The Request", "Exodus 32", "The people ask Aaron to make a god for them.", "What do the people ask for, and why might they ask it?"], ["The Golden Calf", "Exodus 32; Deuteronomy 9:7–27", "Aaron fashions a golden calf. Deuteronomy 9 retells the incident in Moses’ own words.", "What is Aaron’s role in this story?"], ["Moses Intercedes", "Exodus 32–34", "After the people’s sin, Moses intercedes for them, asking God to forgive and to remain with Israel.", "What does it cost a leader to stand between God and a rebellious people?"], ["Moses in the Camp", "Exodus 32; Deuteronomy 9", "Moses reacts both on the mountain and in the camp. The covenant relationship has been broken. Khata, often translated sin, means missing the mark.", "How does the story show a covenant relationship breaking?"], ["God Is Merciful", "Exodus 34:6–7", "God forgives and renews the covenant, and God’s response reveals the character described in Exodus 34:6–7.", "Flip each card below. Which word surprises you most in this moment?"]];var cur=0;
+var sc=[].slice.call(document.querySelectorAll('.scene'));var dots=document.getElementById('gDots');
+S.forEach(function(s,i){var b=document.createElement('button');b.className='dot';b.setAttribute('aria-label','Step '+(i+1)+': '+s[0]);b.onclick=function(){go(i)};dots.appendChild(b)});
+function go(i){cur=i;sc.forEach(function(g,k){g.style.display=k===i?'':'none'});[].slice.call(dots.children).forEach(function(d,k){d.className='dot'+(k===i?' on':(k<i?' done':''))});
+document.getElementById('gStep').textContent='Step '+(i+1)+' of '+S.length;document.getElementById('gTitle').textContent=S[i][0];document.getElementById('gRef').textContent=S[i][1];document.getElementById('gDesc').textContent=S[i][2];document.getElementById('gAsk').textContent=S[i][3];
+document.getElementById('gFlips').className='flips'+(i===S.length-1?' on':'');
+document.getElementById('gPrev').disabled=i===0;document.getElementById('gNext').disabled=i===S.length-1;}
+document.getElementById('gPrev').onclick=function(){go(cur-1)};document.getElementById('gNext').onclick=function(){go(cur+1)};
+[].slice.call(document.querySelectorAll('.flip')).forEach(function(f){f.onclick=function(){f.setAttribute('aria-pressed',f.getAttribute('aria-pressed')!=='true')}});
+go(0);
+var M=[["Genesis 3","Rebellion begins early in the story. The arrow misses the mark at the very start.",[455,120]],["Exodus 32","Just weeks after the exodus and the covenant at Sinai, Israel builds a golden calf. Sin breaks relationships, and the arrow lands far from the center.",[215,265]],["Deuteronomy 9","Moses retells the incident to a new generation so they will remember. The story of rebellion also reveals God’s compassion and faithfulness.",[420,290]]];
+var NS='http://www.w3.org/2000/svg',A=document.getElementById('arrows');
+[].slice.call(document.querySelectorAll('#mBtns .chip')).forEach(function(b){b.onclick=function(){var m=M[+b.getAttribute('data-i')];[].slice.call(document.querySelectorAll('#mBtns .chip')).forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+A.innerHTML='';for(var k=0;k<=+b.getAttribute('data-i');k++){var p=M[k][2];var g=document.createElementNS(NS,'g');g.innerHTML='<line x1="'+(p[0]+(p[0]>350?60:-60))+'" y1="'+(p[1]-50)+'" x2="'+p[0]+'" y2="'+p[1]+'" stroke="#2b2622" stroke-width="5" stroke-linecap="round"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="5" fill="#2b2622"/><text x="'+(p[0]+(p[0]>350?14:-14))+'" y="'+(p[1]+22)+'" text-anchor="'+(p[0]>350?'start':'end')+'" font-size="13" font-weight="700" fill="#82272b">'+M[k][0]+'</text>';A.appendChild(g)}
+document.getElementById('mTxt').textContent=m[1];}});
+var boxes=[].slice.call(document.querySelectorAll('.chk input'));
+boxes.forEach(function(c){c.onchange=function(){var n=boxes.filter(function(x){return x.checked}).length;document.getElementById('ring').setAttribute('stroke-dashoffset',540.4*(1-n/5));document.getElementById('rt').textContent=n+' / 5';document.getElementById('rm').textContent=n===5?'Ready to submit. Well done.':'Check each item as you finish it.'}});
+})();
+
+</script>
+</body>
+</html>

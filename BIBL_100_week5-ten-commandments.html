@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 5 Interactive: Belief and Obedience</title>
+<style>
+:root{--red:#a8353a;--red-d:#82272b;--ink:#2b2622;--muted:#5d554d;--paper:#fbf6ee;--sand:#f0e4cf;--sand-d:#e2d0ae;--gold:#b9831a;--sea:#2b6a8a;--green:#2f6b4a;--card:#fff;--line:#dccfb8}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0}
+.app{max-width:980px;margin:0 auto;padding:0 0 14px}
+.hd{background:linear-gradient(100deg,var(--red-d),var(--red));color:#fff;padding:14px 20px 12px;display:flex;align-items:center;gap:14px}
+.hd .badge{background:#fff;color:var(--red);font-weight:700;border-radius:999px;padding:3px 12px;font-size:.8rem;letter-spacing:.04em;white-space:nowrap}
+.hd h1{font-size:1.35rem;line-height:1.2}
+.hd p{margin:2px 0 0;font-size:.85rem;opacity:.95}
+.tabs{display:flex;gap:4px;padding:10px 16px 0;border-bottom:2px solid var(--sand-d);flex-wrap:wrap}
+.tab{appearance:none;border:2px solid var(--sand-d);border-bottom:none;background:var(--sand);color:var(--ink);font:inherit;font-weight:600;font-size:.92rem;padding:8px 14px;border-radius:10px 10px 0 0;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--card);color:var(--red-d);border-color:var(--red);margin-bottom:-2px;padding-bottom:10px}
+.tab:hover{background:#fff}
+:focus-visible{outline:3px solid #1b4fd6;outline-offset:2px}
+.panel{display:none;padding:14px 16px 0}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+.art{background:var(--card);border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.art svg{display:block;width:100%;height:auto}
+.art svg.ic{width:44px;height:44px;flex:none}
+.art svg.rg{width:190px;height:190px;margin:0 auto}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;min-height:350px}
+.card h2{font-size:1.2rem;color:var(--red-d);margin-bottom:4px}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 10px;background:var(--sand);color:var(--red-d);margin-bottom:8px}
+.card p{margin:6px 0}
+.ref{color:var(--muted);font-size:.85rem}
+.notice{background:#fff8e6;border-left:5px solid var(--gold);padding:8px 12px;border-radius:6px;margin-top:10px;font-size:.95rem}
+.btn{appearance:none;border:2px solid var(--red);background:var(--red);color:#fff;font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn:hover{background:var(--red-d);border-color:var(--red-d)}
+.btn.alt{background:#fff;color:var(--red-d)}
+.btn.alt:hover{background:var(--sand)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.sp{flex:1}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--sand-d);border:2px solid var(--sand-d);padding:0;cursor:pointer}
+.dot.on{background:var(--red);border-color:var(--red)}
+.dot.done{border-color:var(--red)}
+.fb{margin-top:10px;padding:8px 12px;border-radius:8px;font-weight:600;min-height:1px}
+.fb.ok{background:#e5f3ea;color:#1f5238;border:2px solid #9fcfb2}
+.fb.no{background:#fdeaea;color:#7a1f24;border:2px solid #e7a9ac}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{appearance:none;font:inherit;font-weight:600;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"],.chip[aria-checked="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hot{cursor:pointer}
+.hot:focus-visible{outline:3px solid #1b4fd6;outline-offset:3px}
+@media (max-width:620px){.grid{grid-template-columns:1fr}.card{min-height:0}.hd h1{font-size:1.1rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hd">
+    <span class="badge">WEEK 5</span>
+    <div><h1>Belief and Obedience: The Two Tablets</h1><p>Grace comes first. Explore each commandment in context, then test what you see.</p></div>
+  </header>
+  <div class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" aria-selected="false" tabindex="-1">Explore the Tablets</button><button class="tab" role="tab" aria-selected="false" tabindex="-1">Sort Challenge</button></div>
+  <div class="panel" role="tabpanel"><div class="grid">
+<div class="art"><svg viewBox="0 0 700 420" role="group" aria-label="Two stone tablets with ten numbered commandments">
+<rect width="700" height="420" fill="#fbe9bd"/>
+<path d="M0 360 Q 150 320 300 350 T 700 340 V420 H0Z" fill="#d6b074"/>
+<rect x="40" y="14" width="620" height="46" rx="23" fill="#a8353a"/>
+<text x="350" y="43" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#fff" font-weight="700">Grace first: “I am the Lord your God…” (Ex. 20:2)</text>
+<path d="M60 360 V122 Q60 82 140 82 Q 220 82 220 122 V360Z" fill="#c9c1b2" stroke="#8a8070" stroke-width="4"/>
+<path d="M300 360 V104 Q300 70 460 70 Q 620 70 640 104 V360Z" fill="#c9c1b2" stroke="#8a8070" stroke-width="4"/>
+<text x="140" y="126" text-anchor="middle" font-size="18" font-weight="700" fill="#2b2622">With God</text>
+<text x="470" y="106" text-anchor="middle" font-size="18" font-weight="700" fill="#2b2622">With one another</text>
+<g class="hot num" data-i="0" tabindex="0" role="button" aria-label="Commandment 1: No other gods"><circle class="nc" cx="108" cy="156" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="108" y="165" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">1</text></g><g class="hot num" data-i="1" tabindex="0" role="button" aria-label="Commandment 2: No idols"><circle class="nc" cx="200" cy="156" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="200" y="165" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">2</text></g><g class="hot num" data-i="2" tabindex="0" role="button" aria-label="Commandment 3: Honor God’s name"><circle class="nc" cx="108" cy="244" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="108" y="253" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">3</text></g><g class="hot num" data-i="3" tabindex="0" role="button" aria-label="Commandment 4: Keep the Sabbath"><circle class="nc" cx="200" cy="244" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="200" y="253" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">4</text></g><g class="hot num" data-i="4" tabindex="0" role="button" aria-label="Commandment 5: Honor parents"><circle class="nc" cx="392" cy="138" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="392" y="147" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">5</text></g><g class="hot num" data-i="5" tabindex="0" role="button" aria-label="Commandment 6: No murder"><circle class="nc" cx="472" cy="138" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="472" y="147" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">6</text></g><g class="hot num" data-i="6" tabindex="0" role="button" aria-label="Commandment 7: Faithfulness"><circle class="nc" cx="552" cy="138" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="552" y="147" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">7</text></g><g class="hot num" data-i="7" tabindex="0" role="button" aria-label="Commandment 8: No stealing"><circle class="nc" cx="392" cy="224" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="392" y="233" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">8</text></g><g class="hot num" data-i="8" tabindex="0" role="button" aria-label="Commandment 9: Truthful witness"><circle class="nc" cx="472" cy="224" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="472" y="233" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">9</text></g><g class="hot num" data-i="9" tabindex="0" role="button" aria-label="Commandment 10: No coveting"><circle class="nc" cx="552" cy="224" r="28" fill="#fff7e4" stroke="#8a6b3f" stroke-width="3"/><text x="552" y="233" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="#5a3a22">10</text></g>
+<rect class="ring" x="0" y="0" width="0" height="0" fill="none"/>
+</svg></div>
+<div class="card" aria-live="polite" style="min-height:420px"><span class="tag" id="cTag"></span><h2 id="cName"></h2><p id="cText" style="font-size:1.05rem"></p>
+<p class="ref" style="margin-top:2px">Read it in context (Exodus 20). Consider three lenses:</p>
+<div style="display:grid;gap:6px">
+<div class="notice" style="margin:0;border-left-color:var(--sea)"><strong>Historical:</strong> <span id="cH"></span></div>
+<div class="notice" style="margin:0;border-left-color:var(--green)"><strong>Literary:</strong> <span id="cL"></span></div>
+<div class="notice" style="margin:0"><strong>Theological:</strong> <span id="cT"></span></div></div>
+<div class="row"><button class="btn alt" id="cP">&larr; Previous</button><span class="sp"></span><button class="btn" id="cN">Next &rarr;</button></div></div>
+</div></div><div class="panel" role="tabpanel"><div class="grid">
+<div class="card" style="min-height:320px"><span class="tag">Sort challenge</span><p class="ref" id="kCount"></p>
+<h2 id="kName" style="font-size:1.4rem;color:var(--ink);margin:6px 0 2px"></h2><p id="kText" style="margin:0 0 12px"></p>
+<p style="margin:0 0 6px"><strong>Does this commandment mainly address…</strong></p>
+<div class="row" style="margin-top:0" id="kBtns"><button class="btn alt" data-a="God">Our relationship with God</button><button class="btn alt" data-a="Others">Our relationships with people</button></div>
+<div class="fb" id="kFb" aria-live="polite"></div>
+<div class="row"><button class="btn" id="kNext" style="display:none">Next &rarr;</button><button class="btn alt" id="kAgain" style="display:none">Play again</button></div></div>
+<div class="art" style="padding:16px;background:#fffaf0">
+<svg viewBox="0 0 400 150" role="img" aria-label="Score bar showing correct answers out of ten"><rect width="400" height="150" fill="#fffaf0"/><g id="kPips"></g><text id="kScore" x="200" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#82272b">0 correct</text></svg>
+<p class="ref" style="margin:8px 0 0">The course frames the Ten Commandments as loyalty to God and relationships among people. Traditions number and group them differently, and the fifth can be read as bridging both.</p></div></div></div>
+</div>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+  function show(i){tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});panels.forEach(function(p,k){p.classList.toggle('on',k===i)});post();}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(n!==null){show(n);tabs[n].focus();e.preventDefault()}})});
+  function post(){try{var h=document.querySelector('.app').offsetHeight;parent.postMessage({subject:'lti.frameResize',height:h},'*');}catch(e){}}
+  window.addEventListener('resize',post);window.addEventListener('load',post);
+  window.__post=post;
+  show(0);
+})();
+</script>
+<script>
+
+(function(){
+var C=[["No other gods", "Give your loyalty to the Lord alone.", "God", "Israel had just been rescued from Egypt, a land of many gods. What would loyalty to one God mean in that setting?", "It comes first in the list and follows the reminder of the rescue in Exodus 20:2.", "God is the one who acts first in rescue, so loyalty is a response to grace."], ["No idols", "Do not make images to worship.", "God", "Nations around Israel worshiped through images. How would this set Israel apart?", "Notice how the commandment is phrased and how it builds on the first.", "What does it teach about who God is, and why God cannot be reduced to an object?"], ["Honor God’s name", "Do not misuse the name of the Lord.", "God", "In the ancient world, names carried identity and reputation. What would it mean to carry God’s name?", "Look at how the commandment is worded and where it sits in the sequence.", "Israel is called to represent God to the nations, so how they speak and live reflects on God."], ["Keep the Sabbath", "Remember the Sabbath day and keep it holy.", "God", "A weekly rest was striking in a world of constant labor. Who gets to rest?", "Notice the word “remember” and how this commandment connects to creation.", "Rest points back to creation and to a God who gives freedom from slavery."], ["Honor parents", "Honor your father and your mother.", "Others", "Family carried the faith and the land from one generation to the next.", "It is the first commandment that turns toward human relationships.", "Honoring family is part of how a redeemed community remembers and passes on God’s story. Traditions number and group the commandments differently."], ["No murder", "Do not murder.", "Others", "Life in the ancient world was fragile. What protections did the community need?", "It is very short. What does brevity do for the reader?", "Human life is valued because humans are made in God’s image."], ["Faithfulness", "Do not commit adultery.", "Others", "Marriage and family were central to community stability.", "Notice how it echoes the covenant language of faithfulness.", "Human faithfulness mirrors the faithfulness of God."], ["No stealing", "Do not steal.", "Others", "How did property and livelihood hold a village together?", "Short commands let you hear the repeated rhythm of the list.", "Respecting what belongs to others expresses trust in God’s provision."], ["Truthful witness", "Do not give false testimony.", "Others", "In a village, courts depended on honest witnesses. What happens when they lie?", "Notice the courtroom language.", "A people who represent the God of truth are to be truthful."], ["No coveting", "Do not covet what belongs to your neighbor.", "Others", "This commandment looks beyond actions to desire. Why would that matter?", "It is the last in the list and is longer than the ones before it.", "It shows that God cares about the heart as well as outward behavior."]];var cur=0;
+var nums=[].slice.call(document.querySelectorAll('.num'));
+function sel(i){cur=i;nums.forEach(function(g,k){var c=g.querySelector('.nc');c.setAttribute('fill',k===i?'#a8353a':'#fff7e4');g.querySelector('text').setAttribute('fill',k===i?'#fff':'#5a3a22');g.setAttribute('aria-pressed',k===i)});
+var d=C[i];document.getElementById('cTag').textContent=(d[2]==='God'?'Tablet: with God':'Tablet: with one another')+'  ·  Commandment '+(i+1);document.getElementById('cName').textContent=d[0];document.getElementById('cText').textContent=d[1];document.getElementById('cH').textContent=d[3];document.getElementById('cL').textContent=d[4];document.getElementById('cT').textContent=d[5];}
+nums.forEach(function(g,k){g.onclick=function(){sel(k)};g.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){sel(k);e.preventDefault()}}});
+document.getElementById('cP').onclick=function(){sel((cur+9)%10)};document.getElementById('cN').onclick=function(){sel((cur+1)%10)};sel(0);
+var order=[],n=0,score=0,lock=false;
+function shuffle(){order=C.map(function(_,i){return i});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}}
+var pips=document.getElementById('kPips');var NS='http://www.w3.org/2000/svg';
+for(var i=0;i<10;i++){var c=document.createElementNS(NS,'circle');c.setAttribute('cx',40+i*35);c.setAttribute('cy',60);c.setAttribute('r',13);c.setAttribute('fill','#e2d0ae');c.setAttribute('stroke','#8a6b3f');c.setAttribute('stroke-width',2);pips.appendChild(c)}
+var btns=[].slice.call(document.querySelectorAll('#kBtns .btn')),F=document.getElementById('kFb');
+function load(){lock=false;F.className='fb';F.textContent='';document.getElementById('kNext').style.display='none';document.getElementById('kAgain').style.display='none';btns.forEach(function(b){b.disabled=false});
+if(n>=10){document.getElementById('kName').textContent='Finished: '+score+' of 10';document.getElementById('kText').textContent='';document.getElementById('kCount').textContent='';btns.forEach(function(b){b.disabled=true});F.className='fb ok';F.textContent=score>=8?'You see how the commandments flow from loyalty to God into life together.':'Revisit the tablets on the Explore tab, then play again.';document.getElementById('kAgain').style.display='';return}
+var d=C[order[n]];document.getElementById('kCount').textContent='Commandment '+(n+1)+' of 10 (shuffled)';document.getElementById('kName').textContent=d[0];document.getElementById('kText').textContent=d[1];}
+btns.forEach(function(b){b.onclick=function(){if(lock)return;lock=true;var d=C[order[n]],ok=b.getAttribute('data-a')===d[2];if(ok)score++;
+pips.children[n].setAttribute('fill',ok?'#2f6b4a':'#a8353a');document.getElementById('kScore').textContent=score+' correct';
+F.className='fb '+(ok?'ok':'no');F.textContent=(ok?'Yes. ':'Not quite; this one is mainly about '+(d[2]==='God'?'our relationship with God. ':'our relationships with people. '))+d[5];btns.forEach(function(x){x.disabled=true});var nx=document.getElementById('kNext');nx.style.display='';nx.focus();}});
+document.getElementById('kNext').onclick=function(){n++;load()};
+document.getElementById('kAgain').onclick=function(){n=0;score=0;shuffle();[].slice.call(pips.children).forEach(function(c){c.setAttribute('fill','#e2d0ae')});document.getElementById('kScore').textContent='0 correct';load()};
+shuffle();load();
+})();
+
+</script>
+</body>
+</html>
