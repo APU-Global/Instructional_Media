@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 4 Interactive | The Skeletal System and Joints</title>
+<style>
+:root{--navy:#12355b;--accent:#4f46e5;--accent-dark:#3730a3;--soft:#eef0ff;--ink:#1b2733;--muted:#51606f;--line:#d6e0ea;--bg:#f4f8fb;--ok:#0f7a4d;--bad:#b42318;--warn:#b45309}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(100deg,var(--navy),var(--accent-dark));color:#fff}
+header .badge{flex:none;background:#fff;color:var(--accent-dark);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+header h1{margin:0;font-size:18px;line-height:1.2;font-weight:700}
+header p{margin:0;font-size:12.5px;opacity:.9}
+nav{flex:none;display:flex;gap:4px;padding:8px 12px 0;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{font:inherit;font-weight:600;font-size:14px;color:var(--muted);background:transparent;border:0;border-bottom:3px solid transparent;padding:8px 14px;cursor:pointer;white-space:nowrap;border-radius:8px 8px 0 0}
+nav button:hover{background:var(--soft);color:var(--navy)}
+nav button[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);background:var(--soft)}
+nav button:focus-visible,.chip:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+main{flex:1;min-height:0;padding:12px 16px;overflow:hidden}
+.panel{display:none;height:100%}
+.panel.active{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;height:100%}
+.gfx{min-height:0;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center}
+.gfx>svg{width:100%;height:100%;display:block}
+.side{min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+.chips{flex:none;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;font-weight:600;background:#fff;color:var(--navy);border:1.5px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.info{flex:1;min-height:0;overflow:auto}
+.info h2,.card h2{margin:0 0 4px;font-size:18px;color:var(--navy)}
+.info p,.card p{margin:6px 0}
+.hint{color:var(--muted);font-style:italic}
+.tip{margin-top:8px;background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:7px 11px;font-size:14px}
+.tip b{color:var(--accent-dark)}
+.hs{cursor:pointer;transition:filter .15s}
+.hs:hover,.hs:focus{filter:drop-shadow(0 0 5px #f59e0b)}
+.hs:focus{outline:none}
+.hs.active{filter:drop-shadow(0 0 6px #f59e0b)}
+.hs.active .sh{stroke:#d97706;stroke-width:3.5}
+svg text{font-family:inherit}
+.btn{font:inherit;font-weight:700;font-size:14px;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:8px 16px;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn.ghostbtn{background:#fff;color:var(--accent-dark);border:1.5px solid var(--accent)}
+.btn.ghostbtn:hover{background:var(--soft)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opts{display:grid;gap:7px;margin-top:8px}
+.opt{font:inherit;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--soft)}
+.opt.right{border-color:var(--ok);background:#e7f6ee}
+.opt.wrong{border-color:var(--bad);background:#fdecea}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;padding:8px 12px;border-radius:8px;font-size:14px}
+.fb.ok{background:#e7f6ee;color:#0b5a39}
+.fb.no{background:#fdecea;color:#8a1c12}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:600}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:4px 0 8px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.score{font-size:34px;font-weight:800;color:var(--accent-dark)}
+.swatch{display:inline-block;width:56px;height:56px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line);vertical-align:middle;margin-right:12px}
+.ghost{opacity:.16;transition:opacity .4s}
+.on{opacity:1}
+.chosen{margin:6px 0 0;padding-left:0;list-style:none;display:grid;gap:5px}
+.chosen li{background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:5px 10px;font-size:14px}
+.chosen li b{color:var(--accent-dark)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.read{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.read div{background:var(--soft);border-radius:10px;padding:6px 8px;text-align:center;font-size:12.5px;color:var(--muted)}
+.read b{display:block;font-size:17px;color:var(--accent-dark)}
+footer{flex:none;padding:3px 16px 5px;font-size:11.5px;color:var(--muted);background:#fff;border-top:1px solid var(--line)}
+@media (max-width:760px){
+  main{overflow-y:auto}
+  .grid{grid-template-columns:1fr;height:auto}
+  .gfx{height:300px}
+  .info{overflow:visible}
+  header h1{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <span class="badge">Week 4</span>
+  <div><h1>The Skeletal System and Joints</h1><p>Explore the anatomy of a long bone and match joint types to movements.</p></div>
+</header>
+<nav role="tablist" aria-label="Activities"><button role="tab" data-tab="p-bone" aria-selected="false">Anatomy of a Long Bone</button><button role="tab" data-tab="p-joints" aria-selected="false">Joint Types</button><button role="tab" data-tab="p-check" aria-selected="false">Check Your Understanding</button></nav>
+<main><section class="panel" id="p-bone" role="tabpanel"><div class="grid"><div class="gfx"><svg viewBox="0 0 360 540" role="img" aria-label="Cut-away drawing of a long bone showing epiphyses, diaphysis, medullary cavity, periosteum and articular cartilage">
+<defs><pattern id="trab" width="14" height="14" patternUnits="userSpaceOnUse"><path d="M0 14 L14 0 M-2 2 L2 -2 M12 16 L16 12" stroke="#b8a37a" stroke-width="1.6"/><path d="M0 0 L14 14" stroke="#cdbb95" stroke-width="1.2"/></pattern></defs>
+<g class="hs" data-key="compact"><path class="sh" d="M150 130 C150 100 110 100 110 70 C110 40 140 36 180 36 C220 36 250 40 250 70 C250 100 210 100 210 130 L210 410 C210 440 250 440 250 470 C250 500 220 504 180 504 C140 504 110 500 110 470 C110 440 150 440 150 410 Z" fill="#e6d5b3" stroke="#8a7447" stroke-width="2"/>
+<path d="M156 150 V390 M204 150 V390 M160 150 V390" stroke="#c9b68c" stroke-width="1.5" stroke-dasharray="2 5"/></g>
+<g class="hs" data-key="epiph"><path class="sh" d="M165 134 C165 96 128 94 128 70 C128 54 150 52 180 52 C210 52 232 54 232 70 C232 94 195 96 195 134 Z" fill="#f6efdf" stroke="#9a8556" stroke-width="2"/><path d="M165 134 C165 96 128 94 128 70 C128 54 150 52 180 52 C210 52 232 54 232 70 C232 94 195 96 195 134 Z" fill="url(#trab)"/>
+<path class="sh" d="M165 406 C165 444 128 446 128 470 C128 486 150 488 180 488 C210 488 232 486 232 470 C232 446 195 444 195 406 Z" fill="#f6efdf" stroke="#9a8556" stroke-width="2"/><path d="M165 406 C165 444 128 446 128 470 C128 486 150 488 180 488 C210 488 232 486 232 470 C232 446 195 444 195 406 Z" fill="url(#trab)"/></g>
+<g class="hs" data-key="cavity"><rect class="sh" x="168" y="136" width="24" height="268" fill="#fcd96a" stroke="#c99a12" stroke-width="2"/>
+<text x="180" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#7a5a00" transform="rotate(-90 180 270)">marrow</text></g>
+<g class="hs" data-key="cart"><path class="sh" d="M116 60 C124 40 150 34 180 34 C210 34 236 40 244 60 C232 48 210 44 180 44 C150 44 128 48 116 60 Z" fill="#9fd3f5" stroke="#2f7fb0" stroke-width="2"/>
+<path class="sh" d="M116 480 C124 500 150 506 180 506 C210 506 236 500 244 480 C232 492 210 496 180 496 C150 496 128 492 116 480 Z" fill="#9fd3f5" stroke="#2f7fb0" stroke-width="2"/></g>
+<g class="hs" data-key="line"><path class="sh" d="M152 136 H208 M152 404 H208" stroke="#7c3aed" stroke-width="3" stroke-dasharray="5 4" fill="none"/></g>
+<g class="hs" data-key="peri"><path d="M150 130 C150 100 110 100 110 70 C110 40 140 36 180 36 C220 36 250 40 250 70 C250 100 210 100 210 130 L210 410 C210 440 250 440 250 470 C250 500 220 504 180 504 C140 504 110 500 110 470 C110 440 150 440 150 410 Z" fill="none" stroke="transparent" stroke-width="16"/><path class="sh" d="M150 130 C150 100 110 100 110 70 C110 40 140 36 180 36 C220 36 250 40 250 70 C250 100 210 100 210 130 L210 410 C210 440 250 440 250 470 C250 500 220 504 180 504 C140 504 110 500 110 470 C110 440 150 440 150 410 Z" fill="none" stroke="#b45309" stroke-width="3.5"/></g>
+<g class="hs" data-key="endo"><path class="sh" d="M168 138 V402 M192 138 V402" stroke="#be185d" stroke-width="3" fill="none"/></g>
+<g font-size="12" font-weight="700" fill="#334155"><text x="262" y="48">Articular cartilage</text><text x="262" y="100">Epiphysis (spongy bone)</text>
+<text x="226" y="270">Compact bone</text><text x="262" y="440">Epiphysis</text></g>
+</svg></div><div class="side"><div class="chips"></div><div class="card info"></div></div></div></section><section class="panel" id="p-joints" role="tabpanel"><div class="grid" style="grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)"><div class="gfx" style="align-items:stretch;padding:12px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;align-content:center"><button class="chip jt" data-jt="ball" style="display:flex;align-items:center;gap:12px;border-radius:14px;padding:8px 12px;text-align:left;font-size:15px"><svg viewBox="0 0 80 80" width="104" height="104" aria-hidden="true"><path d="M18 34 Q40 78 62 34" fill="none" stroke="#0f766e" stroke-width="6" stroke-linecap="round"/><rect x="36" y="4" width="8" height="24" rx="3" fill="#e6d5b3" stroke="#8a7447"/><circle cx="40" cy="36" r="13" fill="#f6efdf" stroke="#8a7447" stroke-width="2"/></svg><span style="font-size:14px">Ball-and-socket</span></button><button class="chip jt" data-jt="hinge" style="display:flex;align-items:center;gap:12px;border-radius:14px;padding:8px 12px;text-align:left;font-size:15px"><svg viewBox="0 0 80 80" width="104" height="104" aria-hidden="true"><rect x="6" y="30" width="44" height="14" rx="5" fill="#e6d5b3" stroke="#8a7447" stroke-width="2"/><rect x="40" y="36" width="14" height="40" rx="5" fill="#f6efdf" stroke="#8a7447" stroke-width="2"/><circle cx="47" cy="38" r="5" fill="#0f766e"/></svg><span style="font-size:14px">Hinge</span></button><button class="chip jt" data-jt="pivot" style="display:flex;align-items:center;gap:12px;border-radius:14px;padding:8px 12px;text-align:left;font-size:15px"><svg viewBox="0 0 80 80" width="104" height="104" aria-hidden="true"><rect x="33" y="30" width="14" height="46" rx="4" fill="#e6d5b3" stroke="#8a7447" stroke-width="2"/><path d="M33 30 Q40 14 47 30" fill="#e6d5b3" stroke="#8a7447" stroke-width="2"/><ellipse cx="40" cy="26" rx="24" ry="8" fill="none" stroke="#0f766e" stroke-width="5"/><path d="M62 14 q6 4 2 11 M62 14 l-6 0 M62 14 l2 6" fill="none" stroke="#0f766e" stroke-width="2.5"/></svg><span style="font-size:14px">Pivot</span></button><button class="chip jt" data-jt="saddle" style="display:flex;align-items:center;gap:12px;border-radius:14px;padding:8px 12px;text-align:left;font-size:15px"><svg viewBox="0 0 80 80" width="104" height="104" aria-hidden="true"><path d="M8 76 V56 Q40 28 72 56 V76 Z" fill="#e6d5b3" stroke="#8a7447" stroke-width="2"/><path d="M18 6 H62 V26 Q40 52 18 26 Z" fill="#f6efdf" stroke="#8a7447" stroke-width="2"/><path d="M26 40 q14 8 28 0" fill="none" stroke="#0f766e" stroke-width="3"/></svg><span style="font-size:14px">Saddle</span></button><button class="chip jt" data-jt="condyl" style="display:flex;align-items:center;gap:12px;border-radius:14px;padding:8px 12px;text-align:left;font-size:15px"><svg viewBox="0 0 80 80" width="104" height="104" aria-hidden="true"><path d="M10 34 Q40 78 70 34" fill="none" stroke="#0f766e" stroke-width="6" stroke-linecap="round"/><rect x="34" y="4" width="12" height="22" rx="3" fill="#e6d5b3" stroke="#8a7447"/><ellipse cx="40" cy="38" rx="20" ry="10" fill="#f6efdf" stroke="#8a7447" stroke-width="2"/></svg><span style="font-size:14px">Condyloid</span></button><button class="chip jt" data-jt="plane" style="display:flex;align-items:center;gap:12px;border-radius:14px;padding:8px 12px;text-align:left;font-size:15px"><svg viewBox="0 0 80 80" width="104" height="104" aria-hidden="true"><rect x="8" y="22" width="56" height="14" rx="4" fill="#e6d5b3" stroke="#8a7447" stroke-width="2"/><rect x="16" y="40" width="56" height="14" rx="4" fill="#f6efdf" stroke="#8a7447" stroke-width="2"/><path d="M14 66 H66 M14 66 l6 -4 M14 66 l6 4 M66 66 l-6 -4 M66 66 l-6 4" fill="none" stroke="#0f766e" stroke-width="2.5"/></svg><span style="font-size:14px">Plane (gliding)</span></button></div></div><div class="side"><div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Synovial joint types</h2><button class="btn ghostbtn" id="mode">Switch to challenge</button></div><div id="jinfo" class="info" style="overflow:visible;margin-top:6px"></div></div><div class="card" id="scen" style="display:none;flex:1"></div></div></div></section><section class="panel" id="p-check" role="tabpanel"><div class="grid" style="grid-template-columns:minmax(0,640px)"><div class="card quiz" style="align-self:start"></div></div></section></main>
+<footer>BIOL 230 Anatomy and Physiology I/Lab &middot; Week 4 Deep Dive &middot; Content adapted from the course Deep Dive and OpenStax <i>Anatomy and Physiology</i> 2e (Betts et al., 2022).</footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav button').forEach(b=>b.addEventListener('click',()=>{
+  $$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $$('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));
+}));
+$$('nav button')[0].click();
+
+/* Explore: clickable graphic + chips */
+function explore(root,info,first){
+  const keys=Object.keys(info),chips=$('.chips',root),box=$('.info',root);
+  keys.forEach(k=>{const c=document.createElement('button');c.className='chip';c.textContent=info[k].chip||info[k].t;c.dataset.key=k;chips.appendChild(c)});
+  function show(k){
+    const d=info[k];if(!d)return;
+    $$('.chip',root).forEach(c=>c.classList.toggle('active',c.dataset.key===k));
+    $$('.hs',root).forEach(h=>h.classList.toggle('active',h.dataset.key===k));
+    box.innerHTML='<h2>'+d.t+'</h2><p>'+d.p+'</p>'+(d.tip?'<div class="tip"><b>'+(d.tipLabel||'Clinical connection:')+'</b> '+d.tip+'</div>':'');
+    if(d.after)d.after();
+  }
+  $$('[data-key]',root).forEach(el=>{
+    el.addEventListener('click',()=>show(el.dataset.key));
+    if(el.classList.contains('hs')){el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',(info[el.dataset.key]||{}).t||'');
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(el.dataset.key)}})}
+  });
+  box.innerHTML='<p class="hint">Select a part of the graphic or one of the buttons above to learn more.</p>';
+  if(first)show(first);
+  return show;
+}
+
+/* Multiple-choice quiz, one question at a time */
+function quiz(root,qs){
+  let i=0,score=0,done=false;
+  function render(){
+    if(i>=qs.length){
+      const pct=Math.round(score/qs.length*100);
+      root.innerHTML='<div class="qhead"><span>Finished</span></div><div class="bar"><i style="width:100%"></i></div><div class="score">'+score+' / '+qs.length+'</div><p>'+(pct>=80?'Excellent work. You are ready for the quiz.':pct>=60?'Good progress. Revisit the Explore tab for the items you missed.':'Take another look at the Explore tab, then try again.')+'</p><button class="btn" id="retry">Try again</button>';
+      $('#retry',root).onclick=()=>{i=0;score=0;qs=shuffle(qs);render()};return;
+    }
+    const q=qs[i];done=false;
+    root.innerHTML='<div class="qhead"><span>Question '+(i+1)+' of '+qs.length+'</span><span>Score: '+score+'</span></div><div class="bar"><i style="width:'+(i/qs.length*100)+'%"></i></div><p><b>'+(q.html||'')+q.q+'</b></p><div class="opts"></div><div id="fb"></div>';
+    const o=$('.opts',root);
+    q.o.forEach((txt,idx)=>{const b=document.createElement('button');b.className='opt';b.textContent=txt;
+      b.onclick=()=>{
+        if(done)return;done=true;const ok=idx===q.a;if(ok)score++;
+        $$('.opt',root).forEach((x,n)=>{x.disabled=true;if(n===q.a)x.classList.add('right');else if(n===idx)x.classList.add('wrong')});
+        $('#fb',root).innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+q.e+'</div><div class="row" style="margin-top:8px"><button class="btn" id="nx">'+(i+1<qs.length?'Next question':'See results')+'</button></div>';
+        $('#nx',root).onclick=()=>{i++;render()};$('#nx',root).focus();
+      };o.appendChild(b)});
+  }
+  render();
+}
+
+/* Put-in-order activity; steps[].hl is an element id in the graphic */
+function order(root,steps,labels){
+  const ch=$('.chosen',root),opts=$('.opts',root),fb=$('.ofb',root);let n=0;
+  function reset(){n=0;ch.innerHTML='';fb.innerHTML='<p class="hint">'+labels.start+'</p>';
+    steps.forEach(s=>{const e=document.getElementById(s.hl);if(e){e.classList.add('ghost');e.classList.remove('on')}});
+    opts.innerHTML='';shuffle(steps.map((s,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=steps[i].t;b.dataset.i=i;
+      b.onclick=()=>{
+        if(+b.dataset.i===n){
+          const s=steps[n];const li=document.createElement('li');li.innerHTML='<b>'+(n+1)+'. '+(s.name||s.t)+'</b>'+(s.d?' &mdash; '+s.d:'');ch.appendChild(li);
+          const e=document.getElementById(s.hl);if(e){e.classList.remove('ghost');e.classList.add('on')}
+          b.disabled=true;b.style.display='none';n++;
+          if(n===steps.length){fb.innerHTML='<div class="fb ok"><b>Complete! </b>'+labels.done+'</div><div class="row" style="margin-top:8px"><button class="btn ghostbtn" id="rs">Start over</button></div>';$('#rs',root).onclick=reset}
+          else fb.innerHTML='<p class="hint">Correct. '+labels.next+'</p>';
+        }else{b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb.innerHTML='<div class="fb no">'+labels.wrong.replace('{n}',n+1)+'</div>'}
+      };opts.appendChild(b)});
+  }
+  reset();
+}
+const JT=[{"k": "ball", "n": "Ball-and-socket", "e": "Shoulder, hip", "m": "Flexion, extension, abduction, adduction, rotation and circumduction. Movement in all directions (multiaxial)."}, {"k": "hinge", "n": "Hinge", "e": "Elbow, knee, ankle", "m": "Flexion and extension in one plane, like a door hinge (uniaxial)."}, {"k": "pivot", "n": "Pivot", "e": "Atlas and axis (turning the head), radius and ulna at the elbow", "m": "Rotation around a single axis, as one bone turns within a ring."}, {"k": "saddle", "n": "Saddle", "e": "Thumb (carpometacarpal joint)", "m": "Flexion, extension, abduction, adduction and circumduction. Allows the thumb to oppose the fingers."}, {"k": "condyl", "n": "Condyloid", "e": "Wrist (radiocarpal), knuckles", "m": "Movement in two planes: flexion/extension and abduction/adduction (biaxial)."}, {"k": "plane", "n": "Plane (gliding)", "e": "Between carpal bones, between vertebrae", "m": "Flat surfaces glide over one another with only slight movement."}];
+explore($('#p-bone'),{
+cart:{t:'Articular cartilage',chip:'Articular cartilage',p:'A smooth layer of hyaline cartilage on the joint ends of a bone. It reduces friction and absorbs shock at synovial joints.',tip:'Wear of this cartilage is the hallmark of osteoarthritis.'},
+epiph:{t:'Epiphysis (spongy bone)',chip:'Epiphysis',p:'The expanded end of a long bone. Inside is spongy bone made of a lattice of trabeculae, with red marrow where blood cells are produced. A thin shell of compact bone surrounds it.',tip:'Red marrow in the epiphyses and flat bones makes blood cells.'},
+line:{t:'Epiphyseal line',chip:'Epiphyseal line',p:'A remnant of the epiphyseal plate, the cartilage growth plate where a child\'s bone lengthens. In adults the plate has ossified and only this line remains.',tip:'Growth plate injuries in children can affect how a bone grows.'},
+compact:{t:'Diaphysis: compact bone',chip:'Diaphysis (compact bone)',p:'The long shaft of the bone. Dense compact bone is built from osteons (Haversian systems), cylinders of bone matrix around a central canal that carries vessels and nerves. It provides strength and support.'},
+cavity:{t:'Medullary cavity',chip:'Medullary cavity',p:'The hollow center of the diaphysis. In adults it holds yellow marrow, which stores fat. This hollow design keeps the bone strong yet light.'},
+peri:{t:'Periosteum',chip:'Periosteum',p:'A tough connective tissue sheath covering the outside of the bone. It contains blood vessels, nerves and bone-forming cells, and anchors tendons and ligaments.',tip:'Because the periosteum is rich in nerves, a bone bruise or fracture is very painful.'},
+endo:{t:'Endosteum',chip:'Endosteum',p:'A thin membrane lining the medullary cavity and the spaces of spongy bone. It contains osteoblasts and osteoclasts that remodel bone from the inside.'}
+},'compact');
+const jinfo=$('#jinfo'),scen=$('#scen');let mode='learn',cur=null,idx=0,sc=0,list=[];
+const SCN=[
+{q:'Bending and straightening your elbow.',a:'hinge'},
+{q:'Swinging your arm in a full circle at the shoulder.',a:'ball'},
+{q:'Shaking your head to say "no".',a:'pivot'},
+{q:'Touching your thumb to your little finger.',a:'saddle'},
+{q:'Moving your wrist up and down and from side to side.',a:'condyl'},
+{q:'Small sliding movements between carpal bones.',a:'plane'},
+{q:'Kicking a ball: movement at the knee.',a:'hinge'},
+{q:'Moving the hip joint in all directions.',a:'ball'}
+];
+function learn(k){
+  const d=JT.find(x=>x.k===k);cur=k;
+  $$('.jt').forEach(b=>b.classList.toggle('active',b.dataset.jt===k));
+  jinfo.innerHTML='<h2>'+d.n+'</h2><p><b>Movement:</b> '+d.m+'</p><p><b>Examples:</b> '+d.e+'</p>';
+}
+function nextScn(){
+  if(idx>=list.length){scen.innerHTML='<h2>Challenge complete</h2><p class="score">'+sc+' / '+list.length+'</p><button class="btn" id="again">Play again</button>';$('#again').onclick=startChallenge;return}
+  scen.innerHTML='<div class="qhead"><span>Scenario '+(idx+1)+' of '+list.length+'</span><span>Score: '+sc+'</span></div><div class="bar"><i style="width:'+(idx/list.length*100)+'%"></i></div><p><b>Which joint type allows this?</b></p><p style="font-size:16px">'+list[idx].q+'</p><div id="sfb"></div>';
+}
+function startChallenge(){list=shuffle(SCN);idx=0;sc=0;nextScn();jinfo.innerHTML='<p class="hint">Challenge mode: read the scenario, then choose a joint type on the left.</p>'}
+function setMode(m){
+  mode=m;$$('.jt').forEach(b=>b.classList.remove('active'));
+  if(m==='learn'){scen.style.display='none';$('#mode').textContent='Switch to challenge';jinfo.innerHTML='<p class="hint">Select a joint type to see its movement and examples.</p>'}
+  else{scen.style.display='block';$('#mode').textContent='Back to learning';startChallenge()}
+}
+$$('.jt').forEach(b=>b.addEventListener('click',()=>{
+  if(mode==='learn'){learn(b.dataset.jt);return}
+  if(idx>=list.length)return;
+  const ok=b.dataset.jt===list[idx].a,right=JT.find(x=>x.k===list[idx].a);
+  if(ok)sc++;
+  $('#sfb').innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+(ok?'':'The answer is '+right.n+'. ')+right.m+'</div><div class="row" style="margin-top:8px"><button class="btn" id="nx">Next</button></div>';
+  $('#nx').onclick=()=>{idx++;nextScn()};$('#nx').focus();
+}));
+$('#mode').onclick=()=>setMode(mode==='learn'?'challenge':'learn');
+setMode('learn');
+const Q=[
+{q:'Which cells build new bone matrix?',o:['Osteoclasts','Osteoblasts','Osteocytes','Chondrocytes'],a:1,e:'Osteoblasts build bone matrix. Osteocytes maintain it and osteoclasts resorb it.'},
+{q:'Which cells break down (resorb) bone?',o:['Osteoblasts','Osteocytes','Osteoclasts','Fibroblasts'],a:2,e:'Osteoclasts resorb bone, which allows remodeling and calcium release.'},
+{q:'What is the shaft of a long bone called?',o:['Epiphysis','Diaphysis','Metaphysis','Periosteum'],a:1,e:'The diaphysis is the shaft. Epiphyses are the ends.'},
+{q:'Which structure lines the medullary cavity?',o:['Periosteum','Articular cartilage','Endosteum','Synovial membrane'],a:2,e:'The endosteum lines the inner surfaces; the periosteum covers the outside.'},
+{q:'Which fracture-healing step comes first?',o:['Bony callus','Remodeling','Fibrocartilaginous callus','Hematoma formation'],a:3,e:'The order is hematoma, fibrocartilaginous callus, bony callus, then remodeling.'},
+{q:'A joint that is freely movable is a:',o:['Synarthrosis','Amphiarthrosis','Diarthrosis','Syndesmosis'],a:2,e:'Diarthroses are freely movable. Synarthroses are immovable and amphiarthroses are slightly movable.'},
+{q:'The knee and elbow are examples of which synovial joint type?',o:['Ball-and-socket','Pivot','Hinge','Plane'],a:2,e:'Hinge joints permit flexion and extension in one plane.'},
+{q:'Which statement about joints is true?',o:['More mobile joints tend to be less stable','More mobile joints are always more stable','Fibrous joints are freely movable','Synovial joints have no capsule'],a:0,e:'Joints balance stability and mobility. Freely movable joints are more injury-prone.'}
+];
+quiz($('#p-check .quiz'),shuffle(Q));
+
+</script>
+</body>
+</html>

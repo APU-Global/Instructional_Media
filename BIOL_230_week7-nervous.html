@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 7 Interactive | The Nervous System</title>
+<style>
+:root{--navy:#12355b;--accent:#7c3aed;--accent-dark:#5b21b6;--soft:#f3edff;--ink:#1b2733;--muted:#51606f;--line:#d6e0ea;--bg:#f4f8fb;--ok:#0f7a4d;--bad:#b42318;--warn:#b45309}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(100deg,var(--navy),var(--accent-dark));color:#fff}
+header .badge{flex:none;background:#fff;color:var(--accent-dark);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+header h1{margin:0;font-size:18px;line-height:1.2;font-weight:700}
+header p{margin:0;font-size:12.5px;opacity:.9}
+nav{flex:none;display:flex;gap:4px;padding:8px 12px 0;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{font:inherit;font-weight:600;font-size:14px;color:var(--muted);background:transparent;border:0;border-bottom:3px solid transparent;padding:8px 14px;cursor:pointer;white-space:nowrap;border-radius:8px 8px 0 0}
+nav button:hover{background:var(--soft);color:var(--navy)}
+nav button[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);background:var(--soft)}
+nav button:focus-visible,.chip:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+main{flex:1;min-height:0;padding:12px 16px;overflow:hidden}
+.panel{display:none;height:100%}
+.panel.active{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;height:100%}
+.gfx{min-height:0;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center}
+.gfx>svg{width:100%;height:100%;display:block}
+.side{min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+.chips{flex:none;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;font-weight:600;background:#fff;color:var(--navy);border:1.5px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.info{flex:1;min-height:0;overflow:auto}
+.info h2,.card h2{margin:0 0 4px;font-size:18px;color:var(--navy)}
+.info p,.card p{margin:6px 0}
+.hint{color:var(--muted);font-style:italic}
+.tip{margin-top:8px;background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:7px 11px;font-size:14px}
+.tip b{color:var(--accent-dark)}
+.hs{cursor:pointer;transition:filter .15s}
+.hs:hover,.hs:focus{filter:drop-shadow(0 0 5px #f59e0b)}
+.hs:focus{outline:none}
+.hs.active{filter:drop-shadow(0 0 6px #f59e0b)}
+.hs.active .sh{stroke:#d97706;stroke-width:3.5}
+svg text{font-family:inherit}
+.btn{font:inherit;font-weight:700;font-size:14px;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:8px 16px;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn.ghostbtn{background:#fff;color:var(--accent-dark);border:1.5px solid var(--accent)}
+.btn.ghostbtn:hover{background:var(--soft)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opts{display:grid;gap:7px;margin-top:8px}
+.opt{font:inherit;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--soft)}
+.opt.right{border-color:var(--ok);background:#e7f6ee}
+.opt.wrong{border-color:var(--bad);background:#fdecea}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;padding:8px 12px;border-radius:8px;font-size:14px}
+.fb.ok{background:#e7f6ee;color:#0b5a39}
+.fb.no{background:#fdecea;color:#8a1c12}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:600}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:4px 0 8px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.score{font-size:34px;font-weight:800;color:var(--accent-dark)}
+.swatch{display:inline-block;width:56px;height:56px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line);vertical-align:middle;margin-right:12px}
+.ghost{opacity:.16;transition:opacity .4s}
+.on{opacity:1}
+.chosen{margin:6px 0 0;padding-left:0;list-style:none;display:grid;gap:5px}
+.chosen li{background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:5px 10px;font-size:14px}
+.chosen li b{color:var(--accent-dark)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.read{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.read div{background:var(--soft);border-radius:10px;padding:6px 8px;text-align:center;font-size:12.5px;color:var(--muted)}
+.read b{display:block;font-size:17px;color:var(--accent-dark)}
+footer{flex:none;padding:3px 16px 5px;font-size:11.5px;color:var(--muted);background:#fff;border-top:1px solid var(--line)}
+@media (max-width:760px){
+  main{overflow-y:auto}
+  .grid{grid-template-columns:1fr;height:auto}
+  .gfx{height:300px}
+  .info{overflow:visible}
+  header h1{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <span class="badge">Week 7</span>
+  <div><h1>The Nervous System</h1><p>Explore the neuron, step through an action potential and predict paralysis patterns.</p></div>
+</header>
+<nav role="tablist" aria-label="Activities"><button role="tab" data-tab="p-neuron" aria-selected="false">Neuron Anatomy</button><button role="tab" data-tab="p-ap" aria-selected="false">Action Potential</button><button role="tab" data-tab="p-injury" aria-selected="false">Where Is the Injury?</button><button role="tab" data-tab="p-check" aria-selected="false">Check Your Understanding</button></nav>
+<main><section class="panel" id="p-neuron" role="tabpanel"><div class="grid"><div class="gfx"><svg viewBox="4 30 624 256" role="img" aria-label="Neuron showing dendrites, cell body, axon, myelin sheath, nodes of Ranvier and axon terminals">
+<g class="hs" data-key="dend"><path d="M118 140 C90 120 60 100 28 70" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/><path d="M118 150 C80 150 50 160 14 150" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/><path d="M118 160 C90 190 60 215 30 240" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/><path d="M60 100 C52 80 50 60 52 40" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/><path d="M50 160 C40 190 30 195 18 205" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/></g>
+<g class="hs" data-key="soma"><ellipse class="sh" cx="150" cy="155" rx="48" ry="42" fill="#ddd6fe" stroke="#6d28d9" stroke-width="2.5"/><circle cx="150" cy="155" r="17" fill="#a78bfa" stroke="#4c1d95" stroke-width="2"/><circle cx="150" cy="155" r="5" fill="#4c1d95"/></g>
+<g class="hs" data-key="axon"><path class="sh" d="M196 157 H545" stroke="#0d9488" stroke-width="9" stroke-linecap="round" fill="none"/></g>
+<g class="hs" data-key="myelin"><rect class="sh" x="222" y="140" width="62" height="34" rx="16" fill="#fde68a" stroke="#b7791f" stroke-width="2"/><rect class="sh" x="300" y="140" width="62" height="34" rx="16" fill="#fde68a" stroke="#b7791f" stroke-width="2"/><rect class="sh" x="378" y="140" width="62" height="34" rx="16" fill="#fde68a" stroke="#b7791f" stroke-width="2"/><rect class="sh" x="456" y="140" width="62" height="34" rx="16" fill="#fde68a" stroke="#b7791f" stroke-width="2"/></g>
+<g class="hs" data-key="node"><rect class="sh" x="284" y="150" width="16" height="14" fill="#5eead4" stroke="#0f766e" stroke-width="2.5"/><rect class="sh" x="362" y="150" width="16" height="14" fill="#5eead4" stroke="#0f766e" stroke-width="2.5"/><rect class="sh" x="440" y="150" width="16" height="14" fill="#5eead4" stroke="#0f766e" stroke-width="2.5"/></g>
+<g class="hs" data-key="term"><path d="M542 157 C560 120 580 100 600 100" fill="none" stroke="#0d9488" stroke-width="5" stroke-linecap="round"/><circle cx="604" cy="100" r="8" fill="#5eead4" stroke="#0f766e" stroke-width="2"/><path d="M542 157 C560 157 580 157 600 157" fill="none" stroke="#0d9488" stroke-width="5" stroke-linecap="round"/><circle cx="604" cy="157" r="8" fill="#5eead4" stroke="#0f766e" stroke-width="2"/><path d="M542 157 C560 195 580 215 600 215" fill="none" stroke="#0d9488" stroke-width="5" stroke-linecap="round"/><circle cx="604" cy="215" r="8" fill="#5eead4" stroke="#0f766e" stroke-width="2"/></g>
+<g font-size="16" font-weight="700" fill="#334155"><text x="50" y="270">Dendrites</text><text x="128" y="224">Cell body</text><text x="236" y="120">Myelin sheath</text><text x="284" y="198">Node of Ranvier</text><text x="470" y="270">Axon terminals</text><text x="196" y="258" fill="#0f766e">Axon &#8594; (signal travels this way)</text></g>
+</svg></div><div class="side"><div class="chips"></div><div class="card info"></div></div></div></section><section class="panel" id="p-ap" role="tabpanel"><div class="grid"><div class="gfx"><svg id="ap" viewBox="6 10 580 322" role="img" aria-label="Graph of membrane potential over time during an action potential"></svg></div><div class="side"><div class="chips" id="apchips"></div><div class="card info" id="apinfo"></div><div class="row"><button class="btn ghostbtn" id="apPrev">Back</button><button class="btn" id="apNext">Next phase</button><button class="btn ghostbtn" id="apPlay">Play</button></div></div></div></section><section class="panel" id="p-injury" role="tabpanel"><div class="grid"><div class="gfx"><svg viewBox="0 0 420 430" role="img" aria-label="Body outline and spinal column. Select a spinal region to see which body areas are affected.">
+<g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><circle cx="120" cy="48" r="24"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="48" y="100" width="24" height="118" rx="11"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="168" y="100" width="24" height="118" rx="11"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="80" y="98" width="80" height="66" rx="12"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="86" y="166" width="68" height="52" rx="10"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="86" y="220" width="68" height="40" rx="14"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="88" y="262" width="30" height="124" rx="13"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="122" y="262" width="30" height="124" rx="13"/></g><g fill="#e2e8f0" stroke="#64748b" stroke-width="2"><rect x="84" y="388" width="36" height="22" rx="9"/><rect x="120" y="388" width="36" height="22" rx="9"/></g><g id="a-armL" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="48" y="100" width="24" height="118" rx="11"/></g><g id="a-armR" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="168" y="100" width="24" height="118" rx="11"/></g><g id="a-trunkU" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="80" y="98" width="80" height="66" rx="12"/></g><g id="a-trunkL" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="86" y="166" width="68" height="52" rx="10"/></g><g id="a-pelvis" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="86" y="220" width="68" height="40" rx="14"/></g><g id="a-legL" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="88" y="262" width="30" height="124" rx="13"/></g><g id="a-legR" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="122" y="262" width="30" height="124" rx="13"/></g><g id="a-feet" style="opacity:0;transition:opacity .3s" fill="#ef4444" fill-opacity=".62" stroke="#b91c1c" stroke-width="2"><rect x="84" y="388" width="36" height="22" rx="9"/><rect x="120" y="388" width="36" height="22" rx="9"/></g>
+<path d="M285 36 V30 M285 328 V340" stroke="#64748b"/><text x="285" y="24" text-anchor="middle" font-size="12" font-weight="700" fill="#64748b">Spinal cord injury level</text>
+<g class="hs" data-key="cerv"><rect x="262" y="38" width="46" height="8" rx="4" fill="#38bdf8" stroke="#334155" stroke-width="1.2"/><rect x="262" y="48" width="46" height="8" rx="4" fill="#38bdf8" stroke="#334155" stroke-width="1.2"/><rect x="262" y="58" width="46" height="8" rx="4" fill="#38bdf8" stroke="#334155" stroke-width="1.2"/><rect x="262" y="68" width="46" height="8" rx="4" fill="#38bdf8" stroke="#334155" stroke-width="1.2"/><rect x="262" y="78" width="46" height="8" rx="4" fill="#38bdf8" stroke="#334155" stroke-width="1.2"/><rect x="262" y="88" width="46" height="8" rx="4" fill="#38bdf8" stroke="#334155" stroke-width="1.2"/><rect x="262" y="98" width="46" height="8" rx="4" fill="#38bdf8" stroke="#334155" stroke-width="1.2"/><rect class="sh" x="258" y="36" width="54" height="72" rx="6" fill="transparent" stroke="transparent"/></g><g class="hs" data-key="thor"><rect x="262" y="108" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="118" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="128" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="138" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="148" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="158" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="168" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="178" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="188" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="198" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="208" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect x="262" y="218" width="46" height="8" rx="4" fill="#34d399" stroke="#334155" stroke-width="1.2"/><rect class="sh" x="258" y="106" width="54" height="122" rx="6" fill="transparent" stroke="transparent"/></g><g class="hs" data-key="lumb"><rect x="262" y="228" width="46" height="12" rx="4" fill="#fbbf24" stroke="#334155" stroke-width="1.2"/><rect x="262" y="242" width="46" height="12" rx="4" fill="#fbbf24" stroke="#334155" stroke-width="1.2"/><rect x="262" y="256" width="46" height="12" rx="4" fill="#fbbf24" stroke="#334155" stroke-width="1.2"/><rect x="262" y="270" width="46" height="12" rx="4" fill="#fbbf24" stroke="#334155" stroke-width="1.2"/><rect x="262" y="284" width="46" height="12" rx="4" fill="#fbbf24" stroke="#334155" stroke-width="1.2"/><rect class="sh" x="258" y="226" width="54" height="72" rx="6" fill="transparent" stroke="transparent"/></g><g class="hs" data-key="sacr"><rect x="262" y="298" width="46" height="40" rx="4" fill="#fb7185" stroke="#334155" stroke-width="1.2"/><rect class="sh" x="258" y="296" width="54" height="42" rx="6" fill="transparent" stroke="transparent"/></g><g font-size="12.5" font-weight="700" fill="#334155"><text x="318" y="82">Cervical (C1&#8211;C8)</text><text x="318" y="170">Thoracic (T1&#8211;T12)</text><text x="318" y="268">Lumbar (L1&#8211;L5)</text><text x="318" y="318">Sacral (S1&#8211;S5)</text></g><g class="hs" data-key="stroke"><ellipse class="sh" cx="120" cy="44" rx="30" ry="26" fill="#f9a8d4" stroke="#be185d" stroke-width="2" fill-opacity=".9"/><path d="M120 20 V68" stroke="#be185d" stroke-width="2"/><path d="M104 36 q8 6 0 12 M136 36 q-8 6 0 12" fill="none" stroke="#be185d" stroke-width="2"/></g>
+<text x="120" y="426" text-anchor="middle" font-size="12" font-weight="700" fill="#ef4444">Red = loss of function</text>
+</svg></div><div class="side"><div class="chips"></div><div class="card info"></div></div></div></section><section class="panel" id="p-check" role="tabpanel"><div class="grid" style="grid-template-columns:minmax(0,640px)"><div class="card quiz" style="align-self:start"></div></div></section></main>
+<footer>BIOL 230 Anatomy and Physiology I/Lab &middot; Week 7 Deep Dive &middot; Content adapted from the course Deep Dive and OpenStax <i>Anatomy and Physiology</i> 2e (Betts et al., 2022).</footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav button').forEach(b=>b.addEventListener('click',()=>{
+  $$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $$('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));
+}));
+$$('nav button')[0].click();
+
+/* Explore: clickable graphic + chips */
+function explore(root,info,first){
+  const keys=Object.keys(info),chips=$('.chips',root),box=$('.info',root);
+  keys.forEach(k=>{const c=document.createElement('button');c.className='chip';c.textContent=info[k].chip||info[k].t;c.dataset.key=k;chips.appendChild(c)});
+  function show(k){
+    const d=info[k];if(!d)return;
+    $$('.chip',root).forEach(c=>c.classList.toggle('active',c.dataset.key===k));
+    $$('.hs',root).forEach(h=>h.classList.toggle('active',h.dataset.key===k));
+    box.innerHTML='<h2>'+d.t+'</h2><p>'+d.p+'</p>'+(d.tip?'<div class="tip"><b>'+(d.tipLabel||'Clinical connection:')+'</b> '+d.tip+'</div>':'');
+    if(d.after)d.after();
+  }
+  $$('[data-key]',root).forEach(el=>{
+    el.addEventListener('click',()=>show(el.dataset.key));
+    if(el.classList.contains('hs')){el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',(info[el.dataset.key]||{}).t||'');
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(el.dataset.key)}})}
+  });
+  box.innerHTML='<p class="hint">Select a part of the graphic or one of the buttons above to learn more.</p>';
+  if(first)show(first);
+  return show;
+}
+
+/* Multiple-choice quiz, one question at a time */
+function quiz(root,qs){
+  let i=0,score=0,done=false;
+  function render(){
+    if(i>=qs.length){
+      const pct=Math.round(score/qs.length*100);
+      root.innerHTML='<div class="qhead"><span>Finished</span></div><div class="bar"><i style="width:100%"></i></div><div class="score">'+score+' / '+qs.length+'</div><p>'+(pct>=80?'Excellent work. You are ready for the quiz.':pct>=60?'Good progress. Revisit the Explore tab for the items you missed.':'Take another look at the Explore tab, then try again.')+'</p><button class="btn" id="retry">Try again</button>';
+      $('#retry',root).onclick=()=>{i=0;score=0;qs=shuffle(qs);render()};return;
+    }
+    const q=qs[i];done=false;
+    root.innerHTML='<div class="qhead"><span>Question '+(i+1)+' of '+qs.length+'</span><span>Score: '+score+'</span></div><div class="bar"><i style="width:'+(i/qs.length*100)+'%"></i></div><p><b>'+(q.html||'')+q.q+'</b></p><div class="opts"></div><div id="fb"></div>';
+    const o=$('.opts',root);
+    q.o.forEach((txt,idx)=>{const b=document.createElement('button');b.className='opt';b.textContent=txt;
+      b.onclick=()=>{
+        if(done)return;done=true;const ok=idx===q.a;if(ok)score++;
+        $$('.opt',root).forEach((x,n)=>{x.disabled=true;if(n===q.a)x.classList.add('right');else if(n===idx)x.classList.add('wrong')});
+        $('#fb',root).innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+q.e+'</div><div class="row" style="margin-top:8px"><button class="btn" id="nx">'+(i+1<qs.length?'Next question':'See results')+'</button></div>';
+        $('#nx',root).onclick=()=>{i++;render()};$('#nx',root).focus();
+      };o.appendChild(b)});
+  }
+  render();
+}
+
+/* Put-in-order activity; steps[].hl is an element id in the graphic */
+function order(root,steps,labels){
+  const ch=$('.chosen',root),opts=$('.opts',root),fb=$('.ofb',root);let n=0;
+  function reset(){n=0;ch.innerHTML='';fb.innerHTML='<p class="hint">'+labels.start+'</p>';
+    steps.forEach(s=>{const e=document.getElementById(s.hl);if(e){e.classList.add('ghost');e.classList.remove('on')}});
+    opts.innerHTML='';shuffle(steps.map((s,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=steps[i].t;b.dataset.i=i;
+      b.onclick=()=>{
+        if(+b.dataset.i===n){
+          const s=steps[n];const li=document.createElement('li');li.innerHTML='<b>'+(n+1)+'. '+(s.name||s.t)+'</b>'+(s.d?' &mdash; '+s.d:'');ch.appendChild(li);
+          const e=document.getElementById(s.hl);if(e){e.classList.remove('ghost');e.classList.add('on')}
+          b.disabled=true;b.style.display='none';n++;
+          if(n===steps.length){fb.innerHTML='<div class="fb ok"><b>Complete! </b>'+labels.done+'</div><div class="row" style="margin-top:8px"><button class="btn ghostbtn" id="rs">Start over</button></div>';$('#rs',root).onclick=reset}
+          else fb.innerHTML='<p class="hint">Correct. '+labels.next+'</p>';
+        }else{b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb.innerHTML='<div class="fb no">'+labels.wrong.replace('{n}',n+1)+'</div>'}
+      };opts.appendChild(b)});
+  }
+  reset();
+}
+
+const NEURON={
+dend:{t:'Dendrites',chip:'Dendrites',p:'Branches that receive signals from other neurons and carry them toward the cell body. Their large surface area lets one neuron receive thousands of inputs.'},
+soma:{t:'Cell body (soma)',chip:'Cell body',p:'Contains the nucleus and most organelles. It integrates incoming signals and decides whether to send an action potential down the axon.'},
+axon:{t:'Axon',chip:'Axon',p:'A long fiber that carries action potentials away from the cell body. Most neurons have a single axon, which may be a meter long.'},
+myelin:{t:'Myelin sheath',chip:'Myelin sheath',p:'A fatty insulating layer made by oligodendrocytes in the CNS and Schwann cells in the PNS. It speeds conduction by letting the signal jump between gaps.',tip:'In multiple sclerosis the immune system damages CNS myelin, slowing or blocking signals.'},
+node:{t:'Nodes of Ranvier',chip:'Nodes of Ranvier',p:'Gaps in the myelin where the axon is exposed. The action potential regenerates at each node and appears to jump, which is called saltatory conduction.'},
+term:{t:'Axon terminals and synapse',chip:'Axon terminals',p:'Branched endings that release neurotransmitters into the synapse. The chemical message binds to receptors on the next neuron, muscle or gland.',tip:'Chemical synapses convert the electrical signal into a chemical one, then back again.'}
+};
+explore($('#p-neuron'),NEURON,'soma');
+
+/* Spinal injury */
+const INJ={
+cerv:{t:'Cervical injury: quadriplegia (tetraplegia)',chip:'Cervical',p:'An injury in the neck region can affect the arms, trunk and legs. High cervical injuries (C1 to C4) may also affect breathing because the phrenic nerve arises from C3 to C5.',tip:'The higher the injury, the more of the body is affected.',tipLabel:'Key idea:',aff:['armL','armR','trunkU','trunkL','pelvis','legL','legR','feet']},
+thor:{t:'Thoracic injury: paraplegia',chip:'Thoracic',p:'Arms keep function, but the trunk below the injury and the legs are affected. Control of the trunk muscles depends on how high the injury is.',tip:'Paraplegia is paralysis of the lower body.',tipLabel:'Key idea:',aff:['trunkL','pelvis','legL','legR','feet']},
+lumb:{t:'Lumbar injury: paraplegia of the legs',chip:'Lumbar',p:'Arms and trunk are spared. The legs, and often bladder and bowel control, are affected.',tip:'Reflex arcs below the injury may still work, producing reflexes without voluntary control.',tipLabel:'Key idea:',aff:['pelvis','legL','legR','feet']},
+sacr:{t:'Sacral injury',chip:'Sacral',p:'Mostly affects the feet, pelvic organs and sexual function. Leg movement is often preserved. Bladder and bowel control are most affected.',aff:['pelvis','feet']},
+stroke:{t:'Brain injury (stroke): hemiplegia',chip:'Stroke (brain)',p:'Damage to motor areas on one side of the brain causes paralysis on the opposite side of the body, called hemiplegia. This happens because motor tracts cross over in the brainstem.',tip:'Paralysis pattern depends on where the nervous system is injured. Location predicts deficit.',tipLabel:'Key idea:',aff:['armR','trunkU','legR']}
+};
+const ALL=['armL','armR','trunkU','trunkL','pelvis','legL','legR','feet'];
+(function(){
+  const root=$('#p-injury'),info=Object.assign({},INJ);
+  Object.keys(info).forEach(k=>{const d=info[k];d.after=()=>{ALL.forEach(p=>{document.getElementById('a-'+p).style.opacity=d.aff.includes(p)?1:0})}});
+  explore(root,info,'thor');
+})();
+
+/* Action potential */
+const T=[[0,-70],[20,-70],[23,-55],[29,30],[38,-82],[52,-75],[60,-70]];
+const X0=60,X1=570,Y0=24,Y1=290;
+const px=t=>X0+t/60*(X1-X0),py=v=>Y0+(40-v)/130*(Y1-Y0);
+function V(t){for(let i=0;i<T.length-1;i++){if(t>=T[i][0]&&t<=T[i+1][0]){const k=(t-T[i][0])/(T[i+1][0]-T[i][0]),e=(1-Math.cos(k*Math.PI))/2;return T[i][1]+(T[i+1][1]-T[i][1])*e}}return -70}
+const PH=[
+{t:'Resting potential',at:8,ac:'#64748b',p:'The membrane rests at about -70 mV. The sodium-potassium pump and leak channels keep the inside negative. Voltage-gated channels are closed.'},
+{t:'Depolarization',at:26,ac:'#dc2626',p:'A stimulus brings the membrane to threshold (about -55 mV). Voltage-gated Na&#8314; channels open and Na&#8314; rushes in, so the inside becomes positive. This follows the all-or-none rule.'},
+{t:'Repolarization',at:33,ac:'#2563eb',p:'Na&#8314; channels inactivate and voltage-gated K&#8314; channels open. K&#8314; flows out, which moves the membrane potential back toward negative.'},
+{t:'Hyperpolarization',at:40,ac:'#7c3aed',p:'K&#8314; channels close slowly, so the potential briefly dips below resting (about -80 mV). This refractory period keeps signals moving in one direction.'},
+{t:'Return to rest',at:52,ac:'#0f766e',p:'K&#8314; channels close and the sodium-potassium pump and leak channels restore the resting potential of about -70 mV. The neuron is ready for the next signal.'}
+];
+const ap=$('#ap');let cur=0,raf=null;
+function E(n,a,txt){const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);if(txt!==undefined)e.textContent=txt;ap.appendChild(e);return e}
+function drawAP(){
+  ap.innerHTML='';
+  [40,0,-55,-70].forEach(v=>{E('line',{x1:X0,x2:X1,y1:py(v),y2:py(v),stroke:v===-55?'#f59e0b':'#e2e8f0','stroke-width':v===-55?1.5:1,'stroke-dasharray':v===-55?'5 4':''});E('text',{x:X0-8,y:py(v)+4,'text-anchor':'end','font-size':14,fill:'#64748b'},v+'');});
+  E('text',{x:X1,y:py(-55)-5,'text-anchor':'end','font-size':13,'font-weight':700,fill:'#b45309'},'Threshold (-55 mV)');
+  E('line',{x1:X0,x2:X0,y1:Y0-6,y2:Y1+4,stroke:'#334155','stroke-width':2});E('line',{x1:X0,x2:X1,y1:Y1+4,y2:Y1+4,stroke:'#334155','stroke-width':2});
+  E('text',{x:18,y:(Y0+Y1)/2,'font-size':14,'font-weight':700,fill:'#334155',transform:'rotate(-90 18 '+(Y0+Y1)/2+')','text-anchor':'middle'},'Membrane potential (mV)');
+  E('text',{x:(X0+X1)/2,y:Y1+30,'font-size':14,'font-weight':700,fill:'#334155','text-anchor':'middle'},'Time (milliseconds)');
+  let d='';for(let t=0;t<=60;t+=.5)d+=(t?'L':'M')+px(t).toFixed(1)+' '+py(V(t)).toFixed(1);
+  E('path',{d:d,fill:'none',stroke:'#94a3b8','stroke-width':4,'stroke-linecap':'round'});
+  const bounds=[[0,20],[20,29],[29,38],[38,46],[46,60]];
+  const b=bounds[cur];let dd='';for(let t=b[0];t<=b[1];t+=.5)dd+=(t===b[0]?'M':'L')+px(t).toFixed(1)+' '+py(V(t)).toFixed(1);
+  E('path',{d:dd,fill:'none',stroke:PH[cur].ac,'stroke-width':6,'stroke-linecap':'round'});
+  E('circle',{cx:px(PH[cur].at),cy:py(V(PH[cur].at)),r:9,fill:PH[cur].ac,stroke:'#fff','stroke-width':3});
+  const lbl=[[8,-62,'1'],[26,10,'2'],[33,-25,'3'],[41,-92,'4'],[53,-62,'5']];
+}
+const chips=$('#apchips'),box=$('#apinfo');
+PH.forEach((p,i)=>{const c=document.createElement('button');c.className='chip';c.textContent=(i+1)+'. '+p.t;c.onclick=()=>{stop();go(i)};chips.appendChild(c)});
+function go(i){cur=(i+PH.length)%PH.length;$$('#apchips .chip').forEach((c,n)=>c.classList.toggle('active',n===cur));
+  box.innerHTML='<h2>'+(cur+1)+'. '+PH[cur].t+'</h2><p>'+PH[cur].p+'</p>';drawAP()}
+function stop(){clearTimeout(raf);raf=null;$('#apPlay').textContent='Play'}
+$('#apNext').onclick=()=>{stop();go(cur+1)};$('#apPrev').onclick=()=>{stop();go(cur-1)};
+$('#apPlay').onclick=()=>{if(raf){stop();return}$('#apPlay').textContent='Pause';
+  (function tick(){go(cur+1);raf=setTimeout(tick,2200)})()};
+go(0);
+
+const Q=[
+{q:'Which division of the nervous system includes the brain and spinal cord?',o:['Peripheral nervous system','Autonomic nervous system','Central nervous system','Somatic nervous system'],a:2,e:'The CNS is the brain and spinal cord. The PNS is the cranial and spinal nerves.'},
+{q:'Which neurons carry information toward the CNS?',o:['Motor (efferent) neurons','Sensory (afferent) neurons','Interneurons only','Somatic motor neurons'],a:1,e:'Sensory neurons are afferent: they carry signals toward the CNS.'},
+{q:'Which cells make myelin in the peripheral nervous system?',o:['Oligodendrocytes','Astrocytes','Schwann cells','Microglia'],a:2,e:'Schwann cells myelinate PNS axons. Oligodendrocytes myelinate CNS axons.'},
+{q:'The resting membrane potential of a neuron is about:',o:['+30 mV','0 mV','-55 mV','-70 mV'],a:3,e:'Neurons rest at about -70 mV.'},
+{q:'Which ion rushes into the neuron during depolarization?',o:['Potassium (K+)','Sodium (Na+)','Chloride (Cl-)','Calcium only'],a:1,e:'Voltage-gated Na+ channels open and Na+ enters the cell.'},
+{q:'The all-or-none rule means that:',o:['Larger stimuli make larger action potentials','Action potentials occur fully or not at all','Only myelinated axons fire','Signals cannot reach the synapse'],a:1,e:'Once threshold is reached, an action potential of fixed size fires.'},
+{q:'Which meningeal layer lies directly on the brain surface?',o:['Dura mater','Arachnoid mater','Pia mater','Epidural layer'],a:2,e:'From outside in: dura mater, arachnoid mater, pia mater.'},
+{q:'A patient has paralysis of the legs but normal arm function. The injury is most likely in the:',o:['Cervical spinal cord','Thoracic or lumbar spinal cord','Cerebellum','Peripheral nerve in the arm'],a:1,e:'Injury below the cervical region spares the arms. This pattern is paraplegia.'}
+];
+quiz($('#p-check .quiz'),shuffle(Q));
+
+</script>
+</body>
+</html>

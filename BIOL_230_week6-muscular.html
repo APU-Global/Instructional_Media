@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 6 Interactive | The Muscular System</title>
+<style>
+:root{--navy:#12355b;--accent:#be123c;--accent-dark:#9f1239;--soft:#fff0f3;--ink:#1b2733;--muted:#51606f;--line:#d6e0ea;--bg:#f4f8fb;--ok:#0f7a4d;--bad:#b42318;--warn:#b45309}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(100deg,var(--navy),var(--accent-dark));color:#fff}
+header .badge{flex:none;background:#fff;color:var(--accent-dark);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+header h1{margin:0;font-size:18px;line-height:1.2;font-weight:700}
+header p{margin:0;font-size:12.5px;opacity:.9}
+nav{flex:none;display:flex;gap:4px;padding:8px 12px 0;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{font:inherit;font-weight:600;font-size:14px;color:var(--muted);background:transparent;border:0;border-bottom:3px solid transparent;padding:8px 14px;cursor:pointer;white-space:nowrap;border-radius:8px 8px 0 0}
+nav button:hover{background:var(--soft);color:var(--navy)}
+nav button[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);background:var(--soft)}
+nav button:focus-visible,.chip:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+main{flex:1;min-height:0;padding:12px 16px;overflow:hidden}
+.panel{display:none;height:100%}
+.panel.active{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;height:100%}
+.gfx{min-height:0;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center}
+.gfx>svg{width:100%;height:100%;display:block}
+.side{min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+.chips{flex:none;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;font-weight:600;background:#fff;color:var(--navy);border:1.5px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.info{flex:1;min-height:0;overflow:auto}
+.info h2,.card h2{margin:0 0 4px;font-size:18px;color:var(--navy)}
+.info p,.card p{margin:6px 0}
+.hint{color:var(--muted);font-style:italic}
+.tip{margin-top:8px;background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:7px 11px;font-size:14px}
+.tip b{color:var(--accent-dark)}
+.hs{cursor:pointer;transition:filter .15s}
+.hs:hover,.hs:focus{filter:drop-shadow(0 0 5px #f59e0b)}
+.hs:focus{outline:none}
+.hs.active{filter:drop-shadow(0 0 6px #f59e0b)}
+.hs.active .sh{stroke:#d97706;stroke-width:3.5}
+svg text{font-family:inherit}
+.btn{font:inherit;font-weight:700;font-size:14px;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:8px 16px;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn.ghostbtn{background:#fff;color:var(--accent-dark);border:1.5px solid var(--accent)}
+.btn.ghostbtn:hover{background:var(--soft)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opts{display:grid;gap:7px;margin-top:8px}
+.opt{font:inherit;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--soft)}
+.opt.right{border-color:var(--ok);background:#e7f6ee}
+.opt.wrong{border-color:var(--bad);background:#fdecea}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;padding:8px 12px;border-radius:8px;font-size:14px}
+.fb.ok{background:#e7f6ee;color:#0b5a39}
+.fb.no{background:#fdecea;color:#8a1c12}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:600}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:4px 0 8px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.score{font-size:34px;font-weight:800;color:var(--accent-dark)}
+.swatch{display:inline-block;width:56px;height:56px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line);vertical-align:middle;margin-right:12px}
+.ghost{opacity:.16;transition:opacity .4s}
+.on{opacity:1}
+.chosen{margin:6px 0 0;padding-left:0;list-style:none;display:grid;gap:5px}
+.chosen li{background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:5px 10px;font-size:14px}
+.chosen li b{color:var(--accent-dark)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.read{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.read div{background:var(--soft);border-radius:10px;padding:6px 8px;text-align:center;font-size:12.5px;color:var(--muted)}
+.read b{display:block;font-size:17px;color:var(--accent-dark)}
+footer{flex:none;padding:3px 16px 5px;font-size:11.5px;color:var(--muted);background:#fff;border-top:1px solid var(--line)}
+@media (max-width:760px){
+  main{overflow-y:auto}
+  .grid{grid-template-columns:1fr;height:auto}
+  .gfx{height:300px}
+  .info{overflow:visible}
+  header h1{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <span class="badge">Week 6</span>
+  <div><h1>The Muscular System</h1><p>Contract a sarcomere and sequence the events from nerve signal to contraction.</p></div>
+</header>
+<nav role="tablist" aria-label="Activities"><button role="tab" data-tab="p-sarc" aria-selected="false">Sarcomere Slider</button><button role="tab" data-tab="p-steps" aria-selected="false">Nerve to Muscle</button><button role="tab" data-tab="p-check" aria-selected="false">Check Your Understanding</button></nav>
+<main><section class="panel" id="p-sarc" role="tabpanel"><div class="grid"><div class="gfx"><svg id="sarc" viewBox="68 20 464 262" role="img" aria-label="Sarcomere with actin and myosin filaments. Use the slider to contract it."></svg></div><div class="side"><div class="card"><h2>Sliding filament model</h2><p>Drag the slider from relaxed to contracted. Watch which bands change and which stay the same.</p><input type="range" id="sl" min="0" max="100" value="0" aria-label="Contraction amount"><div class="row" style="justify-content:space-between;font-size:12.5px;color:var(--muted)"><span>Relaxed</span><span>Contracted</span></div><div class="row" style="margin-top:8px"><button class="btn" id="play">Play contraction</button><button class="btn ghostbtn" id="rst">Reset</button></div><div class="read"><div>Sarcomere length<b id="rL">100%</b></div><div>I band<b id="rI">wide</b></div><div>H zone<b id="rH">wide</b></div></div></div><div class="card info" id="sinfo"></div></div></div></section><section class="panel" id="p-steps" role="tabpanel"><div class="grid"><div class="gfx"><svg viewBox="0 0 420 470" role="img" aria-label="Neuromuscular junction, T-tubule, sarcoplasmic reticulum and thin and thick filaments">
+<path d="M70 8 H350 Q372 8 372 30 V78 Q372 96 350 96 H70 Q48 96 48 78 V30 Q48 8 70 8 Z" fill="#ffe3b3" stroke="#b9770e" stroke-width="2"/>
+<text x="210" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6b4306">Motor neuron axon terminal</text>
+<g id="m1" class="ghost"><circle cx="110" cy="60" r="12" fill="#fff" stroke="#b9770e" stroke-width="2"/><circle cx="170" cy="66" r="12" fill="#fff" stroke="#b9770e" stroke-width="2"/><circle cx="240" cy="60" r="12" fill="#fff" stroke="#b9770e" stroke-width="2"/><circle cx="300" cy="66" r="12" fill="#fff" stroke="#b9770e" stroke-width="2"/>
+<g fill="#d97706"><circle cx="106" cy="58" r="3"/><circle cx="114" cy="63" r="3"/><circle cx="166" cy="64" r="3"/><circle cx="174" cy="69" r="3"/><circle cx="236" cy="58" r="3"/><circle cx="244" cy="63" r="3"/><circle cx="296" cy="64" r="3"/><circle cx="304" cy="69" r="3"/></g>
+<g fill="#d97706"><circle cx="110" cy="108" r="3.5"/><circle cx="170" cy="112" r="3.5"/><circle cx="240" cy="108" r="3.5"/><circle cx="300" cy="112" r="3.5"/><circle cx="205" cy="106" r="3.5"/></g>
+<text x="392" y="112" font-size="11" font-weight="700" fill="#b45309" text-anchor="end">ACh</text></g>
+<text x="30" y="118" font-size="10.5" fill="#64748b" transform="rotate(-90 30 118)" text-anchor="middle">cleft</text>
+<path d="M30 126 Q80 150 130 126 T230 126 T330 126 T400 126" fill="none" stroke="#2f7fb0" stroke-width="4"/>
+<text x="400" y="146" font-size="11" font-weight="700" fill="#1e5f87" text-anchor="end">Sarcolemma / motor end plate</text>
+<g id="m2" class="ghost"><g fill="#16a34a" stroke="#14532d"><rect x="96" y="124" width="12" height="16" rx="3"/><rect x="160" y="130" width="12" height="16" rx="3"/><rect x="226" y="124" width="12" height="16" rx="3"/><rect x="290" y="130" width="12" height="16" rx="3"/></g>
+<text x="100" y="160" font-size="10.5" font-weight="700" fill="#14532d">ACh receptors</text></g>
+<rect x="30" y="150" width="360" height="300" rx="10" fill="#fdecec" stroke="#e5b4b4" stroke-width="1.5" opacity=".6"/>
+<g id="m3" class="ghost"><path d="M200 130 V300" stroke="#2f7fb0" stroke-width="12" stroke-linecap="round"/><path d="M130 126 Q80 150 60 150" fill="none" stroke="#f59e0b" stroke-width="4"/>
+<path d="M200 126 L200 280" stroke="#fde68a" stroke-width="3" stroke-dasharray="3 5"/><text x="212" y="205" font-size="12" font-weight="700" fill="#1e5f87">T-tubule</text>
+<path d="M50 168 L110 168" stroke="#f59e0b" stroke-width="3" marker-end="url(#ah)"/><text x="52" y="186" font-size="11" font-weight="700" fill="#b45309">action potential</text></g>
+<g id="m4" class="ghost"><path d="M236 214 Q250 196 290 200 Q340 196 352 226 Q360 262 330 286 Q290 304 252 286 Q226 266 236 214 Z" fill="#e9d5ff" stroke="#7e22ce" stroke-width="2"/>
+<text x="296" y="238" text-anchor="middle" font-size="12" font-weight="700" fill="#581c87">Sarcoplasmic</text><text x="296" y="253" text-anchor="middle" font-size="12" font-weight="700" fill="#581c87">reticulum</text>
+<g fill="#7e22ce"><circle cx="262" cy="268" r="3.5"/><circle cx="278" cy="274" r="3.5"/><circle cx="318" cy="272" r="3.5"/><circle cx="332" cy="258" r="3.5"/><circle cx="300" cy="278" r="3.5"/></g>
+<text x="296" y="320" text-anchor="middle" font-size="12" font-weight="700" fill="#7e22ce">Ca&#178;&#8314; released</text></g>
+<text x="62" y="338" font-size="12" font-weight="700" fill="#475569">Thin filament (actin)</text>
+<g id="m5" class="ghost"><path d="M50 356 H380" stroke="#1d4ed8" stroke-width="9" stroke-linecap="round"/>
+<g fill="#93c5fd" stroke="#1d4ed8"><circle cx="90" cy="356" r="7"/><circle cx="150" cy="356" r="7"/><circle cx="210" cy="356" r="7"/><circle cx="270" cy="356" r="7"/><circle cx="330" cy="356" r="7"/></g>
+<g fill="#fb923c" stroke="#9a3412"><rect x="112" y="346" width="12" height="20" rx="4"/><rect x="172" y="346" width="12" height="20" rx="4"/><rect x="232" y="346" width="12" height="20" rx="4"/><rect x="292" y="346" width="12" height="20" rx="4"/></g>
+<text x="210" y="382" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">troponin + tropomyosin move; binding sites exposed</text></g>
+<g id="m6" class="ghost"><rect x="50" y="418" width="330" height="14" rx="7" fill="#b91c1c"/>
+<g fill="#ef4444" stroke="#7f1d1d"><path d="M100 418 q-8 -22 10 -40 l6 6 q-12 16 -2 34z"/><path d="M170 418 q-8 -22 10 -40 l6 6 q-12 16 -2 34z"/><path d="M240 418 q-8 -22 10 -40 l6 6 q-12 16 -2 34z"/><path d="M310 418 q-8 -22 10 -40 l6 6 q-12 16 -2 34z"/></g>
+<text x="215" y="452" text-anchor="middle" font-size="12" font-weight="700" fill="#7f1d1d">Thick filament (myosin heads form cross-bridges, ATP used)</text></g>
+<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#f59e0b"/></marker></defs>
+</svg></div><div class="side"><div class="card"><h2>From nerve signal to muscle contraction</h2><div class="ofb"></div><ol class="chosen"></ol></div><div class="card" style="flex:1;min-height:0;overflow:auto"><b>Choose the next item:</b><div class="opts"></div></div></div></div></section><section class="panel" id="p-check" role="tabpanel"><div class="grid" style="grid-template-columns:minmax(0,640px)"><div class="card quiz" style="align-self:start"></div></div></section></main>
+<footer>BIOL 230 Anatomy and Physiology I/Lab &middot; Week 6 Deep Dive &middot; Content adapted from the course Deep Dive and OpenStax <i>Anatomy and Physiology</i> 2e (Betts et al., 2022).</footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav button').forEach(b=>b.addEventListener('click',()=>{
+  $$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $$('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));
+}));
+$$('nav button')[0].click();
+
+/* Explore: clickable graphic + chips */
+function explore(root,info,first){
+  const keys=Object.keys(info),chips=$('.chips',root),box=$('.info',root);
+  keys.forEach(k=>{const c=document.createElement('button');c.className='chip';c.textContent=info[k].chip||info[k].t;c.dataset.key=k;chips.appendChild(c)});
+  function show(k){
+    const d=info[k];if(!d)return;
+    $$('.chip',root).forEach(c=>c.classList.toggle('active',c.dataset.key===k));
+    $$('.hs',root).forEach(h=>h.classList.toggle('active',h.dataset.key===k));
+    box.innerHTML='<h2>'+d.t+'</h2><p>'+d.p+'</p>'+(d.tip?'<div class="tip"><b>'+(d.tipLabel||'Clinical connection:')+'</b> '+d.tip+'</div>':'');
+    if(d.after)d.after();
+  }
+  $$('[data-key]',root).forEach(el=>{
+    el.addEventListener('click',()=>show(el.dataset.key));
+    if(el.classList.contains('hs')){el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',(info[el.dataset.key]||{}).t||'');
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(el.dataset.key)}})}
+  });
+  box.innerHTML='<p class="hint">Select a part of the graphic or one of the buttons above to learn more.</p>';
+  if(first)show(first);
+  return show;
+}
+
+/* Multiple-choice quiz, one question at a time */
+function quiz(root,qs){
+  let i=0,score=0,done=false;
+  function render(){
+    if(i>=qs.length){
+      const pct=Math.round(score/qs.length*100);
+      root.innerHTML='<div class="qhead"><span>Finished</span></div><div class="bar"><i style="width:100%"></i></div><div class="score">'+score+' / '+qs.length+'</div><p>'+(pct>=80?'Excellent work. You are ready for the quiz.':pct>=60?'Good progress. Revisit the Explore tab for the items you missed.':'Take another look at the Explore tab, then try again.')+'</p><button class="btn" id="retry">Try again</button>';
+      $('#retry',root).onclick=()=>{i=0;score=0;qs=shuffle(qs);render()};return;
+    }
+    const q=qs[i];done=false;
+    root.innerHTML='<div class="qhead"><span>Question '+(i+1)+' of '+qs.length+'</span><span>Score: '+score+'</span></div><div class="bar"><i style="width:'+(i/qs.length*100)+'%"></i></div><p><b>'+(q.html||'')+q.q+'</b></p><div class="opts"></div><div id="fb"></div>';
+    const o=$('.opts',root);
+    q.o.forEach((txt,idx)=>{const b=document.createElement('button');b.className='opt';b.textContent=txt;
+      b.onclick=()=>{
+        if(done)return;done=true;const ok=idx===q.a;if(ok)score++;
+        $$('.opt',root).forEach((x,n)=>{x.disabled=true;if(n===q.a)x.classList.add('right');else if(n===idx)x.classList.add('wrong')});
+        $('#fb',root).innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+q.e+'</div><div class="row" style="margin-top:8px"><button class="btn" id="nx">'+(i+1<qs.length?'Next question':'See results')+'</button></div>';
+        $('#nx',root).onclick=()=>{i++;render()};$('#nx',root).focus();
+      };o.appendChild(b)});
+  }
+  render();
+}
+
+/* Put-in-order activity; steps[].hl is an element id in the graphic */
+function order(root,steps,labels){
+  const ch=$('.chosen',root),opts=$('.opts',root),fb=$('.ofb',root);let n=0;
+  function reset(){n=0;ch.innerHTML='';fb.innerHTML='<p class="hint">'+labels.start+'</p>';
+    steps.forEach(s=>{const e=document.getElementById(s.hl);if(e){e.classList.add('ghost');e.classList.remove('on')}});
+    opts.innerHTML='';shuffle(steps.map((s,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=steps[i].t;b.dataset.i=i;
+      b.onclick=()=>{
+        if(+b.dataset.i===n){
+          const s=steps[n];const li=document.createElement('li');li.innerHTML='<b>'+(n+1)+'. '+(s.name||s.t)+'</b>'+(s.d?' &mdash; '+s.d:'');ch.appendChild(li);
+          const e=document.getElementById(s.hl);if(e){e.classList.remove('ghost');e.classList.add('on')}
+          b.disabled=true;b.style.display='none';n++;
+          if(n===steps.length){fb.innerHTML='<div class="fb ok"><b>Complete! </b>'+labels.done+'</div><div class="row" style="margin-top:8px"><button class="btn ghostbtn" id="rs">Start over</button></div>';$('#rs',root).onclick=reset}
+          else fb.innerHTML='<p class="hint">Correct. '+labels.next+'</p>';
+        }else{b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb.innerHTML='<div class="fb no">'+labels.wrong.replace('{n}',n+1)+'</div>'}
+      };opts.appendChild(b)});
+  }
+  reset();
+}
+
+const SI=[
+'<h2>Relaxed</h2><p>Thin (actin) filaments are anchored to the Z-discs and only slightly overlap the thick (myosin) filaments. The H zone and I bands are wide.</p>',
+'<h2>Contracting</h2><p>Myosin heads grab actin and pull the thin filaments toward the M line. The Z-discs move closer, so the sarcomere shortens.</p><div class="tip"><b>Notice:</b> the thick filaments stay the same length. Filaments slide; they do not shorten.</div>',
+'<h2>Fully contracted</h2><p>Thin filaments nearly meet in the center, so the H zone almost disappears and the I bands are narrow. The A band is unchanged.</p><div class="tip"><b>Key idea:</b> The A band stays constant. The I band and H zone shrink.</div>'
+];
+
+const NS='http://www.w3.org/2000/svg',svg=$('#sarc'),CX=300,THICK=160,THIN=140,LR=420,LC=280;
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function txt(x,y,s,c,anchor){const t=el('text',{x:x,y:y,'font-size':12,'font-weight':700,fill:c||'#334155','text-anchor':anchor||'middle'});t.textContent=s;return t}
+function brace(x1,x2,y,label,col){el('path',{d:'M'+x1+' '+y+' V'+(y-6)+' H'+x2+' V'+y,fill:'none',stroke:col,'stroke-width':2.5});txt((x1+x2)/2,y-12,label,col)}
+function bracedn(x1,x2,y,label,col){el('path',{d:'M'+x1+' '+y+' V'+(y+6)+' H'+x2+' V'+y,fill:'none',stroke:col,'stroke-width':2.5});txt((x1+x2)/2,y+20,label,col)}
+function draw(p){
+  svg.innerHTML='';
+  const L=LR-(LR-LC)*p,zl=CX-L/2,zr=CX+L/2;
+  const rows=[104,138,172],thinRows=[86,121,155,189];
+  rows.forEach(y=>{el('rect',{x:CX-THICK/2,y:y-8,width:THICK,height:16,rx:8,fill:'#b91c1c'});
+    let k=0;for(let x=CX-THICK/2+8;x<CX+THICK/2-4;x+=14,k++){if(Math.abs(x-CX)<10)continue;
+      el('line',{x1:x,y1:y,x2:x+(x<CX?-6:6),y2:y+(k%2?-12:12),stroke:'#ef4444','stroke-width':3,'stroke-linecap':'round'})}});
+  thinRows.forEach((y,i)=>{
+    el('rect',{x:zl,y:y-3,width:THIN,height:6,rx:3,fill:'#1d4ed8'});
+    el('rect',{x:zr-THIN,y:y-3,width:THIN,height:6,rx:3,fill:'#1d4ed8'});
+  });
+  [zl,zr].forEach(x=>el('rect',{x:x-5,y:62,width:10,height:150,rx:3,fill:'#334155'}));
+  el('line',{x1:CX,y1:70,x2:CX,y2:204,stroke:'#94a3b8','stroke-width':2,'stroke-dasharray':'4 4'});
+  txt(zl,54,'Z-disc','#334155');txt(zr,54,'Z-disc','#334155');txt(CX,226,'M line','#64748b');
+  brace(CX-THICK/2,CX+THICK/2,40,'A band (constant)','#b91c1c');
+  const Hw=(zr-THIN)-(zl+THIN);
+  bracedn(zl+THIN,zr-THIN,232,'H zone','#7c3aed');
+  bracedn(zl,CX-THICK/2,256,'I band','#1d4ed8');bracedn(CX+THICK/2,zr,256,'I band','#1d4ed8');
+  const rel=(LR-L)/(LR-LC);
+  $('#rL').textContent=Math.round(L/LR*100)+'%';
+  $('#rI').textContent=rel<0.34?'wide':rel<0.67?'narrower':'narrow';
+  $('#rH').textContent=Hw>110?'wide':Hw>40?'narrower':'tiny';
+  $('#sinfo').innerHTML=SI[rel<0.25?0:rel<0.75?1:2];
+}
+const sl=$('#sl');sl.oninput=()=>draw(sl.value/100);draw(0);
+let raf=null;
+$('#play').onclick=()=>{cancelAnimationFrame(raf);let v=+sl.value;if(v>=100)v=0;const t0=performance.now(),dur=3500*(1-v/100)+400;
+  (function step(t){const k=Math.min(1,(t-t0)/dur),nv=v+(100-v)*k;sl.value=nv;draw(nv/100);if(k<1)raf=requestAnimationFrame(step)})(performance.now())};
+$('#rst').onclick=()=>{cancelAnimationFrame(raf);sl.value=0;draw(0)};
+
+order($('#p-steps'),[
+{t:'The motor neuron releases acetylcholine (ACh) into the synaptic cleft',hl:'m1',name:'Neuron releases ACh',d:'a motor neuron action potential opens calcium channels in the terminal and vesicles release ACh'},
+{t:'ACh binds to receptors on the motor end plate',hl:'m2',name:'ACh binds receptors',d:'sodium enters the muscle fiber'},
+{t:'A muscle action potential spreads along the sarcolemma and down the T-tubules',hl:'m3',name:'Action potential spreads',d:'the signal reaches deep inside the fiber'},
+{t:'Calcium is released from the sarcoplasmic reticulum',hl:'m4',name:'Calcium released',d:'Ca&#178;&#8314; floods the sarcoplasm around the myofibrils'},
+{t:'Calcium binds troponin and tropomyosin exposes the myosin-binding sites',hl:'m5',name:'Binding sites exposed',d:'the thin filament is now ready'},
+{t:'Myosin heads form cross-bridges and pull the actin filaments, using ATP',hl:'m6',name:'Cross-bridge cycling',d:'sarcomeres shorten and the muscle contracts'}
+],{start:'Place the events in order, starting at the nerve signal.',next:'What happens next?',wrong:'Not yet. Think about what must happen before this step. Which event is number {n}?',done:'Disorders disrupt this chain: botulism blocks ACh release and myasthenia gravis attacks ACh receptors.'});
+
+const Q=[
+{q:'Which muscle tissue is voluntary, striated and multinucleated?',o:['Cardiac muscle','Smooth muscle','Skeletal muscle','Visceral muscle'],a:2,e:'Skeletal muscle is voluntary, striated and multinucleated. Cardiac muscle has intercalated discs; smooth muscle is non-striated.'},
+{q:'Which connective tissue wrapping surrounds an entire muscle?',o:['Endomysium','Perimysium','Epimysium','Periosteum'],a:2,e:'Endomysium surrounds fibers, perimysium surrounds fascicles and epimysium surrounds the whole muscle.'},
+{q:'During contraction, which band stays the same length?',o:['I band','H zone','A band','Distance between Z-discs'],a:2,e:'The A band is the length of the thick filaments, which do not change.'},
+{q:'Calcium triggers contraction by binding to which protein?',o:['Myosin','Troponin','Actin','Acetylcholine'],a:1,e:'Calcium binds troponin, which moves tropomyosin and exposes myosin-binding sites.'},
+{q:'What is ATP needed for in the cross-bridge cycle?',o:['Only the power stroke','Only detaching the myosin head','The power stroke and the detachment of the myosin head','Making acetylcholine'],a:2,e:'ATP powers the myosin head and is also required for it to release actin.'},
+{q:'Which disorder involves antibodies against acetylcholine receptors?',o:['Botulism','Myasthenia gravis','Tetanus','Muscular dystrophy'],a:1,e:'In myasthenia gravis, antibodies attack ACh receptors, causing muscle weakness. Botulism blocks ACh release.'},
+{q:'The origin of a muscle is the attachment that:',o:['Moves the most','Moves the least','Is always on a tendon','Is always the muscle belly'],a:1,e:'The origin moves least; the insertion moves the most.'},
+{q:'A muscle that opposes the prime mover is called a(n):',o:['Agonist','Synergist','Antagonist','Fixator'],a:2,e:'Antagonists oppose agonists (prime movers). Synergists assist and fixators stabilize.'}
+];
+quiz($('#p-check .quiz'),shuffle(Q));
+
+</script>
+</body>
+</html>

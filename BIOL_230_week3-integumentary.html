@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 3 Interactive | The Integumentary System</title>
+<style>
+:root{--navy:#12355b;--accent:#c2410c;--accent-dark:#9a3412;--soft:#fff1e8;--ink:#1b2733;--muted:#51606f;--line:#d6e0ea;--bg:#f4f8fb;--ok:#0f7a4d;--bad:#b42318;--warn:#b45309}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(100deg,var(--navy),var(--accent-dark));color:#fff}
+header .badge{flex:none;background:#fff;color:var(--accent-dark);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+header h1{margin:0;font-size:18px;line-height:1.2;font-weight:700}
+header p{margin:0;font-size:12.5px;opacity:.9}
+nav{flex:none;display:flex;gap:4px;padding:8px 12px 0;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{font:inherit;font-weight:600;font-size:14px;color:var(--muted);background:transparent;border:0;border-bottom:3px solid transparent;padding:8px 14px;cursor:pointer;white-space:nowrap;border-radius:8px 8px 0 0}
+nav button:hover{background:var(--soft);color:var(--navy)}
+nav button[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);background:var(--soft)}
+nav button:focus-visible,.chip:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+main{flex:1;min-height:0;padding:12px 16px;overflow:hidden}
+.panel{display:none;height:100%}
+.panel.active{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;height:100%}
+.gfx{min-height:0;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center}
+.gfx>svg{width:100%;height:100%;display:block}
+.side{min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+.chips{flex:none;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;font-weight:600;background:#fff;color:var(--navy);border:1.5px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.info{flex:1;min-height:0;overflow:auto}
+.info h2,.card h2{margin:0 0 4px;font-size:18px;color:var(--navy)}
+.info p,.card p{margin:6px 0}
+.hint{color:var(--muted);font-style:italic}
+.tip{margin-top:8px;background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:7px 11px;font-size:14px}
+.tip b{color:var(--accent-dark)}
+.hs{cursor:pointer;transition:filter .15s}
+.hs:hover,.hs:focus{filter:drop-shadow(0 0 5px #f59e0b)}
+.hs:focus{outline:none}
+.hs.active{filter:drop-shadow(0 0 6px #f59e0b)}
+.hs.active .sh{stroke:#d97706;stroke-width:3.5}
+svg text{font-family:inherit}
+.btn{font:inherit;font-weight:700;font-size:14px;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:8px 16px;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn.ghostbtn{background:#fff;color:var(--accent-dark);border:1.5px solid var(--accent)}
+.btn.ghostbtn:hover{background:var(--soft)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opts{display:grid;gap:7px;margin-top:8px}
+.opt{font:inherit;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--soft)}
+.opt.right{border-color:var(--ok);background:#e7f6ee}
+.opt.wrong{border-color:var(--bad);background:#fdecea}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;padding:8px 12px;border-radius:8px;font-size:14px}
+.fb.ok{background:#e7f6ee;color:#0b5a39}
+.fb.no{background:#fdecea;color:#8a1c12}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:600}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:4px 0 8px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.score{font-size:34px;font-weight:800;color:var(--accent-dark)}
+.swatch{display:inline-block;width:56px;height:56px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line);vertical-align:middle;margin-right:12px}
+.ghost{opacity:.16;transition:opacity .4s}
+.on{opacity:1}
+.chosen{margin:6px 0 0;padding-left:0;list-style:none;display:grid;gap:5px}
+.chosen li{background:var(--soft);border-left:4px solid var(--accent);border-radius:6px;padding:5px 10px;font-size:14px}
+.chosen li b{color:var(--accent-dark)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.read{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.read div{background:var(--soft);border-radius:10px;padding:6px 8px;text-align:center;font-size:12.5px;color:var(--muted)}
+.read b{display:block;font-size:17px;color:var(--accent-dark)}
+footer{flex:none;padding:3px 16px 5px;font-size:11.5px;color:var(--muted);background:#fff;border-top:1px solid var(--line)}
+@media (max-width:760px){
+  main{overflow-y:auto}
+  .grid{grid-template-columns:1fr;height:auto}
+  .gfx{height:300px}
+  .info{overflow:visible}
+  header h1{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <span class="badge">Week 3</span>
+  <div><h1>The Integumentary System</h1><p>Explore the skin, build the epidermis and read clinical clues.</p></div>
+</header>
+<nav role="tablist" aria-label="Activities"><button role="tab" data-tab="p-explore" aria-selected="false">Explore the Skin</button><button role="tab" data-tab="p-build" aria-selected="false">Build the Epidermis</button><button role="tab" data-tab="p-clues" aria-selected="false">Clinical Clues</button><button role="tab" data-tab="p-check" aria-selected="false">Check Your Understanding</button></nav>
+<main><section class="panel" id="p-explore" role="tabpanel"><div class="grid"><div class="gfx"><svg viewBox="0 0 480 500" role="img" aria-label="Cross-section of skin showing epidermis, dermis, hypodermis, a hair follicle, glands, a blood vessel and a sensory receptor">
+<defs><pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1" fill="#c98a6a"/></pattern></defs>
+<g class="hs" data-key="hypo"><rect class="sh" x="20" y="300" width="440" height="180" rx="10" fill="#f8e08e" stroke="#d7b23c" stroke-width="2"/><circle cx="60" cy="350" r="20" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="110" cy="380" r="22" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="160" cy="440" r="18" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="70" cy="430" r="21" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="230" cy="445" r="20" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="200" cy="360" r="18" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="270" cy="350" r="16" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="400" cy="360" r="22" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="430" cy="420" r="20" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="350" cy="440" r="22" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="40" cy="395" r="12" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="330" cy="395" r="14" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/><circle cx="450" cy="345" r="12" fill="#fbe9a6" stroke="#e2c04b" stroke-width="1.5"/>
+<text x="30" y="468" font-size="15" font-weight="700" fill="#5a4308">Hypodermis (subcutaneous layer)</text></g>
+<g class="hs" data-key="derm"><path class="sh" d="M20 124 Q47 108 75 124 Q102 108 130 124 Q157 108 185 124 Q212 108 240 124 Q267 108 295 124 Q322 108 350 124 Q377 108 405 124 Q432 108 460 124 L460 300 L20 300 Z" fill="#e9a08c" stroke="#b9695a" stroke-width="2"/>
+<rect x="20" y="130" width="440" height="170" fill="url(#dots)" opacity=".35"/>
+<text x="30" y="290" font-size="15" font-weight="700" fill="#5b1f12">Dermis</text></g>
+<g class="hs" data-key="epi"><rect class="sh" x="20" y="72" width="440" height="52" rx="6" fill="#f3c9a8" stroke="#b98253" stroke-width="2"/>
+<rect x="20" y="72" width="440" height="9" fill="#e0a77d"/><path d="M20 100 H460" stroke="#d9a67c" stroke-dasharray="4 4"/>
+<text x="30" y="108" font-size="15" font-weight="700" fill="#4a2a12">Epidermis</text></g>
+<g class="hs" data-key="vessel"><path class="sh" d="M112 318 C100 260 80 220 98 176 C108 150 130 160 120 134" fill="none" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/>
+<path d="M150 322 C150 270 150 240 140 190 C136 170 120 160 126 138" fill="none" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/>
+<circle class="sh" cx="112" cy="326" r="14" fill="#fca5a5" stroke="#dc2626" stroke-width="2"/><circle class="sh" cx="152" cy="330" r="12" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/></g>
+<g class="hs" data-key="sweat"><path class="sh" d="M372 276 C350 220 404 180 384 132 C376 108 392 92 388 70" fill="none" stroke="#2f7fb0" stroke-width="6" stroke-linecap="round"/>
+<ellipse class="sh" cx="372" cy="292" rx="28" ry="20" fill="#cfe8f7" stroke="#2f7fb0" stroke-width="2"/>
+<path d="M352 292 q6 -12 12 0 t12 0 t12 0 M356 300 q6 -10 12 0 t12 0" fill="none" stroke="#2f7fb0" stroke-width="3"/>
+<circle cx="388" cy="70" r="4" fill="#fff" stroke="#2f7fb0" stroke-width="2"/></g>
+<g class="hs" data-key="sebum"><ellipse class="sh" cx="208" cy="184" rx="22" ry="30" fill="#fff3b0" stroke="#b79b0f" stroke-width="2"/>
+<path d="M226 178 L240 178" stroke="#b79b0f" stroke-width="5" stroke-linecap="round"/></g>
+<g class="hs" data-key="hair"><path d="M240 72 C238 40 252 24 246 4" fill="none" stroke="#4a3220" stroke-width="6" stroke-linecap="round"/>
+<path class="sh" d="M240 72 C238 150 252 230 256 290" fill="none" stroke="#c08a5f" stroke-width="20" stroke-linecap="round"/>
+<path d="M240 72 C238 150 252 230 256 290" fill="none" stroke="#4a3220" stroke-width="5" stroke-linecap="round"/>
+<circle class="sh" cx="257" cy="298" r="17" fill="#d9a27a" stroke="#8b5e3c" stroke-width="2"/><circle cx="257" cy="298" r="7" fill="#4a3220"/></g>
+<g class="hs" data-key="pacini"><path d="M300 330 C300 280 296 240 292 130" fill="none" stroke="#f59e0b" stroke-width="3"/>
+<g transform="rotate(-18 300 400)"><ellipse class="sh" cx="300" cy="400" rx="30" ry="40" fill="#fff" stroke="#b9695a" stroke-width="2"/>
+<ellipse cx="300" cy="400" rx="22" ry="32" fill="none" stroke="#c98a6a" stroke-width="2"/><ellipse cx="300" cy="400" rx="14" ry="23" fill="none" stroke="#c98a6a" stroke-width="2"/>
+<ellipse cx="300" cy="400" rx="6" ry="14" fill="#f59e0b"/></g></g>
+</svg></div><div class="side"><div class="chips"></div><div class="card info"></div></div></div></section><section class="panel" id="p-build" role="tabpanel"><div class="grid"><div class="gfx"><svg viewBox="0 0 480 462" role="img" aria-label="Five stacked layers of the epidermis. Layers appear as you place them in order.">
+<text x="240" y="40" text-anchor="middle" font-size="15" font-weight="700" fill="#4a2a12">Surface (dead, keratinized cells)</text>
+<path d="M240 48 v18" stroke="#4a2a12" stroke-width="2"/>
+<g id="s-basale" class="ghost"><rect x="30" y="332" width="420" height="58" rx="6" fill="#c46a4b" stroke="#7a4a30" stroke-width="2"/><rect x="50" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="88" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="126" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="164" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="202" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="240" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="278" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="316" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="354" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><rect x="392" y="342" width="22" height="44" rx="6" fill="#e58f6e" stroke="#8c3e26"/><ellipse cx="203" cy="364" rx="14" ry="10" fill="#4a2a1a"/><ellipse cx="355" cy="364" rx="14" ry="10" fill="#4a2a1a"/></g><g id="s-spinosum" class="ghost"><rect x="30" y="268" width="420" height="58" rx="6" fill="#d98563" stroke="#7a4a30" stroke-width="2"/><polygon points="50,300 56,280 70,280 76,300 70,320 56,320" fill="#eba387" stroke="#8c3e26"/><polygon points="88,300 94,280 108,280 114,300 108,320 94,320" fill="#eba387" stroke="#8c3e26"/><polygon points="126,300 132,280 146,280 152,300 146,320 132,320" fill="#eba387" stroke="#8c3e26"/><polygon points="164,300 170,280 184,280 190,300 184,320 170,320" fill="#eba387" stroke="#8c3e26"/><polygon points="202,300 208,280 222,280 228,300 222,320 208,320" fill="#eba387" stroke="#8c3e26"/><polygon points="240,300 246,280 260,280 266,300 260,320 246,320" fill="#eba387" stroke="#8c3e26"/><polygon points="278,300 284,280 298,280 304,300 298,320 284,320" fill="#eba387" stroke="#8c3e26"/><polygon points="316,300 322,280 336,280 342,300 336,320 322,320" fill="#eba387" stroke="#8c3e26"/><polygon points="354,300 360,280 374,280 380,300 374,320 360,320" fill="#eba387" stroke="#8c3e26"/><polygon points="392,300 398,280 412,280 418,300 412,320 398,320" fill="#eba387" stroke="#8c3e26"/></g><g id="s-granulosum" class="ghost"><rect x="30" y="204" width="420" height="58" rx="6" fill="#e9a283" stroke="#7a4a30" stroke-width="2"/><ellipse cx="62" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="56" cy="234" r="3" fill="#7a3a22"/><circle cx="68" cy="239" r="3" fill="#7a3a22"/><ellipse cx="100" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="94" cy="234" r="3" fill="#7a3a22"/><circle cx="106" cy="239" r="3" fill="#7a3a22"/><ellipse cx="138" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="132" cy="234" r="3" fill="#7a3a22"/><circle cx="144" cy="239" r="3" fill="#7a3a22"/><ellipse cx="176" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="170" cy="234" r="3" fill="#7a3a22"/><circle cx="182" cy="239" r="3" fill="#7a3a22"/><ellipse cx="214" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="208" cy="234" r="3" fill="#7a3a22"/><circle cx="220" cy="239" r="3" fill="#7a3a22"/><ellipse cx="252" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="246" cy="234" r="3" fill="#7a3a22"/><circle cx="258" cy="239" r="3" fill="#7a3a22"/><ellipse cx="290" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="284" cy="234" r="3" fill="#7a3a22"/><circle cx="296" cy="239" r="3" fill="#7a3a22"/><ellipse cx="328" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="322" cy="234" r="3" fill="#7a3a22"/><circle cx="334" cy="239" r="3" fill="#7a3a22"/><ellipse cx="366" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="360" cy="234" r="3" fill="#7a3a22"/><circle cx="372" cy="239" r="3" fill="#7a3a22"/><ellipse cx="404" cy="236" rx="20" ry="13" fill="#f2b99d" stroke="#8c3e26"/><circle cx="398" cy="234" r="3" fill="#7a3a22"/><circle cx="410" cy="239" r="3" fill="#7a3a22"/></g><g id="s-lucidum" class="ghost"><rect x="30" y="140" width="420" height="58" rx="6" fill="#f1bd9d" stroke="#7a4a30" stroke-width="2"/><rect x="45" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="83" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="121" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="159" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="197" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="235" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="273" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="311" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="349" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/><rect x="387" y="165" width="34" height="14" rx="7" fill="#fbe0cb" stroke="#a46a4a"/></g><g id="s-corneum" class="ghost"><rect x="30" y="76" width="420" height="58" rx="6" fill="#f7d6bb" stroke="#7a4a30" stroke-width="2"/><rect x="45" y="90" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(5 60 96)"/><rect x="83" y="100" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(-6 98 96)"/><rect x="121" y="90" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(5 136 96)"/><rect x="159" y="100" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(-6 174 96)"/><rect x="197" y="90" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(5 212 96)"/><rect x="235" y="100" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(-6 250 96)"/><rect x="273" y="90" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(5 288 96)"/><rect x="311" y="100" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(-6 326 96)"/><rect x="349" y="90" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(5 364 96)"/><rect x="387" y="100" width="34" height="9" rx="2" fill="#fff4e8" stroke="#b78a6a" transform="rotate(-6 402 96)"/></g>
+<rect x="30" y="396" width="420" height="30" rx="6" fill="#e9a08c" stroke="#b9695a" stroke-width="2"/><text x="240" y="416" text-anchor="middle" font-size="14" font-weight="700" fill="#5b1f12">Dermis (below)</text>
+<g font-size="12" fill="#4a2a12" font-weight="700"><text x="240" y="452" text-anchor="middle" fill="#7a3a22">&#9679; Dark cells in the deepest layer are melanocytes</text></g>
+</svg></div><div class="side"><div class="card"><h2>Layers of the epidermis</h2><div class="ofb"></div><ol class="chosen"></ol></div><div class="card" style="flex:1;min-height:0;overflow:auto"><b>Choose the next item:</b><div class="opts"></div></div></div></div></section><section class="panel" id="p-clues" role="tabpanel"><div class="grid" style="grid-template-columns:minmax(0,640px)"><div class="card quiz" style="align-self:start"></div></div></section><section class="panel" id="p-check" role="tabpanel"><div class="grid" style="grid-template-columns:minmax(0,640px)"><div class="card quiz" style="align-self:start"></div></div></section></main>
+<footer>BIOL 230 Anatomy and Physiology I/Lab &middot; Week 3 Deep Dive &middot; Content adapted from the course Deep Dive and OpenStax <i>Anatomy and Physiology</i> 2e (Betts et al., 2022).</footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav button').forEach(b=>b.addEventListener('click',()=>{
+  $$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $$('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));
+}));
+$$('nav button')[0].click();
+
+/* Explore: clickable graphic + chips */
+function explore(root,info,first){
+  const keys=Object.keys(info),chips=$('.chips',root),box=$('.info',root);
+  keys.forEach(k=>{const c=document.createElement('button');c.className='chip';c.textContent=info[k].chip||info[k].t;c.dataset.key=k;chips.appendChild(c)});
+  function show(k){
+    const d=info[k];if(!d)return;
+    $$('.chip',root).forEach(c=>c.classList.toggle('active',c.dataset.key===k));
+    $$('.hs',root).forEach(h=>h.classList.toggle('active',h.dataset.key===k));
+    box.innerHTML='<h2>'+d.t+'</h2><p>'+d.p+'</p>'+(d.tip?'<div class="tip"><b>'+(d.tipLabel||'Clinical connection:')+'</b> '+d.tip+'</div>':'');
+    if(d.after)d.after();
+  }
+  $$('[data-key]',root).forEach(el=>{
+    el.addEventListener('click',()=>show(el.dataset.key));
+    if(el.classList.contains('hs')){el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',(info[el.dataset.key]||{}).t||'');
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(el.dataset.key)}})}
+  });
+  box.innerHTML='<p class="hint">Select a part of the graphic or one of the buttons above to learn more.</p>';
+  if(first)show(first);
+  return show;
+}
+
+/* Multiple-choice quiz, one question at a time */
+function quiz(root,qs){
+  let i=0,score=0,done=false;
+  function render(){
+    if(i>=qs.length){
+      const pct=Math.round(score/qs.length*100);
+      root.innerHTML='<div class="qhead"><span>Finished</span></div><div class="bar"><i style="width:100%"></i></div><div class="score">'+score+' / '+qs.length+'</div><p>'+(pct>=80?'Excellent work. You are ready for the quiz.':pct>=60?'Good progress. Revisit the Explore tab for the items you missed.':'Take another look at the Explore tab, then try again.')+'</p><button class="btn" id="retry">Try again</button>';
+      $('#retry',root).onclick=()=>{i=0;score=0;qs=shuffle(qs);render()};return;
+    }
+    const q=qs[i];done=false;
+    root.innerHTML='<div class="qhead"><span>Question '+(i+1)+' of '+qs.length+'</span><span>Score: '+score+'</span></div><div class="bar"><i style="width:'+(i/qs.length*100)+'%"></i></div><p><b>'+(q.html||'')+q.q+'</b></p><div class="opts"></div><div id="fb"></div>';
+    const o=$('.opts',root);
+    q.o.forEach((txt,idx)=>{const b=document.createElement('button');b.className='opt';b.textContent=txt;
+      b.onclick=()=>{
+        if(done)return;done=true;const ok=idx===q.a;if(ok)score++;
+        $$('.opt',root).forEach((x,n)=>{x.disabled=true;if(n===q.a)x.classList.add('right');else if(n===idx)x.classList.add('wrong')});
+        $('#fb',root).innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+q.e+'</div><div class="row" style="margin-top:8px"><button class="btn" id="nx">'+(i+1<qs.length?'Next question':'See results')+'</button></div>';
+        $('#nx',root).onclick=()=>{i++;render()};$('#nx',root).focus();
+      };o.appendChild(b)});
+  }
+  render();
+}
+
+/* Put-in-order activity; steps[].hl is an element id in the graphic */
+function order(root,steps,labels){
+  const ch=$('.chosen',root),opts=$('.opts',root),fb=$('.ofb',root);let n=0;
+  function reset(){n=0;ch.innerHTML='';fb.innerHTML='<p class="hint">'+labels.start+'</p>';
+    steps.forEach(s=>{const e=document.getElementById(s.hl);if(e){e.classList.add('ghost');e.classList.remove('on')}});
+    opts.innerHTML='';shuffle(steps.map((s,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=steps[i].t;b.dataset.i=i;
+      b.onclick=()=>{
+        if(+b.dataset.i===n){
+          const s=steps[n];const li=document.createElement('li');li.innerHTML='<b>'+(n+1)+'. '+(s.name||s.t)+'</b>'+(s.d?' &mdash; '+s.d:'');ch.appendChild(li);
+          const e=document.getElementById(s.hl);if(e){e.classList.remove('ghost');e.classList.add('on')}
+          b.disabled=true;b.style.display='none';n++;
+          if(n===steps.length){fb.innerHTML='<div class="fb ok"><b>Complete! </b>'+labels.done+'</div><div class="row" style="margin-top:8px"><button class="btn ghostbtn" id="rs">Start over</button></div>';$('#rs',root).onclick=reset}
+          else fb.innerHTML='<p class="hint">Correct. '+labels.next+'</p>';
+        }else{b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb.innerHTML='<div class="fb no">'+labels.wrong.replace('{n}',n+1)+'</div>'}
+      };opts.appendChild(b)});
+  }
+  reset();
+}
+
+const Q=[
+{q:'Which skin layer is a stratified squamous epithelium with no blood vessels?',o:['Dermis','Epidermis','Hypodermis','Reticular layer'],a:1,e:'The epidermis is avascular and gets nutrients by diffusion from the dermis.'},
+{q:'Which epidermal layer contains the stem cells that divide to replace the skin surface?',o:['Stratum corneum','Stratum lucidum','Stratum basale','Stratum granulosum'],a:2,e:'Cells are produced in the stratum basale and move upward as they mature.'},
+{q:'Which statement about the stratum lucidum is correct?',o:['It is found in every area of skin','It is found only in thick skin','It contains the blood vessels of the epidermis','It is the deepest epidermal layer'],a:1,e:'The stratum lucidum is a thin clear layer present only in thick skin such as palms and soles.'},
+{q:'Which cells produce melanin?',o:['Keratinocytes','Langerhans cells','Merkel cells','Melanocytes'],a:3,e:'Melanocytes make melanin, which protects against ultraviolet radiation.'},
+{q:'Where would a subcutaneous injection be delivered?',o:['Epidermis','Papillary layer','Hypodermis','Stratum corneum'],a:2,e:'The hypodermis (subcutaneous layer) lies beneath the skin proper and stores fat.'},
+{q:'Oil that lubricates skin and hair is produced by which structure?',o:['Eccrine sweat gland','Apocrine sweat gland','Sebaceous gland','Arrector pili muscle'],a:2,e:'Sebaceous glands secrete sebum into hair follicles.'},
+{q:'Partial-thickness burns involve which layers?',o:['Epidermis only','Epidermis and part of the dermis','Dermis and hypodermis only','Only the hypodermis'],a:1,e:'Superficial burns affect only the epidermis. Partial-thickness burns reach into the dermis. Full-thickness burns go through the dermis.'}
+];
+
+const C=[
+{html:'<span class="swatch" style="background:#e6c84c"></span>',q:'A patient has yellowing of the skin and the whites of the eyes. What is this sign called and what might it suggest?',o:['Jaundice; a possible liver or bile problem','Cyanosis; low blood oxygen','Pallor; reduced blood flow or anemia','Erythema; skin inflammation'],a:0,e:'Jaundice reflects a buildup of bilirubin and can point to liver disease or bile duct blockage.'},
+{html:'<span class="swatch" style="background:#8aa4d6"></span>',q:'Lips and fingertips look bluish. What is the best description?',o:['Jaundice','Cyanosis, a sign of poorly oxygenated blood','Albinism','Melanoma'],a:1,e:'Cyanosis is a bluish color from low oxygen levels in the blood.'},
+{html:'<span class="swatch" style="background:#f1e6e0"></span>',q:'A person suddenly looks very pale and clammy. Which mechanism could explain this?',o:['Blood vessels in the dermis dilate','Blood vessels in the dermis constrict','Melanocytes increase melanin','The stratum corneum thickens'],a:1,e:'Pallor can occur when dermal blood vessels constrict and less blood reaches the skin.'},
+{html:'<span class="swatch" style="background:#e0746a"></span>',q:'Skin on a hot day looks flushed and red. What is the body doing?',o:['Dilating dermal vessels to release heat','Constricting dermal vessels to save heat','Stopping sweat production','Increasing keratin production'],a:0,e:'Dilated dermal vessels bring warm blood near the surface so heat can be lost.'},
+{html:'<span class="swatch" style="background:#5b3a29"></span>',q:'A mole is asymmetric, has irregular borders and is changing. Which skin cancer is most dangerous?',o:['Basal cell carcinoma','Squamous cell carcinoma','Melanoma','Acne vulgaris'],a:2,e:'Melanoma arises from melanocytes and is the most dangerous of the three common skin cancers because it can spread.'}
+];
+
+explore($('#p-explore'),{
+epi:{t:'Epidermis',chip:'Epidermis',p:'The outer layer: stratified squamous epithelium with no blood vessels. It forms the waterproof barrier and renews itself continuously. Keratinocytes make keratin, melanocytes make melanin, Langerhans cells aid immunity and Merkel cells help with touch.',tip:'Because the epidermis has no blood supply, a shallow scrape (superficial burn) hurts but usually does not bleed.'},
+derm:{t:'Dermis',chip:'Dermis',p:'Connective tissue with blood vessels, nerves, hair follicles and glands. The papillary layer has fingerlike bumps that interlock with the epidermis. The deeper reticular layer is dense and gives the skin strength.',tip:'Blisters and partial-thickness burns involve the dermis, which is why they are painful and can scar.'},
+hypo:{t:'Hypodermis (subcutaneous layer)',chip:'Hypodermis',p:'Lies beneath the skin proper. It anchors the skin to muscle and bone, stores fat for energy and insulation, and cushions the body.',tip:'Injections are often given here (subcutaneous) because the fat layer absorbs medication slowly.'},
+hair:{t:'Hair follicle and hair',chip:'Hair follicle',p:'Hair is made of hardened keratin. It grows from a follicle that dips into the dermis, with cells dividing in the bulb at the base. The visible shaft is dead keratin.'},
+sebum:{t:'Sebaceous gland',chip:'Sebaceous gland',p:'Secretes oil (sebum) into the hair follicle. Sebum lubricates skin and hair and slows water loss.',tip:'Acne develops when follicles become blocked with sebum and dead cells.'},
+sweat:{t:'Eccrine sweat gland',chip:'Sweat gland',p:'A coiled gland in the dermis with a duct that opens at a surface pore. Eccrine glands release watery sweat that cools the body. Apocrine glands (armpits and groin) open into hair follicles.',tip:'Heavy sweating with dehydration shows how closely thermoregulation and fluid balance are linked.'},
+vessel:{t:'Blood vessels',chip:'Blood vessels',p:'Dermal arteries and veins supply nutrients and carry heat. Widening vessels releases heat and reddens skin; narrowing vessels conserves heat and makes skin pale. Skin color also reflects melanin and carotene.',tip:'Pallor, cyanosis and jaundice are clues clinicians use. Try the Clinical Clues tab.'},
+pacini:{t:'Sensory receptors and nerves',chip:'Sensory receptor',p:'Nerve endings sense touch, pressure, vibration, temperature and pain. The onion-like Pacinian corpuscle in the deep dermis and hypodermis detects deep pressure and vibration. Merkel cells in the epidermis help sense light touch.'}
+},'epi');
+order($('#p-build'),[
+{t:'Stratum basale',hl:'s-basale',d:'deepest layer; stem cells divide, with melanocytes and Merkel cells'},
+{t:'Stratum spinosum',hl:'s-spinosum',d:'keratinocytes joined by spiny desmosomes; Langerhans cells help defend'},
+{t:'Stratum granulosum',hl:'s-granulosum',d:'cells flatten, fill with granules and begin to die'},
+{t:'Stratum lucidum',hl:'s-lucidum',d:'thin clear layer, thick skin only (palms and soles)'},
+{t:'Stratum corneum',hl:'s-corneum',d:'many layers of dead, keratin-filled cells that flake off'}
+],{start:'Build the epidermis from the deepest layer to the surface.',next:'What layer comes next as cells move upward?',wrong:'Not that one. Remember that new cells are born deep and move up. Which layer is number {n}?',done:'Cells are born in the basale layer and take about a month to reach the surface.'});
+quiz($('#p-clues .quiz'),shuffle(C));
+quiz($('#p-check .quiz'),shuffle(Q));
+
+</script>
+</body>
+</html>
