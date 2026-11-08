@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 8: Decision Making in a World of Choices</title><style>
+:root{--red:#d34147;--dred:#a8353a;--ink:#111;--bg:#fcfcfc;--warm:#edebe8;--card:#fff;--line:#d9d5cf;--ok:#2e7d4f;--okbg:#e5f3ea;--badbg:#fbe7e8;--muted:#555}
+@media (prefers-color-scheme:dark){:root{--ink:#f3f1ee;--bg:#161616;--warm:#262524;--card:#1f1e1d;--line:#3a3836;--muted:#b9b4ad;--okbg:#17301f;--badbg:#3a1a1c;--ok:#6cc58f}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif}
+.app{height:100%;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column}
+header{background:#000;color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;border-bottom:4px solid var(--red);flex:0 0 auto}
+header svg{flex:0 0 56px;width:56px;height:56px}
+header h1{font-size:1.2rem;margin:0;line-height:1.2}
+header p{margin:2px 0 0;font-size:.85rem;color:#ddd}
+.wk{display:inline-block;background:var(--red);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-bottom:4px}
+main{padding:18px 22px 24px;flex:1 0 auto;max-width:980px;width:100%;margin:0 auto}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{border:2px solid var(--ink);background:transparent;color:var(--ink);padding:7px 14px;border-radius:999px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.panel[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}header{padding:12px 14px}main{padding:14px}}
+h2{font-size:1.1rem;margin:0 0 6px}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.95rem}
+button.btn,.opt{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:6px;padding:9px 18px;font-weight:700}
+.btn:hover{background:var(--dred)}.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 8px}
+.opt:hover:not(:disabled){border-color:var(--red)}
+.opt.sel{border-color:var(--red);background:var(--warm)}
+.opt.right{border-color:var(--ok);background:var(--okbg)}.opt.wrong{border-color:var(--red);background:var(--badbg)}
+.fb{margin-top:8px;padding:10px 12px;border-left:4px solid var(--red);background:var(--warm);border-radius:4px;font-size:.92rem}
+.fb.good{border-color:var(--ok);background:var(--okbg)}
+.verse{font-style:italic;font-size:.88rem;color:var(--muted);border-top:1px dashed var(--line);margin-top:14px;padding-top:10px}
+.bar{height:10px;background:var(--warm);border-radius:6px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--red);transition:width .4s}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.sp{flex:1}
+.pill{display:inline-block;background:var(--warm);border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:600}
+:focus-visible{outline:3px solid #f5a623;outline-offset:2px}
+svg text{font-family:inherit}
+.sr{position:absolute;left:-9999px}
+</style></head><body><div class="app">
+<header><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#d34147"/><path d="M32 12L12 48h40z" fill="none" stroke="#fff" stroke-width="3"/><path d="M22 36h20M27 24h10" stroke="#fff" stroke-width="3"/></svg><div><span class="wk">Week 8</span><h1>Needs, Perception & Integrity</h1><p>Explore Maslow’s hierarchy, match ads to needs, and see how perception shapes meaning.</p></div></header><main>
+<div class="tabs"><button class="tab" data-p="p1" aria-selected="true">1 · Explore the Pyramid</button><button class="tab" data-p="p2" aria-selected="false">2 · Match the Ad</button><button class="tab" data-p="p3" aria-selected="false">3 · Perception</button></div>
+
+<section class="panel" id="p1"><div class="card"><h2>Maslow’s hierarchy of needs</h2>
+<p class="lead">Tap a level to see what consumers want and how brands speak to it. Then ask: does this framework fit every culture?</p>
+<div class="grid2"><div><svg id="pyr" viewBox="0 0 340 280" width="100%" role="img" aria-label="Maslow pyramid with five levels"></svg></div><div id="pinfo"></div></div></div></section>
+
+<section class="panel" id="p2" hidden><div class="card"><h2>Which need is this ad targeting?</h2><div class="row"><span class="pill" id="s2">0 / 5</span><div class="bar" style="flex:1"><i id="b2" style="width:0"></i></div></div><div id="q2" style="margin-top:12px"></div></div></section>
+
+<section class="panel" id="p3" hidden><div class="card"><h2>Same message, different meaning</h2>
+<p class="lead">Perception filters what people notice. Pick a viewer to see how each decodes the same ad.</p>
+<svg viewBox="0 0 340 130" width="100%" style="max-width:520px;display:block;margin:0 auto 10px" role="img" aria-label="Ad: Treat yourself, you deserve it"><rect x="5" y="5" width="330" height="120" rx="12" fill="#000"/><rect x="5" y="5" width="12" height="120" fill="#d34147"/><text x="170" y="62" text-anchor="middle" font-size="24" font-weight="700" fill="#fff">“Treat yourself.</text><text x="170" y="92" text-anchor="middle" font-size="24" font-weight="700" fill="#fff">You deserve it.”</text><text x="170" y="113" text-anchor="middle" font-size="11" fill="#bbb">— Brand X Spa Weekends</text></svg>
+<div class="row" id="vw" style="justify-content:center"></div><div id="vfb" style="margin-top:12px"></div>
+<div class="fb" style="margin-top:14px"><b>Ethical check:</b> A reviewer says the spa is “100% carbon neutral.” Which response shows integrity?</div><div style="margin-top:8px" id="eth"></div></div></section>
+
+<div class="verse">Reflection: Daniel cooperated where he could without compromising his convictions (Daniel 1:10; 6:4). If an ad conflicted with your values, how would you respond respectfully?</div>
+<script>
+const L=[
+["Self-Actualization","#6f2126","Growth, creativity, fulfilling potential.","“Become who you were meant to be” — online courses, art supplies.","Critique: individual self-fulfillment may rank lower in communal cultures."],
+["Esteem","#8c2a30","Recognition, status, achievement.","“Earn the badge.” — premium credit cards, luxury watches.","Be careful: status appeals can feed consumerism."],
+["Belonging","#a8353a","Friendship, family, community.","“Share a Coke with friends.” — brand communities, social apps.","In many cultures, belonging sits at the top, not the middle."],
+["Safety","#c0393f","Security, health, stability.","“Protects what matters.” — insurance, home security, vaccines.","Claims must be truthful and verifiable."],
+["Physiological","#d34147","Food, water, rest, shelter.","“Hot, fresh, ready now.” — groceries, bottled water, mattresses.","Foundation: unmet basics dominate every decision."]];
+let h='';
+// simpler: build trapezoids explicitly
+h='';const step=27;L.forEach((l,i)=>{const topW=i*54;const botW=(i+1)*54+ (i===4?0:0);const y=8+i*54;const cx=170;
+const pts=i===0?`${cx},${y} ${cx+32},${y+50} ${cx-32},${y+50}`:`${cx-i*32},${y} ${cx+i*32},${y} ${cx+(i+1)*32},${y+50} ${cx-(i+1)*32},${y+50}`;
+h+=`<g tabindex="0" role="button" aria-label="${l[0]}" style="cursor:pointer" data-i="${i}"><polygon points="${pts}" fill="${l[1]}" class="lv"/><text x="170" y="${y+(i===0?40:30)}" text-anchor="middle" font-size="${i===0?9:i===1?11:13}" font-weight="700" fill="#fff">${i===0?'Self':i===1?l[0]:l[0]}</text></g>`;});
+const pyr=document.getElementById('pyr');pyr.innerHTML=h;
+pyr.setAttribute('viewBox','0 0 340 285');
+function info(i){const l=L[i];document.getElementById('pinfo').innerHTML=`<h2 style="color:${l[1]}">${l[0]}</h2><p>${l[2]}</p><p><b>Brand example:</b> ${l[3]}</p><div class="fb">${l[4]}</div>`;pyr.querySelectorAll('.lv').forEach((p,k)=>p.setAttribute('stroke',k===i?'#f5a623':'none')),pyr.querySelectorAll('.lv').forEach(p=>p.setAttribute('stroke-width','4'));}
+pyr.querySelectorAll('g').forEach(g=>{g.onclick=()=>info(+g.dataset.i);g.onkeydown=e=>{if(e.key==='Enter')info(+g.dataset.i)};});info(4);
+
+const A=[["“Hot pizza at your door in 30 minutes.”",4,"Hunger is a physiological need."],["“Lock it. Monitor it. Sleep easy.” (home alarm)",3,"Security and stability are safety needs."],["“Because friends make every game night better.”",2,"This speaks to belonging and relationships."],["“Be the first to wear the limited gold edition.”",1,"Status and recognition are esteem needs."],["“Discover the artist inside you.” (painting workshop)",0,"Creativity and fulfilling potential are self-actualization."]];
+let i2=0,sc=0;const q=document.getElementById('q2');
+function r2(){if(i2>=A.length){q.innerHTML=`<div class="fb good"><b>${sc} / ${A.length} correct.</b> Remember that real consumers often have several needs at once, and cultures may order them differently.</div><button class="btn" style="margin-top:10px" id="ag">Play again</button>`;document.getElementById('ag').onclick=()=>{i2=0;sc=0;upd();r2();};return;}
+const a=A[i2];q.innerHTML=`<p style="font-size:1.1rem"><b>${a[0]}</b></p>`;L.forEach((l,k)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${l[1]};margin-right:8px"></span>${l[0]}`;b.onclick=()=>{const ok=k===a[1];if(ok)sc++;[...q.querySelectorAll('.opt')].forEach((c,j)=>{c.disabled=true;if(j===a[1])c.classList.add('right');});if(!ok)b.classList.add('wrong');q.insertAdjacentHTML('beforeend',`<div class="fb ${ok?'good':''}">${a[2]}</div><button class="btn" style="margin-top:10px" id="nx">Next</button>`);document.getElementById('nx').onclick=()=>{i2++;upd();r2();};};q.appendChild(b);});}
+function upd(){document.getElementById('s2').textContent=Math.min(i2,5)+' / 5';document.getElementById('b2').style.width=Math.min(i2,5)/5*100+'%';}
+r2();
+
+const V=[["🎓 Student on a budget","Hears “treat yourself” as financial guilt: “I can’t afford that.” Perceives the ad as out of touch."],["💼 Burned-out nurse","Hears permission to rest: “I finally deserve a break.” Perceives the ad as caring."],["🌏 Family-first grandparent","Hears selfishness: “What about the family?” In a collectivist culture the ad may feel off-putting."]];
+const vw=document.getElementById('vw');V.forEach(v=>{const b=document.createElement('button');b.className='tab';b.setAttribute('aria-selected',false);b.textContent=v[0];b.onclick=()=>{[...vw.children].forEach(x=>x.setAttribute('aria-selected',x===b));document.getElementById('vfb').innerHTML=`<div class="fb">${v[1]}</div>`;};vw.appendChild(b);});
+const EO=[["Ask for the evidence and publish the claim only if it can be verified","r","Truthful, verifiable claims build trust. This is integrity in practice."],["Run it — it sounds great and nobody checks","w","Unverified claims risk greenwashing and destroy credibility."],["Round it up to “planet-saving” for impact","w","Exaggeration misleads ethical consumers."]];
+const eth=document.getElementById('eth');EO.sort(()=>Math.random()-.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o[0];b.onclick=()=>{[...eth.querySelectorAll('.opt')].forEach(c=>c.disabled=true);b.classList.add(o[1]==='r'?'right':'wrong');eth.insertAdjacentHTML('beforeend',`<div class="fb ${o[1]==='r'?'good':''}">${o[2]}</div>`);};eth.appendChild(b);});
+</script></main></div>
+<script>
+function tabs(){const t=[...document.querySelectorAll('.tab[data-p]')];t.forEach(b=>b.onclick=()=>{t.forEach(x=>x.setAttribute('aria-selected',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==b.dataset.p);document.querySelector('.app').scrollTop=0;});}
+tabs();
+</script></body></html>
