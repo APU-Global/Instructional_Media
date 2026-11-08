@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 505 Week 6 Interactive</title>
+<style>
+:root{--navy:#1f3a5f;--teal:#17707d;--teal-d:#0f5560;--gold:#f0b04a;--gold-d:#8a5a00;--ink:#1d2733;--mute:#566474;--bg:#f4f7fb;--card:#fff;--line:#d5dde8;--good:#176b3a;--goodbg:#e6f4ea;--bad:#9a3412;--badbg:#fdeee5;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent}
+html.embedded,html.embedded body{overflow:hidden}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.5;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:12px;background:var(--bg)}
+.hero{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;min-height:128px;background:var(--navy)}
+.hero svg.art{position:absolute;inset:0;width:100%;height:100%}
+.hero .txt{position:relative;padding:20px 24px;max-width:640px}
+.hero .kick{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;margin:0 0 4px}
+.hero h1{margin:0 0 6px;font-size:1.55rem;line-height:1.2}
+.hero p{margin:0;font-size:.98rem;opacity:.95}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 0;padding:0}
+.tabs button{font:inherit;font-weight:600;background:#e3eaf3;color:var(--navy);border:2px solid transparent;border-radius:999px;padding:8px 16px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--navy);color:#fff}
+.tabs button:hover{border-color:var(--teal)}
+:focus-visible{outline:3px solid #0b57d0;outline-offset:2px}
+.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:10px;min-height:var(--panelh,0)}
+.panel.on{display:block}
+.panel h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--mute)}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;align-items:start}
+@media (min-width:721px){.grid2.eq{grid-template-columns:1fr 1fr}.grid2.sortg{grid-template-columns:1fr 1.2fr}}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}.hero .txt{padding:16px}.hero h1{font-size:1.3rem}}
+.detail{background:#f0f6f8;border:1px solid #bfd6dc;border-left:6px solid var(--teal);border-radius:10px;padding:12px 14px;min-height:150px}
+.detail h3{margin:0 0 4px;color:var(--teal-d);font-size:1.05rem}
+.detail ul{margin:6px 0 0;padding-left:20px}
+.detail .tag{display:inline-block;font-size:.75rem;font-weight:700;background:var(--gold);color:#3b2a00;border-radius:6px;padding:1px 8px;margin-bottom:6px}
+svg.fig{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node circle,.node rect{fill:#fff;stroke:var(--teal);stroke-width:3;transition:fill .15s}
+.node text{font:600 13px system-ui,sans-serif;fill:var(--navy);pointer-events:none}
+.node:hover circle,.node:hover rect{fill:#e3f3f5}
+.node.sel circle,.node.sel rect{fill:var(--gold);stroke:var(--gold-d)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--teal);background:#fff;color:var(--teal-d);border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn:hover{background:#e3f3f5}
+.btn.pri{background:var(--teal);color:#fff}
+.btn.pri:hover{background:var(--teal-d)}
+.btn[aria-pressed=true],.btn.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.96rem}
+.fb.good{background:var(--goodbg);color:var(--good);border:1px solid #9bd0ae}
+.fb.bad{background:var(--badbg);color:var(--bad);border:1px solid #efb48f}
+.fb strong{font-weight:800}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.qcard{margin-bottom:12px}
+.qcard p{margin:0 0 8px;font-weight:600}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts .btn{text-align:left}
+.opts .btn.right{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.opts .btn.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.score{font-weight:700;color:var(--navy);margin:8px 0}
+.small{font-size:.88rem;color:var(--mute)}
+.foot{margin:10px 4px 2px;font-size:.8rem;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{border-color:var(--teal);background:#dff1f3;color:var(--teal-d);font-weight:700}
+.chip[aria-pressed=true]::before{content:"\2713  "}
+.bucket{border:2px dashed var(--teal);border-radius:12px;padding:10px;min-height:120px;background:#f7fbfc}
+.bucket h3{margin:0 0 6px;font-size:1rem;color:var(--teal-d)}
+.bucket .tok{margin:4px 0}
+.tok{display:block;width:100%;text-align:left;font:inherit;font-size:.92rem;border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;cursor:pointer}
+.tok.pick{border-color:var(--gold-d);background:#fff6e0}
+.tok.ok{border-color:var(--good);background:var(--goodbg)}
+.tok.no{border-color:var(--bad);background:var(--badbg)}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{background:#e8eef6;color:var(--navy)}
+.tblwrap{overflow-x:auto}
+select{font:inherit;padding:7px;border:2px solid var(--line);border-radius:8px;background:#fff;max-width:100%}
+label.lb{display:block;font-weight:600;margin:10px 0 4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:root{--panelh:520px}</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<svg class="art" viewBox="0 0 1000 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs><linearGradient id="h6" x1="0" x2="1"><stop offset="0" stop-color="#1f3a5f"/><stop offset="1" stop-color="#17707d"/></linearGradient></defs>
+<rect width="1000" height="140" fill="url(#h6)"/>
+<g fill="#fff" opacity=".95"><rect x="690" y="40" width="70" height="60" rx="6"/><rect x="900" y="40" width="70" height="60" rx="6"/></g>
+<path d="M760 62q70-40 140 0" fill="none" stroke="#f0b04a" stroke-width="8" stroke-linecap="round"/><path d="M760 62v40M900 62v40" stroke="#f0b04a" stroke-width="6"/>
+<g stroke="#1f3a5f" stroke-width="3" opacity=".7"><path d="M702 56h46M702 68h46M702 80h30M912 56h46M912 68h46M912 80h30"/></g></svg>
+<div class="txt"><p class="kick">EDUC 505 · Week 6</p><h1>Diversity of Needs</h1><p>Learn what individualized plans tell you, sort accommodations from modifications, and build an instructional bridge table.</p></div>
+</header>
+<div class="tabs" role="tablist" aria-label="Activities"><button role="tab" type="button">Plans at a glance</button><button role="tab" type="button">Accommodation or modification?</button><button role="tab" type="button">Bridge table</button></div>
+
+<section class="panel" id="p1" role="tabpanel">
+<h2>Individualized plans at a glance</h2>
+<p class="lead">Read the plan before you plan the lesson. Select a document to see its purpose.</p>
+<div class="grid2"><div id="docs"></div><div class="detail" id="docd" aria-live="polite"><h3>Start here</h3><p>Select one of the four plans.</p></div></div>
+</section>
+<section class="panel" id="p2" role="tabpanel">
+<h2>Accommodation or modification?</h2>
+<p class="lead"><strong>Accommodations</strong> change <em>how</em> a student accesses learning. <strong>Modifications</strong> change <em>what</em> a student is expected to learn.</p>
+<div id="am"></div>
+</section>
+<section class="panel" id="p3" role="tabpanel">
+<h2>Build an instructional bridge table</h2>
+<p class="lead">Connect a data point from a student's plan to a learning goal and a specific support. Complete both students.</p>
+<div id="bridge"></div>
+<div class="tblwrap" style="margin-top:12px"><table class="t"><thead><tr><th>Student</th><th>Data point</th><th>Learning goal</th><th>Support</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="row" style="margin-top:8px"><button class="btn" type="button" id="cp">Copy table</button><span class="small" id="cpm" aria-live="polite"></span></div>
+</section>
+
+<p class="foot">Source: EDUC 505 Deep Dive. Banks, J. A. (2016). <em>Cultural diversity and education</em> (6th ed.). Routledge. Practice scenarios are fictional examples written for this activity.</p>
+</div>
+<script>
+(function(){
+  var emb=false;try{emb=window.self!==window.top}catch(e){emb=true}
+  if(emb)document.documentElement.classList.add('embedded');
+  window.$=function(s,r){return (r||document).querySelector(s)};
+  window.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  window.esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  function send(){var w=document.querySelector('.wrap');if(!w)return;var h=Math.ceil(w.getBoundingClientRect().height);try{parent.postMessage({type:'iframe-height',height:h},'*')}catch(e){}}
+  window.__send=send;
+  var tabs=$$('.tabs [role=tab]'),panels=$$('.panel');
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});panels.forEach(function(p,j){p.classList.toggle('on',j===i)});send()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(n!==null){e.preventDefault();show(n);tabs[n].focus()}})});
+  show(0);
+  window.addEventListener('resize',send);window.addEventListener('load',send);
+  if(window.ResizeObserver)new ResizeObserver(send).observe(document.querySelector('.wrap'));
+  /* multiple-choice helper: one question at a time keeps the page height stable */
+  window.mc=function(host,items,doneMsg){
+    var score=0,cur=0;host.innerHTML='';
+    var box=document.createElement('div');host.appendChild(box);
+    function render(){
+      if(cur>=items.length){
+        box.innerHTML='<div class="card"><p class="score" style="font-size:1.1rem">Score: '+score+' of '+items.length+'</p><p>'+doneMsg+'</p><button class="btn" type="button" id="mcr">Try again</button></div>';
+        $('#mcr',box).addEventListener('click',function(){score=0;cur=0;render()});send();return;
+      }
+      var it=items[cur];
+      box.innerHTML='<div class="card qcard"><p class="small" style="margin:0 0 4px">Question '+(cur+1)+' of '+items.length+'</p><p>'+it.q+'</p><div class="opts"></div><div class="fbh" aria-live="polite"></div><div class="row" style="margin-top:10px"><button class="btn pri" type="button" id="mcn" hidden>'+(cur===items.length-1?'See score':'Next question')+'</button></div></div>';
+      var o=$('.opts',box);
+      it.o.forEach(function(txt,oi){
+        var b=document.createElement('button');b.className='btn';b.type='button';b.textContent=txt;
+        b.addEventListener('click',function(){
+          var ok=oi===it.a;if(ok)score++;
+          $$('.btn',o).forEach(function(x,xi){x.disabled=true;if(xi===it.a)x.classList.add('right')});
+          if(!ok)b.classList.add('wrong');
+          $('.fbh',box).innerHTML='<div class="fb '+(ok?'good':'bad')+'"><strong>'+(ok?'Yes. ':'Not quite. ')+'</strong>'+it.w+'</div>';
+          var n=$('#mcn',box);n.hidden=false;n.focus();send();
+        });
+        o.appendChild(b);
+      });
+      $('#mcn',box).addEventListener('click',function(){cur++;render()});
+      send();
+    }
+    render();
+  };
+  /* ring diagram helper: returns svg markup with nodes around a center */
+  window.ring=function(o){
+    var W=o.w||700,H=o.h||380,cx=W/2,cy=H/2,rx=o.rx||250,ry=o.ry||140,n=o.nodes.length,s='<svg class="fig" viewBox="0 0 '+W+' '+H+'" role="group" aria-label="'+esc(o.label)+'">';
+    s+='<defs><radialGradient id="g'+o.id+'" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#fff6e0"/><stop offset="1" stop-color="#fde3ae"/></radialGradient></defs>';
+    s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(rx+30)+'" ry="'+(ry+26)+'" fill="#eaf4f6" stroke="#bfd6dc" stroke-dasharray="6 6"/>';
+    var pts=o.nodes.map(function(_,i){var a=-Math.PI/2+i*2*Math.PI/n;return[cx+rx*Math.cos(a),cy+ry*Math.sin(a)]});
+    pts.forEach(function(p){s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#8fb9c1" stroke-width="3"/>'});
+    s+='<g transform="translate('+cx+' '+cy+')">'+o.center+'</g>';
+    o.nodes.forEach(function(nd,i){var p=pts[i],r=o.r||44;
+      s+='<g class="node" tabindex="0" role="button" aria-label="'+esc(nd.name)+'" data-i="'+i+'" transform="translate('+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><circle r="'+r+'"/>'+nd.icon+'<text text-anchor="middle" y="'+(r+18)+'" style="fill:#1f3a5f">'+nd.name+'</text></g>';});
+    return s+'</svg>';
+  };
+  window.bindNodes=function(host,cb){
+    function pick(g){$$('.node',host).forEach(function(x){x.classList.remove('sel')});g.classList.add('sel');cb(+g.dataset.i);send()}
+    $$('.node',host).forEach(function(g){g.addEventListener('click',function(){pick(g)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g)}})});
+  };
+})();
+</script>
+<script>
+var D=[
+{name:'IEP',full:'Individualized Education Program',fill:'#17707d',when:'Students with an identified disability who need specialized instruction.',pts:['Documents goals, services, and supports.','Differs from a 504 plan in purpose and requirements.','Read it before you plan the lesson.']},
+{name:'504',full:'504 plan',fill:'#1f3a5f',when:'Students who need accommodations to access learning.',pts:['Focuses on access to the general education classroom.','Differs from an IEP in purpose and requirements.','Know exactly which accommodations are listed.']},
+{name:'IFSP',full:'Individualized Family Service Plan',fill:'#c47f12',when:'Very young children and their families (typically birth to age 3).',pts:['Centers on the child and family.','May transition into an IEP.']},
+{name:'ITP',full:'Individualized Transition Plan',fill:'#6b4e9b',when:'Older students preparing for life after school. Timing varies by state.',pts:['Sets goals for the move beyond school.','Another document that shows what a student needs.']}
+];
+var dh='<svg class="fig" viewBox="0 0 640 300" role="group" aria-label="Four plan documents"><rect width="640" height="300" rx="10" fill="#eef4f8"/>';
+D.forEach(function(d,i){var x=24+i*150;
+ dh+='<g class="node" tabindex="0" role="button" aria-label="'+d.name+'" data-i="'+i+'" transform="translate('+x+' 30)"><rect width="130" height="190" rx="8"/><path d="M0 0h130v38H0z" style="fill:'+d.fill+';stroke:none"/><text x="65" y="25" text-anchor="middle" style="fill:#fff;font:800 18px system-ui">'+d.name+'</text><g stroke="#9db3c4" stroke-width="5" stroke-linecap="round"><path d="M16 62h98M16 82h98M16 102h70M16 130h98M16 150h60"/></g><circle cx="105" cy="165" r="12" fill="#f0b04a" stroke="none"/></g>';
+});
+dh+='<path d="M389 228Q239 290 95 232" fill="none" stroke="#17707d" stroke-width="3" stroke-dasharray="6 5"/><path d="M104 244L93 231L109 228" fill="none" stroke="#17707d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><text x="239" y="282" text-anchor="middle" style="font:600 13px system-ui;fill:#17707d">An IFSP may transition into an IEP</text></svg>';
+$('#docs').innerHTML=dh;
+bindNodes($('#docs'),function(i){var d=D[i];$('#docd').innerHTML='<span class="tag">'+d.name+'</span><h3>'+d.full+'</h3><p><strong>Often used for:</strong> '+d.when+'</p><ul>'+d.pts.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ul>'});
+
+/* accommodation vs modification */
+var A=[
+['A student gets extra time on a quiz.',0,'The expectations are the same. Only the access (time) changes.'],
+['A student is assigned 5 spelling words instead of 20.',1,'The amount the student is expected to learn changes.'],
+['A teacher reads the directions aloud to a student.',0,'The task is unchanged. The way the student accesses directions changes.'],
+['A student works from a text written at a lower grade level with simplified learning goals.',1,'Both the material and the learning goals are reduced.'],
+['A student with a hearing need is seated near the teacher with a clear view of the board.',0,'Seating changes access without changing expectations.'],
+['A student can listen to an audio version of the grade-level text.',0,'The student still works toward the same goal. The format changes how the student accesses it.']
+];
+mc($('#am'),A.map(function(a){return{q:a[0],o:['Accommodation (changes how)','Modification (changes what)'],a:a[1],w:a[2]}}),'Remember: name the barrier, then match the support.');
+
+/* bridge */
+var B=[
+{who:'Student A',data:'IEP: reading comprehension below grade level; decoding is fluent.',
+ goals:['Explain the main idea of a grade-level text','Match pictures to words only','Skip reading tasks'],ga:0,
+ sup:['Accommodation: audio version of the text plus a graphic organizer','Modification: replace the text with a first-grade reader','No change; let the student keep trying'],sa:0,
+ why:'The goal stays grade-level, and the audio and organizer change how Student A accesses the text.'},
+{who:'Student B',data:'ELPAC overall level shows stronger listening than writing.',
+ goals:['Write a four-sentence explanation using key vocabulary','Copy sentences from the board','Avoid writing until proficient'],ga:0,
+ sup:['Accommodation: sentence frames and a word bank, with oral rehearsal first','Modification: reduce the assignment to one sentence for the whole term','Have the student write the same as everyone else with no support'],sa:0,
+ why:'Student B keeps the same goal, and scaffolds for language support connect to the data point.'},
+{who:'Student C',data:'504 plan: extended time and a quiet space for tests.',
+ goals:['Show mastery of the unit on the same test','Take an easier test with fewer standards','Complete the test later without limits'],ga:0,
+ sup:['Accommodation: time-and-a-half in a quiet space','Modification: remove half of the test items','Seat next to the door'],sa:0,
+ why:'The 504 plan lists the accommodations. The expectation stays the same.'}
+];
+var rows={};
+var bh=$('#bridge');
+bh.innerHTML='<div class="row" id="bsel" role="group" aria-label="Choose a student"></div><div id="bbody"></div>';
+B.forEach(function(b,i){var x=document.createElement('button');x.className='btn';x.type='button';x.textContent=b.who;x.setAttribute('aria-pressed','false');x.addEventListener('click',function(){open(i)});$('#bsel').appendChild(x)});
+function open(i){
+  $$('#bsel .btn').forEach(function(b,j){b.setAttribute('aria-pressed',j===i)});
+  var b=B[i];
+  $('#bbody').innerHTML='<div class="card" style="margin-top:10px"><strong>Data point:</strong> '+b.data+' <span class="small">(fictional)</span></div>'
+   +'<label class="lb" for="gl">Learning goal</label><select id="gl"><option value="">Select</option>'+b.goals.map(function(g,k){return'<option value="'+k+'">'+g+'</option>'}).join('')+'</select>'
+   +'<label class="lb" for="sp">Support</label><select id="sp"><option value="">Select</option>'+b.sup.map(function(g,k){return'<option value="'+k+'">'+g+'</option>'}).join('')+'</select>'
+   +'<div class="row" style="margin-top:10px"><button class="btn pri" type="button" id="addrow">Check and add to table</button></div><div id="bfb" aria-live="polite"></div>';
+  $('#addrow').addEventListener('click',function(){var g=$('#gl').value,s=$('#sp').value;
+    if(g===''||s===''){$('#bfb').innerHTML='<div class="fb bad">Choose both a goal and a support.</div>';__send();return}
+    var ok=+g===b.ga&&+s===b.sa;
+    if(ok){rows[i]=[b.who,b.data,b.goals[g],b.sup[s]];draw();$('#bfb').innerHTML='<div class="fb good"><strong>Added. </strong>'+b.why+'</div>'}
+    else $('#bfb').innerHTML='<div class="fb bad"><strong>Not yet. </strong>Keep the learning goal tied to the data point, and choose a support that matches the barrier without lowering expectations unnecessarily.</div>';
+    __send()});
+  __send();
+}
+function draw(){var t=$('#tb');t.innerHTML='';Object.keys(rows).forEach(function(k){var r=rows[k];var tr=document.createElement('tr');tr.innerHTML=r.map(function(c){return'<td>'+esc(c)+'</td>'}).join('');t.appendChild(tr)});
+  if(!t.children.length)t.innerHTML='<tr><td colspan="4" class="small">Your completed rows will appear here.</td></tr>'}
+draw();open(0);
+$('#cp').addEventListener('click',function(){var txt=Object.keys(rows).map(function(k){return rows[k].join(' | ')}).join('\n');
+  if(!txt){$('#cpm').textContent='Add a row first.';return}
+  var done=function(){$('#cpm').textContent='Copied.'};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){$('#cpm').textContent='Copy is not available here. Select the table text instead.'})}else{$('#cpm').textContent='Copy is not available here. Select the table text instead.'}});
+</script>
+</body>
+</html>

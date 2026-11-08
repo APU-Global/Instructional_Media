@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 505 Week 1 Interactive</title>
+<style>
+:root{--navy:#1f3a5f;--teal:#17707d;--teal-d:#0f5560;--gold:#f0b04a;--gold-d:#8a5a00;--ink:#1d2733;--mute:#566474;--bg:#f4f7fb;--card:#fff;--line:#d5dde8;--good:#176b3a;--goodbg:#e6f4ea;--bad:#9a3412;--badbg:#fdeee5;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent}
+html.embedded,html.embedded body{overflow:hidden}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.5;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:12px;background:var(--bg)}
+.hero{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;min-height:128px;background:var(--navy)}
+.hero svg.art{position:absolute;inset:0;width:100%;height:100%}
+.hero .txt{position:relative;padding:20px 24px;max-width:640px}
+.hero .kick{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;margin:0 0 4px}
+.hero h1{margin:0 0 6px;font-size:1.55rem;line-height:1.2}
+.hero p{margin:0;font-size:.98rem;opacity:.95}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 0;padding:0}
+.tabs button{font:inherit;font-weight:600;background:#e3eaf3;color:var(--navy);border:2px solid transparent;border-radius:999px;padding:8px 16px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--navy);color:#fff}
+.tabs button:hover{border-color:var(--teal)}
+:focus-visible{outline:3px solid #0b57d0;outline-offset:2px}
+.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:10px;min-height:var(--panelh,0)}
+.panel.on{display:block}
+.panel h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--mute)}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;align-items:start}
+@media (min-width:721px){.grid2.eq{grid-template-columns:1fr 1fr}.grid2.sortg{grid-template-columns:1fr 1.2fr}}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}.hero .txt{padding:16px}.hero h1{font-size:1.3rem}}
+.detail{background:#f0f6f8;border:1px solid #bfd6dc;border-left:6px solid var(--teal);border-radius:10px;padding:12px 14px;min-height:150px}
+.detail h3{margin:0 0 4px;color:var(--teal-d);font-size:1.05rem}
+.detail ul{margin:6px 0 0;padding-left:20px}
+.detail .tag{display:inline-block;font-size:.75rem;font-weight:700;background:var(--gold);color:#3b2a00;border-radius:6px;padding:1px 8px;margin-bottom:6px}
+svg.fig{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node circle,.node rect{fill:#fff;stroke:var(--teal);stroke-width:3;transition:fill .15s}
+.node text{font:600 13px system-ui,sans-serif;fill:var(--navy);pointer-events:none}
+.node:hover circle,.node:hover rect{fill:#e3f3f5}
+.node.sel circle,.node.sel rect{fill:var(--gold);stroke:var(--gold-d)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--teal);background:#fff;color:var(--teal-d);border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn:hover{background:#e3f3f5}
+.btn.pri{background:var(--teal);color:#fff}
+.btn.pri:hover{background:var(--teal-d)}
+.btn[aria-pressed=true],.btn.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.96rem}
+.fb.good{background:var(--goodbg);color:var(--good);border:1px solid #9bd0ae}
+.fb.bad{background:var(--badbg);color:var(--bad);border:1px solid #efb48f}
+.fb strong{font-weight:800}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.qcard{margin-bottom:12px}
+.qcard p{margin:0 0 8px;font-weight:600}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts .btn{text-align:left}
+.opts .btn.right{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.opts .btn.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.score{font-weight:700;color:var(--navy);margin:8px 0}
+.small{font-size:.88rem;color:var(--mute)}
+.foot{margin:10px 4px 2px;font-size:.8rem;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{border-color:var(--teal);background:#dff1f3;color:var(--teal-d);font-weight:700}
+.chip[aria-pressed=true]::before{content:"\2713  "}
+.bucket{border:2px dashed var(--teal);border-radius:12px;padding:10px;min-height:120px;background:#f7fbfc}
+.bucket h3{margin:0 0 6px;font-size:1rem;color:var(--teal-d)}
+.bucket .tok{margin:4px 0}
+.tok{display:block;width:100%;text-align:left;font:inherit;font-size:.92rem;border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;cursor:pointer}
+.tok.pick{border-color:var(--gold-d);background:#fff6e0}
+.tok.ok{border-color:var(--good);background:var(--goodbg)}
+.tok.no{border-color:var(--bad);background:var(--badbg)}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{background:#e8eef6;color:var(--navy)}
+.tblwrap{overflow-x:auto}
+select{font:inherit;padding:7px;border:2px solid var(--line);border-radius:8px;background:#fff;max-width:100%}
+label.lb{display:block;font-weight:600;margin:10px 0 4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:root{--panelh:520px}</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<svg class="art" viewBox="0 0 1000 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs><linearGradient id="h1" x1="0" x2="1"><stop offset="0" stop-color="#1f3a5f"/><stop offset="1" stop-color="#17707d"/></linearGradient></defs>
+<rect width="1000" height="140" fill="url(#h1)"/>
+<g opacity=".28" fill="none" stroke="#fff" stroke-width="3"><circle cx="820" cy="70" r="58"/><circle cx="880" cy="70" r="58"/><circle cx="850" cy="40" r="58"/></g>
+<g transform="translate(850 72)"><ellipse rx="64" ry="34" fill="#fff" opacity=".95"/><circle r="22" fill="#f0b04a"/><circle r="10" fill="#1f3a5f"/><circle cx="-6" cy="-6" r="3.5" fill="#fff"/></g>
+<g fill="#f0b04a" opacity=".85"><circle cx="720" cy="30" r="6"/><circle cx="960" cy="112" r="7"/><circle cx="700" cy="108" r="4"/></g></svg>
+<div class="txt"><p class="kick">EDUC 505 · Week 1</p><h1>Introduction to Diversity and Inclusive Schooling</h1><p>Explore the key terms, see the difference between equality and equity, then check your understanding.</p></div>
+</header>
+<div class="tabs" role="tablist" aria-label="Activities"><button role="tab" type="button">Key terms</button><button role="tab" type="button">Equality vs. equity</button><button role="tab" type="button">Check yourself</button></div>
+
+<section class="panel" id="p1" role="tabpanel">
+<h2>Key terms: the language of this course</h2>
+<p class="lead">Select a term in the diagram. Every term points toward one goal.</p>
+<div class="grid2"><div id="hub"></div><div class="detail" id="hubd" aria-live="polite"><h3>Start here</h3><p>Select any circle to see what the term means and what it asks of a teacher.</p></div></div>
+</section>
+<section class="panel" id="p2" role="tabpanel">
+<h2>Equality or equity?</h2>
+<p class="lead">Three students want to see over the same wall. Compare what happens under each approach.</p>
+<div class="row" role="group" aria-label="Choose an approach"><button class="btn" type="button" id="b0" aria-pressed="true">No support</button><button class="btn" type="button" id="b1" aria-pressed="false">Equality: same box for all</button><button class="btn" type="button" id="b2" aria-pressed="false">Equity: support by need</button></div>
+<div class="grid2" style="margin-top:10px"><div id="wall"></div><div class="detail" id="walld" aria-live="polite"></div></div>
+</section>
+<section class="panel" id="p3" role="tabpanel">
+<h2>Check your understanding</h2>
+<p class="lead">Four quick questions on this week's key ideas.</p>
+<div id="quiz"></div>
+</section>
+
+<p class="foot">Source: EDUC 505 Deep Dive. Banks, J. A. (2016). <em>Cultural diversity and education</em> (6th ed.). Routledge. Practice scenarios are fictional examples written for this activity.</p>
+</div>
+<script>
+(function(){
+  var emb=false;try{emb=window.self!==window.top}catch(e){emb=true}
+  if(emb)document.documentElement.classList.add('embedded');
+  window.$=function(s,r){return (r||document).querySelector(s)};
+  window.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  window.esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  function send(){var w=document.querySelector('.wrap');if(!w)return;var h=Math.ceil(w.getBoundingClientRect().height);try{parent.postMessage({type:'iframe-height',height:h},'*')}catch(e){}}
+  window.__send=send;
+  var tabs=$$('.tabs [role=tab]'),panels=$$('.panel');
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});panels.forEach(function(p,j){p.classList.toggle('on',j===i)});send()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(n!==null){e.preventDefault();show(n);tabs[n].focus()}})});
+  show(0);
+  window.addEventListener('resize',send);window.addEventListener('load',send);
+  if(window.ResizeObserver)new ResizeObserver(send).observe(document.querySelector('.wrap'));
+  /* multiple-choice helper: one question at a time keeps the page height stable */
+  window.mc=function(host,items,doneMsg){
+    var score=0,cur=0;host.innerHTML='';
+    var box=document.createElement('div');host.appendChild(box);
+    function render(){
+      if(cur>=items.length){
+        box.innerHTML='<div class="card"><p class="score" style="font-size:1.1rem">Score: '+score+' of '+items.length+'</p><p>'+doneMsg+'</p><button class="btn" type="button" id="mcr">Try again</button></div>';
+        $('#mcr',box).addEventListener('click',function(){score=0;cur=0;render()});send();return;
+      }
+      var it=items[cur];
+      box.innerHTML='<div class="card qcard"><p class="small" style="margin:0 0 4px">Question '+(cur+1)+' of '+items.length+'</p><p>'+it.q+'</p><div class="opts"></div><div class="fbh" aria-live="polite"></div><div class="row" style="margin-top:10px"><button class="btn pri" type="button" id="mcn" hidden>'+(cur===items.length-1?'See score':'Next question')+'</button></div></div>';
+      var o=$('.opts',box);
+      it.o.forEach(function(txt,oi){
+        var b=document.createElement('button');b.className='btn';b.type='button';b.textContent=txt;
+        b.addEventListener('click',function(){
+          var ok=oi===it.a;if(ok)score++;
+          $$('.btn',o).forEach(function(x,xi){x.disabled=true;if(xi===it.a)x.classList.add('right')});
+          if(!ok)b.classList.add('wrong');
+          $('.fbh',box).innerHTML='<div class="fb '+(ok?'good':'bad')+'"><strong>'+(ok?'Yes. ':'Not quite. ')+'</strong>'+it.w+'</div>';
+          var n=$('#mcn',box);n.hidden=false;n.focus();send();
+        });
+        o.appendChild(b);
+      });
+      $('#mcn',box).addEventListener('click',function(){cur++;render()});
+      send();
+    }
+    render();
+  };
+  /* ring diagram helper: returns svg markup with nodes around a center */
+  window.ring=function(o){
+    var W=o.w||700,H=o.h||380,cx=W/2,cy=H/2,rx=o.rx||250,ry=o.ry||140,n=o.nodes.length,s='<svg class="fig" viewBox="0 0 '+W+' '+H+'" role="group" aria-label="'+esc(o.label)+'">';
+    s+='<defs><radialGradient id="g'+o.id+'" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#fff6e0"/><stop offset="1" stop-color="#fde3ae"/></radialGradient></defs>';
+    s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(rx+30)+'" ry="'+(ry+26)+'" fill="#eaf4f6" stroke="#bfd6dc" stroke-dasharray="6 6"/>';
+    var pts=o.nodes.map(function(_,i){var a=-Math.PI/2+i*2*Math.PI/n;return[cx+rx*Math.cos(a),cy+ry*Math.sin(a)]});
+    pts.forEach(function(p){s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#8fb9c1" stroke-width="3"/>'});
+    s+='<g transform="translate('+cx+' '+cy+')">'+o.center+'</g>';
+    o.nodes.forEach(function(nd,i){var p=pts[i],r=o.r||44;
+      s+='<g class="node" tabindex="0" role="button" aria-label="'+esc(nd.name)+'" data-i="'+i+'" transform="translate('+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><circle r="'+r+'"/>'+nd.icon+'<text text-anchor="middle" y="'+(r+18)+'" style="fill:#1f3a5f">'+nd.name+'</text></g>';});
+    return s+'</svg>';
+  };
+  window.bindNodes=function(host,cb){
+    function pick(g){$$('.node',host).forEach(function(x){x.classList.remove('sel')});g.classList.add('sel');cb(+g.dataset.i);send()}
+    $$('.node',host).forEach(function(g){g.addEventListener('click',function(){pick(g)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g)}})});
+  };
+})();
+</script>
+<script>
+var terms=[
+{name:'Culture',icon:'<path d="M-20 8c0-14 10-24 20-24s20 10 20 24" fill="none" stroke="#17707d" stroke-width="5" stroke-linecap="round"/><circle cx="0" cy="-2" r="5" fill="#f0b04a"/>',
+ def:'The customary beliefs, social forms, and material traits of a racial, religious, or social group; the shared attitudes, values, goals, and practices of an institution or organization.',
+ pts:['Every student brings a cultural background into the classroom.','Culture shapes how students communicate, learn, and relate to school.','Understanding culture starts with understanding your own.']},
+{name:'Diversity',icon:'<circle cx="-12" cy="0" r="12" fill="#17707d" opacity=".8"/><circle cx="12" cy="0" r="12" fill="#f0b04a" opacity=".9"/><circle cx="0" cy="-9" r="12" fill="#1f3a5f" opacity=".7"/>',
+ def:'The condition of having or being composed of differing elements. A classroom is usually diverse because each student brings a different culture to it.',
+ pts:['Includes race, religion, gender, culture, and socioeconomic status.','Also includes learning differences, literacy skills, and language.','Diversity is a resource for the whole learning community.']},
+{name:'Equity',icon:'<rect x="-22" y="6" width="14" height="8" fill="#17707d"/><rect x="-6" y="-2" width="14" height="16" fill="#17707d"/><rect x="10" y="-10" width="14" height="24" fill="#17707d"/>',
+ def:'Justice according to natural law or right; specifically, freedom from bias or favoritism. Educators are responsible for making sure students are safe from bias and have what they need to succeed.',
+ pts:['Equity is different from treating every student identically.','Equity asks what each student needs to access learning.','Equity is a central goal of the multicultural education movement.']},
+{name:'Personal constructs',icon:'<circle cx="0" cy="0" r="18" fill="none" stroke="#17707d" stroke-width="4"/><circle cx="0" cy="0" r="8" fill="#f0b04a"/><path d="M-26 0h8M18 0h8" stroke="#17707d" stroke-width="4"/>',
+ def:'We make meaning through our life experiences, which affect how we view the world, interpret events, and react to stimuli.',
+ pts:['Your experiences shape how you see your students.','Students\u2019 experiences shape how they see school.','Awareness of these lenses helps teachers respond with intention.']},
+{name:'Implicit bias',icon:'<path d="M-20 6h40M-14 6v-14a14 14 0 0 1 28 0v14" fill="none" stroke="#17707d" stroke-width="4"/><circle cx="0" cy="-8" r="5" fill="#f0b04a"/>',
+ def:'Every person has some type of bias. This week you take two implicit association tests to raise your awareness of your own.',
+ pts:['Bias is not a deterrent to teaching when you are aware of it.','Unexamined bias can quietly shape expectations and decisions.','Awareness is the first step toward a multicultural classroom.']}
+];
+var hub=$('#hub');
+hub.innerHTML=ring({id:'1',label:'Key terms around the goal of educational equality',w:700,h:400,rx:250,ry:140,r:42,nodes:terms,
+ center:'<circle r="70" fill="url(#g1)" stroke="#f0b04a" stroke-width="4"/><text text-anchor="middle" y="-6" style="font:700 15px system-ui;fill:#1f3a5f">Educational</text><text text-anchor="middle" y="14" style="font:700 15px system-ui;fill:#1f3a5f">equality</text>'});
+bindNodes(hub,function(i){var t=terms[i];$('#hubd').innerHTML='<span class="tag">Key term</span><h3>'+t.name+'</h3><p>'+t.def+'</p><ul>'+t.pts.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ul>'});
+
+/* wall scene */
+var H=[88,112,138],WALL=138,FIG=['#17707d','#f0b04a','#1f3a5f'];
+function wall(mode){
+  var box=[0,0,0];if(mode==1)box=[24,24,24];if(mode==2)box=[50,26,0];
+  var s='<svg class="fig" viewBox="0 0 620 300" role="img" aria-label="Three students of different heights next to a wall"><rect width="620" height="300" fill="#e9f4f8" rx="10"/><circle cx="560" cy="48" r="26" fill="#fbd77f"/><rect y="262" width="620" height="38" fill="#9ccc9c"/>';
+  s+='<rect x="330" y="'+(262-WALL-20)+'" width="270" height="'+(WALL+20)+'" fill="#b4674b"/><g stroke="#8c4a33" stroke-width="2"><path d="M330 '+(262-WALL-20+30)+'h270M330 '+(262-WALL-20+60)+'h270M330 '+(262-WALL-20+90)+'h270"/></g>';
+  s+='<text x="465" y="'+(262-WALL-30)+'" text-anchor="middle" style="font:700 14px system-ui;fill:#1f3a5f">The game, learning, opportunity</text>';
+  var res=[];
+  for(var i=0;i<3;i++){var x=70+i*85,b=box[i],eye=H[i]+b,sees=eye>=WALL,top=262-b;
+    if(b)s+='<rect x="'+(x-26)+'" y="'+top+'" width="52" height="'+b+'" fill="#d8a45a" stroke="#8a5a00" stroke-width="2"/>';
+    var bh=H[i]-26;
+    s+='<g><rect x="'+(x-14)+'" y="'+(top-bh)+'" width="28" height="'+bh+'" rx="8" fill="'+FIG[i]+'"/><circle cx="'+x+'" cy="'+(top-bh-14)+'" r="15" fill="#f3c9a0" stroke="'+FIG[i]+'" stroke-width="3"/>';
+    s+= sees?'<path d="M'+(x-7)+' '+(top-bh-15)+'q7 6 14 0" stroke="#1d2733" stroke-width="2.5" fill="none"/>':'<path d="M'+(x-7)+' '+(top-bh-11)+'q7 -6 14 0" stroke="#1d2733" stroke-width="2.5" fill="none"/>';
+    s+='</g>';
+    s+='<text x="'+x+'" y="288" text-anchor="middle" style="font:700 13px system-ui;fill:#1d2733">'+(sees?'\u2713 can see':'\u2717 cannot see')+'</text>';
+    res.push(sees);}
+  s+='<line x1="30" x2="330" y1="'+(262-WALL)+'" y2="'+(262-WALL)+'" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 5"/><text x="34" y="'+(262-WALL-6)+'" style="font:600 12px system-ui;fill:#c0392b">line of sight</text></svg>';
+  var n=res.filter(Boolean).length,msg=[
+   '<h3>No support</h3><p>Only the tallest student can see. The barrier is the wall, not the students.</p>',
+   '<h3>Equality: same support for all</h3><p>Every student got an identical box, yet <strong>'+n+' of 3</strong> can see. Treating everyone identically does not guarantee access.</p>',
+   '<h3>Equity: support by need</h3><p>Each student got what they needed, and <strong>all 3</strong> can see. Equity asks what each student needs to access learning.</p><p class="small">Classroom link: this might be a visual for one student, a word bank for another, and extended time for a third.</p>'][mode];
+  $('#wall').innerHTML=s;$('#walld').innerHTML=msg;
+  [0,1,2].forEach(function(k){$('#b'+k).setAttribute('aria-pressed',k===mode)});
+  __send();
+}
+[0,1,2].forEach(function(k){$('#b'+k).addEventListener('click',function(){wall(k)})});
+wall(0);
+
+mc($('#quiz'),[
+{q:'A teacher gives every student the same worksheet, but several English learners cannot access the directions. Which idea best explains the problem?',o:['Diversity','Equality is not the same as equity','Personal construct theory'],a:1,w:'Identical treatment does not guarantee access. Equity asks what each student needs.'},
+{q:'Which statement best matches the major goal of multicultural education?',o:['To reform schools so students from diverse racial, ethnic, and social-class groups experience educational equality','To teach every student the same cultural traditions','To remove cultural topics from the curriculum'],a:0,w:'Banks (2016) frames the goal as reforming schools so all students experience educational equality.'},
+{q:'Personal construct theory suggests that a teacher\u2019s view of a student is shaped by:',o:['Only test scores','The teacher\u2019s own life experiences and meaning-making','The student\u2019s grade level'],a:1,w:'We make meaning through life experiences, and these shape how we interpret events and people.'},
+{q:'You take an implicit association test and notice a bias. What does the week\u2019s guidance suggest?',o:['Bias disqualifies you from teaching','Ignore the result','Awareness helps you plan lessons that meet students\u2019 needs'],a:2,w:'Bias is not a deterrent to teaching when you are aware of it. Awareness is the first step.'}
+],'Review the key terms diagram for anything you missed.');
+</script>
+</body>
+</html>

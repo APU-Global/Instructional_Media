@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 505 Week 5 Interactive</title>
+<style>
+:root{--navy:#1f3a5f;--teal:#17707d;--teal-d:#0f5560;--gold:#f0b04a;--gold-d:#8a5a00;--ink:#1d2733;--mute:#566474;--bg:#f4f7fb;--card:#fff;--line:#d5dde8;--good:#176b3a;--goodbg:#e6f4ea;--bad:#9a3412;--badbg:#fdeee5;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent}
+html.embedded,html.embedded body{overflow:hidden}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.5;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:12px;background:var(--bg)}
+.hero{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;min-height:128px;background:var(--navy)}
+.hero svg.art{position:absolute;inset:0;width:100%;height:100%}
+.hero .txt{position:relative;padding:20px 24px;max-width:640px}
+.hero .kick{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;margin:0 0 4px}
+.hero h1{margin:0 0 6px;font-size:1.55rem;line-height:1.2}
+.hero p{margin:0;font-size:.98rem;opacity:.95}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 0;padding:0}
+.tabs button{font:inherit;font-weight:600;background:#e3eaf3;color:var(--navy);border:2px solid transparent;border-radius:999px;padding:8px 16px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--navy);color:#fff}
+.tabs button:hover{border-color:var(--teal)}
+:focus-visible{outline:3px solid #0b57d0;outline-offset:2px}
+.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:10px;min-height:var(--panelh,0)}
+.panel.on{display:block}
+.panel h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--mute)}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;align-items:start}
+@media (min-width:721px){.grid2.eq{grid-template-columns:1fr 1fr}.grid2.sortg{grid-template-columns:1fr 1.2fr}}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}.hero .txt{padding:16px}.hero h1{font-size:1.3rem}}
+.detail{background:#f0f6f8;border:1px solid #bfd6dc;border-left:6px solid var(--teal);border-radius:10px;padding:12px 14px;min-height:150px}
+.detail h3{margin:0 0 4px;color:var(--teal-d);font-size:1.05rem}
+.detail ul{margin:6px 0 0;padding-left:20px}
+.detail .tag{display:inline-block;font-size:.75rem;font-weight:700;background:var(--gold);color:#3b2a00;border-radius:6px;padding:1px 8px;margin-bottom:6px}
+svg.fig{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node circle,.node rect{fill:#fff;stroke:var(--teal);stroke-width:3;transition:fill .15s}
+.node text{font:600 13px system-ui,sans-serif;fill:var(--navy);pointer-events:none}
+.node:hover circle,.node:hover rect{fill:#e3f3f5}
+.node.sel circle,.node.sel rect{fill:var(--gold);stroke:var(--gold-d)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--teal);background:#fff;color:var(--teal-d);border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn:hover{background:#e3f3f5}
+.btn.pri{background:var(--teal);color:#fff}
+.btn.pri:hover{background:var(--teal-d)}
+.btn[aria-pressed=true],.btn.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.96rem}
+.fb.good{background:var(--goodbg);color:var(--good);border:1px solid #9bd0ae}
+.fb.bad{background:var(--badbg);color:var(--bad);border:1px solid #efb48f}
+.fb strong{font-weight:800}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.qcard{margin-bottom:12px}
+.qcard p{margin:0 0 8px;font-weight:600}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts .btn{text-align:left}
+.opts .btn.right{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.opts .btn.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.score{font-weight:700;color:var(--navy);margin:8px 0}
+.small{font-size:.88rem;color:var(--mute)}
+.foot{margin:10px 4px 2px;font-size:.8rem;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{border-color:var(--teal);background:#dff1f3;color:var(--teal-d);font-weight:700}
+.chip[aria-pressed=true]::before{content:"\2713  "}
+.bucket{border:2px dashed var(--teal);border-radius:12px;padding:10px;min-height:120px;background:#f7fbfc}
+.bucket h3{margin:0 0 6px;font-size:1rem;color:var(--teal-d)}
+.bucket .tok{margin:4px 0}
+.tok{display:block;width:100%;text-align:left;font:inherit;font-size:.92rem;border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;cursor:pointer}
+.tok.pick{border-color:var(--gold-d);background:#fff6e0}
+.tok.ok{border-color:var(--good);background:var(--goodbg)}
+.tok.no{border-color:var(--bad);background:var(--badbg)}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{background:#e8eef6;color:var(--navy)}
+.tblwrap{overflow-x:auto}
+select{font:inherit;padding:7px;border:2px solid var(--line);border-radius:8px;background:#fff;max-width:100%}
+label.lb{display:block;font-weight:600;margin:10px 0 4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:root{--panelh:520px}</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<svg class="art" viewBox="0 0 1000 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs><linearGradient id="h5" x1="0" x2="1"><stop offset="0" stop-color="#1f3a5f"/><stop offset="1" stop-color="#17707d"/></linearGradient></defs>
+<rect width="1000" height="140" fill="url(#h5)"/>
+<g fill="#f0b04a" opacity=".95"><path d="M700 24l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z"/><path d="M770 60l4 9 10 1-8 7 2 10-9-5-9 5 2-10-8-7 10-1z"/><path d="M845 28l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z"/><path d="M910 66l4 9 10 1-8 7 2 10-9-5-9 5 2-10-8-7 10-1z"/><path d="M730 100l4 9 10 1-8 7 2 10-9-5-9 5 2-10-8-7 10-1z"/><path d="M850 98l4 9 10 1-8 7 2 10-9-5-9 5 2-10-8-7 10-1z"/><path d="M955 20l4 9 10 1-8 7 2 10-9-5-9 5 2-10-8-7 10-1z"/></g>
+<rect x="640" y="118" width="360" height="22" fill="#fff" opacity=".15"/></svg>
+<div class="txt"><p class="kick">EDUC 505 · Week 5</p><h1>Instructional Strategies</h1><p>Explore the seven principles, practice spotting them in real classroom moments, and sort differentiation strategies.</p></div>
+</header>
+<div class="tabs" role="tablist" aria-label="Activities"><button role="tab" type="button">Seven principles</button><button role="tab" type="button">Which principle?</button><button role="tab" type="button">Differentiate it</button></div>
+
+<section class="panel" id="p1" role="tabpanel">
+<h2>The seven principles of culturally responsive teaching</h2>
+<p class="lead">Select a principle to see what it looks like in a classroom.</p>
+<div class="grid2"><div id="seven"></div><div class="detail" id="sevend" aria-live="polite"><h3>Start here</h3><p>Select one of the seven stars.</p></div></div>
+</section>
+<section class="panel" id="p2" role="tabpanel">
+<h2>Which principle is at work?</h2>
+<p class="lead">Read each classroom moment and choose the principle it best shows.</p>
+<div id="which"></div>
+</section>
+<section class="panel" id="p3" role="tabpanel">
+<h2>Differentiate it: content, process, or product?</h2>
+<p class="lead">Differentiation means adjusting what students access (content), how they make sense of it (process), and how they show learning (product). Select a strategy card, then select a bucket.</p>
+<div class="grid2 sortg">
+ <div><h3 style="margin:0 0 6px;color:#1f3a5f;font-size:1rem">Strategies to sort</h3><div id="pool"></div></div>
+ <div class="row" style="align-items:stretch;flex-wrap:nowrap" id="buckets"></div>
+</div>
+<div id="sortfb" class="score" aria-live="polite"></div>
+<button class="btn" type="button" id="sortreset">Reset</button>
+</section>
+
+<p class="foot">Source: EDUC 505 Deep Dive. Banks, J. A. (2016). <em>Cultural diversity and education</em> (6th ed.). Routledge. Practice scenarios are fictional examples written for this activity.</p>
+</div>
+<script>
+(function(){
+  var emb=false;try{emb=window.self!==window.top}catch(e){emb=true}
+  if(emb)document.documentElement.classList.add('embedded');
+  window.$=function(s,r){return (r||document).querySelector(s)};
+  window.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  window.esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  function send(){var w=document.querySelector('.wrap');if(!w)return;var h=Math.ceil(w.getBoundingClientRect().height);try{parent.postMessage({type:'iframe-height',height:h},'*')}catch(e){}}
+  window.__send=send;
+  var tabs=$$('.tabs [role=tab]'),panels=$$('.panel');
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});panels.forEach(function(p,j){p.classList.toggle('on',j===i)});send()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(n!==null){e.preventDefault();show(n);tabs[n].focus()}})});
+  show(0);
+  window.addEventListener('resize',send);window.addEventListener('load',send);
+  if(window.ResizeObserver)new ResizeObserver(send).observe(document.querySelector('.wrap'));
+  /* multiple-choice helper: one question at a time keeps the page height stable */
+  window.mc=function(host,items,doneMsg){
+    var score=0,cur=0;host.innerHTML='';
+    var box=document.createElement('div');host.appendChild(box);
+    function render(){
+      if(cur>=items.length){
+        box.innerHTML='<div class="card"><p class="score" style="font-size:1.1rem">Score: '+score+' of '+items.length+'</p><p>'+doneMsg+'</p><button class="btn" type="button" id="mcr">Try again</button></div>';
+        $('#mcr',box).addEventListener('click',function(){score=0;cur=0;render()});send();return;
+      }
+      var it=items[cur];
+      box.innerHTML='<div class="card qcard"><p class="small" style="margin:0 0 4px">Question '+(cur+1)+' of '+items.length+'</p><p>'+it.q+'</p><div class="opts"></div><div class="fbh" aria-live="polite"></div><div class="row" style="margin-top:10px"><button class="btn pri" type="button" id="mcn" hidden>'+(cur===items.length-1?'See score':'Next question')+'</button></div></div>';
+      var o=$('.opts',box);
+      it.o.forEach(function(txt,oi){
+        var b=document.createElement('button');b.className='btn';b.type='button';b.textContent=txt;
+        b.addEventListener('click',function(){
+          var ok=oi===it.a;if(ok)score++;
+          $$('.btn',o).forEach(function(x,xi){x.disabled=true;if(xi===it.a)x.classList.add('right')});
+          if(!ok)b.classList.add('wrong');
+          $('.fbh',box).innerHTML='<div class="fb '+(ok?'good':'bad')+'"><strong>'+(ok?'Yes. ':'Not quite. ')+'</strong>'+it.w+'</div>';
+          var n=$('#mcn',box);n.hidden=false;n.focus();send();
+        });
+        o.appendChild(b);
+      });
+      $('#mcn',box).addEventListener('click',function(){cur++;render()});
+      send();
+    }
+    render();
+  };
+  /* ring diagram helper: returns svg markup with nodes around a center */
+  window.ring=function(o){
+    var W=o.w||700,H=o.h||380,cx=W/2,cy=H/2,rx=o.rx||250,ry=o.ry||140,n=o.nodes.length,s='<svg class="fig" viewBox="0 0 '+W+' '+H+'" role="group" aria-label="'+esc(o.label)+'">';
+    s+='<defs><radialGradient id="g'+o.id+'" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#fff6e0"/><stop offset="1" stop-color="#fde3ae"/></radialGradient></defs>';
+    s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(rx+30)+'" ry="'+(ry+26)+'" fill="#eaf4f6" stroke="#bfd6dc" stroke-dasharray="6 6"/>';
+    var pts=o.nodes.map(function(_,i){var a=-Math.PI/2+i*2*Math.PI/n;return[cx+rx*Math.cos(a),cy+ry*Math.sin(a)]});
+    pts.forEach(function(p){s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#8fb9c1" stroke-width="3"/>'});
+    s+='<g transform="translate('+cx+' '+cy+')">'+o.center+'</g>';
+    o.nodes.forEach(function(nd,i){var p=pts[i],r=o.r||44;
+      s+='<g class="node" tabindex="0" role="button" aria-label="'+esc(nd.name)+'" data-i="'+i+'" transform="translate('+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><circle r="'+r+'"/>'+nd.icon+'<text text-anchor="middle" y="'+(r+18)+'" style="fill:#1f3a5f">'+nd.name+'</text></g>';});
+    return s+'</svg>';
+  };
+  window.bindNodes=function(host,cb){
+    function pick(g){$$('.node',host).forEach(function(x){x.classList.remove('sel')});g.classList.add('sel');cb(+g.dataset.i);send()}
+    $$('.node',host).forEach(function(g){g.addEventListener('click',function(){pick(g)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g)}})});
+  };
+})();
+</script>
+<script>
+var PR=[
+['Students are affirmed in their cultural connections','Students see their backgrounds and languages treated as strengths, not obstacles.','Invite students to share a family tradition as part of a unit introduction.'],
+['Teachers are personally inviting','Teachers show warmth and interest in who students are.','Greet each student by name at the door and ask about something they care about.'],
+['The classroom is physically and culturally inviting','The room reflects the cultures and identities of the people in it.','Display student work and books featuring many cultures and languages.'],
+['Students are reinforced for academic development','Students receive recognition and feedback that supports academic growth.','Give specific praise on progress toward a learning goal.'],
+['Instructional changes are made to accommodate differences','Teachers adjust instruction to meet different needs.','Offer a choice of reading formats and ways to demonstrate learning.'],
+['The classroom is managed with firm, consistent, loving control','Clear expectations are held with care and consistency.','Teach routines directly, and respond to mistakes with respect and a path forward.'],
+['Interactions stress collectivity as well as individuality','Students are part of a community while keeping their individuality.','Use team tasks where each member has a role and individual strengths are valued.']
+];
+var ICONS=['<circle cx="-8" cy="0" r="9"/><circle cx="8" cy="0" r="9"/>','<circle cx="0" cy="0" r="14"/><path d="M-7 4q7 7 14 0"/>','<path d="M-15 12V-4l15-11 15 11v16z"/>','<path d="M-14 12l10-12 8 6 10-16"/>','<path d="M-14-6h28M-14 6h28"/><circle cx="-5" cy="-6" r="4" fill="#fff"/><circle cx="6" cy="6" r="4" fill="#fff"/>','<path d="M0-15l14 5v10c0 9-6 14-14 17-8-3-14-8-14-17v-10z"/>','<circle cx="-9" cy="-4" r="6"/><circle cx="9" cy="-4" r="6"/><circle cx="0" cy="8" r="6"/>'];
+var N=PR.map(function(p,i){return{name:(i+1)+'',icon:'<g stroke="#17707d" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="scale(.85)">'+ICONS[i]+'</g>'}});
+var sv=$('#seven');
+sv.innerHTML=ring({id:'5',label:'Seven principles arranged around culturally responsive teaching',w:700,h:430,rx:250,ry:150,r:34,nodes:N,
+ center:'<circle r="62" fill="url(#g5)" stroke="#f0b04a" stroke-width="4"/><text text-anchor="middle" y="-8" style="font:700 14px system-ui;fill:#1f3a5f">Culturally</text><text text-anchor="middle" y="8" style="font:700 14px system-ui;fill:#1f3a5f">responsive</text><text text-anchor="middle" y="24" style="font:700 14px system-ui;fill:#1f3a5f">teaching</text>'});
+bindNodes(sv,function(i){var p=PR[i];$('#sevend').innerHTML='<span class="tag">Principle '+(i+1)+'</span><h3>'+p[0]+'</h3><p>'+p[1]+'</p><p class="small"><strong>In practice (example):</strong> '+p[2]+'</p>'});
+
+/* which principle */
+var Q=[
+['At the start of the year, Ms. Lee invites students to bring in an object that represents their family\u2019s culture and shares them in a display.',0,'Students\u2019 cultural connections are affirmed.'],
+['Mr. Ortiz stands at the door every morning, greets each student by name, and asks about the soccer game they mentioned.',1,'Teachers are personally inviting.'],
+['A teacher offers three ways to show learning: a written paragraph, a short talk, or a published poster.',4,'Instructional changes are made to accommodate differences.'],
+['A teacher teaches routines directly, holds firm expectations, and responds to mistakes with respect and a plan to move forward.',5,'The classroom is managed with firm, consistent, loving control.'],
+['In a group project each student has a role, and the final grade also reflects each student\u2019s individual contribution.',6,'Interactions stress collectivity as well as individuality.']
+];
+var wh=$('#which');
+mc(wh,Q.map(function(q){var opts=PR.map(function(p,i){return(i+1)+'. '+p[0]});
+ return{q:q[0],o:opts,a:q[1],w:q[2]}}),'Open the seven stars to review any you missed.');
+
+/* sorter */
+var CARDS=[
+['Offer a short article, an audio version, and a video on the same topic',0],
+['Pre-teach key vocabulary with picture cards',0],
+['Let students choose to work alone, in pairs, or at a station',1],
+['Use think-pair-share with sentence starters',1],
+['Provide a graphic organizer to map ideas',1],
+['Let students show learning by writing, presenting, publishing, or speaking',2],
+['Offer a choice of poster, short talk, or written paragraph',2],
+['Give a rubric with examples at different levels',2]
+];
+var BK=['Content','Process','Product'],BD=['What students access','How students make sense of it','How students show learning'];
+var picked=null,placed={};
+function sort(){
+  var pool=$('#pool'),bk=$('#buckets');pool.innerHTML='';bk.innerHTML='';
+  CARDS.forEach(function(c,i){if(placed[i]!==undefined)return;var b=document.createElement('button');b.type='button';b.className='tok'+(picked===i?' pick':'');b.style.marginBottom='6px';b.textContent=c[0];b.addEventListener('click',function(){picked=picked===i?null:i;sort()});pool.appendChild(b)});
+  BK.forEach(function(n,k){var d=document.createElement('div');d.className='bucket';d.style.flex='1 1 0';d.innerHTML='<h3>'+n+'</h3><p class="small" style="margin:0 0 6px">'+BD[k]+'</p>';
+    d.setAttribute('role','button');d.tabIndex=0;d.setAttribute('aria-label','Place selected strategy in '+n);
+    function drop(){if(picked===null)return;var ok=CARDS[picked][1]===k;if(ok){placed[picked]=k;picked=null}else{var t=$$('.tok',pool).filter(function(x){return x.textContent===CARDS[picked][0]})[0];if(t){t.classList.add('no');$('#sortfb').textContent='Not in '+n+'. Ask: is this about what students access, how they make sense of it, or how they show learning?'}return}sort()}
+    d.addEventListener('click',drop);d.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();drop()}});
+    CARDS.forEach(function(c,i){if(placed[i]===k){var t=document.createElement('div');t.className='tok ok';t.textContent=c[0];d.appendChild(t)}});
+    bk.appendChild(d)});
+  var n=Object.keys(placed).length;
+  if(picked===null&&$('#sortfb').textContent.indexOf('Not in')!==0||n===CARDS.length)$('#sortfb').textContent=n===CARDS.length?'All sorted! Differentiation is planned ahead and adjusted in the moment.':'Sorted '+n+' of '+CARDS.length+'. Select a card, then a bucket.';
+  __send();
+}
+$('#sortreset').addEventListener('click',function(){placed={};picked=null;$('#sortfb').textContent='';sort()});
+sort();
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 505 Week 4 Interactive</title>
+<style>
+:root{--navy:#1f3a5f;--teal:#17707d;--teal-d:#0f5560;--gold:#f0b04a;--gold-d:#8a5a00;--ink:#1d2733;--mute:#566474;--bg:#f4f7fb;--card:#fff;--line:#d5dde8;--good:#176b3a;--goodbg:#e6f4ea;--bad:#9a3412;--badbg:#fdeee5;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent}
+html.embedded,html.embedded body{overflow:hidden}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.5;font-size:16px}
+.wrap{max-width:1000px;margin:0 auto;padding:12px;background:var(--bg)}
+.hero{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;min-height:128px;background:var(--navy)}
+.hero svg.art{position:absolute;inset:0;width:100%;height:100%}
+.hero .txt{position:relative;padding:20px 24px;max-width:640px}
+.hero .kick{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;margin:0 0 4px}
+.hero h1{margin:0 0 6px;font-size:1.55rem;line-height:1.2}
+.hero p{margin:0;font-size:.98rem;opacity:.95}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 0;padding:0}
+.tabs button{font:inherit;font-weight:600;background:#e3eaf3;color:var(--navy);border:2px solid transparent;border-radius:999px;padding:8px 16px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--navy);color:#fff}
+.tabs button:hover{border-color:var(--teal)}
+:focus-visible{outline:3px solid #0b57d0;outline-offset:2px}
+.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:10px;min-height:var(--panelh,0)}
+.panel.on{display:block}
+.panel h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--mute)}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;align-items:start}
+@media (min-width:721px){.grid2.eq{grid-template-columns:1fr 1fr}.grid2.sortg{grid-template-columns:1fr 1.2fr}}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}.hero .txt{padding:16px}.hero h1{font-size:1.3rem}}
+.detail{background:#f0f6f8;border:1px solid #bfd6dc;border-left:6px solid var(--teal);border-radius:10px;padding:12px 14px;min-height:150px}
+.detail h3{margin:0 0 4px;color:var(--teal-d);font-size:1.05rem}
+.detail ul{margin:6px 0 0;padding-left:20px}
+.detail .tag{display:inline-block;font-size:.75rem;font-weight:700;background:var(--gold);color:#3b2a00;border-radius:6px;padding:1px 8px;margin-bottom:6px}
+svg.fig{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node circle,.node rect{fill:#fff;stroke:var(--teal);stroke-width:3;transition:fill .15s}
+.node text{font:600 13px system-ui,sans-serif;fill:var(--navy);pointer-events:none}
+.node:hover circle,.node:hover rect{fill:#e3f3f5}
+.node.sel circle,.node.sel rect{fill:var(--gold);stroke:var(--gold-d)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--teal);background:#fff;color:var(--teal-d);border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn:hover{background:#e3f3f5}
+.btn.pri{background:var(--teal);color:#fff}
+.btn.pri:hover{background:var(--teal-d)}
+.btn[aria-pressed=true],.btn.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.96rem}
+.fb.good{background:var(--goodbg);color:var(--good);border:1px solid #9bd0ae}
+.fb.bad{background:var(--badbg);color:var(--bad);border:1px solid #efb48f}
+.fb strong{font-weight:800}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.qcard{margin-bottom:12px}
+.qcard p{margin:0 0 8px;font-weight:600}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts .btn{text-align:left}
+.opts .btn.right{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.opts .btn.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.score{font-weight:700;color:var(--navy);margin:8px 0}
+.small{font-size:.88rem;color:var(--mute)}
+.foot{margin:10px 4px 2px;font-size:.8rem;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{border-color:var(--teal);background:#dff1f3;color:var(--teal-d);font-weight:700}
+.chip[aria-pressed=true]::before{content:"\2713  "}
+.bucket{border:2px dashed var(--teal);border-radius:12px;padding:10px;min-height:120px;background:#f7fbfc}
+.bucket h3{margin:0 0 6px;font-size:1rem;color:var(--teal-d)}
+.bucket .tok{margin:4px 0}
+.tok{display:block;width:100%;text-align:left;font:inherit;font-size:.92rem;border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;cursor:pointer}
+.tok.pick{border-color:var(--gold-d);background:#fff6e0}
+.tok.ok{border-color:var(--good);background:var(--goodbg)}
+.tok.no{border-color:var(--bad);background:var(--badbg)}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{background:#e8eef6;color:var(--navy)}
+.tblwrap{overflow-x:auto}
+select{font:inherit;padding:7px;border:2px solid var(--line);border-radius:8px;background:#fff;max-width:100%}
+label.lb{display:block;font-weight:600;margin:10px 0 4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:root{--panelh:520px}</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<svg class="art" viewBox="0 0 1000 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs><linearGradient id="h4" x1="0" x2="1"><stop offset="0" stop-color="#1f3a5f"/><stop offset="1" stop-color="#17707d"/></linearGradient></defs>
+<rect width="1000" height="140" fill="url(#h4)"/>
+<g stroke="#fff" stroke-width="3" opacity=".45"><path d="M850 70L780 30M850 70L790 112M850 70L930 34M850 70L940 108M850 70L850 14"/></g>
+<g fill="#fff" opacity=".95"><circle cx="850" cy="70" r="16"/></g><g fill="#f0b04a"><circle cx="780" cy="30" r="9"/><circle cx="790" cy="112" r="9"/><circle cx="930" cy="34" r="9"/><circle cx="940" cy="108" r="9"/><circle cx="850" cy="14" r="9"/></g></svg>
+<div class="txt"><p class="kick">EDUC 505 · Week 4</p><h1>Communicating and Collaborating with Stakeholders</h1><p>Map the people around a student, then practice building a collaboration plan.</p></div>
+</header>
+<div class="tabs" role="tablist" aria-label="Activities"><button role="tab" type="button">Stakeholder map</button><button role="tab" type="button">Collaboration plan</button><button role="tab" type="button">Banks's principles</button></div>
+
+<section class="panel" id="p1" role="tabpanel">
+<h2>Who are your stakeholders?</h2>
+<p class="lead">Every student sits at the center of a network. Select a group to see what they bring and how you might reach them.</p>
+<div class="grid2"><div id="map"></div><div class="detail" id="mapd" aria-live="polite"><h3>Start here</h3><p>Select a group around the student to explore.</p></div></div>
+</section>
+<section class="panel" id="p2" role="tabpanel">
+<h2>Draft a collaboration plan</h2>
+<p class="lead">Choose a fictional student, then pick the partners and the communication approach you would use.</p>
+<div class="row" id="cases" role="group" aria-label="Choose a student"></div>
+<div id="casebody"></div>
+</section>
+<section class="panel" id="p3" role="tabpanel">
+<h2>Banks's principles for this week</h2>
+<p class="lead">Chapter 14 describes principles for teaching and learning in a multicultural society. Flip a card, then test yourself.</p>
+<div id="pcards" class="row" style="align-items:stretch"></div>
+<div id="pq" style="margin-top:12px"></div>
+</section>
+
+<p class="foot">Source: EDUC 505 Deep Dive. Banks, J. A. (2016). <em>Cultural diversity and education</em> (6th ed.). Routledge. Practice scenarios are fictional examples written for this activity.</p>
+</div>
+<script>
+(function(){
+  var emb=false;try{emb=window.self!==window.top}catch(e){emb=true}
+  if(emb)document.documentElement.classList.add('embedded');
+  window.$=function(s,r){return (r||document).querySelector(s)};
+  window.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  window.esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  function send(){var w=document.querySelector('.wrap');if(!w)return;var h=Math.ceil(w.getBoundingClientRect().height);try{parent.postMessage({type:'iframe-height',height:h},'*')}catch(e){}}
+  window.__send=send;
+  var tabs=$$('.tabs [role=tab]'),panels=$$('.panel');
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});panels.forEach(function(p,j){p.classList.toggle('on',j===i)});send()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;if(n!==null){e.preventDefault();show(n);tabs[n].focus()}})});
+  show(0);
+  window.addEventListener('resize',send);window.addEventListener('load',send);
+  if(window.ResizeObserver)new ResizeObserver(send).observe(document.querySelector('.wrap'));
+  /* multiple-choice helper: one question at a time keeps the page height stable */
+  window.mc=function(host,items,doneMsg){
+    var score=0,cur=0;host.innerHTML='';
+    var box=document.createElement('div');host.appendChild(box);
+    function render(){
+      if(cur>=items.length){
+        box.innerHTML='<div class="card"><p class="score" style="font-size:1.1rem">Score: '+score+' of '+items.length+'</p><p>'+doneMsg+'</p><button class="btn" type="button" id="mcr">Try again</button></div>';
+        $('#mcr',box).addEventListener('click',function(){score=0;cur=0;render()});send();return;
+      }
+      var it=items[cur];
+      box.innerHTML='<div class="card qcard"><p class="small" style="margin:0 0 4px">Question '+(cur+1)+' of '+items.length+'</p><p>'+it.q+'</p><div class="opts"></div><div class="fbh" aria-live="polite"></div><div class="row" style="margin-top:10px"><button class="btn pri" type="button" id="mcn" hidden>'+(cur===items.length-1?'See score':'Next question')+'</button></div></div>';
+      var o=$('.opts',box);
+      it.o.forEach(function(txt,oi){
+        var b=document.createElement('button');b.className='btn';b.type='button';b.textContent=txt;
+        b.addEventListener('click',function(){
+          var ok=oi===it.a;if(ok)score++;
+          $$('.btn',o).forEach(function(x,xi){x.disabled=true;if(xi===it.a)x.classList.add('right')});
+          if(!ok)b.classList.add('wrong');
+          $('.fbh',box).innerHTML='<div class="fb '+(ok?'good':'bad')+'"><strong>'+(ok?'Yes. ':'Not quite. ')+'</strong>'+it.w+'</div>';
+          var n=$('#mcn',box);n.hidden=false;n.focus();send();
+        });
+        o.appendChild(b);
+      });
+      $('#mcn',box).addEventListener('click',function(){cur++;render()});
+      send();
+    }
+    render();
+  };
+  /* ring diagram helper: returns svg markup with nodes around a center */
+  window.ring=function(o){
+    var W=o.w||700,H=o.h||380,cx=W/2,cy=H/2,rx=o.rx||250,ry=o.ry||140,n=o.nodes.length,s='<svg class="fig" viewBox="0 0 '+W+' '+H+'" role="group" aria-label="'+esc(o.label)+'">';
+    s+='<defs><radialGradient id="g'+o.id+'" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#fff6e0"/><stop offset="1" stop-color="#fde3ae"/></radialGradient></defs>';
+    s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(rx+30)+'" ry="'+(ry+26)+'" fill="#eaf4f6" stroke="#bfd6dc" stroke-dasharray="6 6"/>';
+    var pts=o.nodes.map(function(_,i){var a=-Math.PI/2+i*2*Math.PI/n;return[cx+rx*Math.cos(a),cy+ry*Math.sin(a)]});
+    pts.forEach(function(p){s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#8fb9c1" stroke-width="3"/>'});
+    s+='<g transform="translate('+cx+' '+cy+')">'+o.center+'</g>';
+    o.nodes.forEach(function(nd,i){var p=pts[i],r=o.r||44;
+      s+='<g class="node" tabindex="0" role="button" aria-label="'+esc(nd.name)+'" data-i="'+i+'" transform="translate('+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><circle r="'+r+'"/>'+nd.icon+'<text text-anchor="middle" y="'+(r+18)+'" style="fill:#1f3a5f">'+nd.name+'</text></g>';});
+    return s+'</svg>';
+  };
+  window.bindNodes=function(host,cb){
+    function pick(g){$$('.node',host).forEach(function(x){x.classList.remove('sel')});g.classList.add('sel');cb(+g.dataset.i);send()}
+    $$('.node',host).forEach(function(g){g.addEventListener('click',function(){pick(g)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g)}})});
+  };
+})();
+</script>
+<script>
+function ic(p){return '<g stroke="#17707d" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">'+p+'</g>'}
+var S=[
+{name:'Families',icon:ic('<circle cx="-8" cy="-8" r="6"/><circle cx="10" cy="-4" r="5"/><path d="M-18 14c0-8 6-12 10-12s10 4 10 12M4 14c0-6 4-9 7-9s7 3 7 9"/>'),
+ brings:'Insight into students\u2019 home life, language, and culture.',
+ how:['Communicate respectfully and consistently.','Use channels families can access, with interpreters when needed.','Think about how language and culture shape communication.']},
+{name:'Colleagues',icon:ic('<circle cx="-8" cy="-6" r="6"/><circle cx="9" cy="-6" r="6"/><path d="M-18 14c0-7 5-10 10-10M19 14c0-7-5-10-10-10"/>'),
+ brings:'Knowledge of what has worked before. Includes other teachers, special education teachers, and instructional coaches.',
+ how:['Ask what strategies have worked with this student.','Share what you are trying so supports stay consistent.']},
+{name:'Specialists',icon:ic('<rect x="-14" y="-14" width="28" height="28" rx="6"/><path d="M0-7v14M-7 0h14"/>'),
+ brings:'Specialized information and services: service providers, counselors, school nurses, and case managers.',
+ how:['Name specific partners in your plan, such as a case manager.','Ask how their work connects to your lesson planning.']},
+{name:'Administrators',icon:ic('<path d="M-16 12V-4l16-12 16 12v16z"/><path d="M-5 12V2h10v10"/>'),
+ brings:'School-level decisions, resources, and support for families and teachers.',
+ how:['Keep them informed of significant needs or concerns.','Ask what school systems or supports exist.']},
+{name:'Language support',icon:ic('<path d="M-18-12h22v16h-10l-6 6v-6h-6z"/><path d="M6-2h12v12h-4v5l-5-5H6"/>'),
+ brings:'Language proficiency data and strategies from English learner coordinators and teachers, including ELPAC results.',
+ how:['Review student language data before planning.','Share results thoughtfully with families and colleagues.']},
+{name:'Out-of-class staff',icon:ic('<circle cx="0" cy="-2" r="14"/><path d="M0-2V-10M0-2l6 4"/>'),
+ brings:'A different view of the student from tutors, coaches, and after-school program staff.',
+ how:['Share goals so practice outside class lines up with your lessons.','Ask what they notice about student strengths.']},
+{name:'Community',icon:ic('<circle cx="0" cy="0" r="16"/><path d="M-16 0h32M0-16c-9 8-9 24 0 32M0-16c9 8 9 24 0 32"/>'),
+ brings:'Local knowledge and partnerships that help you gain trust and connect learning to students\u2019 lives.',
+ how:['Treat the local community as a partner, not an audience.','Look for assets in the neighborhood you can bring into lessons.']}
+];
+var m=$('#map');
+m.innerHTML=ring({id:'4',label:'Stakeholder map around one student',w:700,h:420,rx:245,ry:145,r:38,nodes:S,
+ center:'<circle r="52" fill="url(#g4)" stroke="#f0b04a" stroke-width="4"/><circle cy="-10" r="13" fill="#17707d"/><path d="M-24 22c2-16 12-20 24-20s22 4 24 20z" fill="#17707d"/><text text-anchor="middle" y="46" style="font:700 12px system-ui;fill:#1f3a5f">Student</text>'});
+bindNodes(m,function(i){var s=S[i];$('#mapd').innerHTML='<span class="tag">Stakeholder</span><h3>'+s.name+'</h3><p><strong>Brings:</strong> '+s.brings+'</p><p><strong>Reaching them:</strong></p><ul>'+s.how.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ul>'});
+
+/* plan builder */
+var P=['Family (with interpreter if needed)','Family (no interpreter)','English learner coordinator','Special education teacher','Counselor or case manager','School administrator','After-school program staff','Instructional coach'];
+var C=[
+{name:'Maria',tag:'Language barrier',story:'Grade 5, is a newly arrived English learner. Her family speaks Spanish at home. Her ELPAC summary shows stronger listening than writing, and she rarely speaks in group work.',
+ best:[0,2,7],ok:[4],why:{0:'Family insight about home language and culture is essential, and an interpreter makes the exchange two-way.',2:'The EL coordinator can explain ELPAC data and language supports.',7:'A coach can help you build language scaffolds into lessons.',4:'Reasonable for her adjustment to a new school, but not the first priority here.'},
+ comm:['Interpreter-supported call or meeting, then a short follow-up note in Spanish','English-only email newsletter','Wait for the next parent conference'],ca:0,
+ lesson:'Add sentence frames and a word bank, and let Maria show learning orally before writing.'},
+{name:'Devon',tag:'Learning need',story:'Grade 4, has an IEP for reading. He avoids reading aloud and becomes frustrated during independent work.',
+ best:[1,3,4],ok:[0,7],why:{1:'Family can share what helps at home. No interpreter is needed because the family speaks English.',3:'The special education teacher knows the goals and services in the IEP.',4:'A counselor or case manager can help with frustration and coordinate supports.',0:'Not needed unless the family requests language support.',7:'Helpful for strategies, but the IEP team is the core partner.'},
+ comm:['Regular, brief updates to the family plus a check-in with the IEP team','Contact the family only when there is a problem','Share Devon\u2019s IEP details with the whole class'],ca:0,
+ lesson:'Read the IEP before planning. Offer audio access to text and a graphic organizer for independent work.'},
+{name:'Amir',tag:'Life challenges',story:'Grade 4, has moved schools twice this year. He is often tired, misses assignments, and his family\u2019s work hours make daytime contact hard.',
+ best:[1,4,6],ok:[5],why:{1:'Family dynamics shape what is possible. Ask which times and channels work for them.',4:'A counselor can connect the family to resources and monitor Amir\u2019s well-being.',6:'After-school staff may see Amir in a different setting and can support homework time.',5:'Useful if resources are needed, but start with the people closest to Amir.'},
+ comm:['Ask the family which time and channel works best, such as an evening text or call','Send home a note and expect it to be returned','Require a daytime meeting'],ca:0,
+ lesson:'Plan flexible due dates and build in a short, predictable start-of-day routine.'}
+];
+var cs=$('#cases'),cb=$('#casebody');
+C.forEach(function(c,i){var b=document.createElement('button');b.className='btn';b.type='button';b.textContent=c.name+' ('+c.tag+')';b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){load(i)});cs.appendChild(b)});
+function load(i){
+  $$('#cases .btn').forEach(function(b,j){b.setAttribute('aria-pressed',j===i)});
+  var c=C[i],sel={};
+  cb.innerHTML='<div class="card" style="margin-top:10px;padding:8px 12px"><p style="margin:0"><strong>'+c.name+' (fictional).</strong> '+c.story+'</p></div>'
+   +'<div class="grid2 eq"><div><label class="lb">1. Choose your partners (choose up to 4)</label><div class="chips" id="chips"></div>'
+   +'<label class="lb" for="cm">2. Choose your communication approach</label><select id="cm"><option value="">Select one</option>'+c.comm.map(function(x,k){return'<option value="'+k+'">'+x+'</option>'}).join('')+'</select>'
+   +'<div style="margin-top:12px" class="row"><button class="btn pri" type="button" id="chk">Check my plan</button></div></div><div id="res" aria-live="polite"><div class="detail"><h3>Your feedback</h3><p>Make your choices, then select Check my plan.</p></div></div></div>';
+  P.forEach(function(p,k){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=p;b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){var n=Object.keys(sel).filter(function(q){return sel[q]}).length;if(!sel[k]&&n>=4){$('#res').innerHTML='<div class="fb bad">You can choose up to 4 partners. A focused plan names the people who matter most. Deselect one to swap.</div>';__send();return}sel[k]=!sel[k];b.setAttribute('aria-pressed',!!sel[k])});$('#chips').appendChild(b)});
+  $('#chk').addEventListener('click',function(){
+    var chosen=Object.keys(sel).filter(function(k){return sel[k]}).map(Number),h='';
+    var hit=chosen.filter(function(k){return c.best.indexOf(k)>-1}),miss=c.best.filter(function(k){return chosen.indexOf(k)<0}),other=chosen.filter(function(k){return c.best.indexOf(k)<0});
+    var cm=$('#cm').value,nm=function(k){return P[k].replace(/ \(.*\)/,'')};
+    h+='<div class="fb '+(hit.length===c.best.length&&!other.length?'good':'bad')+'"><strong>Partners: '+hit.length+' of '+c.best.length+' key partners.</strong>'
+      +(hit.length?'<br>Strong: '+hit.map(nm).join(', ')+'.':'')
+      +(miss.length?'<br>Consider adding: '+miss.map(function(k){return '<em>'+nm(k)+'</em> &ndash; '+c.why[k]}).join(' '):'')
+      +(other.length?'<br>Lower priority here: '+other.map(nm).join(', ')+'.':'')+'</div>';
+    h+=cm===''?'<div class="fb bad"><strong>Communication:</strong> Choose an approach to complete your plan.</div>':'<div class="fb '+(+cm===c.ca?'good':'bad')+'"><strong>Communication:</strong> '+(+cm===c.ca?'Strong choice: respectful, consistent, and accessible to the family.':'Trust grows when communication is respectful, consistent, and accessible. Best option: '+c.comm[c.ca]+'.')+'</div>';
+    h+='<div class="fb good"><strong>Effect on lesson planning (example):</strong> '+c.lesson+'</div>';
+    $('#res').innerHTML=h;__send();
+  });
+  __send();
+}
+load(0);
+
+/* principles */
+var PR=[
+{n:'Principle 3',t:'Teach different perspectives',d:'Students learn to see events and ideas from more than one point of view.',e:'Example: after a history reading, have students compare two accounts of the same event.'},
+{n:'Principle 6',t:'Teach about stereotyping and its negative effects',d:'Students learn how stereotypes form and the harm they cause.',e:'Example: discuss how a character is judged unfairly in a class novel.'},
+{n:'Principles 7 and 8',t:'Shared values and social skills across groups',d:'Build the shared values and the social skills students need to work with people from different groups.',e:'Example: structured group tasks where each student has a meaningful role.'}
+];
+var pc=$('#pcards');
+PR.forEach(function(p){var b=document.createElement('button');b.type='button';b.className='card';b.style.cssText='flex:1 1 220px;text-align:left;cursor:pointer;font:inherit';b.setAttribute('aria-expanded','false');
+ b.innerHTML='<span class="tag" style="display:inline-block;background:#f0b04a;border-radius:6px;padding:1px 8px;font-weight:700;font-size:.78rem">'+p.n+'</span><h3 style="margin:6px 0;color:#1f3a5f;font-size:1rem">'+p.t+'</h3><div class="more" hidden><p>'+p.d+'</p><p class="small">'+p.e+'</p></div><span class="small more-hint">Select to flip</span>';
+ b.addEventListener('click',function(){var o=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',!o);$('.more',b).hidden=o;$('.more-hint',b).hidden=!o;__send()});pc.appendChild(b)});
+mc($('#pq'),[
+{q:'A teacher asks students to read two firsthand accounts of the same event and compare them. Which principle is this?',o:['Principle 3: teach different perspectives','Principle 6: stereotyping','Principles 7 and 8: shared values and social skills'],a:0,w:'Comparing accounts helps students see an event from more than one point of view.'},
+{q:'A class discusses how a character is judged unfairly because of a group label. Which principle is this?',o:['Principle 3','Principle 6: teach about stereotyping and its negative effects','Principles 7 and 8'],a:1,w:'The discussion is about how stereotypes work and how they harm people.'},
+{q:'Which is the best first step toward gaining the trust of a family that speaks another language at home?',o:['Send written notes in English only','Communicate respectfully and consistently, with an interpreter when needed','Wait for the family to contact you'],a:1,w:'Trust grows through respectful, consistent communication in ways families can access.'}
+],'Revisit the stakeholder map for more ideas.');
+</script>
+</body>
+</html>
