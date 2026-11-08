@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive: The Respiratory System</title><style>
+:root{--red:#b8323a;--red2:#d34147;--ink:#1f2933;--grey:#edebe8;--line:#d9d4ce;--blue:#1d5a8a;--green:#2f7d4f;--amber:#8a5a00}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--grey);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.4}
+.app{height:100%;min-height:640px;display:flex;flex-direction:column;gap:8px;padding:10px 12px;max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px;flex:none;flex-wrap:wrap}
+.chip{background:var(--red2);color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:13px;white-space:nowrap}
+h1{font-size:19px;margin:0;line-height:1.2;flex:1;min-width:180px}
+h2{font-size:16px;margin:0;line-height:1.25}
+.tabs{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.tab{border:2px solid var(--red);background:#fff;color:var(--red);border-radius:8px;padding:4px 11px;font:600 13px/1.3 inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);color:#fff}
+main{flex:1;min-height:0}
+.panel{display:none;height:100%;gap:10px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.panel.active{display:grid}
+.panel.wide{grid-template-columns:minmax(0,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.gfx{padding:6px}
+.gfx svg{flex:1;min-height:0;width:100%;display:block}
+p{margin:0}
+.lead{color:#3e4c59;font-size:14px}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:2px solid var(--red);background:var(--red);color:#fff;border-radius:8px;padding:6px 12px;font:600 14px/1.2 inherit;font-family:inherit;cursor:pointer}
+.btn.sec{background:#fff;color:var(--red)}
+.btn.sec[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:hover:not(:disabled){filter:brightness(.93)}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.status{border-left:5px solid var(--blue);background:#eef5fb;padding:8px 10px;border-radius:6px;font-size:14px}
+.status.good{border-color:var(--green);background:#edf7f0}
+.status.bad{border-color:var(--red);background:#fbeeee}
+.notes{margin:0;padding-left:18px;font-size:13.5px;color:#3e4c59}
+.notes li{margin:2px 0}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.check input{width:18px;height:18px;accent-color:var(--red)}
+.sl{display:grid;grid-template-columns:1fr auto;gap:0 8px;font-size:14px;align-items:center}
+.sl label{font-weight:600}
+.sl output{font-variant-numeric:tabular-nums;font-weight:700;color:var(--red)}
+.sl input[type=range]{grid-column:1/3;width:100%;accent-color:var(--red);margin:2px 0 4px}
+.take{flex:none;font-size:13px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid var(--line)}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font:600 14px/1.25 inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.opt[aria-pressed=true]{border-color:var(--red);background:#fbeeee}
+.opt.ok{border-color:var(--green);background:#edf7f0}
+.opt.no{border-color:var(--red);background:#fbeeee}
+.meter{display:grid;grid-template-columns:90px 1fr 38px;gap:6px;align-items:center;font-size:13px}
+.meter .bar{height:12px;background:#e6e2dc;border-radius:6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--blue);transition:width .4s}
+svg text{font-family:inherit}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:760px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto}
+ main{flex:none}
+ .panel,.panel.active{height:auto}
+ .panel.active{display:flex;flex-direction:column}
+ .gfx svg{height:auto;max-height:340px;flex:none}
+ .card{overflow:visible}
+}
+</style></head><body>
+<div class="app">
+<header><span class="chip">Week 5</span><h1>The Respiratory System: Mechanics and Disease</h1><div class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" id="tab0" aria-controls="p0" aria-selected="false" tabindex="-1">Breathing Mechanics</button><button class="tab" role="tab" id="tab1" aria-controls="p1" aria-selected="false" tabindex="-1">Normal vs. Disease</button></div></header>
+<main>
+<section class="panel active" id="p0" role="tabpanel" aria-labelledby="tab0">
+ <div class="card gfx">
+  <svg viewBox="0 0 400 380" role="img" id="bsvg" aria-label="Chest cross-section showing the lungs, ribs and diaphragm. The diaphragm flattens and the lungs expand during inhalation.">
+   <defs><marker id="aw" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1d5a8a"/></marker><marker id="ao" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#b25e00"/></marker></defs>
+   <rect id="chest" x="64" y="48" width="272" height="262" rx="60" fill="#f6e6df" stroke="#a88a7a" stroke-width="3"/>
+   <g id="ribs"></g>
+   <rect x="64" y="300" width="272" height="64" rx="20" fill="#e8d5c8" stroke="#a88a7a" stroke-width="3"/>
+   <text x="200" y="352" text-anchor="middle" font-size="12" fill="#6b4f3f">Abdomen</text>
+   <path id="llung" fill="#f3a9a9" stroke="#b8323a" stroke-width="3"/>
+   <path id="rlung" fill="#f3a9a9" stroke="#b8323a" stroke-width="3"/>
+   <path d="M200 100 L158 150 M200 100 L242 150 M158 150 L136 190 M158 150 L170 200 M242 150 L264 190 M242 150 L230 200" stroke="#6aa6c8" stroke-width="5" stroke-linecap="round" fill="none"/>
+   <rect x="192" y="14" width="16" height="90" rx="6" fill="#bfe0f0" stroke="#3e7ba1" stroke-width="2"/>
+   <text x="228" y="30" font-size="12" font-weight="700">Trachea</text>
+   <path id="dia" fill="none" stroke="#7a2c1c" stroke-width="7" stroke-linecap="round"/>
+   <text x="200" y="326" text-anchor="middle" font-size="12" font-weight="700" fill="#7a2c1c">Diaphragm</text>
+   <g id="inA" opacity="0"><path d="M178 22 L178 64" stroke="#1d5a8a" stroke-width="5" marker-end="url(#aw)"/><text x="100" y="46" font-size="12" font-weight="700" fill="#1d5a8a">Air in</text></g>
+   <g id="exA" opacity="0"><path d="M178 66 L178 24" stroke="#b25e00" stroke-width="5" marker-end="url(#ao)"/><text x="100" y="46" font-size="12" font-weight="700" fill="#b25e00">Air out</text></g>
+  </svg>
+ </div>
+ <div class="card">
+  <h2>Breathing mechanics</h2>
+  <div class="btnrow"><button class="btn" id="inh">Inhale</button><button class="btn" id="exh">Exhale</button><button class="btn sec" id="auto" aria-pressed="false">Breathe automatically</button></div>
+  <div class="sl"><label for="tt">Breath position</label><output id="tto"></output><input type="range" id="tt" min="0" max="100" value="0"></div>
+  <div class="status" id="pr" aria-live="off"></div>
+  <ol class="notes" id="chain"><li id="c1"></li><li id="c2"></li><li id="c3"></li><li id="c4"></li></ol>
+ </div>
+</section>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="tab1">
+ <div class="card gfx">
+  <svg viewBox="0 0 560 400" role="img" id="dsvg" aria-label="A bronchiole cross-section and a cluster of alveoli that change with the selected condition.">
+   <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="700">Bronchiole (cross-section)</text>
+   <text x="410" y="30" text-anchor="middle" font-size="14" font-weight="700">Alveoli (air sacs)</text>
+   <g id="air"></g><g id="alv"></g>
+   <text id="cap1" x="150" y="330" text-anchor="middle" font-size="13"></text>
+   <text id="cap2" x="410" y="330" text-anchor="middle" font-size="13"></text>
+   <g id="legend" font-size="11"><circle cx="40" cy="370" r="6" fill="#f2c94c" stroke="#8a6a00"/><text x="52" y="374">mucus</text><circle cx="110" cy="370" r="6" fill="#b9d9ef" stroke="#3e7ba1"/><text x="122" y="374">fluid</text><circle cx="180" cy="370" r="5" fill="#fff" stroke="#555" stroke-width="2"/><text x="192" y="374">white blood cell</text><circle cx="300" cy="370" r="4" fill="#4b7a2a"/><text x="310" y="374">microbe</text></g>
+  </svg>
+ </div>
+ <div class="card">
+  <h2>Normal lung vs. disease</h2>
+  <div class="btnrow" role="group" aria-label="Condition">
+   <button class="btn sec dz" data-d="normal" aria-pressed="true">Normal</button>
+   <button class="btn sec dz" data-d="asthma" aria-pressed="false">Asthma</button>
+   <button class="btn sec dz" data-d="copd" aria-pressed="false">COPD</button>
+   <button class="btn sec dz" data-d="pneu" aria-pressed="false">Pneumonia</button>
+  </div>
+  <div class="status" id="dinfo" aria-live="polite"></div>
+  <p class="lead" id="deff"></p>
+  <div class="meter"><span>Airflow</span><span class="bar"><i id="m1"></i></span><span id="m1t"></span></div>
+  <div class="meter"><span>Gas exchange</span><span class="bar"><i id="m2"></i></span><span id="m2t"></span></div>
+  <p style="font-size:12px;color:#555">Meters are illustrative, not clinical values.</p>
+ </div>
+</section>
+</main>
+<div class="take"><strong>Key takeaway:</strong> Air moves because of pressure differences created by the diaphragm and ribs, and lung disease changes structure, which changes airflow and gas exchange. (Faith connection: Genesis 2:7 and Job 34:14–15.)</div>
+</div>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+ function show(i,focus){tabs.forEach(function(t,j){t.setAttribute('aria-selected',i===j);t.tabIndex=i===j?0:-1;panels[j].classList.toggle('active',i===j);});if(focus)tabs[i].focus();}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight')show((i+1)%tabs.length,true);else if(e.key==='ArrowLeft')show((i+tabs.length-1)%tabs.length,true);});});
+ show(0);
+})();
+</script><script>
+(function(){
+ var $=function(i){return document.getElementById(i)};
+ var t=0,target=0,dir=0,idle=null,raf=null,autoT=null;
+ var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ function render(){
+  var u=t,w=10*u,apex=262+30*u,yb=300;
+  $('chest').setAttribute('x',64-w);$('chest').setAttribute('width',272+2*w);
+  var h='';
+  for(var i=0;i<4;i++){var y0=96+i*44,lift=12*u;
+   h+='<path d="M200 '+y0+' C160 '+(y0-14)+' 100 '+(y0-6)+' '+(72-w)+' '+(y0+44-lift)+'" fill="none" stroke="#c9b7a6" stroke-width="6" stroke-linecap="round"/>';
+   h+='<path d="M200 '+y0+' C240 '+(y0-14)+' 300 '+(y0-6)+' '+(328+w)+' '+(y0+44-lift)+'" fill="none" stroke="#c9b7a6" stroke-width="6" stroke-linecap="round"/>';}
+  $('ribs').innerHTML=h;
+  var a=92-9*u,b=86-9*u,c=118;
+  var L='M192 80 C150 66 '+a+' 108 '+b+' 190 C'+(b-4)+' 245 '+(a+2)+' '+(yb-8)+' '+c+' '+(yb-4)+' Q 150 '+(apex-2)+' 192 '+(apex-6)+' Z';
+  var R='M208 80 C250 66 '+(400-a)+' 108 '+(400-b)+' 190 C'+(400-b+4)+' 245 '+(400-a-2)+' '+(yb-8)+' '+(400-c)+' '+(yb-4)+' Q 250 '+(apex-2)+' 208 '+(apex-6)+' Z';
+  $('llung').setAttribute('d',L);$('rlung').setAttribute('d',R);
+  $('dia').setAttribute('d','M'+(c-30)+' '+yb+' Q 200 '+(apex+4)+' '+(400-c+30)+' '+yb);
+  $('tt').value=Math.round(u*100);$('tto').textContent=Math.round(u*100)+'%';
+  var p=760-3*dir;
+  $('pr').textContent='Pressure in the lungs: '+p+' mmHg (atmosphere: 760 mmHg)'+(dir>0?'  → air flows IN':dir<0?'  → air flows OUT':'');
+  $('pr').className='status'+(dir===0?' good':'');
+  $('inA').setAttribute('opacity',dir>0?1:0);$('exA').setAttribute('opacity',dir<0?1:0);
+  var steps=dir<0?['Diaphragm relaxes and rises; ribs lower','Thoracic volume decreases','Pressure inside increases (Boyle’s law)','Air flows out, down the pressure gradient']:
+    ['Diaphragm contracts and flattens; ribs lift','Thoracic volume increases','Pressure inside decreases (Boyle’s law)','Air flows in, down the pressure gradient'];
+  for(var k=0;k<4;k++){var e=$('c'+(k+1));e.textContent=steps[k];e.style.fontWeight=dir===0?'400':'600';e.style.color=dir===0?'#3e4c59':'#1f2933';}
+ }
+ function setT(v){dir=v>t?1:v<t?-1:dir;t=v;render();clearTimeout(idle);idle=setTimeout(function(){dir=0;render();},400);}
+ function go(to){target=to;cancelAnimationFrame(raf);
+  if(rm){setT(to);return;}
+  (function step(){var d=target-t;if(Math.abs(d)<0.012){setT(target);return;}setT(t+(d>0?0.012:-0.012));raf=requestAnimationFrame(step);})();}
+ $('inh').onclick=function(){go(1)};$('exh').onclick=function(){go(0)};
+ $('tt').oninput=function(){cancelAnimationFrame(raf);setT(+this.value/100);};
+ $('auto').onclick=function(){var on=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',on);clearInterval(autoT);
+  if(on){var s=true;go(1);autoT=setInterval(function(){s=!s;go(s?1:0);},2600);}};
+ render();
+
+ var D={
+  normal:{n:'Normal',s:'Open airway with a thin wall. Thin-walled alveoli give a large surface area for diffusion.',e:'Air flows freely and oxygen and carbon dioxide diffuse across the respiratory membrane.',a:100,g:100,c1:'Open airway',c2:'Many small alveoli'},
+  asthma:{n:'Asthma',s:'Smooth muscle contracts, the wall swells with inflammation, and extra mucus narrows the airway.',e:'Higher airway resistance causes wheezing and shortness of breath. Often reversible with bronchodilators.',a:35,g:85,c1:'Narrowed, inflamed airway',c2:'Alveoli mostly normal'},
+  copd:{n:'COPD',s:'Chronic bronchitis: inflamed airways with excess mucus. Emphysema: alveolar walls break down into fewer, larger sacs.',e:'Less surface area and trapped air reduce gas exchange. The damage is progressive.',a:45,g:35,c1:'Mucus-filled airway',c2:'Fewer, larger sacs (emphysema)'},
+  pneu:{n:'Pneumonia',s:'Infection fills alveoli with fluid and inflammatory cells.',e:'Fluid-filled alveoli cannot exchange gases well, causing cough, fever, and low oxygen.',a:80,g:40,c1:'Airway mostly open',c2:'Alveoli filled with fluid'}};
+ var cur='normal';
+ function circ(x,y,r,f,s,sw){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'" stroke="'+(s||'none')+'" stroke-width="'+(sw||0)+'"/>';}
+ function draw(){
+  var d=D[cur],ax=150,ay=170,lum={normal:62,asthma:22,copd:46,pneu:62}[cur];
+  var h=circ(ax,ay,98,'#f3b3b0','#b8323a',3)+circ(ax,ay,Math.max(lum+8,lum+(cur==='asthma'?30:8)),'#e07f7a','#b8323a',2);
+  var lr=lum;
+  h+=circ(ax,ay,lr,'#fff','#b8323a',2);
+  if(cur==='asthma'){h+=circ(ax,ay,10,'#f2c94c','#8a6a00',2);}
+  if(cur==='copd'){h+=circ(ax,ay,lr,'none','#f2c94c',14);h+=circ(ax,ay,lr-14,'#fff');}
+  if(cur==='normal'||cur==='pneu')h+='<g stroke="#6aa6c8" stroke-width="3" fill="none"><path d="M120 150 q15 -10 30 0 t30 0"/><path d="M120 175 q15 -10 30 0 t30 0"/><path d="M125 198 q15 -10 30 0 t30 0"/></g>';
+  $('air').innerHTML=h;
+  var cx=410,cy=170,g='';
+  if(cur==='copd'){
+   g+=circ(cx-45,cy-20,62,'#fde3e3','#b8323a',3)+circ(cx+55,cy-5,50,'#fde3e3','#b8323a',3)+circ(cx+5,cy+75,44,'#fde3e3','#b8323a',3);
+  }else{
+   var pos=[[0,0],[-64,-36],[64,-36],[-64,38],[64,38],[0,-74],[0,74]];
+   var fill=cur==='pneu'?'#b9d9ef':'#fde3e3';
+   pos.forEach(function(p,i){g+=circ(cx+p[0],cy+p[1],34,fill,'#b8323a',3);g+=circ(cx+p[0],cy+p[1],34,'none','#d34147',1);
+     if(cur==='pneu'){g+=circ(cx+p[0]-8,cy+p[1]+4,6,'#fff','#555',2);g+=circ(cx+p[0]+10,cy+p[1]-8,3,'#4b7a2a');g+=circ(cx+p[0]+8,cy+p[1]+14,3,'#4b7a2a');}});
+  }
+  $('alv').innerHTML=g;
+  $('cap1').textContent=d.c1;$('cap2').textContent=d.c2;
+ }
+ function dz(k){cur=k;[].forEach.call(document.querySelectorAll('.dz'),function(b){b.setAttribute('aria-pressed',b.getAttribute('data-d')===k)});
+  var d=D[k];$('dinfo').textContent=d.n+': '+d.s;$('deff').textContent=d.e;
+  $('m1').style.width=d.a+'%';$('m2').style.width=d.g+'%';$('m1t').textContent=d.a+'%';$('m2t').textContent=d.g+'%';draw();}
+ [].forEach.call(document.querySelectorAll('.dz'),function(b){b.onclick=function(){dz(b.getAttribute('data-d'))};});
+ dz('normal');
+})();
+</script>
+</body></html>

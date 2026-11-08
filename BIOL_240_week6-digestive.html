@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 Interactive: The Digestive System</title><style>
+:root{--red:#b8323a;--red2:#d34147;--ink:#1f2933;--grey:#edebe8;--line:#d9d4ce;--blue:#1d5a8a;--green:#2f7d4f;--amber:#8a5a00}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--grey);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.4}
+.app{height:100%;min-height:640px;display:flex;flex-direction:column;gap:8px;padding:10px 12px;max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px;flex:none;flex-wrap:wrap}
+.chip{background:var(--red2);color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:13px;white-space:nowrap}
+h1{font-size:19px;margin:0;line-height:1.2;flex:1;min-width:180px}
+h2{font-size:16px;margin:0;line-height:1.25}
+.tabs{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.tab{border:2px solid var(--red);background:#fff;color:var(--red);border-radius:8px;padding:4px 11px;font:600 13px/1.3 inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);color:#fff}
+main{flex:1;min-height:0}
+.panel{display:none;height:100%;gap:10px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.panel.active{display:grid}
+.panel.wide{grid-template-columns:minmax(0,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.gfx{padding:6px}
+.gfx svg{flex:1;min-height:0;width:100%;display:block}
+p{margin:0}
+.lead{color:#3e4c59;font-size:14px}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:2px solid var(--red);background:var(--red);color:#fff;border-radius:8px;padding:6px 12px;font:600 14px/1.2 inherit;font-family:inherit;cursor:pointer}
+.btn.sec{background:#fff;color:var(--red)}
+.btn.sec[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:hover:not(:disabled){filter:brightness(.93)}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.status{border-left:5px solid var(--blue);background:#eef5fb;padding:8px 10px;border-radius:6px;font-size:14px}
+.status.good{border-color:var(--green);background:#edf7f0}
+.status.bad{border-color:var(--red);background:#fbeeee}
+.notes{margin:0;padding-left:18px;font-size:13.5px;color:#3e4c59}
+.notes li{margin:2px 0}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.check input{width:18px;height:18px;accent-color:var(--red)}
+.sl{display:grid;grid-template-columns:1fr auto;gap:0 8px;font-size:14px;align-items:center}
+.sl label{font-weight:600}
+.sl output{font-variant-numeric:tabular-nums;font-weight:700;color:var(--red)}
+.sl input[type=range]{grid-column:1/3;width:100%;accent-color:var(--red);margin:2px 0 4px}
+.take{flex:none;font-size:13px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid var(--line)}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font:600 14px/1.25 inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.opt[aria-pressed=true]{border-color:var(--red);background:#fbeeee}
+.opt.ok{border-color:var(--green);background:#edf7f0}
+.opt.no{border-color:var(--red);background:#fbeeee}
+.meter{display:grid;grid-template-columns:90px 1fr 38px;gap:6px;align-items:center;font-size:13px}
+.meter .bar{height:12px;background:#e6e2dc;border-radius:6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--blue);transition:width .4s}
+svg text{font-family:inherit}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:760px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto}
+ main{flex:none}
+ .panel,.panel.active{height:auto}
+ .panel.active{display:flex;flex-direction:column}
+ .gfx svg{height:auto;max-height:340px;flex:none}
+ .card{overflow:visible}
+}
+</style></head><body>
+<div class="app">
+<header><span class="chip">Week 6</span><h1>The Digestive System: Tract Tour and Secretions</h1><div class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" id="tab0" aria-controls="p0" aria-selected="false" tabindex="-1">Digestive Tract Tour</button><button class="tab" role="tab" id="tab1" aria-controls="p1" aria-selected="false" tabindex="-1">Secretion Match</button></div></header>
+<main>
+<section class="panel active" id="p0" role="tabpanel" aria-labelledby="tab0">
+ <div class="card gfx">
+  <svg viewBox="0 0 360 420" role="group" id="tsvg" aria-label="Diagram of the digestive system. Each organ is a selectable button.">
+   <path d="M70 100 Q180 80 290 100 L305 395 Q180 415 55 395 Z" fill="#f6ece6" stroke="#c9b7a6" stroke-width="2"/>
+   <circle cx="180" cy="38" r="30" fill="#f6ece6" stroke="#c9b7a6" stroke-width="2"/>
+   <path d="M180 62 L180 150" stroke="#e9a3a3" stroke-width="12" stroke-linecap="round" id="eso0"/>
+   <g class="org" id="o-mouth" tabindex="0" role="button" aria-label="Mouth and salivary glands"><ellipse cx="180" cy="46" rx="16" ry="8" fill="#e9a3a3" stroke="#8a3a3a" stroke-width="2"/><ellipse cx="146" cy="52" rx="9" ry="6" fill="#f2c94c" stroke="#8a6a00" stroke-width="2"/><ellipse cx="214" cy="52" rx="9" ry="6" fill="#f2c94c" stroke="#8a6a00" stroke-width="2"/></g>
+   <g class="org" id="o-eso" tabindex="0" role="button" aria-label="Esophagus"><path d="M180 70 L180 150" stroke="#e9a3a3" stroke-width="14" stroke-linecap="round"/><path d="M180 70 L180 150" stroke="#8a3a3a" stroke-width="2" fill="none"/></g>
+   <g class="org" id="o-liver" tabindex="0" role="button" aria-label="Liver"><path d="M80 160 C110 150 190 152 205 168 C205 200 170 218 120 214 C95 212 82 190 80 160Z" fill="#c4573f" stroke="#7a2c1c" stroke-width="2"/></g>
+   <g class="org" id="o-gb" tabindex="0" role="button" aria-label="Gallbladder"><ellipse cx="170" cy="222" rx="9" ry="14" fill="#6aa84f" stroke="#2f5a1f" stroke-width="2"/></g>
+   <g class="org" id="o-stom" tabindex="0" role="button" aria-label="Stomach"><path d="M186 152 C230 140 290 156 290 192 C290 232 250 244 226 232 C212 226 228 210 214 200 C204 192 190 190 186 152Z" fill="#e58a74" stroke="#7a2c1c" stroke-width="2"/></g>
+   <g class="org" id="o-panc" tabindex="0" role="button" aria-label="Pancreas"><path d="M150 244 C190 236 240 240 276 252 C240 262 190 256 150 252Z" fill="#f2c94c" stroke="#8a6a00" stroke-width="2"/></g>
+   <g class="org" id="o-large" tabindex="0" role="button" aria-label="Large intestine"><path d="M112 350 L112 270 L252 270 L252 350 Q252 376 214 380 L186 398" fill="none" stroke="#b9855a" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></g>
+   <g class="org" id="o-small" tabindex="0" role="button" aria-label="Small intestine"><path d="M238 238 C238 254 232 262 226 282 L140 286 L140 302 L232 306 L232 322 L140 326 L140 342 L232 346" fill="none" stroke="#e9a3a3" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M238 238 C238 254 232 262 226 282 L140 286 L140 302 L232 306 L232 322 L140 326 L140 342 L232 346" fill="none" stroke="#8a3a3a" stroke-width="1.5" stroke-linejoin="round"/></g>
+   <g class="lab" font-size="11" font-weight="700" fill="#1f2933">
+    <text x="232" y="30">Mouth</text><text x="196" y="112">Esophagus</text><text x="104" y="190" fill="#fff">Liver</text><text x="232" y="196" fill="#fff">Stomach</text><text x="86" y="236">Gallbladder</text><text x="262" y="268" text-anchor="start">Pancreas</text><text x="134" y="368">Small intestine</text><text x="258" y="330">Large</text><text x="258" y="343">intestine</text></g>
+   <circle id="bite" cx="180" cy="46" r="8" fill="#8a5a00" stroke="#fff" stroke-width="2" style="transition:cx .8s,cy .8s" opacity="0"/>
+  </svg>
+ </div>
+ <div class="card">
+  <h2 id="oName">Tour the digestive system</h2>
+  <div class="btnrow"><button class="btn" id="bt">Follow a bite</button><span id="oType" style="align-self:center;font-size:13px;font-weight:600;color:#3e4c59"></span></div>
+  <div class="status" id="oInfo" aria-live="polite">Select an organ on the diagram, or press “Follow a bite” and use “Next stop” to move through the tract.</div>
+  <ul class="notes" id="oNotes"></ul>
+  <p class="lead" style="font-size:13px"><b>GI tract:</b> mouth, pharynx, esophagus, stomach, small and large intestine. <b>Accessory organs:</b> salivary glands, liver, gallbladder, pancreas. The wall has four layers: mucosa, submucosa, muscularis, serosa.</p>
+ </div>
+</section>
+
+<section class="panel wide" id="p1" role="tabpanel" aria-labelledby="tab1">
+ <div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2>Match the secretion to its job</h2><span id="msc" style="font-weight:700">Matched 0 of 6</span></div>
+  <p class="lead">Select a secretion or hormone on the left, then the job it does on the right.</p>
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;align-content:start">
+   <div id="L" style="display:grid;gap:6px;align-content:start"></div>
+   <div id="Rg" style="display:grid;gap:6px;align-content:start"></div>
+  </div>
+  <div class="status" id="mfb" aria-live="polite">Start with any secretion on the left.</div>
+  <div class="btnrow"><button class="btn sec" id="mrs">Shuffle &amp; restart</button></div>
+ </div>
+</section>
+</main>
+<div class="take"><strong>Key takeaway:</strong> Food moves through a continuous tube supported by accessory organs; enzymes and bile do the chemical work, and hormones such as gastrin, secretin, and CCK coordinate it.</div>
+</div>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+ function show(i,focus){tabs.forEach(function(t,j){t.setAttribute('aria-selected',i===j);t.tabIndex=i===j?0:-1;panels[j].classList.toggle('active',i===j);});if(focus)tabs[i].focus();}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight')show((i+1)%tabs.length,true);else if(e.key==='ArrowLeft')show((i+tabs.length-1)%tabs.length,true);});});
+ show(0);
+})();
+</script><script>
+(function(){
+ var $=function(i){return document.getElementById(i)};
+ var O={
+ mouth:{n:'Mouth and salivary glands',t:'GI tract + accessory organ',i:'Chewing breaks food into smaller pieces. Salivary glands add saliva that moistens food and starts chemical digestion.',
+  l:['<b>Mechanical:</b> chewing (mastication)','<b>Chemical:</b> salivary amylase starts starch digestion','<b>Result:</b> a swallowed bolus'],x:180,y:46},
+ eso:{n:'Esophagus',t:'GI tract',i:'A muscular tube that moves the bolus to the stomach by peristalsis. Very little digestion or absorption occurs here.',
+  l:['<b>Movement:</b> peristalsis','<b>Digestion:</b> none to speak of','<b>Absorption:</b> none'],x:180,y:110},
+ stom:{n:'Stomach',t:'GI tract',i:'Churns food with acid and enzymes into a liquid called chyme. Gastrin stimulates acid secretion.',
+  l:['<b>Mechanical:</b> churning','<b>Chemical:</b> HCl and pepsin begin protein digestion','<b>Control:</b> gastrin; parasympathetic activity'],x:250,y:196},
+ liver:{n:'Liver',t:'Accessory organ',i:'Makes bile and is central to metabolic regulation. Blood from digestive organs travels here through the hepatic portal system.',
+  l:['<b>Makes:</b> bile (emulsifies fats)','<b>Metabolism:</b> processes absorbed nutrients','<b>Stores:</b> glycogen and some vitamins'],x:140,y:186},
+ gb:{n:'Gallbladder',t:'Accessory organ',i:'Stores and concentrates bile. CCK signals it to contract and release bile into the small intestine.',
+  l:['<b>Stores:</b> bile made by the liver','<b>Signal:</b> cholecystokinin (CCK)','<b>Target:</b> duodenum'],x:170,y:222},
+ panc:{n:'Pancreas',t:'Accessory organ',i:'Releases pancreatic juice into the small intestine: digestive enzymes plus bicarbonate that neutralizes stomach acid.',
+  l:['<b>Enzymes:</b> amylase, lipase, proteases','<b>Bicarbonate:</b> neutralizes acidic chyme','<b>Control:</b> secretin and CCK'],x:215,y:248},
+ small:{n:'Small intestine',t:'GI tract',i:'Pancreatic enzymes and bile complete digestion here, and nearly all nutrient absorption happens across its villi.',
+  l:['<b>Sections:</b> duodenum, jejunum, ileum','<b>Chemical:</b> completes carbohydrate, protein, and fat digestion','<b>Absorbs:</b> most nutrients'],x:190,y:316},
+ large:{n:'Large intestine',t:'GI tract',i:'Absorbs water and electrolytes and forms feces. Gut bacteria live here.',
+  l:['<b>Absorbs:</b> water and electrolytes','<b>Forms:</b> feces','<b>Ends at:</b> rectum and anus'],x:182,y:392}};
+ var map={'o-mouth':'mouth','o-eso':'eso','o-stom':'stom','o-liver':'liver','o-gb':'gb','o-panc':'panc','o-small':'small','o-large':'large'};
+ function sel(k){
+  [].forEach.call(document.querySelectorAll('.org'),function(g){var on=map[g.id]===k;g.style.filter=on?'drop-shadow(0 0 5px #1d5a8a) drop-shadow(0 0 3px #1d5a8a)':'';g.style.opacity=(!k||on)?1:.55;});
+  var d=O[k];$('oName').textContent=d.n;$('oType').textContent=d.t;$('oInfo').textContent=d.i;
+  $('oNotes').innerHTML=d.l.map(function(x){return '<li>'+x+'</li>'}).join('');
+ }
+ [].forEach.call(document.querySelectorAll('.org'),function(g){g.style.cursor='pointer';
+  g.onclick=function(){sel(map[g.id])};g.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();sel(map[g.id]);}};});
+ var stops=['mouth','eso','stom','small','large'],si=-1,bt=$('bt'),bite=$('bite');
+ bt.onclick=function(){
+  si++;if(si>=stops.length){si=-1;bite.setAttribute('opacity',0);bt.textContent='Follow a bite';sel_none();return;}
+  var k=stops[si],d=O[k];bite.setAttribute('opacity',1);bite.setAttribute('cx',d.x);bite.setAttribute('cy',d.y);sel(k);
+  bt.textContent=si===stops.length-1?'Finish tour':'Next stop';
+  if(k==='small')$('oInfo').textContent+=' Bile (from the liver and gallbladder) and pancreatic juice join the chyme here.';
+ };
+ function sel_none(){[].forEach.call(document.querySelectorAll('.org'),function(g){g.style.filter='';g.style.opacity=1;});$('oName').textContent='Tour the digestive system';$('oType').textContent='';$('oInfo').textContent='Select an organ on the diagram, or press “Follow a bite”.';$('oNotes').innerHTML='';}
+
+ // matching
+ var P=[
+  ['Salivary amylase','Begins starch digestion in the mouth','<g fill="#f2c94c" stroke="#8a6a00"><polygon points="6,16 14,11 22,16 22,26 14,31 6,26"/><polygon points="24,16 32,11 40,16 40,26 32,31 24,26"/></g>'],
+  ['Pepsin (with HCl)','Starts protein digestion in the stomach','<g fill="#8a5fd0"><circle cx="8" cy="22" r="5"/><circle cx="19" cy="14" r="5"/><circle cx="30" cy="22" r="5"/><circle cx="41" cy="14" r="5"/></g>'],
+  ['Pancreatic lipase','Digests fats in the small intestine','<path d="M22 6 C34 20 36 32 22 36 C8 32 10 20 22 6Z" fill="#f2c94c" stroke="#8a6a00" stroke-width="2"/>'],
+  ['Bile','Emulsifies fats into tiny droplets','<g fill="#f2c94c" stroke="#8a6a00"><circle cx="12" cy="16" r="9"/><circle cx="30" cy="12" r="4"/><circle cx="36" cy="22" r="4"/><circle cx="28" cy="30" r="4"/></g>'],
+  ['Gastrin','Stimulates stomach acid secretion','<path d="M10 10 C30 4 40 20 32 30 C24 38 20 28 14 26 C8 22 8 16 10 10Z" fill="#e58a74" stroke="#7a2c1c" stroke-width="2"/>'],
+  ['CCK (cholecystokinin)','Signals the gallbladder to release bile and the pancreas to release enzymes','<ellipse cx="14" cy="22" rx="7" ry="11" fill="#6aa84f" stroke="#2f5a1f" stroke-width="2"/><path d="M26 10 L40 10 L40 34 L26 34Z" fill="#f2c94c" stroke="#8a6a00" stroke-width="2"/>']];
+ var order=[3,0,5,2,4,1],pick=null,matched=0,tries=0;
+ function build(){
+  matched=0;pick=null;$('msc').textContent='Matched 0 of 6';$('mfb').className='status';$('mfb').textContent='Start with any secretion on the left.';
+  var L='',R='';
+  P.forEach(function(p,i){L+='<button class="opt" data-i="'+i+'">'+p[0]+'</button>';});
+  order.forEach(function(i){var p=P[i];R+='<button class="opt" data-i="'+i+'" style="display:flex;gap:8px;align-items:center"><svg width="46" height="40" viewBox="0 0 46 40" aria-hidden="true">'+p[2]+'</svg><span style="font-weight:600;font-size:13.5px">'+p[1]+'</span></button>';});
+  $('L').innerHTML=L;$('Rg').innerHTML=R;
+  [].forEach.call($('L').children,function(b){b.onclick=function(){if(b.classList.contains('ok'))return;[].forEach.call($('L').children,function(x){x.setAttribute('aria-pressed',false)});b.setAttribute('aria-pressed',true);pick=b.getAttribute('data-i');$('mfb').className='status';$('mfb').textContent='Now choose its job on the right.';};});
+  [].forEach.call($('Rg').children,function(b){b.onclick=function(){
+   if(pick===null){$('mfb').textContent='Select a secretion on the left first.';return;}
+   if(b.classList.contains('ok'))return;
+   if(b.getAttribute('data-i')===pick){b.classList.add('ok');var lb=$('L').children[+pick];lb.classList.add('ok');lb.setAttribute('aria-pressed',false);matched++;pick=null;
+    $('msc').textContent='Matched '+matched+' of 6';$('mfb').className='status good';$('mfb').textContent=matched===6?'All matched. Enzymes and bile do the work, and hormones coordinate when it happens.':'Correct.';}
+   else{$('mfb').className='status bad';$('mfb').textContent='Not that one. Think about where that secretion acts and which nutrient it targets.';}};});
+ }
+ $('mrs').onclick=function(){order=order.slice().sort(function(){return Math.random()-.5});build();};
+ build();sel('mouth');sel_none();
+})();
+</script>
+</body></html>

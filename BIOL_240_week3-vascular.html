@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Interactive: The Vascular System</title><style>
+:root{--red:#b8323a;--red2:#d34147;--ink:#1f2933;--grey:#edebe8;--line:#d9d4ce;--blue:#1d5a8a;--green:#2f7d4f;--amber:#8a5a00}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--grey);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.4}
+.app{height:100%;min-height:640px;display:flex;flex-direction:column;gap:8px;padding:10px 12px;max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px;flex:none;flex-wrap:wrap}
+.chip{background:var(--red2);color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:13px;white-space:nowrap}
+h1{font-size:19px;margin:0;line-height:1.2;flex:1;min-width:180px}
+h2{font-size:16px;margin:0;line-height:1.25}
+.tabs{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.tab{border:2px solid var(--red);background:#fff;color:var(--red);border-radius:8px;padding:4px 11px;font:600 13px/1.3 inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);color:#fff}
+main{flex:1;min-height:0}
+.panel{display:none;height:100%;gap:10px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.panel.active{display:grid}
+.panel.wide{grid-template-columns:minmax(0,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.gfx{padding:6px}
+.gfx svg{flex:1;min-height:0;width:100%;display:block}
+p{margin:0}
+.lead{color:#3e4c59;font-size:14px}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:2px solid var(--red);background:var(--red);color:#fff;border-radius:8px;padding:6px 12px;font:600 14px/1.2 inherit;font-family:inherit;cursor:pointer}
+.btn.sec{background:#fff;color:var(--red)}
+.btn.sec[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:hover:not(:disabled){filter:brightness(.93)}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.status{border-left:5px solid var(--blue);background:#eef5fb;padding:8px 10px;border-radius:6px;font-size:14px}
+.status.good{border-color:var(--green);background:#edf7f0}
+.status.bad{border-color:var(--red);background:#fbeeee}
+.notes{margin:0;padding-left:18px;font-size:13.5px;color:#3e4c59}
+.notes li{margin:2px 0}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.check input{width:18px;height:18px;accent-color:var(--red)}
+.sl{display:grid;grid-template-columns:1fr auto;gap:0 8px;font-size:14px;align-items:center}
+.sl label{font-weight:600}
+.sl output{font-variant-numeric:tabular-nums;font-weight:700;color:var(--red)}
+.sl input[type=range]{grid-column:1/3;width:100%;accent-color:var(--red);margin:2px 0 4px}
+.take{flex:none;font-size:13px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid var(--line)}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font:600 14px/1.25 inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.opt[aria-pressed=true]{border-color:var(--red);background:#fbeeee}
+.opt.ok{border-color:var(--green);background:#edf7f0}
+.opt.no{border-color:var(--red);background:#fbeeee}
+.meter{display:grid;grid-template-columns:90px 1fr 38px;gap:6px;align-items:center;font-size:13px}
+.meter .bar{height:12px;background:#e6e2dc;border-radius:6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--blue);transition:width .4s}
+svg text{font-family:inherit}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:760px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto}
+ main{flex:none}
+ .panel,.panel.active{height:auto}
+ .panel.active{display:flex;flex-direction:column}
+ .gfx svg{height:auto;max-height:340px;flex:none}
+ .card{overflow:visible}
+}
+</style></head><body>
+<div class="app">
+<header><span class="chip">Week 3</span><h1>The Vascular System: Structure, Exchange, and Pressure</h1><div class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" id="tab0" aria-controls="p0" aria-selected="false" tabindex="-1">Vessel Explorer</button><button class="tab" role="tab" id="tab1" aria-controls="p1" aria-selected="false" tabindex="-1">Capillary Exchange</button><button class="tab" role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">Blood Pressure Lab</button></div></header>
+<main>
+<section class="panel active" id="p0" role="tabpanel" aria-labelledby="tab0">
+ <div class="card gfx">
+  <svg viewBox="0 0 360 360" role="img" id="vsvg" aria-label="Cross-section of a blood vessel showing the lumen and the tunica intima, media and externa layers.">
+   <g id="rings"></g>
+   <text id="vlabel" x="180" y="22" text-anchor="middle" font-size="15" font-weight="700"></text>
+   <g id="strip"></g>
+   <text x="180" y="350" text-anchor="middle" font-size="11" fill="#555">Diagram not to scale. Select a layer to learn more.</text>
+  </svg>
+ </div>
+ <div class="card">
+  <h2>Vessel explorer</h2>
+  <div class="btnrow" role="group" aria-label="Vessel type">
+   <button class="btn sec vt" data-v="artery" aria-pressed="true">Artery</button>
+   <button class="btn sec vt" data-v="capillary" aria-pressed="false">Capillary</button>
+   <button class="btn sec vt" data-v="vein" aria-pressed="false">Vein</button>
+  </div>
+  <p class="lead">Pick a layer (or click it on the diagram):</p>
+  <div class="btnrow" role="group" aria-label="Vessel layer">
+   <button class="btn sec ly" data-l="lumen" aria-pressed="false">Lumen</button>
+   <button class="btn sec ly" data-l="intima" aria-pressed="false">Tunica intima</button>
+   <button class="btn sec ly" data-l="media" aria-pressed="false">Tunica media</button>
+   <button class="btn sec ly" data-l="externa" aria-pressed="false">Tunica externa</button>
+  </div>
+  <div class="status" id="vinfo" aria-live="polite"></div>
+  <ul class="notes" id="vnotes"></ul>
+ </div>
+</section>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="tab1">
+ <div class="card gfx">
+  <svg viewBox="0 0 560 400" role="img" id="csvg" aria-label="A capillary above a tissue space. Arrows show fluid leaving or entering the capillary depending on pressures.">
+   <defs><marker id="aO" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d5a8a"/></marker></defs>
+   <rect x="30" y="60" width="500" height="80" rx="40" fill="#f6d2d4" stroke="#d34147" stroke-width="3"/>
+   <g fill="#d34147"><ellipse cx="100" cy="100" rx="16" ry="9"/><ellipse cx="190" cy="92" rx="16" ry="9"/><ellipse cx="280" cy="106" rx="16" ry="9"/><ellipse cx="370" cy="94" rx="16" ry="9"/><ellipse cx="460" cy="102" rx="16" ry="9"/></g>
+   <text x="46" y="48" font-size="13" font-weight="700">Capillary (blood flows left → right)</text>
+   <rect x="30" y="200" width="500" height="160" rx="14" fill="#f7efe3" stroke="#8a6a4a" stroke-width="2"/>
+   <rect id="fluid" x="32" y="300" width="496" height="58" rx="12" fill="#8ec5e8" opacity=".6"/>
+   <g fill="#d8a77d" stroke="#8a6a4a"><ellipse cx="90" cy="335" rx="26" ry="14"/><ellipse cx="200" cy="340" rx="28" ry="15"/><ellipse cx="320" cy="333" rx="26" ry="14"/><ellipse cx="440" cy="340" rx="28" ry="15"/></g>
+   <text x="46" y="222" font-size="13" font-weight="700">Tissue (interstitial fluid)</text>
+   <g id="arrows"></g>
+   <text id="edema" x="280" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#b8323a"></text>
+  </svg>
+ </div>
+ <div class="card">
+  <h2>Capillary exchange</h2>
+  <p class="lead">Fluid movement depends on two opposing pressures.</p>
+  <div class="sl"><label for="hp">Hydrostatic pressure (pushes fluid out)</label><output id="hpo"></output><input type="range" id="hp" min="5" max="45" value="35"></div>
+  <div class="sl"><label for="op">Osmotic pressure from plasma proteins (pulls fluid in)</label><output id="opo"></output><input type="range" id="op" min="5" max="45" value="25"></div>
+  <div class="btnrow"><button class="btn sec pre" data-h="35" data-o="25">Arterial end</button><button class="btn sec pre" data-h="15" data-o="25">Venous end</button><button class="btn sec pre" data-h="30" data-o="12">Low plasma protein</button><button class="btn sec pre" data-h="38" data-o="25">High venous pressure</button></div>
+  <div class="status" id="cinfo" aria-live="polite"></div>
+ </div>
+</section>
+
+<section class="panel" id="p2" role="tabpanel" aria-labelledby="tab2">
+ <div class="card gfx">
+  <svg viewBox="0 0 560 400" role="img" id="psvg" aria-label="A heart pushing blood through an arteriole whose width changes, and a mean arterial pressure gauge.">
+   <defs><style>.fd{animation:fl linear infinite}@keyframes fl{from{transform:translateX(0)}to{transform:translateX(66px)}}</style><clipPath id="tc"><rect x="130" y="60" width="400" height="160"/></clipPath></defs>
+   <path d="M65 178 C14 140 18 98 44 98 C58 98 65 108 65 114 C65 108 72 98 86 98 C112 98 116 140 65 178Z" fill="#d34147" stroke="#7a1d22" stroke-width="2"/>
+   <text x="65" y="200" text-anchor="middle" font-size="13" font-weight="700">Heart</text>
+   <text x="65" y="216" text-anchor="middle" font-size="11">CO = HR × SV</text>
+   <rect id="wallT" x="130" y="90" width="400" height="16" fill="#d34147"/>
+   <rect id="lum" x="130" y="106" width="400" height="68" fill="#f6d2d4"/>
+   <rect id="wallB" x="130" y="174" width="400" height="16" fill="#d34147"/>
+   <g id="flow" clip-path="url(#tc)"></g>
+   <text x="330" y="74" text-anchor="middle" font-size="13" font-weight="700">Arteriole</text>
+   <g id="baro"><circle cx="250" cy="34" r="12" fill="#fff" stroke="#1d5a8a" stroke-width="3"/><path d="M268 26 q9 8 0 16 M278 20 q14 14 0 28" fill="none" stroke="#1d5a8a" stroke-width="2.5"/><text x="300" y="38" font-size="12" fill="#1d5a8a" font-weight="700">Baroreceptors</text></g>
+   <text id="rTxt" x="30" y="262" font-size="14">Resistance: 1.0× normal</text>
+   <text id="coT" x="30" y="288" font-size="14" font-weight="700"></text>
+   <text x="30" y="314" font-size="12" fill="#3e4c59">MAP ≈ cardiac output × resistance</text>
+   <g transform="translate(400,316)">
+    <path d="M-95 0 A95 95 0 0 1 -48 -82" fill="none" stroke="#1d5a8a" stroke-width="16"/>
+    <path d="M-48 -82 A95 95 0 0 1 48 -82" fill="none" stroke="#2f7d4f" stroke-width="16"/>
+    <path d="M48 -82 A95 95 0 0 1 95 0" fill="none" stroke="#b8323a" stroke-width="16"/>
+    <line id="needle" x1="0" y1="0" x2="-80" y2="0" stroke="#1f2933" stroke-width="4" stroke-linecap="round"/><circle r="8" fill="#1f2933"/>
+    <text x="-95" y="20" text-anchor="middle" font-size="10">40</text><text x="95" y="20" text-anchor="middle" font-size="10">200</text>
+    <text id="mapT" x="0" y="42" text-anchor="middle" font-size="20" font-weight="700">93</text>
+    <text x="0" y="58" text-anchor="middle" font-size="12">MAP (mmHg)</text>
+    <text id="mapC" x="0" y="76" text-anchor="middle" font-size="13" font-weight="700"></text>
+   </g>
+  </svg>
+ </div>
+ <div class="card">
+  <h2>Blood pressure lab</h2>
+  <div class="sl"><label for="hr">Heart rate</label><output id="hro"></output><input type="range" id="hr" min="45" max="150" value="70"></div>
+  <div class="sl"><label for="sv">Stroke volume</label><output id="svo"></output><input type="range" id="sv" min="40" max="110" value="75"></div>
+  <div class="sl"><label for="dm">Arteriole diameter</label><output id="dmo"></output><input type="range" id="dm" min="85" max="115" value="100"></div>
+  <div class="btnrow"><button class="btn" id="baroB">Let baroreceptors respond</button><button class="btn sec" id="rst">Reset</button></div>
+  <div class="status" id="pinfo" aria-live="polite"></div>
+  <ul class="notes"><li>Resistance changes with the <b>fourth power</b> of the radius, so small diameter changes matter a lot.</li><li>RAAS and ADH adjust blood volume over longer periods.</li></ul>
+ </div>
+</section>
+</main>
+<div class="take"><strong>Key takeaway:</strong> Vessel structure matches function; capillaries are where exchange happens; and blood pressure depends on cardiac output and vessel resistance, which neural and hormonal controls adjust.</div>
+</div>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+ function show(i,focus){tabs.forEach(function(t,j){t.setAttribute('aria-selected',i===j);t.tabIndex=i===j?0:-1;panels[j].classList.toggle('active',i===j);});if(focus)tabs[i].focus();}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight')show((i+1)%tabs.length,true);else if(e.key==='ArrowLeft')show((i+tabs.length-1)%tabs.length,true);});});
+ show(0);
+})();
+</script><script>
+(function(){
+ var $=function(i){return document.getElementById(i)};
+ var cx=180,cy=150;
+ var VD={artery:{name:'Artery',r:[38,44,84,106],
+   lumen:'Narrow, round lumen. Blood leaves the heart here under high pressure.',
+   intima:'Tunica intima: thin endothelial lining with a smooth surface that reduces friction.',
+   media:'Tunica media: THICK smooth muscle and elastic fibers. Withstands pressure and changes diameter (vasoconstriction and vasodilation).',
+   externa:'Tunica externa: connective tissue (collagen) that anchors and protects the vessel.',
+   notes:['Thick, elastic, muscular wall','High pressure, carries blood away from the heart']},
+  vein:{name:'Vein',r:[64,68,80,106],
+   lumen:'Wide lumen, often flattened. Pressure is low, so valves keep blood moving toward the heart.',
+   intima:'Tunica intima: endothelium that folds into one-way valves.',
+   media:'Tunica media: thin, with little smooth muscle because pressure is low.',
+   externa:'Tunica externa: often the thickest layer in a vein. Gives support.',
+   notes:['Thin wall and valves prevent backflow','Skeletal muscle pump helps return blood']},
+  capillary:{name:'Capillary',r:[26,34,34,34],
+   lumen:'So narrow that red blood cells pass single file. Gases, nutrients, and wastes are exchanged here.',
+   intima:'Endothelium only: a wall one cell thick (with a basement membrane) that allows exchange.',
+   media:'Absent. Capillaries have no tunica media.',
+   externa:'Absent. Capillaries have no tunica externa.',
+   notes:['Wall is one cell thick','Site of exchange with tissues']}};
+ var vt='artery',ly='lumen',COL={externa:'#e6cba8',media:'#d34147',intima:'#f4b6b9',lumen:'#f9dede'};
+ function rings(){
+  var d=VD[vt],r=d.r,h='';
+  var layers=[['externa',r[3]],['media',r[2]],['intima',r[1]],['lumen',r[0]]];
+  if(vt==='capillary'){layers=[['intima',r[1]],['lumen',r[0]]];}
+  layers.forEach(function(L){var sel=L[0]===ly;
+   h+='<circle data-l="'+L[0]+'" cx="'+cx+'" cy="'+cy+'" r="'+L[1]+'" fill="'+COL[L[0]]+'" stroke="'+(sel?'#1d5a8a':'#7a4a4a')+'" stroke-width="'+(sel?5:1.5)+'" style="cursor:pointer"/>';});
+  if(vt==='capillary')h+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="14" ry="10" fill="#b8323a"/>';
+  $('rings').innerHTML=h;
+  $('vlabel').textContent=d.name+' (cross-section)';
+  [].forEach.call($('rings').children,function(c){c.onclick=function(){setLy(c.getAttribute('data-l'))}});
+  var s='';
+  if(vt==='artery')s='<rect x="60" y="283" width="240" height="8" fill="#d34147"/><rect x="60" y="311" width="240" height="8" fill="#d34147"/><rect x="60" y="291" width="240" height="20" fill="#f9dede"/><text x="180" y="334" text-anchor="middle" font-size="12">Thick wall, no valves, high pressure</text>';
+  if(vt==='vein')s='<rect x="60" y="277" width="240" height="4" fill="#d34147"/><rect x="60" y="319" width="240" height="4" fill="#d34147"/><rect x="60" y="281" width="240" height="38" fill="#f9dede"/><path d="M120 281 L150 300 L120 300Z M120 319 L150 300 L120 300Z" fill="#7a4a4a" opacity=".8"/><path d="M220 281 L250 300 L220 300Z M220 319 L250 300 L220 300Z" fill="#7a4a4a" opacity=".8"/><text x="180" y="334" text-anchor="middle" font-size="12">Valves (dark flaps) prevent backflow</text>';
+  if(vt==='capillary')s='<rect x="60" y="289" width="240" height="3" fill="#d34147"/><rect x="60" y="308" width="240" height="3" fill="#d34147"/><rect x="60" y="292" width="240" height="16" fill="#f9dede"/><ellipse cx="110" cy="300" rx="14" ry="6" fill="#b8323a"/><ellipse cx="170" cy="300" rx="14" ry="6" fill="#b8323a"/><ellipse cx="230" cy="300" rx="14" ry="6" fill="#b8323a"/><text x="180" y="334" text-anchor="middle" font-size="12">Red blood cells pass in single file</text>';
+  $('strip').innerHTML=s;
+ }
+ function info(){var d=VD[vt];$('vinfo').textContent=d[ly];$('vnotes').innerHTML=d.notes.map(function(n){return '<li>'+n+'</li>'}).join('');}
+ function setLy(l){ly=l;[].forEach.call(document.querySelectorAll('.ly'),function(b){b.setAttribute('aria-pressed',b.getAttribute('data-l')===l)});rings();info();}
+ [].forEach.call(document.querySelectorAll('.vt'),function(b){b.onclick=function(){vt=b.getAttribute('data-v');[].forEach.call(document.querySelectorAll('.vt'),function(x){x.setAttribute('aria-pressed',x===b)});setLy(ly);};});
+ [].forEach.call(document.querySelectorAll('.ly'),function(b){b.onclick=function(){setLy(b.getAttribute('data-l'))};});
+ setLy('media');
+ document.querySelector('.ly[data-l=media]').setAttribute('aria-pressed','true');
+
+ // capillary exchange
+ var hp=$('hp'),op=$('op');
+ function cex(){
+  var H=+hp.value,O=+op.value,net=H-O;$('hpo').textContent=H+' mmHg';$('opo').textContent=O+' mmHg';
+  var n=Math.min(10,Math.round(Math.abs(net)/2)),h='';
+  for(var i=0;i<n;i++){var x=70+i*(420/Math.max(1,n-1||1));if(n===1)x=280;
+   h+= net>0?'<path d="M'+x+' 146 L'+x+' 196" stroke="#1d5a8a" stroke-width="4" marker-end="url(#aO)"/>':'<path d="M'+x+' 196 L'+x+' 146" stroke="#1d5a8a" stroke-width="4" marker-end="url(#aO)"/>';}
+  $('arrows').innerHTML=h;
+  var fh=net>0?Math.min(150,30+net*6):Math.max(14,30+net*1.5);
+  $('fluid').setAttribute('y',360-fh);$('fluid').setAttribute('height',fh);
+  $('edema').textContent=net>=12?'Fluid builds up: edema (swelling)':'';
+  var m=(H-O>0?'+':'')+net;var msg='Net = '+H+' − '+O+' = '+m+' mmHg. ';
+  var c='status';
+  if(net>=12){msg+='Strong net filtration. More fluid leaves than the lymphatic system can return, so tissue swells (edema).';c+=' bad';}
+  else if(net>2){msg+='Net filtration: fluid moves out of the capillary into the tissue.';}
+  else if(net>=-2){msg+='Balanced: little net movement.';c+=' good';}
+  else{msg+='Net reabsorption: fluid moves back into the capillary.';}
+  $('cinfo').textContent=msg;$('cinfo').className=c;
+ }
+ hp.oninput=op.oninput=cex;
+ [].forEach.call(document.querySelectorAll('.pre'),function(b){b.onclick=function(){hp.value=b.getAttribute('data-h');op.value=b.getAttribute('data-o');cex();};});
+ cex();
+
+ // pressure lab
+ var hr=$('hr'),sv=$('sv'),dm=$('dm'),fl=$('flow');
+ var flowH='';for(var i=0;i<8;i++)flowH+='<circle class="fd" cx="'+(130+i*66)+'" cy="140" r="7" fill="#b8323a" style="animation-duration:2s"/>';
+ fl.innerHTML=flowH;
+ function plab(){
+  var HR=+hr.value,SV=+sv.value,D=+dm.value;
+  $('hro').textContent=HR+' bpm';$('svo').textContent=SV+' mL';$('dmo').textContent=D+'%';
+  var CO=HR*SV/1000,R=Math.pow(100/D,4),MAP=CO*R*17.7;
+  var half=34*D/100;$('lum').setAttribute('y',140-half);$('lum').setAttribute('height',half*2);
+  $('wallT').setAttribute('y',140-half-16);$('wallB').setAttribute('y',140+half);
+  [].forEach.call(fl.children,function(c){c.style.animationDuration=(3/Math.max(1,CO))+'s';});
+  $('rTxt').textContent='Resistance: '+R.toFixed(2)+'× normal';
+  $('coT').textContent='Cardiac output: '+CO.toFixed(1)+' L/min';
+  var m=Math.max(40,Math.min(200,MAP)),ang=Math.PI*(1-(m-40)/160);
+  $('needle').setAttribute('x2',(Math.cos(ang)*80).toFixed(1));$('needle').setAttribute('y2',(-Math.sin(ang)*80).toFixed(1));
+  $('mapT').textContent=Math.round(MAP);
+  var c='status',t;
+  if(MAP>105){t='High';c+=' bad';}else if(MAP<70){t='Low';c+=' bad';}else{t='Normal';c+=' good';}
+  $('mapC').textContent=t;$('mapC').setAttribute('fill',t==='Normal'?'#2f7d4f':'#b8323a');
+  $('pinfo').className=c;
+  $('pinfo').textContent=MAP>105?'MAP is high. Baroreceptors detect stretch and signal the brainstem to lower heart rate and dilate vessels.':MAP<70?'MAP is low. Baroreceptors detect reduced stretch and signal the brainstem to raise heart rate and constrict vessels.':'MAP is in the normal range (about 70–105 mmHg).';
+ }
+ hr.oninput=sv.oninput=dm.oninput=plab;
+ var tm=null;
+ $('baroB').onclick=function(){clearInterval(tm);var k=0;tm=setInterval(function(){
+   var M=(+hr.value)*(+sv.value)/1000*Math.pow(100/(+dm.value),4)*17.7;
+   var dir=M>93?-1:1;
+   if(M>=70&&M<=105&&k>0){clearInterval(tm);return;}
+   hr.value=+hr.value+dir*2;
+   dm.value=Math.max(85,Math.min(115,+dm.value+(M>93?1:-1)));k++;plab();if(k>60)clearInterval(tm);},120);};
+ $('rst').onclick=function(){clearInterval(tm);hr.value=70;sv.value=75;dm.value=100;plab();};
+ plab();
+})();
+</script>
+</body></html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 1 Interactive: The Endocrine System</title><style>
+:root{--red:#b8323a;--red2:#d34147;--ink:#1f2933;--grey:#edebe8;--line:#d9d4ce;--blue:#1d5a8a;--green:#2f7d4f;--amber:#8a5a00}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--grey);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.4}
+.app{height:100%;min-height:640px;display:flex;flex-direction:column;gap:8px;padding:10px 12px;max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px;flex:none;flex-wrap:wrap}
+.chip{background:var(--red2);color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:13px;white-space:nowrap}
+h1{font-size:19px;margin:0;line-height:1.2;flex:1;min-width:180px}
+h2{font-size:16px;margin:0;line-height:1.25}
+.tabs{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.tab{border:2px solid var(--red);background:#fff;color:var(--red);border-radius:8px;padding:4px 11px;font:600 13px/1.3 inherit;font-family:inherit;cursor:pointer}
+.tab[aria-selected=true]{background:var(--red);color:#fff}
+main{flex:1;min-height:0}
+.panel{display:none;height:100%;gap:10px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.panel.active{display:grid}
+.panel.wide{grid-template-columns:minmax(0,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.gfx{padding:6px}
+.gfx svg{flex:1;min-height:0;width:100%;display:block}
+p{margin:0}
+.lead{color:#3e4c59;font-size:14px}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:2px solid var(--red);background:var(--red);color:#fff;border-radius:8px;padding:6px 12px;font:600 14px/1.2 inherit;font-family:inherit;cursor:pointer}
+.btn.sec{background:#fff;color:var(--red)}
+.btn.sec[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:hover:not(:disabled){filter:brightness(.93)}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.status{border-left:5px solid var(--blue);background:#eef5fb;padding:8px 10px;border-radius:6px;font-size:14px}
+.status.good{border-color:var(--green);background:#edf7f0}
+.status.bad{border-color:var(--red);background:#fbeeee}
+.notes{margin:0;padding-left:18px;font-size:13.5px;color:#3e4c59}
+.notes li{margin:2px 0}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.check input{width:18px;height:18px;accent-color:var(--red)}
+.sl{display:grid;grid-template-columns:1fr auto;gap:0 8px;font-size:14px;align-items:center}
+.sl label{font-weight:600}
+.sl output{font-variant-numeric:tabular-nums;font-weight:700;color:var(--red)}
+.sl input[type=range]{grid-column:1/3;width:100%;accent-color:var(--red);margin:2px 0 4px}
+.take{flex:none;font-size:13px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid var(--line)}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font:600 14px/1.25 inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.opt[aria-pressed=true]{border-color:var(--red);background:#fbeeee}
+.opt.ok{border-color:var(--green);background:#edf7f0}
+.opt.no{border-color:var(--red);background:#fbeeee}
+.meter{display:grid;grid-template-columns:90px 1fr 38px;gap:6px;align-items:center;font-size:13px}
+.meter .bar{height:12px;background:#e6e2dc;border-radius:6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--blue);transition:width .4s}
+svg text{font-family:inherit}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:760px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto}
+ main{flex:none}
+ .panel,.panel.active{height:auto}
+ .panel.active{display:flex;flex-direction:column}
+ .gfx svg{height:auto;max-height:340px;flex:none}
+ .card{overflow:visible}
+}
+</style></head><body>
+<div class="app">
+<header><span class="chip">Week 1</span><h1>The Endocrine System: Feedback and Control</h1><div class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" id="tab0" aria-controls="p0" aria-selected="false" tabindex="-1">Glucose Feedback Loop</button><button class="tab" role="tab" id="tab1" aria-controls="p1" aria-selected="false" tabindex="-1">Where’s the Problem?</button></div></header>
+<main>
+<section class="panel active" id="p0" role="tabpanel" aria-labelledby="tab0">
+ <div class="card gfx">
+  <svg id="gs" viewBox="0 0 560 420" role="img" aria-label="Diagram of blood glucose negative feedback: a glucose gauge, the pancreas with beta and alpha cells, the liver and muscle and fat cells, and the bloodstream.">
+   <defs>
+    <marker id="ahB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1d5a8a"/></marker>
+    <marker id="ahO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#b25e00"/></marker>
+    <marker id="ahG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#6b7785"/></marker>
+   </defs>
+   <text x="62" y="30" text-anchor="middle" font-size="13" font-weight="700">Blood glucose</text>
+   <rect x="40" y="60" width="44" height="320" rx="10" fill="#fff" stroke="#3e4c59" stroke-width="2"/>
+   <rect x="36" y="220" width="52" height="80" fill="#2f7d4f" opacity=".25"/>
+   <rect id="lvl" x="42" y="200" width="40" height="178" rx="8" fill="#2f7d4f"/>
+   <text x="94" y="256" font-size="11" fill="#2f7d4f" font-weight="700">set point</text>
+   <text x="94" y="270" font-size="11" fill="#2f7d4f">70–110</text>
+   <text x="36" y="68" text-anchor="end" font-size="10" fill="#555">200</text>
+   <text x="36" y="168" text-anchor="end" font-size="10" fill="#555">150</text>
+   <text x="36" y="268" text-anchor="end" font-size="10" fill="#555">100</text>
+   <text x="36" y="368" text-anchor="end" font-size="10" fill="#555">50</text>
+   <text id="gv" x="62" y="50" text-anchor="middle" font-size="13" font-weight="700">90 mg/dL</text>
+
+   <path d="M92 150 L170 112" stroke="#6b7785" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ahG)"/>
+   <text x="104" y="128" font-size="11" fill="#6b7785">sensed by</text>
+
+   <path d="M165 110 C165 70 205 55 250 58 C300 62 340 68 350 92 C356 118 322 134 275 130 C230 126 195 148 172 134 Z" fill="#f2c94c" stroke="#8a6a00" stroke-width="2"/>
+   <circle id="bg" cx="222" cy="98" r="26" fill="#1d5a8a" opacity="0"/>
+   <circle id="ag" cx="292" cy="98" r="26" fill="#b25e00" opacity="0"/>
+   <circle cx="222" cy="98" r="16" fill="#1d5a8a"/><text x="222" y="103" text-anchor="middle" fill="#fff" font-weight="700" font-size="14">β</text>
+   <circle cx="292" cy="98" r="16" fill="#b25e00"/><text x="292" y="103" text-anchor="middle" fill="#fff" font-weight="700" font-size="14">α</text>
+   <text x="258" y="40" text-anchor="middle" font-size="13" font-weight="700">Pancreas (islets)</text>
+   <text x="222" y="150" text-anchor="middle" font-size="11" fill="#1d5a8a" font-weight="700">insulin</text>
+   <text x="292" y="150" text-anchor="middle" font-size="11" fill="#8a4a00" font-weight="700">glucagon</text>
+
+   <g id="insA" opacity=".15"><path d="M350 100 L416 92" stroke="#1d5a8a" stroke-width="4" fill="none" marker-end="url(#ahB)"/><path d="M340 128 L416 222" stroke="#1d5a8a" stroke-width="4" fill="none" marker-end="url(#ahB)"/></g>
+   <g id="gluA" opacity=".15"><path d="M350 78 L416 68" stroke="#b25e00" stroke-width="4" fill="none" marker-end="url(#ahO)"/></g>
+
+   <rect x="420" y="40" width="130" height="110" rx="14" fill="#c4573f" stroke="#7a2c1c" stroke-width="2"/>
+   <path d="M450 70 C470 55 500 55 520 70 C530 90 515 112 485 114 C455 114 440 92 450 70Z" fill="#e58a74" opacity=".8"/>
+   <text x="485" y="136" text-anchor="middle" fill="#fff" font-weight="700" font-size="13">Liver</text>
+   <text x="485" y="90" text-anchor="middle" fill="#fff" font-size="10.5">stores or releases</text>
+   <text x="485" y="103" text-anchor="middle" fill="#fff" font-size="10.5">glucose (glycogen)</text>
+   <rect x="420" y="180" width="130" height="110" rx="14" fill="#f2dfc9" stroke="#8a6a4a" stroke-width="2"/>
+   <ellipse cx="455" cy="222" rx="18" ry="12" fill="#d8a77d"/><ellipse cx="500" cy="236" rx="22" ry="13" fill="#d8a77d"/><ellipse cx="480" cy="204" rx="16" ry="10" fill="#d8a77d"/>
+   <text x="485" y="272" text-anchor="middle" font-weight="700" font-size="13">Muscle &amp; fat</text>
+   <text x="485" y="287" text-anchor="middle" font-size="10.5">take up glucose</text>
+
+   <rect x="120" y="326" width="430" height="58" rx="29" fill="#f6d2d4" stroke="#d34147" stroke-width="2"/>
+   <text x="335" y="399" text-anchor="middle" font-size="12" font-weight="700">Bloodstream (glucose molecules ● travel here)</text>
+   <g id="dots"></g>
+  </svg>
+ </div>
+ <div class="card">
+  <h2>Blood glucose feedback loop</h2>
+  <p class="lead">Disturb the system, then watch negative feedback pull glucose back to its set point.</p>
+  <div class="btnrow"><button class="btn" id="eat">Eat a meal</button><button class="btn" id="fast">Skip a meal</button><button class="btn sec" id="reset">Reset</button></div>
+  <label class="check"><input type="checkbox" id="broken"> Pancreas can’t release insulin (broken loop)</label>
+  <div class="status" id="st" aria-live="polite">Glucose is in the set-point range. Insulin and glucagon are both resting.</div>
+  <ul class="notes">
+   <li><b>Receptor:</b> islet cells sense blood glucose.</li>
+   <li><b>Control center &amp; effector:</b> the pancreas releases insulin or glucagon.</li>
+   <li><b>Targets:</b> liver, muscle and fat cells change what they do with glucose.</li>
+   <li><b>Negative feedback:</b> the response reverses the change that started it.</li>
+  </ul>
+ </div>
+</section>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="tab1">
+ <div class="card gfx">
+  <svg viewBox="0 0 560 400" role="img" id="axSvg" aria-label="Hypothalamus, anterior pituitary and thyroid axis with hormone levels for the current case.">
+   <defs><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3e4c59"/></marker></defs>
+   <g id="n0"><rect x="14" y="60" width="164" height="170" rx="14" fill="#f4f1ec" stroke="#3e4c59" stroke-width="2"/>
+    <path d="M56 120 C56 90 90 78 118 84 C146 80 160 100 154 122 C150 148 120 152 100 146 C70 150 56 140 56 120Z" fill="#e9a3a3" stroke="#8a3a3a" stroke-width="2"/><path d="M100 146 L100 168" stroke="#8a3a3a" stroke-width="5"/>
+    <text x="96" y="192" text-anchor="middle" font-weight="700" font-size="14">Hypothalamus</text><text x="96" y="210" text-anchor="middle" font-size="12">makes TRH</text></g>
+   <g id="n1"><rect x="198" y="60" width="164" height="170" rx="14" fill="#f4f1ec" stroke="#3e4c59" stroke-width="2"/>
+    <ellipse cx="280" cy="125" rx="40" ry="28" fill="#c9b0e8" stroke="#5b3d8a" stroke-width="2"/><ellipse cx="280" cy="125" rx="16" ry="12" fill="#a98ad4"/>
+    <text x="280" y="192" text-anchor="middle" font-weight="700" font-size="14">Anterior pituitary</text><text x="280" y="210" text-anchor="middle" font-size="12">makes TSH</text></g>
+   <g id="n2"><rect x="382" y="60" width="164" height="170" rx="14" fill="#f4f1ec" stroke="#3e4c59" stroke-width="2"/>
+    <path d="M464 100 C440 78 412 92 418 128 C424 152 450 150 462 130 L466 130 C478 150 504 152 510 128 C516 92 488 78 464 100Z" fill="#f2c94c" stroke="#8a6a00" stroke-width="2"/>
+    <text x="464" y="192" text-anchor="middle" font-weight="700" font-size="14">Thyroid gland</text><text x="464" y="210" text-anchor="middle" font-size="12">makes T4 (thyroxine)</text></g>
+   <path d="M180 145 L196 145" stroke="#3e4c59" stroke-width="3" marker-end="url(#ah2)"/>
+   <path d="M364 145 L380 145" stroke="#3e4c59" stroke-width="3" marker-end="url(#ah2)"/>
+   <path d="M464 238 C464 300 300 300 100 238" stroke="#6b7785" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#ah2)" transform="translate(0,0)"/>
+   <text x="280" y="296" text-anchor="middle" font-size="12" fill="#3e4c59">Negative feedback: T4 normally tells the top of the axis to slow down</text>
+   <g id="lv0"></g><g id="lv1"></g><g id="lv2"></g>
+   <g id="flag" opacity="0"><rect id="flagBox" x="0" y="0" width="10" height="10" rx="14" fill="none" stroke="#b8323a" stroke-width="5"/><text id="flagTxt" x="0" y="0" text-anchor="middle" font-weight="700" font-size="13" fill="#b8323a">Problem starts here</text></g>
+  </svg>
+ </div>
+ <div class="card">
+  <h2 id="cTitle">Case 1 of 4</h2>
+  <p id="cText" class="lead"></p>
+  <p><b>Where does the problem begin?</b></p>
+  <button class="opt" data-a="Primary">Primary: the target gland (thyroid)</button>
+  <button class="opt" data-a="Secondary">Secondary: the pituitary</button>
+  <button class="opt" data-a="Tertiary">Tertiary: the hypothalamus</button>
+  <div class="status" id="fb" aria-live="polite">Read the lab pattern, then choose.</div>
+  <div class="btnrow"><button class="btn" id="nxt" disabled>Next case</button><span id="score" style="align-self:center;font-weight:600"></span></div>
+ </div>
+</section>
+</main>
+<div class="take"><strong>Key takeaway:</strong> Hormone levels are held in range by negative feedback, and the pattern of high and low levels along the hypothalamus–pituitary axis shows where a disorder begins.</div>
+</div>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab')),panels=[].slice.call(document.querySelectorAll('.panel'));
+ function show(i,focus){tabs.forEach(function(t,j){t.setAttribute('aria-selected',i===j);t.tabIndex=i===j?0:-1;panels[j].classList.toggle('active',i===j);});if(focus)tabs[i].focus();}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});t.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight')show((i+1)%tabs.length,true);else if(e.key==='ArrowLeft')show((i+tabs.length-1)%tabs.length,true);});});
+ show(0);
+})();
+</script><script>
+(function(){
+ var $=function(i){return document.getElementById(i)};
+ var g=90,bump=0,hi=false,lo=false,broken=false;
+ var lvl=$('lvl'),gv=$('gv'),st=$('st'),dots=$('dots');
+ function Y(v){return 380-(v-40)*2}
+ function drawDots(){var n=Math.round((g-40)/6),h='';for(var i=0;i<n;i++){var x=140+(i%15)*27+((Math.floor(i/15))%2)*12,y=342+Math.floor(i/15)*20+((i*7)%5);h+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="#f2c94c" stroke="#8a6a00"/>';}dots.innerHTML=h;}
+ function render(){
+  var v=Math.round(g),y=Y(Math.max(40,Math.min(200,g)));
+  lvl.setAttribute('y',y);lvl.setAttribute('height',380-y);
+  lvl.setAttribute('fill',v>110?'#b8323a':v<70?'#1d5a8a':'#2f7d4f');
+  gv.textContent=v+' mg/dL '+(v>110?'(high)':v<70?'(low)':'(normal)');
+  var ins=hi,glu=lo;
+  $('bg').setAttribute('opacity',ins?.35:0);$('ag').setAttribute('opacity',glu?.35:0);
+  $('insA').setAttribute('opacity',ins&&!broken?1:.15);$('gluA').setAttribute('opacity',glu?1:.15);
+  var m,c='status';
+  if(hi&&broken){m='Glucose is high but there is no insulin signal, so the loop is broken and glucose stays high (hyperglycemia).';c+=' bad';}
+  else if(hi){m='High glucose → β cells release insulin → liver stores glucose and muscle/fat take it up → glucose falls.';}
+  else if(lo){m='Low glucose → α cells release glucagon → liver releases glucose → glucose rises.';}
+  else if(v>110){m='Glucose is above the set point.';}
+  else{m='Glucose is in the set-point range. Insulin and glucagon are both resting.';c+=' good';}
+  st.textContent=m;st.className=c;drawDots();
+ }
+ function tick(){
+  var d=0;if(bump>0){d=Math.min(5,bump);bump-=d;}else if(bump<0){d=Math.max(-3,bump);bump-=d;}
+  if(g>110)hi=true;if(g<=95)hi=false;if(g<70)lo=true;if(g>=85)lo=false;
+  if(hi)d-=broken?0.05:1.6;if(lo)d+=1.4;
+  g=Math.max(40,Math.min(200,g+d));render();
+ }
+ $('eat').onclick=function(){bump=85;};
+ $('fast').onclick=function(){bump=-45;};
+ $('reset').onclick=function(){g=90;bump=0;hi=lo=false;render();};
+ $('broken').onchange=function(){broken=this.checked;};
+ setInterval(tick,100);render();
+
+ var cases=[
+ {t:'A patient is tired, always cold, and gaining weight. Labs: TRH ↑, TSH ↑, T4 ↓.',v:['high','high','low'],a:'Primary',p:2,
+  e:'Primary. T4 is low, so the thyroid itself is failing. Low T4 removes negative feedback, so the hypothalamus and pituitary push harder (TRH and TSH rise).'},
+ {t:'Same symptoms, new patient. Labs: TRH ↑, TSH ↓, T4 ↓.',v:['high','low','low'],a:'Secondary',p:1,
+  e:'Secondary. TRH is high but TSH is low, so the pituitary is not responding. The thyroid is under-stimulated, so T4 is low.'},
+ {t:'Another patient with the same symptoms. Labs: TRH ↓, TSH ↓, T4 ↓.',v:['low','low','low'],a:'Tertiary',p:0,
+  e:'Tertiary. Everything is low and the highest level is low too: the hypothalamus is not sending TRH, so the whole axis is under-stimulated.'},
+ {t:'A patient has a racing heart, heat intolerance, and weight loss. Labs: TRH ↓, TSH ↓, T4 ↑.',v:['low','low','high'],a:'Primary',p:2,
+  e:'Primary (hyperfunction). The thyroid makes too much T4. High T4 shuts down TRH and TSH through negative feedback, so they are low.'}];
+ var ci=0,score=0,answered=false;
+ var xs=[96,280,464],names=['TRH','TSH','T4'];
+ function load(){
+  var c=cases[ci];answered=false;
+  $('cTitle').textContent='Case '+(ci+1)+' of '+cases.length;$('cText').textContent=c.t;
+  for(var k=0;k<3;k++){var h=c.v[k]==='high'?'▲ HIGH':'▼ LOW',col=c.v[k]==='high'?'#b8323a':'#1d5a8a';
+   $('lv'+k).innerHTML='<rect x="'+(xs[k]-62)+'" y="316" width="124" height="34" rx="17" fill="#fff" stroke="'+col+'" stroke-width="3"/><text x="'+xs[k]+'" y="338" text-anchor="middle" font-weight="700" font-size="14" fill="'+col+'">'+names[k]+' '+h+'</text>';}
+  $('flag').setAttribute('opacity',0);
+  [].forEach.call(document.querySelectorAll('#p1 .opt'),function(b){b.className='opt';b.disabled=false;});
+  $('fb').className='status';$('fb').textContent='Read the lab pattern, then choose.';
+  $('nxt').disabled=true;$('nxt').textContent=ci===cases.length-1?'See score':'Next case';
+  $('score').textContent='Score: '+score+' / '+ci;
+ }
+ [].forEach.call(document.querySelectorAll('#p1 .opt'),function(b){b.onclick=function(){
+  if(answered)return;answered=true;var c=cases[ci],ok=b.getAttribute('data-a')===c.a;
+  if(ok)score++;b.className='opt '+(ok?'ok':'no');
+  $('fb').className='status '+(ok?'good':'bad');$('fb').textContent=(ok?'Correct. ':'Not quite. ')+c.e;
+  var bx=[14,198,382][c.p];$('flagBox').setAttribute('x',bx-4);$('flagBox').setAttribute('y',56);$('flagBox').setAttribute('width',172);$('flagBox').setAttribute('height',178);
+  $('flagTxt').setAttribute('x',bx+82);$('flagTxt').setAttribute('y',252);$('flag').setAttribute('opacity',1);
+  $('nxt').disabled=false;$('score').textContent='Score: '+score+' / '+(ci+1);};});
+ $('nxt').onclick=function(){
+  if(ci===cases.length-1&&$('nxt').textContent==='See score'){$('fb').className='status good';$('fb').textContent='You got '+score+' of '+cases.length+'. Press Restart to try again.';$('nxt').textContent='Restart';return;}
+  if($('nxt').textContent==='Restart'){ci=0;score=0;load();return;}
+  ci++;load();};
+ load();
+})();
+</script>
+</body></html>
