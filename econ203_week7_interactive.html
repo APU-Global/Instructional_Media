@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7 Interactive | The Market for Lemons</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.tg{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tg button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 16px;cursor:pointer;text-align:left}
+.tg button[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.35rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.key{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;font-weight:700;margin:6px 0}.key span{display:flex;gap:6px;align-items:center}.key i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of two cars that look identical, one with a question mark, and a magnifying glass">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<path d="M0 190h980v40H0z" fill="#8e2b31"/>
+<g transform="translate(110 100)"><path d="M0 62v-24l20-24h70l22 24h38v24z" fill="#f7dcdd"/><path d="M26 20h24v20H18zM58 20h26l16 20H58z" fill="#7d2429"/><circle cx="34" cy="64" r="16" fill="#231f20"/><circle cx="118" cy="64" r="16" fill="#231f20"/></g>
+<g transform="translate(360 100)"><path d="M0 62v-24l20-24h70l22 24h38v24z" fill="#f6c453"/><path d="M26 20h24v20H18zM58 20h26l16 20H58z" fill="#7d2429"/><circle cx="34" cy="64" r="16" fill="#231f20"/><circle cx="118" cy="64" r="16" fill="#231f20"/><text x="80" y="-4" text-anchor="middle" font-size="46" font-weight="800" fill="#fff" font-family="Georgia,serif">?</text></g>
+<g transform="translate(610 54)" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"><circle cx="50" cy="50" r="46"/><path d="M84 86l50 54"/></g>
+<g transform="translate(790 60)" font-family="system-ui" fill="#fff"><text font-size="20" font-weight="800">The seller knows.</text><text y="30" font-size="20" font-weight="800">The buyer guesses.</text></g>
+</svg>
+<div class="txt"><div class="kick">ECON 203 · Week 7 Interactive</div><h1>The Market for Lemons</h1><p>When one side of a transaction knows more than the other, markets can work poorly. Watch a used-car market unravel when quality is hidden, then see how information fixes it.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Watch a market unravel</h2>
+<p class="lead">100 used cars, from a worst “lemon” (1) to a best (100). A car’s quality is worth that many hundred dollars to its owner; a buyer would value it 30% higher, so every sale would create gains for both sides. Sellers know their own car’s quality. Buyers can see only the average quality of cars on the market, and pay for an average car.</p>
+<div class="tg" role="group" aria-label="Information"><button id="m1" aria-pressed="true">Quality is hidden<br><small style="font-weight:500">buyers pay for the average</small></button><button id="m2" aria-pressed="false">Buyers can inspect<br><small style="font-weight:500">each car’s quality is revealed</small></button></div>
+<div class="row"><button class="btn pri" id="nx">Next round</button><button class="btn" id="all">Run to the end</button><button class="btn" id="rs">Reset</button></div>
+<div class="key"><span><i style="background:#3b9a63"></i>High quality</span><span><i style="background:#e0a526"></i>Medium</span><span><i style="background:#d34147"></i>Low quality (lemon)</span><span><i style="background:#e0dad4"></i>Withdrawn from the market</span></div>
+<div class="two"><svg class="chart" id="gr" viewBox="0 0 400 400" role="img" aria-label="Grid of 100 cars; withdrawn cars turn gray"></svg><svg class="chart" id="ln" viewBox="0 0 400 400" role="img" aria-label="Price offered by round"></svg></div>
+<div class="stats" aria-live="polite"><div><b id="s1">100</b><small>Cars for sale</small></div><div><b id="s2">–</b><small>Price buyers offer</small></div><div><b id="s3">–</b><small>Average quality offered</small></div><div><b id="s4">$0</b><small>Gains from trade lost</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite">Press <em>Next round</em>. In round 1, buyers pay for the average of all 100 cars.</div>
+<p class="lead" style="font-size:.85rem">A stylized version of the “market for lemons” model: sellers sell only if the price is at least their car’s value, and buyers pay 1.3 times the average quality they expect.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Signal or screen?</h2>
+<p class="lead">Parties can reduce information gaps. Sellers send <strong>signals</strong>, such as warranties and credentials; buyers <strong>screen</strong>, using tests and questions.</p>
+<div id="sg"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Adverse selection or moral hazard?</h2>
+<p class="lead">Adverse selection occurs when hidden characteristics lead to a poor mix of participants. Moral hazard occurs when protection from risk changes behavior.</p>
+<div id="am"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+<div class="note"><strong>Ethics and information.</strong> Good business ethics require that all parties receive complete information before a transaction. Withholding what you know about a product may be profitable for a while, but it harms buyers and, as the market above shows, it can destroy the market itself.</div>
+</section>
+</div>
+<p class="foot">Source: ECON 203 Week 7 Deep Dive. Numbers are illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var hidden=true,T=100,hist=[];
+function col(q){return q>66?"#3b9a63":q>33?"#e0a526":"#d34147"}
+function draw(){
+ var g=document.getElementById("gr");g.innerHTML="";el("rect",{width:400,height:400,fill:"#fcfcfc"},g);
+ for(var i=0;i<100;i++){var q=i+1,r=Math.floor(i/10),c=i%10,on=hidden?q<=T:true;
+  el("rect",{x:20+c*36,y:20+(9-r)*36,width:32,height:32,rx:6,fill:on?col(q):"#e0dad4"},g);
+  var t=el("text",{x:20+c*36+16,y:20+(9-r)*36+20,"text-anchor":"middle","font-size":"11","font-weight":"700",fill:on?"#fff":"#b8b0aa"},g);t.textContent=q}
+ var l=document.getElementById("ln");l.innerHTML="";el("rect",{width:400,height:400,fill:"#fcfcfc"},l);el("rect",{x:50,y:30,width:330,height:310,fill:"#fff",stroke:"#e8e3de"},l);
+ function X(i){return 60+i*(310/Math.max(hist.length,8))}function Y(p){return 340-p/9000*300}
+ [0,3000,6000,9000].forEach(function(p){var t=el("text",{x:44,y:Y(p)+4,"text-anchor":"end","font-size":"10",fill:"#5b5557"},l);t.textContent="$"+p/1000+"k";el("path",{d:"M50 "+Y(p)+"H380",stroke:"#f0ece8"},l)});
+ var t1=el("text",{x:215,y:372,"text-anchor":"middle","font-size":"11","font-weight":"700"},l);t1.textContent="Round";var t2=el("text",{x:215,y:20,"text-anchor":"middle","font-size":"12","font-weight":"700"},l);t2.textContent="Price buyers offer";
+ var path="";hist.forEach(function(h,i){path+=(path?"L":"M")+X(i)+" "+Y(h.p)});if(path)el("path",{d:path,fill:"none",stroke:"#d34147","stroke-width":4},l);
+ hist.forEach(function(h,i){el("circle",{cx:X(i),cy:Y(h.p),r:5,fill:"#7d2429"},l);var t=el("text",{x:X(i),y:358,"text-anchor":"middle","font-size":"10",fill:"#5b5557"},l);t.textContent=i+1});
+ el("path",{d:"M50 "+Y(6500)+"H380",stroke:"#3b9a63","stroke-width":2,"stroke-dasharray":"6 5"},l);var ht=el("text",{x:376,y:Y(6500)-6,"text-anchor":"end","font-size":"10","font-weight":"700",fill:"#2d7a4b"},l);ht.textContent="what an average-quality car (50) is worth to a buyer: $6,500";
+ var on=hidden?T:100,lost=0;if(hidden)for(var q=T+1;q<=100;q++)lost+=.3*q*100;
+ document.getElementById("s1").textContent=on;document.getElementById("s4").textContent="$"+Math.round(lost).toLocaleString();
+ document.getElementById("s2").textContent=hist.length?"$"+Math.round(hist[hist.length-1].p).toLocaleString():(hidden?"–":"varies by car");
+ document.getElementById("s3").textContent=hidden?(hist.length?hist[hist.length-1].a.toFixed(1):"–"):"known";
+}
+function step(){if(!hidden)return false;var avg=(T+1)/2,p=1.3*avg*100,nT=Math.min(T,Math.floor(p/100));hist.push({p:p,a:avg});var moved=nT<T;T=nT;draw();
+ var a=document.getElementById("adv");a.innerHTML="<strong>Round "+hist.length+": buyers offer $"+Math.round(p).toLocaleString()+" for an average car (quality "+avg.toFixed(1)+").</strong> "+(moved?"Owners of cars worth more than that withdraw, so the cars left are worse on average. Next round’s price will be lower.":"No one else wants to leave: the market has shrunk to the very worst cars.")+(T<=1?" Almost everything has vanished, even though every sale would have made both sides better off.":"");
+ return moved&&T>1}
+function reset(){T=100;hist=[];draw();document.getElementById("adv").innerHTML=hidden?"Press <em>Next round</em>. In round 1, buyers pay for the average of all 100 cars.":"<strong>With inspection, buyers see each car’s true quality and pay 1.3 × its value.</strong> Every owner is willing to sell and every buyer is willing to buy, so all 100 cars trade and all the gains from trade are realized. Information repairs the market."}
+document.getElementById("nx").onclick=function(){if(hidden)step()};
+document.getElementById("all").onclick=function(){if(!hidden)return;var n=0;while(n<30&&step())n++};
+document.getElementById("rs").onclick=reset;
+function mode(h){hidden=h;document.getElementById("m1").setAttribute("aria-pressed",h);document.getElementById("m2").setAttribute("aria-pressed",!h);document.getElementById("nx").disabled=!h;document.getElementById("all").disabled=!h;reset()}
+document.getElementById("m1").onclick=function(){mode(true)};document.getElementById("m2").onclick=function(){mode(false)};reset();
+function quiz(host,list,labels,fin){var h=document.getElementById(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ labels.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)document.getElementById(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Not quite. Who is acting, and what do they know or change?</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("sg",[
+{t:"A seller offers a one-year warranty on a used car.",a:0,w:"The informed seller sends a credible signal that the car is good: a signal."},
+{t:"A buyer pays an independent mechanic to inspect the car.",a:1,w:"The uninformed buyer gathers information through a test: screening."},
+{t:"An insurer asks applicants to complete a health questionnaire.",a:1,w:"The uninformed party uses questions and tests to sort applicants: screening."},
+{t:"A job candidate lists a degree and professional certifications.",a:0,w:"The informed party sends a signal about hidden ability: a signal."}],["Signal (by the informed party)","Screen (by the uninformed party)"],null);
+quiz("am",[
+{t:"High-risk drivers are the most likely to buy generous car insurance.",a:0,w:"Hidden risk leads to a poor mix of participants: adverse selection."},
+{t:"After buying full coverage, a driver starts parking carelessly.",a:1,w:"Protection from risk changes behavior: moral hazard."},
+{t:"Sellers of low-quality used cars drive out the sellers of high-quality ones.",a:0,w:"Hidden quality leads to a poor mix of sellers: adverse selection."},
+{t:"Insurers add deductibles so that customers still pay part of any loss. Which problem does this limit?",a:1,w:"Keeping a financial stake in the outcome reduces risky behavior: it limits moral hazard."}],["Adverse selection","Moral hazard"],"qres");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

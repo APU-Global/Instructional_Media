@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive | Externalities and Policy</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.tg{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tg button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:7px 18px;cursor:pointer}
+.tg button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:10px 14px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.35rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;font-weight:700;margin:6px 0}.legend span{display:flex;gap:6px;align-items:center}.legend i{width:18px;height:5px;border-radius:3px;display:inline-block}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a factory emitting smoke over a neighborhood, beside a vaccination shield protecting people">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<path d="M0 190h980v40H0z" fill="#8e2b31"/>
+<g transform="translate(100 70)"><rect x="0" y="50" width="150" height="70" fill="#f7dcdd"/><rect x="20" y="10" width="26" height="42" fill="#f7dcdd"/><rect x="70" y="24" width="26" height="28" fill="#f7dcdd"/><g fill="#a8353a"><rect x="14" y="76" width="20" height="20"/><rect x="50" y="76" width="20" height="20"/><rect x="86" y="76" width="20" height="20"/></g><g fill="#fff" fill-opacity=".8"><circle cx="34" cy="0" r="16"/><circle cx="62" cy="-14" r="20"/><circle cx="96" cy="-26" r="24"/></g></g>
+<g transform="translate(330 120)" fill="#f7dcdd"><g><path d="M0 70V30l22-16 22 16v40z"/><path d="M60 70V36l20-14 20 14v34z" opacity=".85"/><path d="M118 70V32l22-16 22 16v38z" opacity=".7"/></g></g>
+<g transform="translate(600 40)" font-family="system-ui" fill="#fff"><text font-size="26" font-weight="800">When others pay</text><text y="34" font-size="26" font-weight="800">the price…</text></g>
+<g transform="translate(830 60)"><path d="M50 0l50 16v40c0 36-24 58-50 70C24 114 0 92 0 56V16z" fill="#f7dcdd"/><path d="M26 56l16 16 32-34" stroke="#1f6f78" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>
+<div class="txt"><div class="kick">ECON 203 · Week 5 Interactive</div><h1>Externalities and Policy</h1><p>When a transaction affects people who are not part of it, the market outcome may not serve society well. Add an external cost or benefit, see the market over- or underproduce, and fix it with a tax or subsidy.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Private versus social</h2>
+<p class="lead">Social cost equals private cost plus external cost. Markets overproduce goods with negative externalities and underproduce goods with positive externalities. Choose a case, set the size of the external effect, and compare the market with the social optimum.</p>
+<div class="tg" role="group" aria-label="Case"><button id="m1" aria-pressed="true">Negative externality (a polluting chemical)</button><button id="m2" aria-pressed="false">Positive externality (vaccination)</button></div>
+<div class="ctl"><div><label for="ex" id="exl">External cost per unit <span id="exv">$20</span></label><input type="range" id="ex" min="0" max="40" step="2" value="20"></div>
+<div><label for="tx" id="txl">Tax per unit <span id="txv">$0</span></label><input type="range" id="tx" min="0" max="40" step="2" value="0"></div></div>
+<div class="legend" id="lg"></div>
+<svg class="chart" id="ch" viewBox="0 0 700 380" role="img" aria-label="Market with private and social curves, market outcome, social optimum, and deadweight loss"></svg>
+<div class="stats" aria-live="polite"><div><b id="s1">–</b><small>Quantity with no policy</small></div><div><b id="s2">–</b><small>Socially best quantity</small></div><div><b id="s3">–</b><small>Quantity with your policy</small></div><div><b id="s4">–</b><small>Welfare lost</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Choose the policy tool</h2>
+<p class="lead">Governments and communities can address externalities. Taxes, subsidies, regulation, and tradable permits are common tools, and clear property rights can sometimes allow private bargaining.</p>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Ethics are part of economics</h2>
+<div class="grid2">
+<div class="note"><strong>Who bears the costs, and who gains?</strong> Externalities raise questions of responsibility and justice. The people harmed by pollution are often not the ones who profit from the product.</div>
+<div class="note teal"><strong>Choose policies carefully.</strong> A tax or subsidy can only be set well if decision makers listen to those affected, reflecting care for neighbors and for creation.</div></div>
+</section>
+</div>
+<p class="foot">Source: ECON 203 Week 5 Deep Dive. Numbers are illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var neg=true,ch=document.getElementById("ch");
+function X(q){return 60+q/80*610}function Y(p){return 330-p/120*300}
+function ln(a,b,col,w,dash,lbl,lx,dy){var q1=0,q2=80,lo=Math.max(0,(0-a)/b),hi=Math.min(80,(120-a)/b);if(b<0){lo=Math.max(0,(120-a)/b);hi=Math.min(80,(0-a)/b)}
+ el("path",{d:"M"+X(lo)+" "+Y(a+b*lo)+"L"+X(hi)+" "+Y(a+b*hi),stroke:col,"stroke-width":w,"stroke-dasharray":dash||"none","stroke-linecap":"round",fill:"none"},ch);
+ if(lbl){var q=lx,t=el("text",{x:X(q)+4,y:Y(a+b*q)+(dy===undefined?-8:dy),"font-size":"12","font-weight":"800",fill:col},ch);t.textContent=lbl}}
+function upd(){
+ var E=+document.getElementById("ex").value,T=+document.getElementById("tx").value;
+ document.getElementById("exv").textContent="$"+E;document.getElementById("txv").textContent="$"+T;
+ document.getElementById("exl").firstChild.textContent=neg?"External cost per unit ":"External benefit per unit ";
+ document.getElementById("txl").firstChild.textContent=neg?"Tax per unit ":"Subsidy per unit ";
+ // MPB: 100 - Q ; MPC: 20 + Q
+ var Qm=40,Pm=60,Qs=neg?(80-E)/2:(80+E)/2,Qp=neg?(80-T)/2:(80+T)/2,loss=Math.pow(Qp-Qs,2);
+ ch.innerHTML="";el("rect",{width:700,height:380,fill:"#fcfcfc"},ch);el("rect",{x:60,y:30,width:610,height:300,fill:"#fff",stroke:"#e8e3de"},ch);
+ [0,20,40,60,80].forEach(function(q){var t=el("text",{x:X(q),y:348,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},ch);t.textContent=q});
+ [0,30,60,90,120].forEach(function(p){var t=el("text",{x:54,y:Y(p)+4,"text-anchor":"end","font-size":"11",fill:"#5b5557"},ch);t.textContent="$"+p;el("path",{d:"M60 "+Y(p)+"H670",stroke:"#f0ece8"},ch)});
+ var xl=el("text",{x:365,y:372,"text-anchor":"middle","font-size":"12","font-weight":"700"},ch);xl.textContent="Quantity";
+ // deadweight loss triangle (no policy)
+ var qa=Math.min(Qm,Qs),qb=Math.max(Qm,Qs);
+ if(Math.abs(Qm-Qs)>.5){var a1=neg?Y(20+qa):Y(100+E-qa),pa=neg?20+E+qb:100+E-qb;
+  var tri=neg?"M"+X(Qs)+" "+Y(20+Qs+E)+"L"+X(Qm)+" "+Y(Pm+E)+"L"+X(Qm)+" "+Y(Pm)+"Z":"M"+X(Qm)+" "+Y(Pm)+"L"+X(Qs)+" "+Y(100+E-Qs)+"L"+X(Qs)+" "+Y(20+Qs)+"Z";
+  el("path",{d:tri,fill:"#d34147","fill-opacity":T===0?.5:.12},ch)}
+ ln(100,-1,"#1f6f78",5,null,neg?"Demand = private benefit":"Private benefit",2);
+ ln(20,1,"#d34147",5,null,neg?"Supply = private cost":"Private cost",56,22);
+ if(neg)ln(20+E,1,"#7d2429",4,"9 6","Social cost",56,-10);else ln(100+E,-1,"#3b9a63",4,"9 6","Social benefit",3);
+ if(T>0){if(neg)ln(20+T,1,"#e0a526",4,"3 6","Supply with tax",4);else ln(20-T,1,"#e0a526",4,"3 6","Supply with subsidy",8,22)}
+ el("circle",{cx:X(Qm),cy:Y(Pm),r:8,fill:"#d34147",stroke:"#fff","stroke-width":3},ch);
+ var ps=neg?(100-Qs):100+E-Qs;el("circle",{cx:X(Qs),cy:Y(ps),r:8,fill:"#3b9a63",stroke:"#fff","stroke-width":3},ch);
+ el("path",{d:"M"+X(Qs)+" 330V"+Y(ps),stroke:"#3b9a63","stroke-width":2,"stroke-dasharray":"4 4"},ch);el("path",{d:"M"+X(Qm)+" 330V"+Y(Pm),stroke:"#d34147","stroke-width":2,"stroke-dasharray":"4 4"},ch);
+ if(T>0){var pp=neg?100-Qp:100-Qp;el("circle",{cx:X(Qp),cy:Y(pp),r:7,fill:"#e0a526",stroke:"#231f20","stroke-width":2},ch)}
+ document.getElementById("lg").innerHTML='<span><i style="background:#1f6f78"></i>'+(neg?"Demand (private benefit)":"Private benefit")+'</span><span><i style="background:#d34147"></i>'+(neg?"Supply (private cost)":"Supply (private cost)")+'</span><span><i style="background:'+(neg?"#7d2429":"#3b9a63")+'"></i>'+(neg?"Social cost":"Social benefit")+'</span><span><i style="background:#d34147;opacity:.5"></i>Welfare lost without policy</span>';
+ document.getElementById("s1").textContent=Qm;document.getElementById("s2").textContent=Math.round(Qs*10)/10;document.getElementById("s3").textContent=Math.round(Qp*10)/10;document.getElementById("s4").textContent="$"+Math.round(loss);
+ var a=document.getElementById("adv");
+ if(E===0)a.innerHTML="<strong>With no external effect, the market quantity is already best.</strong> Raise the external "+(neg?"cost":"benefit")+" to see what changes.";
+ else if(Math.abs(T-E)<.01)a.innerHTML="<strong>Your "+(neg?"tax":"subsidy")+" equals the external "+(neg?"cost":"benefit")+", so the market quantity ("+Math.round(Qp*10)/10+") matches the social optimum.</strong> That internalizes the externality: the decision maker now faces the full social "+(neg?"cost":"benefit")+". Welfare lost is zero.";
+ else if(T===0)a.innerHTML="<strong>"+(neg?"Overproduction":"Underproduction")+": the market makes "+Qm+" but society’s best is "+Math.round(Qs*10)/10+".</strong> "+(neg?"The producer ignores the cost that lands on third parties, so too much is produced.":"Buyers and sellers ignore the benefit that spills over to others, so too little is produced.")+" Try a "+(neg?"tax":"subsidy")+".";
+ else a.innerHTML="<strong>"+(T<E?"Your policy is too small":"Your policy is too large")+".</strong> Quantity is "+Math.round(Qp*10)/10+" versus the social best of "+Math.round(Qs*10)/10+", so $"+Math.round(loss)+" of welfare is still lost. Setting it equal to the external "+(neg?"cost":"benefit")+" ($"+E+") is the Pigouvian level. In practice, measuring E well is the hard part."}
+["ex","tx"].forEach(function(i){document.getElementById(i).oninput=upd});
+function setM(n){neg=n;document.getElementById("m1").setAttribute("aria-pressed",n);document.getElementById("m2").setAttribute("aria-pressed",!n);upd()}
+document.getElementById("m1").onclick=function(){setM(true)};document.getElementById("m2").onclick=function(){setM(false)};upd();
+var T=["Tax","Subsidy","Regulation","Tradable permits","Property rights and bargaining"];
+var Q=[
+{t:"A city charges a fee per ton of pollution that factories emit.",a:0,w:"A per-unit charge that raises the private cost of the harmful activity is a tax."},
+{t:"The government pays part of the cost of vaccinations because others in the community benefit.",a:1,w:"Paying for the activity that creates an external benefit is a subsidy."},
+{t:"A law sets a maximum amount of pollution each plant may release.",a:2,w:"A rule setting a limit or standard is regulation."},
+{t:"Firms may buy and sell the right to emit a fixed total amount of pollution.",a:3,w:"A capped, tradable right to pollute is a tradable permit system."},
+{t:"A fishing community owns its lake and negotiates with a factory over discharge, without the government setting rules.",a:4,w:"Clear property rights can sometimes let the affected parties bargain privately."}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+Q.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ T.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(dn===Q.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Not that tool. How does the policy work: a price, a payment, a rule, a trade, or bargaining?</span>'}};o.appendChild(b)});qh.appendChild(d)});
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

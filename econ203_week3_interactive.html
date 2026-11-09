@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Interactive | Elasticity and Revenue</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.pre{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.pre button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer;text-align:left}
+.pre button[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.ctl{background:var(--warm);border-radius:14px;padding:10px 14px;margin:10px 0}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.35rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 16px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a stretching spring beside a price tag and a rectangle of revenue">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 70)" fill="none" stroke="#f7dcdd" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M0 40H30l10-30 20 60 20-60 20 60 20-60 20 60 10-30h40"/><path d="M230 10V70M230 40H300" stroke="#fff"/></g>
+<g transform="translate(120 140)" font-family="system-ui" font-weight="700" fill="#fff" font-size="14"><text>responsive</text><text x="190">stubborn</text></g>
+<g transform="translate(470 40)"><rect x="0" y="0" width="190" height="130" rx="10" fill="#f7dcdd" fill-opacity=".35" stroke="#fff" stroke-width="3"/><rect x="0" y="30" width="130" height="100" fill="#f6c453" fill-opacity=".9"/><text x="65" y="88" text-anchor="middle" font-size="20" font-weight="800" fill="#7d2429" font-family="system-ui">P × Q</text></g>
+<g transform="translate(730 60) rotate(-8)"><path d="M0 0h110l28 30-28 30H0z" fill="#f6c453"/><circle cx="16" cy="30" r="6" fill="#a8353a"/><text x="38" y="38" font-size="20" font-weight="800" fill="#7d2429" font-family="system-ui">$10</text></g>
+</svg>
+<div class="txt"><div class="kick">ECON 203 · Week 3 Interactive</div><h1>Elasticity and Revenue</h1><p>Elasticity tells us how strongly buyers respond when price changes. Change a price, measure the response with the midpoint method, and see why elasticity predicts what happens to total revenue.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Raise or cut the price?</h2>
+<p class="lead">You currently charge <strong>$10</strong> and sell <strong>50</strong> units, so revenue is $500. Pick a product type, then move your new price. Price elasticity is the percentage change in quantity demanded divided by the percentage change in price, calculated with the midpoint method and reported as an absolute value.</p>
+<div class="pre" id="pre" role="group" aria-label="Product type"></div>
+<div class="two"><svg class="chart" id="c1" viewBox="0 0 400 320" role="img" aria-label="Demand curve with revenue rectangles at the old and new price"></svg>
+<svg class="chart" id="c2" viewBox="0 0 400 320" role="img" aria-label="Total revenue as price changes"></svg></div>
+<div class="ctl"><label for="np">Your new price <span id="npv">$12.00</span></label><input type="range" id="np" min="6" max="14" step="0.5" value="12"></div>
+<div class="stats" aria-live="polite"><div><b id="e1">–</b><small>Midpoint elasticity</small></div><div><b id="e2">–</b><small>Type</small></div><div><b id="e3">–</b><small>New quantity</small></div><div><b id="e4">–</b><small>Revenue (was $500)</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">Demand curves here are straight lines through ($10, 50). Elasticity varies along a straight line, so the steeper curve is less responsive at $10.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Is demand elastic or inelastic?</h2>
+<p class="lead">Availability of substitutes, necessity, share of income, and time horizon all affect how responsive buyers are, and narrowly defined goods tend to be more elastic. Classify each situation.</p>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Advise the manager</h2>
+<div id="mg"></div>
+<div class="note"><strong>The rule.</strong> If demand is elastic, raising price lowers total revenue. If demand is inelastic, raising price raises it. At unit elasticity, revenue is at its maximum.</div>
+</section>
+</div>
+<p class="foot">Source: ECON 203 Week 3 Deep Dive. All numbers are illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var PR=[{n:"Necessity with few substitutes",s:"elasticity ≈ 0.5 at $10",b:2.5},{n:"Moderate response",s:"elasticity ≈ 1.0 at $10",b:5},{n:"Many close substitutes",s:"elasticity ≈ 2.0 at $10",b:10}];
+var pi=0,pb=document.getElementById("pre");
+PR.forEach(function(p,i){var b=document.createElement("button");b.setAttribute("aria-pressed",i===0);b.innerHTML=p.n+"<br><small style='font-weight:500;color:#5b5557'>"+p.s+"</small>";b.onclick=function(){pi=i;[].forEach.call(pb.children,function(x,k){x.setAttribute("aria-pressed",k===i)});upd()};pb.appendChild(b)});
+function Q(P,b){return Math.max(0,50-b*(P-10))}
+function upd(){var b=PR[pi].b,P1=+document.getElementById("np").value,Q1=Q(P1,b),P0=10,Q0=50;
+ document.getElementById("npv").textContent="$"+P1.toFixed(2);
+ var c=document.getElementById("c1");c.innerHTML="";el("rect",{width:400,height:320,fill:"#fcfcfc"},c);
+ function X(q){return 50+q/100*330}function Y(p){return 280-p/16*250}
+ el("rect",{x:50,y:30,width:330,height:250,fill:"#fff",stroke:"#e8e3de"},c);
+ [0,20,40,60,80,100].forEach(function(q){var t=el("text",{x:X(q),y:298,"text-anchor":"middle","font-size":"10",fill:"#5b5557"},c);t.textContent=q});
+ [0,4,8,12,16].forEach(function(p){var t=el("text",{x:44,y:Y(p)+4,"text-anchor":"end","font-size":"10",fill:"#5b5557"},c);t.textContent="$"+p;el("path",{d:"M50 "+Y(p)+"H380",stroke:"#f0ece8"},c)});
+ el("rect",{x:50,y:Y(P0),width:X(Q0)-50,height:280-Y(P0),fill:"#d34147","fill-opacity":.22},c);
+ el("rect",{x:50,y:Y(P1),width:X(Q1)-50,height:280-Y(P1),fill:"none",stroke:"#231f20","stroke-width":3,"stroke-dasharray":"7 5"},c);
+ var pa=Math.max(0,10-50/b*0),pLo=Math.max(0,10-(100-50)/b),pTop=10+50/b;
+ var d1=el("path",{d:"M"+X(Q(Math.min(pTop,16),b)>100?100:Q(Math.min(pTop,16),b))+" "+Y(Math.min(pTop,16))+"L"+X(Math.min(100,Q(Math.max(pLo,0),b)))+" "+Y(Math.max(pLo,0)),stroke:"#1f6f78","stroke-width":5,fill:"none","stroke-linecap":"round"},c);
+ el("circle",{cx:X(Q0),cy:Y(P0),r:7,fill:"#d34147",stroke:"#fff","stroke-width":2},c);el("circle",{cx:X(Q1),cy:Y(P1),r:7,fill:"#231f20",stroke:"#fff","stroke-width":2},c);
+ var t=el("text",{x:215,y:318,"text-anchor":"middle","font-size":"11","font-weight":"700"},c);t.textContent="Quantity demanded";
+ var l=el("text",{x:60,y:22,"font-size":"11","font-weight":"700"},c);l.textContent="Price";
+ var lg=el("text",{x:372,y:48,"text-anchor":"end","font-size":"10.5","font-weight":"700",fill:"#a8353a"},c);lg.textContent="shaded: old revenue · dashed: new";
+ var dQ=(Q1-Q0)/((Q1+Q0)/2),dP=(P1-P0)/((P1+P0)/2),E=Math.abs(dQ/dP),R1=P1*Q1;
+ document.getElementById("e1").textContent=E.toFixed(2);document.getElementById("e2").textContent=E>1.05?"Elastic":E<.95?"Inelastic":"Unit elastic";
+ document.getElementById("e3").textContent=Math.round(Q1);document.getElementById("e4").textContent="$"+Math.round(R1);
+ var s=document.getElementById("c2");s.innerHTML="";el("rect",{width:400,height:320,fill:"#fcfcfc"},s);
+ function RX(p){return 50+(p-5)/10*330}var maxR=620;function RY(r){return 280-r/maxR*250}
+ el("rect",{x:50,y:30,width:330,height:250,fill:"#fff",stroke:"#e8e3de"},s);
+ [6,8,10,12,14].forEach(function(p){var tt=el("text",{x:RX(p),y:298,"text-anchor":"middle","font-size":"10",fill:"#5b5557"},s);tt.textContent="$"+p});
+ [0,200,400,600].forEach(function(r){var tt=el("text",{x:44,y:RY(r)+4,"text-anchor":"end","font-size":"10",fill:"#5b5557"},s);tt.textContent="$"+r;el("path",{d:"M50 "+RY(r)+"H380",stroke:"#f0ece8"},s)});
+ var path="";for(var p=5;p<=15;p+=.25){path+=(path?"L":"M")+RX(p)+" "+RY(Math.min(maxR,p*Q(p,b)))}
+ el("path",{d:path,fill:"none",stroke:"#7d2429","stroke-width":4},s);
+ var ps=(50+10*b)/(2*b);if(ps>5&&ps<15){el("path",{d:"M"+RX(ps)+" 30V280",stroke:"#e0a526","stroke-width":2,"stroke-dasharray":"5 4"},s);var pt=el("text",{x:RX(ps)+4,y:44,"font-size":"10","font-weight":"700",fill:"#8a6a10"},s);pt.textContent="revenue peaks at $"+ps.toFixed(1)}
+ else if(ps>=15){var pt2=el("text",{x:375,y:44,"text-anchor":"end","font-size":"10","font-weight":"700",fill:"#8a6a10"},s);pt2.textContent="revenue keeps rising as price rises"}
+ el("circle",{cx:RX(10),cy:RY(500),r:6,fill:"#d34147",stroke:"#fff","stroke-width":2},s);el("circle",{cx:RX(P1),cy:RY(Math.min(maxR,R1)),r:7,fill:"#231f20",stroke:"#fff","stroke-width":2},s);
+ var xt=el("text",{x:215,y:318,"text-anchor":"middle","font-size":"11","font-weight":"700"},s);xt.textContent="Price → total revenue";
+ var up=P1>P0,rUp=R1>500+1,rDn=R1<500-1;
+ document.getElementById("adv").innerHTML=Math.abs(P1-P0)<.01?"<strong>No price change.</strong> Move the slider to see the response.":"<strong>Price "+(up?"up ":"down ")+Math.round(Math.abs(dP)*100)+"%, quantity "+(Q1<Q0?"down ":"up ")+Math.round(Math.abs(dQ)*100)+"% → elasticity "+E.toFixed(2)+" ("+(E>1.05?"elastic":E<.95?"inelastic":"unit elastic")+").</strong> Revenue went "+(rUp?"up":rDn?"down":"almost nowhere")+" to $"+Math.round(R1)+". "+(E>1?"Buyers respond strongly, so "+(up?"a price increase lowers":"a price cut raises")+" total revenue.":"Buyers respond weakly, so "+(up?"a price increase raises":"a price cut lowers")+" total revenue.")}
+document.getElementById("np").oninput=upd;upd();
+var D=[
+{t:"Gasoline for a daily commute, in the next week.",a:1,w:"A necessity with no quick substitutes, in a short time horizon: inelastic."},
+{t:"One particular brand of cereal among many similar brands.",a:0,w:"Narrowly defined goods with close substitutes are more elastic."},
+{t:"Table salt, which is a tiny share of a household’s budget.",a:1,w:"A small share of income and no real substitute: inelastic."},
+{t:"Gasoline demand over ten years, as people can change cars and homes.",a:0,w:"A longer time horizon gives buyers time to adjust: more elastic."},
+{t:"Life-saving medication for a chronic condition.",a:1,w:"A necessity with no substitute: inelastic."},
+{t:"Restaurant meals out, a luxury with many alternatives such as cooking at home.",a:0,w:"Many substitutes and not a necessity: elastic."}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+D.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ ["Elastic","Inelastic"].forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(dn===D.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+D.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Think about substitutes, necessity, share of income, and time.</span>'}};o.appendChild(b)});qh.appendChild(d)});
+var M=[
+{t:"Your demand is inelastic and you want more revenue. What should you do?",o:["Raise the price","Cut the price"],a:0,w:"With inelastic demand, a price increase raises revenue because quantity falls proportionally less."},
+{t:"Your demand is elastic and you want more revenue. What should you do?",o:["Raise the price","Cut the price"],a:1,w:"With elastic demand, a price cut raises revenue because quantity rises proportionally more."},
+{t:"A competitor launches a close substitute for your product. What happens to the elasticity of your demand?",o:["It becomes more elastic","It becomes less elastic"],a:0,w:"More substitutes mean buyers respond more strongly to your price, so demand becomes more elastic."}];
+var mh=document.getElementById("mg");
+M.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb");
+ x.o.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>'}
+  else{b.className="wrong";b.disabled=true;f.innerHTML='<span class="badbox">Check the rule linking elasticity to revenue.</span>'}};o.appendChild(b)});mh.appendChild(d)});
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
