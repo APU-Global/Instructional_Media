@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 400: Leading Disruptive Innovation | Week 3 Interactive: Combining Types of Innovation</title>
+<style>
+:root{
+  --ink:#17233b;--muted:#4f5b73;--bg:#f4f7fc;--card:#ffffff;--line:#d7dfee;
+  --navy:#14213d;--navy2:#24406e;
+  --cfg:#2755c4;--cfg-t:#e5ecfb;
+  --off:#b9520a;--off-t:#fdeddf;
+  --exp:#0f7a69;--exp-t:#dff2ee;
+  --good:#1b7f45;--good-t:#e2f4e9;--bad:#b3261e;--bad-t:#fbe6e4;--gold:#f2b134;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  overflow:hidden; /* the Canvas page is the only scroller: no double scrollbar */}
+#app{padding:0 0 14px}
+.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;gap:16px;padding:16px 22px;border-radius:0 0 18px 18px}
+.hero-text{flex:1;min-width:0}
+.course{font-size:13px;font-weight:700;letter-spacing:.04em;color:#f2b134;margin-bottom:6px}
+.kicker{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:99px}
+.hero h1{font:700 24px/1.2 Georgia,"Times New Roman",serif;margin:8px 0 4px}
+.hero p{margin:0;color:#dbe5f7;font-size:15px;max-width:560px}
+.hero svg{flex:0 0 auto;width:230px;height:auto}
+.wrap{padding:14px 18px 0}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:14px}
+.tab{appearance:none;border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:10px 14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--off);background:#fff}
+.tab:hover{color:var(--navy)}
+button:focus-visible,.node:focus-visible,[tabindex]:focus-visible{outline:3px solid #1a73e8;outline-offset:2px}
+.panel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.card h2{font-size:18px;margin:0 0 6px}
+.card h3{font-size:14px;margin:12px 0 2px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.lead{color:var(--muted);margin:0 0 10px;font-size:15px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff}
+.chip.cfg{background:var(--cfg)}.chip.off{background:var(--off)}.chip.exp{background:var(--exp)}
+.btn{appearance:none;font:inherit;font-weight:600;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy)}
+.btn:hover{filter:brightness(1.12)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.node{cursor:pointer}
+.node .shape{transition:stroke-width .15s, transform .15s}
+.node:hover .shape{stroke-width:4}
+.node:focus-visible{outline:none}
+.node:focus-visible .shape{stroke:#1a73e8;stroke-width:5}
+.feedback{border-radius:10px;padding:10px 12px;font-size:15px}
+.feedback.ok{background:var(--good-t);border:1px solid #9fd5b4}
+.feedback.no{background:var(--bad-t);border:1px solid #efb1ac}
+.feedback.info{background:#eef3fb;border:1px solid var(--line)}
+.progress{height:8px;border-radius:99px;background:#e3e9f5;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--exp),var(--gold));width:0;transition:width .3s}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pill{appearance:none;font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px;line-height:1.2;color:var(--ink)}
+.pill svg{width:28px;height:28px;flex:0 0 auto}
+.pill:hover{border-color:var(--navy2)}
+.pill[disabled]{cursor:default}
+.pill.right{background:var(--good-t);border-color:var(--good)}
+.pill.wrong{background:var(--bad-t);border-color:var(--bad)}
+.stat{font:700 36px/1 Georgia,serif;color:var(--navy)}
+.small{font-size:13px;color:var(--muted)}
+.foot{margin:14px 18px 0;font-size:12px;color:var(--muted);text-align:right}
+@media (max-width:760px){
+  .hero{flex-direction:column;align-items:flex-start;padding:14px 16px}
+  .hero svg{display:none}
+  .grid{grid-template-columns:1fr}
+  .pills{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wrap{padding:12px 12px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.idea{appearance:none;width:100%;display:flex;gap:10px;align-items:center;text-align:left;font:inherit;background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 10px;margin-bottom:6px;cursor:pointer;color:var(--ink)}
+.idea svg{width:30px;height:30px;flex:0 0 auto}
+.idea b{display:block;font-size:13px;line-height:1.2}
+.idea span.t{font-size:13px;line-height:1.3;color:var(--muted);display:block}
+.idea[aria-pressed="true"]{background:var(--tint);border-color:var(--c)}
+.idea[aria-pressed="true"] .tick{opacity:1}
+.tick{margin-left:auto;width:22px;height:22px;border-radius:50%;background:var(--c);color:#fff;font-size:14px;display:grid;place-items:center;opacity:0;flex:0 0 auto}
+.gl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin:4px 0 4px}
+.seg{cursor:pointer}.seg:focus,.seg:focus-visible{outline:none!important}.seg:focus-visible path{stroke:#1a73e8;stroke-width:4}
+.bizb{appearance:none;font:inherit;font-weight:600;font-size:14px;border:2px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;cursor:pointer;color:var(--ink)}
+.bizb[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.mbar{display:flex;gap:4px;margin:6px 0}
+.mbar i{flex:1;height:12px;border-radius:6px;background:#e3e9f5;transition:background .2s}
+@media (max-width:760px){.grid{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-profit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><path d="M29 19.500c-1.500-3.200-10-3.200-10 1.500 0 5 10 2.500 10 7.500 0 4.500-8.500 4.700-10 1.500M24 12.500v4M24 31.500v4"/></g></symbol>
+<symbol id="i-network" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="12" r="5"/><circle cx="11" cy="35" r="5"/><circle cx="37" cy="35" r="5"/><path d="M21.500 16.500 13.500 30.500M26.500 16.500 34.500 30.500M16 35h16"/></g></symbol>
+<symbol id="i-structure" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="17" y="6" width="14" height="9" rx="2"/><rect x="4" y="33" width="14" height="9" rx="2"/><rect x="30" y="33" width="14" height="9" rx="2"/><path d="M24 15v9M11 33v-9h26v9"/></g></symbol>
+<symbol id="i-process" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M38 24a14 14 0 0 1-24.500 9.200"/><path d="M10 24a14 14 0 0 1 24.500-9.200"/><path d="M36 7v8h-8M12 41v-8h8"/></g></symbol>
+<symbol id="i-performance" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 34a17 17 0 1 1 32 0"/><path d="M24 34l8-12"/><circle cx="24" cy="34" r="2.500"/><path d="M24 13v3M12.500 20l2 2M35.500 20l-2 2"/></g></symbol>
+<symbol id="i-system" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="15" height="15" rx="3"/><rect x="27" y="6" width="15" height="15" rx="3"/><rect x="6" y="27" width="15" height="15" rx="3"/><circle cx="34.500" cy="34.500" r="7.500"/><path d="M21 13.500h6M13.500 21v6M21 34.500h6"/></g></symbol>
+<symbol id="i-service" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32a16 16 0 0 1 32 0z"/><path d="M5 38h38M24 16v-4M21 12h6"/></g></symbol>
+<symbol id="i-channel" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 10 8h28l4 10"/><path d="M6 18c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5"/><path d="M9 25v17h30V25M20 42V32h8v10"/></g></symbol>
+<symbol id="i-brand" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 5l5.600 11.400 12.400 1.800-9 8.800 2.100 12.400L24 33.500 12.900 39.400 15 27l-9-8.800 12.400-1.800z"/></g></symbol>
+<symbol id="i-engage" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 41S6 30 6 17a9.500 9.500 0 0 1 18-4 9.500 9.500 0 0 1 18 4c0 13-18 24-18 24z"/></g></symbol>
+</defs></svg>
+<main id="app">
+<header class="hero">
+  <div class="hero-text">
+    <div class="course">ORGS 400: Leading Disruptive Innovation</div>
+    <span class="kicker">Week 3</span>
+    <h1>Combine Types to Build a Moat</h1>
+    <p>Experience types face the customer. Layer several types onto one business and see how much harder it becomes to copy.</p>
+  </div>
+  <svg viewBox="0 0 260 150" role="img" aria-label="Illustration of a storefront reaching customers through several channels">
+<circle cx="130" cy="75" r="68" fill="#fff" opacity=".07"/>
+<rect x="64" y="58" width="104" height="78" rx="6" fill="#fff"/>
+<path d="M58 58 70 36h92l12 22z" fill="#f2b134"/>
+<g fill="#fff"><path d="M58 58c0 7 6 10 12 10s12-3 12-10c0 7 6 10 12 10s12-3 12-10c0 7 6 10 12 10s12-3 12-10c0 7 6 10 12 10s12-3 12-10z" fill="#e07a1f"/></g>
+<rect x="76" y="82" width="34" height="26" rx="3" fill="#cfd9ee"/><rect x="118" y="82" width="38" height="54" rx="3" fill="#0f7a69"/>
+<circle cx="150" cy="110" r="2.500" fill="#fff"/>
+<g stroke="#9fd0ff" stroke-width="2.500" fill="none" stroke-dasharray="5 5"><path d="M174 98 214 70M174 112 220 112M174 124 212 146"/></g>
+<g fill="#fff"><circle cx="222" cy="64" r="9" fill="#2fb59f"/><circle cx="230" cy="112" r="9" fill="#f2b134"/><circle cx="220" cy="148" r="0"/></g>
+<path d="M214 70c-3-6 7-10 8-4" fill="none"/>
+<g fill="#ff8aa0" transform="translate(194 134) scale(.38)"><path d="M24 41S6 30 6 17a9.500 9.500 0 0 1 18-4 9.500 9.500 0 0 1 18 4c0 13-18 24-18 24z"/></g>
+<rect x="32" y="40" width="22" height="22" rx="5" fill="#2755c4"/><rect x="36" y="46" width="14" height="3" rx="1.500" fill="#fff"/><rect x="36" y="52" width="9" height="3" rx="1.500" fill="#fff"/>
+</svg>
+</header>
+<div class="wrap">
+
+<div class="grid" style="grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)">
+ <div>
+  <div class="card" style="padding-bottom:10px">
+   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px">
+     <b style="font-size:15px">Choose a business:</b>
+     <div role="group" aria-label="Business" id="biz" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+   </div>
+   <div style="position:relative">
+    <svg id="ring" viewBox="0 0 400 400" role="group" aria-label="Ring of ten innovation types" style="width:100%;max-width:380px;display:block;margin:0 auto"></svg>
+   </div>
+   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap" class="small">
+     <span><span class="chip cfg">Configuration</span></span><span><span class="chip off">Offering</span></span><span><span class="chip exp">Experience</span></span>
+   </div>
+  </div>
+  <div class="card" id="meter" aria-live="polite" style="margin-top:12px;min-height:200px"></div>
+ </div>
+ <div>
+  <div class="card" style="padding:10px 12px">
+   <div class="small" style="margin-bottom:6px"><b>Toggle moves</b> to add them to <span id="bname"></span>&rsquo;s strategy. Experience types (this week) are first.</div>
+   <div id="ideas"></div>
+  </div>
+ </div>
+</div>
+
+</div>
+<div class="foot">ORGS 400 &middot; Leading Disruptive Innovation &middot; Based on Keeley, <em>Ten Types of Innovation</em> (2013)</div>
+</main>
+<script>
+(function(){
+  // Tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+    document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});report();}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t)});
+    t.addEventListener('keydown',function(e){var n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i+tabs.length-1)%tabs.length];
+      if(n){n.focus();show(n);e.preventDefault();}});});
+  // Tell the parent page how tall we are (optional auto-resize; harmless if nobody listens)
+  function report(){var h=Math.ceil(document.getElementById('app').getBoundingClientRect().height);
+    try{parent.postMessage({type:'iframe-resize',source:location.pathname.split('/').pop(),height:h},'*')}catch(e){}}
+  window.report=report;
+  if(window.ResizeObserver){new ResizeObserver(report).observe(document.getElementById('app'))}
+  window.addEventListener('load',report);window.addEventListener('resize',report);
+})();
+function $(s,r){return (r||document).querySelector(s)}
+function svgIcon(id,cls){return '<svg class="'+(cls||'')+'" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-'+id+'"/></svg>'}
+
+
+var T=[
+ {k:'service',n:'Service',g:'exp'},{k:'channel',n:'Channel',g:'exp'},{k:'brand',n:'Brand',g:'exp'},{k:'engage',n:'Customer Engagement',g:'exp'},
+ {k:'profit',n:'Profit Model',g:'cfg'},{k:'network',n:'Network',g:'cfg'},{k:'structure',n:'Structure',g:'cfg'},{k:'process',n:'Process',g:'cfg'},
+ {k:'performance',n:'Product Performance',g:'off'},{k:'system',n:'Product System',g:'off'}];
+var C={cfg:'#2755c4',off:'#b9520a',exp:'#0f7a69'}, TI={cfg:'#e5ecfb',off:'#fdeddf',exp:'#dff2ee'};
+var GN={cfg:'Configuration',off:'Offering',exp:'Experience'};
+var B={
+ coffee:{n:'Brewline Coffee',sub:'neighborhood coffee shop',I:{
+  service:'Free taste consult and a no-questions remake guarantee.',
+  channel:'Pop-up carts at the commuter station and office lobbies.',
+  brand:'A transparent, farmer-direct promise printed on every cup.',
+  engage:'A loyalty passport that lets regulars vote on the next seasonal blend.',
+  profit:'Monthly drip subscription with discounted pre-paid refills.',
+  network:'Partner with a local bakery and a bike-courier co-op for morning delivery.',
+  structure:'Cross-train baristas as coffee guides with skill-based pay tiers.',
+  process:'Mobile pre-order so drinks are ready when customers arrive.',
+  performance:'Nitrogen-sealed cold brew that stays fresh three times longer.',
+  system:'Brew kit, bean club, and app that tune recipes together.'}},
+ gym:{n:'FitLoop Gym',sub:'neighborhood fitness studio',I:{
+  service:'24/7 chat with a coach plus a first-week check-in call.',
+  channel:'On-site corporate classes and an at-home streaming tier.',
+  brand:'A \u201cstrong for life\u201d promise told through member stories, not models.',
+  engage:'Team challenges and member-designed workouts voted on monthly.',
+  profit:'Pay-per-visit credits that roll over instead of fixed monthly fees.',
+  network:'Alliances with physical therapists and employers for referrals and benefits.',
+  structure:'Small coach-led pods where coaches own member outcomes.',
+  process:'A 10-minute automated assessment that builds a starter plan.',
+  performance:'Smart equipment that adjusts weight and checks lifting form.',
+  system:'Classes, wearables, and a nutrition app sharing one dashboard.'}},
+ books:{n:'Page & Pine Books',sub:'independent bookstore',I:{
+  service:'Personal reading consultations with free gift wrapping and shipping.',
+  channel:'Neighborhood little-library kiosks plus same-day pickup ordering.',
+  brand:'\u201cBooks chosen by someone who loves them,\u201d with handwritten staff notes.',
+  engage:'Reader polls and monthly author meet-ups that shape what gets stocked.',
+  profit:'Membership with a curated monthly box and event discounts.',
+  network:'Team up with local authors, schools, and caf\u00e9s on reading programs.',
+  structure:'Staff become genre curators with their own shelf budgets.',
+  process:'Trade-in kiosk that updates used-book inventory automatically.',
+  performance:'Durable special editions of local favorites, signed by the author.',
+  system:'Books, e-book borrowing, and discussion guides bundled for book clubs.'}}
+};
+var cur='coffee', sel={};
+function resetSel(){sel={};T.forEach(function(t){sel[t.k]=false})}
+resetSel();
+function arc(cx,cy,r0,r1,a0,a1){var p=function(r,a){return (cx+r*Math.cos(a)).toFixed(2)+' '+(cy+r*Math.sin(a)).toFixed(2)};
+ return 'M'+p(r1,a0)+' A'+r1+' '+r1+' 0 0 1 '+p(r1,a1)+' L'+p(r0,a1)+' A'+r0+' '+r0+' 0 0 0 '+p(r0,a0)+'Z';}
+var ring=$('#ring');
+function drawRing(){
+ var h='',n=T.length,gap=0.035;
+ T.forEach(function(t,i){
+  var a0=-Math.PI/2+i*2*Math.PI/n+gap,a1=-Math.PI/2+(i+1)*2*Math.PI/n-gap,am=(a0+a1)/2,on=sel[t.k];
+  var mx=200+138*Math.cos(am),my=200+138*Math.sin(am);
+  h+='<g class="seg" role="button" tabindex="0" aria-pressed="'+on+'" aria-label="'+t.n+'" data-k="'+t.k+'">'+
+   '<path d="'+arc(200,200,92,190,a0,a1)+'" fill="'+(on?C[t.g]:TI[t.g])+'" stroke="'+C[t.g]+'" stroke-width="2"/>'+
+   '<g style="color:'+(on?'#fff':C[t.g])+'"><use href="#i-'+t.k+'" x="'+(mx-17)+'" y="'+(my-24)+'" width="34" height="34"/></g>'+
+   '<text x="'+mx+'" y="'+(my+19)+'" text-anchor="middle" font-size="10.500" font-weight="700" fill="'+(on?'#fff':'#17233b')+'">'+t.n.replace('Customer Engagement','Engagement').replace('Product Performance','Performance').replace('Product System','System').replace('Profit Model','Profit')+'</text></g>';
+ });
+ var c=count();
+ h+='<circle cx="200" cy="200" r="82" fill="#fff" stroke="#d7dfee" stroke-width="2"/>'+
+  '<text x="200" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="54" font-weight="700" fill="#14213d">'+c+'</text>'+
+  '<text x="200" y="234" text-anchor="middle" font-size="13" fill="#4f5b73">of 10 types</text>'+
+  '<text x="200" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="#4f5b73" letter-spacing="1">COMBINED</text>';
+ ring.innerHTML=h;
+ [].forEach.call(ring.querySelectorAll('.seg'),function(s){
+  s.addEventListener('click',function(){toggle(s.getAttribute('data-k'),true)});
+  s.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(s.getAttribute('data-k'),true)}});});
+}
+function count(){return T.filter(function(t){return sel[t.k]}).length}
+function drawIdeas(){
+ var h='';['exp','cfg','off'].forEach(function(g){
+  h+='<div class="gl" style="color:'+C[g]+'">'+GN[g]+'</div>';
+  T.filter(function(t){return t.g===g}).forEach(function(t){
+   h+='<button class="idea" data-k="'+t.k+'" aria-pressed="'+sel[t.k]+'" style="--c:'+C[g]+';--tint:'+TI[g]+'"><span style="color:'+C[g]+'">'+svgIcon(t.k)+'</span><span><b>'+t.n+'</b><span class="t">'+B[cur].I[t.k]+'</span></span><span class="tick" aria-hidden="true">\u2713</span></button>';});
+ });
+ $('#ideas').innerHTML=h;
+ [].forEach.call($('#ideas').querySelectorAll('.idea'),function(b){b.addEventListener('click',function(){toggle(b.getAttribute('data-k'),false)})});
+ $('#bname').textContent=B[cur].n;
+}
+function drawMeter(){
+ var c=count(),lab,txt,col;
+ var groups={};T.forEach(function(t){if(sel[t.k])groups[t.g]=1});var gc=Object.keys(groups).length;
+ if(c===0){lab='Nothing chosen yet';col='#4f5b73';txt='Select moves for '+B[cur].n+' and watch how hard the whole package would be for a rival to copy.';}
+ else if(c===1){lab='Easy to copy';col='#b3261e';txt='A single move can be matched by a competitor within months. This is the trap of innovating only on one dimension.';}
+ else if(c<=3){lab='Some protection';col='#b9520a';txt='Two or three connected moves start to raise the cost of imitation, especially when they reinforce each other.';}
+ else if(c<=6){lab='Defensible';col='#0f7a69';txt='Rivals must copy many moves at once, and each one depends on the others. This is the strength in numbers Keeley describes.';}
+ else{lab='Hard to copy';col='#1b7f45';txt='A deep, interlocking system. Be sure you can actually execute this many moves; breadth without focus can overwhelm a small team.';}
+ var h='<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0">Defensibility meter</h2><span style="font-weight:700;color:'+col+'">'+lab+'</span></div><div class="mbar" aria-hidden="true">';
+ for(var i=0;i<10;i++){h+='<i style="background:'+(i<c?col:'')+'"></i>'}
+ h+='</div><p style="margin:4px 0 0;font-size:15px">'+txt+'</p>';
+ if(c>0)h+='<p class="small" style="margin:6px 0 0">Groups touched: <b>'+gc+' of 3</b>'+(gc===3?' (Configuration, Offering and Experience).':'. Look for a move in the group you are missing.')+'</p>';
+ $('#meter').innerHTML=h;
+}
+function toggle(k,fromRing){sel[k]=!sel[k];drawAll();
+ if(fromRing){var s=ring.querySelector('[data-k="'+k+'"]');if(s)s.focus();} else {var b=$('#ideas').querySelector('[data-k="'+k+'"]');if(b)b.focus();}}
+function drawAll(){drawRing();drawIdeas();drawMeter();report();}
+var bz=$('#biz');
+Object.keys(B).forEach(function(k){var b=document.createElement('button');b.className='bizb';b.textContent=B[k].n;b.setAttribute('aria-pressed',k===cur);b.title=B[k].sub;
+ b.addEventListener('click',function(){cur=k;resetSel();[].forEach.call(bz.children,function(x){x.setAttribute('aria-pressed',x===b)});drawAll();});bz.appendChild(b);});
+drawAll();
+</script>
+</body>
+</html>

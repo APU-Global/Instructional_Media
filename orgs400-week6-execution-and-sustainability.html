@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 400: Leading Disruptive Innovation | Week 6 Interactive: Execution and Sustainability</title>
+<style>
+:root{
+  --ink:#17233b;--muted:#4f5b73;--bg:#f4f7fc;--card:#ffffff;--line:#d7dfee;
+  --navy:#14213d;--navy2:#24406e;
+  --cfg:#2755c4;--cfg-t:#e5ecfb;
+  --off:#b9520a;--off-t:#fdeddf;
+  --exp:#0f7a69;--exp-t:#dff2ee;
+  --good:#1b7f45;--good-t:#e2f4e9;--bad:#b3261e;--bad-t:#fbe6e4;--gold:#f2b134;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  overflow:hidden; /* the Canvas page is the only scroller: no double scrollbar */}
+#app{padding:0 0 14px}
+.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;gap:16px;padding:16px 22px;border-radius:0 0 18px 18px}
+.hero-text{flex:1;min-width:0}
+.course{font-size:13px;font-weight:700;letter-spacing:.04em;color:#f2b134;margin-bottom:6px}
+.kicker{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:99px}
+.hero h1{font:700 24px/1.2 Georgia,"Times New Roman",serif;margin:8px 0 4px}
+.hero p{margin:0;color:#dbe5f7;font-size:15px;max-width:560px}
+.hero svg{flex:0 0 auto;width:230px;height:auto}
+.wrap{padding:14px 18px 0}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:14px}
+.tab{appearance:none;border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:10px 14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--off);background:#fff}
+.tab:hover{color:var(--navy)}
+button:focus-visible,.node:focus-visible,[tabindex]:focus-visible{outline:3px solid #1a73e8;outline-offset:2px}
+.panel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.card h2{font-size:18px;margin:0 0 6px}
+.card h3{font-size:14px;margin:12px 0 2px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.lead{color:var(--muted);margin:0 0 10px;font-size:15px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff}
+.chip.cfg{background:var(--cfg)}.chip.off{background:var(--off)}.chip.exp{background:var(--exp)}
+.btn{appearance:none;font:inherit;font-weight:600;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy)}
+.btn:hover{filter:brightness(1.12)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.node{cursor:pointer}
+.node .shape{transition:stroke-width .15s, transform .15s}
+.node:hover .shape{stroke-width:4}
+.node:focus-visible{outline:none}
+.node:focus-visible .shape{stroke:#1a73e8;stroke-width:5}
+.feedback{border-radius:10px;padding:10px 12px;font-size:15px}
+.feedback.ok{background:var(--good-t);border:1px solid #9fd5b4}
+.feedback.no{background:var(--bad-t);border:1px solid #efb1ac}
+.feedback.info{background:#eef3fb;border:1px solid var(--line)}
+.progress{height:8px;border-radius:99px;background:#e3e9f5;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--exp),var(--gold));width:0;transition:width .3s}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pill{appearance:none;font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px;line-height:1.2;color:var(--ink)}
+.pill svg{width:28px;height:28px;flex:0 0 auto}
+.pill:hover{border-color:var(--navy2)}
+.pill[disabled]{cursor:default}
+.pill.right{background:var(--good-t);border-color:var(--good)}
+.pill.wrong{background:var(--bad-t);border-color:var(--bad)}
+.stat{font:700 36px/1 Georgia,serif;color:var(--navy)}
+.small{font-size:13px;color:var(--muted)}
+.foot{margin:14px 18px 0;font-size:12px;color:var(--muted);text-align:right}
+@media (max-width:760px){
+  .hero{flex-direction:column;align-items:flex-start;padding:14px 16px}
+  .hero svg{display:none}
+  .grid{grid-template-columns:1fr}
+  .pills{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wrap{padding:12px 12px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.act{appearance:none;font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:9px 12px;cursor:pointer;color:var(--ink);font-size:15px}
+.act:hover{border-color:var(--navy2)}
+.act.best{background:var(--good-t);border-color:var(--good)}.act.ok{background:#fff6dd;border-color:#c99400}.act.poor{background:var(--bad-t);border-color:var(--bad)}
+.act[disabled]{cursor:default}
+.ini{appearance:none;width:100%;font:inherit;text-align:left;display:block;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:7px;cursor:pointer;color:var(--ink)}
+.ini b{font-size:14.5px;display:block;line-height:1.25}
+.ini .t{font-size:13px;color:var(--muted);display:block;line-height:1.3;margin-top:1px}
+.ini .sc{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.ini .sc i{font-style:normal;font-size:12px;font-weight:700;border-radius:99px;padding:1px 8px;color:#fff}
+.ini[aria-pressed="true"]{background:#eef3fb;border-color:var(--navy2)}
+.ini[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+.vc{cursor:pointer}.vc:focus,.vc:focus-visible{outline:none!important}.vc:focus-visible circle{stroke:#1a73e8;stroke-width:5}
+@media (max-width:760px){.grid{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-profit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><path d="M29 19.500c-1.500-3.200-10-3.200-10 1.500 0 5 10 2.500 10 7.500 0 4.500-8.500 4.700-10 1.500M24 12.500v4M24 31.500v4"/></g></symbol>
+<symbol id="i-network" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="12" r="5"/><circle cx="11" cy="35" r="5"/><circle cx="37" cy="35" r="5"/><path d="M21.500 16.500 13.500 30.500M26.500 16.500 34.500 30.500M16 35h16"/></g></symbol>
+<symbol id="i-structure" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="17" y="6" width="14" height="9" rx="2"/><rect x="4" y="33" width="14" height="9" rx="2"/><rect x="30" y="33" width="14" height="9" rx="2"/><path d="M24 15v9M11 33v-9h26v9"/></g></symbol>
+<symbol id="i-process" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M38 24a14 14 0 0 1-24.500 9.200"/><path d="M10 24a14 14 0 0 1 24.500-9.200"/><path d="M36 7v8h-8M12 41v-8h8"/></g></symbol>
+<symbol id="i-performance" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 34a17 17 0 1 1 32 0"/><path d="M24 34l8-12"/><circle cx="24" cy="34" r="2.500"/><path d="M24 13v3M12.500 20l2 2M35.500 20l-2 2"/></g></symbol>
+<symbol id="i-system" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="15" height="15" rx="3"/><rect x="27" y="6" width="15" height="15" rx="3"/><rect x="6" y="27" width="15" height="15" rx="3"/><circle cx="34.500" cy="34.500" r="7.500"/><path d="M21 13.500h6M13.500 21v6M21 34.500h6"/></g></symbol>
+<symbol id="i-service" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32a16 16 0 0 1 32 0z"/><path d="M5 38h38M24 16v-4M21 12h6"/></g></symbol>
+<symbol id="i-channel" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 10 8h28l4 10"/><path d="M6 18c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5"/><path d="M9 25v17h30V25M20 42V32h8v10"/></g></symbol>
+<symbol id="i-brand" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 5l5.600 11.400 12.400 1.800-9 8.800 2.100 12.400L24 33.500 12.900 39.400 15 27l-9-8.800 12.400-1.800z"/></g></symbol>
+<symbol id="i-engage" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 41S6 30 6 17a9.500 9.500 0 0 1 18-4 9.500 9.500 0 0 1 18 4c0 13-18 24-18 24z"/></g></symbol>
+</defs></svg>
+<main id="app">
+<header class="hero">
+  <div class="hero-text">
+    <div class="course">ORGS 400: Leading Disruptive Innovation</div>
+    <span class="kicker">Week 6</span>
+    <h1>Execute, Then Sustain</h1>
+    <p>Run a launch with collective-creativity capabilities, then balance societal, environmental, and financial footprints.</p>
+  </div>
+  <svg viewBox="0 0 260 150" role="img" aria-label="Illustration of a rocket launching above a growing plant">
+<circle cx="130" cy="75" r="68" fill="#fff" opacity=".07"/>
+<g transform="translate(96 14) rotate(18 34 60)"><path d="M34 0c14 14 18 34 14 62H20C16 34 20 14 34 0z" fill="#fff"/><circle cx="34" cy="34" r="8" fill="#2755c4"/><path d="M20 50 6 68l14-2zM48 50l14 18-14-2z" fill="#e07a1f"/><path d="M26 64h16l-8 22z" fill="#f2b134"/></g>
+<path d="M60 134c40 8 100 8 150 0" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5" fill="none"/>
+<g transform="translate(186 96)"><path d="M0 40V10" stroke="#2fb59f" stroke-width="4" stroke-linecap="round"/><path d="M0 22C-18 22-22 8-22 0c14 0 22 6 22 22z" fill="#2fb59f"/><path d="M0 14C16 14 22 2 22-6 8-6 0 0 0 14z" fill="#7fe0c8"/></g>
+<g fill="#f2b134"><circle cx="48" cy="40" r="3"/><circle cx="214" cy="38" r="2.500"/><circle cx="70" cy="100" r="2.500"/></g>
+</svg>
+</header>
+<div class="wrap">
+
+<div class="tabs" role="tablist" aria-label="Activities">
+  <button class="tab" role="tab" id="t-cap" aria-selected="true" aria-controls="p-cap">1 &middot; Launch simulator</button>
+  <button class="tab" role="tab" id="t-foot" aria-selected="false" aria-controls="p-foot" tabindex="-1">2 &middot; Footprint builder</button>
+</div>
+
+<section class="panel" id="p-cap" role="tabpanel" aria-labelledby="t-cap">
+ <div class="grid" style="grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)">
+  <div class="card">
+   <h2>Collective creativity</h2>
+   <p class="lead">Three capabilities sustain innovation over time. Select a circle to read more.</p>
+   <svg id="venn" viewBox="0 0 360 300" role="group" aria-label="Three capabilities: creative abrasion, agility, resolution" style="width:100%;max-width:360px;display:block;margin:0 auto"></svg>
+   <div id="vtext" class="feedback info" aria-live="polite" style="margin-top:8px;min-height:84px"></div>
+  </div>
+  <div class="card" style="min-height:470px">
+   <div style="display:flex;justify-content:space-between;align-items:center"><span class="small" id="rcount"></span><b id="ready" style="font-size:14px"></b></div>
+   <div class="progress" style="margin:6px 0 4px"><i id="rbar"></i></div>
+   <p class="small" style="margin:0 0 10px">Launch readiness</p>
+   <p id="situation" style="font-size:16.5px;margin:0 0 10px;min-height:98px"></p>
+   <div id="actions" style="display:grid;gap:8px"></div>
+   <div id="rfb" aria-live="polite" style="margin-top:10px;min-height:96px"></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="p-foot" role="tabpanel" aria-labelledby="t-foot" hidden>
+ <div class="grid" style="grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)">
+  <div class="card">
+   <h2>Footprint scorecard</h2>
+   <p class="lead">A sustainable organization balances its societal, environmental, and financial footprints. Choose up to three initiatives.</p>
+   <svg id="tri" viewBox="0 0 360 300" role="img" aria-label="Triangle chart of the three footprint scores" style="width:100%;max-width:360px;display:block;margin:0 auto"></svg>
+   <div id="fverdict" aria-live="polite" class="feedback info" style="margin-top:6px;min-height:100px"></div>
+  </div>
+  <div class="card">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>Goal: every footprint at 5 or more</b><span class="small" id="slots"></span></div>
+   <div id="inits"></div>
+   <p style="margin:8px 0 0"><button class="btn ghost" id="freset">Clear choices</button></p>
+  </div>
+ </div>
+</section>
+
+</div>
+<div class="foot">ORGS 400 &middot; Leading Disruptive Innovation &middot; Based on Keeley, <em>Ten Types of Innovation</em> (2013)</div>
+</main>
+<script>
+(function(){
+  // Tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+    document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});report();}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t)});
+    t.addEventListener('keydown',function(e){var n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i+tabs.length-1)%tabs.length];
+      if(n){n.focus();show(n);e.preventDefault();}});});
+  // Tell the parent page how tall we are (optional auto-resize; harmless if nobody listens)
+  function report(){var h=Math.ceil(document.getElementById('app').getBoundingClientRect().height);
+    try{parent.postMessage({type:'iframe-resize',source:location.pathname.split('/').pop(),height:h},'*')}catch(e){}}
+  window.report=report;
+  if(window.ResizeObserver){new ResizeObserver(report).observe(document.getElementById('app'))}
+  window.addEventListener('load',report);window.addEventListener('resize',report);
+})();
+function $(s,r){return (r||document).querySelector(s)}
+function svgIcon(id,cls){return '<svg class="'+(cls||'')+'" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-'+id+'"/></svg>'}
+
+
+// ---------- Tab 1 ----------
+var CAP={
+ abrasion:{n:'Creative abrasion',c:'#b9520a',d:'Generate a range of ideas through lively, respectful debate. Different views rub against each other and sharpen the thinking.'},
+ agility:{n:'Creative agility',c:'#0f7a69',d:'Test and refine ideas through quick, small experiments. Learn from evidence, adjust, and try again.'},
+ resolution:{n:'Creative resolution',c:'#2755c4',d:'Make integrated decisions that combine different, even opposing, ideas into something better than either, rather than choosing a winner.'}};
+var vsel=null;
+function drawVenn(){
+ var P={abrasion:[135,118],agility:[225,118],resolution:[180,190]};
+ var h='';
+ Object.keys(CAP).forEach(function(k){var p=P[k];
+  h+='<g class="vc" role="button" tabindex="0" data-k="'+k+'" aria-label="'+CAP[k].n+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="84" fill="'+CAP[k].c+'" fill-opacity="'+(vsel===k?.55:.28)+'" stroke="'+CAP[k].c+'" stroke-width="2.5"/></g>';});
+ h+='<g pointer-events="none" font-size="13" font-weight="700" text-anchor="middle" fill="#17233b">'+
+  '<text x="100" y="92">Creative</text><text x="100" y="108">abrasion</text>'+
+  '<text x="260" y="92">Creative</text><text x="260" y="108">agility</text>'+
+  '<text x="180" y="236">Creative</text><text x="180" y="252">resolution</text>'+
+  '<circle cx="180" cy="150" r="30" fill="#fff" stroke="#14213d" stroke-width="2"/><text x="180" y="147" font-size="10">Collective</text><text x="180" y="160" font-size="10">genius</text></g>';
+ $('#venn').innerHTML=h;
+ [].forEach.call($('#venn').querySelectorAll('.vc'),function(g){
+  var f=function(){vsel=g.getAttribute('data-k');drawVenn();var c=CAP[vsel];$('#vtext').innerHTML='<b style="color:'+c.c+'">'+c.n+'.</b> '+c.d;report();};
+  g.addEventListener('click',f);g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();f();$('#venn').querySelector('[data-k="'+vsel+'"]').focus();}});});
+}
+drawVenn();
+$('#vtext').innerHTML='Select a circle to see how each capability works. Together they let an organization generate ideas, test them, and decide well.';
+
+var R=[
+ {s:'Your team is planning a reusable-packaging line. Everyone agrees with the first plan within ten minutes, and nobody raises a concern.',cap:'Missing: creative abrasion',a:[
+  ['Assign devil\u2019s-advocate roles and invite open dissent before locking the plan.',34,'Healthy debate surfaces hidden risks and better ideas. This builds <b>creative abrasion</b>.'],
+  ['Move forward; quick agreement means the team is aligned.',0,'Fast agreement can signal that people are holding back. Without debate, weak assumptions go unchallenged.'],
+  ['Ask the senior leader to choose the best idea on the team\u2019s behalf.',10,'This ends the discussion but does not draw out the range of ideas the team holds.']]},
+ {s:'Debate has been rich, but after two months the team still has no prototype and customers have seen nothing.',cap:'Missing: creative agility',a:[
+  ['Schedule another brainstorming workshop to generate more ideas.',0,'More ideas will not help if none are tested. The team needs evidence from the real world.'],
+  ['Run a two-week prototype with real customers, then revise from what you learn.',34,'Quick, small experiments turn opinions into evidence. This builds <b>creative agility</b>.'],
+  ['Write a more detailed report that predicts how customers will respond.',8,'Analysis helps, but predictions are no substitute for testing with customers.']]},
+ {s:'Two camps each defend their own design. The launch date is close and neither will budge.',cap:'Missing: creative resolution',a:[
+  ['Take a vote and let the majority win.',10,'This ends the standoff but discards the best ideas of the losing side.'],
+  ['Postpone the decision until everyone agrees.',0,'Waiting for full agreement can stall the launch indefinitely.'],
+  ['Facilitate a session to combine the strongest elements of both designs into a new, integrated solution.',34,'Blending different ideas into something new is <b>creative resolution</b>.']]}];
+var ri=0,rscore=0,rlock=false;
+function rrender(){
+ rlock=false;
+ if(ri>=R.length){return rdone();}
+ $('#rcount').textContent='Round '+(ri+1)+' of '+R.length;
+ $('#situation').textContent=R[ri].s;
+ $('#actions').innerHTML=R[ri].a.map(function(a,i){return '<button class="act" data-i="'+i+'">'+a[0]+'</button>'}).join('');
+ [].forEach.call($('#actions').querySelectorAll('.act'),function(b){b.addEventListener('click',function(){rpick(b)})});
+ $('#rfb').innerHTML='<div class="feedback info small">Choose the action a leader should take. Each choice moves your launch-readiness score.</div>';
+ setReady();report();}
+function setReady(){var p=Math.min(100,rscore);$('#rbar').style.width=p+'%';$('#ready').textContent=p+'%';$('#ready').style.color=p>=90?'#1b7f45':p>=50?'#8a6100':'#4f5b73';}
+function rpick(b){if(rlock)return;rlock=true;var i=+b.getAttribute('data-i'),a=R[ri].a[i];rscore+=a[1];setReady();
+ [].forEach.call($('#actions').querySelectorAll('.act'),function(x,j){x.disabled=true;var pts=R[ri].a[j][1];x.classList.add(pts===34?'best':pts>0?'ok':'poor');if(j!==i)x.style.opacity=.55;});
+ $('#rfb').innerHTML='<div class="feedback '+(a[1]===34?'ok':'no')+'"><b>'+(a[1]===34?'Best choice (+34). ':a[1]>0?'Partly helpful (+'+a[1]+'). ':'Not helpful (+0). ')+'</b>'+a[2]+'</div><p style="margin:8px 0 0"><button class="btn" id="rnext">'+(ri===R.length-1?'See launch result':'Next round')+'</button></p>';
+ $('#rnext').addEventListener('click',function(){ri++;rrender()});$('#rnext').focus();report();}
+function rdone(){var p=Math.min(100,rscore);
+ $('#rcount').textContent='Launch result';$('#situation').innerHTML='<b>'+(p>=100?'Launch ready.':p>=60?'Nearly ready.':'Not ready yet.')+'</b> '+(p>=100?'Your team debated, tested, and integrated. That is a sustainable innovation engine.':'Strong teams build all three capabilities, not just one. Review the rounds you missed and try again.');
+ $('#actions').innerHTML='';$('#rfb').innerHTML='<button class="btn" id="ragain">Run it again</button><p class="small" style="margin:10px 0 0">Bring this to Discussion 6: which of the three capabilities is hardest for your own organization to build?</p>';
+ $('#ragain').addEventListener('click',function(){ri=0;rscore=0;rrender()});setReady();report();}
+rrender();
+
+// ---------- Tab 2 ----------
+var INI=[
+ {n:'One-for-One giving',t:'Donate a product for each one sold, tying the brand to a clear purpose (inspired by TOMS).',s:[4,1,2]},
+ {n:'Outside-in trend watching',t:'A team scans trends beyond our own industry to anticipate future needs (inspired by Ford).',s:[2,2,3]},
+ {n:'Non-toxic formulas, recycled containers',t:'Redesign products with safe ingredients and recycled packaging (inspired by Method Home).',s:[2,4,2]},
+ {n:'Lowest-cost suppliers, no questions asked',t:'Cut costs by switching to the cheapest suppliers regardless of their practices.',s:[0,0,4]},
+ {n:'Employee training and volunteering',t:'Paid volunteer days and funded skills training for staff and neighbors.',s:[3,1,1]},
+ {n:'Take-back and refill program',t:'Customers return empty containers for refills and reuse.',s:[1,4,2]}];
+var FD=[{n:'Societal',c:'#2755c4'},{n:'Environmental',c:'#0f7a69'},{n:'Financial',c:'#b9520a'}];
+var fsel=[];
+function totals(){var t=[0,0,0];fsel.forEach(function(i){INI[i].s.forEach(function(v,j){t[j]+=v})});return t;}
+function drawInits(){
+ $('#inits').innerHTML=INI.map(function(x,i){var on=fsel.indexOf(i)>=0,full=!on&&fsel.length>=3;
+  return '<button class="ini" data-i="'+i+'" aria-pressed="'+on+'" aria-disabled="'+full+'"><b>'+x.n+'</b><span class="t">'+x.t+'</span><span class="sc">'+x.s.map(function(v,j){return '<i style="background:'+FD[j].c+'">'+FD[j].n.charAt(0)+' +'+v+'</i>'}).join('')+'</span></button>';}).join('');
+ [].forEach.call($('#inits').querySelectorAll('.ini'),function(b){b.addEventListener('click',function(){var i=+b.getAttribute('data-i'),k=fsel.indexOf(i);
+   if(k>=0)fsel.splice(k,1);else if(fsel.length<3)fsel.push(i);else return;drawFoot();var nb=$('#inits').querySelector('[data-i="'+i+'"]');if(nb)nb.focus();});});
+ $('#slots').textContent=fsel.length+' of 3 chosen';
+}
+function drawTri(){
+ var t=totals(),cx=180,cy=165,R0=115,ang=[-Math.PI/2,Math.PI/6,5*Math.PI/6],MAX=9,GOAL=5;
+ var pt=function(j,v){var r=R0*Math.min(v,MAX)/MAX;return [cx+r*Math.cos(ang[j]),cy+r*Math.sin(ang[j])];};
+ var h='';
+ [0.25,0.5,0.75,1].forEach(function(f){h+='<polygon points="'+[0,1,2].map(function(j){var p=pt(j,MAX*f);return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ')+'" fill="none" stroke="#d7dfee" stroke-width="1.5"/>';});
+ h+='<polygon points="'+[0,1,2].map(function(j){var p=pt(j,GOAL);return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ')+'" fill="none" stroke="#1b7f45" stroke-width="2" stroke-dasharray="5 4"/>';
+ [0,1,2].forEach(function(j){var p=pt(j,MAX);h+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#d7dfee"/>';});
+ if(fsel.length)h+='<polygon points="'+[0,1,2].map(function(j){var p=pt(j,t[j]);return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ')+'" fill="#f2b134" fill-opacity=".55" stroke="#b9520a" stroke-width="3" stroke-linejoin="round"/>';
+ [0,1,2].forEach(function(j){var p=pt(j,t[j]),l=pt(j,MAX+2.6),ok=t[j]>=GOAL;
+  if(fsel.length)h+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="6" fill="'+FD[j].c+'" stroke="#fff" stroke-width="2"/>';
+  h+='<text x="'+l[0].toFixed(1)+'" y="'+(l[1]+(j===0?-6:12)).toFixed(1)+'" text-anchor="middle" font-size="13" font-weight="700" fill="'+FD[j].c+'">'+FD[j].n+'</text>'+
+     '<text x="'+l[0].toFixed(1)+'" y="'+(l[1]+(j===0?9:27)).toFixed(1)+'" text-anchor="middle" font-size="12" fill="'+(ok?'#1b7f45':'#4f5b73')+'" font-weight="'+(ok?700:400)+'">'+t[j]+' / goal 5'+(ok?' \u2713':'')+'</text>';});
+ $('#tri').innerHTML=h;
+}
+function drawVerdict(){var t=totals(),ok=t.every(function(v){return v>=5}),n=fsel.length,low=t.indexOf(Math.min.apply(null,t));
+ var m;
+ if(n===0)m='Choose initiatives to build your footprint. The dashed triangle marks the goal: at least 5 in every dimension.';
+ else if(ok)m='<b>Balanced and sustainable.</b> Each footprint meets the goal. Notice that no single initiative did this alone: you had to combine them.';
+ else if(n<3)m='Keep going. Your weakest dimension so far is <b>'+FD[low].n+'</b>.';
+ else m='<b>Not balanced yet.</b> Your weakest dimension is <b>'+FD[low].n+'</b>. A lopsided footprint is fragile: try swapping an initiative.';
+ $('#fverdict').className='feedback '+(ok?'ok':'info');$('#fverdict').innerHTML=m;}
+function drawFoot(){drawInits();drawTri();drawVerdict();report();}
+$('#freset').addEventListener('click',function(){fsel=[];drawFoot();});
+drawFoot();
+</script>
+</body>
+</html>

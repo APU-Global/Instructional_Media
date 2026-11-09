@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 400: Leading Disruptive Innovation | Week 2 Interactive: Internal Types of Innovation</title>
+<style>
+:root{
+  --ink:#17233b;--muted:#4f5b73;--bg:#f4f7fc;--card:#ffffff;--line:#d7dfee;
+  --navy:#14213d;--navy2:#24406e;
+  --cfg:#2755c4;--cfg-t:#e5ecfb;
+  --off:#b9520a;--off-t:#fdeddf;
+  --exp:#0f7a69;--exp-t:#dff2ee;
+  --good:#1b7f45;--good-t:#e2f4e9;--bad:#b3261e;--bad-t:#fbe6e4;--gold:#f2b134;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  overflow:hidden; /* the Canvas page is the only scroller: no double scrollbar */}
+#app{padding:0 0 14px}
+.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;gap:16px;padding:16px 22px;border-radius:0 0 18px 18px}
+.hero-text{flex:1;min-width:0}
+.course{font-size:13px;font-weight:700;letter-spacing:.04em;color:#f2b134;margin-bottom:6px}
+.kicker{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:99px}
+.hero h1{font:700 24px/1.2 Georgia,"Times New Roman",serif;margin:8px 0 4px}
+.hero p{margin:0;color:#dbe5f7;font-size:15px;max-width:560px}
+.hero svg{flex:0 0 auto;width:230px;height:auto}
+.wrap{padding:14px 18px 0}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:14px}
+.tab{appearance:none;border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:10px 14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--off);background:#fff}
+.tab:hover{color:var(--navy)}
+button:focus-visible,.node:focus-visible,[tabindex]:focus-visible{outline:3px solid #1a73e8;outline-offset:2px}
+.panel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.card h2{font-size:18px;margin:0 0 6px}
+.card h3{font-size:14px;margin:12px 0 2px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.lead{color:var(--muted);margin:0 0 10px;font-size:15px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff}
+.chip.cfg{background:var(--cfg)}.chip.off{background:var(--off)}.chip.exp{background:var(--exp)}
+.btn{appearance:none;font:inherit;font-weight:600;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy)}
+.btn:hover{filter:brightness(1.12)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.node{cursor:pointer}
+.node .shape{transition:stroke-width .15s, transform .15s}
+.node:hover .shape{stroke-width:4}
+.node:focus-visible{outline:none}
+.node:focus-visible .shape{stroke:#1a73e8;stroke-width:5}
+.feedback{border-radius:10px;padding:10px 12px;font-size:15px}
+.feedback.ok{background:var(--good-t);border:1px solid #9fd5b4}
+.feedback.no{background:var(--bad-t);border:1px solid #efb1ac}
+.feedback.info{background:#eef3fb;border:1px solid var(--line)}
+.progress{height:8px;border-radius:99px;background:#e3e9f5;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--exp),var(--gold));width:0;transition:width .3s}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pill{appearance:none;font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px;line-height:1.2;color:var(--ink)}
+.pill svg{width:28px;height:28px;flex:0 0 auto}
+.pill:hover{border-color:var(--navy2)}
+.pill[disabled]{cursor:default}
+.pill.right{background:var(--good-t);border-color:var(--good)}
+.pill.wrong{background:var(--bad-t);border-color:var(--bad)}
+.stat{font:700 36px/1 Georgia,serif;color:var(--navy)}
+.small{font-size:13px;color:var(--muted)}
+.foot{margin:14px 18px 0;font-size:12px;color:var(--muted);text-align:right}
+@media (max-width:760px){
+  .hero{flex-direction:column;align-items:flex-start;padding:14px 16px}
+  .hero svg{display:none}
+  .grid{grid-template-columns:1fr}
+  .pills{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wrap{padding:12px 12px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-profit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><path d="M29 19.500c-1.500-3.200-10-3.200-10 1.500 0 5 10 2.500 10 7.500 0 4.500-8.500 4.700-10 1.500M24 12.500v4M24 31.500v4"/></g></symbol>
+<symbol id="i-network" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="12" r="5"/><circle cx="11" cy="35" r="5"/><circle cx="37" cy="35" r="5"/><path d="M21.500 16.500 13.500 30.500M26.500 16.500 34.500 30.500M16 35h16"/></g></symbol>
+<symbol id="i-structure" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="17" y="6" width="14" height="9" rx="2"/><rect x="4" y="33" width="14" height="9" rx="2"/><rect x="30" y="33" width="14" height="9" rx="2"/><path d="M24 15v9M11 33v-9h26v9"/></g></symbol>
+<symbol id="i-process" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M38 24a14 14 0 0 1-24.500 9.200"/><path d="M10 24a14 14 0 0 1 24.500-9.200"/><path d="M36 7v8h-8M12 41v-8h8"/></g></symbol>
+<symbol id="i-performance" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 34a17 17 0 1 1 32 0"/><path d="M24 34l8-12"/><circle cx="24" cy="34" r="2.500"/><path d="M24 13v3M12.500 20l2 2M35.500 20l-2 2"/></g></symbol>
+<symbol id="i-system" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="15" height="15" rx="3"/><rect x="27" y="6" width="15" height="15" rx="3"/><rect x="6" y="27" width="15" height="15" rx="3"/><circle cx="34.500" cy="34.500" r="7.500"/><path d="M21 13.500h6M13.500 21v6M21 34.500h6"/></g></symbol>
+<symbol id="i-service" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32a16 16 0 0 1 32 0z"/><path d="M5 38h38M24 16v-4M21 12h6"/></g></symbol>
+<symbol id="i-channel" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 10 8h28l4 10"/><path d="M6 18c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5"/><path d="M9 25v17h30V25M20 42V32h8v10"/></g></symbol>
+<symbol id="i-brand" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 5l5.600 11.400 12.400 1.800-9 8.800 2.100 12.400L24 33.500 12.900 39.400 15 27l-9-8.800 12.400-1.800z"/></g></symbol>
+<symbol id="i-engage" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 41S6 30 6 17a9.500 9.500 0 0 1 18-4 9.500 9.500 0 0 1 18 4c0 13-18 24-18 24z"/></g></symbol>
+</defs></svg>
+<main id="app">
+<header class="hero">
+  <div class="hero-text">
+    <div class="course">ORGS 400: Leading Disruptive Innovation</div>
+    <span class="kicker">Week 2</span>
+    <h1>Internal Types of Innovation</h1>
+    <p>Configuration and Offering: the six inside-out levers you control. Explore each one, then test yourself.</p>
+  </div>
+  <svg viewBox="0 0 260 150" role="img" aria-label="Illustration of a building with gears and connected partners" >
+<circle cx="130" cy="75" r="68" fill="#ffffff" opacity=".07"/>
+<rect x="38" y="46" width="96" height="92" rx="8" fill="#fff"/>
+<rect x="38" y="46" width="96" height="16" rx="8" fill="#f2b134"/>
+<g fill="#cfd9ee"><rect x="50" y="72" width="16" height="14" rx="2"/><rect x="76" y="72" width="16" height="14" rx="2"/><rect x="102" y="72" width="16" height="14" rx="2"/>
+<rect x="50" y="96" width="16" height="14" rx="2"/><rect x="102" y="96" width="16" height="14" rx="2"/></g>
+<rect x="78" y="100" width="12" height="38" rx="2" fill="#2755c4"/>
+<g transform="translate(160 62)"><circle r="22" fill="#e07a1f"/><circle r="9" fill="#14213d"/>
+<g fill="#e07a1f"><rect x="-4" y="-30" width="8" height="10" rx="2"/><rect x="-4" y="20" width="8" height="10" rx="2"/><rect x="-30" y="-4" width="10" height="8" rx="2"/><rect x="20" y="-4" width="10" height="8" rx="2"/>
+<rect x="-4" y="-30" width="8" height="10" rx="2" transform="rotate(45)"/><rect x="-4" y="20" width="8" height="10" rx="2" transform="rotate(45)"/><rect x="-30" y="-4" width="10" height="8" rx="2" transform="rotate(45)"/><rect x="20" y="-4" width="10" height="8" rx="2" transform="rotate(45)"/></g></g>
+<g stroke="#9fd0ff" stroke-width="2.500" fill="none"><path d="M134 100 188 112M188 112 226 84M188 112 214 132"/></g>
+<g fill="#2fb59f" stroke="#fff" stroke-width="2.500"><circle cx="188" cy="112" r="9"/><circle cx="226" cy="84" r="8"/><circle cx="214" cy="132" r="8"/></g>
+</svg>
+</header>
+<div class="wrap">
+
+<div class="tabs" role="tablist" aria-label="Activities">
+  <button class="tab" role="tab" id="t-explore" aria-selected="true" aria-controls="p-explore">1 &middot; Explore the six levers</button>
+  <button class="tab" role="tab" id="t-practice" aria-selected="false" aria-controls="p-practice" tabindex="-1">2 &middot; Practice: spot the lever</button>
+</div>
+
+<section class="panel" id="p-explore" role="tabpanel" aria-labelledby="t-explore">
+ <div class="grid">
+  <div class="card">
+   <h2>The inside-out map</h2>
+   <p class="lead">Select any lever to see what it means. Configuration and Offering are the levers an organization controls directly.</p>
+   <svg id="map" viewBox="0 0 470 330" role="group" aria-label="Map of six internal innovation types" style="width:100%;height:auto;display:block"></svg>
+  </div>
+  <div class="card" id="detail" aria-live="polite" style="min-height:330px"></div>
+ </div>
+</section>
+
+<section class="panel" id="p-practice" role="tabpanel" aria-labelledby="t-practice" hidden>
+ <div class="grid">
+  <div class="card" style="min-height:372px">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+     <h2 style="margin:0">Which lever is being pulled?</h2><span class="small" id="count"></span></div>
+   <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+   <p id="scenario" style="font-size:17px;margin:14px 0;min-height:78px"></p>
+   <div class="pills" id="choices"></div>
+  </div>
+  <div class="card" id="result" aria-live="polite" style="min-height:372px"></div>
+ </div>
+</section>
+
+</div>
+<div class="foot">ORGS 400 &middot; Leading Disruptive Innovation &middot; Based on Keeley, <em>Ten Types of Innovation</em> (2013)</div>
+</main>
+<script>
+(function(){
+  // Tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+    document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});report();}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t)});
+    t.addEventListener('keydown',function(e){var n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i+tabs.length-1)%tabs.length];
+      if(n){n.focus();show(n);e.preventDefault();}});});
+  // Tell the parent page how tall we are (optional auto-resize; harmless if nobody listens)
+  function report(){var h=Math.ceil(document.getElementById('app').getBoundingClientRect().height);
+    try{parent.postMessage({type:'iframe-resize',source:location.pathname.split('/').pop(),height:h},'*')}catch(e){}}
+  window.report=report;
+  if(window.ResizeObserver){new ResizeObserver(report).observe(document.getElementById('app'))}
+  window.addEventListener('load',report);window.addEventListener('resize',report);
+})();
+function $(s,r){return (r||document).querySelector(s)}
+function svgIcon(id,cls){return '<svg class="'+(cls||'')+'" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-'+id+'"/></svg>'}
+
+
+var TYPES={
+ profit:{n:'Profit Model',g:'cfg',gn:'Configuration',
+   d:'How the organization turns its offering into revenue: pricing, revenue streams, and what customers actually pay for.',
+   ex:'A razor maker moves from selling blades by the pack to a subscription that ships fresh blades on a schedule.',
+   q:'Where could we charge differently, or for something customers value more?'},
+ network:{n:'Network',g:'cfg',gn:'Configuration',
+   d:'Partnerships, alliances, and collaborations that let you do more than you could alone.',
+   ex:'A small hospital teams up with a university lab and a device start-up to launch a remote-monitoring service.',
+   q:'Who else holds a piece of the puzzle we could connect with?'},
+ structure:{n:'Structure',g:'cfg',gn:'Configuration',
+   d:'How people, talent, incentives, and assets are organized and aligned to the work.',
+   ex:'A manufacturer replaces silo departments with cross-functional product teams and shared-goal bonuses.',
+   q:'Is our organization designed to help or hinder the work customers care about?'},
+ process:{n:'Process',g:'cfg',gn:'Configuration',
+   d:'The methods and routines used to deliver the offering efficiently and distinctively.',
+   ex:'A clinic lets patients complete forms on their phones before arrival, cutting waiting-room time in half.',
+   q:'Which routine frustrates customers or staff, and what would a better one look like?'},
+ performance:{n:'Product Performance',g:'off',gn:'Offering',
+   d:'Distinguishing features, functionality, and quality of what you sell.',
+   ex:'A headphone brand ships a model with clearly longer battery life and better noise cancellation.',
+   q:'What could our product do that customers would notice immediately?'},
+ system:{n:'Product System',g:'off',gn:'Offering',
+   d:'Complementary products and services that connect into a larger, scalable system.',
+   ex:'A smart-home maker links thermostat, lights, and door lock in one app so each device makes the others more valuable.',
+   q:'What could we add or connect so the whole is worth more than the parts?'}
+};
+var COL={cfg:'#2755c4',off:'#b9520a'}, TINT={cfg:'#e5ecfb',off:'#fdeddf'};
+var POS={profit:[22,60],network:[142,60],structure:[22,170],process:[142,170],performance:[322,60],system:[322,170]};
+var map=$('#map'),h='';
+h+='<rect x="8" y="8" width="270" height="312" rx="18" fill="#f1f5fd" stroke="#2755c4" stroke-width="2" stroke-dasharray="6 5"/>';
+h+='<rect x="304" y="8" width="158" height="312" rx="18" fill="#fff6ee" stroke="#b9520a" stroke-width="2" stroke-dasharray="6 5"/>';
+h+='<text x="24" y="38" font-size="15" font-weight="700" fill="#2755c4">CONFIGURATION</text><text x="24" y="54" font-size="12" fill="#4f5b73" style="display:none">x</text>';
+h+='<text x="320" y="38" font-size="15" font-weight="700" fill="#b9520a">OFFERING</text>';
+h+='<text x="24" y="302" font-size="12" fill="#4f5b73">How the organization works</text><text x="320" y="302" font-size="12" fill="#4f5b73">What it sells</text>';
+Object.keys(TYPES).forEach(function(k){var t=TYPES[k],p=POS[k],c=COL[t.g];
+ var lines=t.n.indexOf(' ')>0?t.n.split(' '):[t.n];
+ h+='<g class="node" role="button" tabindex="0" data-k="'+k+'" aria-label="'+t.n+'" transform="translate('+p[0]+','+p[1]+')">'+
+ '<rect class="shape" width="114" height="100" rx="14" fill="#fff" stroke="'+c+'" stroke-width="2.5"/>'+
+ '<circle cx="57" cy="36" r="24" fill="'+TINT[t.g]+'"/>'+
+ '<g style="color:'+c+'"><use href="#i-'+k+'" x="39" y="18" width="36" height="36"/></g>'+
+ '<text x="57" y="'+(lines.length>1?78:84)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#17233b">'+lines[0]+'</text>'+
+ (lines.length>1?'<text x="57" y="93" text-anchor="middle" font-size="13" font-weight="700" fill="#17233b">'+lines.slice(1).join(' ')+'</text>':'')+
+ '</g>';});
+map.innerHTML=h;
+function showType(k){var t=TYPES[k];
+ [].forEach.call(map.querySelectorAll('.node'),function(n){var on=n.getAttribute('data-k')===k;
+   n.querySelector('.shape').setAttribute('fill',on?TINT[TYPES[n.getAttribute('data-k')].g]:'#fff');});
+ $('#detail').innerHTML='<div style="display:flex;gap:12px;align-items:center"><div style="width:56px;height:56px;border-radius:14px;background:'+TINT[t.g]+';color:'+COL[t.g]+';display:grid;place-items:center">'+svgIcon(k,'')+'</div>'+
+ '<div><h2 style="margin:0">'+t.n+'</h2><span class="chip '+t.g+'">'+t.gn+'</span></div></div>'+
+ '<h3>What it means</h3><p style="margin:2px 0">'+t.d+'</p>'+
+ '<h3>In practice</h3><p style="margin:2px 0">'+t.ex+'</p>'+
+ '<h3>Ask yourself</h3><p style="margin:2px 0;font-weight:600">'+t.q+'</p>';
+ $('#detail svg').style.cssText='width:34px;height:34px';
+ report();}
+[].forEach.call(map.querySelectorAll('.node'),function(n){
+ n.addEventListener('click',function(){showType(n.getAttribute('data-k'))});
+ n.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();showType(n.getAttribute('data-k'))}});});
+$('#detail').innerHTML='<h2>Select a lever</h2><p class="lead">Pick any card on the map to see its definition, a real-world style example, and a question to ask in your own organization.</p>'+
+ '<p class="small">Tip: Keeley groups ten types of innovation into Configuration, Offering, and Experience. This week covers the six inside-out levers. Next week turns to Experience.</p>';
+
+// ---------- Practice ----------
+var Q=[
+ ['A software company stops selling annual licenses and offers a pay-as-you-go plan based on how much each customer uses.','profit','The change is to <b>how the company earns revenue</b>: pricing and revenue streams.'],
+ ['A hospital joins forces with a university and a medical-device start-up to co-develop a remote-monitoring service.','network','Partnering to extend what the hospital can do is a <b>Network</b> move.'],
+ ['A manufacturer dissolves separate design, engineering, and marketing departments into small cross-functional teams with shared-goal bonuses.','structure','Reorganizing people, talent, and incentives is a <b>Structure</b> change.'],
+ ['A clinic redesigns check-in so patients complete forms on their phones before arriving, cutting waits in half.','process','The offering is the same; the <b>routine that delivers it</b> improved.'],
+ ['A headphone brand launches a model with noticeably longer battery life and clearer noise cancellation than any it sold before.','performance','Better features and quality are <b>Product Performance</b>.'],
+ ['A smart-home company\u2019s thermostat, lights, and lock now share one app, and each new device makes the others more valuable.','system','Connected complements that scale together form a <b>Product System</b>.'],
+ ['Independent bakeries form a co-op to share ovens, buy flour in bulk, and split delivery costs.','network','Alliances and shared assets across organizations are a <b>Network</b> innovation.'],
+ ['An airline lowers base fares but charges separately for bags, seat choice, and priority boarding, raising total revenue.','profit','Unbundling price into new revenue streams changes the <b>Profit Model</b>.']
+];
+var i=0,score=0,locked=false;
+var ORDER=['profit','network','structure','process','performance','system'];
+function render(){
+ if(i>=Q.length){done();return;}
+ locked=false;
+ $('#count').textContent='Question '+(i+1)+' of '+Q.length;
+ $('#bar').style.width=(i/Q.length*100)+'%';
+ $('#scenario').textContent=Q[i][0];
+ $('#choices').innerHTML=ORDER.map(function(k){return '<button class="pill" data-k="'+k+'" style="color:'+COL[TYPES[k].g]+'">'+svgIcon(k)+'<span style="color:#17233b">'+TYPES[k].n+'</span></button>'}).join('');
+ [].forEach.call(document.querySelectorAll('#choices .pill'),function(b){b.addEventListener('click',function(){pick(b)})});
+ if(i===0&&!window.__started){$('#result').innerHTML='<h2>Your score</h2><div class="stat">0 / '+Q.length+'</div><p class="lead">Read each situation and choose the type of innovation that is the <i>primary</i> lever being pulled.</p><div class="feedback info small">Real innovations often touch more than one type. Look for the main change.</div>';}
+ report();
+}
+function pick(b){if(locked)return;locked=true;var k=b.getAttribute('data-k'),ans=Q[i][1],ok=k===ans;
+ if(ok)score++;
+ [].forEach.call(document.querySelectorAll('#choices .pill'),function(p){p.disabled=true;
+   if(p.getAttribute('data-k')===ans)p.classList.add('right');else if(p===b)p.classList.add('wrong');});
+ window.__started=true;
+ var last=i===Q.length-1;
+ $('#result').innerHTML='<h2>Your score</h2><div class="stat">'+score+' / '+Q.length+'</div>'+
+  '<div class="feedback '+(ok?'ok':'no')+'" style="margin-top:10px"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+(ok?'':'This is <b>'+TYPES[ans].n+'</b>. ')+Q[i][2]+'</div>'+
+  '<p style="margin:12px 0 0"><button class="btn" id="next">'+(last?'See results':'Next scenario')+'</button></p>';
+ $('#next').addEventListener('click',function(){i++;render()});
+ $('#next').focus();report();}
+function done(){
+ $('#bar').style.width='100%';$('#count').textContent='Complete';
+ var msg=score>=7?'Excellent. You can spot the inside-out levers quickly.':score>=5?'Solid. Revisit the levers you missed on the map.':'Good start. Re-read the definitions on the Explore tab and try again.';
+ $('#scenario').innerHTML='<b>'+msg+'</b>';
+ $('#choices').innerHTML='';
+ $('#result').innerHTML='<h2>Final score</h2><div class="stat">'+score+' / '+Q.length+'</div><p class="lead">Take this to Discussion 2: which of these six levers could your own organization pull first?</p><button class="btn" id="again">Try again</button>';
+ $('#again').addEventListener('click',function(){i=0;score=0;window.__started=false;render()});
+ report();}
+render();
+</script>
+</body>
+</html>

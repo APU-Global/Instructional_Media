@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 400: Leading Disruptive Innovation | Week 5 Interactive: Innovation Intent and Five Forces</title>
+<style>
+:root{
+  --ink:#17233b;--muted:#4f5b73;--bg:#f4f7fc;--card:#ffffff;--line:#d7dfee;
+  --navy:#14213d;--navy2:#24406e;
+  --cfg:#2755c4;--cfg-t:#e5ecfb;
+  --off:#b9520a;--off-t:#fdeddf;
+  --exp:#0f7a69;--exp-t:#dff2ee;
+  --good:#1b7f45;--good-t:#e2f4e9;--bad:#b3261e;--bad-t:#fbe6e4;--gold:#f2b134;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  overflow:hidden; /* the Canvas page is the only scroller: no double scrollbar */}
+#app{padding:0 0 14px}
+.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;gap:16px;padding:16px 22px;border-radius:0 0 18px 18px}
+.hero-text{flex:1;min-width:0}
+.course{font-size:13px;font-weight:700;letter-spacing:.04em;color:#f2b134;margin-bottom:6px}
+.kicker{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:99px}
+.hero h1{font:700 24px/1.2 Georgia,"Times New Roman",serif;margin:8px 0 4px}
+.hero p{margin:0;color:#dbe5f7;font-size:15px;max-width:560px}
+.hero svg{flex:0 0 auto;width:230px;height:auto}
+.wrap{padding:14px 18px 0}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:14px}
+.tab{appearance:none;border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:10px 14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--off);background:#fff}
+.tab:hover{color:var(--navy)}
+button:focus-visible,.node:focus-visible,[tabindex]:focus-visible{outline:3px solid #1a73e8;outline-offset:2px}
+.panel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.card h2{font-size:18px;margin:0 0 6px}
+.card h3{font-size:14px;margin:12px 0 2px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.lead{color:var(--muted);margin:0 0 10px;font-size:15px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff}
+.chip.cfg{background:var(--cfg)}.chip.off{background:var(--off)}.chip.exp{background:var(--exp)}
+.btn{appearance:none;font:inherit;font-weight:600;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy)}
+.btn:hover{filter:brightness(1.12)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.node{cursor:pointer}
+.node .shape{transition:stroke-width .15s, transform .15s}
+.node:hover .shape{stroke-width:4}
+.node:focus-visible{outline:none}
+.node:focus-visible .shape{stroke:#1a73e8;stroke-width:5}
+.feedback{border-radius:10px;padding:10px 12px;font-size:15px}
+.feedback.ok{background:var(--good-t);border:1px solid #9fd5b4}
+.feedback.no{background:var(--bad-t);border:1px solid #efb1ac}
+.feedback.info{background:#eef3fb;border:1px solid var(--line)}
+.progress{height:8px;border-radius:99px;background:#e3e9f5;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--exp),var(--gold));width:0;transition:width .3s}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pill{appearance:none;font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px;line-height:1.2;color:var(--ink)}
+.pill svg{width:28px;height:28px;flex:0 0 auto}
+.pill:hover{border-color:var(--navy2)}
+.pill[disabled]{cursor:default}
+.pill.right{background:var(--good-t);border-color:var(--good)}
+.pill.wrong{background:var(--bad-t);border-color:var(--bad)}
+.stat{font:700 36px/1 Georgia,serif;color:var(--navy)}
+.small{font-size:13px;color:var(--muted)}
+.foot{margin:14px 18px 0;font-size:12px;color:var(--muted);text-align:right}
+@media (max-width:760px){
+  .hero{flex-direction:column;align-items:flex-start;padding:14px 16px}
+  .hero svg{display:none}
+  .grid{grid-template-columns:1fr}
+  .pills{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wrap{padding:12px 12px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.opt{appearance:none;font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer;display:flex;gap:10px;align-items:center;color:var(--ink);font-weight:600}
+.opt .dot{width:16px;height:16px;border-radius:50%;flex:0 0 auto}
+.opt small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+.opt:hover{border-color:var(--navy2)}
+.opt.right{background:var(--good-t);border-color:var(--good)}.opt.wrong{background:var(--bad-t);border-color:var(--bad)}
+.srow{display:grid;grid-template-columns:130px 1fr 28px;gap:8px;align-items:center;margin:5px 0;font-size:14px;font-weight:600}
+.srow input{width:100%;accent-color:#24406e;height:26px}
+.srow output{font:700 16px Georgia,serif;text-align:center}
+.bizb{appearance:none;font:inherit;font-weight:600;font-size:14px;border:2px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;cursor:pointer;color:var(--ink)}
+.bizb[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.ring{cursor:pointer}.ring:focus,.ring:focus-visible{outline:none!important}.ring:focus-visible circle{stroke:#1a73e8;stroke-width:5}
+@media (max-width:760px){.grid{grid-template-columns:1fr!important}.srow{grid-template-columns:100px 1fr 24px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-profit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><path d="M29 19.500c-1.500-3.200-10-3.200-10 1.500 0 5 10 2.500 10 7.500 0 4.500-8.500 4.700-10 1.500M24 12.500v4M24 31.500v4"/></g></symbol>
+<symbol id="i-network" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="12" r="5"/><circle cx="11" cy="35" r="5"/><circle cx="37" cy="35" r="5"/><path d="M21.500 16.500 13.500 30.500M26.500 16.500 34.500 30.500M16 35h16"/></g></symbol>
+<symbol id="i-structure" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="17" y="6" width="14" height="9" rx="2"/><rect x="4" y="33" width="14" height="9" rx="2"/><rect x="30" y="33" width="14" height="9" rx="2"/><path d="M24 15v9M11 33v-9h26v9"/></g></symbol>
+<symbol id="i-process" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M38 24a14 14 0 0 1-24.500 9.200"/><path d="M10 24a14 14 0 0 1 24.500-9.200"/><path d="M36 7v8h-8M12 41v-8h8"/></g></symbol>
+<symbol id="i-performance" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 34a17 17 0 1 1 32 0"/><path d="M24 34l8-12"/><circle cx="24" cy="34" r="2.500"/><path d="M24 13v3M12.500 20l2 2M35.500 20l-2 2"/></g></symbol>
+<symbol id="i-system" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="15" height="15" rx="3"/><rect x="27" y="6" width="15" height="15" rx="3"/><rect x="6" y="27" width="15" height="15" rx="3"/><circle cx="34.500" cy="34.500" r="7.500"/><path d="M21 13.500h6M13.500 21v6M21 34.500h6"/></g></symbol>
+<symbol id="i-service" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32a16 16 0 0 1 32 0z"/><path d="M5 38h38M24 16v-4M21 12h6"/></g></symbol>
+<symbol id="i-channel" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 10 8h28l4 10"/><path d="M6 18c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5c0 3 3 5 6 5s6-2 6-5"/><path d="M9 25v17h30V25M20 42V32h8v10"/></g></symbol>
+<symbol id="i-brand" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 5l5.600 11.400 12.400 1.800-9 8.800 2.100 12.400L24 33.500 12.900 39.400 15 27l-9-8.800 12.400-1.800z"/></g></symbol>
+<symbol id="i-engage" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 41S6 30 6 17a9.500 9.500 0 0 1 18-4 9.500 9.500 0 0 1 18 4c0 13-18 24-18 24z"/></g></symbol>
+</defs></svg>
+<main id="app">
+<header class="hero">
+  <div class="hero-text">
+    <div class="course">ORGS 400: Leading Disruptive Innovation</div>
+    <span class="kicker">Week 5</span>
+    <h1>Declare Intent, Read the Industry</h1>
+    <p>Decide whether an initiative is core, adjacent, or transformational, then see how Porter’s Five Forces point to the right innovation lever.</p>
+  </div>
+  <svg viewBox="0 0 260 150" role="img" aria-label="Illustration of a bullseye target and a five-sided competitive forces chart">
+<circle cx="130" cy="75" r="68" fill="#fff" opacity=".07"/>
+<g transform="translate(78 76)"><circle r="46" fill="#fff"/><circle r="34" fill="#2755c4"/><circle r="22" fill="#fff"/><circle r="11" fill="#e07a1f"/></g>
+<path d="M78 76 150 28" stroke="#f2b134" stroke-width="4" stroke-linecap="round"/><path d="M150 28l-14 2 10 10z" fill="#f2b134"/>
+<g transform="translate(192 92)"><polygon points="0,-40 38,-12 24,32 -24,32 -38,-12" fill="#2fb59f" opacity=".35" stroke="#fff" stroke-width="2.500"/>
+<polygon points="0,-26 24,-8 12,22 -20,24 -22,-10" fill="#f2b134" opacity=".9"/>
+<g fill="#fff"><circle cy="-40" r="4"/><circle cx="38" cy="-12" r="4"/><circle cx="24" cy="32" r="4"/><circle cx="-24" cy="32" r="4"/><circle cx="-38" cy="-12" r="4"/></g></g>
+</svg>
+</header>
+<div class="wrap">
+
+<div class="tabs" role="tablist" aria-label="Activities">
+  <button class="tab" role="tab" id="t-intent" aria-selected="true" aria-controls="p-intent">1 &middot; Declare your intent</button>
+  <button class="tab" role="tab" id="t-forces" aria-selected="false" aria-controls="p-forces" tabindex="-1">2 &middot; Five Forces lab</button>
+</div>
+
+<section class="panel" id="p-intent" role="tabpanel" aria-labelledby="t-intent">
+ <div class="grid" style="grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)">
+  <div class="card">
+   <h2>Where are you playing?</h2>
+   <p class="lead">Select a ring to declare the level of innovation.</p>
+   <svg id="bull" viewBox="0 0 360 330" role="group" aria-label="Target with three rings: core, adjacent, transformational" style="width:100%;max-width:360px;display:block;margin:0 auto"></svg>
+  </div>
+  <div class="card" style="min-height:400px">
+   <div style="display:flex;justify-content:space-between;align-items:center"><span class="small" id="icount"></span><span class="small"><b id="iscore"></b></span></div>
+   <div class="progress" style="margin:6px 0 12px"><i id="ibar"></i></div>
+   <p id="initiative" style="font-size:17px;margin:0 0 12px;min-height:84px"></p>
+   <div id="ichoices" style="display:grid;gap:8px"></div>
+   <div id="ifb" aria-live="polite" style="margin-top:12px;min-height:118px"></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="p-forces" role="tabpanel" aria-labelledby="t-forces" hidden>
+ <div class="grid" style="grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)">
+  <div class="card">
+   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px"><b style="font-size:15px">Industry:</b>
+    <div id="ind" role="group" aria-label="Industry" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+   <svg id="five" viewBox="0 0 440 342" role="img" aria-label="Porter's Five Forces diagram colored by pressure" style="width:100%;height:auto;display:block"></svg>
+  </div>
+  <div class="card">
+   <h2>Adjust the pressure</h2>
+   <p class="small" style="margin:0 0 6px">Ratings are illustrative starting points. Change them to match your own proposal&rsquo;s industry (1 = weak, 5 = strong).</p>
+   <div id="sliders"></div>
+   <div id="verdict" aria-live="polite" style="margin-top:8px;min-height:120px"></div>
+  </div>
+ </div>
+</section>
+
+</div>
+<div class="foot">ORGS 400 &middot; Leading Disruptive Innovation &middot; Based on Keeley, <em>Ten Types of Innovation</em> (2013)</div>
+</main>
+<script>
+(function(){
+  // Tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;
+    document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});report();}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t)});
+    t.addEventListener('keydown',function(e){var n=null;
+      if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i+tabs.length-1)%tabs.length];
+      if(n){n.focus();show(n);e.preventDefault();}});});
+  // Tell the parent page how tall we are (optional auto-resize; harmless if nobody listens)
+  function report(){var h=Math.ceil(document.getElementById('app').getBoundingClientRect().height);
+    try{parent.postMessage({type:'iframe-resize',source:location.pathname.split('/').pop(),height:h},'*')}catch(e){}}
+  window.report=report;
+  if(window.ResizeObserver){new ResizeObserver(report).observe(document.getElementById('app'))}
+  window.addEventListener('load',report);window.addEventListener('resize',report);
+})();
+function $(s,r){return (r||document).querySelector(s)}
+function svgIcon(id,cls){return '<svg class="'+(cls||'')+'" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-'+id+'"/></svg>'}
+
+
+// ---------- Tab 1: intent bullseye ----------
+var L={core:{n:'Core',s:'Changes the known',c:'#2755c4',t:'#e5ecfb',risk:1,time:1,res:1,d:'Improves existing offerings for existing customers. Lower risk, faster payback, uses what you already have.'},
+ adjacent:{n:'Adjacent',s:'Changes the boundaries',c:'#0f7a69',t:'#dff2ee',risk:2,time:2,res:2,d:'Extends into a new customer group, channel, or offering close to what you do today. Moderate risk; some new capabilities needed.'},
+ transformational:{n:'Transformational',s:'Changes the game',c:'#b9520a',t:'#fdeddf',risk:3,time:3,res:3,d:'Creates new markets or models and often new capabilities. Highest risk, longest horizon, biggest potential upside.'}};
+var IQ=[
+ ['A national pizza chain adds a limited-time crust and a new topping to its existing menu.','core','Same customers, same stores, same business: a <b>Core</b> improvement.'],
+ ['A bank that serves consumers launches a lending product for small businesses, a segment it has never served.','adjacent','New customer group, but close to the bank\u2019s existing capabilities: <b>Adjacent</b>.'],
+ ['An online bookseller begins renting out its own computing infrastructure as a separate cloud business.','transformational','A new market, model, and set of capabilities: <b>Transformational</b>.'],
+ ['A grocery chain redesigns its loyalty app so existing members earn points faster.','core','Incremental improvement for current customers: <b>Core</b>.'],
+ ['A carmaker that sells to individuals starts selling its existing models to fleet and rental companies.','adjacent','A new customer segment and channel using today\u2019s product: <b>Adjacent</b>.'],
+ ['A DVD-rental company moves to internet delivery and begins producing its own original series.','transformational','It changes the model, the technology, and the competitive game: <b>Transformational</b>.']
+];
+var ii=0,iscore=0,ilock=false,chosen=null,answer=null;
+function drawBull(){
+ var h='',order=['transformational','adjacent','core'],R={transformational:138,adjacent:94,core:50};
+ order.forEach(function(k){var on=(k===chosen),ans=(answer===k);
+  h+='<g class="ring" role="button" tabindex="0" data-k="'+k+'" aria-label="'+L[k].n+': '+L[k].s+'"><circle cx="180" cy="158" r="'+R[k]+'" fill="'+(ans?L[k].c:L[k].t)+'" stroke="'+L[k].c+'" stroke-width="'+(on?5:2.5)+'"/></g>';});
+ h+='<g pointer-events="none" font-size="12" font-weight="700" text-anchor="middle">'+
+  '<text x="180" y="44" fill="#b9520a">TRANSFORMATIONAL</text><text x="180" y="88" fill="#0f7a69">ADJACENT</text>'+
+  '<text x="180" y="156" fill="'+(answer==='core'?'#fff':'#2755c4')+'" font-size="14">CORE</text><text x="180" y="172" fill="'+(answer==='core'?'#fff':'#4f5b73')+'" font-weight="400" font-size="11">changes the known</text>'+
+  '<text x="180" y="60" fill="#4f5b73" font-weight="400" font-size="11">changes the game</text><text x="180" y="103" fill="#4f5b73" font-weight="400" font-size="11">changes the boundaries</text></g>';
+ if(answer){h+='<g pointer-events="none"><circle cx="180" cy="'+(answer==='core'?218:answer==='adjacent'?238:292)+'" r="0"/></g>';}
+ h+='<g pointer-events="none" transform="translate(0 322)"><text x="180" y="0" text-anchor="middle" font-size="12" fill="#4f5b73">Risk and time horizon grow toward the outer rings</text></g>';
+ $('#bull').innerHTML=h;
+ [].forEach.call($('#bull').querySelectorAll('.ring'),function(r){
+  r.addEventListener('click',function(){ipick(r.getAttribute('data-k'))});
+  r.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();ipick(r.getAttribute('data-k'))}});});
+}
+function meters(k){var m=L[k];function row(l,v){var s='';for(var i=1;i<=3;i++)s+='<i style="display:inline-block;width:22px;height:8px;border-radius:4px;margin-right:3px;background:'+(i<=v?m.c:'#d7dfee')+'"></i>';return '<span style="display:inline-block;margin-right:12px;font-size:12px;color:#4f5b73">'+l+' '+s+'</span>';}
+ return '<div style="margin-top:6px">'+row('Risk',m.risk)+row('Time',m.time)+row('New capabilities',m.res)+'</div>';}
+function irender(){
+ chosen=null;answer=null;ilock=false;
+ if(ii>=IQ.length){return idone();}
+ $('#icount').textContent='Initiative '+(ii+1)+' of '+IQ.length;
+ $('#iscore').textContent='Score: '+iscore;
+ $('#ibar').style.width=(ii/IQ.length*100)+'%';
+ $('#initiative').textContent=IQ[ii][0];
+ $('#ichoices').innerHTML=['core','adjacent','transformational'].map(function(k){return '<button class="opt" data-k="'+k+'"><span class="dot" style="background:'+L[k].c+'"></span><span>'+L[k].n+'<small>'+L[k].s+'</small></span></button>'}).join('');
+ [].forEach.call($('#ichoices').querySelectorAll('.opt'),function(b){b.addEventListener('click',function(){ipick(b.getAttribute('data-k'))})});
+ $('#ifb').innerHTML='<div class="feedback info small">Declaring intent sets expectations for resources, risk, and timelines. Choose the ring that best describes this initiative.</div>';
+ drawBull();report();
+}
+function ipick(k){if(ilock||ii>=IQ.length)return;ilock=true;chosen=k;answer=IQ[ii][1];var ok=k===answer;if(ok)iscore++;
+ [].forEach.call($('#ichoices').querySelectorAll('.opt'),function(b){b.disabled=true;var bk=b.getAttribute('data-k');if(bk===answer)b.classList.add('right');else if(bk===k)b.classList.add('wrong');});
+ $('#iscore').textContent='Score: '+iscore;
+ $('#ifb').innerHTML='<div class="feedback '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+IQ[ii][2]+' '+L[answer].d+meters(answer)+'</div>'+
+  '<p style="margin:10px 0 0"><button class="btn" id="inext">'+(ii===IQ.length-1?'See results':'Next initiative')+'</button></p>';
+ $('#inext').addEventListener('click',function(){ii++;irender()});$('#inext').focus();
+ drawBull();report();}
+function idone(){
+ $('#ibar').style.width='100%';$('#icount').textContent='Complete';$('#iscore').textContent='Score: '+iscore+' / '+IQ.length;
+ $('#initiative').innerHTML='<b>'+(iscore>=5?'Strong grasp of the three levels.':'Review the three levels, then try again.')+'</b> In Innovation Proposal Part 2, state clearly which level your idea sits in and what that means for resources and risk.';
+ $('#ichoices').innerHTML='';$('#ifb').innerHTML='<button class="btn" id="iagain">Try again</button>';
+ $('#iagain').addEventListener('click',function(){ii=0;iscore=0;irender()});
+ drawBull();report();}
+irender();
+
+// ---------- Tab 2: five forces ----------
+var F=[{k:'entry',n:'Threat of new entrants',x:220,y:14,lever:'Build barriers: layer several innovation types (see Week 3) and invest in Brand and Customer Engagement so newcomers cannot copy you easily.'},
+ {k:'supply',n:'Supplier power',x:14,y:128,lever:'Reduce dependence with Network and Process innovation: alliances, alternate sources, or redesigned inputs.'},
+ {k:'buyer',n:'Buyer power',x:426,y:128,lever:'Raise switching costs and value with Product System, Service, and Customer Engagement so customers have reasons to stay.'},
+ {k:'sub',n:'Threat of substitutes',x:220,y:244,lever:'Out-innovate the alternative on a new dimension of performance: Product Performance, Service, or a different Profit Model.'},
+ {k:'rival',n:'Rivalry among competitors',x:220,y:128,lever:'Stop competing on the same terms. Differentiate through Brand, Product System, or a transformational move rather than price alone.'}];
+var IND={
+ 'Streaming video':{entry:3,supply:4,buyer:4,sub:5,rival:5},
+ 'Regional airline':{entry:2,supply:4,buyer:4,sub:3,rival:5},
+ 'Local coffee shop':{entry:4,supply:2,buyer:4,sub:4,rival:4}};
+var cur='Streaming video',val=JSON.parse(JSON.stringify(IND[cur]));
+var HEAT=['#dff2ee','#e9f3d6','#fdf0c9','#fbd8b6','#f4a6a0'];
+var HEATTXT=['Weak','Low','Moderate','High','Strong'];
+function drawFive(){
+ var pos={entry:[150,12],supply:[10,120],buyer:[290,120],sub:[150,228],rival:[150,120]};
+ var h='<g stroke="#9aa7c2" stroke-width="2.500" fill="none"><path d="M220 82v38M220 190v38M140 155h10M290 155h10" marker-end="none"/></g>';
+ h+='<g fill="#9aa7c2"><path d="M214 108l6 12 6-12zM214 204l6-12 6 12zM142 149l12 6-12 6zM298 149l-12 6 12 6z" transform="translate(0 -0)"/></g>';
+ F.forEach(function(f){var p=pos[f.k],v=val[f.k];
+  h+='<g transform="translate('+p[0]+' '+p[1]+')"><rect width="140" height="70" rx="14" fill="'+HEAT[v-1]+'" stroke="#24406e" stroke-width="'+(f.k==='rival'?3:2)+'"/>'+
+   '<text x="70" y="26" text-anchor="middle" font-size="12.500" font-weight="700" fill="#17233b">'+f.n.replace('Threat of ','Threat of').replace('Rivalry among competitors','Rivalry among')+'</text>'+
+   (f.k==='rival'?'<text x="70" y="41" text-anchor="middle" font-size="12.500" font-weight="700" fill="#17233b">competitors</text>':'')+
+   '<text x="70" y="'+(f.k==='rival'?60:52)+'" text-anchor="middle" font-size="12" fill="#4f5b73">'+HEATTXT[v-1]+' ('+v+'/5)</text></g>';});
+ h+='<g transform="translate(0 328)"><text x="0" y="0" font-size="12" fill="#4f5b73">Color shows pressure:</text>'+HEAT.map(function(c,i){return '<rect x="'+(138+i*34)+'" y="-11" width="30" height="12" rx="3" fill="'+c+'" stroke="#9aa7c2"/>'}).join('')+'<text x="310" y="0" font-size="12" fill="#4f5b73">weak to strong</text></g>';
+ // nicer words
+ h=h.replace('Threat ofnew entrants','New entrants').replace('Threat ofsubstitutes','Substitutes');
+ $('#five').innerHTML=h;
+}
+function drawSliders(){
+ $('#sliders').innerHTML=F.map(function(f){var lab={entry:'New entrants',supply:'Suppliers',buyer:'Buyers',sub:'Substitutes',rival:'Rivalry'}[f.k];
+  return '<div class="srow"><label for="s-'+f.k+'">'+lab+'</label><input type="range" id="s-'+f.k+'" min="1" max="5" step="1" value="'+val[f.k]+'" data-k="'+f.k+'"><output id="o-'+f.k+'">'+val[f.k]+'</output></div>';}).join('');
+ [].forEach.call($('#sliders').querySelectorAll('input'),function(s){s.addEventListener('input',function(){val[s.getAttribute('data-k')]=+s.value;$('#o-'+s.getAttribute('data-k')).textContent=s.value;update();});});
+}
+function update(){
+ drawFive();
+ var sum=0,mx=F[0];F.forEach(function(f){sum+=val[f.k];if(val[f.k]>val[mx.k])mx=f;});
+ var avg=sum/5,lab=avg<2.4?'An attractive industry':avg<3.4?'Moderately competitive':avg<4.2?'Intense pressure':'Brutal for profits',col=avg<2.4?'#1b7f45':avg<3.4?'#8a6100':avg<4.2?'#b9520a':'#b3261e';
+ var pct=((avg-1)/4*100).toFixed(0);
+ $('#verdict').innerHTML='<div style="display:flex;justify-content:space-between;align-items:baseline"><b>Overall pressure</b><b style="color:'+col+'">'+lab+'</b></div>'+
+  '<div class="progress" style="margin:6px 0 8px"><i style="width:'+pct+'%;background:'+col+'"></i></div>'+
+  '<div class="feedback info"><b>Strongest force: '+mx.n+'.</b> '+mx.lever+'</div>';
+ report();
+}
+var ind=$('#ind');
+Object.keys(IND).forEach(function(k){var b=document.createElement('button');b.className='bizb';b.textContent=k;b.setAttribute('aria-pressed',k===cur);
+ b.addEventListener('click',function(){cur=k;val=JSON.parse(JSON.stringify(IND[k]));[].forEach.call(ind.children,function(x){x.setAttribute('aria-pressed',x===b)});drawSliders();update();});ind.appendChild(b);});
+drawSliders();update();
+</script>
+</body>
+</html>
