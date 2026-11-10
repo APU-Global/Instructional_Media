@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HIST440 Week 8 | California Water: Map and Owens Valley Debate</title>
+<style>
+:root{--teal:#0b4f6c;--teal2:#136f8f;--gold:#e0a526;--gold-d:#8a5f00;--terra:#b5532f;--cream:#fbf7ef;--paper:#ffffff;--ink:#1f2a33;--muted:#55636f;--line:#e2d9c6;--good:#1f7a4d;--bad:#b3261e;--sea:#cfe6ef}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--cream);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.4}
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+header.top{flex:0 0 auto;position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(90deg,var(--teal),var(--teal2));color:#fff;min-height:58px}
+header.top .txt{position:relative;z-index:1;max-width:72%}
+header.top .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:var(--ink);padding:1px 8px;border-radius:99px;margin-bottom:2px}
+header.top h1{margin:0;font-size:19px;line-height:1.15}
+header.top p{margin:2px 0 0;font-size:13px;opacity:.95}
+header.top svg.art{position:absolute;right:0;top:0;height:100%;width:auto;max-width:40%}
+main{flex:1 1 auto;min-height:0;display:grid;gap:12px;padding:10px 16px 12px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:0;min-width:0;display:flex;flex-direction:column}
+h2{font-size:15px;margin:0 0 6px;color:var(--teal)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:3px solid #1b6ef3;outline-offset:2px}
+.btn{border:1.5px solid var(--teal);background:#fff;color:var(--teal);border-radius:8px;padding:6px 12px;font-weight:600}
+.btn:hover{background:#eaf4f8}
+.btn.primary{background:var(--teal);color:#fff}
+.btn.primary:hover{background:#093f57}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.tabs{display:flex;gap:6px;margin-bottom:8px}
+.tabs button{flex:1;border:1.5px solid var(--line);background:#f4efe3;border-radius:8px;padding:6px 8px;font-weight:700;color:var(--muted)}
+.tabs button[aria-selected=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:600;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--gold);border-color:var(--gold-d);}
+.pill{display:inline-block;background:#eef5f8;color:var(--teal);border-radius:99px;padding:2px 10px;font-size:13px;font-weight:600;margin:0 4px 4px 0}
+.fb{border-radius:8px;padding:6px 10px;font-size:13.5px;margin-top:6px}
+.fb.good{background:#e6f4ec;border:1px solid #9fd2b5;color:#14503a}
+.fb.bad{background:#fdeceb;border:1px solid #f0b4b0;color:#7a1b15}
+.fb.info{background:#fff6dc;border:1px solid #ecd48a;color:#5b4300}
+.small{font-size:13px;color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+.think{background:#fff6dc;border-left:4px solid var(--gold);padding:6px 10px;border-radius:0 8px 8px 0;font-size:13.5px}
+svg text{font-family:inherit}
+@media (max-width:720px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto}
+ main{display:flex;flex-direction:column}
+ header.top .txt{max-width:100%}
+ header.top svg.art{opacity:.25}
+ .mapwrap{height:420px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+main{grid-template-columns:minmax(290px,44%) 1fr}
+.left{padding:8px 10px}
+.mapbox{flex:1 1 auto;min-height:0;background:#cfe6ef;border-radius:10px;overflow:hidden;position:relative}
+.mapbox svg{width:100%;height:100%;display:block}
+.layers{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin:6px 0 4px}
+.layers label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;cursor:pointer;line-height:1.15}
+.layers input{width:16px;height:16px;flex:0 0 auto}
+.layers i{width:14px;height:5px;border-radius:3px;flex:0 0 auto}
+#linfo{min-height:48px;font-size:13px;padding:4px 8px;margin-top:0}
+.bars{margin-top:6px}
+.bars .r{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:12px}
+.bars .r span.l{width:92px;font-weight:700;color:var(--teal);line-height:1.1}
+.bars .b{flex:1;display:flex;height:22px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.bars .b div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;white-space:nowrap}
+.ev{background:#fff6dc;border:1.5px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:15.5px;min-height:84px;display:flex;align-items:center}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.two button{border:2px solid var(--teal);background:#fff;border-radius:10px;padding:10px 6px;font-weight:700;color:var(--teal);line-height:1.2}
+.two button:hover:not([disabled]){background:#eaf4f8}
+.two button[disabled]{opacity:.5;cursor:default}
+.balance{flex:0 0 auto;display:flex;justify-content:center}
+.balance svg{width:100%;max-width:400px;height:150px}
+#beam{transition:transform .5s}
+.verdict{margin-top:6px}
+.verdict input{width:100%;accent-color:#136f8f}
+.verdict .ends{display:flex;justify-content:space-between;font-weight:700;font-size:13px;color:var(--teal)}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="txt"><span class="tag">HIST440 &bull; Week 8</span>
+ <h1>California Water: Map &amp; Owens Valley Debate</h1>
+ <p>Big Question: Who has the stronger claim to water: a growing city or the valley it comes from?</p></div>
+ <svg class="art" viewBox="0 0 300 60" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+  <path d="M200 8q10 16 0 24q-10-8 0-24z" fill="#7fc3e0"/><path d="M240 20q8 12 0 19q-8-7 0-19z" fill="#a9d9ee"/><path d="M270 6q7 11 0 17q-7-6 0-17z" fill="#7fc3e0"/>
+  <path d="M120 60Q150 40 180 60Z" fill="#0a3f57"/><path d="M0 52q25-8 50 0t50 0t50 0t50 0t50 0t50 0V60H0Z" fill="#0a3f57" opacity=".7"/>
+ </svg>
+</header>
+<main>
+ <section class="panel left" aria-label="California water map">
+  <h2 style="margin-bottom:4px">Where water falls vs. where it&rsquo;s used</h2>
+  <div class="mapbox"><svg id="map" viewBox="0 0 400 470" role="img" aria-label="Map of California showing wetter north and water projects"></svg></div>
+  <div class="layers" id="layers"></div>
+  <div class="fb info" id="linfo" aria-live="polite"></div>
+  <div class="bars" id="bars" aria-label="Supply and demand bars"></div>
+ </section>
+ <section class="panel" aria-label="Owens Valley debate">
+  <h2>Owens Valley debate: sort the evidence</h2>
+  <p class="small" style="margin:0 0 6px">Water from the Owens River was sent to Los Angeles by aqueduct in 1913. Whose claim does each piece of evidence support?</p>
+  <div class="ev" id="ev" aria-live="polite"></div>
+  <div class="two" id="two"><button data-s="la">Supports Los Angeles</button><button data-s="ov">Supports Owens Valley</button></div>
+  <div id="fb" aria-live="polite" style="min-height:44px"></div>
+  <div class="balance"><svg viewBox="0 0 330 124" role="img" aria-label="Balance scale comparing evidence counts"><g id="bal"></g></svg></div>
+  <div class="verdict" id="verdict" hidden>
+   <div class="think"><b>Counting isn&rsquo;t weighing.</b> Which pieces of evidence matter most? Place your verdict, then consider: Deuteronomy 19:14 (a neighbor&rsquo;s landmark) and Matthew 22:37&ndash;40 (love your neighbor).</div>
+   <div class="ends"><span>Owens Valley</span><span id="vv">Even</span><span>Los Angeles</span></div>
+   <input type="range" id="vs" min="0" max="100" value="50" aria-label="Your verdict from Owens Valley to Los Angeles">
+  </div>
+ </section>
+</main>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const CA_OUT=[[-124.2,42.0],[-120,42],[-120,39],[-114.6,35.0],[-114.7,32.7],[-117.1,32.5],[-117.3,33.0],[-118.4,33.8],[-118.5,34.0],[-119.2,34.1],[-120.5,34.45],[-120.65,35.15],[-121.3,35.7],[-121.9,36.6],[-122.0,36.95],[-122.5,37.5],[-122.5,37.8],[-123.0,38.0],[-123.7,38.9],[-123.8,39.6],[-124.4,40.4],[-124.1,41.0]];
+function mkProj(o){const c=Math.cos(37.5*Math.PI/180);return (lon,lat)=>[(lon-o.lonMin)*c*o.k,(o.latMax-lat)*o.k];}
+function pathOf(P,pts){return 'M'+pts.map(p=>P(p[0],p[1]).map(v=>v.toFixed(1)).join(' ')).join('L')+'Z';}
+function lineOf(P,pts){return 'M'+pts.map(p=>P(p[0],p[1]).map(v=>v.toFixed(1)).join(' ')).join('L');}
+function waves(w,h,n){let s='';for(let i=0;i<n;i++){const x=(i*97)%w,y=(i*53+20)%h;s+=`<path d="M${x} ${y}q6 -5 12 0t12 0" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/>`;}return s;}
+
+const P=mkProj({lonMin:-124.6,latMax:42.2,k:47.5});
+const L=[
+ {id:'gold',name:'Gold Rush dams & ditches',yr:'1850s',c:'#8a5f00',info:'<b>1850s:</b> Dams and ditches in the Sierra foothills supplied water to gold mines during dry summers and permanently changed the course of rivers and streams.',pts:[[-120.9,38.0],[-120.5,38.3],[-121.0,39.0],[-120.8,37.7],[-121.1,39.4]],type:'dots'},
+ {id:'la',name:'Los Angeles Aqueduct',yr:'1913',c:'#c4261e',info:'<b>1913:</b> The Los Angeles Aqueduct carried Owens River water roughly 230 miles to Los Angeles. Route shown is approximate.',pts:[[-118.2,36.8],[-118.0,35.9],[-117.95,35.2],[-118.15,34.75],[-118.5,34.3]],type:'line'},
+ {id:'cvp',name:'Central Valley Project',yr:'1930s&ndash;40s',c:'#2f6b3f',info:'<b>1930s&ndash;1940s:</b> Dams and canals such as Shasta Dam moved northern water into the Central Valley to supply farms and cities. Route is approximate.',pts:[[-122.4,40.7],[-121.8,39.0],[-121.6,38.0],[-120.8,37.2],[-119.7,36.95]],type:'line'},
+ {id:'swp',name:'State Water Project',yr:'1960s&ndash;70s',c:'#6a2c91',info:'<b>1960s&ndash;1970s:</b> The State Water Project carries northern water south through the California Aqueduct to Southern California. Route is approximate.',pts:[[-121.5,39.5],[-121.6,38.0],[-121.2,37.2],[-120.4,36.4],[-119.8,35.5],[-118.9,35.0],[-118.4,34.6],[-117.3,34.1]],type:'line'}
+];
+const svg=$('#map');
+let h=`<defs><clipPath id="ca"><path d="${pathOf(P,CA_OUT)}"/></clipPath><linearGradient id="rain" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fa8d3"/><stop offset=".5" stop-color="#b9dcc8"/><stop offset="1" stop-color="#ecd9a8"/></linearGradient></defs><rect width="400" height="470" fill="#cfe6ef"/>${waves(400,470,30)}<g clip-path="url(#ca)"><rect width="400" height="470" fill="url(#rain)"/></g><path d="${pathOf(P,CA_OUT)}" fill="none" stroke="#1f2a33" stroke-width="2"/>`;
+L.forEach(l=>{h+=`<g id="ly-${l.id}">`;if(l.type==='line'){h+=`<path d="${lineOf(P,l.pts)}" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="${lineOf(P,l.pts)}" fill="none" stroke="${l.c}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="${l.id==='la'?'0':'1 0'}"/>`;}
+ else l.pts.forEach(p=>{const[x,y]=P(...p);h+=`<rect x="${x-5}" y="${y-5}" width="10" height="10" rx="2" fill="${l.c}" stroke="#fff" stroke-width="1.5"/>`;});h+='</g>';});
+const pt=(lon,lat,txt,dx,dy,anchor)=>{const[x,y]=P(lon,lat);return `<circle cx="${x}" cy="${y}" r="4" fill="#1f2a33" stroke="#fff" stroke-width="1.5"/><text x="${x+dx}" y="${y+dy}" font-size="12.5" font-weight="700" fill="#1f2a33" text-anchor="${anchor||'start'}" paint-order="stroke" stroke="#fff" stroke-width="3">${txt}</text>`;};
+h+=pt(-118.2,36.8,'Owens Valley',10,-6)+pt(-118.25,34.05,'Los Angeles',-8,18,'end')+pt(-121.5,38.58,'Sacramento',-10,-4,'end');
+h+=`<text x="20" y="40" font-size="12" font-weight="700" fill="#0b4f6c">Wetter</text><text x="20" y="58" font-size="11.5" fill="#0b4f6c">(rain &amp; snow)</text><text x="20" y="435" font-size="12" font-weight="700" fill="#8a5f00">Drier</text>`;
+svg.innerHTML=h;
+$('#layers').innerHTML=L.map(l=>`<label><input type="checkbox" data-id="${l.id}" checked><i style="background:${l.c}"></i>${l.name} (${l.yr})</label>`).join('');
+function info(id){const l=L.find(x=>x.id===id);$('#linfo').innerHTML=l.info;}
+$$('#layers input').forEach(i=>i.addEventListener('change',()=>{$('#ly-'+i.dataset.id).style.display=i.checked?'':'none';if(i.checked)info(i.dataset.id);}));
+$('#linfo').innerHTML='Toggle the layers to see how California moved water. Each layer opens a short note.';
+$('#bars').innerHTML=`<div class="r"><span class="l">Where rain &amp; snow fall</span><div class="b"><div style="width:75%;background:#2a7fb0">75% north of Sacramento</div><div style="width:25%;background:#9aa7b0">25%</div></div></div><div class="r"><span class="l">Where water is demanded</span><div class="b"><div style="width:20%;background:#2a7fb0">20%</div><div style="width:80%;background:#b5532f">80% southern two-thirds</div></div></div>`;
+const EV=[
+{t:'Los Angeles was growing quickly, and its local water supply could not keep up.',s:'la',w:'This supports the city: population growth created a real need for new water.'},
+{t:'Owens Valley farmers and ranchers depended on the river to irrigate their land.',s:'ov',w:'This supports the valley: the diverted water was their livelihood.'},
+{t:'Los Angeles voters approved bonds to pay for the aqueduct.',s:'la',w:'This supports the city: the project had public approval and funding in Los Angeles.'},
+{t:'Agents bought land and water rights in the valley without always revealing why.',s:'ov',w:'This supports the valley: sellers were not given the full picture.'},
+{t:'Owens Lake dried up after its inflow was diverted, leaving harmful dust storms.',s:'ov',w:'This supports the valley: the transfer caused lasting environmental harm.'},
+{t:'Reliable water helped Los Angeles grow into a major economic center.',s:'la',w:'This supports the city: the transfer produced large economic benefits.'},
+{t:'The valley&rsquo;s Paiute people had irrigated and lived along the river long before the aqueduct.',s:'ov',w:'This supports the valley: long-standing use and presence are part of the claim.'}];
+let order,ix,cnt,ans;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function bal(){const d=cnt.la-cnt.ov,ang=Math.max(-9,Math.min(9,d*-4));
+ $('#bal').innerHTML=`<path d="M165 108V52" stroke="#55636f" stroke-width="6"/><path d="M135 110h60" stroke="#55636f" stroke-width="8" stroke-linecap="round"/>
+ <g id="beam" style="transform-origin:165px 50px;transform:rotate(${ang}deg)"><rect x="40" y="46" width="250" height="7" rx="3" fill="#8a5f00"/>
+ <path d="M52 53L30 92h44z" fill="none" stroke="#8a5f00"/><path d="M278 53L256 92h44z" fill="none" stroke="#8a5f00"/>
+ <g transform="rotate(${-ang} 52 92)"><path d="M26 92h52q-4 14-26 14t-26-14z" fill="#b5532f"/><text x="52" y="86" text-anchor="middle" font-size="12" font-weight="700" fill="#b5532f">${cnt.la}</text></g>
+ <g transform="rotate(${-ang} 278 92)"><path d="M252 92h52q-4 14-26 14t-26-14z" fill="#136f8f"/><text x="278" y="86" text-anchor="middle" font-size="12" font-weight="700" fill="#136f8f">${cnt.ov}</text></g></g>
+ <text x="52" y="122" text-anchor="middle" font-size="11.5" fill="#55636f">Los Angeles</text><text x="278" y="122" text-anchor="middle" font-size="11.5" fill="#55636f">Owens Valley</text>`;}
+function card(){const b=$$('#two button');
+ if(ix>=EV.length){$('#ev').innerHTML='<div><b>All evidence sorted.</b> Both sides have real evidence. Now weigh it below.</div>';b.forEach(x=>x.disabled=true);$('#verdict').hidden=false;$('#fb').innerHTML='<button class="btn" id="rs">Restart</button>';$('#rs').onclick=start;return;}
+ ans=false;$('#ev').innerHTML=`<div><span class="small">Evidence ${ix+1} of ${EV.length}</span><br>${order[ix].t}</div>`;b.forEach(x=>x.disabled=false);}
+$$('#two button').forEach(b=>b.onclick=()=>{if(ix>=EV.length||ans)return;const e=order[ix],ok=b.dataset.s===e.s;ans=true;$$('#two button').forEach(x=>x.disabled=true);cnt[e.s]++;bal();
+ $('#fb').innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?'Yes.':'Look again.'}</b> ${e.w} <button class="btn primary" id="nx" style="margin-left:6px;padding:3px 10px">Next</button></div>`;$('#nx').focus();$('#nx').onclick=()=>{ix++;$('#fb').innerHTML='';card();};});
+function start(){order=shuffle(EV);ix=0;cnt={la:0,ov:0};$('#fb').innerHTML='';$('#verdict').hidden=true;bal();card();}
+$('#vs').addEventListener('input',e=>{const v=+e.target.value;$('#vv').textContent=v<40?'Leaning Owens Valley':v>60?'Leaning Los Angeles':'Even';});
+start();
+</script>
+</body>
+</html>

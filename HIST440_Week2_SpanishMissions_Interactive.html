@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HIST440 Week 2 | Spanish Californians: Mission Timeline and Evidence Sorter</title>
+<style>
+:root{--teal:#0b4f6c;--teal2:#136f8f;--gold:#e0a526;--gold-d:#8a5f00;--terra:#b5532f;--cream:#fbf7ef;--paper:#ffffff;--ink:#1f2a33;--muted:#55636f;--line:#e2d9c6;--good:#1f7a4d;--bad:#b3261e;--sea:#cfe6ef}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--cream);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.4}
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+header.top{flex:0 0 auto;position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;padding:8px 16px;background:linear-gradient(90deg,var(--teal),var(--teal2));color:#fff;min-height:58px}
+header.top .txt{position:relative;z-index:1;max-width:72%}
+header.top .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:var(--ink);padding:1px 8px;border-radius:99px;margin-bottom:2px}
+header.top h1{margin:0;font-size:19px;line-height:1.15}
+header.top p{margin:2px 0 0;font-size:13px;opacity:.95}
+header.top svg.art{position:absolute;right:0;top:0;height:100%;width:auto;max-width:40%}
+main{flex:1 1 auto;min-height:0;display:grid;gap:12px;padding:10px 16px 12px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:0;min-width:0;display:flex;flex-direction:column}
+h2{font-size:15px;margin:0 0 6px;color:var(--teal)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:3px solid #1b6ef3;outline-offset:2px}
+.btn{border:1.5px solid var(--teal);background:#fff;color:var(--teal);border-radius:8px;padding:6px 12px;font-weight:600}
+.btn:hover{background:#eaf4f8}
+.btn.primary{background:var(--teal);color:#fff}
+.btn.primary:hover{background:#093f57}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.tabs{display:flex;gap:6px;margin-bottom:8px}
+.tabs button{flex:1;border:1.5px solid var(--line);background:#f4efe3;border-radius:8px;padding:6px 8px;font-weight:700;color:var(--muted)}
+.tabs button[aria-selected=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:600;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--gold);border-color:var(--gold-d);}
+.pill{display:inline-block;background:#eef5f8;color:var(--teal);border-radius:99px;padding:2px 10px;font-size:13px;font-weight:600;margin:0 4px 4px 0}
+.fb{border-radius:8px;padding:6px 10px;font-size:13.5px;margin-top:6px}
+.fb.good{background:#e6f4ec;border:1px solid #9fd2b5;color:#14503a}
+.fb.bad{background:#fdeceb;border:1px solid #f0b4b0;color:#7a1b15}
+.fb.info{background:#fff6dc;border:1px solid #ecd48a;color:#5b4300}
+.small{font-size:13px;color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+.think{background:#fff6dc;border-left:4px solid var(--gold);padding:6px 10px;border-radius:0 8px 8px 0;font-size:13.5px}
+svg text{font-family:inherit}
+@media (max-width:720px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto}
+ main{display:flex;flex-direction:column}
+ header.top .txt{max-width:100%}
+ header.top svg.art{opacity:.25}
+ .mapwrap{height:420px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+main{grid-template-columns:minmax(280px,42%) 1fr}
+.mapwrap{padding:0;background:#cfe6ef;overflow:hidden;position:relative}
+.mapwrap svg{width:100%;flex:1 1 auto;min-height:0;display:block}
+.ctl{flex:0 0 auto;background:#fff;border-top:1px solid var(--line);padding:8px 12px}
+.ctl label{font-weight:700;color:var(--teal);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ctl input[type=range]{width:100%;accent-color:#b5532f}
+.row{display:flex;gap:8px;align-items:center}
+.ms{cursor:pointer}
+.ms circle{fill:#b5532f;stroke:#fff;stroke-width:2;transition:r .15s}
+.ms:hover circle{r:9}
+.ms.sel circle{fill:#e0a526;stroke:#1f2a33;stroke-width:2.5;r:10}
+.ms.hid{display:none}
+.mcard{display:flex;gap:10px;align-items:center;border:1px solid var(--line);background:#faf6ec;border-radius:10px;padding:8px 10px;margin-bottom:8px;flex:0 0 auto}
+.mcard svg{width:78px;height:62px;flex:0 0 auto}
+.mcard h3{margin:0;font-size:16px;color:var(--teal)}
+.mcard p{margin:2px 0 0;font-size:13.5px}
+.sorter{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.ev{background:#fff6dc;border:1.5px solid var(--gold);border-radius:10px;padding:14px 16px;font-size:17px;min-height:120px;display:flex;align-items:center}
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.bins button{border:2px solid var(--teal);background:#fff;border-radius:10px;padding:14px 6px;font-size:15px;font-weight:700;color:var(--teal);line-height:1.2}
+.bins button small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+.bins button:hover:not([disabled]){background:#eaf4f8}
+.bins button[disabled]{opacity:.55;cursor:default}
+.meter{display:flex;height:22px;border-radius:99px;overflow:hidden;background:#eee;border:1px solid var(--line);margin-top:4px}
+.meter span{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;transition:width .3s;min-width:0;overflow:hidden}
+.legend{display:flex;gap:12px;font-size:12.5px;margin-top:4px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="txt"><span class="tag">HIST440 &bull; Week 2</span>
+ <h1>Spanish Californians: Missions Timeline &amp; Evidence Sorter</h1>
+ <p>Big Question: Was the Great Commission the main purpose of the Spanish mission system?</p></div>
+ <svg class="art" viewBox="0 0 300 60" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+  <path d="M170 60V30q25-26 50 0V60Z" fill="#f2e2c4"/><path d="M180 60V34q15-16 30 0V60Z" fill="#0a3f57"/>
+  <rect x="150" y="20" width="12" height="40" fill="#f2e2c4"/><path d="M148 20q8-14 16 0Z" fill="#b5532f"/><circle cx="156" cy="30" r="3" fill="#0a3f57"/>
+  <rect x="228" y="34" width="50" height="26" fill="#f2e2c4"/><path d="M224 34l29-14 29 14Z" fill="#b5532f"/>
+  <circle cx="110" cy="20" r="11" fill="#e0a526"/>
+ </svg>
+</header>
+<main>
+ <section class="panel mapwrap" aria-label="Map of California missions">
+  <svg id="map" viewBox="0 0 400 470" role="group" aria-label="Map of the 21 California missions"></svg>
+  <div class="ctl">
+   <label for="yr"><span>Year: <output id="yrOut">1823</output></span><span id="cnt" class="small" style="font-weight:700">21 of 21 missions</span></label>
+   <div class="row"><button class="btn" id="play" aria-label="Play timeline animation">&#9654; Play</button><input type="range" id="yr" min="1769" max="1823" value="1823" aria-label="Year slider"></div>
+  </div>
+ </section>
+ <section class="panel" aria-label="Mission details and evidence activity">
+  <div class="mcard" id="mcard" aria-live="polite"></div>
+  <div class="sorter">
+   <h2>Weigh the evidence: why were the missions built?</h2>
+   <div class="ev" id="ev" aria-live="polite"></div>
+   <div class="bins" id="bins">
+    <button data-k="faith">Faith &amp; conversion<small>Great Commission</small></button>
+    <button data-k="empire">Empire &amp; defense<small>claiming land for Spain</small></button>
+    <button data-k="econ">Land &amp; economy<small>farms, ranches, labor</small></button>
+   </div>
+   <div id="fb" aria-live="polite"></div>
+   <div style="margin-top:auto">
+    <div class="meter" id="meter" aria-label="Your sorted evidence"></div>
+    <div class="legend"><span><i style="background:#7b4fa3"></i>Faith</span><span><i style="background:#0b4f6c"></i>Empire</span><span><i style="background:#b5532f"></i>Economy</span><span class="small" id="prog"></span></div>
+   </div>
+  </div>
+ </section>
+</main>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const CA_OUT=[[-124.2,42.0],[-120,42],[-120,39],[-114.6,35.0],[-114.7,32.7],[-117.1,32.5],[-117.3,33.0],[-118.4,33.8],[-118.5,34.0],[-119.2,34.1],[-120.5,34.45],[-120.65,35.15],[-121.3,35.7],[-121.9,36.6],[-122.0,36.95],[-122.5,37.5],[-122.5,37.8],[-123.0,38.0],[-123.7,38.9],[-123.8,39.6],[-124.4,40.4],[-124.1,41.0]];
+function mkProj(o){const c=Math.cos(37.5*Math.PI/180);return (lon,lat)=>[(lon-o.lonMin)*c*o.k,(o.latMax-lat)*o.k];}
+function pathOf(P,pts){return 'M'+pts.map(p=>P(p[0],p[1]).map(v=>v.toFixed(1)).join(' ')).join('L')+'Z';}
+function lineOf(P,pts){return 'M'+pts.map(p=>P(p[0],p[1]).map(v=>v.toFixed(1)).join(' ')).join('L');}
+function waves(w,h,n){let s='';for(let i=0;i<n;i++){const x=(i*97)%w,y=(i*53+20)%h;s+=`<path d="M${x} ${y}q6 -5 12 0t12 0" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/>`;}return s;}
+
+const M=[
+['San Diego de Alcalá',1769,-117.1,32.76,'San Diego'],['San Carlos Borromeo (Carmel)',1770,-121.92,36.54,'Carmel'],['San Antonio de Padua',1771,-121.26,36.02,'near Jolon'],['San Gabriel Arcángel',1771,-118.1,34.1,'San Gabriel'],['San Luis Obispo de Tolosa',1772,-120.66,35.28,'San Luis Obispo'],['San Francisco de Asís (Dolores)',1776,-122.43,37.76,'San Francisco'],['San Juan Capistrano',1776,-117.66,33.5,'San Juan Capistrano'],['Santa Clara de Asís',1777,-121.94,37.35,'Santa Clara'],['San Buenaventura',1782,-119.3,34.28,'Ventura'],['Santa Bárbara',1786,-119.71,34.44,'Santa Barbara'],['La Purísima Concepción',1787,-120.47,34.67,'near Lompoc'],['Santa Cruz',1791,-122.03,36.98,'Santa Cruz'],['Nuestra Señora de la Soledad',1791,-121.35,36.4,'Soledad'],['San José',1797,-121.92,37.53,'Fremont'],['San Juan Bautista',1797,-121.54,36.85,'San Juan Bautista'],['San Miguel Arcángel',1797,-120.7,35.75,'San Miguel'],['San Fernando Rey de España',1797,-118.46,34.27,'Mission Hills (Los Angeles)'],['San Luis Rey de Francia',1798,-117.32,33.23,'Oceanside'],['Santa Inés',1804,-120.14,34.59,'Solvang'],['San Rafael Arcángel',1817,-122.53,37.97,'San Rafael'],['San Francisco Solano',1823,-122.46,38.29,'Sonoma']];
+const P=mkProj({lonMin:-123.4,latMax:38.6,k:76});
+const svg=$('#map');
+const _route=lineOf(P,M.slice().sort((a,b)=>a[1]-b[1]||b[3]-a[3]).sort((a,b)=>a[3]-b[3]).map(m=>[m[2],m[3]]));
+let h=`<rect width="400" height="470" fill="#cfe6ef"/>${waves(400,470,30)}<path d="${pathOf(P,CA_OUT)}" fill="#f1e3c0" stroke="#1f2a33" stroke-width="2"/>`;
+h+=`<text x="30" y="400" font-size="13" fill="#2b5a70" font-style="italic">Pacific Ocean</text>`;
+M.forEach((m,i)=>{const[x,y]=P(m[2],m[3]);h+=`<g class="ms" data-i="${i}" tabindex="0" role="button" aria-label="${m[0]}, founded ${m[1]}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="7"/></g>`;});
+svg.innerHTML=h;
+const art='<svg viewBox="0 0 78 62" aria-hidden="true"><rect width="78" height="62" rx="8" fill="#d7ecf5"/><rect y="48" width="78" height="14" fill="#c9a96a"/><rect x="14" y="26" width="50" height="24" fill="#f6ead0"/><path d="M10 26l29-14 29 14Z" fill="#b5532f"/><path d="M31 50V38q8-10 16 0V50Z" fill="#7a4a2b"/><rect x="50" y="8" width="10" height="20" fill="#f6ead0"/><path d="M48 8q7-8 14 0Z" fill="#b5532f"/><circle cx="55" cy="16" r="2.5" fill="#7a4a2b"/></svg>';
+let cur=0;
+function show(i){cur=i;const m=M[i];$$('.ms',svg).forEach(g=>g.classList.toggle('sel',+g.dataset.i===i));
+ const serra=m[1]<=1782?' Founded under Fr. Junípero Serra&rsquo;s leadership.':'';
+ $('#mcard').innerHTML=`${art}<div><h3>${m[0]}</h3><p>Founded <b>${m[1]}</b> &bull; today&rsquo;s ${m[4]}.${serra}</p><p class="small">Mission no. ${[...M].sort((a,b)=>a[1]-b[1]).indexOf(m)+1} of 21. Select any dot on the map.</p></div>`;}
+$$('.ms',svg).forEach(g=>{g.addEventListener('click',()=>show(+g.dataset.i));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(+g.dataset.i);}});});
+const yr=$('#yr');
+function year(){const y=+yr.value;$('#yrOut').textContent=y;let n=0;$$('.ms',svg).forEach(g=>{const vis=M[+g.dataset.i][1]<=y;g.classList.toggle('hid',!vis);if(vis)n++;});$('#cnt').textContent=n+' of 21 missions';
+ if(M[cur][1]>y){const first=M.findIndex(m=>m[1]<=y);if(first>=0)show(first);}}
+yr.addEventListener('input',year);
+let tm=null;$('#play').onclick=()=>{if(tm){clearInterval(tm);tm=null;$('#play').innerHTML='&#9654; Play';return;}
+ if(+yr.value>=1823)yr.value=1768;$('#play').innerHTML='&#10074;&#10074; Pause';
+ tm=setInterval(()=>{yr.value=+yr.value+1;year();const f=M.findIndex(m=>m[1]===+yr.value);if(f>=0)show(f);if(+yr.value>=1823){clearInterval(tm);tm=null;$('#play').innerHTML='&#9654; Play';}},260);};
+const EV=[
+{t:'Franciscan friars sought to teach Christianity to Native Californians and baptize them.',k:'faith',w:'Conversion was the friars&rsquo; stated religious goal, tied to the Great Commission (Matthew 28:19&ndash;20).'},
+{t:'Each mission was paired with a presidio (military fort) at key harbors such as San Diego and Monterey.',k:'empire',w:'Forts and soldiers protected Spain&rsquo;s claim to the coast.'},
+{t:'The Spanish king granted each mission a large number of acres for crops and livestock.',k:'econ',w:'Land grants for farming and herding built the roots of California agriculture.'},
+{t:'Daily life at a mission was organized around Mass, prayer, and religious instruction.',k:'faith',w:'The mission schedule centered on religious practice and instruction.'},
+{t:'Spain feared Russian and British expansion along the Pacific coast and wanted to occupy Alta California.',k:'empire',w:'Occupying the territory was a strategic way to block rival empires.'},
+{t:'Native workers (neophytes) farmed, herded, and made tools and cloth that fed and supplied the missions.',k:'econ',w:'Mission labor shifted the economy from hunting and gathering to agriculture.'},
+{t:'Missions, pueblos, and ranchos together settled the land with Spanish colonists and soldiers.',k:'empire',w:'Settlement patterns were designed to hold the colony.'},
+{t:'Missionaries&rsquo; primary early goals included clearing land and planting crops, including grain, grapes, and olives.',k:'econ',w:'Agriculture made missions self-supporting and later fed the presidios.'}];
+const NAME={faith:'Faith',empire:'Empire',econ:'Economy'};
+let order=[],ix=0,cnt={faith:0,empire:0,econ:0},done=false,ans=false;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function meter(){const t=cnt.faith+cnt.empire+cnt.econ;const c={faith:'#7b4fa3',empire:'#0b4f6c',econ:'#b5532f'};
+ $('#meter').innerHTML=t?['faith','empire','econ'].filter(k=>cnt[k]).map(k=>`<span style="width:${cnt[k]/t*100}%;background:${c[k]}">${cnt[k]}</span>`).join(''):'<span style="width:100%;background:#cfcfcf;color:#555">Sort the evidence to build your chart</span>';
+ $('#prog').textContent=`Sorted ${Math.min(ix+(ans?1:0),EV.length)} of ${EV.length}`;}
+function card(){const bins=$$('#bins button');
+ if(ix>=EV.length){$('#ev').innerHTML='<div><b>All evidence sorted.</b> Look at your chart below. Which purposes did the evidence support? Faith is one purpose among several: decide how you would answer the Big Question, using this evidence.</div>';
+  bins.forEach(b=>b.disabled=true);$('#fb').innerHTML='<button class="btn primary" id="rs">Restart activity</button>';$('#rs').onclick=start;return;}
+ ans=false;$('#ev').innerHTML=`<div><span class="small">Evidence ${ix+1} of ${EV.length}</span><br>${order[ix].t}</div>`;bins.forEach(b=>b.disabled=false);meter();}
+$$('#bins button').forEach(b=>b.addEventListener('click',()=>{if(ix>=EV.length||ans)return;const e=order[ix],ok=b.dataset.k===e.k;ans=true;
+ $$('#bins button').forEach(x=>x.disabled=true);
+ if(ok){cnt[e.k]++;$('#fb').innerHTML=`<div class="fb good"><b>Yes: ${NAME[e.k]}.</b> ${e.w} <button class="btn primary" id="nx" style="margin-left:6px;padding:3px 10px">Next</button></div>`;}
+ else{cnt[e.k]++;$('#fb').innerHTML=`<div class="fb bad"><b>Closer look:</b> this evidence points to <b>${NAME[e.k]}</b>. ${e.w} <button class="btn primary" id="nx" style="margin-left:6px;padding:3px 10px">Next</button></div>`;}
+ meter();$('#nx').focus();$('#nx').onclick=()=>{ix++;$('#fb').innerHTML='';card();};}));
+function start(){order=shuffle(EV);ix=0;cnt={faith:0,empire:0,econ:0};$('#fb').innerHTML='';card();}
+show(0);year();start();
+</script>
+</body>
+</html>
