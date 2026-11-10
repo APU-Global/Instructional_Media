@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATH 099 | Week 8 Interactive: Ball Toss, Discriminants &amp; Complex Numbers</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--ink:#222;--grey:#5f5f5f;--line:#ccc;--sand:#edebe8;--teal:#1b7f79;--amber:#b36b00;--ok:#1d7a3e}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.4}
+.app{max-width:1000px;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+header{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 18px;border-bottom:4px solid var(--red)}
+header .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#f1a3a6;font-weight:600}
+header h1{margin:2px 0 2px;font-size:22px;line-height:1.15;font-weight:700}
+header p{margin:0;font-size:13px;color:#ddd}
+header svg{flex:0 0 auto;width:230px;height:84px}
+nav.tabs{display:flex;background:var(--sand);border-bottom:1px solid var(--line)}
+nav.tabs button{flex:1;border:0;background:transparent;padding:10px 8px;font-weight:600;font-size:14px;font-family:inherit;color:#333;cursor:pointer;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected=true]{background:#fff;color:var(--dark);border-bottom-color:var(--red)}
+nav.tabs button:hover{background:#f6f4f2}
+nav.tabs button:focus-visible,.btn:focus-visible,.opt:focus-visible,.seg button:focus-visible,input:focus-visible{outline:3px solid #1b5fd1;outline-offset:2px}
+.panel{display:none;padding:12px 16px 10px;min-height:520px}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:290px 1fr;gap:16px}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.card h3{margin:0 0 6px;font-size:14px;color:var(--dark);text-transform:uppercase;letter-spacing:.04em}
+.ctl{margin:7px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:1px}
+.ctl output{color:var(--dark);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--red);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 6px}
+.seg button,.btn{font-weight:600;font-size:13px;font-family:inherit;border:1.5px solid var(--dark);background:#fff;color:var(--dark);border-radius:6px;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed=true],.btn{background:var(--dark);color:#fff}
+.btn:hover{background:#8c2a2f}
+.btn.ghost{background:#fff;color:var(--dark)}
+.btn.ghost:hover{background:#f6e7e8}
+.chk{display:flex;align-items:center;gap:6px;font-size:13.5px;margin:4px 0}
+.rep{display:grid;grid-template-columns:92px 1fr;gap:4px 8px;font-size:14px;align-items:baseline}
+.rep b{color:var(--grey);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.rep span.v{font-weight:600}
+.big{font-size:17px}
+.msg{border-left:4px solid var(--red);background:#fdf1f1;padding:7px 10px;border-radius:0 6px 6px 0;font-size:14px;margin-top:8px}
+.msg.good{border-color:var(--ok);background:#eef8f1}
+.msg.warn{border-color:var(--amber);background:#fff6e8}
+.msg.bad{border-color:var(--dark);background:#fdf1f1}
+svg text{font-family:inherit}
+.vis svg{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:8px}
+.qhead{display:flex;justify-content:space-between;font-size:13px;color:var(--grey);font-weight:600;margin-bottom:4px}
+.qprompt{font-size:18px;font-weight:600;margin:4px 0 6px}
+.qvis svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto 6px;border:1px solid var(--line);border-radius:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.opt{font-weight:600;font-size:16px;font-family:inherit;text-align:center;padding:10px;border:2px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--red);background:#fdf6f6}
+.opt.right{border-color:var(--ok);background:#eef8f1}
+.opt.wrong{border-color:var(--dark);background:#fdf1f1}
+.fb{min-height:44px;font-size:14px}
+.done{text-align:center;padding:60px 10px}
+.done h3{font-size:30px;margin:0 0 6px;color:var(--dark)}
+.quizwrap{max-width:640px;margin:0 auto}
+.chiprow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:4px 0}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font:italic 600 14px Georgia,serif;color:#fff;background:var(--red);border:2px solid transparent}
+.chip.b{background:#222}
+.chip.x{opacity:.35;text-decoration:line-through;background:#888}
+.chip.g{background:var(--teal)}
+.grp{display:inline-flex;gap:3px;padding:3px 5px;border:2px dashed var(--line);border-radius:14px;margin:2px}
+.frac{display:inline-block;text-align:center;vertical-align:middle}
+.frac>div:first-child{border-bottom:2px solid #222;padding:2px 8px}
+.frac>div:last-child{padding:2px 8px}
+footer{display:flex;justify-content:space-between;font-size:12px;color:var(--grey);padding:6px 16px;border-top:1px solid var(--line);background:var(--sand)}
+.legend{display:flex;gap:14px;align-items:center;font-size:13px;font-weight:600}
+.legend svg{width:42px;height:22px;vertical-align:middle;border:0}
+.mono{font-variant-numeric:tabular-nums}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.opts{grid-template-columns:1fr}header svg{display:none}.rep{grid-template-columns:80px 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><div class="eyebrow">MATH 099 &middot; Intermediate Algebra &middot; Week 8</div>
+  <h1>Ball Toss, Discriminants &amp; Complex Numbers</h1><p>Toss a ball, solve a quadratic, and discover what the discriminant tells you about real and complex solutions.</p></div>
+  <svg viewBox="0 0 230 84" role="img" aria-label="A ball tossed in an arc and the imaginary unit i">
+<line x1="6" y1="76" x2="224" y2="76" stroke="#777" stroke-width="2"/>
+<rect x="14" y="48" width="30" height="28" fill="#555"/><circle cx="29" cy="40" r="5" fill="#fff"/><path d="M29 45v10M29 49l-7 6M29 49l8 -8" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M37 38Q95 -30 150 70" fill="none" stroke="#d34147" stroke-width="3" stroke-dasharray="6 5"/>
+<circle cx="92" cy="14" r="7" fill="#d34147" stroke="#fff" stroke-width="2"/>
+<text x="188" y="52" text-anchor="middle" font-size="40" font-weight="700" font-style="italic" fill="#fff" font-family="Georgia,serif">i</text>
+<text x="188" y="70" text-anchor="middle" font-size="12" fill="#f1a3a6">i² = −1</text>
+</svg>
+</header>
+<nav class="tabs" role="tablist"><button role="tab" data-tab="t1" aria-selected="true">Ball Toss Lab</button><button role="tab" data-tab="t2" aria-selected="false">Complex Number Workshop</button><button role="tab" data-tab="t3" aria-selected="false">Quick Check</button></nav>
+
+<section class="panel on" id="t1" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>Set up the toss</h3>
+    <div class="ctl"><label for="v0">Launch speed v&#8320; <output id="v0Out"></output></label><input type="range" id="v0" min="8" max="64" step="1" value="40"></div>
+    <div class="ctl"><label for="h0">Starting height h&#8320; <output id="h0Out"></output></label><input type="range" id="h0" min="0" max="40" step="1" value="6"></div>
+    <div class="ctl"><label for="k">Target height k <output id="kOut"></output></label><input type="range" id="k" min="0" max="80" step="1" value="20"></div>
+    <div class="seg" style="margin-bottom:0"><button id="go">&#9654; Toss it</button></div>
+   </div>
+   <div class="vis" style="margin-top:8px"><svg id="scene" viewBox="0 0 280 190" role="img" aria-label="Person on a platform tossing a ball upward toward a target height"></svg></div>
+  </div>
+  <div>
+   <div class="card" style="padding:8px 12px">
+    <div class="mono" style="font-size:14px">Model: h(t) = &minus;16t&sup2; + <span id="m1"></span>t + <span id="m2"></span> &nbsp;&rarr;&nbsp; solve h(t) = <span id="m3"></span></div>
+    <div class="mono" style="font-size:14px;margin-top:2px">Standard form: &minus;16t&sup2; + <span id="s1"></span>t + (<span id="s2"></span>) = 0 &nbsp; so a = &minus;16, b = <span id="s3"></span>, c = <span id="s4"></span></div>
+   </div>
+   <div class="vis" style="margin-top:8px"><svg id="gr" viewBox="0 0 560 250" role="img" aria-label="Height of the ball over time"></svg></div>
+   <div class="rep" style="margin-top:8px;grid-template-columns:150px 1fr"><b style="text-transform:none">Discriminant D</b><span class="v big mono" id="disc"></span><b style="text-transform:none">Solutions for t</b><span class="v big mono" id="solv"></span></div>
+   <div class="msg" id="dmsg" aria-live="polite"></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="t2" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>Two complex numbers</h3>
+    <div class="ctl"><label for="za">z&#8321; real part <output id="zaOut"></output></label><input type="range" id="za" min="-5" max="5" step="1" value="2"></div>
+    <div class="ctl"><label for="zb">z&#8321; imaginary part <output id="zbOut"></output></label><input type="range" id="zb" min="-5" max="5" step="1" value="3"></div>
+    <div class="ctl"><label for="zc">z&#8322; real part <output id="zcOut"></output></label><input type="range" id="zc" min="-5" max="5" step="1" value="1"></div>
+    <div class="ctl"><label for="zd">z&#8322; imaginary part <output id="zdOut"></output></label><input type="range" id="zd" min="-5" max="5" step="1" value="-2"></div>
+    <div class="seg" id="ops"><button data-o="add" aria-pressed="true">Add</button><button data-o="sub" aria-pressed="false">Subtract</button><button data-o="mul" aria-pressed="false">Multiply</button></div>
+   </div>
+   <div class="card" style="margin-top:8px"><h3>Steps</h3><div id="csteps" style="font-size:14px;line-height:1.7"></div></div>
+  </div>
+  <div>
+   <div class="vis"><svg id="argand" viewBox="0 0 560 400" role="img" aria-label="Complex plane showing both numbers and the result"></svg></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="t3" role="tabpanel"><div class="quizwrap" id="quiz"></div></section>
+
+<footer><span>MATH 099 Intermediate Algebra &middot; Week 8 Interactive</span><span>Quadratic Equations &middot; Imaginary &amp; Complex Numbers</span></footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const choice=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const MINUS='\u2212';
+const sgn=n=>n<0?MINUS+Math.abs(n):String(n);
+const r2=n=>(Math.round(n*100)/100);
+function fx(n,d=2){return (Math.abs(n)<1e-9?0:n).toFixed(d).replace('-',MINUS)}
+function bindRange(id,cb,fmt){const el=document.getElementById(id);const out=document.getElementById(id+'Out');const f=()=>{if(out)out.textContent=fmt?fmt(+el.value):el.value;cb()};el.addEventListener('input',f);f();return el}
+function initTabs(onChange){
+  const btns=$$('nav.tabs button');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-selected',x===b));
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.tab));
+    if(onChange)onChange(b.dataset.tab);postSize();
+  }));
+}
+function postSize(){try{const h=document.querySelector('.app').offsetHeight+2;parent.postMessage({type:'math099-resize',height:h,page:document.title},'*')}catch(e){}}
+window.addEventListener('load',()=>{postSize();if(window.ResizeObserver)new ResizeObserver(postSize).observe(document.querySelector('.app'))});
+window.addEventListener('resize',postSize);
+function Quiz(root,gen,total=6,label='Great work!'){
+  let i=0,score=0;
+  function render(){
+    if(i>=total){
+      const msg=score===total?'Perfect score. You have this down.':score>=total-2?'Strong work. Review any you missed and try a new set.':'Good start. Revisit the Explore tab, then try a new set.';
+      root.innerHTML=`<div class="done"><h3>${score} / ${total} correct</h3><p>${msg}</p><button class="btn" id="qr">Try a new set</button></div>`;
+      $('#qr',root).onclick=()=>{i=0;score=0;render()};postSize();return;
+    }
+    const q=gen();let done=false;
+    root.innerHTML=`<div class="qhead"><span>Question ${i+1} of ${total}</span><span>Score: ${score}</span></div><div class="qprompt">${q.prompt}</div><div class="qvis">${q.visual||''}</div><div class="opts">${q.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div><div class="fb" aria-live="polite"></div><button class="btn" id="qn" hidden>${i===total-1?'See results':'Next question'}</button>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>{
+      if(done)return;done=true;const k=+b.dataset.k;const ok=k===q.answer;
+      if(ok)score++;
+      $$('.opt',root).forEach((x,j)=>{x.disabled=true;if(j===q.answer)x.classList.add('right');else if(j===k)x.classList.add('wrong')});
+      $('.fb',root).innerHTML=`<div class="msg ${ok?'good':'bad'}"><b>${ok?'Correct!':'Not quite.'}</b> ${q.explain||''}</div>`;
+      $('#qn',root).hidden=false;$('#qn',root).focus();postSize();
+    });
+    $('#qn',root).onclick=()=>{i++;render()};postSize();
+  }
+  render();
+}
+function mcq(correct,distractors,extra){
+  const ds=[...new Set(distractors.filter(d=>d!==correct))];
+  let k=0;while(ds.length<3&&extra&&k<extra.length){if(extra[k]!==correct&&!ds.includes(extra[k]))ds.push(extra[k]);k++}
+  const opts=shuffle([correct,...ds.slice(0,3)]);
+  return {options:opts,answer:opts.indexOf(correct)};
+}
+
+
+const Q={v0:40,h0:6,k:20};let anim=null;
+function solveBall(){
+  const {v0,h0,k}=Q;const D=v0*v0+64*(h0-k);
+  const tl=(v0+Math.sqrt(v0*v0+64*h0))/32;
+  return {D,tl,vt:v0/32,vh:h0+v0*v0/64};
+}
+const hOf=t=>-16*t*t+Q.v0*t+Q.h0;
+function drawScene(t){
+  const {vh}=solveBall();const top=Math.max(vh,Q.k)*1.08+2;const gy=172,ty=14;const Y=h=>gy-h/top*(gy-ty);
+  const bh=Math.max(Q.h0,0);
+  let s=`<rect x="0" y="${gy}" width="280" height="18" fill="#edebe8"/><line x1="0" y1="${gy}" x2="280" y2="${gy}" stroke="#222" stroke-width="2"/>`;
+  s+=`<rect x="26" y="${Y(bh)}" width="62" height="${gy-Y(bh)}" fill="#555"/>`;
+  for(let i=0;i<Math.floor((gy-Y(bh))/16);i++)for(let j=0;j<3;j++)s+=`<rect x="${34+j*18}" y="${Y(bh)+8+i*16}" width="10" height="8" fill="#edebe8" opacity=".7"/>`;
+  s+=`<g transform="translate(57 ${Y(bh)})"><circle cx="0" cy="-26" r="6" fill="#fff" stroke="#222" stroke-width="2"/><path d="M0 -20v12M0 -8l-5 8M0 -8l5 8M0 -16l-7 6M0 -16l8 -9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M0 -20v12M0 -8l-5 8M0 -8l5 8M0 -16l-7 6M0 -16l8 -9" stroke="#d34147" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>`;
+  s+=`<line x1="104" y1="${Y(Q.k)}" x2="262" y2="${Y(Q.k)}" stroke="#1b7f79" stroke-width="2.5" stroke-dasharray="6 4"/><text x="262" y="${Y(Q.k)-5}" text-anchor="end" font-size="12" font-weight="700" fill="#1b7f79">target k = ${Q.k} ft</text>`;
+  s+=`<line x1="270" y1="${gy}" x2="270" y2="${Y(Math.max(vh,Q.k))}" stroke="#bbb"/>`;
+  const bt=t==null?0:t;const bhgt=Math.max(0,hOf(bt));
+  s+=`<circle cx="90" cy="${Y(bhgt)-(t==null?34:0)*(1)}" r="7" fill="#d34147" stroke="#fff" stroke-width="2"/>`;
+  $('#scene').innerHTML=s;
+}
+function drawGraph(tcur){
+  const {v0,h0,k}=Q;const {D,tl,vh}=solveBall();
+  const W=560,H=250,L=48,B=36,Tp=14,Rr=16;const xm=Math.ceil(tl*2)/2+0.5,ym=Math.max(vh,k)*1.1+2;
+  const X=v=>L+v/xm*(W-L-Rr),Y=v=>H-B-v/ym*(H-B-Tp);
+  let s='';
+  const xs=xm<=4?0.5:1;for(let v=0;v<=xm+1e-9;v+=xs)s+=`<line x1="${X(v)}" y1="${Tp}" x2="${X(v)}" y2="${H-B}" stroke="#f0f0f0"/><text x="${X(v)}" y="${H-B+15}" text-anchor="middle" font-size="11" fill="#555">${v}</text>`;
+  const ys=ym>60?20:10;for(let v=0;v<=ym;v+=ys)s+=`<line x1="${L}" y1="${Y(v)}" x2="${W-Rr}" y2="${Y(v)}" stroke="#f0f0f0"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#555">${v}</text>`;
+  s+=`<line x1="${L}" y1="${H-B}" x2="${W-Rr}" y2="${H-B}" stroke="#222" stroke-width="2"/><line x1="${L}" y1="${Tp}" x2="${L}" y2="${H-B}" stroke="#222" stroke-width="2"/>`;
+  s+=`<text x="${(L+W)/2}" y="${H-4}" text-anchor="middle" font-size="12" font-weight="600">Time t (seconds)</text><text transform="translate(12 ${(H-B)/2+10}) rotate(-90)" text-anchor="middle" font-size="12" font-weight="600">Height (ft)</text>`;
+  let pts='';for(let t=0;t<=tl+1e-9;t+=tl/80)pts+=`${X(t)},${Y(hOf(t))} `;
+  s+=`<polyline points="${pts}" fill="none" stroke="#d34147" stroke-width="3.5"/>`;
+  s+=`<line x1="${L}" y1="${Y(k)}" x2="${W-Rr}" y2="${Y(k)}" stroke="#1b7f79" stroke-width="2.5" stroke-dasharray="6 4"/><text x="${W-Rr-4}" y="${Y(k)-6}" text-anchor="end" font-size="12" font-weight="700" fill="#1b7f79" stroke="#fff" stroke-width="4" paint-order="stroke">h = ${k}</text>`;
+  if(D>=0){const sq=Math.sqrt(D);[(v0-sq)/32,(v0+sq)/32].filter((v,i,a)=>i===0||Math.abs(v-a[0])>1e-9).forEach(t=>{if(t>=0)s+=`<circle cx="${X(t)}" cy="${Y(k)}" r="7" fill="#fff" stroke="#1b7f79" stroke-width="4"/><text x="${X(t)}" y="${Y(k)+22}" text-anchor="middle" font-size="12" font-weight="700" fill="#1b7f79" stroke="#fff" stroke-width="4" paint-order="stroke">t = ${fx(t)}</text>`})}
+  if(tcur!=null)s+=`<circle cx="${X(tcur)}" cy="${Y(hOf(tcur))}" r="7" fill="#222" stroke="#fff" stroke-width="2"/>`;
+  $('#gr').innerHTML=s;
+}
+function readout(){
+  const {v0,h0,k}=Q;const {D,vh}=solveBall();
+  $('#m1').textContent=v0;$('#m2').textContent=h0;$('#m3').textContent=k;$('#s1').textContent=v0;$('#s2').textContent=sgn(h0-k);$('#s3').textContent=v0;$('#s4').textContent=sgn(h0-k);
+  $('#disc').textContent=`${v0}\u00b2 \u2212 4(\u221216)(${sgn(h0-k)}) = ${sgn(D)}`;
+  const dm=$('#dmsg');
+  if(D>0){const sq=Math.sqrt(D),t1=(v0-sq)/32,t2=(v0+sq)/32;
+    $('#solv').textContent=`t \u2248 ${fx(t1)} or t \u2248 ${fx(t2)}`;
+    const neg=t1<0;
+    dm.className='msg good';dm.innerHTML=`<b>D &gt; 0: two different real solutions.</b> ${neg?`The negative time (${fx(t1)} s) is rejected in context. The ball is at ${k} ft only once, on its way down at ${fx(t2)} s.`:`The ball passes ${k} ft twice: going up at ${fx(t1)} s and coming down at ${fx(t2)} s.`}`}
+  else if(Math.abs(D)<1e-9){$('#solv').textContent=`t = ${fx(v0/32)} (repeated)`;dm.className='msg warn';dm.innerHTML=`<b>D = 0: one repeated real solution.</b> ${k} ft is exactly the peak of the toss, so the ball just touches that height.`}
+  else{const re=v0/32,im=Math.sqrt(-D)/32;$('#solv').textContent=`t = ${fx(re)} \u00b1 ${fx(im)}i`;dm.className='msg bad';dm.innerHTML=`<b>D &lt; 0: two complex (non-real) solutions.</b> The peak is only ${fx(vh,1)} ft, so the ball <b>never reaches ${k} ft</b>. Complex answers tell us the situation cannot happen.`}
+}
+function updateQ(){readout();drawGraph(null);drawScene(null)}
+bindRange('v0',()=>{Q.v0=+$('#v0').value;updateQ()},v=>v+' ft/s');bindRange('h0',()=>{Q.h0=+$('#h0').value;updateQ()},v=>v+' ft');bindRange('k',()=>{Q.k=+$('#k').value;updateQ()},v=>v+' ft');
+$('#go').onclick=()=>{
+  cancelAnimationFrame(anim);const {tl}=solveBall();const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduce){drawGraph(solveBall().vt);drawScene(solveBall().vt);return}
+  const t0=performance.now(),dur=tl*800;
+  const step=now=>{const f=Math.min(1,(now-t0)/dur),t=f*tl;drawGraph(t);drawScene(t);if(f<1)anim=requestAnimationFrame(step);else{setTimeout(updateQ,500)}};
+  anim=requestAnimationFrame(step);
+};
+
+/* ---------- Complex numbers ---------- */
+function cx(a,b){if(b===0)return sgn(a);const bi=(Math.abs(b)===1?'':Math.abs(b))+'i';if(a===0)return (b<0?MINUS:'')+bi;return `${sgn(a)} ${b<0?MINUS:'+'} ${bi}`}
+let OP='add';
+function tm4(c1,c2,u2,c3,u3,c4,u4){let out=sgn(c1);[[c2,u2],[c3,u3],[c4,u4]].forEach(([c,u])=>{if(!u&&c===0)return;out+=` ${c<0?MINUS:'+'} ${Math.abs(c)}${u}`});return out}
+function drawComplex(){
+  const a=+$('#za').value,b=+$('#zb').value,c=+$('#zc').value,d=+$('#zd').value;
+  let ra,rb,steps;
+  if(OP==='add'){ra=a+c;rb=b+d;steps=`(${cx(a,b)}) + (${cx(c,d)})<br>= (${sgn(a)} + ${sgn(c)}) + (${sgn(b)} + ${sgn(d)})i<br>= <b>${cx(ra,rb)}</b><br><span style="color:#5f5f5f">Combine real with real, imaginary with imaginary.</span>`}
+  else if(OP==='sub'){ra=a-c;rb=b-d;steps=`(${cx(a,b)}) ${MINUS} (${cx(c,d)})<br>= (${sgn(a)} ${MINUS} ${c<0?'('+sgn(c)+')':c}) + (${sgn(b)} ${MINUS} ${d<0?'('+sgn(d)+')':d})i<br>= <b>${cx(ra,rb)}</b><br><span style="color:#5f5f5f">Distribute the negative to both parts of z\u2082.</span>`}
+  else{ra=a*c-b*d;rb=a*d+b*c;steps=`(${cx(a,b)})(${cx(c,d)})<br>= ${tm4(a*c,a*d,'i',b*c,'i',b*d,'i\u00b2')}<br>= ${tm4(a*c,a*d+b*c,'i',0,'',0,'')} + ${b*d<0?'('+sgn(b*d)+')':b*d}(${MINUS}1)<br>= <b>${cx(ra,rb)}</b><br><span style="color:#5f5f5f">FOIL, then replace i\u00b2 with \u22121.</span>`}
+  $('#csteps').innerHTML=steps;
+  const m=Math.max(5,Math.ceil(Math.max(Math.abs(a),Math.abs(b),Math.abs(c),Math.abs(d),Math.abs(ra),Math.abs(rb))/1)+1);
+  const W=560,H=400,cxp=W/2,cyp=H/2,sc=Math.min(cxp-30,cyp-24)/m;
+  const X=v=>cxp+v*sc,Y=v=>cyp-v*sc;
+  let s='';const st=m>12?5:m>8?2:1;
+  for(let v=-m;v<=m;v+=1){if(v===0)continue;s+=`<line x1="${X(v)}" y1="${Y(-m)}" x2="${X(v)}" y2="${Y(m)}" stroke="#f0f0f0"/><line x1="${X(-m)}" y1="${Y(v)}" x2="${X(m)}" y2="${Y(v)}" stroke="#f0f0f0"/>`;if(v%st===0)s+=`<text x="${X(v)}" y="${Y(0)+14}" text-anchor="middle" font-size="10" fill="#555">${sgn(v)}</text><text x="${X(0)-5}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="#555">${sgn(v)}i</text>`}
+  s+=`<line x1="${X(-m)}" y1="${Y(0)}" x2="${X(m)}" y2="${Y(0)}" stroke="#222" stroke-width="2"/><line x1="${X(0)}" y1="${Y(-m)}" x2="${X(0)}" y2="${Y(m)}" stroke="#222" stroke-width="2"/><text x="${X(m)-4}" y="${Y(0)-8}" text-anchor="end" font-size="12" font-weight="700">Real</text><text x="${X(0)+8}" y="${Y(m)+12}" font-size="12" font-weight="700">Imaginary</text>`;
+  const arrow=(x,y,col,lab,dash)=>`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(x)}" y2="${Y(y)}" stroke="${col}" stroke-width="3" ${dash?'stroke-dasharray="7 5"':''}/><circle cx="${X(x)}" cy="${Y(y)}" r="7" fill="${col}" stroke="#fff" stroke-width="2"/><text x="${X(x)+(x>=0?11:-11)}" y="${Y(y)+(y>=0?-10:18)}" text-anchor="${x>=0?'start':'end'}" font-size="13" font-weight="700" fill="${col}" stroke="#fff" stroke-width="4" paint-order="stroke">${lab}</text>`;
+  s+=arrow(a,b,'#d34147','z\u2081 = '+cx(a,b))+arrow(c,d,'#222','z\u2082 = '+cx(c,d))+arrow(ra,rb,'#1b7f79','result = '+cx(ra,rb),true);
+  $('#argand').innerHTML=s;
+}
+['za','zb','zc','zd'].forEach(id=>bindRange(id,drawComplex,sgn));
+$$('#ops button').forEach(b=>b.onclick=()=>{OP=b.dataset.o;$$('#ops button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawComplex()});
+
+/* ---------- Quiz ---------- */
+function genC(){
+  const k=choice(['sqrt','pow','mul','disc']);
+  if(k==='sqrt'){const n=rnd(2,9),m=choice([1,1,2,3,5]);const rad=n*n*m;
+    const c=`${n}${m>1?'\u221a'+m:''}i`;const d=[`${n}${m>1?'\u221a'+m:''}`,`${MINUS}${n}${m>1?'\u221a'+m:''}`,`${rad}i`,`${n*m}i`];
+    return {prompt:`Simplify: \u221a(${MINUS}${rad})`,visual:'',...mcq(c,d,['i']),explain:`\u221a(\u2212${rad}) = \u221a${rad} &middot; \u221a(\u22121) = ${n}${m>1?'\u221a'+m:''}i.`}}
+  if(k==='pow'){const n=rnd(5,43);const r=n%4;const ans=['1','i',MINUS+'1',MINUS+'i'][r];
+    return {prompt:`Simplify: i<sup>${n}</sup>`,visual:'',...mcq(ans,['1','i',MINUS+'1',MINUS+'i'].filter(x=>x!==ans)),explain:`Powers of i repeat every 4: i, \u22121, \u2212i, 1. ${n} &divide; 4 leaves remainder ${r}, so i<sup>${n}</sup> = ${ans}.`}}
+  if(k==='mul'){let a=rnd(1,4),b=rnd(-4,4),c=rnd(1,4),d=rnd(-4,4);while(b===0||d===0){b=rnd(-4,4);d=rnd(-4,4)}
+    const ans=cx(a*c-b*d,a*d+b*c);
+    return {prompt:`Multiply: (${cx(a,b)})(${cx(c,d)})`,visual:'',...mcq(ans,[cx(a*c+b*d,a*d+b*c),cx(a*c-b*d,a*d-b*c),cx(a*c,a*d+b*c)],[cx(a*c-b*d+1,a*d+b*c)]),explain:`FOIL: the i\u00b2 term becomes ${sgn(b*d)}(\u22121), so the real part is ${sgn(a*c)} ${MINUS} (${sgn(b*d)}) = ${sgn(a*c-b*d)}; imaginary part ${sgn(a*d)} + ${sgn(b*c)} = ${sgn(a*d+b*c)}.`}}
+  const a=choice([1,2,3]),b=rnd(-6,6),c=rnd(-5,5);const D=b*b-4*a*c;
+  const t=D>0?'Two different real solutions':D===0?'One repeated real solution':'Two complex (non-real) solutions';
+  const all=['Two different real solutions','One repeated real solution','Two complex (non-real) solutions','No solutions of any kind'];
+  return {prompt:`The equation ${a===1?'':a}x\u00b2 ${b<0?MINUS:'+'} ${Math.abs(b)}x ${c<0?MINUS:'+'} ${Math.abs(c)} = 0 has discriminant b\u00b2 \u2212 4ac = ${sgn(D)}. What kind of solutions does it have?`,visual:'',...mcq(t,all.filter(x=>x!==t)),explain:`Positive: two real. Zero: one repeated real. Negative: two complex conjugates. Here b\u00b2 \u2212 4ac = ${sgn(D)}.`};
+}
+Quiz($('#quiz'),genC,6);
+drawComplex();
+initTabs();
+
+</script>
+</body>
+</html>

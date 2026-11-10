@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATH 099 | Week 4 Interactive: Taxis, Systems &amp; Exponent Rules</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--ink:#222;--grey:#5f5f5f;--line:#ccc;--sand:#edebe8;--teal:#1b7f79;--amber:#b36b00;--ok:#1d7a3e}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.4}
+.app{max-width:1000px;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+header{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 18px;border-bottom:4px solid var(--red)}
+header .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#f1a3a6;font-weight:600}
+header h1{margin:2px 0 2px;font-size:22px;line-height:1.15;font-weight:700}
+header p{margin:0;font-size:13px;color:#ddd}
+header svg{flex:0 0 auto;width:230px;height:84px}
+nav.tabs{display:flex;background:var(--sand);border-bottom:1px solid var(--line)}
+nav.tabs button{flex:1;border:0;background:transparent;padding:10px 8px;font-weight:600;font-size:14px;font-family:inherit;color:#333;cursor:pointer;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected=true]{background:#fff;color:var(--dark);border-bottom-color:var(--red)}
+nav.tabs button:hover{background:#f6f4f2}
+nav.tabs button:focus-visible,.btn:focus-visible,.opt:focus-visible,.seg button:focus-visible,input:focus-visible{outline:3px solid #1b5fd1;outline-offset:2px}
+.panel{display:none;padding:12px 16px 10px;min-height:520px}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:290px 1fr;gap:16px}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.card h3{margin:0 0 6px;font-size:14px;color:var(--dark);text-transform:uppercase;letter-spacing:.04em}
+.ctl{margin:7px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:1px}
+.ctl output{color:var(--dark);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--red);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 6px}
+.seg button,.btn{font-weight:600;font-size:13px;font-family:inherit;border:1.5px solid var(--dark);background:#fff;color:var(--dark);border-radius:6px;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed=true],.btn{background:var(--dark);color:#fff}
+.btn:hover{background:#8c2a2f}
+.btn.ghost{background:#fff;color:var(--dark)}
+.btn.ghost:hover{background:#f6e7e8}
+.chk{display:flex;align-items:center;gap:6px;font-size:13.5px;margin:4px 0}
+.rep{display:grid;grid-template-columns:92px 1fr;gap:4px 8px;font-size:14px;align-items:baseline}
+.rep b{color:var(--grey);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.rep span.v{font-weight:600}
+.big{font-size:17px}
+.msg{border-left:4px solid var(--red);background:#fdf1f1;padding:7px 10px;border-radius:0 6px 6px 0;font-size:14px;margin-top:8px}
+.msg.good{border-color:var(--ok);background:#eef8f1}
+.msg.warn{border-color:var(--amber);background:#fff6e8}
+.msg.bad{border-color:var(--dark);background:#fdf1f1}
+svg text{font-family:inherit}
+.vis svg{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:8px}
+.qhead{display:flex;justify-content:space-between;font-size:13px;color:var(--grey);font-weight:600;margin-bottom:4px}
+.qprompt{font-size:18px;font-weight:600;margin:4px 0 6px}
+.qvis svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto 6px;border:1px solid var(--line);border-radius:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.opt{font-weight:600;font-size:16px;font-family:inherit;text-align:center;padding:10px;border:2px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--red);background:#fdf6f6}
+.opt.right{border-color:var(--ok);background:#eef8f1}
+.opt.wrong{border-color:var(--dark);background:#fdf1f1}
+.fb{min-height:44px;font-size:14px}
+.done{text-align:center;padding:60px 10px}
+.done h3{font-size:30px;margin:0 0 6px;color:var(--dark)}
+.quizwrap{max-width:640px;margin:0 auto}
+.chiprow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:4px 0}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font:italic 600 14px Georgia,serif;color:#fff;background:var(--red);border:2px solid transparent}
+.chip.b{background:#222}
+.chip.x{opacity:.35;text-decoration:line-through;background:#888}
+.chip.g{background:var(--teal)}
+.grp{display:inline-flex;gap:3px;padding:3px 5px;border:2px dashed var(--line);border-radius:14px;margin:2px}
+.frac{display:inline-block;text-align:center;vertical-align:middle}
+.frac>div:first-child{border-bottom:2px solid #222;padding:2px 8px}
+.frac>div:last-child{padding:2px 8px}
+footer{display:flex;justify-content:space-between;font-size:12px;color:var(--grey);padding:6px 16px;border-top:1px solid var(--line);background:var(--sand)}
+.legend{display:flex;gap:14px;align-items:center;font-size:13px;font-weight:600}
+.legend svg{width:42px;height:22px;vertical-align:middle;border:0}
+.mono{font-variant-numeric:tabular-nums}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.opts{grid-template-columns:1fr}header svg{display:none}.rep{grid-template-columns:80px 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><div class="eyebrow">MATH 099 &middot; Intermediate Algebra &middot; Week 4</div>
+  <h1>Taxis, Systems &amp; Exponent Rules</h1><p>Compare two taxi plans, explore how systems intersect, practice exponent rules, and learn to read graphs critically.</p></div>
+  <svg viewBox="0 0 230 84" role="img" aria-label="Two taxis and two crossing lines">
+<line x1="14" y1="76" x2="216" y2="76" stroke="#777" stroke-width="2"/>
+<g transform="translate(14,34)"><path d="M0 28v-8q0-4 4-5l8-1 6-9h22l7 9 8 1q4 1 4 5v8z" fill="#d34147" stroke="#fff" stroke-width="2"/><rect x="21" y="-12" width="14" height="6" rx="2" fill="#fff"/><path d="M20 14l4-7h14l5 7z" fill="#edebe8"/><circle cx="14" cy="30" r="6" fill="#222" stroke="#fff" stroke-width="2"/><circle cx="46" cy="30" r="6" fill="#222" stroke="#fff" stroke-width="2"/></g>
+<g transform="translate(86,34)"><path d="M0 28v-8q0-4 4-5l8-1 6-9h22l7 9 8 1q4 1 4 5v8z" fill="#fff" stroke="#888" stroke-width="2"/><rect x="21" y="-12" width="14" height="6" rx="2" fill="#d34147"/><path d="M20 14l4-7h14l5 7z" fill="#222"/><circle cx="14" cy="30" r="6" fill="#222" stroke="#fff" stroke-width="2"/><circle cx="46" cy="30" r="6" fill="#222" stroke="#fff" stroke-width="2"/></g>
+<g transform="translate(160,6)"><line x1="0" y1="62" x2="62" y2="62" stroke="#fff" stroke-width="2"/><line x1="0" y1="0" x2="0" y2="62" stroke="#fff" stroke-width="2"/><line x1="4" y1="50" x2="58" y2="10" stroke="#d34147" stroke-width="4"/><line x1="4" y1="22" x2="58" y2="52" stroke="#fff" stroke-width="4"/><circle cx="31" cy="31" r="6" fill="#000" stroke="#f1a3a6" stroke-width="3"/></g>
+</svg>
+</header>
+<nav class="tabs" role="tablist"><button role="tab" data-tab="t1" aria-selected="true">Taxi Showdown (Systems)</button><button role="tab" data-tab="t2" aria-selected="false">Exponent Workshop</button><button role="tab" data-tab="t3" aria-selected="false">Graph Detective</button></nav>
+
+<section class="panel on" id="t1" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>Taxi A &mdash; <span style="color:#d34147">red line</span></h3>
+    <div class="ctl"><label for="bA">Starting fee <output id="bAOut"></output></label><input type="range" id="bA" min="0" max="8" step="0.25" value="4"></div>
+    <div class="ctl"><label for="rA">Cost per mile <output id="rAOut"></output></label><input type="range" id="rA" min="0.05" max="0.6" step="0.01" value="0.2"></div>
+   </div>
+   <div class="card" style="margin-top:8px">
+    <h3>Taxi B &mdash; black line</h3>
+    <div class="ctl"><label for="bB">Starting fee <output id="bBOut"></output></label><input type="range" id="bB" min="0" max="8" step="0.25" value="3"></div>
+    <div class="ctl"><label for="rB">Cost per mile <output id="rBOut"></output></label><input type="range" id="rB" min="0.05" max="0.6" step="0.01" value="0.25"></div>
+   </div>
+   <div class="card" style="margin-top:8px">
+    <div class="ctl" style="margin-top:0"><label for="mi">Your trip <output id="miOut"></output></label><input type="range" id="mi" min="0" max="40" step="1" value="12"></div>
+    <div class="seg" id="presets" style="margin-bottom:0"><button data-k="def" aria-pressed="true">Original</button><button data-k="par" aria-pressed="false">Parallel</button><button data-k="same" aria-pressed="false">Same plan</button></div>
+   </div>
+  </div>
+  <div>
+   <div class="legend" style="margin-bottom:4px">
+    <span><svg viewBox="0 0 42 22"><path d="M0 18v-5q0-3 3-3l5-1 4-6h13l4 6 5 1q3 0 3 3v5z" fill="#d34147"/><circle cx="10" cy="19" r="3.5" fill="#222"/><circle cx="31" cy="19" r="3.5" fill="#222"/></svg> Taxi A: <span id="eqA" class="mono"></span></span>
+    <span><svg viewBox="0 0 42 22"><path d="M0 18v-5q0-3 3-3l5-1 4-6h13l4 6 5 1q3 0 3 3v5z" fill="#fff" stroke="#222" stroke-width="1.5"/><circle cx="10" cy="19" r="3.5" fill="#222"/><circle cx="31" cy="19" r="3.5" fill="#222"/></svg> Taxi B: <span id="eqB" class="mono"></span></span>
+   </div>
+   <div class="vis"><svg id="g" viewBox="0 0 560 290" role="img" aria-label="Graph of cost versus miles for two taxis"></svg></div>
+   <div class="msg" id="cmp" aria-live="polite"></div>
+   <div class="msg warn" id="sys" style="margin-top:6px" aria-live="polite"></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="t2" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>Choose a rule</h3>
+    <div class="seg" id="rules" style="flex-direction:column;align-items:stretch">
+     <button data-r="prod" aria-pressed="true">Product: x<sup>m</sup> &middot; x<sup>n</sup></button>
+     <button data-r="quo" aria-pressed="false">Quotient: x<sup>m</sup> &divide; x<sup>n</sup></button>
+     <button data-r="pow" aria-pressed="false">Power: (x<sup>m</sup>)<sup>n</sup></button>
+     <button data-r="zero" aria-pressed="false">Zero: x<sup>0</sup></button>
+     <button data-r="neg" aria-pressed="false">Negative: x<sup>&minus;n</sup></button>
+    </div>
+    <div class="ctl"><label for="em">m <output id="emOut"></output></label><input type="range" id="em" min="1" max="6" step="1" value="3"></div>
+    <div class="ctl"><label for="en">n <output id="enOut"></output></label><input type="range" id="en" min="1" max="6" step="1" value="2"></div>
+   </div>
+  </div>
+  <div>
+   <div class="card"><div id="exTitle" class="big" style="font-weight:700;margin-bottom:6px"></div><div id="exChips"></div></div>
+   <div class="msg good" id="exRule" style="margin-top:8px"></div>
+   <div class="card" style="margin-top:8px"><h3>Quick check</h3><div id="exq"></div></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="t3" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>Be the graph detective</h3>
+    <p style="margin:0 0 6px;font-size:14px">Sales grew from <b>$96M</b> to <b>$100M</b>. Slide the y-axis starting value and watch the story change.</p>
+    <div class="ctl"><label for="ax">Y-axis starts at <output id="axOut"></output></label><input type="range" id="ax" min="0" max="90" step="5" value="90"></div>
+    <div class="seg"><button class="" id="honest" aria-pressed="false">Start at zero</button><button id="trunc" aria-pressed="false">Truncate it</button></div>
+   </div>
+   <div class="card" style="margin-top:8px">
+    <h3>Ask before you believe</h3>
+    <ol style="margin:0;padding-left:18px;font-size:14px"><li>What does each axis measure, and in what units?</li><li>Where does the scale start?</li><li>What did the author want me to conclude?</li><li>What information is missing?</li></ol>
+   </div>
+  </div>
+  <div>
+   <div class="vis"><svg id="bars" viewBox="0 0 560 330" role="img" aria-label="Bar chart comparing sales in 2025 and 2026"></svg></div>
+   <div class="msg warn" id="barMsg" aria-live="polite"></div>
+  </div>
+ </div>
+</section>
+
+<footer><span>MATH 099 Intermediate Algebra &middot; Week 4 Interactive</span><span>Systems of Linear Equations &middot; Exponents &middot; Reading Graphs</span></footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const choice=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const MINUS='\u2212';
+const sgn=n=>n<0?MINUS+Math.abs(n):String(n);
+const r2=n=>(Math.round(n*100)/100);
+function fx(n,d=2){return (Math.abs(n)<1e-9?0:n).toFixed(d).replace('-',MINUS)}
+function bindRange(id,cb,fmt){const el=document.getElementById(id);const out=document.getElementById(id+'Out');const f=()=>{if(out)out.textContent=fmt?fmt(+el.value):el.value;cb()};el.addEventListener('input',f);f();return el}
+function initTabs(onChange){
+  const btns=$$('nav.tabs button');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-selected',x===b));
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.tab));
+    if(onChange)onChange(b.dataset.tab);postSize();
+  }));
+}
+function postSize(){try{const h=document.querySelector('.app').offsetHeight+2;parent.postMessage({type:'math099-resize',height:h,page:document.title},'*')}catch(e){}}
+window.addEventListener('load',()=>{postSize();if(window.ResizeObserver)new ResizeObserver(postSize).observe(document.querySelector('.app'))});
+window.addEventListener('resize',postSize);
+function Quiz(root,gen,total=6,label='Great work!'){
+  let i=0,score=0;
+  function render(){
+    if(i>=total){
+      const msg=score===total?'Perfect score. You have this down.':score>=total-2?'Strong work. Review any you missed and try a new set.':'Good start. Revisit the Explore tab, then try a new set.';
+      root.innerHTML=`<div class="done"><h3>${score} / ${total} correct</h3><p>${msg}</p><button class="btn" id="qr">Try a new set</button></div>`;
+      $('#qr',root).onclick=()=>{i=0;score=0;render()};postSize();return;
+    }
+    const q=gen();let done=false;
+    root.innerHTML=`<div class="qhead"><span>Question ${i+1} of ${total}</span><span>Score: ${score}</span></div><div class="qprompt">${q.prompt}</div><div class="qvis">${q.visual||''}</div><div class="opts">${q.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div><div class="fb" aria-live="polite"></div><button class="btn" id="qn" hidden>${i===total-1?'See results':'Next question'}</button>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>{
+      if(done)return;done=true;const k=+b.dataset.k;const ok=k===q.answer;
+      if(ok)score++;
+      $$('.opt',root).forEach((x,j)=>{x.disabled=true;if(j===q.answer)x.classList.add('right');else if(j===k)x.classList.add('wrong')});
+      $('.fb',root).innerHTML=`<div class="msg ${ok?'good':'bad'}"><b>${ok?'Correct!':'Not quite.'}</b> ${q.explain||''}</div>`;
+      $('#qn',root).hidden=false;$('#qn',root).focus();postSize();
+    });
+    $('#qn',root).onclick=()=>{i++;render()};postSize();
+  }
+  render();
+}
+function mcq(correct,distractors,extra){
+  const ds=[...new Set(distractors.filter(d=>d!==correct))];
+  let k=0;while(ds.length<3&&extra&&k<extra.length){if(extra[k]!==correct&&!ds.includes(extra[k]))ds.push(extra[k]);k++}
+  const opts=shuffle([correct,...ds.slice(0,3)]);
+  return {options:opts,answer:opts.indexOf(correct)};
+}
+
+
+const T={bA:4,rA:0.2,bB:3,rB:0.25,mi:12};
+const money=n=>'$'+n.toFixed(2);
+function eq(b,r){return `${money(b)} + ${money(r)}m`}
+function drawTaxi(){
+  const {bA,rA,bB,rB,mi}=T;
+  const W=560,H=290,L=52,R=14,Tp=14,B=38;const xmax=40;
+  const top=Math.max(bA+rA*xmax,bB+rB*xmax,10);const ymax=Math.ceil(top/2)*2;
+  const X=v=>L+v/xmax*(W-L-R),Y=v=>H-B-v/ymax*(H-B-Tp);
+  let s='';
+  for(let v=0;v<=xmax;v+=5){s+=`<line x1="${X(v)}" y1="${Tp}" x2="${X(v)}" y2="${H-B}" stroke="#eee"/><text x="${X(v)}" y="${H-B+16}" text-anchor="middle" font-size="12" fill="#444">${v}</text>`}
+  const st=ymax<=12?2:ymax<=24?4:5;
+  for(let v=0;v<=ymax;v+=st){s+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eee"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="#444">$${v}</text>`}
+  s+=`<line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="#222" stroke-width="2"/><line x1="${L}" y1="${Tp}" x2="${L}" y2="${H-B}" stroke="#222" stroke-width="2"/>`;
+  s+=`<text x="${(L+W-R)/2}" y="${H-6}" text-anchor="middle" font-size="13" font-weight="600">Miles traveled (m)</text><text transform="translate(13 ${(Tp+H-B)/2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600">Total cost</text>`;
+  s+=`<line x1="${X(0)}" y1="${Y(bA)}" x2="${X(xmax)}" y2="${Y(bA+rA*xmax)}" stroke="#d34147" stroke-width="3.5"/><line x1="${X(0)}" y1="${Y(bB)}" x2="${X(xmax)}" y2="${Y(bB+rB*xmax)}" stroke="#222" stroke-width="3.5"/>`;
+  const cA=bA+rA*mi,cB=bB+rB*mi;
+  s+=`<line x1="${X(mi)}" y1="${Tp}" x2="${X(mi)}" y2="${H-B}" stroke="#777" stroke-dasharray="5 4"/><circle cx="${X(mi)}" cy="${Y(cA)}" r="6" fill="#d34147" stroke="#fff" stroke-width="2"/><circle cx="${X(mi)}" cy="${Y(cB)}" r="6" fill="#222" stroke="#fff" stroke-width="2"/>`;
+  const dx=mi>28?-8:8,anc=mi>28?'end':'start';
+  s+=`<text x="${X(mi)+dx}" y="${Y(Math.max(cA,cB))-12}" font-size="12" font-weight="700" fill="#a8353a" stroke="#fff" stroke-width="4" paint-order="stroke" text-anchor="${anc}">A ${money(cA)}</text><text x="${X(mi)+dx}" y="${Y(Math.min(cA,cB))+20}" font-size="12" font-weight="700" fill="#222" stroke="#fff" stroke-width="4" paint-order="stroke" text-anchor="${anc}">B ${money(cB)}</text>`;
+  const dr=rA-rB;let sysMsg;
+  if(Math.abs(dr)<1e-9){
+    sysMsg=Math.abs(bA-bB)<1e-9?'<b>Infinitely many solutions:</b> both taxis charge exactly the same for every trip (same line).':'<b>No solution:</b> the lines are parallel, so the two taxis never cost the same.';
+  }else{
+    const m=(bB-bA)/dr,c=bA+rA*m;
+    if(m>=0&&m<=xmax){s+=`<circle cx="${X(m)}" cy="${Y(c)}" r="9" fill="none" stroke="#1b7f79" stroke-width="4"/><text x="${X(m)+(m>28?-12:12)}" y="${Y(c)+(c>ymax*0.6?24:-14)}" font-size="12" font-weight="700" fill="#1b7f79" stroke="#fff" stroke-width="4" paint-order="stroke" text-anchor="${m>28?'end':'start'}">(${r2(m)} mi, ${money(c)})</text>`}
+    if(m>=0)sysMsg=`<b>One solution:</b> set ${eq(bA,rA)} = ${eq(bB,rB)}. Solving gives m = <b>${r2(m)} miles</b>, where both cost <b>${money(c)}</b>.`;
+    else sysMsg=`<b>One solution, but not for a real trip:</b> the lines cross at m = ${r2(m)} miles (negative), so one taxi is always cheaper.`;
+  }
+  $('#g').innerHTML=s;
+  $('#sys').innerHTML=sysMsg;
+  const d=Math.abs(cA-cB);
+  $('#cmp').innerHTML=Math.abs(cA-cB)<0.005?`<b>${mi} miles:</b> the taxis cost the same, ${money(cA)}.`:`<b>${mi} miles:</b> Taxi ${cA<cB?'A':'B'} is cheaper by <b>${money(d)}</b> (A ${money(cA)} vs. B ${money(cB)}).`;
+  $('#eqA').textContent=eq(bA,rA);$('#eqB').textContent=eq(bB,rB);
+}
+const dol=v=>'$'+(+v).toFixed(2);
+bindRange('bA',()=>{T.bA=+$('#bA').value;drawTaxi()},dol);bindRange('rA',()=>{T.rA=+$('#rA').value;drawTaxi()},dol);
+bindRange('bB',()=>{T.bB=+$('#bB').value;drawTaxi()},dol);bindRange('rB',()=>{T.rB=+$('#rB').value;drawTaxi()},dol);
+bindRange('mi',()=>{T.mi=+$('#mi').value;drawTaxi()},v=>v+' miles');
+const PRE={def:[4,.2,3,.25],par:[4,.2,3,.2],same:[4,.2,4,.2]};
+$$('#presets button').forEach(b=>b.onclick=()=>{$$('#presets button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const [a,b2,c,d]=PRE[b.dataset.k];[['bA',a],['rA',b2],['bB',c],['rB',d]].forEach(([id,v])=>{$('#'+id).value=v;$('#'+id).dispatchEvent(new Event('input'))})});
+
+/* ---- Exponent workshop ---- */
+const E={r:'prod'};
+const sup=n=>`<sup>${n<0?MINUS+Math.abs(n):n}</sup>`;
+const chips=(n,cls='',cancel=0)=>Array.from({length:n},(_,i)=>`<span class="chip ${cls} ${i<cancel?'x':''}">x</span>`).join('');
+function drawEx(){
+  const m=+$('#em').value,n=+$('#en').value;let t,c,rule;
+  $('#en').parentElement.style.display=E.r==='zero'?'none':'';
+  if(E.r==='prod'){
+    t=`x${sup(m)} &middot; x${sup(n)} = x${sup(m+n)}`;
+    c=`<div class="chiprow"><span class="grp">${chips(m)}</span> &times; <span class="grp">${chips(n,'b')}</span> = <span class="grp">${chips(m,'')}${chips(n,'b')}</span></div><p style="margin:4px 0 0">${m} factors of x and ${n} more factors of x give <b>${m+n}</b> factors.</p>`;
+    rule=`<b>Product rule:</b> same base, so <b>add</b> the exponents: ${m} + ${n} = ${m+n}.`;
+  }else if(E.r==='quo'){
+    const k=Math.min(m,n),res=m-n;
+    t=`x${sup(m)} &divide; x${sup(n)} = ${res>0?`x${sup(res)}`:res===0?'1':`1 &divide; x${sup(-res)}`}`;
+    c=`<div style="display:flex;align-items:center;gap:10px"><div class="frac"><div class="chiprow" style="justify-content:center">${chips(m,'',k)}</div><div class="chiprow" style="justify-content:center">${chips(n,'b',k)}</div></div></div><p style="margin:4px 0 0">${k} matching pair${k>1?'s':''} cancel (grey). ${res>0?`${res} factor${res>1?'s':''} of x remain on top.`:res===0?'Everything cancels, leaving 1.':`${-res} factor${-res>1?'s':''} of x remain on the bottom.`}</p>`;
+    rule=`<b>Quotient rule:</b> same base, so <b>subtract</b> the exponents: ${m} &minus; ${n} = ${sgn(res)}${res<0?', which means 1 &divide; x'+sup(-res):''}.`;
+  }else if(E.r==='pow'){
+    const mm=Math.min(m,5),nn=Math.min(n,5);
+    t=`(x${sup(mm)})${sup(nn)} = x${sup(mm*nn)}`;
+    c=`<div class="chiprow">${Array.from({length:nn},()=>`<span class="grp">${chips(mm,'g')}</span>`).join('')}</div><p style="margin:4px 0 0">${nn} group${nn>1?'s':''} of ${mm} factors = <b>${mm*nn}</b> factors of x.</p>`;
+    rule=`<b>Power rule:</b> a power of a power, so <b>multiply</b> the exponents: ${mm} &middot; ${nn} = ${mm*nn}.`;
+  }else if(E.r==='zero'){
+    t=`x${sup(m)} &divide; x${sup(m)} = x${sup(0)} = 1`;
+    c=`<div class="frac"><div class="chiprow" style="justify-content:center">${chips(m,'',m)}</div><div class="chiprow" style="justify-content:center">${chips(m,'b',m)}</div></div><p style="margin:4px 0 0">Every factor cancels, leaving <b>1</b>. (This works when x &ne; 0.)</p>`;
+    rule=`<b>Zero exponent:</b> any nonzero base raised to the 0 power equals 1.`;
+  }else{
+    t=`x${sup(-n)} = 1 &divide; x${sup(n)}`;
+    c=`<div class="frac"><div class="chiprow" style="justify-content:center"><b>1</b></div><div class="chiprow" style="justify-content:center">${chips(n,'b')}</div></div><p style="margin:4px 0 0">A negative exponent means <b>reciprocal</b>, not a negative number.</p>`;
+    rule=`<b>Negative exponent:</b> x${sup(-n)} = 1 &divide; x${sup(n)}. The sign flips the position, not the value.`;
+  }
+  $('#exTitle').innerHTML=t;$('#exChips').innerHTML=c;$('#exRule').innerHTML=rule;
+}
+$$('#rules button').forEach(b=>b.onclick=()=>{E.r=b.dataset.r;$$('#rules button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawEx()});
+bindRange('em',drawEx);bindRange('en',drawEx);
+function genExp(){
+  const k=choice(['prod','quo','pow','zero','neg']);
+  const e=n=>`x${sup(n)}`;let p,c,d;
+  if(k==='prod'){const m=rnd(2,7),n=rnd(2,6);p=`Simplify: ${e(m)} &middot; ${e(n)}`;c=e(m+n);d=[e(m*n),e(m-n),e(m+n+1)]}
+  else if(k==='quo'){const n=rnd(2,4),m=n+rnd(2,5);p=`Simplify: ${e(m)} &divide; ${e(n)}`;c=e(m-n);d=[e(m+n),e(m*n),e(n-m)]}
+  else if(k==='pow'){const m=rnd(2,5),n=rnd(2,4);p=`Simplify: (${e(m)})${sup(n)}`;c=e(m*n);d=[e(m+n),e(m**n>99?m*n+1:m**n),e(m-n)]}
+  else if(k==='zero'){const a=rnd(2,9);p=`Simplify (x &ne; 0): (${a}x)${sup(0)}`;c='1';d=['0',String(a),`${a}x`]}
+  else{const n=rnd(2,5);p=`Rewrite with a positive exponent: ${e(-n)}`;c=`1 &divide; ${e(n)}`;d=[`${MINUS}${e(n)}`,e(n),`${MINUS}1 &divide; ${e(n)}`]}
+  const q=mcq(c,d,[e(rnd(8,12))]);
+  const ex={prod:'Same base, multiply the terms: add exponents.',quo:'Same base, divide the terms: subtract exponents (top minus bottom).',pow:'Power of a power: multiply exponents.',zero:'The entire base (a&middot;x) is raised to 0, so the result is 1.',neg:'A negative exponent signals a reciprocal.'}[k];
+  return {prompt:p,visual:'',...q,explain:ex};
+}
+let exDone=false;
+function newExQ(){const q=genExp();const host=$('#exq');
+  host.innerHTML=`<div style="font-weight:600;margin-bottom:6px">${q.prompt}</div><div class="seg">${q.options.map((o,i)=>`<button data-i="${i}" style="font-size:15px">${o}</button>`).join('')}</div><div id="exfb"></div>`;
+  $$('button',host).forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===q.answer;
+    $('#exfb').innerHTML=`<div class="msg ${ok?'good':'bad'}"><b>${ok?'Correct!':'Not quite.'}</b> ${q.explain} <button class="btn ghost" id="exn" style="padding:3px 8px;margin-left:6px">New question</button></div>`;
+    $('#exn').onclick=newExQ;postSize()});postSize()}
+newExQ();
+
+/* ---- Graph detective ---- */
+function drawBars(){
+  const mn=+$('#ax').value;const W=560,H=330,L=64,B=44,Tp=34,Rr=20;const top=102;
+  const Y=v=>H-B-(v-mn)/(top-mn)*(H-B-Tp);
+  let s='';
+  const ticks=mn===0?[0,25,50,75,100]:[mn,Math.round((mn+top)/2/2)*2,100].filter((v,i,a)=>a.indexOf(v)===i);
+  ticks.forEach(v=>{s+=`<line x1="${L}" y1="${Y(v)}" x2="${W-Rr}" y2="${Y(v)}" stroke="#e5e5e5"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="#444">$${v}M</text>`});
+  s+=`<line x1="${L}" y1="${Tp-8}" x2="${L}" y2="${H-B}" stroke="#222" stroke-width="2"/><line x1="${L}" y1="${H-B}" x2="${W-Rr}" y2="${H-B}" stroke="#222" stroke-width="2"/>`;
+  [['2025',96,150,'#767676'],['2026',100,340,'#d34147']].forEach(([lab,v,x,col])=>{
+    const y=Y(v);s+=`<rect x="${x}" y="${y}" width="110" height="${H-B-y}" fill="${col}"/><text x="${x+55}" y="${y-7}" text-anchor="middle" font-size="14" font-weight="700">$${v}M</text><text x="${x+55}" y="${H-B+20}" text-anchor="middle" font-size="14" font-weight="600">${lab}</text>`});
+  s+=`<text x="${(L+W)/2}" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="${mn>=60?'#a8353a':'#222'}">${mn>=60?'Sales SOAR!':'Annual Sales'}</text>`;
+  if(mn>0)s+=`<path d="M${L-8} ${H-B-10}l8 -5l8 10l8 -10" fill="none" stroke="#222" stroke-width="1.5" transform="translate(-4 8)"/>`;
+  $('#bars').innerHTML=s;
+  const ratio=(100-mn)/(96-mn);
+  $('#barMsg').innerHTML=mn===0?`<b>Honest scale.</b> The 2026 bar is about <b>${ratio.toFixed(2)}&times;</b> as tall as the 2025 bar, matching the real <b>4.2%</b> growth.`:`<b>The 2026 bar looks ${ratio.toFixed(2)}&times; as tall</b> as the 2025 bar, but real growth is only <b>4.2%</b> (about 1.04&times;). Because the axis starts at $${mn}M, the picture exaggerates the change.`;
+  $('#axOut').textContent='$'+mn+'M';
+  $('#honest').setAttribute('aria-pressed',mn===0);$('#trunc').setAttribute('aria-pressed',mn===90);
+}
+$('#ax').addEventListener('input',drawBars);
+$('#honest').onclick=()=>{$('#ax').value=0;drawBars()};$('#trunc').onclick=()=>{$('#ax').value=90;drawBars()};
+drawBars();
+initTabs();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATH 099 | Week 6 Interactive: Factoring Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--ink:#222;--grey:#5f5f5f;--line:#ccc;--sand:#edebe8;--teal:#1b7f79;--amber:#b36b00;--ok:#1d7a3e}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.4}
+.app{max-width:1000px;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+header{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 18px;border-bottom:4px solid var(--red)}
+header .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#f1a3a6;font-weight:600}
+header h1{margin:2px 0 2px;font-size:22px;line-height:1.15;font-weight:700}
+header p{margin:0;font-size:13px;color:#ddd}
+header svg{flex:0 0 auto;width:230px;height:84px}
+nav.tabs{display:flex;background:var(--sand);border-bottom:1px solid var(--line)}
+nav.tabs button{flex:1;border:0;background:transparent;padding:10px 8px;font-weight:600;font-size:14px;font-family:inherit;color:#333;cursor:pointer;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected=true]{background:#fff;color:var(--dark);border-bottom-color:var(--red)}
+nav.tabs button:hover{background:#f6f4f2}
+nav.tabs button:focus-visible,.btn:focus-visible,.opt:focus-visible,.seg button:focus-visible,input:focus-visible{outline:3px solid #1b5fd1;outline-offset:2px}
+.panel{display:none;padding:12px 16px 10px;min-height:520px}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:290px 1fr;gap:16px}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.card h3{margin:0 0 6px;font-size:14px;color:var(--dark);text-transform:uppercase;letter-spacing:.04em}
+.ctl{margin:7px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:1px}
+.ctl output{color:var(--dark);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--red);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 6px}
+.seg button,.btn{font-weight:600;font-size:13px;font-family:inherit;border:1.5px solid var(--dark);background:#fff;color:var(--dark);border-radius:6px;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed=true],.btn{background:var(--dark);color:#fff}
+.btn:hover{background:#8c2a2f}
+.btn.ghost{background:#fff;color:var(--dark)}
+.btn.ghost:hover{background:#f6e7e8}
+.chk{display:flex;align-items:center;gap:6px;font-size:13.5px;margin:4px 0}
+.rep{display:grid;grid-template-columns:92px 1fr;gap:4px 8px;font-size:14px;align-items:baseline}
+.rep b{color:var(--grey);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.rep span.v{font-weight:600}
+.big{font-size:17px}
+.msg{border-left:4px solid var(--red);background:#fdf1f1;padding:7px 10px;border-radius:0 6px 6px 0;font-size:14px;margin-top:8px}
+.msg.good{border-color:var(--ok);background:#eef8f1}
+.msg.warn{border-color:var(--amber);background:#fff6e8}
+.msg.bad{border-color:var(--dark);background:#fdf1f1}
+svg text{font-family:inherit}
+.vis svg{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:8px}
+.qhead{display:flex;justify-content:space-between;font-size:13px;color:var(--grey);font-weight:600;margin-bottom:4px}
+.qprompt{font-size:18px;font-weight:600;margin:4px 0 6px}
+.qvis svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto 6px;border:1px solid var(--line);border-radius:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.opt{font-weight:600;font-size:16px;font-family:inherit;text-align:center;padding:10px;border:2px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--red);background:#fdf6f6}
+.opt.right{border-color:var(--ok);background:#eef8f1}
+.opt.wrong{border-color:var(--dark);background:#fdf1f1}
+.fb{min-height:44px;font-size:14px}
+.done{text-align:center;padding:60px 10px}
+.done h3{font-size:30px;margin:0 0 6px;color:var(--dark)}
+.quizwrap{max-width:640px;margin:0 auto}
+.chiprow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:4px 0}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font:italic 600 14px Georgia,serif;color:#fff;background:var(--red);border:2px solid transparent}
+.chip.b{background:#222}
+.chip.x{opacity:.35;text-decoration:line-through;background:#888}
+.chip.g{background:var(--teal)}
+.grp{display:inline-flex;gap:3px;padding:3px 5px;border:2px dashed var(--line);border-radius:14px;margin:2px}
+.frac{display:inline-block;text-align:center;vertical-align:middle}
+.frac>div:first-child{border-bottom:2px solid #222;padding:2px 8px}
+.frac>div:last-child{padding:2px 8px}
+footer{display:flex;justify-content:space-between;font-size:12px;color:var(--grey);padding:6px 16px;border-top:1px solid var(--line);background:var(--sand)}
+.legend{display:flex;gap:14px;align-items:center;font-size:13px;font-weight:600}
+.legend svg{width:42px;height:22px;vertical-align:middle;border:0}
+.mono{font-variant-numeric:tabular-nums}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.opts{grid-template-columns:1fr}header svg{display:none}.rep{grid-template-columns:80px 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><div class="eyebrow">MATH 099 &middot; Intermediate Algebra &middot; Week 6</div>
+  <h1>Factoring Lab</h1><p>Build trinomials with algebra tiles, practice every factoring pattern, and see how factors become solutions.</p></div>
+  <svg viewBox="0 0 230 84" role="img" aria-label="Algebra tiles and a parabola">
+<rect x="10" y="12" width="46" height="46" fill="#d34147" stroke="#fff" stroke-width="2"/><text x="33" y="42" text-anchor="middle" font-size="17" font-weight="700" fill="#fff" font-style="italic">x²</text>
+<rect x="60" y="12" width="12" height="46" fill="#777" stroke="#fff" stroke-width="2"/><rect x="74" y="12" width="12" height="46" fill="#777" stroke="#fff" stroke-width="2"/>
+<rect x="10" y="62" width="46" height="12" fill="#777" stroke="#fff" stroke-width="2"/>
+<rect x="60" y="62" width="12" height="12" fill="#edebe8" stroke="#fff" stroke-width="2"/><rect x="74" y="62" width="12" height="12" fill="#edebe8" stroke="#fff" stroke-width="2"/>
+<g transform="translate(110,0)"><line x1="4" y1="64" x2="116" y2="64" stroke="#fff" stroke-width="2"/><path d="M14 8Q60 130 106 8" fill="none" stroke="#d34147" stroke-width="4"/><circle cx="31" cy="64" r="5" fill="#000" stroke="#f1a3a6" stroke-width="3"/><circle cx="89" cy="64" r="5" fill="#000" stroke="#f1a3a6" stroke-width="3"/></g>
+</svg>
+</header>
+<nav class="tabs" role="tablist"><button role="tab" data-tab="t1" aria-selected="true">Tile Builder</button><button role="tab" data-tab="t2" aria-selected="false">Factor Challenge</button><button role="tab" data-tab="t3" aria-selected="false">Factors &rarr; Solutions</button></nav>
+
+<section class="panel on" id="t1" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>Build the area model</h3>
+    <div class="ctl"><label for="r">r <output id="rOut"></output></label><input type="range" id="r" min="1" max="6" step="1" value="2"></div>
+    <div class="ctl"><label for="s">s <output id="sOut"></output></label><input type="range" id="s" min="1" max="6" step="1" value="3"></div>
+    <div class="legend" style="flex-wrap:wrap;gap:8px;font-size:12px;margin-top:6px">
+      <span><svg viewBox="0 0 16 16" style="width:16px;height:16px"><rect width="16" height="16" fill="#d34147"/></svg> x² tile</span>
+      <span><svg viewBox="0 0 16 16" style="width:16px;height:16px"><rect width="16" height="16" fill="#555"/></svg> x tiles</span>
+      <span><svg viewBox="0 0 16 16" style="width:16px;height:16px"><rect width="16" height="16" fill="#edebe8" stroke="#888"/></svg> 1 tiles</span>
+    </div>
+   </div>
+   <div class="card" style="margin-top:8px">
+    <h3>Mystery challenge</h3>
+    <p style="margin:0 0 6px;font-size:14px">Match the sliders to the trinomial.</p>
+    <div class="big" id="myst" style="font-weight:700;margin-bottom:6px">Press the button to start.</div>
+    <div class="seg" style="margin-bottom:4px"><button id="newMyst">New mystery</button></div>
+    <div id="mystFb" style="font-size:13.5px"></div>
+   </div>
+  </div>
+  <div>
+   <div class="vis"><svg id="tiles" viewBox="0 0 560 300" role="img" aria-label="Algebra tile area model"></svg></div>
+   <div class="card" style="margin-top:8px">
+    <div class="rep"><b>Area</b><span class="v big mono" id="aExp"></span><b>Factored</b><span class="v big mono" id="aFac"></span><b>Rule</b><span class="v" id="aRule"></span></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="panel" id="t2" role="tabpanel"><div class="quizwrap" id="quiz"></div></section>
+
+<section class="panel" id="t3" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>Pick the roots</h3>
+    <div class="ctl"><label for="p">p <output id="pOut"></output></label><input type="range" id="p" min="-6" max="6" step="1" value="-2"></div>
+    <div class="ctl"><label for="q">q <output id="qOut"></output></label><input type="range" id="q" min="-6" max="6" step="1" value="3"></div>
+   </div>
+   <div class="card" style="margin-top:8px">
+    <h3>Zero-product property</h3>
+    <ol id="zsteps" style="margin:0;padding-left:18px;font-size:14px;line-height:1.7"></ol>
+   </div>
+  </div>
+  <div>
+   <div class="vis"><svg id="par" viewBox="0 0 560 340" role="img" aria-label="Parabola crossing the x-axis at its solutions"></svg></div>
+   <div class="msg good" id="zmsg" aria-live="polite">Each solution of the equation is an <b>x-intercept</b> of the graph.</div>
+  </div>
+ </div>
+</section>
+
+<footer><span>MATH 099 Intermediate Algebra &middot; Week 6 Interactive</span><span>Polynomials &middot; Factoring &middot; Zero-Product Property</span></footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const choice=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const MINUS='\u2212';
+const sgn=n=>n<0?MINUS+Math.abs(n):String(n);
+const r2=n=>(Math.round(n*100)/100);
+function fx(n,d=2){return (Math.abs(n)<1e-9?0:n).toFixed(d).replace('-',MINUS)}
+function bindRange(id,cb,fmt){const el=document.getElementById(id);const out=document.getElementById(id+'Out');const f=()=>{if(out)out.textContent=fmt?fmt(+el.value):el.value;cb()};el.addEventListener('input',f);f();return el}
+function initTabs(onChange){
+  const btns=$$('nav.tabs button');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-selected',x===b));
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.tab));
+    if(onChange)onChange(b.dataset.tab);postSize();
+  }));
+}
+function postSize(){try{const h=document.querySelector('.app').offsetHeight+2;parent.postMessage({type:'math099-resize',height:h,page:document.title},'*')}catch(e){}}
+window.addEventListener('load',()=>{postSize();if(window.ResizeObserver)new ResizeObserver(postSize).observe(document.querySelector('.app'))});
+window.addEventListener('resize',postSize);
+function Quiz(root,gen,total=6,label='Great work!'){
+  let i=0,score=0;
+  function render(){
+    if(i>=total){
+      const msg=score===total?'Perfect score. You have this down.':score>=total-2?'Strong work. Review any you missed and try a new set.':'Good start. Revisit the Explore tab, then try a new set.';
+      root.innerHTML=`<div class="done"><h3>${score} / ${total} correct</h3><p>${msg}</p><button class="btn" id="qr">Try a new set</button></div>`;
+      $('#qr',root).onclick=()=>{i=0;score=0;render()};postSize();return;
+    }
+    const q=gen();let done=false;
+    root.innerHTML=`<div class="qhead"><span>Question ${i+1} of ${total}</span><span>Score: ${score}</span></div><div class="qprompt">${q.prompt}</div><div class="qvis">${q.visual||''}</div><div class="opts">${q.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div><div class="fb" aria-live="polite"></div><button class="btn" id="qn" hidden>${i===total-1?'See results':'Next question'}</button>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>{
+      if(done)return;done=true;const k=+b.dataset.k;const ok=k===q.answer;
+      if(ok)score++;
+      $$('.opt',root).forEach((x,j)=>{x.disabled=true;if(j===q.answer)x.classList.add('right');else if(j===k)x.classList.add('wrong')});
+      $('.fb',root).innerHTML=`<div class="msg ${ok?'good':'bad'}"><b>${ok?'Correct!':'Not quite.'}</b> ${q.explain||''}</div>`;
+      $('#qn',root).hidden=false;$('#qn',root).focus();postSize();
+    });
+    $('#qn',root).onclick=()=>{i++;render()};postSize();
+  }
+  render();
+}
+function mcq(correct,distractors,extra){
+  const ds=[...new Set(distractors.filter(d=>d!==correct))];
+  let k=0;while(ds.length<3&&extra&&k<extra.length){if(extra[k]!==correct&&!ds.includes(extra[k]))ds.push(extra[k]);k++}
+  const opts=shuffle([correct,...ds.slice(0,3)]);
+  return {options:opts,answer:opts.indexOf(correct)};
+}
+
+
+const fac=(r)=>r<0?`(x ${MINUS} ${Math.abs(r)})`:r===0?'x':`(x + ${r})`;
+function tri(a,b,c){
+  let s=(a===1?'':a===-1?MINUS:a)+'x\u00b2';
+  if(b!==0){s+=(b<0?` ${MINUS} `:' + ')+(Math.abs(b)===1?'':Math.abs(b))+'x'}
+  if(c!==0){s+=(c<0?` ${MINUS} `:' + ')+Math.abs(c)}
+  return s;
+}
+let R=2,Sx=3,mys=null;
+function drawTiles(){
+  const u=19,X=7; // x drawn as 7 units
+  const w=(X+R)*u,h=(X+Sx)*u,ox=(560-w-50)/2+30,oy=(300-h)/2+4;
+  let s='';
+  // x^2
+  s+=`<rect x="${ox}" y="${oy}" width="${X*u}" height="${X*u}" fill="#d34147" stroke="#fff" stroke-width="2"/><text x="${ox+X*u/2}" y="${oy+X*u/2+8}" text-anchor="middle" font-size="26" font-weight="700" font-style="italic" fill="#fff">x\u00b2</text>`;
+  // right: R vertical x-tiles
+  for(let i=0;i<R;i++)s+=`<rect x="${ox+X*u+i*u}" y="${oy}" width="${u}" height="${X*u}" fill="#555" stroke="#fff" stroke-width="2"/><text x="${ox+X*u+i*u+u/2}" y="${oy+X*u/2+4}" text-anchor="middle" font-size="13" font-style="italic" font-weight="700" fill="#fff">x</text>`;
+  // bottom: S horizontal x-tiles
+  for(let j=0;j<Sx;j++)s+=`<rect x="${ox}" y="${oy+X*u+j*u}" width="${X*u}" height="${u}" fill="#555" stroke="#fff" stroke-width="2"/><text x="${ox+X*u/2}" y="${oy+X*u+j*u+u/2+4}" text-anchor="middle" font-size="13" font-style="italic" font-weight="700" fill="#fff">x</text>`;
+  // units
+  for(let i=0;i<R;i++)for(let j=0;j<Sx;j++)s+=`<rect x="${ox+X*u+i*u}" y="${oy+X*u+j*u}" width="${u}" height="${u}" fill="#edebe8" stroke="#888" stroke-width="1.5"/>`;
+  // dimension brackets
+  s+=`<g stroke="#222" stroke-width="2" fill="none"><path d="M${ox} ${oy-10}h${X*u}M${ox} ${oy-15}v10M${ox+X*u} ${oy-15}v10"/><path d="M${ox+X*u} ${oy-10}h${R*u}M${ox+X*u+R*u} ${oy-15}v10"/><path d="M${ox-10} ${oy}v${X*u}M${ox-15} ${oy}h10M${ox-15} ${oy+X*u}h10"/><path d="M${ox-10} ${oy+X*u}v${Sx*u}M${ox-15} ${oy+X*u+Sx*u}h10"/></g>`;
+  s+=`<text x="${ox+X*u/2}" y="${oy-19}" text-anchor="middle" font-size="14" font-weight="700" font-style="italic">x</text><text x="${ox+X*u+R*u/2}" y="${oy-19}" text-anchor="middle" font-size="14" font-weight="700">${R}</text>`;
+  s+=`<text x="${ox-22}" y="${oy+X*u/2+5}" text-anchor="middle" font-size="14" font-weight="700" font-style="italic">x</text><text x="${ox-22}" y="${oy+X*u+Sx*u/2+5}" text-anchor="middle" font-size="14" font-weight="700">${Sx}</text>`;
+  s+=`<text x="${ox+w+14}" y="${oy+h/2}" font-size="13" fill="#5f5f5f"><tspan x="${ox+w+14}" dy="0">Width: x + ${R}</tspan><tspan x="${ox+w+14}" dy="18">Height: x + ${Sx}</tspan></text>`;
+  $('#tiles').innerHTML=s;
+  const b=R+Sx,c=R*Sx;
+  $('#aExp').textContent=`x\u00b2 + ${R}x + ${Sx}x + ${c} = ${tri(1,b,c)}`;
+  $('#aFac').textContent=`(x + ${R})(x + ${Sx})`;
+  $('#aRule').innerHTML=`${R} &times; ${Sx} = <b>${c}</b> (the constant) and ${R} + ${Sx} = <b>${b}</b> (the x-coefficient)`;
+  checkMyst();
+}
+function checkMyst(){
+  if(!mys){$('#mystFb').innerHTML='';return}
+  const prod=R*Sx===mys.c,sum=R+Sx===mys.b;
+  const tick=(ok,t)=>`<span style="color:${ok?'#1d7a3e':'#a8353a'};font-weight:700">${ok?'\u2713':'\u2717'}</span> ${t}`;
+  $('#mystFb').innerHTML=`${tick(prod,`r &times; s = ${R*Sx} (need ${mys.c})`)}<br>${tick(sum,`r + s = ${R+Sx} (need ${mys.b})`)}`+(prod&&sum?`<div class="msg good" style="margin-top:6px"><b>Solved!</b> ${tri(1,mys.b,mys.c)} = (x + ${R})(x + ${Sx})</div>`:'');
+  postSize();
+}
+bindRange('r',()=>{R=+$('#r').value;drawTiles()});bindRange('s',()=>{Sx=+$('#s').value;drawTiles()});
+$('#newMyst').onclick=()=>{const a=rnd(1,6),b=rnd(1,6);mys={b:a+b,c:a*b};$('#myst').textContent=tri(1,mys.b,mys.c);checkMyst()};
+
+/* -------- Factor challenge -------- */
+const pf=(r)=>r<0?`(x ${MINUS} ${Math.abs(r)})`:`(x + ${r})`;
+function genFactor(){
+  const t=choice(['tri','tri','dos','psq','lead']);let p,c,d,ex;
+  if(t==='tri'){
+    let r=rnd(-7,7),s=rnd(-7,7);while(r===0||s===0||r===s){r=rnd(-7,7);s=rnd(-7,7)}
+    p=`Factor: <span class="mono">${tri(1,r+s,r*s)}</span>`;
+    c=pf(r)+pf(s);d=[pf(-r)+pf(-s),pf(r)+pf(-s),pf(-r)+pf(s)];
+    ex=`Find two numbers with product ${sgn(r*s)} and sum ${sgn(r+s)}: they are ${sgn(r)} and ${sgn(s)}.`;
+  }else if(t==='dos'){
+    const k=rnd(2,9);p=`Factor: <span class="mono">x\u00b2 ${MINUS} ${k*k}</span>`;
+    c=pf(-k)+pf(k);d=[`(x ${MINUS} ${k})\u00b2`,`(x + ${k})\u00b2`,pf(-k*k)+pf(1)];
+    ex=`Difference of squares: a\u00b2 ${MINUS} b\u00b2 = (a ${MINUS} b)(a + b), with a = x and b = ${k}.`;
+  }else if(t==='psq'){
+    const k=rnd(2,8),sg=choice([1,-1]);p=`Factor: <span class="mono">${tri(1,2*k*sg,k*k)}</span>`;
+    c=`(x ${sg<0?MINUS:'+'} ${k})\u00b2`;d=[`(x ${sg<0?'+':MINUS} ${k})\u00b2`,pf(k)+pf(-k),pf(sg*k*k)+pf(sg)];
+    ex=`Perfect square trinomial: the first and last terms are squares and the middle term is 2 &middot; x &middot; ${k}. So it factors as (x ${sg<0?MINUS:'+'} ${k})\u00b2.`;
+  }else{
+    const a=choice([2,3]),r=rnd(1,5),s=rnd(1,5);
+    p=`Factor: <span class="mono">${tri(a,a*s+r,r*s)}</span>`;
+    const f=(A,B,C,D)=>`(${A===1?'':A}x + ${B})(${C===1?'':C}x + ${D})`;
+    c=f(a,r,1,s);d=[f(a,s,1,r),f(a,r*s,1,1),`(${a}x ${MINUS} ${r})(x ${MINUS} ${s})`];
+    ex=`Try grouping or trial and error: (${a}x + ${r})(x + ${s}) expands to ${tri(a,a*s+r,r*s)}. Always check by multiplying.`;
+  }
+  return {prompt:p,visual:'',...mcq(c,d,[pf(1)+pf(2)]),explain:ex};
+}
+Quiz($('#quiz'),genFactor,6);
+
+/* -------- Zero product -------- */
+const sol=v=>`x ${v<0?'+ '+Math.abs(v):v>0?MINUS+' '+v:''}`;
+function drawPar(){
+  const p=+$('#p').value,q=+$('#q').value;
+  const W=560,H=340,L=34,B=30,Tp=12,Rr=14,xmin=-8,xmax=8;const vy=-Math.pow((p-q)/2,2);
+  const ymin=Math.min(vy-3,-8),ymax=20;
+  const X=v=>L+(v-xmin)/(xmax-xmin)*(W-L-Rr),Y=v=>H-B-(v-ymin)/(ymax-ymin)*(H-B-Tp);
+  let s=`<defs><clipPath id="cp"><rect x="${L}" y="${Tp}" width="${W-L-Rr}" height="${H-B-Tp}"/></clipPath></defs>`;
+  for(let v=xmin;v<=xmax;v+=2)s+=`<line x1="${X(v)}" y1="${Tp}" x2="${X(v)}" y2="${H-B}" stroke="#f0f0f0"/><text x="${X(v)}" y="${H-B+15}" text-anchor="middle" font-size="11" fill="#555">${sgn(v)}</text>`;
+  s+=`<line x1="${L}" y1="${Y(0)}" x2="${W-Rr}" y2="${Y(0)}" stroke="#222" stroke-width="2"/><line x1="${X(0)}" y1="${Tp}" x2="${X(0)}" y2="${H-B}" stroke="#222" stroke-width="1.5"/>`;
+  let pts='';for(let x=xmin;x<=xmax+1e-9;x+=0.1)pts+=`${X(x)},${Y((x-p)*(x-q))} `;
+  s+=`<polyline clip-path="url(#cp)" points="${pts}" fill="none" stroke="#d34147" stroke-width="3.5"/>`;
+  [p,q].filter((v,i,a)=>a.indexOf(v)===i).forEach(v=>{const two=p!==q;const lo=v===Math.min(p,q);s+=`<circle cx="${X(v)}" cy="${Y(0)}" r="8" fill="#fff" stroke="#1b7f79" stroke-width="4"/><text x="${X(v)+(two?(lo?-16:16):0)}" y="${Y(0)-(two?-18:16)}" text-anchor="${two?(lo?'end':'start'):'middle'}" font-size="13" font-weight="700" fill="#1b7f79" stroke="#fff" stroke-width="4" paint-order="stroke">x = ${sgn(v)}</text>`});
+  $('#par').innerHTML=s;
+  const b=-(p+q),c=p*q;
+  $('#zsteps').innerHTML=`<li>Equation: <span class="mono"><b>${tri(1,b,c)} = 0</b></span></li><li>Factor: <span class="mono">${pf(-p)}${pf(-q)} = 0</span></li><li>Set each factor to 0: <span class="mono">${sol(p)} = 0</span> or <span class="mono">${sol(q)} = 0</span></li><li>Solve: <b class="mono">x = ${sgn(p)}</b>${p!==q?` or <b class="mono">x = ${sgn(q)}</b>`:' (a repeated root)'}</li>`;
+  $('#zmsg').innerHTML=p===q?'The parabola just <b>touches</b> the x-axis: one repeated solution.':'Each solution of the equation is an <b>x-intercept</b> of the graph.';
+}
+bindRange('p',drawPar,sgn);bindRange('q',drawPar,sgn);
+initTabs();
+
+</script>
+</body>
+</html>

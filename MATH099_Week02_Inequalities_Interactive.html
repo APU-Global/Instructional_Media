@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATH 099 | Week 2 Interactive: Inequalities Four Ways</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--ink:#222;--grey:#5f5f5f;--line:#ccc;--sand:#edebe8;--teal:#1b7f79;--amber:#b36b00;--ok:#1d7a3e}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.4}
+.app{max-width:1000px;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+header{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 18px;border-bottom:4px solid var(--red)}
+header .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#f1a3a6;font-weight:600}
+header h1{margin:2px 0 2px;font-size:22px;line-height:1.15;font-weight:700}
+header p{margin:0;font-size:13px;color:#ddd}
+header svg{flex:0 0 auto;width:230px;height:84px}
+nav.tabs{display:flex;background:var(--sand);border-bottom:1px solid var(--line)}
+nav.tabs button{flex:1;border:0;background:transparent;padding:10px 8px;font:600 14px inherit;font-family:inherit;color:#333;cursor:pointer;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected=true]{background:#fff;color:var(--dark);border-bottom-color:var(--red)}
+nav.tabs button:hover{background:#f6f4f2}
+nav.tabs button:focus-visible,.btn:focus-visible,.opt:focus-visible,.seg button:focus-visible,input:focus-visible{outline:3px solid #1b5fd1;outline-offset:2px}
+.panel{display:none;padding:12px 16px 10px;min-height:520px}
+.panel.on{display:block}
+.grid{display:grid;grid-template-columns:290px 1fr;gap:16px}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.card h3{margin:0 0 6px;font-size:14px;color:var(--dark);text-transform:uppercase;letter-spacing:.04em}
+.ctl{margin:7px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:1px}
+.ctl output{color:var(--dark);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--red);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 6px}
+.seg button,.btn{font:600 13px inherit;font-family:inherit;border:1.5px solid var(--dark);background:#fff;color:var(--dark);border-radius:6px;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed=true],.btn{background:var(--dark);color:#fff}
+.btn:hover{background:#8c2a2f}
+.btn.ghost{background:#fff;color:var(--dark)}
+.btn.ghost:hover{background:#f6e7e8}
+.chk{display:flex;align-items:center;gap:6px;font-size:13.5px;margin:4px 0}
+.rep{display:grid;grid-template-columns:92px 1fr;gap:4px 8px;font-size:14px;align-items:baseline}
+.rep b{color:var(--grey);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.rep span.v{font-weight:600}
+.big{font-size:17px}
+.msg{border-left:4px solid var(--red);background:#fdf1f1;padding:7px 10px;border-radius:0 6px 6px 0;font-size:14px;margin-top:8px}
+.msg.good{border-color:var(--ok);background:#eef8f1}
+.msg.warn{border-color:var(--amber);background:#fff6e8}
+.msg.bad{border-color:var(--dark);background:#fdf1f1}
+svg text{font-family:inherit}
+.vis svg{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:8px}
+.qhead{display:flex;justify-content:space-between;font-size:13px;color:var(--grey);font-weight:600;margin-bottom:4px}
+.qprompt{font-size:18px;font-weight:600;margin:4px 0 6px}
+.qvis svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto 6px;border:1px solid var(--line);border-radius:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.opt{font:600 16px inherit;font-family:inherit;text-align:center;padding:10px;border:2px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--red);background:#fdf6f6}
+.opt.right{border-color:var(--ok);background:#eef8f1}
+.opt.wrong{border-color:var(--dark);background:#fdf1f1}
+.fb{min-height:44px;font-size:14px}
+.done{text-align:center;padding:60px 10px}
+.done h3{font-size:30px;margin:0 0 6px;color:var(--dark)}
+.quizwrap{max-width:640px;margin:0 auto}
+.chiprow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:4px 0}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font:italic 600 14px Georgia,serif;color:#fff;background:var(--red);border:2px solid transparent}
+.chip.b{background:#222}
+.chip.x{opacity:.35;text-decoration:line-through;background:#888}
+.chip.g{background:var(--teal)}
+.grp{display:inline-flex;gap:3px;padding:3px 5px;border:2px dashed var(--line);border-radius:14px;margin:2px}
+.frac{display:inline-block;text-align:center;vertical-align:middle}
+.frac>div:first-child{border-bottom:2px solid #222;padding:2px 8px}
+.frac>div:last-child{padding:2px 8px}
+footer{display:flex;justify-content:space-between;font-size:12px;color:var(--grey);padding:6px 16px;border-top:1px solid var(--line);background:var(--sand)}
+.legend{display:flex;gap:14px;align-items:center;font-size:13px;font-weight:600}
+.legend svg{width:42px;height:22px;vertical-align:middle;border:0}
+.mono{font-variant-numeric:tabular-nums}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.opts{grid-template-columns:1fr}header svg{display:none}.rep{grid-template-columns:80px 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><div class="eyebrow">MATH 099 &middot; Intermediate Algebra &middot; Week 2</div>
+  <h1>Inequalities Four Ways</h1><p>Build one solution and see it in words, algebra, interval notation, and on a number line.</p></div>
+  <svg viewBox="0 0 230 84" role="img" aria-label="Delivery truck driving along a number line with a clock">
+<rect x="0" y="0" width="230" height="84" fill="none"/>
+<line x1="8" y1="70" x2="222" y2="70" stroke="#fff" stroke-width="2"/>
+<g stroke="#fff" stroke-width="2"><line x1="30" y1="65" x2="30" y2="75"/><line x1="70" y1="65" x2="70" y2="75"/><line x1="110" y1="65" x2="110" y2="75"/><line x1="150" y1="65" x2="150" y2="75"/><line x1="190" y1="65" x2="190" y2="75"/></g>
+<line x1="70" y1="70" x2="150" y2="70" stroke="#d34147" stroke-width="6"/>
+<circle cx="70" cy="70" r="5" fill="#000" stroke="#d34147" stroke-width="3"/><circle cx="150" cy="70" r="5" fill="#d34147" stroke="#d34147" stroke-width="3"/>
+<g transform="translate(72,26)"><rect x="0" y="0" width="38" height="24" rx="3" fill="#fff"/><path d="M38 7h12l8 9v8H38z" fill="#d34147"/><path d="M42 10h7l5 6h-12z" fill="#edebe8"/><circle cx="12" cy="26" r="6" fill="#222" stroke="#fff" stroke-width="2"/><circle cx="46" cy="26" r="6" fill="#222" stroke="#fff" stroke-width="2"/><text x="19" y="16" text-anchor="middle" font-size="10" font-weight="700" fill="#a8353a">x</text></g>
+<g transform="translate(185,22)"><circle r="17" fill="#fff" stroke="#d34147" stroke-width="3"/><line x1="0" y1="0" x2="0" y2="-11" stroke="#222" stroke-width="2.5" stroke-linecap="round"/><line x1="0" y1="0" x2="8" y2="4" stroke="#222" stroke-width="2.5" stroke-linecap="round"/></g>
+</svg>
+</header>
+<nav class="tabs" role="tablist"><button role="tab" data-tab="t1" aria-selected="true">Explore: Delivery Window</button><button role="tab" data-tab="t2" aria-selected="false">Practice: Check Yourself</button></nav>
+
+<section class="panel on" id="t1" role="tabpanel">
+ <div class="grid">
+  <div>
+   <div class="card">
+    <h3>1 &middot; Pick the situation</h3>
+    <div class="seg" id="pat" role="group" aria-label="Type of inequality">
+      <button data-p="between" aria-pressed="true">Between</button>
+      <button data-p="outside" aria-pressed="false">Outside (or)</button>
+      <button data-p="less" aria-pressed="false">Before</button>
+      <button data-p="greater" aria-pressed="false">After</button>
+    </div>
+    <div class="ctl"><label for="a">Endpoint a (hour, 24-hr) <output id="aOut"></output></label><input type="range" id="a" min="6" max="19" step="1" value="10"></div>
+    <div class="ctl" id="bctl"><label for="b">Endpoint b (hour, 24-hr) <output id="bOut"></output></label><input type="range" id="b" min="7" max="20" step="1" value="14"></div>
+    <label class="chk"><input type="checkbox" id="incA"> Include endpoint a (closed)</label>
+    <label class="chk" id="incBwrap"><input type="checkbox" id="incB"> Include endpoint b (closed)</label>
+   </div>
+   <div class="card" style="margin-top:10px">
+    <h3>2 &middot; Test an arrival time</h3>
+    <div class="ctl"><label for="t">Truck arrives at <output id="tOut"></output></label><input type="range" id="t" min="6" max="20" step="0.5" value="12"></div>
+   </div>
+  </div>
+  <div>
+   <div class="card">
+    <div class="rep">
+     <b>In words</b><span class="v" id="rWords"></span>
+     <b>Algebra</b><span class="v big mono" id="rAlg"></span>
+     <b>Interval</b><span class="v big mono" id="rInt"></span>
+    </div>
+   </div>
+   <div class="vis" style="margin-top:10px"><svg id="nl" viewBox="0 0 600 190" role="img" aria-label="Number line showing the delivery window"></svg></div>
+   <div class="msg" id="verdict" aria-live="polite"></div>
+  </div>
+ </div>
+</section>
+<section class="panel" id="t2" role="tabpanel"><div class="quizwrap" id="quiz"></div></section>
+
+<footer><span>MATH 099 Intermediate Algebra &middot; Week 2 Interactive</span><span>Linear Inequalities &amp; Representations</span></footer>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const choice=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const MINUS='\u2212';
+const sgn=n=>n<0?MINUS+Math.abs(n):String(n);
+const r2=n=>(Math.round(n*100)/100);
+function fx(n,d=2){return (Math.abs(n)<1e-9?0:n).toFixed(d).replace('-',MINUS)}
+function bindRange(id,cb,fmt){const el=document.getElementById(id);const out=document.getElementById(id+'Out');const f=()=>{if(out)out.textContent=fmt?fmt(+el.value):el.value;cb()};el.addEventListener('input',f);f();return el}
+function initTabs(onChange){
+  const btns=$$('nav.tabs button');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-selected',x===b));
+    $$('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.tab));
+    if(onChange)onChange(b.dataset.tab);postSize();
+  }));
+}
+function postSize(){try{const h=document.querySelector('.app').offsetHeight+2;parent.postMessage({type:'math099-resize',height:h,page:document.title},'*')}catch(e){}}
+window.addEventListener('load',()=>{postSize();if(window.ResizeObserver)new ResizeObserver(postSize).observe(document.querySelector('.app'))});
+window.addEventListener('resize',postSize);
+function Quiz(root,gen,total=6,label='Great work!'){
+  let i=0,score=0;
+  function render(){
+    if(i>=total){
+      const msg=score===total?'Perfect score. You have this down.':score>=total-2?'Strong work. Review any you missed and try a new set.':'Good start. Revisit the Explore tab, then try a new set.';
+      root.innerHTML=`<div class="done"><h3>${score} / ${total} correct</h3><p>${msg}</p><button class="btn" id="qr">Try a new set</button></div>`;
+      $('#qr',root).onclick=()=>{i=0;score=0;render()};postSize();return;
+    }
+    const q=gen();let done=false;
+    root.innerHTML=`<div class="qhead"><span>Question ${i+1} of ${total}</span><span>Score: ${score}</span></div><div class="qprompt">${q.prompt}</div><div class="qvis">${q.visual||''}</div><div class="opts">${q.options.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div><div class="fb" aria-live="polite"></div><button class="btn" id="qn" hidden>${i===total-1?'See results':'Next question'}</button>`;
+    $$('.opt',root).forEach(b=>b.onclick=()=>{
+      if(done)return;done=true;const k=+b.dataset.k;const ok=k===q.answer;
+      if(ok)score++;
+      $$('.opt',root).forEach((x,j)=>{x.disabled=true;if(j===q.answer)x.classList.add('right');else if(j===k)x.classList.add('wrong')});
+      $('.fb',root).innerHTML=`<div class="msg ${ok?'good':'bad'}"><b>${ok?'Correct!':'Not quite.'}</b> ${q.explain||''}</div>`;
+      $('#qn',root).hidden=false;$('#qn',root).focus();postSize();
+    });
+    $('#qn',root).onclick=()=>{i++;render()};postSize();
+  }
+  render();
+}
+function mcq(correct,distractors,extra){
+  const ds=[...new Set(distractors.filter(d=>d!==correct))];
+  let k=0;while(ds.length<3&&extra&&k<extra.length){if(extra[k]!==correct&&!ds.includes(extra[k]))ds.push(extra[k]);k++}
+  const opts=shuffle([correct,...ds.slice(0,3)]);
+  return {options:opts,answer:opts.indexOf(correct)};
+}
+
+
+const S={p:'between',a:10,b:14,incA:false,incB:true,t:12};
+function tm(h){const H=Math.floor(h),m=Math.round((h-H)*60);let ap=H>=12&&H<24?'pm':'am';let h12=H%12===0?12:H%12;return h12+(m?':'+String(m).padStart(2,'0'):'')+' '+ap}
+const L=(inc)=>inc?'\u2264':'<', G=(inc)=>inc?'\u2265':'>';
+function lo(inc,v){return (inc?'[':'(')+v}
+function describe(){
+  const {p,a,b,incA,incB}=S;let w,alg,intv;
+  if(p==='between'){
+    w=`between ${tm(a)} and ${tm(b)} (${incA?'including':'not including'} ${tm(a)}, ${incB?'including':'not including'} ${tm(b)})`;
+    alg=`${a} ${L(incA)} x ${L(incB)} ${b}`;
+    intv=`${incA?'[':'('}${a}, ${b}${incB?']':')'}`;
+  }else if(p==='outside'){
+    w=`before ${tm(a)} or after ${tm(b)}`+(incA||incB?` (including ${[incA?tm(a):'',incB?tm(b):''].filter(Boolean).join(' and ')})`:'');
+    alg=`x ${L(incA)} ${a}  or  x ${G(incB)} ${b}`;
+    intv=`(${MINUS}\u221e, ${a}${incA?']':')'} \u222a ${incB?'[':'('}${b}, \u221e)`;
+  }else if(p==='less'){
+    w=`${incA?'at or before':'before'} ${tm(a)}`;alg=`x ${L(incA)} ${a}`;intv=`(${MINUS}\u221e, ${a}${incA?']':')'}`;
+  }else{
+    w=`${incA?'at or after':'after'} ${tm(a)}`;alg=`x ${G(incA)} ${a}`;intv=`${incA?'[':'('}${a}, \u221e)`;
+  }
+  return {w,alg,intv};
+}
+function inWin(t){const {p,a,b,incA,incB}=S;
+  if(p==='between')return (incA?t>=a:t>a)&&(incB?t<=b:t<b);
+  if(p==='outside')return (incA?t<=a:t<a)||(incB?t>=b:t>b);
+  if(p==='less')return incA?t<=a:t<a;
+  return incA?t>=a:t>a;}
+function nlSVG(min,max,segs,pts,opts={}){
+  const W=600,x0=34,x1=566,y=opts.y||120;const X=v=>x0+(v-min)/(max-min)*(x1-x0);
+  let s=`<line x1="${x0-14}" y1="${y}" x2="${x1+14}" y2="${y}" stroke="#222" stroke-width="3"/><path d="M${x0-14} ${y}l9 -6v12z M${x1+14} ${y}l-9 -6v12z" fill="#222"/>`;
+  const step=opts.step||1;
+  for(let v=min;v<=max;v+=step){s+=`<line x1="${X(v)}" y1="${y-7}" x2="${X(v)}" y2="${y+7}" stroke="#222" stroke-width="2"/><text x="${X(v)}" y="${y+26}" text-anchor="middle" font-size="${opts.fs||14}" fill="#222">${opts.lab?opts.lab(v):sgn(v)}</text>`}
+  segs.forEach(g=>{const f=Math.max(g.from,min-0.4),t=Math.min(g.to,max+0.4);s+=`<line x1="${X(f)}" y1="${y}" x2="${X(t)}" y2="${y}" stroke="#d34147" stroke-width="9" stroke-linecap="butt"/>`;
+    if(g.from>-Infinity)s+=`<circle cx="${X(g.from)}" cy="${y}" r="8" fill="${g.fromOpen?'#fff':'#d34147'}" stroke="#a8353a" stroke-width="3"/>`;
+    if(g.to<Infinity)s+=`<circle cx="${X(g.to)}" cy="${y}" r="8" fill="${g.toOpen?'#fff':'#d34147'}" stroke="#a8353a" stroke-width="3"/>`;
+    if(g.from===-Infinity)s+=`<path d="M${x0-14} ${y}l12 -10v20z" fill="#d34147"/>`;
+    if(g.to===Infinity)s+=`<path d="M${x1+14} ${y}l-12 -10v20z" fill="#d34147"/>`;});
+  return s;
+}
+function truck(x,y,ok){return `<g transform="translate(${x-30},${y-52})"><rect x="0" y="0" width="38" height="26" rx="3" fill="#fff" stroke="#222" stroke-width="2"/><path d="M38 8h12l8 10v8H38z" fill="${ok?'#1d7a3e':'#d34147'}" stroke="#222" stroke-width="2"/><path d="M42 11h7l5 7H42z" fill="#edebe8"/><circle cx="11" cy="28" r="6" fill="#222"/><circle cx="46" cy="28" r="6" fill="#222"/><text x="19" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#a8353a">x</text></g><line x1="${x}" y1="${y-22}" x2="${x}" y2="${y-4}" stroke="#222" stroke-dasharray="3 3"/>`}
+function draw1(){
+  const {p,a,b,incA,incB,t}=S;const segs=[];
+  if(p==='between')segs.push({from:a,to:b,fromOpen:!incA,toOpen:!incB});
+  if(p==='outside'){segs.push({from:-Infinity,to:a,toOpen:!incA});segs.push({from:b,to:Infinity,fromOpen:!incB})}
+  if(p==='less')segs.push({from:-Infinity,to:a,toOpen:!incA});
+  if(p==='greater')segs.push({from:a,to:Infinity,fromOpen:!incA});
+  const X=v=>34+(v-6)/14*532;
+  let svg=nlSVG(6,20,segs,[],{step:2,y:130,fs:14});
+  svg+=truck(X(t),104,inWin(t));
+  svg+=`<text x="300" y="182" text-anchor="middle" font-size="13" fill="#5f5f5f">x = delivery time (hour of the day, 24-hour clock)</text>`;
+  $('#nl').innerHTML=svg;
+  const d=describe();$('#rWords').textContent=d.w;$('#rAlg').textContent=d.alg;$('#rInt').textContent=d.intv;
+  const ok=inWin(t);const v=$('#verdict');
+  v.className='msg '+(ok?'good':'bad');
+  v.innerHTML=`<b>${tm(t)} (x = ${t}):</b> ${ok?'inside':'outside'} the solution set. Substitute to check: ${ok?'the inequality is true.':'the inequality is false.'}`;
+  $('#tOut').textContent=tm(t);
+}
+$$('#pat button').forEach(b=>b.onclick=()=>{S.p=b.dataset.p;$$('#pat button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const two=S.p==='between'||S.p==='outside';$('#bctl').style.display=two?'':'none';$('#incBwrap').style.display=two?'':'none';
+  $('#a').previousElementSibling.firstChild.textContent=two?'Endpoint a (hour, 24-hr) ':'Endpoint (hour, 24-hr) ';draw1()});
+bindRange('a',()=>{S.a=+$('#a').value;if(S.b<=S.a){S.b=S.a+1;$('#b').value=S.b;$('#bOut').textContent=S.b}draw1()});
+bindRange('b',()=>{S.b=+$('#b').value;if(S.a>=S.b){S.a=S.b-1;$('#a').value=S.a;$('#aOut').textContent=S.a}draw1()});
+$('#incA').onchange=e=>{S.incA=e.target.checked;draw1()};
+$('#incB').onchange=e=>{S.incB=e.target.checked;draw1()};$('#incB').checked=true;
+bindRange('t',()=>{S.t=+$('#t').value;draw1()},tm);
+initTabs();
+
+/* ---------- Practice quiz ---------- */
+function ivl(p,a,b,ia,ib){
+  if(p==='between')return `${ia?'[':'('}${sgn(a)}, ${sgn(b)}${ib?']':')'}`;
+  if(p==='outside')return `(${MINUS}\u221e, ${sgn(a)}${ia?']':')'} \u222a ${ib?'[':'('}${sgn(b)}, \u221e)`;
+  if(p==='less')return `(${MINUS}\u221e, ${sgn(a)}${ia?']':')'}`;
+  return `${ia?'[':'('}${sgn(a)}, \u221e)`;
+}
+function genNL(){
+  const p=choice(['between','outside','less','greater']);let a=rnd(-6,3),b=a+rnd(2,6);const ia=!!rnd(0,1),ib=!!rnd(0,1);
+  const segs=[];
+  if(p==='between')segs.push({from:a,to:b,fromOpen:!ia,toOpen:!ib});
+  if(p==='outside'){segs.push({from:-Infinity,to:a,toOpen:!ia});segs.push({from:b,to:Infinity,fromOpen:!ib})}
+  if(p==='less')segs.push({from:-Infinity,to:a,toOpen:!ia});
+  if(p==='greater')segs.push({from:a,to:Infinity,fromOpen:!ia});
+  const svg=`<svg viewBox="0 0 600 110" role="img" aria-label="A number line graph of a solution set">${nlSVG(-8,10,segs,[],{y:50,fs:13})}</svg>`;
+  const comp={between:'outside',outside:'between',less:'greater',greater:'less'};
+  const c=ivl(p,a,b,ia,ib);
+  const m=mcq(c,[ivl(p,a,b,!ia,ib),ivl(p,a,b,ia,!ib),ivl(comp[p],a,b,ia,ib),ivl(p,a,b,!ia,!ib)],[ivl(comp[p],a,b,!ia,!ib)]);
+  return {prompt:'Which interval notation matches this graph?',visual:svg,...m,
+   explain:'Open circles mean the endpoint is not included, so use a parenthesis. Closed circles are included, so use a square bracket. The infinity symbol always gets a parenthesis.'};
+}
+function genSolve(){
+  let a=choice([-4,-3,-2,2,3,4]),s=rnd(-6,6),b=rnd(-9,9);const c=a*s+b;
+  const ops=[['<','\u003c'],['\u2264','\u2264'],['>','>'],['\u2265','\u2265']];const op=choice(ops)[0];
+  const flip={'<':'>','>':'<','\u2264':'\u2265','\u2265':'\u2264'};
+  const finalOp=a<0?flip[op]:op;
+  const lhs=`${a===1?'':a<0?MINUS+Math.abs(a):a}x ${b<0?MINUS+' '+Math.abs(b):'+ '+b}`;
+  const cor=`x ${finalOp} ${sgn(s)}`;
+  const wrongFlip=`x ${a<0?op:flip[op]} ${sgn(s)}`;
+  const m=mcq(cor,[wrongFlip,`x ${finalOp} ${sgn(-s)}`,`x ${a<0?op:flip[op]} ${sgn(-s)}`],[`x ${finalOp} ${sgn(s+1)}`]);
+  return {prompt:`Solve: <span class="mono">${lhs} ${op} ${sgn(c)}</span>`,visual:'',...m,
+   explain:a<0?`Subtract ${b}, then divide by ${sgn(a)}. Dividing by a negative <b>reverses</b> the inequality symbol: ${cor}.`:`Subtract ${b}, then divide by ${a}. The symbol stays the same: ${cor}.`};
+}
+let tog=0;Quiz($('#quiz'),()=>(tog++%2===0)?genNL():genSolve(),6);
+
+</script>
+</body>
+</html>
