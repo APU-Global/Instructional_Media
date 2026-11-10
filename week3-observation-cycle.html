@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3: The Observation Cycle</title><style>
+:root{
+ --ink:#1f2630;--muted:#5a6573;--paper:#ffffff;--wash:#f3f5f8;--line:#d9dee6;
+ --crimson:#a8353a;--crimson-d:#7f2429;--crimson-l:#f8e8e9;
+ --teal:#1f6f78;--teal-l:#e2f1f2;--gold:#c58a1b;--gold-l:#fbf0d9;--ok:#2f7d4f;--ok-l:#e3f3e9;--bad:#b3282e;
+}
+@media (prefers-color-scheme:dark){:root{--ink:#e9edf2;--muted:#a5afbc;--paper:#1b2129;--wash:#232b35;--line:#38424f;--crimson-l:#3a2224;--teal-l:#1d3436;--gold-l:#3a3020;--ok-l:#1f3528;}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column}
+header.top{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--crimson);color:#fff;flex:0 0 auto}
+header.top svg{flex:0 0 auto;width:64px;height:64px}
+header.top h1{font:700 21px/1.15 Georgia,"Times New Roman",serif;margin:0}
+header.top p{margin:2px 0 0;font-size:13.5px;opacity:.92}
+nav.tabs{display:flex;gap:4px;padding:8px 14px 0;background:var(--wash);border-bottom:1px solid var(--line);flex:0 0 auto}
+nav.tabs button{font:600 14px system-ui,sans-serif;padding:8px 14px;border:1px solid transparent;border-bottom:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);cursor:pointer}
+nav.tabs button[aria-selected=true]{background:var(--paper);color:var(--crimson);border-color:var(--line);margin-bottom:-1px;padding-bottom:9px}
+main.stage{flex:1 1 auto;min-height:0;overflow:auto;padding:14px 18px;scrollbar-width:thin}
+section.panel[hidden]{display:none}
+button,select,input{font-family:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.btn{background:var(--crimson);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:600;font-size:14px;cursor:pointer}
+.btn:hover{background:var(--crimson-d)}
+.btn.alt{background:var(--wash);color:var(--ink);border:1px solid var(--line)}
+.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;align-items:start}
+.card{background:var(--wash);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+h2{font:700 18px/1.2 Georgia,serif;margin:0 0 6px}
+h3{font:700 15px/1.25 system-ui,sans-serif;margin:0 0 4px}
+p{margin:0 0 8px}
+.hint{color:var(--muted);font-size:13.5px}
+.chip{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:600;background:var(--teal-l);color:var(--teal)}
+.fb{padding:8px 11px;border-radius:8px;font-size:14px;margin-top:8px}
+.fb.ok{background:var(--ok-l);color:var(--ok)} .fb.no{background:var(--crimson-l);color:var(--bad)} .fb.info{background:var(--gold-l);color:#6d4a07}
+@media (prefers-color-scheme:dark){.fb.info{color:#f0cf8a}.fb.ok{color:#8fd3aa}.fb.no{color:#f2a3a6}}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}header.top svg{width:48px;height:48px}header.top h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head>
+<body><div class="app">
+<header class="top"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff" opacity=".15"/><path d="M32 12a20 20 0 1 1-17 9" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M10 14l8 9 5-11z" fill="#f6d28a"/><circle cx="32" cy="32" r="7" fill="#f6d28a"/></svg><div><h1>Week 3: The Observation Cycle</h1><p>Sequence the steps for each observation and calculate your 48-hour deadline.</p></div></header>
+<nav class="tabs" role="tablist"><button role="tab" aria-selected="true">Build the cycle</button><button role="tab" aria-selected="false">48-hour calculator</button></nav>
+<main class="stage">
+<section class="panel">
+ <div class="grid2">
+  <div>
+   <h2>Build the observation cycle</h2>
+   <p class="hint">Each observation follows the same loop. Select the steps in the order they happen, starting with step 1.</p>
+   <svg id="cyc" viewBox="0 0 340 300" role="img" aria-label="Cycle diagram of seven observation steps" style="width:100%;height:auto;max-height:300px"></svg>
+  </div>
+  <div>
+   <div class="card"><h3>Steps to place</h3><div id="pool" style="display:flex;flex-direction:column;gap:6px"></div></div>
+   <div id="cfb" aria-live="polite"></div>
+  </div>
+ </div>
+</section>
+<section class="panel" hidden>
+ <div class="grid2">
+  <div>
+   <h2>The 48-hour rule</h2>
+   <p class="hint">Your lesson plan must reach your Clinical Supervisor at least 48 hours before your scheduled meeting. Pick the meeting and see your deadline.</p>
+   <label for="mt" style="font-weight:600;font-size:14px">Scheduled meeting with Clinical Supervisor</label><br>
+   <input id="mt" type="datetime-local" style="padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font-size:15px;margin:6px 0 10px">
+   <div class="card" id="dl" aria-live="polite"></div>
+  </div>
+  <div class="card">
+   <svg viewBox="0 0 320 170" role="img" aria-label="Timeline: submit plan, 48 hours, meeting" style="width:100%;height:auto">
+    <line x1="30" y1="90" x2="290" y2="90" stroke="var(--line)" stroke-width="6" stroke-linecap="round"/>
+    <rect x="40" y="84" width="230" height="12" rx="6" fill="#a8353a"/>
+    <circle cx="40" cy="90" r="16" fill="#fff" stroke="#a8353a" stroke-width="5"/><path d="M33 90l5 5 9-10" fill="none" stroke="#a8353a" stroke-width="4"/>
+    <circle cx="270" cy="90" r="16" fill="#1f6f78"/><circle cx="270" cy="90" r="6" fill="#fff"/>
+    <text x="40" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Submit plan</text>
+    <text x="270" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Meeting</text>
+    <text x="155" y="78" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">48 hours minimum</text>
+    <text x="155" y="130" text-anchor="middle" font-size="12" fill="currentColor" opacity=".75">Earlier is always fine. Later is not.</text>
+   </svg>
+  </div>
+ </div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+var S=["Write your lesson plan with the Part B template","Submit the plan to your Clinical Supervisor (48+ hours before the meeting)","Meet to review the plan before the observation","Record the lesson in its entirety","Upload the recording to GoReact","Add timestamped commentary in GoReact","Meet for feedback and apply it to the next observation"],
+ short=["Plan","Submit","Review","Record","Upload","Annotate","Feedback"],cx=170,cy=150,r=105,next=0;
+var order=S.map(function(_,i){return i}).sort(function(a,b){return ((a*5+3)%7)-((b*5+3)%7)});
+function drawC(){var s='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="4" stroke-dasharray="6 6"/>';
+ for(var i=0;i<7;i++){var a=-Math.PI/2+i*2*Math.PI/7,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a),on=i<next;
+  s+='<circle cx="'+x+'" cy="'+y+'" r="25" fill="'+(on?'#a8353a':'var(--paper)')+'" stroke="#a8353a" stroke-width="3"/><text x="'+x+'" y="'+(y+5)+'" text-anchor="middle" font-size="'+(on?11:16)+'" font-weight="700" fill="'+(on?'#fff':'#a8353a')+'">'+(on?short[i]:(i+1))+'</text>'}
+ s+='<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-family="Georgia,serif" font-size="17" font-weight="700" fill="currentColor">'+(next===7?'Cycle complete':'Observation')+'</text><text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="13" fill="currentColor" opacity=".7">'+(next===7?'Repeat for the next one':next+' of 7 placed')+'</text>';
+ document.getElementById('cyc').innerHTML=s}
+function drawP(){var p=document.getElementById('pool');p.innerHTML='';order.forEach(function(i){if(i<next)return;var b=document.createElement('button');b.className='btn alt';b.style.cssText='text-align:left;white-space:normal';b.textContent=S[i];b.onclick=function(){pick(i)};p.appendChild(b)});
+ if(next===7)p.innerHTML='<button class="btn" id="rs">Start over</button>',document.getElementById('rs').onclick=function(){next=0;document.getElementById('cfb').innerHTML='';drawC();drawP()}}
+function pick(i){var f=document.getElementById('cfb');if(i===next){next++;f.innerHTML=next===7?'<div class="fb ok">Complete. After each observation you meet for feedback and carry it into the next lesson. You will do this three times.</div>':'<div class="fb ok">Yes. Step '+next+' placed.</div>'}else{f.innerHTML='<div class="fb no">Not yet. Ask: what has to happen right before step '+(next+1)+'?</div>'}drawC();drawP()}
+drawC();drawP();
+var mt=document.getElementById('mt'),d=new Date();d.setDate(d.getDate()+5);d.setHours(10,0,0,0);
+function p2(n){return (n<10?'0':'')+n}
+mt.value=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'T10:00';
+function calc(){var v=mt.value,o=document.getElementById('dl');if(!v){o.innerHTML='<p class="hint">Choose a date and time above.</p>';return}
+ var m=new Date(v),s=new Date(m.getTime()-48*3600*1000),f={weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'},days=Math.round((m-new Date())/86400000);
+ o.innerHTML='<h3>Submit your plan no later than</h3><h2 style="color:var(--crimson)">'+s.toLocaleString([],f)+'</h2><p class="hint">Your meeting: '+m.toLocaleString([],f)+'</p>'+(m<new Date()?'<div class="fb info">That meeting date is in the past. Pick an upcoming date.</div>':(s<new Date()?'<div class="fb no">This deadline has already passed. Ask your Clinical Supervisor to move the meeting.</div>':'<div class="fb ok">You have time. Aim to send it a day early for a cushion.</div>'))}
+mt.oninput=calc;calc();
+})();
+
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('nav.tabs button'));
+ var panels=[].slice.call(document.querySelectorAll('section.panel'));
+ function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',j===i)});panels.forEach(function(p,j){p.hidden=j!==i});document.querySelector('main.stage').scrollTop=0;}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)})});
+ // Optional: tell a parent page the content height (harmless if nothing listens)
+ try{parent.postMessage({iframeHeight:document.querySelector('.app').scrollHeight},'*')}catch(e){}
+})();
+</script></body></html>
