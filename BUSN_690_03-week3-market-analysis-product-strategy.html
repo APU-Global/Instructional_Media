@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Week 3: Market Analysis and Product Strategy</title><style>
+:root{--crimson:#a73439;--crimson-d:#7e2327;--ink:#1f1f1f;--muted:#55555a;--paper:#f7f6f4;--card:#fff;--line:#dcd9d4;--teal:#1f6f78;--gold:#b7791f;--green:#2b7a45;--blue:#2f5fa7;--purple:#6b4c9a;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 18px;background:linear-gradient(100deg,#1b1b1b 0%,#2a2224 55%,var(--crimson-d) 100%);color:#fff}
+.hero svg{flex:0 0 auto;height:56px;width:auto}
+.hero h1{margin:0;font-size:1.25rem;line-height:1.2;font-weight:700}
+.hero p{margin:2px 0 0;font-size:.85rem;opacity:.92}
+.tabs{flex:0 0 auto;display:flex;gap:4px;padding:8px 18px 0;background:var(--paper);border-bottom:2px solid var(--line)}
+.tab{appearance:none;border:2px solid transparent;border-bottom:0;background:transparent;color:var(--muted);font:inherit;font-weight:600;padding:7px 14px;border-radius:10px 10px 0 0;cursor:pointer;margin-bottom:-2px}
+.tab:hover{color:var(--crimson)}
+.tab[aria-selected=true]{background:var(--card);color:var(--crimson);border-color:var(--line);border-bottom:2px solid var(--card)}
+:focus-visible{outline:3px solid #1d5fd1;outline-offset:2px}
+main{flex:1 1 auto;min-height:0;position:relative}
+.panel{position:absolute;inset:0;padding:12px 18px;overflow-x:hidden;overflow-y:auto;display:none;background:var(--card)}
+.panel.active{display:block}
+.row{display:flex;gap:16px;height:100%}
+.col{flex:1 1 0;min-width:0}
+h2{margin:0 0 4px;font-size:1.05rem}
+.lead{margin:0 0 8px;color:var(--muted);font-size:.92rem}
+.btn{appearance:none;border:0;background:var(--crimson);color:#fff;font:inherit;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer}
+.btn:hover{background:var(--crimson-d)}
+.btn.ghost{background:#fff;color:var(--crimson);border:2px solid var(--crimson)}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.chip{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--crimson);background:#f6e4e5;border-radius:999px;padding:2px 10px}
+.note{font-size:.78rem;color:var(--muted)}
+/* sorter */
+.sorter{display:flex;flex-direction:column;gap:8px;height:100%}
+.prog{display:flex;gap:6px}.prog i{flex:1;height:6px;border-radius:3px;background:var(--line)}.prog i.done{background:var(--green)}.prog i.cur{background:var(--crimson)}
+.card{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--crimson);border-radius:var(--r);padding:10px 14px}
+.card .lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.05em}
+.card .q{margin:4px 0 0;font-size:1.05rem;font-weight:600}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(var(--n,2),1fr)}
+.opt{appearance:none;text-align:left;font:inherit;background:#fff;border:2px solid var(--c,var(--line));border-radius:var(--r);padding:8px 12px;cursor:pointer;color:var(--ink)}
+.opt b{display:block;color:var(--c)}.opt small{display:block;color:var(--muted);font-size:.78rem;line-height:1.25}
+.opt:hover:not(:disabled){background:color-mix(in srgb,var(--c) 10%,#fff)}
+.opt:disabled{cursor:default}.opt.right{background:#e3f3e8;border-color:var(--green)}.opt.wrong{background:#fbe5e5;border-color:#b3261e}
+.fb{min-height:20px;font-size:.92rem}.fb .ok{color:var(--green);font-weight:700}.fb .no{color:#b3261e;font-weight:700}
+.fb .btn{margin-top:6px;padding:6px 14px}
+.result{text-align:center;padding:16px}.result .big{font-size:2.4rem;font-weight:800;color:var(--crimson)}
+/* tiles */
+.tiles{display:grid;gap:8px}
+.tile{appearance:none;text-align:left;font:inherit;border:2px solid var(--line);background:#fff;border-radius:var(--r);padding:8px 10px;cursor:pointer;color:var(--ink)}
+.tile:hover{border-color:var(--crimson)}.tile[aria-pressed=true],.tile[aria-selected=true]{border-color:var(--crimson);background:#fbeff0}
+.tile b{display:block}
+.detail{background:#fff;border:2px solid var(--crimson);border-radius:var(--r);padding:10px 14px}
+.detail h3{margin:0 0 4px;font-size:1rem;color:var(--crimson)}
+.detail p{margin:0 0 4px}
+.seg{display:inline-flex;border:2px solid var(--crimson);border-radius:999px;overflow:hidden}
+.seg button{appearance:none;border:0;background:#fff;color:var(--crimson);font:inherit;font-weight:600;padding:4px 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--crimson);color:#fff}
+input[type=range]{width:100%;accent-color:var(--crimson)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){
+ .hero svg{display:none}.hero h1{font-size:1.05rem}.hero p{font-size:.78rem}
+ .tabs{padding:6px 8px 0;gap:2px}.tab{padding:6px 8px;font-size:.82rem}
+ .panel{padding:8px 10px}.row{flex-direction:column;gap:8px;height:auto}
+ .opts{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body><div class="app"><header class="hero"><svg viewBox="0 0 120 56" role="img" aria-label="Magnifying glass over a bar chart" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="30" width="12" height="20" fill="#fff"/><rect x="30" y="20" width="12" height="30" fill="#f3c969"/><rect x="48" y="26" width="12" height="24" fill="#fff"/><circle cx="86" cy="24" r="16" fill="none" stroke="#fff" stroke-width="5"/><path d="M98 36l16 16" stroke="#f3c969" stroke-width="6" stroke-linecap="round"/></svg><div><h1>Week 3: Market Analysis and Product Strategy</h1><p>Analyze before you market</p></div></header><div class="tabs" role="tablist" aria-label="Activity sections"><button class="tab" role="tab" id="t0" aria-controls="p0" aria-selected="false">SWOT</button><button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="false">PEST</button><button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">Analysis to Plan</button></div><main><section class="panel" role="tabpanel" id="p0" aria-labelledby="t0"><div style="display:flex;flex-direction:column;height:100%"><p class="lead" style="margin:0 0 6px"><span class="chip">Practice scenario</span> A neighborhood meal-prep start-up. Strengths and weaknesses are <b>inside</b> the business. Opportunities and threats come from <b>outside</b>.</p><div id="s1" style="flex:1;min-height:0"></div></div></section><section class="panel" role="tabpanel" id="p1" aria-labelledby="t1"><div style="display:flex;flex-direction:column;height:100%"><p class="lead" style="margin:0 0 6px"><span class="chip">Same scenario</span> A PEST analysis looks at outside forces: political, economic, social and technological.</p><div id="s2" style="flex:1;min-height:0"></div></div></section><section class="panel" role="tabpanel" id="p2" aria-labelledby="t2"><div class="row"><div class="col" style="flex:1.2"><h2>From analysis to marketing plan</h2><p class="lead">Select each step to see what Part 3 asks of you.</p><div id="fl" class="tiles" style="grid-template-columns:1fr 1fr"></div></div><div class="col"><div id="fd" class="detail" aria-live="polite"></div>
+<svg viewBox="0 0 260 70" style="width:100%;margin-top:10px" role="img" aria-label="The four Ps: product, price, place, promotion"><g font-size="11" font-weight="700" text-anchor="middle" fill="#fff"><rect x="4" y="10" width="58" height="46" rx="8" fill="#a73439"/><text x="33" y="30">Product</text><text x="33" y="46" font-size="9" font-weight="400">what you offer</text><rect x="68" y="10" width="58" height="46" rx="8" fill="#1f6f78"/><text x="97" y="30">Price</text><text x="97" y="46" font-size="9" font-weight="400">what it costs</text><rect x="132" y="10" width="58" height="46" rx="8" fill="#b7791f"/><text x="161" y="30">Place</text><text x="161" y="46" font-size="9" font-weight="400">distribution</text><rect x="196" y="10" width="58" height="46" rx="8" fill="#2f5fa7"/><text x="225" y="30">Promotion</text><text x="225" y="46" font-size="9" font-weight="400">how you reach</text></g></svg></div></div></section></main></div><script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+ function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).classList.toggle('active',on)});}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];if(n){n.focus();show(n);e.preventDefault();}})});
+ show(tabs[0]);
+})();
+function esc(s){return s}
+function sorter(id,cfg){
+ var el=document.getElementById(id),i=0,score=0;
+ el.style.setProperty('--n',cfg.cols||cfg.cats.length);
+ function dots(){return '<div class="prog" aria-hidden="true">'+cfg.items.map(function(_,k){return '<i class="'+(k<i?'done':k===i?'cur':'')+'"></i>'}).join('')+'</div>'}
+ function render(){
+  if(i>=cfg.items.length){
+   el.innerHTML='<div class="result"><div class="big">'+score+' / '+cfg.items.length+'</div><p>'+cfg.end(score)+'</p><button class="btn" id="'+id+'r">Try again</button></div>';
+   document.getElementById(id+'r').onclick=function(){i=0;score=0;render()};return;}
+  var it=cfg.items[i];
+  el.innerHTML='<div class="sorter">'+dots()+'<div class="card"><span class="lbl">'+cfg.prompt+' ('+(i+1)+' of '+cfg.items.length+')</span><p class="q">'+it.t+'</p></div><div class="opts">'+cfg.cats.map(function(c){return '<button class="opt" data-k="'+c.k+'" style="--c:'+c.col+'"><b>'+c.l+'</b>'+(c.s?'<small>'+c.s+'</small>':'')+'</button>'}).join('')+'</div><div class="fb" role="status" aria-live="polite"></div></div>';
+  var btns=[].slice.call(el.querySelectorAll('.opt')),fb=el.querySelector('.fb');
+  btns.forEach(function(b){b.onclick=function(){
+   var ok=b.dataset.k===it.c;if(ok)score++;
+   btns.forEach(function(x){x.disabled=true;if(x.dataset.k===it.c)x.classList.add('right');});
+   if(!ok)b.classList.add('wrong');
+   var cat=cfg.cats.filter(function(c){return c.k===it.c})[0];
+   fb.innerHTML=(ok?'<span class="ok">Yes.</span> ':'<span class="no">Not quite.</span> This is <b>'+cat.l+'</b>. ')+it.w+'<br><button class="btn" id="'+id+'n">'+(i+1<cfg.items.length?'Next':'See result')+'</button>';
+   var n=document.getElementById(id+'n');n.focus();n.onclick=function(){i++;render()};
+  }});
+ }
+ render();
+}
+var F=[["1. SWOT", "Begin the market analysis with strengths, weaknesses, opportunities and threats. It helps you develop the market strategy."], ["2. PEST", "Add political, economic, social and technological factors to fully assess the competitive landscape."], ["3. Product vision", "The product strategy is essentially the plan. Begin with a compelling vision and practice stating it clearly and concisely."], ["4. Product goals", "Map product goals strategically to a timeline. The strategy becomes a roadmap for the vision."], ["5. Target market and 4 Ps", "Describe the product or service and how it is differentiated, then identify product, price, place and promotion. Define your target market and sales and marketing goals."], ["6. Implementation plan", "Provide steps and controls, timelines, and measures for monitoring progress."]];
+(function(){var h=document.getElementById('fl'),d=document.getElementById('fd'),bs=[];function p(i){bs.forEach(function(b,k){b.setAttribute('aria-pressed',k===i)});d.innerHTML='<h3>'+F[i][0]+'</h3><p>'+F[i][1]+'</p>'}
+ F.forEach(function(x,i){var b=document.createElement('button');b.className='tile';b.innerHTML='<b>'+x[0]+'</b>';b.onclick=function(){p(i)};h.appendChild(b);bs.push(b)});p(0);
+ sorter('s1',{prompt:'SWOT: where does it belong?',cols:4,cats:[{k:'s',l:'Strength',s:'Internal, helps',col:'#2b7a45'},{k:'w',l:'Weakness',s:'Internal, hurts',col:'#b3261e'},{k:'o',l:'Opportunity',s:'External, helps',col:'#1f6f78'},{k:'t',l:'Threat',s:'External, hurts',col:'#b7791f'}],items:[{"t": "Founder has six years of restaurant kitchen experience.", "c": "s", "w": "This is an internal strength: it belongs to the business."}, {"t": "Only one rented commercial kitchen is available, which limits capacity.", "c": "w", "w": "This is an internal weakness: a limit inside the business."}, {"t": "Local employers are adding wellness benefits for staff.", "c": "o", "w": "This is an external opportunity the business can pursue."}, {"t": "Grocery chains are launching their own meal kits.", "c": "t", "w": "This is an external threat from the market."}, {"t": "The brand has no recognition yet.", "c": "w", "w": "Internal and limiting, so a weakness."}, {"t": "Few competitors deliver to the surrounding suburbs.", "c": "o", "w": "An outside gap in the market: an opportunity."}, {"t": "Recipes use local ingredients that competitors do not offer.", "c": "s", "w": "Internal and differentiating, so a strength."}, {"t": "Rising ingredient costs could squeeze margins.", "c": "t", "w": "An outside force that could hurt the business: a threat."}],end:function(s){return s>=7?'Strong SWOT instincts. Ask yourself first: is it inside or outside the business?':'Tip: first decide inside or outside the business, then helpful or harmful.'}});
+ sorter('s2',{prompt:'PEST: which factor is it?',cols:4,cats:[{k:'p',l:'Political',s:'Laws, policy, incentives',col:'#6b4c9a'},{k:'e',l:'Economic',s:'Costs, spending, rates',col:'#b7791f'},{k:'s',l:'Social',s:'Lifestyle, values, culture',col:'#1f6f78'},{k:'t',l:'Technological',s:'Tools, platforms, systems',col:'#2f5fa7'}],items:[{"t": "The city adds new licensing rules for home-based food producers.", "c": "p", "w": "Government rules and regulation are political and legal factors."}, {"t": "Inflation raises ingredient and delivery costs.", "c": "e", "w": "Costs, prices and spending power are economic factors."}, {"t": "More busy households want healthy, ready-to-eat meals.", "c": "s", "w": "Changing lifestyles and values are social factors."}, {"t": "Route-planning software cuts delivery times.", "c": "t", "w": "New tools and systems are technological factors."}, {"t": "A state program offers tax incentives to small food producers.", "c": "p", "w": "Government incentives are political factors."}, {"t": "Consumers are cutting back on discretionary spending.", "c": "e", "w": "Consumer spending is an economic factor."}, {"t": "Interest in plant-based eating keeps growing.", "c": "s", "w": "Shifts in preferences and culture are social factors."}, {"t": "Customers now expect to order through a mobile app.", "c": "t", "w": "Expectations shaped by technology are technological factors."}],end:function(s){return s>=7?'Great. Use SWOT plus PEST to see the whole competitive landscape.':'Tip: ask what is driving the change: government, money, people or technology.'}});
+})();</script></body></html>

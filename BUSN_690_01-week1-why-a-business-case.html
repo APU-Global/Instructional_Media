@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Week 1: Why a Business Case?</title><style>
+:root{--crimson:#a73439;--crimson-d:#7e2327;--ink:#1f1f1f;--muted:#55555a;--paper:#f7f6f4;--card:#fff;--line:#dcd9d4;--teal:#1f6f78;--gold:#b7791f;--green:#2b7a45;--blue:#2f5fa7;--purple:#6b4c9a;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 18px;background:linear-gradient(100deg,#1b1b1b 0%,#2a2224 55%,var(--crimson-d) 100%);color:#fff}
+.hero svg{flex:0 0 auto;height:56px;width:auto}
+.hero h1{margin:0;font-size:1.25rem;line-height:1.2;font-weight:700}
+.hero p{margin:2px 0 0;font-size:.85rem;opacity:.92}
+.tabs{flex:0 0 auto;display:flex;gap:4px;padding:8px 18px 0;background:var(--paper);border-bottom:2px solid var(--line)}
+.tab{appearance:none;border:2px solid transparent;border-bottom:0;background:transparent;color:var(--muted);font:inherit;font-weight:600;padding:7px 14px;border-radius:10px 10px 0 0;cursor:pointer;margin-bottom:-2px}
+.tab:hover{color:var(--crimson)}
+.tab[aria-selected=true]{background:var(--card);color:var(--crimson);border-color:var(--line);border-bottom:2px solid var(--card)}
+:focus-visible{outline:3px solid #1d5fd1;outline-offset:2px}
+main{flex:1 1 auto;min-height:0;position:relative}
+.panel{position:absolute;inset:0;padding:12px 18px;overflow-x:hidden;overflow-y:auto;display:none;background:var(--card)}
+.panel.active{display:block}
+.row{display:flex;gap:16px;height:100%}
+.col{flex:1 1 0;min-width:0}
+h2{margin:0 0 4px;font-size:1.05rem}
+.lead{margin:0 0 8px;color:var(--muted);font-size:.92rem}
+.btn{appearance:none;border:0;background:var(--crimson);color:#fff;font:inherit;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer}
+.btn:hover{background:var(--crimson-d)}
+.btn.ghost{background:#fff;color:var(--crimson);border:2px solid var(--crimson)}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.chip{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--crimson);background:#f6e4e5;border-radius:999px;padding:2px 10px}
+.note{font-size:.78rem;color:var(--muted)}
+/* sorter */
+.sorter{display:flex;flex-direction:column;gap:8px;height:100%}
+.prog{display:flex;gap:6px}.prog i{flex:1;height:6px;border-radius:3px;background:var(--line)}.prog i.done{background:var(--green)}.prog i.cur{background:var(--crimson)}
+.card{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--crimson);border-radius:var(--r);padding:10px 14px}
+.card .lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.05em}
+.card .q{margin:4px 0 0;font-size:1.05rem;font-weight:600}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(var(--n,2),1fr)}
+.opt{appearance:none;text-align:left;font:inherit;background:#fff;border:2px solid var(--c,var(--line));border-radius:var(--r);padding:8px 12px;cursor:pointer;color:var(--ink)}
+.opt b{display:block;color:var(--c)}.opt small{display:block;color:var(--muted);font-size:.78rem;line-height:1.25}
+.opt:hover:not(:disabled){background:color-mix(in srgb,var(--c) 10%,#fff)}
+.opt:disabled{cursor:default}.opt.right{background:#e3f3e8;border-color:var(--green)}.opt.wrong{background:#fbe5e5;border-color:#b3261e}
+.fb{min-height:20px;font-size:.92rem}.fb .ok{color:var(--green);font-weight:700}.fb .no{color:#b3261e;font-weight:700}
+.fb .btn{margin-top:6px;padding:6px 14px}
+.result{text-align:center;padding:16px}.result .big{font-size:2.4rem;font-weight:800;color:var(--crimson)}
+/* tiles */
+.tiles{display:grid;gap:8px}
+.tile{appearance:none;text-align:left;font:inherit;border:2px solid var(--line);background:#fff;border-radius:var(--r);padding:8px 10px;cursor:pointer;color:var(--ink)}
+.tile:hover{border-color:var(--crimson)}.tile[aria-pressed=true],.tile[aria-selected=true]{border-color:var(--crimson);background:#fbeff0}
+.tile b{display:block}
+.detail{background:#fff;border:2px solid var(--crimson);border-radius:var(--r);padding:10px 14px}
+.detail h3{margin:0 0 4px;font-size:1rem;color:var(--crimson)}
+.detail p{margin:0 0 4px}
+.seg{display:inline-flex;border:2px solid var(--crimson);border-radius:999px;overflow:hidden}
+.seg button{appearance:none;border:0;background:#fff;color:var(--crimson);font:inherit;font-weight:600;padding:4px 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--crimson);color:#fff}
+input[type=range]{width:100%;accent-color:var(--crimson)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){
+ .hero svg{display:none}.hero h1{font-size:1.05rem}.hero p{font-size:.78rem}
+ .tabs{padding:6px 8px 0;gap:2px}.tab{padding:6px 8px;font-size:.82rem}
+ .panel{padding:8px 10px}.row{flex-direction:column;gap:8px;height:auto}
+ .opts{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body><div class="app"><header class="hero"><svg viewBox="0 0 120 56" role="img" aria-label="Business plan document and a lightbulb" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="8" width="42" height="42" rx="4" fill="#fff"/><path d="M21 20h28M21 28h28M21 36h18" stroke="#a73439" stroke-width="3" stroke-linecap="round"/><circle cx="86" cy="22" r="14" fill="#f3c969"/><path d="M80 40h12v6H80z" fill="#fff"/><path d="M80 34h12" stroke="#fff" stroke-width="3"/><path d="M86 2v-0M62 8l-4-4M110 8l4-4M72 22h-8M100 22h8" stroke="#f3c969" stroke-width="2.5" stroke-linecap="round"/></svg><div><h1>Week 1: Why a Business Case?</h1><p>Assess the opportunity before you build the plan</p></div></header><div class="tabs" role="tablist" aria-label="Activity sections"><button class="tab" role="tab" id="t0" aria-controls="p0" aria-selected="false">Plan Anatomy</button><button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="false">Vision or Value?</button><button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">Four-Slide Pitch</button></div><main><section class="panel" role="tabpanel" id="p0" aria-labelledby="t0"><div class="row"><div class="col" style="flex:1.2"><h2>Anatomy of a business plan</h2><p class="lead">Select a section. Then switch on the investor view.</p>
+<div id="secs" class="tiles" style="grid-template-columns:1fr 1fr"></div>
+<p style="margin:10px 0 0"><button class="btn ghost" id="inv" aria-pressed="false">Show what investors read first</button></p></div>
+<div class="col"><div id="sd" class="detail" aria-live="polite"></div>
+<svg viewBox="0 0 260 90" style="width:100%;margin-top:10px" role="img" aria-label="An investor skims a long plan and stops at the executive summary and financials"><rect x="8" y="8" width="70" height="74" rx="4" fill="#fff" stroke="#c9c4bd" stroke-width="2"/><rect x="14" y="14" width="58" height="9" fill="#f3c969"/><path d="M14 30h58M14 38h58M14 46h58M14 54h40" stroke="#dcd9d4" stroke-width="3"/><rect x="14" y="62" width="58" height="9" fill="#f3c969"/><path d="M82 45h34" stroke="#a73439" stroke-width="3" marker-end="url(#ah)"/><defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0l8 4-8 4z" fill="#a73439"/></marker></defs><circle cx="150" cy="40" r="16" fill="#a73439"/><circle cx="150" cy="36" r="7" fill="#fff"/><path d="M138 54a12 8 0 0 1 24 0z" fill="#fff"/><text x="178" y="38" font-size="12" font-weight="700" fill="#1f1f1f">Investor</text><text x="178" y="54" font-size="11" fill="#55555a">reads two parts</text></svg></div></div></section><section class="panel" role="tabpanel" id="p1" aria-labelledby="t1"><div id="s1" style="height:100%"></div></section><section class="panel" role="tabpanel" id="p2" aria-labelledby="t2"><div class="row"><div class="col" style="flex:1.1"><h2>Your four-slide pitch</h2><p class="lead">One profile slide and three business proposal slides. Select a slide.</p><div id="sl" class="tiles" style="grid-template-columns:1fr 1fr"></div></div>
+<div class="col"><div id="sld" class="detail" aria-live="polite"></div><p class="note" style="margin-top:8px">Reserve your instructor meeting in the Business Case Pitch Choice Activity during the first days of the course. The pitch is submitted as a PDF plus a public link to your online presentation.</p></div></div></section></main></div><script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+ function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).classList.toggle('active',on)});}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];if(n){n.focus();show(n);e.preventDefault();}})});
+ show(tabs[0]);
+})();
+function esc(s){return s}
+function sorter(id,cfg){
+ var el=document.getElementById(id),i=0,score=0;
+ el.style.setProperty('--n',cfg.cols||cfg.cats.length);
+ function dots(){return '<div class="prog" aria-hidden="true">'+cfg.items.map(function(_,k){return '<i class="'+(k<i?'done':k===i?'cur':'')+'"></i>'}).join('')+'</div>'}
+ function render(){
+  if(i>=cfg.items.length){
+   el.innerHTML='<div class="result"><div class="big">'+score+' / '+cfg.items.length+'</div><p>'+cfg.end(score)+'</p><button class="btn" id="'+id+'r">Try again</button></div>';
+   document.getElementById(id+'r').onclick=function(){i=0;score=0;render()};return;}
+  var it=cfg.items[i];
+  el.innerHTML='<div class="sorter">'+dots()+'<div class="card"><span class="lbl">'+cfg.prompt+' ('+(i+1)+' of '+cfg.items.length+')</span><p class="q">'+it.t+'</p></div><div class="opts">'+cfg.cats.map(function(c){return '<button class="opt" data-k="'+c.k+'" style="--c:'+c.col+'"><b>'+c.l+'</b>'+(c.s?'<small>'+c.s+'</small>':'')+'</button>'}).join('')+'</div><div class="fb" role="status" aria-live="polite"></div></div>';
+  var btns=[].slice.call(el.querySelectorAll('.opt')),fb=el.querySelector('.fb');
+  btns.forEach(function(b){b.onclick=function(){
+   var ok=b.dataset.k===it.c;if(ok)score++;
+   btns.forEach(function(x){x.disabled=true;if(x.dataset.k===it.c)x.classList.add('right');});
+   if(!ok)b.classList.add('wrong');
+   var cat=cfg.cats.filter(function(c){return c.k===it.c})[0];
+   fb.innerHTML=(ok?'<span class="ok">Yes.</span> ':'<span class="no">Not quite.</span> This is <b>'+cat.l+'</b>. ')+it.w+'<br><button class="btn" id="'+id+'n">'+(i+1<cfg.items.length?'Next':'See result')+'</button>';
+   var n=document.getElementById(id+'n');n.focus();n.onclick=function(){i++;render()};
+  }});
+ }
+ render();
+}
+var S=[["Executive Summary", "The overview of the plan's key elements. It must be compelling because investors read it first.", true], ["Company Description", "Who the business is, what it does and why it exists.", false], ["Market and Opportunity Analysis", "The need, the target market and the competition.", false], ["Organizational Structure", "The key roles and the team that will run the business.", false], ["Differentiated Product or Service", "What you offer and how it differs from competitors.", false], ["Funding Request and Financial Projections", "How much money you need and what the numbers say. Investors focus here too.", true]],SL=[["Slide 1", "Profile", "#a73439", "Include the name of the business, the mission statement, and the industry/NAICS or SIC code (service, retail, profit, non-profit, and so on)."], ["Slide 2", "The Need", "#1f6f78", "What is the need or opportunity you are addressing? Name the customer and the specific business problem."], ["Slide 3", "The Solution", "#b7791f", "What is your solution, and why is it different? This is where your value proposition shows up."], ["Slide 4", "Competitors", "#2f5fa7", "Who are the competitors in this market? Show you understand who else serves your customer."]];
+(function(){var h=document.getElementById('secs'),d=document.getElementById('sd'),inv=document.getElementById('inv'),on=false,cur=0,bs=[];
+ function paint(){bs.forEach(function(b,i){b.setAttribute('aria-pressed',i===cur);b.style.opacity=on&&!S[i][2]?'.45':'1';b.querySelector('.st').textContent=on&&S[i][2]?'\u2605 Investors read this':''});var x=S[cur];d.innerHTML='<h3>'+x[0]+'</h3><p>'+x[1]+'</p>'+(on?'<p class="note">'+(x[2]?'Investors focus on this section.':'Important, but most investors will not read it first.')+'</p>':'');}
+ S.forEach(function(x,i){var b=document.createElement('button');b.className='tile';b.innerHTML='<b>'+x[0]+'</b><span class="st note" style="color:#7e2327;font-weight:700"></span>';b.onclick=function(){cur=i;paint()};h.appendChild(b);bs.push(b)});
+ inv.onclick=function(){on=!on;inv.setAttribute('aria-pressed',on);inv.textContent=on?'Hide investor view':'Show what investors read first';paint()};paint();
+ var sl=document.getElementById('sl'),sd=document.getElementById('sld'),sb=[];
+ function ps(i){sb.forEach(function(b,k){b.setAttribute('aria-pressed',k===i)});var x=SL[i];sd.innerHTML='<h3>'+x[0]+': '+x[1]+'</h3><p>'+x[3]+'</p>';}
+ SL.forEach(function(x,i){var b=document.createElement('button');b.className='tile';b.setAttribute('aria-label',x[0]+': '+x[1]);b.innerHTML='<svg viewBox="0 0 160 90" style="width:100%;display:block" aria-hidden="true"><rect width="160" height="90" rx="6" fill="#fff" stroke="#dcd9d4" stroke-width="2"/><rect width="160" height="22" rx="6" fill="'+x[2]+'"/><rect y="12" width="160" height="10" fill="'+x[2]+'"/><text x="10" y="16" fill="#fff" font-size="11" font-weight="700">'+x[0]+'</text><text x="80" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#1f1f1f">'+x[1]+'</text><path d="M30 72h100" stroke="#dcd9d4" stroke-width="4" stroke-linecap="round"/></svg>';b.onclick=function(){ps(i)};sl.appendChild(b);sb.push(b)});ps(0);
+ sorter('s1',{prompt:'Vision or value proposition?',cols:2,cats:[{k:'v',l:'Vision',s:'Where the business is going',col:'#1f6f78'},{k:'p',l:'Value Proposition',s:'What is unique versus competitors',col:'#a73439'}],
+ items:[
+ {t:'In ten years, every small farm in our region sells directly to local families.',c:'v',w:'A vision looks ahead to where the business is going.'},
+ {t:'Unlike big-box grocers, we deliver farm-fresh produce within 24 hours of harvest.',c:'p',w:'It names a benefit and contrasts it with what competitors offer.'},
+ {t:'We will be the most trusted name in affordable home energy audits.',c:'v',w:'This describes a future position the business is working toward.'},
+ {t:'The only scheduling app that lets nurses swap shifts in one minute with no agency fees.',c:'p',w:'It says what is unique relative to competitors.'},
+ {t:'A world where no student graduates with unmanageable debt.',c:'v',w:'It paints the future the business wants to help create.'},
+ {t:'Our subscription costs less than competing plans and includes free onsite setup.',c:'p',w:'It shows how the offer differs from competitors for the customer.'}],
+ end:function(s){return s>=5?'You can tell direction from differentiation. Use both in Part 1.':'Remember: a vision shows where you are going; a value proposition shows how you differ from competitors.'}});
+})();</script></body></html>
