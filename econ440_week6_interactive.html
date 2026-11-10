@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 Interactive | Regional Trade Agreements: Creation and Diversion</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.stairs{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.st{cursor:pointer}.st:focus{outline:none}.st:focus-visible rect.s{stroke:#231f20;stroke-width:4}
+.feat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}@media(max-width:720px){.feat{grid-template-columns:1fr 1fr}}
+.feat div{border:2px solid #eee;border-radius:14px;padding:10px;text-align:center;font-size:.88rem;background:#fff;transition:.3s}.feat div.on{border-color:var(--ok);background:var(--ok-l)}.feat b{display:block;font-size:1.3rem}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:10px 14px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.src{border:2px solid #eee;border-radius:16px;padding:14px;background:#fff;text-align:center}.src b{display:block;font:700 1.5rem Georgia,serif}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:10px}.stats b{display:block;font:700 1.4rem Georgia,serif}.stats small{color:var(--mut)}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of three connected countries joined by a bridge, with an outsider country outside the circle">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<ellipse cx="300" cy="120" rx="220" ry="92" fill="#f7dcdd" fill-opacity=".22" stroke="#fff" stroke-width="4" stroke-dasharray="10 7"/>
+<g fill="#f6c453"><circle cx="190" cy="120" r="40"/><circle cx="300" cy="86" r="34"/><circle cx="390" cy="130" r="38"/></g>
+<g stroke="#fff" stroke-width="5" stroke-linecap="round"><path d="M226 108L268 94M332 100L362 118M228 134L354 134"/></g>
+<circle cx="640" cy="120" r="46" fill="#1f6f78"/><path d="M520 120H590" stroke="#fff" stroke-width="4" stroke-dasharray="3 10" stroke-linecap="round"/>
+<g font-family="system-ui" font-weight="800" fill="#fff" font-size="15" text-anchor="middle"><text x="190" y="125">A</text><text x="300" y="91">B</text><text x="390" y="135">C</text><text x="640" y="126">W</text></g>
+<g transform="translate(740 60)" font-family="system-ui" fill="#fff"><text font-size="26" font-weight="800">Trade created…</text><text y="36" font-size="26" font-weight="800" fill="#f6c453">or diverted?</text></g>
+</svg>
+<div class="txt"><div class="kick">ECON 440 · Week 6 Interactive</div><h1>Regional Agreements: Creation or Diversion?</h1><p>Agreements range from simple tariff cuts to deep integration, and they can create new trade or redirect it from more efficient outsiders. Climb the ladder of integration, then test when an agreement helps or hurts.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · The ladder of integration</h2>
+<p class="lead">Agreements differ in depth. Select a step (or Tab to it and press Enter) to see what members add at each level.</p>
+<svg class="stairs" id="stairs" viewBox="0 0 760 300" role="group" aria-label="Four levels of integration"></svg>
+<div class="feat" id="feat"></div>
+<div class="note teal live" id="sinfo" aria-live="polite">Select a step.</div>
+<h3 style="margin-top:16px">Which level is it?</h3>
+<div id="lq"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Trade creation and diversion</h2>
+<p class="lead">Country <strong>H</strong> imports widgets and charges a tariff on all imports. Partner <strong>P</strong> will form a free trade area with H; outsider <strong>W</strong>, the world’s lowest-cost producer, makes widgets for <strong>$6</strong>. Set P’s cost and the starting tariff and see where H buys before and after, and whether H gains overall.</p>
+<div class="ctl"><div><label for="pc">Partner P’s cost per widget <span id="pcv">$8.00</span></label><input type="range" id="pc" min="5" max="11" step="0.1" value="8"></div>
+<div><label for="tr">H’s tariff on all imports <span id="trv">50%</span></label><input type="range" id="tr" min="20" max="100" step="5" value="50"></div></div>
+<div class="two"><div class="src" id="bf"></div><div class="src" id="af"></div></div>
+<svg class="chart" id="ch" viewBox="0 0 700 180" role="img" aria-label="Trade creation, trade diversion and net welfare" style="margin-top:12px"></svg>
+<div class="stats" aria-live="polite"><div><b id="s1">–</b><small>Trade creation gain</small></div><div><b id="s2">–</b><small>Trade diversion loss</small></div><div><b id="s3">–</b><small>Net welfare effect for H</small></div></div>
+<div class="note live" id="adv" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">Demand in H: Q = 100 − 5p. Welfare = change in consumer surplus plus change in tariff revenue. Numbers are illustrative.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Agreements in practice</h2>
+<div id="pq"></div>
+<div class="grid2" style="margin-top:12px"><div class="note"><strong>Why join?</strong> Members may gain larger markets and investment.</div><div class="note gold"><strong>Concerns.</strong> Job displacement and loss of policy independence. Weigh these trade-offs when proposing policy.</div></div>
+</section>
+</div>
+<p class="foot">Source: ECON 440 Week 6 Deep Dive. Real agreements have many more details; evaluate each on its specifics.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var LV=[
+{n:"Free trade area",s:"Tariffs removed among members",f:1,d:"Members remove tariffs on trade with each other, but each keeps its own tariffs on outsiders.",c:"#e0a526"},
+{n:"Customs union",s:"+ common external tariff",f:2,d:"Adds a common external tariff: members charge the same tariff on goods from non-members.",c:"#d34147"},
+{n:"Common market",s:"+ free movement of labor and capital",f:3,d:"Adds free movement of labor and capital among members, not only goods.",c:"#7d2429"},
+{n:"Economic union",s:"+ common economic policies",f:4,d:"Goes further, with shared economic policies, and often a common currency.",c:"#1f6f78"}];
+var FT=["No tariffs among members","Common external tariff","Free movement of labor and capital","Common economic policy"];
+var st=document.getElementById("stairs"),fe=document.getElementById("feat"),fd=[];
+FT.forEach(function(f,i){var d=document.createElement("div");d.innerHTML='<b>'+(i+1)+'</b>'+f;fe.appendChild(d);fd.push(d)});
+var nodes=[];
+LV.forEach(function(l,i){var x=20+i*182,h=70+i*60,y=280-h,g=el("g",{"class":"st",tabindex:0,role:"button","aria-label":l.n},st);
+ el("rect",{"class":"s",x:x,y:y,width:170,height:h,rx:12,fill:l.c,"fill-opacity":.9,stroke:"#fff","stroke-width":3},g);
+ var t=el("text",{x:x+85,y:y+30,"text-anchor":"middle","font-size":"15","font-weight":"800",fill:l.c==="#e0a526"?"#231f20":"#fff","pointer-events":"none"},g);t.textContent=l.n;
+ var u=el("text",{x:x+85,y:y+52,"text-anchor":"middle","font-size":"11","font-weight":"600",fill:l.c==="#e0a526"?"#231f20":"#fff","pointer-events":"none"},g);u.textContent=l.s;
+ g.onclick=function(){show(i)};g.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();show(i)}};nodes.push(g)});
+function show(i){nodes.forEach(function(g,k){g.firstChild.setAttribute("stroke",k===i?"#231f20":"#fff");g.firstChild.setAttribute("stroke-width",k===i?5:3)});
+ fd.forEach(function(d,k){d.classList.toggle("on",k<LV[i].f)});
+ document.getElementById("sinfo").innerHTML="<strong>"+LV[i].n+".</strong> "+LV[i].d}
+function mc(host,list,labels){var h=document.getElementById(host);list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb");
+ labels.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>'}
+  else{b.className="wrong";b.disabled=true;f.innerHTML='<span class="badbox">Not that level. What has been added beyond the previous step?</span>'}};o.appendChild(b)});h.appendChild(d)})}
+mc("lq",[
+{t:"Members drop tariffs on each other’s goods, but each sets its own tariff on outsiders.",a:0,w:"A free trade area removes tariffs among members only."},
+{t:"Members also adopt one common tariff on imports from non-members.",a:1,w:"A common external tariff makes it a customs union."},
+{t:"Members also allow workers and capital to move freely across their borders.",a:2,w:"Free movement of labor and capital defines a common market."},
+{t:"Members also coordinate economic policy and share a currency.",a:3,w:"Shared economic policies and often a common currency define an economic union."}],LV.map(function(l){return l.n}));
+show(0);
+var W=6,cc=document.getElementById("ch");
+function upd(){var Pc=+document.getElementById("pc").value,t=+document.getElementById("tr").value/100;
+ document.getElementById("pcv").textContent="$"+Pc.toFixed(2);document.getElementById("trv").textContent=Math.round(t*100)+"%";
+ var pp0=Pc*(1+t),pw0=W*(1+t),p0=Math.min(pp0,pw0),fromP0=pp0<pw0,c0=fromP0?Pc:W;
+ var p1=Math.min(Pc,pw0),fromP1=Pc<pw0,c1=fromP1?Pc:W;
+ var Q0=100-5*p0,Q1=100-5*p1;
+ var TC=.5*(p0-p1)*(Q1-Q0),TD=fromP1?(c0-c1)*Q0:0,net=TC+TD;
+ function box(id,title,fromP,p,Q,cost){var e=document.getElementById(id);e.style.borderColor=fromP?"#e0a526":"#1f6f78";e.innerHTML="<small>"+title+"</small><b>Buys from "+(fromP?"partner P":"outsider W")+"</b>Consumer price $"+p.toFixed(2)+" · quantity "+Q.toFixed(0)+"<br><small>Producer’s cost $"+cost.toFixed(2)+(fromP?"":" + tariff")+"</small>"}
+ box("bf","Before the agreement",fromP0,p0,Q0,c0);box("af","After the agreement (no tariff on P)",fromP1,p1,Q1,c1);
+ cc.innerHTML="";el("rect",{width:700,height:180,fill:"#fcfcfc"},cc);
+ var mx=Math.max(Math.abs(TC),Math.abs(TD),Math.abs(net),20);
+ [["Trade creation (new, cheaper trade)",TC,"#3b9a63",22],["Trade diversion (costlier source)",TD,"#d34147",78],["Net effect on H",net,net>=0?"#1f6f78":"#7d2429",134]].forEach(function(r){
+  var w=Math.abs(r[1])/mx*230,x=r[1]>=0?360:360-w;var lbl=el("text",{x:10,y:r[3]-4,"font-size":"12","font-weight":"700"},cc);lbl.textContent=r[0];
+  el("rect",{x:x,y:r[3],width:Math.max(2,w),height:24,rx:6,fill:r[2]},cc);var v=el("text",{x:r[1]>=0?360+w+8:360-w-8,y:r[3]+17,"text-anchor":r[1]>=0?"start":"end","font-size":"13","font-weight":"800"},cc);v.textContent=(r[1]>=0?"+":"−")+"$"+Math.abs(r[1]).toFixed(1)});
+ el("path",{d:"M360 8V166",stroke:"#5b5557","stroke-width":2},cc);
+ document.getElementById("s1").textContent="+$"+TC.toFixed(1);document.getElementById("s2").textContent=(TD<0?"−$"+Math.abs(TD).toFixed(1):"$0");document.getElementById("s3").textContent=(net>=0?"+":"−")+"$"+Math.abs(net).toFixed(1);
+ var a=document.getElementById("adv");
+ if(Math.abs(p1-p0)<.001)a.innerHTML="<strong>No change.</strong> Even without a tariff on P, P’s goods ($"+Pc.toFixed(2)+") cost more than W’s goods with the tariff ($"+pw0.toFixed(2)+"), so H keeps buying from W.";
+ else if(!fromP0)a.innerHTML="<strong>Trade diversion appears.</strong> H used to buy from the low-cost outsider W (cost $"+W+"). Now it buys from P at a real cost of $"+Pc.toFixed(2)+": resources are wasted on each of the "+Q0.toFixed(0)+" units H already imported. H also loses the tariff revenue it used to collect. Consumers gain from the lower price ($"+p0.toFixed(2)+" to $"+p1.toFixed(2)+") and buy more, which is trade creation. "+(net>=0?"Here creation outweighs diversion, so H gains overall.":"Here diversion outweighs creation, so H loses overall.")+" Lower P’s cost, or lower the starting tariff, and watch the balance shift.";
+ else a.innerHTML="<strong>Pure trade creation.</strong> P was already the cheapest source, so the agreement simply lowers the price from $"+p0.toFixed(2)+" to $"+p1.toFixed(2)+" and H buys more, with no diversion. Net welfare gain: $"+net.toFixed(1)+"."}
+document.getElementById("pc").oninput=upd;document.getElementById("tr").oninput=upd;upd();
+mc("pq",[
+{t:"A pact among three countries that reduces trade barriers among them while each keeps its own external tariffs (such as the United States-Mexico-Canada Agreement).",a:0,w:"Removing barriers among members while keeping separate external tariffs describes a free trade area."},
+{t:"A bloc with a single market for goods, services, people, and capital, and a shared currency for many of its members (such as the European Union).",a:3,w:"The European Union is a deep form of integration, closest to an economic union, with a single market and, for many members, a common currency."}],LV.map(function(l){return l.n}));
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
