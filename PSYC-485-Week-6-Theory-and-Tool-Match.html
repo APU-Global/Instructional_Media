@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 485 Week 6 | Theory and Tool Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--ink:#222;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--paper:#fff;
+  --line:#d9d4ce;--muted:#5b5753;--gold:#f2b84b;
+  --good:#16674a;--good-bg:#e3f1ea;--warn:#7a4f00;--warn-bg:#fbefd2;--bad:#a8353a;--bad-bg:#f9e4e5;
+  --head:'Montserrat','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  --body:'Open Sans','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:#fff;color:var(--ink);font:15px/1.5 var(--body);color-scheme:light}
+button{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- layout: art panel + stage, always exactly the iframe height ---------- */
+.app{display:grid;grid-template-columns:clamp(224px,27vw,268px) minmax(0,1fr);height:100%;min-height:0}
+.art{background:#000;color:#fff;display:flex;flex-direction:column;padding:22px 16px 10px;min-height:0;min-width:0}
+.brand{padding:0 4px}
+.brand .bar{display:block;width:56px;height:5px;background:var(--red);border-radius:3px;margin-bottom:12px}
+.brand .course{font:600 13px/1.2 var(--head);color:#d0d0d0;margin-bottom:5px}
+.brand h1{font:800 21px/1.15 var(--head);letter-spacing:-.01em}
+.scene{flex:1;min-height:0;margin-top:6px}
+.scene svg{width:100%;height:100%;display:block}
+.emblem{display:none}
+.stage{display:flex;flex-direction:column;padding:20px 28px 12px;min-width:0;min-height:0;background:#fff}
+.panel{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding-top:14px}
+.foot{flex:none;font-size:12px;line-height:1.4;color:var(--muted);padding-top:8px;border-top:1px solid var(--line);margin-top:8px}
+.foot b{color:var(--ink)}
+
+/* ---------- headings and text ---------- */
+.panel h2{font:700 21px/1.2 var(--head);letter-spacing:-.01em}
+.lede{color:var(--muted);font-size:14.5px}
+.small{font-size:13px;color:var(--muted)}
+
+/* ---------- step tracker ---------- */
+.steps{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.step{display:flex;align-items:center;gap:7px;flex:1;min-width:0;font:600 12.5px/1.1 var(--head);color:#7a756f}
+.step .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--sand);color:#7a756f;display:grid;place-items:center;transition:background .25s,color .25s}
+.step .dot svg{width:17px;height:17px}
+.step .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step.done .dot{background:var(--red);color:#fff}
+.step.done{color:var(--ink)}
+.step.now .dot{background:#000;color:#fff}
+.step.now{color:#000}
+.step+.step::before{content:"";flex:none;width:10px;height:2px;background:var(--line);margin-right:1px;display:none}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;background:var(--red);color:#fff;font:700 14px/1 var(--head);padding:12px 22px;cursor:pointer;transition:background .15s,transform .1s}
+.btn:hover:not(:disabled){background:var(--red-d)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{background:#c9c4be;color:#fff;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#000;border:2px solid #000;padding:10px 20px}
+.btn.ghost:hover:not(:disabled){background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+:focus-visible{outline:3px solid #000;outline-offset:2px;box-shadow:0 0 0 5px #fff}
+.art :focus-visible{outline-color:#fff;box-shadow:none}
+
+/* ---------- choice cards ---------- */
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+.choice:hover:not(:disabled){border-color:#000}
+.choice .mark{flex:none;width:24px;height:24px;margin-top:1px;border-radius:50%;border:2px solid #9a948d;display:grid;place-items:center;font:700 12px/1 var(--head);color:#fff}
+.choice.multi .mark{border-radius:7px}
+.choice.on{border-color:#000;background:#faf9f8}
+.choice.on .mark{background:#000;border-color:#000}
+.choice.good{border-color:var(--good);background:var(--good-bg)}
+.choice.good .mark{background:var(--good);border-color:var(--good)}
+.choice.bad{border-color:var(--bad);background:var(--bad-bg)}
+.choice.bad .mark{background:var(--bad);border-color:var(--bad)}
+.choice.partial{border-color:#b98200;background:var(--warn-bg)}
+.choice.partial .mark{background:#b98200;border-color:#b98200}
+.choice.missed{border-style:dashed;border-color:var(--good)}
+.choice:disabled{cursor:default}
+.choice .txt{flex:1;min-width:0}
+.choice .txt b{font-family:var(--head);font-weight:700}
+.choice .sub{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ---------- feedback ---------- */
+.fb{border-left:5px solid var(--line);background:#f6f4f2;border-radius:8px;padding:10px 14px;font-size:14px;line-height:1.45}
+.fb b{font-family:var(--head)}
+.fb.good{border-color:var(--good);background:var(--good-bg)}
+.fb.warn{border-color:#b98200;background:var(--warn-bg)}
+.fb.bad{border-color:var(--bad);background:var(--bad-bg)}
+
+/* ---------- chat bubble ---------- */
+.say{display:flex;gap:12px;align-items:flex-start}
+.say .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--sand);color:#000;display:grid;place-items:center;font:800 15px var(--head)}
+.say .av.you{background:var(--red);color:#fff}
+.say .bub{background:var(--sand);border-radius:4px 16px 16px 16px;padding:11px 15px;font-size:15px;line-height:1.45}
+.say.you{flex-direction:row-reverse}
+.say.you .bub{background:#000;color:#fff;border-radius:16px 4px 16px 16px}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line)}
+.tab{background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:9px 14px 9px;font:700 14px/1 var(--head);color:#6b6661;cursor:pointer}
+.tab:hover{color:#000}
+.tab[aria-selected="true"]{color:#000;border-bottom-color:var(--red)}
+
+/* ---------- misc ---------- */
+.chip{display:inline-block;font:600 12px/1 var(--head);padding:6px 10px;border-radius:999px;background:var(--sand);color:#000}
+.chip.red{background:var(--red);color:#fff}
+.chip.black{background:#000;color:#fff}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .n{font:800 30px/1 var(--head)}
+.stat .l{font-size:13px;color:var(--muted)}
+.fade{animation:fade .3s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- narrow screens ---------- */
+@media (max-width:800px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .art{flex-direction:row;align-items:center;gap:12px;padding:10px 14px}
+  .brand .bar{width:36px;height:4px;margin-bottom:7px}
+  .brand h1{font-size:16px}
+  .brand .course{font-size:12px;margin-bottom:3px}
+  .scene{display:none}
+  .emblem{display:block;margin-left:auto;flex:none;width:54px;height:54px}
+  .emblem svg{width:100%;height:100%}
+  .stage{padding:8px 14px 4px;overflow-y:auto}
+  .panel{gap:7px;padding-top:7px;flex:none}
+  .panel h2{font-size:18px}
+  .lede{font-size:13.5px}
+  .step .lbl{display:none}
+  .step.now .lbl{display:block}
+  .step{flex:none}
+  .step.now{flex:1}
+  .choice{padding:8px 11px}
+  .tab{padding:8px 10px;font-size:13px}
+  .foot{font-size:11.5px;margin-top:2px;padding-top:4px;line-height:1.35}
+}
+@media (max-width:560px){
+  .panel h2{font-size:17px}
+  .fb{font-size:12.5px;padding:7px 10px;line-height:1.4}
+  .choice{font-size:13px;line-height:1.35;gap:9px}
+  .choice .mark{width:20px;height:20px}
+  .btn{padding:10px 18px;font-size:13px}
+  .say .bub{font-size:13.5px;padding:8px 12px}
+  .say .av{width:32px;height:32px}
+  .lede{font-size:13px;line-height:1.4}
+  .foot{font-size:11px}
+}
+
+/* ---------- shared form controls ---------- */
+.fl{display:block;font:700 13px/1.2 var(--head);margin-bottom:7px}
+.fl .v{float:right;font-weight:800;color:var(--red-d)}
+.seg{display:inline-flex;border:2px solid #000;border-radius:999px;overflow:hidden;max-width:100%}
+.seg button{background:#fff;border:0;padding:8px 14px;font:700 13px/1 var(--head);cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:2px solid #000}
+.seg button:hover:not([aria-pressed="true"]):not(:disabled){background:var(--sand)}
+.seg button[aria-pressed="true"]{background:#000;color:#fff}
+.seg button:disabled{color:#a8a39d;cursor:not-allowed}
+input[type=range]{width:100%;accent-color:var(--red);height:26px;margin:0;cursor:pointer}
+textarea{width:100%;font:14px/1.45 var(--body);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:9px 12px;resize:none}
+textarea:focus-visible{border-color:#000;outline:none;box-shadow:none}
+
+.og{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.og .choice{padding:10px 12px;align-items:center;font-size:13.5px;line-height:1.35}
+.og .choice .mark{margin-top:0;width:22px;height:22px}
+.og .choice:last-child:nth-child(odd){grid-column:1/-1}
+.scn{background:var(--sand);border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.45}
+.scn b{font-family:var(--head)}
+.pair{display:flex;gap:8px;flex-wrap:wrap}
+.say2{background:#000;color:#fff;border-radius:14px;padding:13px 16px;font-size:14.5px;line-height:1.5}
+.say2 b{color:#f2b84b;font-family:var(--head)}
+.rec{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.35;align-items:center}
+.rec b{font-family:var(--head)}
+.rec .sc{grid-row:1/3;grid-column:2;font:800 18px var(--head)}
+.rec span{color:var(--muted)}
+.lp,.rp{transition:transform .8s cubic-bezier(.3,.7,.3,1)}
+#bulb{transition:opacity .6s}
+@media (max-width:800px){.og .choice{padding:6px 10px}.scn{padding:8px 11px;font-size:13px}.say2{font-size:13.5px;padding:10px 12px}.rec{padding:6px 10px}}
+@media (max-width:560px){.og{gap:6px}.og .choice{font-size:12.5px;padding:6px 8px;gap:8px}.og .choice .mark{width:18px;height:18px}.og .choice .sub{font-size:11.5px;line-height:1.25}.scn{font-size:12.5px;padding:7px 10px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="ic-puzzle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h5a2 2 0 1 1 4 0h5v5a2 2 0 1 0 0 4v3H4z"/></g></symbol>
+</defs></svg>
+<div class="app">
+  <aside class="art">
+    <div class="brand"><span class="bar"></span><p class="course">PSYC 485 Week 6</p><h1>Theory and Tool Match</h1></div>
+    <div class="scene">
+      <svg viewBox="0 0 240 545" preserveAspectRatio="xMidYMax meet" role="img" id="art" aria-label="Two puzzle pieces, one for a theory and one for a tool, that snap together when they fit.">
+        <g id="bulb" opacity=".25" transform="translate(120 66)">
+          <g stroke="#f2b84b" stroke-width="3" stroke-linecap="round">
+            <path d="M0-52v-10M37-37l7-7M-37-37l-7-7M52 0h10M-52 0h-10"/>
+          </g>
+          <circle r="32" fill="#f2b84b"/>
+          <rect x="-13" y="30" width="26" height="9" rx="3" fill="#edebe8"/>
+          <rect x="-9" y="40" width="18" height="6" rx="3" fill="#edebe8"/>
+          <path d="M-9 8l4 8 5-12 5 12 4-8" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+        </g>
+        <g transform="translate(0 150)">
+          <g class="lp" id="lpiece" transform="translate(24 0)">
+            <path d="M8 0H96V36A14 14 0 1 1 96 60V88Q96 96 88 96H8Q0 96 0 88V8Q0 0 8 0Z" fill="#d34147"/>
+            <text x="48" y="28" text-anchor="middle" fill="#fff" style="font:800 12px var(--head)">Theory</text>
+            <text id="thT" text-anchor="middle" fill="#fff" style="font:700 12px var(--head)"></text>
+          </g>
+          <g class="rp" id="rpiece" transform="translate(120 0)">
+            <path d="M0 0H88Q96 0 96 8V88Q96 96 88 96H0V60A14 14 0 1 0 0 36Z" fill="#edebe8"/>
+            <text x="56" y="28" text-anchor="middle" fill="#000" style="font:800 12px var(--head)">Tool</text>
+            <text id="tlT" text-anchor="middle" fill="#000" style="font:700 12px var(--head)"></text>
+          </g>
+        </g>
+        <text id="fitT" x="120" y="296" text-anchor="middle" fill="#fff" style="font:800 18px var(--head)">Pick a pair</text>
+        <text id="fitS" x="120" y="318" text-anchor="middle" fill="#cfcfcf" style="font:400 13px var(--body)"></text>
+        <g id="dots"></g>
+        <text id="rnd" x="120" y="496" text-anchor="middle" fill="#cfcfcf" style="font:600 12px var(--head)"></text>
+      </svg>
+    </div>
+    <div class="emblem"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="26" fill="#d34147"/><use href="#ic-puzzle" x="13" y="13" width="28" height="28" color="#fff"/></svg></div>
+  </aside>
+  <main class="stage">
+    <section class="panel" id="panel" aria-live="polite"></section>
+    <p class="foot"><b>Practice and reflection.</b> Real populations and settings vary, so use your Week 6 resources and your instructor’s guidance when you choose a theory and tool for Discussion 6.</p>
+  </main>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const shuffle=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const ico=(id,cls)=>`<svg class="${cls||''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`;
+const CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const CROSS='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const DASH='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"/></svg>';
+function copyText(text){
+  try{ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).catch(()=>{});return true} }catch(e){}
+  const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;left:-999px;top:0';document.body.appendChild(t);t.select();
+  let ok=false;try{ok=document.execCommand('copy')}catch(e){}t.remove();return ok;
+}
+
+const TH={
+  cbt:{n:'Cognitive Behavioral Theory',l:['Cognitive','Behavioral'],d:'Thoughts shape feelings and actions',p:'the way we think about a situation shapes how we feel and what we do'},
+  attach:{n:'Attachment Theory',l:['Attachment'],d:'Bonds shape how we cope and grieve',p:'the bonds we form with other people shape how we cope with stress and loss'},
+  pos:{n:'Positive Psychology',l:['Positive','Psychology'],d:'Build strengths, meaning and well-being',p:'people do better when they build on their strengths, their sense of meaning and what is going well'},
+  sys:{n:'Systems Theory',l:['Systems'],d:'People live inside families and communities',p:'people are shaped by the families, communities and settings around them'}
+};
+const TL={
+  abcde:{n:'ABCDE model',u:'the ABCDE model',l:['ABCDE','model'],d:'Spot a belief, then dispute it',p:'we notice what happened (Adversity) and the belief we had (Beliefs), see how we felt and acted (Consequences), challenge the belief (Disputation), and notice the new energy that follows (Energization)'},
+  miracle:{n:'Miracle question',u:'the miracle question',l:['Miracle','question'],d:'Picture the problem gone',p:'you picture waking up to find the problem solved and describe what would be different'},
+  journal:{n:'Journaling',u:'journaling',l:['Journaling'],d:'Write to process and notice growth',p:'you write regularly to process feelings and notice patterns and progress'},
+  active:{n:'Active listening',u:'active listening',l:['Active','listening'],d:'Reflect, reassure, ask open questions',p:'you listen fully, reflect feelings back and ask open questions so the person feels heard'},
+  genogram:{n:'Genogram (family map)',u:'a genogram (family map)',l:['Genogram','(family map)'],d:'Map relationships and patterns',p:'you draw a family map to see relationships, patterns and supports'}
+};
+const SC=[
+ {t:'Math is not for me',set:'Youth mentoring club',s:'Middle schoolers in a mentoring club say, “I’m just bad at math. I always fail.” Their grades are fine, but test anxiety is climbing.',
+  th:{cbt:[2,'Thoughts like “I always fail” drive the anxiety, and CBT works directly on the link between thinking, feeling and behavior.'],pos:[1,'Building strengths and confidence helps, but it does not directly challenge the “I always fail” thought.'],attach:[0,'Supportive relationships matter, yet attachment is not the best lens for test-related thinking.'],sys:[0,'Home and school context matter, but the main issue is a thinking pattern within each student.']},
+  tl:{abcde:[2,'ABCDE gives students clear steps to spot the belief behind the anxiety and dispute it.'],journal:[1,'Writing can reveal thoughts, but it needs structure to change them.'],miracle:[1,'Picturing success can motivate, but it does not challenge the belief itself.'],active:[1,'Listening builds trust with any group, but it will not shift the thought pattern alone.'],genogram:[0,'A family map does not address students’ beliefs about tests.']}},
+ {t:'After the loss',set:'Hospital grief group',s:'Adults in a hospital grief group lost their spouses within the past year. They describe waves of sadness, and many say they feel alone.',
+  th:{attach:[2,'Grief is the loss of an important bond, so attachment helps explain why sadness comes in waves and why isolation hurts.'],cbt:[1,'It can help with guilt or harsh self-talk, but grief is not a thinking error to fix.'],pos:[1,'Meaning and gratitude can come later, but pushing positivity too soon can feel dismissive.'],sys:[0,'Family dynamics matter, yet this group centers on each person’s own loss.']},
+  tl:{active:[2,'Feeling heard is central to grief support, and reflecting feelings back tells people they are not alone.'],journal:[2,'Writing helps people process waves of grief at their own pace. Offer it as an option, not a requirement.'],abcde:[0,'Disputing beliefs can feel like arguing with someone’s grief.'],miracle:[0,'Imagining the problem gone is painful when the loss cannot be undone.'],genogram:[0,'It could help in family work, but it is not the main need of a grief group.']}},
+ {t:'A family in crisis',set:'Emergency shelter',s:'A family of four arrives at a shelter after losing their housing. The parents argue, the children are withdrawn, and everyone is exhausted.',
+  th:{sys:[2,'The family’s patterns, roles and supports affect each other, and systems theory looks at them together.'],attach:[1,'The children’s sense of safety matters, but it covers only part of the picture.'],pos:[1,'Naming strengths helps, but it can overlook how family members affect each other under stress.'],cbt:[0,'Individual thoughts matter, but they are only one piece of a family-wide crisis.']},
+  tl:{genogram:[2,'A family map shows relationships, patterns and supports that can guide next steps.'],active:[1,'Calm listening helps everyone in crisis, but it does not map the family system.'],miracle:[1,'Once the crisis settles, it can help the family name shared hopes.'],abcde:[0,'Asking exhausted people to dispute beliefs is too much for this moment.'],journal:[0,'Daily journaling is unlikely to help a family in the middle of a housing crisis.']}},
+ {t:'Running on empty',set:'College wellness group',s:'College students in a campus wellness group feel burned out and perfectionistic. They list everything they did wrong this term and overlook what went well.',
+  th:{pos:[2,'These students overlook what went well, and positive psychology shifts attention to strengths, gratitude and meaning.'],cbt:[1,'Perfectionist thinking can be challenged, but the group also needs to build on what is going well.'],attach:[0,'Relationships matter, yet attachment is not the strongest lens for burnout and perfectionism.'],sys:[0,'Campus context plays a role, but the group is working on individual habits of thinking and focus.']},
+  tl:{journal:[2,'A strengths or “three good things” journal trains attention toward what went well.'],abcde:[1,'It can dispute perfectionist beliefs, though it focuses more on problems than on strengths.'],miracle:[1,'Describing a good day can reveal what students want, but it does not build a daily habit.'],active:[0,'Listening helps rapport, yet it will not by itself shift attention toward strengths.'],genogram:[0,'A family map does not address burnout in a campus group.']}}
+];
+const LAB=['Weak fit','Partial fit','Strong fit'], FB=['bad','warn','good'], CL=['bad','partial','good'];
+const panel=$('#panel');
+let order=shuffle([0,1,2,3]), r=0, pick={}, res=[];
+const cur=()=>SC[order[r]];
+
+function lines(g,arr,cx,y0,ph){
+  g.innerHTML=arr.map((t,i)=>`<tspan x="${cx}" y="${y0+i*15}">${t}</tspan>`).join('');g.style.opacity=ph?'.6':'1';
+}
+function paintArt(){
+  const fin=i=>res[i]&&res[i].done?res[i]:null; const sc=fin(r); const score=sc?sc.th+sc.tl:null;
+  const gap=score===null?14:14*(1-score/4);
+  $('#lpiece').setAttribute('transform',`translate(${24-gap} 0)`);
+  $('#rpiece').setAttribute('transform',`translate(${120+gap} 0)`);
+  lines($('#thT'),pick.th?TH[pick.th].l:['Choose a','theory'],48,56,!pick.th);
+  lines($('#tlT'),pick.tl?TL[pick.tl].l:['Choose a','tool'],56,56,!pick.tl);
+  $('#thT').setAttribute('text-anchor','middle');$('#tlT').setAttribute('text-anchor','middle');
+  $('#bulb').setAttribute('opacity',score===null?.2:.2+.8*(score/4));
+  const T=$('#fitT'),S=$('#fitS');
+  if(score===null){T.textContent=pick.th?'Now choose a tool':'Pick a pair';S.textContent=pick.th?'Does it fit this setting?':'Theory first, then a tool.'}
+  else{T.textContent=score===4?'It snaps together':score>=3?'Almost a fit':score>=2?'A loose fit':'Not a fit yet';S.textContent=`${score} of 4 points this round`}
+  $('#dots').innerHTML=[0,1,2,3].map(i=>{
+    const x=36+i*56,d=fin(i),pts=d?d.th+d.tl:null,now=i===r&&!d;
+    const fill=pts===null?'none':pts>=3?'#d34147':pts===2?'#edebe8':'#555';
+    return `<circle cx="${x}" cy="455" r="17" fill="${fill}" stroke="${now?'#fff':pts===null?'#555':'none'}" stroke-width="2.5" ${pts===null&&!now?'stroke-dasharray="3 4"':''}/><text x="${x}" y="460" text-anchor="middle" fill="${pts===null?'#bbb':pts===2?'#000':'#fff'}" style="font:800 14px var(--head)">${pts===null?i+1:pts}</text>`}).join('');
+  $('#rnd').textContent=step==='done'?'All four rounds complete':`Round ${r+1} of 4`;
+}
+let step='play';
+const total=()=>res.reduce((a,x)=>a+x.th+x.tl,0);
+
+function optHtml(map,kind){
+  const keys=shuffle(Object.keys(map));
+  return keys.map(k=>`<button class="choice" data-k="${k}"><span class="mark"></span><span class="txt"><b>${map[k].n}</b><span class="sub">${map[k].d}</span></span></button>`).join('');
+}
+function renderTheory(){
+  const c=cur();
+  panel.innerHTML=`<h2 class="fade">Round ${r+1}: ${c.t}</h2>
+  <div class="scn"><b>${c.set}.</b> ${c.s}</div>
+  <p style="font:700 15px var(--head)">Which theory best explains what is going on?</p>
+  <div class="og" id="opts">${optHtml(TH)}</div><div id="fb"></div><div id="after"></div>`;
+  choose('th',c.th,TH,'Choose a tool');
+}
+function renderTool(){
+  const c=cur();
+  panel.innerHTML=`<h2 class="fade">Round ${r+1}: ${c.t}</h2>
+  <div class="scn"><b>${c.set}.</b> ${c.s}</div>
+  <p style="font:700 15px var(--head)">Which tool would you use with ${TH[pick.th].n}?</p>
+  <div class="og" id="opts">${optHtml(TL)}</div><div id="fb"></div><div id="after"></div>`;
+  choose('tl',c.tl,TL,'See the plain-language version');
+}
+function choose(key,table,names,nextLabel){
+  $$('#opts .choice').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.k,[pts,txt]=table[k];pick[key]=k;
+    $$('#opts .choice').forEach(x=>{
+      const kk=x.dataset.k;x.disabled=true;
+      if(x===b){x.classList.add(CL[pts]);x.querySelector('.mark').innerHTML=pts===2?CHECK:pts===1?DASH:CROSS}
+      else if(table[kk][0]===2){x.classList.add('missed');const m=x.querySelector('.mark');m.innerHTML='<span style="color:var(--good)">!</span>';m.style.borderColor='var(--good)'}
+    });
+    $('#fb').innerHTML=`<div class="fb ${FB[pts]} fade"><b>${LAB[pts]}.</b> ${txt}${pts<2?' The dashed green card marks the strongest choice.':''}</div>`;
+    $('#after').innerHTML=`<button class="btn fade" id="nx">${nextLabel}</button>`;
+    res[r]=res[r]||{th:0,tl:0};res[r][key]=pts;res[r][key+'K']=k;
+    if(key==='tl')res[r].done=true;
+    paintArt();
+    $('#nx').addEventListener('click',()=>{if(key==='th'){renderTool();paintArt()}else{renderResult();paintArt()}});
+  }));
+}
+function renderResult(){
+  const c=cur(),d=res[r],pts=d.th+d.tl,last=r===3;
+  panel.innerHTML=`<h2 class="fade">Round ${r+1}: ${pts===4?'A strong match':pts>=3?'A good match':pts>=2?'A workable match':'Worth a second look'}</h2>
+  <div class="pair"><span class="chip black">${TH[pick.th].n}</span><span class="chip red">${TL[pick.tl].n}</span><span class="chip">${pts} of 4 points</span></div>
+  <p class="lede" style="font-size:14px">In Discussion 6 you will need to explain your choices in simple language. Here is how that could sound with this group:</p>
+  <div class="say2"><b>Plain language</b><br>“We’re using ${TH[pick.th].n}, which says ${TH[pick.th].p}. To put that to work, we’ll try ${TL[pick.tl].u}, where ${TL[pick.tl].p}.”</div>
+  <div class="row"><button class="btn" id="nx">${last?'See my results':'Next round'}</button></div>`;
+  $('#nx').addEventListener('click',()=>{if(last){step='done';renderDone();paintArt()}else{r++;pick={};renderTheory();paintArt()}});
+}
+function renderDone(){
+  const t=total(),msg=t>=13?'Strong matching. You are choosing frameworks that fit the people and the setting.':t>=9?'Solid. Revisit the rounds marked partial and ask which need you would address first.':'Worth another pass. Review the Week 6 resources, then try again with the needs of each group in mind.';
+  panel.innerHTML=`<h2 class="fade">Your results: ${t} of 16</h2>
+  <div class="fb ${t>=13?'good':t>=9?'warn':'bad'}">${msg}</div>
+  <div class="choices" style="gap:7px">${order.map((o,i)=>{const d=res[i];return `<div class="rec"><b>${SC[o].t}</b><span>${TH[d.thK].n} with ${TL[d.tlK].n}</span><span class="sc">${d.th+d.tl}/4</span></div>`}).join('')}</div>
+  <p class="small">Next for Discussion 6: choose one theory and one tool that fit the population you will serve in your Capstone, and be ready to explain both in plain language.</p>
+  <div class="row"><button class="btn ghost" id="again">Play again</button></div>`;
+  $('#again').addEventListener('click',()=>{order=shuffle([0,1,2,3]);r=0;pick={};res=[];step='play';renderTheory();paintArt()});
+}
+renderTheory();paintArt();
+</script>
+</body>
+</html>

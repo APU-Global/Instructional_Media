@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 485 Week 2 | QPR Conversation Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--ink:#222;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--paper:#fff;
+  --line:#d9d4ce;--muted:#5b5753;--gold:#f2b84b;
+  --good:#16674a;--good-bg:#e3f1ea;--warn:#7a4f00;--warn-bg:#fbefd2;--bad:#a8353a;--bad-bg:#f9e4e5;
+  --head:'Montserrat','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  --body:'Open Sans','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:#fff;color:var(--ink);font:15px/1.5 var(--body);color-scheme:light}
+button{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- layout: art panel + stage, always exactly the iframe height ---------- */
+.app{display:grid;grid-template-columns:clamp(224px,27vw,268px) minmax(0,1fr);height:100%;min-height:0}
+.art{background:#000;color:#fff;display:flex;flex-direction:column;padding:22px 16px 10px;min-height:0;min-width:0}
+.brand{padding:0 4px}
+.brand .bar{display:block;width:56px;height:5px;background:var(--red);border-radius:3px;margin-bottom:12px}
+.brand .course{font:600 13px/1.2 var(--head);color:#d0d0d0;margin-bottom:5px}
+.brand h1{font:800 21px/1.15 var(--head);letter-spacing:-.01em}
+.scene{flex:1;min-height:0;margin-top:6px}
+.scene svg{width:100%;height:100%;display:block}
+.emblem{display:none}
+.stage{display:flex;flex-direction:column;padding:20px 28px 12px;min-width:0;min-height:0;background:#fff}
+.panel{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding-top:14px}
+.foot{flex:none;font-size:12px;line-height:1.4;color:var(--muted);padding-top:8px;border-top:1px solid var(--line);margin-top:8px}
+.foot b{color:var(--ink)}
+
+/* ---------- headings and text ---------- */
+.panel h2{font:700 21px/1.2 var(--head);letter-spacing:-.01em}
+.lede{color:var(--muted);font-size:14.5px}
+.small{font-size:13px;color:var(--muted)}
+
+/* ---------- step tracker ---------- */
+.steps{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.step{display:flex;align-items:center;gap:7px;flex:1;min-width:0;font:600 12.5px/1.1 var(--head);color:#7a756f}
+.step .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--sand);color:#7a756f;display:grid;place-items:center;transition:background .25s,color .25s}
+.step .dot svg{width:17px;height:17px}
+.step .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step.done .dot{background:var(--red);color:#fff}
+.step.done{color:var(--ink)}
+.step.now .dot{background:#000;color:#fff}
+.step.now{color:#000}
+.step+.step::before{content:"";flex:none;width:10px;height:2px;background:var(--line);margin-right:1px;display:none}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;background:var(--red);color:#fff;font:700 14px/1 var(--head);padding:12px 22px;cursor:pointer;transition:background .15s,transform .1s}
+.btn:hover:not(:disabled){background:var(--red-d)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{background:#c9c4be;color:#fff;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#000;border:2px solid #000;padding:10px 20px}
+.btn.ghost:hover:not(:disabled){background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+:focus-visible{outline:3px solid #000;outline-offset:2px;box-shadow:0 0 0 5px #fff}
+.art :focus-visible{outline-color:#fff;box-shadow:none}
+
+/* ---------- choice cards ---------- */
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+.choice:hover:not(:disabled){border-color:#000}
+.choice .mark{flex:none;width:24px;height:24px;margin-top:1px;border-radius:50%;border:2px solid #9a948d;display:grid;place-items:center;font:700 12px/1 var(--head);color:#fff}
+.choice.multi .mark{border-radius:7px}
+.choice.on{border-color:#000;background:#faf9f8}
+.choice.on .mark{background:#000;border-color:#000}
+.choice.good{border-color:var(--good);background:var(--good-bg)}
+.choice.good .mark{background:var(--good);border-color:var(--good)}
+.choice.bad{border-color:var(--bad);background:var(--bad-bg)}
+.choice.bad .mark{background:var(--bad);border-color:var(--bad)}
+.choice.partial{border-color:#b98200;background:var(--warn-bg)}
+.choice.partial .mark{background:#b98200;border-color:#b98200}
+.choice.missed{border-style:dashed;border-color:var(--good)}
+.choice:disabled{cursor:default}
+.choice .txt{flex:1;min-width:0}
+.choice .txt b{font-family:var(--head);font-weight:700}
+.choice .sub{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ---------- feedback ---------- */
+.fb{border-left:5px solid var(--line);background:#f6f4f2;border-radius:8px;padding:10px 14px;font-size:14px;line-height:1.45}
+.fb b{font-family:var(--head)}
+.fb.good{border-color:var(--good);background:var(--good-bg)}
+.fb.warn{border-color:#b98200;background:var(--warn-bg)}
+.fb.bad{border-color:var(--bad);background:var(--bad-bg)}
+
+/* ---------- chat bubble ---------- */
+.say{display:flex;gap:12px;align-items:flex-start}
+.say .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--sand);color:#000;display:grid;place-items:center;font:800 15px var(--head)}
+.say .av.you{background:var(--red);color:#fff}
+.say .bub{background:var(--sand);border-radius:4px 16px 16px 16px;padding:11px 15px;font-size:15px;line-height:1.45}
+.say.you{flex-direction:row-reverse}
+.say.you .bub{background:#000;color:#fff;border-radius:16px 4px 16px 16px}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line)}
+.tab{background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:9px 14px 9px;font:700 14px/1 var(--head);color:#6b6661;cursor:pointer}
+.tab:hover{color:#000}
+.tab[aria-selected="true"]{color:#000;border-bottom-color:var(--red)}
+
+/* ---------- misc ---------- */
+.chip{display:inline-block;font:600 12px/1 var(--head);padding:6px 10px;border-radius:999px;background:var(--sand);color:#000}
+.chip.red{background:var(--red);color:#fff}
+.chip.black{background:#000;color:#fff}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .n{font:800 30px/1 var(--head)}
+.stat .l{font-size:13px;color:var(--muted)}
+.fade{animation:fade .3s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- narrow screens ---------- */
+@media (max-width:800px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .art{flex-direction:row;align-items:center;gap:12px;padding:10px 14px}
+  .brand .bar{width:36px;height:4px;margin-bottom:7px}
+  .brand h1{font-size:16px}
+  .brand .course{font-size:12px;margin-bottom:3px}
+  .scene{display:none}
+  .emblem{display:block;margin-left:auto;flex:none;width:54px;height:54px}
+  .emblem svg{width:100%;height:100%}
+  .stage{padding:8px 14px 4px;overflow-y:auto}
+  .panel{gap:7px;padding-top:7px;flex:none}
+  .panel h2{font-size:18px}
+  .lede{font-size:13.5px}
+  .step .lbl{display:none}
+  .step.now .lbl{display:block}
+  .step{flex:none}
+  .step.now{flex:1}
+  .choice{padding:8px 11px}
+  .tab{padding:8px 10px;font-size:13px}
+  .foot{font-size:11.5px;margin-top:2px;padding-top:4px;line-height:1.35}
+}
+@media (max-width:560px){
+  .panel h2{font-size:17px}
+  .fb{font-size:12.5px;padding:7px 10px;line-height:1.4}
+  .choice{font-size:13px;line-height:1.35;gap:9px}
+  .choice .mark{width:20px;height:20px}
+  .btn{padding:10px 18px;font-size:13px}
+  .say .bub{font-size:13.5px;padding:8px 12px}
+  .say .av{width:32px;height:32px}
+  .lede{font-size:13px;line-height:1.4}
+  .foot{font-size:11px}
+}
+
+/* ---------- shared form controls ---------- */
+.fl{display:block;font:700 13px/1.2 var(--head);margin-bottom:7px}
+.fl .v{float:right;font-weight:800;color:var(--red-d)}
+.seg{display:inline-flex;border:2px solid #000;border-radius:999px;overflow:hidden;max-width:100%}
+.seg button{background:#fff;border:0;padding:8px 14px;font:700 13px/1 var(--head);cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:2px solid #000}
+.seg button:hover:not([aria-pressed="true"]):not(:disabled){background:var(--sand)}
+.seg button[aria-pressed="true"]{background:#000;color:#fff}
+.seg button:disabled{color:#a8a39d;cursor:not-allowed}
+input[type=range]{width:100%;accent-color:var(--red);height:26px;margin:0;cursor:pointer}
+textarea{width:100%;font:14px/1.45 var(--body);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:9px 12px;resize:none}
+textarea:focus-visible{border-color:#000;outline:none;box-shadow:none}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid2 .choice{font-size:13.5px;line-height:1.38;padding:9px 11px;align-items:center}
+.grid2 .choice .mark{margin-top:0;width:22px;height:22px}
+.recap{display:flex;gap:12px;align-items:flex-start}
+.recap .ic{flex:none;width:36px;height:36px;border-radius:50%;background:#000;color:#fff;display:grid;place-items:center}
+.recap .ic svg{width:19px;height:19px}
+.recap p{font-size:14px;line-height:1.4}
+.recap b{font-family:var(--head)}
+.stats{display:flex;gap:28px}
+.st circle{fill:#3a3a3a;transition:fill .3s}
+.st use{color:#a8a8a8;transition:color .3s}
+.st text{fill:#bdbdbd;font:600 11px var(--head)}
+.st.now circle{fill:#fff}.st.now use{color:#000}.st.now text{fill:#fff}
+.st.done circle{fill:#d34147}.st.done use{color:#fff}.st.done text{fill:#fff}
+#sun{transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+@media (max-width:800px){.grid2 .choice{font-size:13px;padding:6px 10px}.stats{gap:20px}.stat .n{font-size:24px}.recap p{font-size:13px}.recap .ic{width:30px;height:30px}.recap .ic svg{width:16px;height:16px}}
+@media (max-width:560px){.grid2{gap:6px}.grid2 .choice{font-size:12.2px;line-height:1.3;padding:6px 7px;gap:7px}.grid2 .choice .mark{width:18px;height:18px}.say .bub{font-size:13.5px;padding:8px 12px}.say .av{width:32px;height:32px}}
+@media (min-width:801px){.steps{display:none}.panel{padding-top:2px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="ic-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+    <symbol id="ic-q" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1.1.9-1.1 1.6"/></g><circle cx="12" cy="16.6" r="1.1" fill="currentColor"/></symbol>
+    <symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-arrow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h12M11 7l5 5-5 5M20 4v16"/></g></symbol>
+    <symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <aside class="art">
+    <div class="brand"><span class="bar"></span><p class="course">PSYC 485 Week 2</p><h1>QPR Conversation Practice</h1></div>
+    <div class="scene">
+      <svg viewBox="0 0 240 545" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Two people sit side by side on a bench while a sun rises behind them. Four stepping stones below show Notice, Question, Persuade and Refer.">
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#f2b84b" stop-opacity=".5"/><stop offset="1" stop-color="#f2b84b" stop-opacity="0"/></radialGradient>
+        </defs>
+        <!-- speech bubbles -->
+        <path d="M18 14h100a14 14 0 0 1 14 14v26a14 14 0 0 1-14 14H50l-14 14 1-14H18A14 14 0 0 1 4 54V28a14 14 0 0 1 14-14z" fill="#2b2b2b"/>
+        <circle cx="40" cy="41" r="4.5" fill="#9b9b9b"/><circle cx="62" cy="41" r="4.5" fill="#9b9b9b"/><circle cx="84" cy="41" r="4.5" fill="#9b9b9b"/>
+        <rect x="108" y="96" width="128" height="56" rx="16" fill="#d34147"/>
+        <path d="M150 150l10 18 10-18z" fill="#d34147"/>
+        <use id="bubIco" href="#ic-eye" x="158" y="108" width="32" height="32" color="#fff"/>
+        <!-- sunrise -->
+        <g id="sun" transform="translate(120 470)">
+          <circle r="130" fill="url(#glow)"/>
+          <circle r="56" fill="#f2b84b"/>
+        </g>
+        <g transform="translate(0 100)">
+        <path d="M0 306Q40 278 96 297T240 285V440H0Z" fill="#1f1f1f"/>
+        <path d="M0 348Q70 332 130 344T240 338V440H0Z" fill="#2e2e2e"/>
+        <!-- Jordan -->
+        <g>
+          <path d="M70 350V320a16 16 0 0 1 32 0V350z" fill="#8c8c8c"/>
+          <circle cx="90" cy="292" r="13" fill="#edebe8"/>
+                  </g>
+        <!-- you (leaning in) -->
+        <g transform="rotate(-7 154 350)">
+          <path d="M138 350V320a16 16 0 0 1 32 0V350z" fill="#d34147"/>
+          <circle cx="154" cy="290" r="13" fill="#edebe8"/>
+        </g>
+        <path d="M141 322L112 331" stroke="#a8353a" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <!-- bench -->
+        <rect x="52" y="346" width="136" height="9" rx="3" fill="#7a7a7a"/>
+        <rect x="76" y="354" width="11" height="32" rx="4" fill="#5f5f5f"/><rect x="92" y="354" width="11" height="32" rx="4" fill="#5f5f5f"/>
+        <rect x="140" y="354" width="11" height="32" rx="4" fill="#5f5f5f"/><rect x="156" y="354" width="11" height="32" rx="4" fill="#5f5f5f"/>
+        <rect x="56" y="355" width="6" height="30" rx="2" fill="#7a7a7a"/><rect x="178" y="355" width="6" height="30" rx="2" fill="#7a7a7a"/>
+        <!-- stepping stones -->
+        <path d="M32 406H208" stroke="#454545" stroke-width="3" stroke-linecap="round"/>
+        <g id="stones">
+          <g class="st" data-i="0"><circle cx="32" cy="406" r="16"/><use href="#ic-eye" x="22" y="396" width="20" height="20"/><text x="32" y="436" text-anchor="middle">Notice</text></g>
+          <g class="st" data-i="1"><circle cx="92" cy="406" r="16"/><use href="#ic-q" x="82" y="396" width="20" height="20"/><text x="92" y="436" text-anchor="middle">Question</text></g>
+          <g class="st" data-i="2"><circle cx="152" cy="406" r="16"/><use href="#ic-heart" x="142" y="396" width="20" height="20"/><text x="152" y="436" text-anchor="middle">Persuade</text></g>
+          <g class="st" data-i="3"><circle cx="212" cy="406" r="16"/><use href="#ic-arrow" x="202" y="396" width="20" height="20"/><text x="212" y="436" text-anchor="middle">Refer</text></g>
+        </g>
+        </g>
+      </svg>
+    </div>
+    <div class="emblem"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="26" fill="#d34147"/><use href="#ic-heart" x="13" y="13" width="28" height="28" color="#fff"/></svg></div>
+  </aside>
+
+  <main class="stage">
+    <ol class="steps" id="steps" aria-label="Progress"></ol>
+    <section class="panel" id="panel" aria-live="polite"></section>
+    <p class="foot"><b>Fictional practice scenario.</b> It does not replace the QPR training. If you or someone you know needs support right now, call or text 988 in the U.S. (outside the U.S., use local crisis services).</p>
+  </main>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const shuffle=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const ico=(id,cls)=>`<svg class="${cls||''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`;
+const CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const CROSS='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const DASH='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"/></svg>';
+function copyText(text){
+  try{ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).catch(()=>{});return true} }catch(e){}
+  const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;left:-999px;top:0';document.body.appendChild(t);t.select();
+  let ok=false;try{ok=document.execCommand('copy')}catch(e){}t.remove();return ok;
+}
+
+const SIGNS=[
+  {t:'Says, “Everyone would be better off without me.”',s:true},
+  {t:'Has skipped two study sessions and stopped replying in the group chat.',s:true},
+  {t:'Is excited about a weekend trip with family.',s:false},
+  {t:'Talks about feeling trapped, with no way out.',s:true},
+  {t:'Mentions the last exam was really hard.',s:false},
+  {t:'Is sleeping far more or far less than usual and drinking more than before.',s:true},
+  {t:'Posts photos from a friend’s birthday dinner.',s:false},
+  {t:'Gives away belongings that used to matter a lot.',s:true}
+];
+const QPR=[
+ {key:'Question',prompt:'Jordan has been quiet all term. Tonight in the study room, Jordan says:',
+  quote:'“Honestly, I don’t know how much longer I can keep doing this. Sometimes I think everyone would be better off without me.”',
+  ask:'What do you say?',
+  opts:[
+   {t:'“Are you thinking about suicide?”',best:1,fb:'Direct, calm and caring. Asking plainly does not plant the idea. It shows Jordan you can handle the answer and opens the door to talk.'},
+   {t:'“You’re not thinking of doing something drastic, are you?”',fb:'This leads Jordan toward “no.” Vague words like “something drastic” make an honest answer harder. Use the word suicide.'},
+   {t:'“Everybody gets overwhelmed near the end of a term. A good night’s sleep will help.”',fb:'This minimizes what Jordan just risked saying out loud and ends the conversation before it starts.'}],
+  reply:'“…Yeah. I have. A lot lately.”'},
+ {key:'Persuade',prompt:'Jordan looks at the floor and says:',
+  quote:'“I’ve thought about it a lot lately. I just feel like a burden to everyone.”',
+  ask:'How do you respond?',
+  opts:[
+   {t:'“Thank you for telling me. I’m glad you did, and I care about you. I want you to get help. Will you let me go with you to talk to someone today?”',best:1,fb:'You listened first, showed care, and asked for one specific yes-or-no step toward help. That is the heart of Persuade.'},
+   {t:'“I promise I won’t tell anyone. Let’s keep this between us.”',fb:'Never promise secrecy. A secret keeps Jordan from getting help and leaves you carrying the risk alone. Being honest that you want to bring in help builds trust.'},
+   {t:'“Think about how much this would hurt your family. You have so much to live for.”',fb:'Guilt and arguments can deepen the feeling of being a burden. Listen to the pain rather than debating whether Jordan should feel it.'}],
+  reply:'“Okay… I think I could try that.”'},
+ {key:'Refer',prompt:'Jordan nods, then adds:',
+  quote:'“I just don’t know who to call.”',
+  ask:'What do you do next?',
+  opts:[
+   {t:'“Let’s call or text 988 together right now, and I’ll stay with you until we’re connected. If you ever can’t stay safe, we call 911.”',best:1,fb:'A warm handoff: you connect Jordan with trained crisis counselors in real time and stay present. In the U.S., 988 is the Suicide & Crisis Lifeline, and 911 is for immediate danger.'},
+   {t:'“Look up a therapist sometime this month and let me know how it goes.”',fb:'Too vague and too slow. Someone in pain needs a specific next step, ideally with a person beside them as they take it.'},
+   {t:'“I’ll be your counselor. We’ll talk every night and work through this ourselves.”',fb:'It comes from care, but it is beyond your role and training and can leave Jordan without professional support. Your job is to connect, not to treat.'}],
+  reply:'“Okay. Thank you for not leaving me alone with this.”'}
+];
+const META=[{l:'Notice',i:'ic-eye'},{l:'Question',i:'ic-q'},{l:'Persuade',i:'ic-heart'},{l:'Refer',i:'ic-arrow'}];
+const ICONS=['ic-eye','ic-q','ic-heart','ic-arrow','ic-check'];
+const panel=$('#panel');
+let st=0, firstTry=[], caught=0, order=[];
+
+function paint(){
+  $('#steps').innerHTML=META.map((m,i)=>`<li class="step ${i<st?'done':i===st?'now':''}"><span class="dot">${ico(m.i)}</span><span class="lbl">${m.l}</span></li>`).join('');
+  $$('.st').forEach(g=>{const i=+g.dataset.i;g.classList.toggle('done',i<st);g.classList.toggle('now',i===st)});
+  $('#sun').setAttribute('transform',`translate(120 ${470-Math.min(st,4)*45})`);
+  $('#bubIco').setAttribute('href','#'+ICONS[Math.min(st,4)]);
+}
+function go(n){st=n;paint();render()}
+
+function renderNotice(){
+  panel.innerHTML=`<div class="fade"><h2>Notice the signs</h2></div>
+  <p class="lede">Jordan is in your Capstone cohort. Over the past few weeks you have noticed the things below. Select every one that could be a warning sign that someone is struggling.</p>
+  <div class="grid2" id="signs">${SIGNS.map((s,i)=>`<button class="choice multi" data-i="${i}" aria-pressed="false"><span class="mark"></span><span class="txt">${s.t}</span></button>`).join('')}</div>
+  <div id="fb"></div>
+  <div class="row"><button class="btn" id="check" disabled>Check my answers</button></div>`;
+  const picked=new Set(), btn=$('#check');
+  $$('#signs .choice').forEach(b=>b.addEventListener('click',()=>{
+    if(btn.dataset.done)return;
+    const i=+b.dataset.i;
+    if(picked.has(i)){picked.delete(i);b.classList.remove('on');b.setAttribute('aria-pressed','false');b.querySelector('.mark').innerHTML=''}
+    else{picked.add(i);b.classList.add('on');b.setAttribute('aria-pressed','true');b.querySelector('.mark').innerHTML=CHECK}
+    btn.disabled=picked.size===0;
+  }));
+  btn.addEventListener('click',()=>{
+    if(btn.dataset.done){go(1);return}
+    btn.dataset.done=1;let hit=0,fp=0,miss=0;
+    $$('#signs .choice').forEach(b=>{
+      const i=+b.dataset.i,s=SIGNS[i].s,p=picked.has(i);b.disabled=true;b.classList.remove('on');
+      const m=b.querySelector('.mark');
+      if(p&&s){hit++;b.classList.add('good');m.innerHTML=CHECK}
+      else if(p&&!s){fp++;b.classList.add('bad');m.innerHTML=CROSS}
+      else if(!p&&s){miss++;b.classList.add('missed');m.innerHTML='<span style="color:var(--good)">!</span>';m.style.borderColor='var(--good)'}
+    });
+    caught=hit;
+    const perfect=hit===5&&fp===0;
+    let msg=perfect?'<b>You spotted all five.</b> Warning signs show up in what people say, what they do, and what has changed for them.'
+      :`<b>You caught ${hit} of 5.</b> ${fp?'Some picks are everyday events that are not warning signs on their own. ':''}${miss?'Dashed green cards are signs you missed. ':''}`;
+    msg+=' Signs alone cannot tell you what someone is thinking, which is why the first QPR step is to ask.';
+    $('#fb').innerHTML=`<div class="fb ${perfect?'good':'warn'} fade">${msg}</div>`;
+    btn.textContent='Continue to Question';
+  });
+}
+
+function renderStep(i){
+  const s=QPR[i];
+  order[i]=order[i]||shuffle([0,1,2]);
+  panel.innerHTML=`<h2 class="fade">${s.key}</h2>
+  <p class="lede">${s.prompt}</p>
+  <div class="say"><div class="av">J</div><div class="bub">${s.quote}</div></div>
+  <p style="font:700 15px var(--head)">${s.ask}</p>
+  <div class="choices" id="opts">${order[i].map(k=>`<button class="choice" data-k="${k}"><span class="mark"></span><span class="txt">${s.opts[k].t}</span></button>`).join('')}</div>
+  <div id="fb"></div><div id="after" class="choices"></div>`;
+  let tried=0;
+  $$('#opts .choice').forEach(b=>b.addEventListener('click',()=>{
+    const o=s.opts[+b.dataset.k];tried++;
+    if(tried===1)firstTry[i]=!!o.best;
+    if(o.best){
+      $$('#opts .choice').forEach(x=>{if(x!==b)x.remove();x.disabled=true});
+      b.classList.add('good');b.querySelector('.mark').innerHTML=CHECK;
+      $('#fb').innerHTML=`<div class="fb good fade"><b>That works.</b> ${o.fb}</div>`;
+      $('#after').outerHTML=`<div class="fade"><div class="say" style="margin-bottom:12px"><div class="av">J</div><div class="bub">${s.reply}</div></div><button class="btn" id="next">${i<2?'Continue to '+QPR[i+1].key:'See my summary'}</button></div>`;
+      $('#next').addEventListener('click',()=>go(i+2));
+    }else{
+      b.disabled=true;b.classList.add('bad');b.querySelector('.mark').innerHTML=CROSS;
+      $('#fb').innerHTML=`<div class="fb warn fade"><b>Not quite.</b> ${o.fb} Try another response.</div>`;
+    }
+  }));
+}
+
+function renderSummary(){
+  const ft=firstTry.filter(Boolean).length;
+  panel.innerHTML=`<h2 class="fade">You walked through all three steps</h2>
+  <div class="stats"><div class="stat"><span class="n">${caught}/5</span><span class="l">warning signs spotted</span></div><div class="stat"><span class="n">${ft}/3</span><span class="l">responses right on the first try</span></div></div>
+  <div class="choices" style="gap:12px">
+    <div class="recap"><span class="ic">${ico('ic-q')}</span><p><b>Question.</b> Ask directly and calmly, using the word suicide.</p></div>
+    <div class="recap"><span class="ic">${ico('ic-heart')}</span><p><b>Persuade.</b> Listen, show you care, never promise secrecy, and ask the person to accept help.</p></div>
+    <div class="recap"><span class="ic">${ico('ic-arrow')}</span><p><b>Refer.</b> Connect the person to trained help, such as 988 in the U.S., and stay with them until they are connected.</p></div>
+  </div>
+  <div class="fb"><b>Next in Week 2:</b> complete the QPR Online Gatekeeper Suicide Training assignment. This practice reinforces the steps but is not a substitute for that training.</div>
+  <div class="row"><button class="btn ghost" id="again">Practice again</button></div>`;
+  $('#again').addEventListener('click',()=>{firstTry=[];caught=0;order=[];go(0)});
+}
+function render(){ if(st===0)renderNotice(); else if(st<4)renderStep(st-1); else renderSummary(); }
+go(0);
+</script>
+</body>
+</html>

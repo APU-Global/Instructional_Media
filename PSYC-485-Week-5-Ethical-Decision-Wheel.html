@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 485 Week 5 | Ethical Decision Wheel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--ink:#222;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--paper:#fff;
+  --line:#d9d4ce;--muted:#5b5753;--gold:#f2b84b;
+  --good:#16674a;--good-bg:#e3f1ea;--warn:#7a4f00;--warn-bg:#fbefd2;--bad:#a8353a;--bad-bg:#f9e4e5;
+  --head:'Montserrat','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  --body:'Open Sans','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:#fff;color:var(--ink);font:15px/1.5 var(--body);color-scheme:light}
+button{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- layout: art panel + stage, always exactly the iframe height ---------- */
+.app{display:grid;grid-template-columns:clamp(224px,27vw,268px) minmax(0,1fr);height:100%;min-height:0}
+.art{background:#000;color:#fff;display:flex;flex-direction:column;padding:22px 16px 10px;min-height:0;min-width:0}
+.brand{padding:0 4px}
+.brand .bar{display:block;width:56px;height:5px;background:var(--red);border-radius:3px;margin-bottom:12px}
+.brand .course{font:600 13px/1.2 var(--head);color:#d0d0d0;margin-bottom:5px}
+.brand h1{font:800 21px/1.15 var(--head);letter-spacing:-.01em}
+.scene{flex:1;min-height:0;margin-top:6px}
+.scene svg{width:100%;height:100%;display:block}
+.emblem{display:none}
+.stage{display:flex;flex-direction:column;padding:20px 28px 12px;min-width:0;min-height:0;background:#fff}
+.panel{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding-top:14px}
+.foot{flex:none;font-size:12px;line-height:1.4;color:var(--muted);padding-top:8px;border-top:1px solid var(--line);margin-top:8px}
+.foot b{color:var(--ink)}
+
+/* ---------- headings and text ---------- */
+.panel h2{font:700 21px/1.2 var(--head);letter-spacing:-.01em}
+.lede{color:var(--muted);font-size:14.5px}
+.small{font-size:13px;color:var(--muted)}
+
+/* ---------- step tracker ---------- */
+.steps{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.step{display:flex;align-items:center;gap:7px;flex:1;min-width:0;font:600 12.5px/1.1 var(--head);color:#7a756f}
+.step .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--sand);color:#7a756f;display:grid;place-items:center;transition:background .25s,color .25s}
+.step .dot svg{width:17px;height:17px}
+.step .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step.done .dot{background:var(--red);color:#fff}
+.step.done{color:var(--ink)}
+.step.now .dot{background:#000;color:#fff}
+.step.now{color:#000}
+.step+.step::before{content:"";flex:none;width:10px;height:2px;background:var(--line);margin-right:1px;display:none}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;background:var(--red);color:#fff;font:700 14px/1 var(--head);padding:12px 22px;cursor:pointer;transition:background .15s,transform .1s}
+.btn:hover:not(:disabled){background:var(--red-d)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{background:#c9c4be;color:#fff;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#000;border:2px solid #000;padding:10px 20px}
+.btn.ghost:hover:not(:disabled){background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+:focus-visible{outline:3px solid #000;outline-offset:2px;box-shadow:0 0 0 5px #fff}
+.art :focus-visible{outline-color:#fff;box-shadow:none}
+
+/* ---------- choice cards ---------- */
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+.choice:hover:not(:disabled){border-color:#000}
+.choice .mark{flex:none;width:24px;height:24px;margin-top:1px;border-radius:50%;border:2px solid #9a948d;display:grid;place-items:center;font:700 12px/1 var(--head);color:#fff}
+.choice.multi .mark{border-radius:7px}
+.choice.on{border-color:#000;background:#faf9f8}
+.choice.on .mark{background:#000;border-color:#000}
+.choice.good{border-color:var(--good);background:var(--good-bg)}
+.choice.good .mark{background:var(--good);border-color:var(--good)}
+.choice.bad{border-color:var(--bad);background:var(--bad-bg)}
+.choice.bad .mark{background:var(--bad);border-color:var(--bad)}
+.choice.partial{border-color:#b98200;background:var(--warn-bg)}
+.choice.partial .mark{background:#b98200;border-color:#b98200}
+.choice.missed{border-style:dashed;border-color:var(--good)}
+.choice:disabled{cursor:default}
+.choice .txt{flex:1;min-width:0}
+.choice .txt b{font-family:var(--head);font-weight:700}
+.choice .sub{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ---------- feedback ---------- */
+.fb{border-left:5px solid var(--line);background:#f6f4f2;border-radius:8px;padding:10px 14px;font-size:14px;line-height:1.45}
+.fb b{font-family:var(--head)}
+.fb.good{border-color:var(--good);background:var(--good-bg)}
+.fb.warn{border-color:#b98200;background:var(--warn-bg)}
+.fb.bad{border-color:var(--bad);background:var(--bad-bg)}
+
+/* ---------- chat bubble ---------- */
+.say{display:flex;gap:12px;align-items:flex-start}
+.say .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--sand);color:#000;display:grid;place-items:center;font:800 15px var(--head)}
+.say .av.you{background:var(--red);color:#fff}
+.say .bub{background:var(--sand);border-radius:4px 16px 16px 16px;padding:11px 15px;font-size:15px;line-height:1.45}
+.say.you{flex-direction:row-reverse}
+.say.you .bub{background:#000;color:#fff;border-radius:16px 4px 16px 16px}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line)}
+.tab{background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:9px 14px 9px;font:700 14px/1 var(--head);color:#6b6661;cursor:pointer}
+.tab:hover{color:#000}
+.tab[aria-selected="true"]{color:#000;border-bottom-color:var(--red)}
+
+/* ---------- misc ---------- */
+.chip{display:inline-block;font:600 12px/1 var(--head);padding:6px 10px;border-radius:999px;background:var(--sand);color:#000}
+.chip.red{background:var(--red);color:#fff}
+.chip.black{background:#000;color:#fff}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .n{font:800 30px/1 var(--head)}
+.stat .l{font-size:13px;color:var(--muted)}
+.fade{animation:fade .3s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- narrow screens ---------- */
+@media (max-width:800px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .art{flex-direction:row;align-items:center;gap:12px;padding:10px 14px}
+  .brand .bar{width:36px;height:4px;margin-bottom:7px}
+  .brand h1{font-size:16px}
+  .brand .course{font-size:12px;margin-bottom:3px}
+  .scene{display:none}
+  .emblem{display:block;margin-left:auto;flex:none;width:54px;height:54px}
+  .emblem svg{width:100%;height:100%}
+  .stage{padding:8px 14px 4px;overflow-y:auto}
+  .panel{gap:7px;padding-top:7px;flex:none}
+  .panel h2{font-size:18px}
+  .lede{font-size:13.5px}
+  .step .lbl{display:none}
+  .step.now .lbl{display:block}
+  .step{flex:none}
+  .step.now{flex:1}
+  .choice{padding:8px 11px}
+  .tab{padding:8px 10px;font-size:13px}
+  .foot{font-size:11.5px;margin-top:2px;padding-top:4px;line-height:1.35}
+}
+@media (max-width:560px){
+  .panel h2{font-size:17px}
+  .fb{font-size:12.5px;padding:7px 10px;line-height:1.4}
+  .choice{font-size:13px;line-height:1.35;gap:9px}
+  .choice .mark{width:20px;height:20px}
+  .btn{padding:10px 18px;font-size:13px}
+  .say .bub{font-size:13.5px;padding:8px 12px}
+  .say .av{width:32px;height:32px}
+  .lede{font-size:13px;line-height:1.4}
+  .foot{font-size:11px}
+}
+
+/* ---------- shared form controls ---------- */
+.fl{display:block;font:700 13px/1.2 var(--head);margin-bottom:7px}
+.fl .v{float:right;font-weight:800;color:var(--red-d)}
+.seg{display:inline-flex;border:2px solid #000;border-radius:999px;overflow:hidden;max-width:100%}
+.seg button{background:#fff;border:0;padding:8px 14px;font:700 13px/1 var(--head);cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:2px solid #000}
+.seg button:hover:not([aria-pressed="true"]):not(:disabled){background:var(--sand)}
+.seg button[aria-pressed="true"]{background:#000;color:#fff}
+.seg button:disabled{color:#a8a39d;cursor:not-allowed}
+input[type=range]{width:100%;accent-color:var(--red);height:26px;margin:0;cursor:pointer}
+textarea{width:100%;font:14px/1.45 var(--body);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:9px 12px;resize:none}
+textarea:focus-visible{border-color:#000;outline:none;box-shadow:none}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid2 .choice{font-size:13.5px;line-height:1.38;padding:9px 11px;align-items:center}
+.grid2 .choice .mark{margin-top:0;width:22px;height:22px}
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.case{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;transition:border-color .15s,transform .1s}
+.case:hover{border-color:#000}
+.case:active{transform:translateY(1px)}
+.case .ic{width:38px;height:38px;border-radius:50%;background:#000;color:#fff;display:grid;place-items:center}
+.case .ic svg{width:21px;height:21px}
+.case h3{font:700 15px/1.25 var(--head)}
+.case p{font-size:13px;line-height:1.38;color:var(--muted)}
+.scn{background:var(--sand);border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.45}
+.scn b{font-family:var(--head)}
+.ctx{display:flex;align-items:center;gap:8px}
+.ctx .chip{flex:none}
+.pr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pr .choice{padding:8px 11px;align-items:center;font-size:13px;line-height:1.3}
+.pr .choice .mark{margin-top:0;width:22px;height:22px;border-radius:7px}
+.pr .choice:last-child:nth-child(odd){grid-column:1/-1}
+.sum{display:flex;gap:10px;flex-wrap:wrap}
+.sum .chip{padding:8px 12px;font-size:12.5px}
+.sum .chip.ok{background:var(--good-bg);color:var(--good)}
+.sum .chip.no{background:var(--warn-bg);color:var(--warn)}
+.wseg path{fill:#262626;transition:fill .3s}
+.wseg text{fill:#a9a9a9;font:700 11.5px var(--head);transition:fill .3s}
+.wseg.now path{fill:#d34147}.wseg.now text{fill:#fff}
+.wseg.done path{fill:#edebe8}.wseg.done text{fill:#000}
+@media (min-width:801px){.steps{display:none}.panel{padding-top:2px}}
+@media (max-width:800px){
+  .cases{gap:8px}
+  .grid2 .choice{font-size:13px;padding:6px 10px}.pr .choice{padding:5px 10px}
+  .case{flex-direction:row;align-items:center;gap:10px;padding:8px 12px;flex-wrap:wrap}
+  .case p{display:none}.scn{padding:8px 11px;font-size:13px}
+}
+@media (max-width:560px){#ref{height:56px}.choices{gap:6px}.choices .choice{padding:5px 8px;font-size:12.5px;gap:8px}.choices .choice .mark{width:18px;height:18px}.card{padding:9px 11px}.cases{grid-template-columns:1fr}.pr .choice .sub{display:none}.pr .choice{padding:5px 8px;font-size:12.5px}.scn{font-size:12.5px;padding:7px 10px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="ic-scales" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8 20h8M4 7h16M7 7l-3.2 7h6.4zM17 7l-3.2 7h6.4z"/></g></symbol>
+  <symbol id="ic-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></g></symbol>
+  <symbol id="ic-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/></g></symbol>
+  <symbol id="ic-chip" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></g></symbol>
+  <symbol id="ic-scope" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></g></symbol>
+</defs></svg>
+<div class="app">
+  <aside class="art">
+    <div class="brand"><span class="bar"></span><p class="course">PSYC 485 Week 5</p><h1>Ethical Decision Wheel</h1></div>
+    <div class="scene">
+      <svg viewBox="0 0 240 545" preserveAspectRatio="xMidYMax meet" role="img" id="wheelsvg" aria-label="A five-part wheel: Identify, Consult, Decide, Reflect, Record.">
+        <g transform="translate(120 190)">
+          <g id="wheel"></g>
+          <circle r="52" fill="#101010" stroke="#2f2f2f" stroke-width="2"/>
+          <use href="#ic-scales" x="-27" y="-27" width="54" height="54" color="#fff"/>
+        </g>
+        <text id="capT" x="120" y="372" text-anchor="middle" fill="#fff" style="font:800 21px var(--head)">Choose a case</text>
+        <g id="capS" fill="#d4d4d4" style="font:400 13px var(--body)" text-anchor="middle"></g>
+        <text id="capC" x="120" y="500" text-anchor="middle" fill="#f2b84b" style="font:700 12px var(--head)"></text>
+      </svg>
+    </div>
+    <div class="emblem"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="26" fill="#d34147"/><use href="#ic-scales" x="12" y="12" width="30" height="30" color="#fff"/></svg></div>
+  </aside>
+  <main class="stage">
+    <ol class="steps" id="steps" aria-label="Progress"></ol>
+    <section class="panel" id="panel" aria-live="polite"></section>
+    <p class="foot"><b>Practice only.</b> Laws and codes vary by state and profession. Check the full text of the code you chose, and ask your instructor or site supervisor in real situations.</p>
+  </main>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const shuffle=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const ico=(id,cls)=>`<svg class="${cls||''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`;
+const CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const CROSS='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const DASH='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"/></svg>';
+function copyText(text){
+  try{ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).catch(()=>{});return true} }catch(e){}
+  const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;left:-999px;top:0';document.body.appendChild(t);t.select();
+  let ok=false;try{ok=document.execCommand('copy')}catch(e){}t.remove();return ok;
+}
+
+const STEPS=[
+  {n:'Identify',s:['Name the ethical issue','and who is affected.']},
+  {n:'Consult',s:['Turn to codes, laws,','policies and your supervisor.']},
+  {n:'Decide',s:['Weigh the options and','choose the best action.']},
+  {n:'Reflect',s:['Check the guiding principles','and your worldview.']},
+  {n:'Record',s:['Document what happened,','what you did, and why.']}
+];
+const PRIN=[
+  {id:'A',t:'Beneficence and nonmaleficence',d:'Do good, avoid harm'},
+  {id:'B',t:'Fidelity and responsibility',d:'Trust, roles, duties'},
+  {id:'C',t:'Integrity',d:'Honesty and accuracy'},
+  {id:'D',t:'Justice',d:'Fairness and access'},
+  {id:'E',t:'Respect for rights and dignity',d:'Privacy, self-determination'}
+];
+const CASES=[
+ {id:'teen',icon:'ic-lock',title:'A teen’s secret',tag:'Practicum',blurb:'Confidentiality and mandated reporting at a youth program.',
+  scenario:'You co-facilitate a youth group at your practicum site. After the session, a 14-year-old privately says an adult at home hurts them, then begs, “Promise you won’t tell anyone.”',
+  identify:{q:'What is the core ethical issue?',opts:[
+    {t:'Child safety and legal reporting duties collide with the teen’s request for secrecy.',best:1,fb:'Confidentiality has limits. When a child may be at risk, safety and the law come first.'},
+    {t:'The teen is testing boundaries, so this is mainly a group-discipline issue.',fb:'A disclosure of harm is not a discipline matter. Treat it as a possible safety and legal issue.'},
+    {t:'This is mainly a question of how skilled your counseling technique is with teens.',fb:'Technique matters, but the heart of this case is safety and legal duty, not skill.'}]},
+  consult:{q:'Which sources should you turn to? Select all that apply.',opts:[
+    {t:'Your site’s child-protection policy and your supervisor',ok:1},
+    {t:'Your state’s mandated reporting law',ok:1},
+    {t:'Confidentiality standards in your chosen ethics code (for example, APA 4.01 and 4.02)',ok:1},
+    {t:'A friend who works in a different field'},
+    {t:'What feels right in the moment'}]},
+  decide:{q:'What is your best next move?',opts:[
+    {t:'Stay calm and thank the teen for trusting you. Explain honestly that you may have to share this to keep them safe, and tell your supervisor right away so a report can be made as required.',best:1,fb:'Honest about limits, protective, and routed through the people who can act.'},
+    {t:'Promise to keep the secret so the teen keeps talking to you.',fb:'A promise you cannot keep damages trust and may break the law. Be honest about the limits of confidentiality.'},
+    {t:'Call the parents yourself to ask what is going on.',fb:'This could put the teen at greater risk and interfere with a protective response. Reports go through the proper channels.'}]},
+  weigh:['A','B'],
+  record:'Write down what the teen said, in their words, with the date and time, who you told, and what happened next. Stay factual and follow your site’s forms.'},
+ {id:'friend',icon:'ic-link',title:'A friend request',tag:'Practicum',blurb:'Professional boundaries and dual relationships.',
+  scenario:'A client at your practicum site finds you on social media and sends a friend request with the message, “You’re the only one who really gets me.”',
+  identify:{q:'What is the core ethical issue?',opts:[
+    {t:'Keeping a professional boundary and avoiding a dual relationship with a client.',best:1,fb:'A personal online connection blurs roles, and the client’s care comes first.'},
+    {t:'Whether you should close your social media accounts.',fb:'Your accounts are not the issue. The question is how to protect the professional relationship.'},
+    {t:'Whether declining will hurt the client’s feelings.',fb:'Feelings matter, and they are a reason to respond kindly. The core issue is still the boundary.'}]},
+  consult:{q:'Which sources should you turn to? Select all that apply.',opts:[
+    {t:'Your site’s policy on social media and client contact, and your supervisor',ok:1},
+    {t:'Boundary and multiple-relationship standards in your chosen code (for example, APA 3.05)',ok:1},
+    {t:'Your university’s Capstone guidance and your instructor',ok:1},
+    {t:'Whatever other staff do informally'},
+    {t:'What the client would prefer'}]},
+  decide:{q:'What is your best next move?',opts:[
+    {t:'Do not accept. Tell your supervisor, follow site policy, and kindly explain to the client in person that you keep the same professional boundaries with everyone you serve.',best:1,fb:'You protect the boundary, involve your supervisor, and treat the client with respect.'},
+    {t:'Accept the request to keep the client engaged, and keep your posts private.',fb:'Even with privacy settings, a personal connection blurs roles and can harm the client’s care.'},
+    {t:'Ignore it and never mention it to anyone.',fb:'Silence leaves the client confused and your supervisor unaware. Address it kindly and openly.'}]},
+  weigh:['B','A'],
+  record:'Note the request, how you responded, who you told, and the site policy you followed. Keep the entry short, factual and free of opinion.'},
+ {id:'ai',icon:'ic-chip',title:'The helpful chatbot',tag:'Practicum or project',blurb:'Privacy and AI tools in mental health work.',
+  scenario:'You are short on time. You want to paste your session notes, which include a participant’s first name, workplace and personal story, into a public AI chatbot to help you write a summary.',
+  identify:{q:'What is the core ethical issue?',opts:[
+    {t:'Protecting participant confidentiality when using AI tools.',best:1,fb:'Entering identifying details into a tool you do not control can expose private information.'},
+    {t:'Whether AI writing is accurate enough for your assignment.',fb:'Accuracy matters, but the ethical issue that comes first is participant privacy.'},
+    {t:'Whether your summary will be long enough.',fb:'Length is a writing concern. The ethical concern is who might see this information.'}]},
+  consult:{q:'Which sources should you turn to? Select all that apply.',opts:[
+    {t:'Your university’s policy on AI usage',ok:1},
+    {t:'Your site’s confidentiality and technology policies, and your supervisor',ok:1},
+    {t:'Privacy standards in your chosen ethics code (for example, APA 4.01)',ok:1},
+    {t:'The chatbot’s marketing page'},
+    {t:'What classmates say they do'}]},
+  decide:{q:'What is your best next move?',opts:[
+    {t:'Do not enter identifying or confidential details into a tool that is not approved. Ask your supervisor what is allowed, and write the summary yourself or with approved tools.',best:1,fb:'You protect the participant first and get clear permission before using any tool.'},
+    {t:'Remove only the name and paste in the rest.',fb:'Workplace and story details can still identify someone. Removing a name is not enough, and a tool may keep what you enter.'},
+    {t:'Paste it in, because the chatbot says it deletes your data.',fb:'You are responsible for confidentiality. Do not rely on a company’s promises.'}]},
+  weigh:['B','E'],
+  record:'Record which tools were approved, who approved them, and how you kept identifying details out. Cite the university or site policy you followed.'},
+ {id:'scope',icon:'ic-scope',title:'Can you advise me?',tag:'Project',blurb:'Competence, scope of role and referral.',
+  scenario:'You lead a psychoeducation session on stress. A participant stays behind and says, “You know so much about this. What should I do about my depression?”',
+  identify:{q:'What is the core ethical issue?',opts:[
+    {t:'Staying within your role and competence while still caring for the participant.',best:1,fb:'You can show care without stepping into a treatment role you are not trained or authorized for.'},
+    {t:'Whether your slides covered depression well enough.',fb:'Strong content does not make you a treating clinician. The issue is role and scope.'},
+    {t:'Whether the participant is being too personal.',fb:'The question is understandable. The issue is how you respond within your role.'}]},
+  consult:{q:'Which sources should you turn to? Select all that apply.',opts:[
+    {t:'Your project scope and informed consent (what you said you would and would not do)',ok:1},
+    {t:'Your instructor or site supervisor',ok:1},
+    {t:'Competence and referral standards in your chosen code (for example, APA 2.01)',ok:1},
+    {t:'Internet advice articles'},
+    {t:'Your own experience with similar feelings'}]},
+  decide:{q:'What is your best next move?',opts:[
+    {t:'Respond warmly, explain you cannot give treatment advice in this role, share referral options for licensed professionals (and crisis resources if safety is a concern), and let your instructor or supervisor know.',best:1,fb:'Caring, honest about your limits, and gives the participant a real next step.'},
+    {t:'Share the coping strategies you have learned, as a kind of mini-therapy.',fb:'Well meant, but outside your training and role. Without an assessment, advice can miss risk or cause harm.'},
+    {t:'Say you cannot help and move on to packing up.',fb:'Caring matters. A cold decline leaves the person without a next step. Show concern and point to resources.'}]},
+  weigh:['A','B'],
+  record:'Note that the participant asked for advice, how you explained your role, which referrals you shared, and who you informed. Do not include more personal detail than needed.'}
+];
+const panel=$('#panel'), svg=$('#wheelsvg');
+const P=(r,a)=>[r*Math.cos(a*Math.PI/180),r*Math.sin(a*Math.PI/180)];
+(function buildWheel(){
+  const R=112,r=54;
+  $('#wheel').innerHTML=STEPS.map((s,i)=>{
+    const a0=-90+i*72+1.6,a1=a0+72-3.2,[x0,y0]=P(R,a0),[x1,y1]=P(R,a1),[x2,y2]=P(r,a1),[x3,y3]=P(r,a0),[tx,ty]=P((R+r)/2,(a0+a1)/2);
+    return `<g class="wseg" data-i="${i}"><path d="M${x0} ${y0}A${R} ${R} 0 0 1 ${x1} ${y1}L${x2} ${y2}A${r} ${r} 0 0 0 ${x3} ${y3}Z"/><text x="${tx}" y="${ty+4}" text-anchor="middle">${s.n}</text></g>`}).join('');
+})();
+
+let step=0, cs=null, R={};
+function paint(){
+  const now=step-1;
+  $$('.wseg').forEach(g=>{const i=+g.dataset.i;g.classList.toggle('done',step>0&&i<now);g.classList.toggle('now',i===now)});
+  $('#steps').innerHTML=STEPS.map((m,i)=>`<li class="step ${i<now?'done':i===now?'now':''}"><span class="dot" style="font:800 12px var(--head)">${i+1}</span><span class="lbl">${m.n}</span></li>`).join('');
+  if(step===0){$('#capT').textContent='Choose a case';$('#capS').innerHTML='<text x="120" y="398">Pick a situation you might</text><text x="120" y="418">face in your Capstone.</text>';$('#capC').textContent=''}
+  else{const m=STEPS[now];$('#capT').textContent=m.n;$('#capS').innerHTML=m.s.map((l,k)=>`<text x="120" y="${398+k*20}">${l}</text>`).join('');$('#capC').textContent=cs.title}
+  svg.setAttribute('aria-label',step?`Wheel, step ${now+1} of 5: ${STEPS[now].n}`:'Wheel, no step chosen yet');
+}
+function go(n){step=n;paint();render()}
+const head=(t)=>`<div class="ctx fade"><h2>${t}</h2></div>`;
+const scn=()=>`<div class="scn"><b>${cs.title}.</b> ${cs.scenario}</div>`;
+
+function renderCases(){
+  panel.innerHTML=`<h2 class="fade">Choose a case</h2>
+  <p class="lede">Ethical codes guide practice and laws shape what you can and must do. Pick a situation and work it through five steps, from naming the issue to recording what you did.</p>
+  <div class="cases">${CASES.map(c=>`<button class="case" data-id="${c.id}"><span class="ic">${ico(c.icon)}</span><h3>${c.title}</h3><span class="chip">${c.tag}</span><p>${c.blurb}</p></button>`).join('')}</div>`;
+  $$('.case').forEach(b=>b.addEventListener('click',()=>{cs=CASES.find(c=>c.id===b.dataset.id);R={};go(1)}));
+}
+
+function renderChoice(key,i,next){
+  const d=cs[key];
+  panel.innerHTML=`${head(STEPS[i].n)}${scn()}<p style="font:700 15px var(--head)">${d.q}</p>
+  <div class="choices" id="opts">${shuffle(d.opts).map(o=>`<button class="choice"><span class="mark"></span><span class="txt">${o.t}</span></button>`).join('')}</div>
+  <div id="fb"></div><div id="after"></div>`;
+  const btns=$$('#opts .choice');
+  const items=Array.from(btns);let tried=0;
+  // map buttons back to option objects by text
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    const o=d.opts.find(x=>x.t===b.querySelector('.txt').textContent);tried++;
+    if(tried===1)R[key]=!!o.best;
+    if(o.best){
+      btns.forEach(x=>{if(x!==b)x.remove()});
+      b.disabled=true;b.classList.add('good');b.querySelector('.mark').innerHTML=CHECK;R[key+'T']=o.t;
+      $('#fb').innerHTML=`<div class="fb good fade"><b>Good call.</b> ${o.fb}</div>`;
+      $('#after').innerHTML=`<button class="btn fade" id="nx">Continue to ${STEPS[i+1].n}</button>`;
+      $('#nx').addEventListener('click',()=>go(i+2));
+    }else{
+      b.disabled=true;b.classList.add('bad');b.querySelector('.mark').innerHTML=CROSS;
+      $('#fb').innerHTML=`<div class="fb warn fade"><b>Not the best fit.</b> ${o.fb} Try another.</div>`;
+    }
+  }));
+}
+
+function renderConsult(){
+  const d=cs.consult, opts=shuffle(d.opts);
+  panel.innerHTML=`${head('Consult')}${scn()}<p style="font:700 15px var(--head)">${d.q}</p>
+  <div class="choices" id="opts">${opts.map((o,k)=>`<button class="choice multi" data-k="${k}" aria-pressed="false"><span class="mark"></span><span class="txt">${o.t}</span></button>`).join('')}</div>
+  <div id="fb"></div><div class="row"><button class="btn" id="chk" disabled>Check my sources</button></div>`;
+  const sel=new Set(),btn=$('#chk');
+  $$('#opts .choice').forEach(b=>b.addEventListener('click',()=>{
+    if(btn.dataset.done)return;const k=+b.dataset.k;
+    if(sel.has(k)){sel.delete(k);b.classList.remove('on');b.querySelector('.mark').innerHTML='';b.setAttribute('aria-pressed','false')}
+    else{sel.add(k);b.classList.add('on');b.querySelector('.mark').innerHTML=CHECK;b.setAttribute('aria-pressed','true')}
+    btn.disabled=!sel.size;
+  }));
+  btn.addEventListener('click',()=>{
+    if(btn.dataset.done){go(3);return}
+    btn.dataset.done=1;let hit=0,fp=0,miss=0;
+    $$('#opts .choice').forEach(b=>{
+      const k=+b.dataset.k,o=opts[k],p=sel.has(k);b.disabled=true;b.classList.remove('on');const m=b.querySelector('.mark');
+      if(p&&o.ok){hit++;b.classList.add('good');m.innerHTML=CHECK}
+      else if(p){fp++;b.classList.add('bad');m.innerHTML=CROSS}
+      else if(o.ok){miss++;b.classList.add('missed');m.innerHTML='<span style="color:var(--good)">!</span>';m.style.borderColor='var(--good)'}
+    });
+    R.found=hit;R.fp=fp;
+    const perfect=hit===3&&!fp;
+    $('#fb').innerHTML=`<div class="fb ${perfect?'good':'warn'} fade">${perfect?'<b>Right sources.</b> Codes, laws and policies, plus a person with more experience, give you firm ground.':`<b>You found ${hit} of 3.</b> ${fp?'Informal advice and gut feelings are not authoritative sources. ':''}${miss?'Dashed green cards are sources you missed.':''}`}</div>`;
+    btn.textContent='Continue to Decide';
+  });
+}
+
+function renderReflect(){
+  const sug=cs.weigh;const sel=new Set();
+  panel.innerHTML=`${head('Reflect')}${scn()}
+  <p style="font:700 15px var(--head)">Which two guiding principles weigh most in this case?</p>
+  <div class="pr" id="pr">${PRIN.map(p=>`<button class="choice multi" data-id="${p.id}" aria-pressed="false"><span class="mark"></span><span class="txt"><b>${p.t}</b><span class="sub">${p.d}</span></span></button>`).join('')}</div>
+  <div><label class="fl" for="ref">How does your faith or worldview shape the way you would handle this?</label><textarea id="ref" rows="3" placeholder="Write a few sentences. Nothing here is saved or sent."></textarea></div>
+  <div id="fb"></div><div class="row"><button class="btn" id="go2" disabled>Check my principles</button></div>`;
+  const btn=$('#go2');
+  $$('#pr .choice').forEach(b=>b.addEventListener('click',()=>{
+    if(btn.dataset.done)return;const id=b.dataset.id;
+    if(sel.has(id)){sel.delete(id);b.classList.remove('on');b.querySelector('.mark').innerHTML='';b.setAttribute('aria-pressed','false')}
+    else if(sel.size<2){sel.add(id);b.classList.add('on');b.querySelector('.mark').innerHTML=CHECK;b.setAttribute('aria-pressed','true')}
+    btn.disabled=sel.size!==2;
+  }));
+  btn.addEventListener('click',()=>{
+    if(btn.dataset.done){R.reflection=$('#ref').value.trim();R.pr=[...sel];go(5);return}
+    btn.dataset.done=1;R.pr=[...sel];R.reflection=$('#ref').value.trim();
+    const hit=[...sel].filter(x=>sug.includes(x)).length;
+    const names=sug.map(id=>PRIN.find(p=>p.id===id).t.toLowerCase()).join(' and ');
+    $$('#pr .choice').forEach(b=>{b.disabled=true;b.classList.remove('on');const id=b.dataset.id;
+      if(sug.includes(id)){b.classList.add(sel.has(id)?'good':'missed');if(sel.has(id))b.querySelector('.mark').innerHTML=CHECK}
+      else if(sel.has(id)){b.classList.add('partial');b.querySelector('.mark').innerHTML=DASH}});
+    $('#fb').innerHTML=`<div class="fb ${hit===2?'good':'warn'} fade"><b>${hit===2?'Strong match.':'Reasonable, but weigh these too.'}</b> Principles often compete, and thoughtful people can rank them differently. Here, ${names} carry the most weight. Your chosen code may name them differently.</div>`;
+    btn.textContent='Continue to Record';
+  });
+}
+
+function notes(){
+  const sel=(k)=>cs[k].opts.filter(o=>o.best).map(o=>o.t)[0];
+  const src=cs.consult.opts.filter(o=>o.ok).map(o=>'- '+o.t).join('\n');
+  const pr=(R.pr||[]).map(id=>PRIN.find(p=>p.id===id).t).join('; ');
+  return `PSYC 485 Week 5 | Ethical Decision Wheel\nCase: ${cs.title}\nIssue: ${sel('identify')}\nSources I would consult:\n${src}\nAction I would take: ${sel('decide')}\nPrinciples I weighed: ${pr}\nMy reflection: ${R.reflection||'(add your reflection)'}\nDocumentation: ${cs.record}`;
+}
+function renderRecord(){
+  const mk=(ok,l)=>`<span class="chip ${ok?'ok':'no'}">${ok?'✓':'•'} ${l}</span>`;
+  panel.innerHTML=`${head('Record and follow up')}
+  <div class="sum">${mk(R.identify,'Issue: first try')}${mk(R.found===3&&!R.fp,`Sources: ${R.found} of 3 found`)}${mk(R.decide,'Action: first try')}</div>
+  <div class="card"><p style="font:700 14px var(--head);margin-bottom:4px">How to document this case</p><p style="font-size:14px">${cs.record}</p></div>
+  <div class="card"><p style="font:700 14px var(--head);margin-bottom:6px">Your decision path</p>
+    <p style="font-size:13.5px;line-height:1.45"><b>Issue:</b> ${cs.identify.opts.find(o=>o.best).t}</p>
+    <p style="font-size:13.5px;line-height:1.45;margin-top:4px"><b>Action:</b> ${cs.decide.opts.find(o=>o.best).t}</p>
+    <p style="font-size:13.5px;line-height:1.45;margin-top:4px"><b>Principles you weighed:</b> ${(R.pr||[]).map(id=>PRIN.find(p=>p.id===id).t).join(' and ')}</p></div>
+  <div class="row"><button class="btn" id="cp">Copy my notes</button><button class="btn ghost" id="again">Try another case</button><span class="small" id="cpm" role="status"></span></div>`;
+  $('#cp').addEventListener('click',()=>{copyText(notes());$('#cpm').textContent='Copied. Paste it into your own document.'});
+  $('#again').addEventListener('click',()=>{cs=null;R={};go(0)});
+}
+function render(){
+  if(step===0)renderCases();
+  else if(step===1)renderChoice('identify',0);
+  else if(step===2)renderConsult();
+  else if(step===3)renderChoice('decide',2);
+  else if(step===4)renderReflect();
+  else renderRecord();
+}
+go(0);
+</script>
+</body>
+</html>

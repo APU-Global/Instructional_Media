@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSYC 485 Week 4 | Mid-Term Conference Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--ink:#222;--red:#d34147;--red-d:#a8353a;--sand:#edebe8;--paper:#fff;
+  --line:#d9d4ce;--muted:#5b5753;--gold:#f2b84b;
+  --good:#16674a;--good-bg:#e3f1ea;--warn:#7a4f00;--warn-bg:#fbefd2;--bad:#a8353a;--bad-bg:#f9e4e5;
+  --head:'Montserrat','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  --body:'Open Sans','Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:#fff;color:var(--ink);font:15px/1.5 var(--body);color-scheme:light}
+button{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- layout: art panel + stage, always exactly the iframe height ---------- */
+.app{display:grid;grid-template-columns:clamp(224px,27vw,268px) minmax(0,1fr);height:100%;min-height:0}
+.art{background:#000;color:#fff;display:flex;flex-direction:column;padding:22px 16px 10px;min-height:0;min-width:0}
+.brand{padding:0 4px}
+.brand .bar{display:block;width:56px;height:5px;background:var(--red);border-radius:3px;margin-bottom:12px}
+.brand .course{font:600 13px/1.2 var(--head);color:#d0d0d0;margin-bottom:5px}
+.brand h1{font:800 21px/1.15 var(--head);letter-spacing:-.01em}
+.scene{flex:1;min-height:0;margin-top:6px}
+.scene svg{width:100%;height:100%;display:block}
+.emblem{display:none}
+.stage{display:flex;flex-direction:column;padding:20px 28px 12px;min-width:0;min-height:0;background:#fff}
+.panel{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding-top:14px}
+.foot{flex:none;font-size:12px;line-height:1.4;color:var(--muted);padding-top:8px;border-top:1px solid var(--line);margin-top:8px}
+.foot b{color:var(--ink)}
+
+/* ---------- headings and text ---------- */
+.panel h2{font:700 21px/1.2 var(--head);letter-spacing:-.01em}
+.lede{color:var(--muted);font-size:14.5px}
+.small{font-size:13px;color:var(--muted)}
+
+/* ---------- step tracker ---------- */
+.steps{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.step{display:flex;align-items:center;gap:7px;flex:1;min-width:0;font:600 12.5px/1.1 var(--head);color:#7a756f}
+.step .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--sand);color:#7a756f;display:grid;place-items:center;transition:background .25s,color .25s}
+.step .dot svg{width:17px;height:17px}
+.step .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step.done .dot{background:var(--red);color:#fff}
+.step.done{color:var(--ink)}
+.step.now .dot{background:#000;color:#fff}
+.step.now{color:#000}
+.step+.step::before{content:"";flex:none;width:10px;height:2px;background:var(--line);margin-right:1px;display:none}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;background:var(--red);color:#fff;font:700 14px/1 var(--head);padding:12px 22px;cursor:pointer;transition:background .15s,transform .1s}
+.btn:hover:not(:disabled){background:var(--red-d)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{background:#c9c4be;color:#fff;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#000;border:2px solid #000;padding:10px 20px}
+.btn.ghost:hover:not(:disabled){background:#000;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+:focus-visible{outline:3px solid #000;outline-offset:2px;box-shadow:0 0 0 5px #fff}
+.art :focus-visible{outline-color:#fff;box-shadow:none}
+
+/* ---------- choice cards ---------- */
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+.choice:hover:not(:disabled){border-color:#000}
+.choice .mark{flex:none;width:24px;height:24px;margin-top:1px;border-radius:50%;border:2px solid #9a948d;display:grid;place-items:center;font:700 12px/1 var(--head);color:#fff}
+.choice.multi .mark{border-radius:7px}
+.choice.on{border-color:#000;background:#faf9f8}
+.choice.on .mark{background:#000;border-color:#000}
+.choice.good{border-color:var(--good);background:var(--good-bg)}
+.choice.good .mark{background:var(--good);border-color:var(--good)}
+.choice.bad{border-color:var(--bad);background:var(--bad-bg)}
+.choice.bad .mark{background:var(--bad);border-color:var(--bad)}
+.choice.partial{border-color:#b98200;background:var(--warn-bg)}
+.choice.partial .mark{background:#b98200;border-color:#b98200}
+.choice.missed{border-style:dashed;border-color:var(--good)}
+.choice:disabled{cursor:default}
+.choice .txt{flex:1;min-width:0}
+.choice .txt b{font-family:var(--head);font-weight:700}
+.choice .sub{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ---------- feedback ---------- */
+.fb{border-left:5px solid var(--line);background:#f6f4f2;border-radius:8px;padding:10px 14px;font-size:14px;line-height:1.45}
+.fb b{font-family:var(--head)}
+.fb.good{border-color:var(--good);background:var(--good-bg)}
+.fb.warn{border-color:#b98200;background:var(--warn-bg)}
+.fb.bad{border-color:var(--bad);background:var(--bad-bg)}
+
+/* ---------- chat bubble ---------- */
+.say{display:flex;gap:12px;align-items:flex-start}
+.say .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--sand);color:#000;display:grid;place-items:center;font:800 15px var(--head)}
+.say .av.you{background:var(--red);color:#fff}
+.say .bub{background:var(--sand);border-radius:4px 16px 16px 16px;padding:11px 15px;font-size:15px;line-height:1.45}
+.say.you{flex-direction:row-reverse}
+.say.you .bub{background:#000;color:#fff;border-radius:16px 4px 16px 16px}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line)}
+.tab{background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:9px 14px 9px;font:700 14px/1 var(--head);color:#6b6661;cursor:pointer}
+.tab:hover{color:#000}
+.tab[aria-selected="true"]{color:#000;border-bottom-color:var(--red)}
+
+/* ---------- misc ---------- */
+.chip{display:inline-block;font:600 12px/1 var(--head);padding:6px 10px;border-radius:999px;background:var(--sand);color:#000}
+.chip.red{background:var(--red);color:#fff}
+.chip.black{background:#000;color:#fff}
+.card{background:#faf9f8;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .n{font:800 30px/1 var(--head)}
+.stat .l{font-size:13px;color:var(--muted)}
+.fade{animation:fade .3s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- narrow screens ---------- */
+@media (max-width:800px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .art{flex-direction:row;align-items:center;gap:12px;padding:10px 14px}
+  .brand .bar{width:36px;height:4px;margin-bottom:7px}
+  .brand h1{font-size:16px}
+  .brand .course{font-size:12px;margin-bottom:3px}
+  .scene{display:none}
+  .emblem{display:block;margin-left:auto;flex:none;width:54px;height:54px}
+  .emblem svg{width:100%;height:100%}
+  .stage{padding:8px 14px 4px;overflow-y:auto}
+  .panel{gap:7px;padding-top:7px;flex:none}
+  .panel h2{font-size:18px}
+  .lede{font-size:13.5px}
+  .step .lbl{display:none}
+  .step.now .lbl{display:block}
+  .step{flex:none}
+  .step.now{flex:1}
+  .choice{padding:8px 11px}
+  .tab{padding:8px 10px;font-size:13px}
+  .foot{font-size:11.5px;margin-top:2px;padding-top:4px;line-height:1.35}
+}
+@media (max-width:560px){
+  .panel h2{font-size:17px}
+  .fb{font-size:12.5px;padding:7px 10px;line-height:1.4}
+  .choice{font-size:13px;line-height:1.35;gap:9px}
+  .choice .mark{width:20px;height:20px}
+  .btn{padding:10px 18px;font-size:13px}
+  .say .bub{font-size:13.5px;padding:8px 12px}
+  .say .av{width:32px;height:32px}
+  .lede{font-size:13px;line-height:1.4}
+  .foot{font-size:11px}
+}
+
+/* ---------- shared form controls ---------- */
+.fl{display:block;font:700 13px/1.2 var(--head);margin-bottom:7px}
+.fl .v{float:right;font-weight:800;color:var(--red-d)}
+.seg{display:inline-flex;border:2px solid #000;border-radius:999px;overflow:hidden;max-width:100%}
+.seg button{background:#fff;border:0;padding:8px 14px;font:700 13px/1 var(--head);cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:2px solid #000}
+.seg button:hover:not([aria-pressed="true"]):not(:disabled){background:var(--sand)}
+.seg button[aria-pressed="true"]{background:#000;color:#fff}
+.seg button:disabled{color:#a8a39d;cursor:not-allowed}
+input[type=range]{width:100%;accent-color:var(--red);height:26px;margin:0;cursor:pointer}
+textarea{width:100%;font:14px/1.45 var(--body);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:9px 12px;resize:none}
+textarea:focus-visible{border-color:#000;outline:none;box-shadow:none}
+
+.cols{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:20px;align-items:start}
+.ctl{display:flex;flex-direction:column;gap:16px}
+.rq-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.rq{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:4px 10px;align-items:center;padding:8px 11px;border:2px solid var(--line);border-radius:10px;font-size:13px;line-height:1.3;opacity:.62}
+.rq.me{opacity:1;border-color:#000}
+.rq.me.met{border-color:var(--good);background:var(--good-bg)}
+.rq .rl b{font-family:var(--head)}
+.rq .rs{font:700 12px/1.2 var(--head);text-align:right;color:var(--muted)}
+.rq.me.met .rs{color:var(--good)}
+.rq .bar{grid-column:1/-1;height:6px;border-radius:3px;background:#e4dfd9;overflow:hidden}
+.rq .bar i{display:block;height:100%;background:var(--red);border-radius:3px;transition:width .3s}
+.rq.me.met .bar i{background:var(--good)}
+.weeks{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:150px}
+.wk{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;gap:4px;height:100%;background:none;border:0;padding:0;cursor:pointer;text-align:center}
+.wk .stack{flex:1;display:flex;flex-direction:column;justify-content:flex-end;border-bottom:3px solid #000}
+.wk .seg-i,.wk .seg-d{width:100%;transition:height .25s}
+.wk .seg-i{background:#c9c4be;border-radius:6px 6px 0 0}
+.wk .seg-d{background:var(--red)}
+.wk .seg-i.nod{border-radius:6px 6px 0 0}
+.wk .nm{font:700 12px var(--head);color:#000}
+.wk.off .stack{border-bottom-style:dashed;border-bottom-color:#9a948d;background:repeating-linear-gradient(135deg,#f3f1ef 0 6px,#fff 6px 12px);border-radius:6px 6px 0 0}
+.wk.off .nm{color:#8a847e;text-decoration:line-through}
+.wk:hover .stack{border-bottom-color:var(--red)}
+.badge{display:flex;align-items:center;gap:10px;flex:1;min-width:150px;padding:10px 12px;border-radius:10px;border:2px solid var(--line);font-size:13px;line-height:1.25}
+.badge .n{font:800 22px/1 var(--head)}
+.badge.ok{border-color:var(--good);background:var(--good-bg)}
+.badge.no{border-color:var(--bad);background:var(--bad-bg)}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tl{width:100%;height:auto;max-height:70px;display:block}
+.ring-t,.ring-d{transition:stroke-dashoffset .5s ease}
+.ck rect.box{fill:#fff;stroke:#b9b3ac;stroke-width:2}
+.ck path.tick{stroke:#d34147;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .3s}
+.ck.on path.tick{opacity:1}
+@media (max-width:800px){
+  .ctl{gap:10px}.weeks{height:96px}.tl{display:none}
+  .rq{padding:5px 9px;font-size:12px;gap:2px 8px}.badge{min-width:120px;padding:7px 9px}
+}
+@media (max-width:560px){.cols{grid-template-columns:1fr;gap:8px}.rq{padding:4px 8px}.weeks{height:80px}.badge .n{font-size:18px}.badge{padding:6px 8px;font-size:12px}}
+
+.ck2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ck2 .choice{font-size:13.5px;line-height:1.38;padding:9px 11px;align-items:center}
+.ck2 .choice .mark{margin-top:0;width:22px;height:22px}
+@media (max-width:560px){.rq:not(.me){display:none}.ck2{gap:6px}.ck2 .choice{font-size:12.2px;line-height:1.3;padding:6px 7px;gap:7px}.ck2 .choice .mark{width:18px;height:18px}.lede{margin-bottom:0}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="ic-clip" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 12l2 2 4-4"/></g></symbol>
+</defs></svg>
+<div class="app">
+  <aside class="art">
+    <div class="brand"><span class="bar"></span><p class="course">PSYC 485 Week 4</p><h1>Mid-Term Conference Planner</h1></div>
+    <div class="scene">
+      <svg viewBox="0 0 240 545" preserveAspectRatio="xMidYMax meet" role="img" aria-label="A clipboard checklist above a two-ring gauge. The outer ring tracks total practicum hours toward 56 and the inner ring tracks direct service hours toward 28.">
+        <g class="ck-board">
+          <rect x="28" y="40" width="184" height="214" rx="16" fill="#202020" stroke="#3b3b3b" stroke-width="2"/>
+          <rect x="44" y="64" width="152" height="176" rx="8" fill="#edebe8"/>
+          <rect x="82" y="30" width="76" height="30" rx="9" fill="#d34147"/>
+          <circle cx="120" cy="45" r="5" fill="#a8353a"/>
+          <g id="ckrows"></g>
+        </g>
+        <g transform="translate(120 372)">
+          <circle r="76" fill="none" stroke="#262626" stroke-width="15"/>
+          <circle r="55" fill="none" stroke="#262626" stroke-width="15"/>
+          <circle class="ring-t" id="ringT" r="76" fill="none" stroke="#edebe8" stroke-width="15" stroke-linecap="round" transform="rotate(-90)" stroke-dasharray="477.5" stroke-dashoffset="477.5"/>
+          <circle class="ring-d" id="ringD" r="55" fill="none" stroke="#d34147" stroke-width="15" stroke-linecap="round" transform="rotate(-90)" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+          <text id="ringN" y="6" text-anchor="middle" fill="#fff" style="font:800 30px var(--head)">0</text>
+          <text y="26" text-anchor="middle" fill="#bdbdbd" style="font:600 11px var(--head)">hours planned</text>
+        </g>
+        <g style="font:600 12px var(--head)" fill="#e6e6e6">
+          <rect x="36" y="474" width="12" height="12" rx="3" fill="#edebe8"/><text id="legT" x="56" y="484">Total: 0 of 56</text>
+          <rect x="36" y="498" width="12" height="12" rx="3" fill="#d34147"/><text id="legD" x="56" y="508">Direct: 0 of 28</text>
+        </g>
+      </svg>
+    </div>
+    <div class="emblem"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="26" fill="#d34147"/><use href="#ic-clip" x="13" y="13" width="28" height="28" color="#fff"/></svg></div>
+  </aside>
+
+  <main class="stage">
+    <div class="tabs" role="tablist" aria-label="Planner sections">
+      <button class="tab" role="tab" id="t0" aria-controls="panel" aria-selected="true" data-t="0">Supervisor check</button>
+      <button class="tab" role="tab" id="t1" aria-controls="panel" aria-selected="false" data-t="1">Hours planner</button>
+      <button class="tab" role="tab" id="t2" aria-controls="panel" aria-selected="false" data-t="2">Conference prep</button>
+    </div>
+    <section class="panel" id="panel" role="tabpanel" aria-live="polite"></section>
+    <p class="foot"><b>Planning aid only.</b> Your instructor and the Capstone Handbook make the final call on supervisors, hours and approvals.</p>
+  </main>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const shuffle=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const ico=(id,cls)=>`<svg class="${cls||''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`;
+const CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const CROSS='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const DASH='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"/></svg>';
+function copyText(text){
+  try{ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).catch(()=>{});return true} }catch(e){}
+  const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;left:-999px;top:0';document.body.appendChild(t);t.select();
+  let ok=false;try{ok=document.execCommand('copy')}catch(e){}t.remove();return ok;
+}
+
+const REQ=[
+  {deg:'bach',aff:true, yrs:3, label:'Affiliated bachelor’s degree + 3 years'},
+  {deg:'grad',aff:true, yrs:1, label:'Affiliated graduate degree + 1 year'},
+  {deg:'bach',aff:false,yrs:5, label:'Non-affiliated bachelor’s degree + 5 years'},
+  {deg:'grad',aff:false,yrs:2, label:'Non-affiliated graduate degree + 2 years'},
+  {deg:'none',aff:null, yrs:10,label:'No degree + 10 or more years, with instructor approval'}
+];
+const LIST={
+  all:[
+    'Reserve a 30-minute Mid-Term Conference time',
+    'Email your instructor the date and time you reserved',
+    'Submit your details form at least 24 hours before the meeting',
+    'Begin the Mandated Reporter Training (due in a later week)'],
+  prac:[
+    'Be in contact with a possible site and site supervisor',
+    'Check that your supervisor’s credentials fit a category',
+    'Review the Practicum Proposal Form and Practicum Agreement',
+    'Sketch your direct and indirect activities (56 hours, 28 direct)'],
+  psy:[
+    'Choose your project topic',
+    'Identify the population your project serves',
+    'Contact the field professionals you plan to interview',
+    'Review the Psychoeducation Project Proposal Form']
+};
+const S={tab:0,deg:'bach',aff:true,yrs:2,hrs:8,dir:4,skip:new Set(),path:'prac',done:{prac:new Set(),psy:new Set()}};
+const panel=$('#panel'), WEEKS=7, MINT=56, MIND=28;
+const plural=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
+
+function hoursNow(){const a=WEEKS-S.skip.size;return{a,t:a*S.hrs,d:a*Math.min(S.dir,S.hrs)}}
+function paintArt(){
+  const h=hoursNow(), C1=477.5, C2=345.6;
+  $('#ringT').style.strokeDashoffset=C1*(1-Math.min(h.t/MINT,1));
+  $('#ringD').style.strokeDashoffset=C2*(1-Math.min(h.d/MIND,1));
+  $('#ringN').textContent=h.t;
+  $('#legT').textContent=`Total: ${h.t} of ${MINT} hours`;
+  $('#legD').textContent=`Direct: ${h.d} of ${MIND} hours`;
+  const list=LIST.all.concat(LIST[S.path]), n=S.done[S.path].size, rows=5;
+  const lit=Math.round(n/list.length*rows);
+  $('#ckrows').innerHTML=Array.from({length:rows},(_,i)=>{
+    const y=78+i*32;
+    return `<g class="ck ${i<lit?'on':''}"><rect class="box" x="56" y="${y}" width="20" height="20" rx="5"/><path class="tick" d="M60 ${y+10}l4.5 4.5L73 ${y+6}"/><rect x="88" y="${y+4}" width="${[92,78,86,70,82][i]}" height="10" rx="5" fill="#c9c4be"/></g>`}).join('');
+}
+
+function setTab(t){
+  S.tab=t;$$('.tab').forEach(b=>b.setAttribute('aria-selected',String(+b.dataset.t===t)));
+  panel.setAttribute('aria-labelledby','t'+t);render();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>setTab(+b.dataset.t)));
+
+/* ---------- Tab 0: supervisor check ---------- */
+function supervisor(){
+  const me=REQ.find(r=>r.deg===S.deg&&(r.aff===null||r.aff===S.aff));
+  const met=S.yrs>=me.yrs, need=me.yrs-S.yrs;
+  let cls,msg;
+  if(me.deg==='none'){
+    cls=met?'warn':'bad';
+    msg=met?`<b>Possible, with approval.</b> Ten or more years of related experience can count when your instructor approves it. Raise it at your conference.`
+           :`<b>Not yet.</b> With no degree, a supervisor needs 10 or more years of related experience and instructor approval. This one is ${plural(need,'year')} short.`;
+  }else if(met){cls='good';msg=`<b>Meets a requirement:</b> ${me.label.toLowerCase().replace(/^./,c=>c.toUpperCase())}. Bring these details to your conference.`}
+  else{cls='warn';msg=`<b>Not quite yet.</b> Under this category the supervisor needs ${plural(need,'more year')} of experience. Ask your instructor whether another category could apply.`}
+  return{me,met,cls,msg};
+}
+function renderSup(){
+  const v=supervisor();
+  const noDeg=S.deg==='none';
+  panel.innerHTML=`<p class="lede">Your practicum site supervisor must fit one of five categories. Describe a possible supervisor to see where they stand.</p>
+  <div class="cols">
+    <div class="ctl">
+      <div><span class="fl" id="l1">Highest degree</span><div class="seg" role="group" aria-labelledby="l1">
+        ${[['none','None'],['bach','Bachelor’s'],['grad','Graduate']].map(([k,l])=>`<button data-deg="${k}" aria-pressed="${S.deg===k}">${l}</button>`).join('')}</div></div>
+      <div><span class="fl" id="l2">Degree field</span><div class="seg" role="group" aria-labelledby="l2">
+        ${[[true,'Affiliated'],[false,'Non-affiliated']].map(([k,l])=>`<button data-aff="${k}" aria-pressed="${!noDeg&&S.aff===k}" ${noDeg?'disabled':''}>${l}</button>`).join('')}</div>
+        <p class="small" style="margin-top:5px">Check the Capstone Handbook for what counts as affiliated.</p></div>
+      <div><label class="fl" for="yrs">Years of related field experience <span class="v" id="yv">${S.yrs}</span></label>
+        <input type="range" id="yrs" min="0" max="12" step="1" value="${S.yrs}"></div>
+    </div>
+    <ul class="rq-list" id="rq">${rqRows(v)}</ul>
+  </div>
+  <div class="fb ${v.cls}" id="verdict">${v.msg}</div>`;
+  $$('[data-deg]').forEach(b=>b.addEventListener('click',()=>{S.deg=b.dataset.deg;renderSup()}));
+  $$('[data-aff]').forEach(b=>b.addEventListener('click',()=>{S.aff=b.dataset.aff==='true';renderSup()}));
+  $('#yrs').addEventListener('input',e=>{S.yrs=+e.target.value;$('#yv').textContent=S.yrs;const v=supervisor();$('#rq').innerHTML=rqRows(v);const f=$('#verdict');f.className='fb '+v.cls;f.innerHTML=v.msg});
+}
+function rqRows(v){
+  return REQ.map(r=>{
+    const mine=r===v.me, pct=mine?Math.min(S.yrs/r.yrs,1)*100:0;
+    const status=mine?(v.met?'Met':`Needs ${S.yrs>=r.yrs?0:r.yrs-S.yrs} more`):`${r.yrs}+ years`;
+    return `<li class="rq ${mine?'me':''} ${mine&&v.met?'met':''}"><span class="rl"><b>${r.label.split(' + ')[0]}</b> + ${r.label.split(' + ')[1]}</span><span class="rs">${status}</span><span class="bar"><i style="width:${pct}%"></i></span></li>`}).join('');
+}
+
+/* ---------- Tab 1: hours planner ---------- */
+function planner(){
+  const h=hoursNow(),a=h.a;
+  const okT=h.t>=MINT, okD=h.d>=MIND;
+  let cls,msg;
+  if(a===0){cls='bad';msg='<b>Pick at least one week.</b> Select the weeks you could serve.'}
+  else if(okT&&okD){cls='good';msg=`<b>On track.</b> ${plural(a,'week')} at ${S.hrs} hours (${Math.min(S.dir,S.hrs)} direct) gives you ${h.t} total and ${h.d} direct hours.`}
+  else{
+    const nt=Math.ceil(MINT/a), nd=Math.ceil(MIND/a);
+    cls='warn';msg=`<b>Short of the minimums.</b> With ${plural(a,'active week')} you would need at least <b>${nt} hours a week, ${nd} of them direct</b>.`;
+  }
+  return{h,okT,okD,cls,msg};
+}
+function renderPlan(){
+  const r=planner(), d=Math.min(S.dir,S.hrs), MAXH=16;
+  panel.innerHTML=`<p class="lede">The practicum runs 7 weeks and needs at least 56 hours, with 28 or more as direct service. Adjust your weekly plan. Select a week to mark it as unavailable.</p>
+  <div class="cols">
+    <div><label class="fl" for="hrs">Total hours each week <span class="v" id="hv">${S.hrs}</span></label><input id="hrs" type="range" min="2" max="${MAXH}" value="${S.hrs}"></div>
+    <div><label class="fl" for="dir">Direct service hours each week <span class="v" id="dv">${d}</span></label><input id="dir" type="range" min="0" max="${S.hrs}" value="${d}"></div>
+  </div>
+  <div class="legend"><span><i style="background:var(--red)"></i>Direct service</span><span><i style="background:#c9c4be"></i>Indirect service</span></div>
+  <div class="weeks" id="weeks">${weeksHtml(d,MAXH)}</div>
+  <div class="row" id="badges">${badges(r)}</div>
+  <div class="fb ${r.cls}" id="pv">${r.msg}</div>`;
+  $('#hrs').addEventListener('input',e=>{
+    S.hrs=+e.target.value;if(S.dir>S.hrs)S.dir=S.hrs;
+    const dr=$('#dir');dr.max=S.hrs;dr.value=Math.min(S.dir,S.hrs);upd();
+  });
+  $('#dir').addEventListener('input',e=>{S.dir=+e.target.value;upd()});
+  $('#weeks').addEventListener('click',e=>{
+    const b=e.target.closest('.wk');if(!b)return;const i=+b.dataset.w;
+    S.skip.has(i)?S.skip.delete(i):S.skip.add(i);upd();
+  });
+  function upd(){
+    const d=Math.min(S.dir,S.hrs),r=planner();
+    $('#hv').textContent=S.hrs;$('#dv').textContent=d;
+    $('#weeks').innerHTML=weeksHtml(d,MAXH);$('#badges').innerHTML=badges(r);
+    const f=$('#pv');f.className='fb '+r.cls;f.innerHTML=r.msg;paintArt();
+  }
+}
+function weeksHtml(d,MAXH){
+  return Array.from({length:WEEKS},(_,i)=>{
+    const off=S.skip.has(i), hi=off?0:(S.hrs-d)/MAXH*100, di=off?0:d/MAXH*100;
+    return `<button class="wk ${off?'off':''}" data-w="${i}" aria-pressed="${off}" aria-label="Week ${i+1}, ${off?'unavailable':S.hrs+' hours'}. Select to toggle."><span class="stack"><span class="seg-i" style="height:${hi}%"></span><span class="seg-d" style="height:${di}%"></span></span><span class="nm">Wk ${i+1}</span></button>`}).join('');
+}
+function badges(r){
+  return `<div class="badge ${r.okT?'ok':'no'}"><span class="n">${r.h.t}</span><span>total hours<br>${r.okT?'meets the 56 minimum':'minimum is 56'}</span></div>
+          <div class="badge ${r.okD?'ok':'no'}"><span class="n">${r.h.d}</span><span>direct hours<br>${r.okD?'meets the 28 minimum':'minimum is 28'}</span></div>`;
+}
+
+/* ---------- Tab 2: conference prep ---------- */
+function renderPrep(){
+  const items=LIST.all.concat(LIST[S.path]), set=S.done[S.path];
+  const form=S.path==='prac'?'Practicum Site Details':'Psychoeducation Project Mid-Term Conference Details Form';
+  panel.innerHTML=`<div class="row"><div class="seg" role="group" aria-label="Capstone pathway">
+      <button data-p="prac" aria-pressed="${S.path==='prac'}">Practicum</button><button data-p="psy" aria-pressed="${S.path==='psy'}">Psychoeducation project</button></div>
+      <span class="spacer"></span><span class="chip ${set.size===items.length?'red':''}" id="pc">${set.size} of ${items.length} ready</span></div>
+  <svg class="tl" viewBox="0 0 580 70" role="img" aria-label="Timeline: reserve a time, email your instructor, submit your form at least 24 hours before, then meet for 30 minutes.">
+    <path d="M44 24H540" stroke="#d9d4ce" stroke-width="4" stroke-linecap="round"/>
+    <path d="M344 24H540" stroke="#d34147" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 9"/>
+    ${[[44,'Reserve a time','start',4],[194,'Email your instructor','middle',194],[344,'Submit '+(S.path==='prac'?'site details':'details form'),'middle',344],[540,'30-minute conference','end',576]].map(([x,l,a,tx],i)=>`<circle cx="${x}" cy="24" r="15" fill="${i===3?'#d34147':'#000'}"/><text x="${x}" y="29" text-anchor="middle" fill="#fff" style="font:800 14px var(--head)">${i+1}</text><text x="${tx}" y="58" text-anchor="${a}" fill="#222" style="font:600 12.5px var(--head)">${l}</text>`).join('')}
+    <text x="442" y="14" text-anchor="middle" fill="#a8353a" style="font:700 12px var(--head)">at least 24 hours before</text>
+  </svg>
+  <div class="ck2" id="items">${items.map((t,i)=>`<button class="choice multi ${set.has(i)?'on':''}" data-i="${i}" aria-pressed="${set.has(i)}"><span class="mark">${set.has(i)?CHECK:''}</span><span class="txt">${t}</span></button>`).join('')}</div>
+  <div class="fb ${set.size===items.length?'good':''}" id="pm">${set.size===items.length?`<b>You are ready.</b> Bring your questions, and confirm your ${form} is submitted.`:`<b>Form to submit:</b> ${form}, due at least 24 hours before your conference.`}</div>`;
+  $$('[data-p]').forEach(b=>b.addEventListener('click',()=>{S.path=b.dataset.p;renderPrep();paintArt()}));
+  $('#items').addEventListener('click',e=>{
+    const b=e.target.closest('.choice');if(!b)return;const i=+b.dataset.i;
+    set.has(i)?set.delete(i):set.add(i);renderPrep();paintArt();
+    const nb=$(`#items [data-i="${i}"]`);if(nb)nb.focus();
+  });
+}
+function render(){[renderSup,renderPlan,renderPrep][S.tab]();paintArt()}
+render();
+</script>
+</body>
+</html>
