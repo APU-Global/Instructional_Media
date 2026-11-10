@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSCI 491 | Week 2 | Mission Statement Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>:root{
+  --ink:#1d1f23; --ink2:#4a4f57; --paper:#ffffff; --wash:#f4f2ef; --line:#dcd8d2;
+  --red:#c8402a; --red-d:#9e2f1d; --gold:#e0a43a; --teal:#2b7a78; --ok:#2e7d4f; --bad:#b3261e;
+  --shadow:0 1px 2px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{--ink:#f1efec; --ink2:#bdb8b0; --paper:#202226; --wash:#2a2c31; --line:#3d4046; --red:#e8644e; --red-d:#f08a78; --gold:#e8b455; --teal:#58b3b0; --ok:#6cc08c; --bad:#f2877f}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:transparent}
+body{font-family:"Source Sans 3","Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);font-size:16px;line-height:1.5}
+.app{max-width:960px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.hero{position:relative;background:#16181b;color:#fff;display:grid;grid-template-columns:1fr 210px;align-items:center;gap:8px;padding:22px 28px}
+.hero h1{font-family:"Source Serif 4",Georgia,serif;font-size:1.7rem;line-height:1.15;margin:6px 0 6px;font-weight:700}
+.hero p{margin:0;color:#d4d0ca;max-width:52ch;font-size:.98rem}
+.course{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:.85rem;padding:3px 10px;border-radius:4px;letter-spacing:.2px}
+.hero svg{width:100%;height:auto;max-height:150px}
+.verse{margin:0;padding:10px 28px;background:var(--wash);border-bottom:1px solid var(--line);font-family:"Source Serif 4",Georgia,serif;font-style:italic;font-size:.92rem;color:var(--ink2)}
+.main{padding:22px 28px 26px}
+h2{font-family:"Source Serif 4",Georgia,serif;font-size:1.25rem;margin:0 0 4px}
+.sub{color:var(--ink2);margin:0 0 16px;font-size:.95rem}
+button,select,input,textarea{font:inherit;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--ink2);background:var(--wash)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+.tab{background:none;border:0;padding:9px 14px;font-weight:600;color:var(--ink2);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected=true]{color:var(--red);border-bottom-color:var(--red)}
+.fb{border-left:4px solid var(--teal);background:var(--wash);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:12px;font-size:.95rem}
+.fb.ok{border-color:var(--ok)} .fb.bad{border-color:var(--bad)} .fb.warn{border-color:var(--gold)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--ink2)}
+.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 28px;background:var(--wash);border-top:1px solid var(--line);font-size:.82rem;color:var(--ink2)}
+@media (max-width:640px){.hero{grid-template-columns:1fr;padding:18px}.hero svg{display:none}.main{padding:16px}.verse{padding:10px 16px}.footer{padding:10px 16px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:22px}
+.q{margin-bottom:14px}.q label{font-weight:700;display:block;margin-bottom:4px}
+.q textarea{width:100%;min-height:64px;resize:vertical;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--paper)}
+.q textarea:focus{border-color:var(--red)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.chip{background:var(--wash);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.82rem;cursor:pointer}
+.chip:hover{border-color:var(--red)}
+.hint{font-size:.85rem;margin-top:4px;color:var(--bad)}.hint.good{color:var(--ok)}
+.preview{background:var(--wash);border-radius:12px;padding:14px;align-self:start}
+.preview h3{margin:10px 0 4px;font-size:1rem}
+.preview svg{width:100%;height:auto;display:block}
+.meter{height:8px;border-radius:6px;background:var(--line);margin-top:8px;overflow:hidden}
+#mfill{height:100%;width:0;background:var(--gold);transition:width .4s}
+.mlabel{font-size:.85rem;color:var(--ink2);margin:4px 0}
+.out{margin:0 0 12px;padding:10px 12px;background:var(--paper);border-left:4px solid var(--red);border-radius:0 8px 8px 0;font-family:"Source Serif 4",Georgia,serif;min-height:60px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.vc{background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+.vc svg{width:46px;height:46px}.vc b{display:block}.vc span{font-size:.8rem;color:var(--ink2)}
+.vc[aria-pressed=true]{border-color:var(--red);background:var(--wash)}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div class="app" id="app">
+<header class="hero"><div><span class="course">HSCI 491 &middot; Week 2</span><h1>Mission Statement Builder</h1><p>Turn your values, goals, and story into a clear draft for ePortfolio Part 2.</p></div><svg viewBox="0 0 220 170" role="img" aria-label="Lighthouse casting light across the water">
+<defs><linearGradient id="bm" x1="0" x2="1"><stop offset="0" stop-color="#ffd98a" stop-opacity=".9"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></linearGradient></defs>
+<rect width="220" height="170" fill="#16181b"/>
+<polygon points="86,44 220,6 220,78" fill="url(#bm)" opacity=".85"/>
+<polygon points="86,44 0,14 0,70" fill="url(#bm)" opacity=".4"/>
+<path d="M0 142 Q30 134 60 142 T120 142 T180 142 T220 140 V170 H0Z" fill="#2b7a78"/>
+<path d="M0 154 Q30 148 60 154 T120 154 T180 154 T220 152 V170 H0Z" fill="#1f5c5a"/>
+<path d="M70 142 L80 62 H98 L108 142Z" fill="#f4f2ef"/>
+<path d="M74 118 L106 118 L104 104 L76 104Z M78 88 L102 88 L101 76 L79 76Z" fill="#c8402a"/>
+<rect x="76" y="52" width="28" height="12" fill="#1d1f23"/><rect x="80" y="38" width="20" height="14" fill="#ffd98a"/>
+<polygon points="76,38 90,26 104,38" fill="#c8402a"/>
+</svg></header>
+<p class="verse">&ldquo;Let your light shine before others, that they may see your good deeds and glorify your Father in heaven.&rdquo; Matthew 5:16 (NIV)</p>
+<main class="main">
+<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" data-p="build">Build your statement</button><button class="tab" role="tab" aria-selected="false" data-p="values">Name your values</button></div>
+
+<section id="build">
+<h2>Answer the four mission questions</h2>
+<p class="sub">Write one or two sentences for each. The lighthouse beam grows brighter as your answers become more specific.</p>
+<div class="grid">
+ <div class="form" id="form"></div>
+ <aside class="preview" aria-live="polite">
+  <svg viewBox="0 0 300 150" id="beamsvg" role="img" aria-label="Lighthouse beam that brightens with the strength of your statement">
+   <defs><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="#ffd98a" stop-opacity="1"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></linearGradient></defs>
+   <rect width="300" height="150" rx="8" fill="#16181b"/>
+   <polygon id="beam" points="96,50 300,0 300,100" fill="url(#g2)" opacity=".08"/>
+   <path d="M0 122 Q40 114 80 122 T160 122 T240 122 T300 120 V150 H0Z" fill="#2b7a78"/>
+   <path d="M80 122 L90 62 H108 L118 122Z" fill="#f4f2ef"/><path d="M84 100 L114 100 L112 88 L86 88Z" fill="#c8402a"/>
+   <rect x="86" y="52" width="28" height="11" fill="#1d1f23"/><rect x="90" y="40" width="20" height="12" fill="#ffd98a"/><polygon points="86,40 100,28 114,40" fill="#c8402a"/>
+  </svg>
+  <div class="meter"><div id="mfill"></div></div>
+  <div class="mlabel" id="mlabel">Start writing to light the beam.</div>
+  <h3>Your draft mission statement</h3>
+  <blockquote id="out" class="out">Your statement will appear here.</blockquote>
+  <div class="row"><button class="btn" id="copy">Copy statement</button><button class="btn ghost" id="clear">Start over</button></div>
+  <div id="copied" class="muted" role="status"></div>
+ </aside>
+</div>
+</section>
+
+<section id="values" hidden>
+<h2>Choose three values that guide your work</h2>
+<p class="sub">Select exactly three. They will be added to the opening of your mission statement.</p>
+<div class="vgrid" id="vgrid"></div>
+<div class="fb" id="vfb">Pick three values to continue.</div>
+</section>
+</main>
+<footer class="footer"><span>HSCI 491 Senior Seminar: Health Sciences Capstone</span><span>Week 2 Interactive</span></footer>
+</div>
+<script>// Report height to parent (Canvas wrappers can use it) so the iframe never needs its own scrollbar.
+(function(){
+  function send(){
+    var h=Math.ceil(document.querySelector('.app').getBoundingClientRect().height)+2;
+    try{parent.postMessage({type:'hsci491-resize',height:h,src:location.pathname.split('/').pop()},'*');}catch(e){}
+    try{ if(window.frameElement){ window.frameElement.style.height=h+'px'; } }catch(e){}
+  }
+  window.addEventListener('load',send);window.addEventListener('resize',send);
+  if(window.ResizeObserver){new ResizeObserver(send).observe(document.querySelector('.app'));}
+})();
+</script>
+<script>
+var Q=[
+ {k:'go',l:'Where do you want to go in your career?',ph:'e.g., I will work as a health educator in a community clinic.',chips:['become a community health educator','lead a public health program','prepare for graduate study in health administration']},
+ {k:'ideal',l:'What does an ideal professional situation look like?',ph:'e.g., a collaborative team serving rural families.',chips:['a collaborative team serving rural families','a clinic that connects patients to resources','a research setting that improves health outcomes']},
+ {k:'treat',l:'How do you want to treat others and conduct yourself?',ph:'e.g., with integrity, respect, and clear communication.',chips:['with integrity and respect','with cultural humility','with honesty and compassion']},
+ {k:'legacy',l:'What legacy or impact do you hope to have?',ph:'e.g., families who understand their health options.',chips:['patients who feel heard and informed','healthier communities with better access to care','a team that grows because I served it']}
+];
+var vague=['many people','help people','make a difference','passionate','the best','everyone','a lot','things','stuff','etc'];
+var VAL=[['Compassion','Seeing needs with care','M12 21s-7-4.6-9-9.2C1.5 8 3.6 5 6.6 5c2 0 3.6 1.2 5.4 3 1.8-1.8 3.4-3 5.4-3 3 0 5.1 3 3.6 6.8C19 16.4 12 21 12 21z'],
+ ['Integrity','Doing right unseen','M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z'],
+ ['Service','Putting others first','M12 3a3 3 0 110 6 3 3 0 010-6zM5 21v-3a7 7 0 0114 0v3z'],
+ ['Excellence','Careful, skilled work','M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.7 5.6 21.5l1.7-7.2L2 9.6 9 9z'],
+ ['Equity','Fair access for all','M12 3v18M4 8h16M6 8l-3 7h6zM18 8l-3 7h6z'],
+ ['Humility','Learning from others','M4 18c0-4 3-6 8-6s8 2 8 6M12 4a4 4 0 110 8 4 4 0 010-8z'],
+ ['Faith','Worldview that guides','M10 3h4v6h6v4h-6v8h-4v-8H4V9h6z'],
+ ['Stewardship','Using gifts well','M12 3C7 3 4 7 4 11c0 5 8 10 8 10s8-5 8-10c0-4-3-8-8-8z']];
+var ans={},vals=[];
+var form=document.getElementById('form');
+Q.forEach(function(q){
+  var d=document.createElement('div');d.className='q';
+  d.innerHTML='<label for="'+q.k+'">'+q.l+'</label><textarea id="'+q.k+'" placeholder="'+q.ph+'"></textarea><div class="chips" aria-label="Starter phrases"></div><div class="hint" id="h_'+q.k+'"></div>';
+  form.appendChild(d);
+  var c=d.querySelector('.chips');
+  q.chips.forEach(function(t){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t;b.onclick=function(){var ta=d.querySelector('textarea');ta.value=t;ta.dispatchEvent(new Event('input'));ta.focus();};c.appendChild(b);});
+  d.querySelector('textarea').addEventListener('input',function(e){ans[q.k]=e.target.value.trim();update();});
+});
+function score(t){ if(!t)return 0; var s=0; var w=t.split(/\s+/).length; if(w>=5)s+=.4; if(w>=9)s+=.3; if(!vague.some(function(v){return t.toLowerCase().indexOf(v)>-1;}))s+=.3; return s;}
+function lc(s){return s.replace(/[.\s]+$/,'');}
+function update(){
+  var tot=0;
+  Q.forEach(function(q){var t=ans[q.k]||'',h=document.getElementById('h_'+q.k),sc=score(t);tot+=sc;
+    var v=vague.filter(function(x){return t.toLowerCase().indexOf(x)>-1;});
+    if(!t){h.textContent='';h.className='hint';}
+    else if(v.length){h.textContent='Too general: "'+v[0]+'". Name who, where, or what instead.';h.className='hint';}
+    else if(t.split(/\s+/).length<5){h.textContent='Add a few more specifics so a reader can picture it.';h.className='hint';}
+    else{h.textContent='Specific and clear.';h.className='hint good';}});
+  var pct=tot/Q.length; document.getElementById('beam').setAttribute('opacity',(0.08+pct*0.85).toFixed(2));
+  document.getElementById('mfill').style.width=Math.round(pct*100)+'%';
+  document.getElementById('mlabel').textContent=pct===0?'Start writing to light the beam.':pct<.5?'The beam is faint. Add detail.':pct<.85?'Getting brighter. Replace general words.':'Bright and clear. Review your wording, then copy it.';
+  var p=[];
+  if(vals.length===3)p.push('Guided by '+vals[0].toLowerCase()+', '+vals[1].toLowerCase()+', and '+vals[2].toLowerCase()+',');
+  var parts=[];
+  if(ans.go)parts.push('my mission is to '+lc(ans.go).replace(/^i (will|want to) /i,'').replace(/^to /i,''));
+  if(ans.ideal)parts.push('working in '+lc(ans.ideal).replace(/^(a|an) /i,'a '));
+  if(ans.treat)parts.push('and serving others '+lc(ans.treat).replace(/^(by|with) /i,'with '));
+  var s=(p.join(' ')+' '+parts.join(', ')).trim();
+  if(s&&!/^guided/i.test(s))s=s.charAt(0).toUpperCase()+s.slice(1);
+  if(s)s+='.';
+  if(ans.legacy)s+=' I hope to leave behind '+lc(ans.legacy).replace(/^(i hope to leave behind|a legacy of) /i,'')+'.';
+  document.getElementById('out').textContent=s||'Your statement will appear here.';
+}
+document.getElementById('copy').onclick=function(){
+  var t=document.getElementById('out').textContent,m=document.getElementById('copied');
+  function ok(){m.textContent='Copied. Paste it into your ePortfolio Part 2 draft.';}
+  function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok();}catch(e){m.textContent='Select the text above and copy it.';}document.body.removeChild(a);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb);}else fb();
+};
+document.getElementById('clear').onclick=function(){ans={};vals=[];document.querySelectorAll('textarea').forEach(function(t){t.value='';});drawVals();update();vfb();document.getElementById('copied').textContent='';};
+function drawVals(){
+  var g=document.getElementById('vgrid');g.innerHTML='';
+  VAL.forEach(function(v){var b=document.createElement('button');b.type='button';b.className='vc';b.setAttribute('aria-pressed',vals.indexOf(v[0])>-1);
+    b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#c8402a" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="'+v[2]+'"/></svg><b>'+v[0]+'</b><span>'+v[1]+'</span>';
+    b.onclick=function(){var i=vals.indexOf(v[0]);if(i>-1)vals.splice(i,1);else if(vals.length<3)vals.push(v[0]);else{document.getElementById('vfb').textContent='You can choose three. Deselect one to swap.';return;}drawVals();vfb();update();};
+    g.appendChild(b);});
+}
+function vfb(){var f=document.getElementById('vfb');f.className='fb'+(vals.length===3?' ok':'');f.textContent=vals.length===3?'Added to your statement: '+vals.join(', ')+'. Return to "Build your statement" to see it.':'Pick '+(3-vals.length)+' more value'+(3-vals.length===1?'':'s')+' to continue.';}
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',x===t);});['build','values'].forEach(function(id){document.getElementById(id).hidden=(id!==t.dataset.p);});};});
+drawVals();update();
+</script>
+</body></html>
