@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSCI 400 | Week 2 Interactive: Public Health System Explorer</title>
+<style>:root{--red:#a8353a;--red2:#d34147;--sand:#edebe8;--sand2:#f7f5f3;--ink:#222;--muted:#555;--line:#d9d5d0;--ok:#2b7a4b;--c1:#a8353a;--c2:#8a4b0f;--c3:#2a6f6f;--c4:#2f5d8a;--c5:#5b3f8c}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:15px;line-height:1.4}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;line-height:1.15}
+p{margin:0 0 8px}
+.app{height:100%;display:flex;flex-direction:column;max-width:1100px;margin:0 auto;background:#fff}
+.hdr{flex:0 0 auto;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 18px;border-radius:0 0 14px 14px}
+.kicker{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;opacity:.92}
+.hdr h1{font-size:clamp(19px,3.2vw,26px);margin-top:2px}
+.hdr .sub{font-size:13px;opacity:.95;margin-top:2px}
+.hdr-art{flex:0 0 auto;width:150px;height:56px}
+.tabs{flex:0 0 auto;display:flex;gap:4px;padding:8px 14px 0;border-bottom:2px solid var(--sand);overflow:hidden}
+.tab{flex:1 1 0;min-width:0;background:var(--sand2);border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 8px;font:600 13px/1.2 inherit;font-family:inherit;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center}
+.tab .n{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#fff;border:1.5px solid var(--red);color:var(--red);font-size:11px;display:grid;place-items:center}
+.tab[aria-selected=true]{background:#fff;border-color:var(--red);border-bottom:2px solid #fff;margin-bottom:-2px;color:var(--red)}
+.tab[aria-selected=true] .n{background:var(--red);color:#fff}
+.panel{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 18px}
+.step[hidden]{display:none}
+.lead h2{font-size:20px;color:var(--red)}
+.lead p{color:var(--muted);margin:4px 0 10px}
+.ftr{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 18px;border-top:2px solid var(--sand);background:var(--sand2)}
+.ftr .ind{font-size:13px;color:var(--muted);font-weight:600}
+.btn{font:600 14px inherit;font-family:inherit;border-radius:8px;padding:8px 16px;border:2px solid var(--red);background:#fff;color:var(--red);cursor:pointer}
+.btn.pri{background:var(--red);color:#fff}
+.btn:hover:not(:disabled){filter:brightness(.94)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.sm{padding:5px 10px;font-size:13px}
+:focus-visible{outline:3px solid #111;outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px}
+.card.tint{background:var(--sand2)}
+.note{font-size:13px;color:var(--muted)}
+.callout{border-left:5px solid var(--red2);background:var(--sand2);border-radius:0 10px 10px 0;padding:8px 12px;font-size:14px}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600;background:var(--sand);color:var(--ink)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ico{width:34px;height:34px;flex:0 0 auto}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.links a{display:block;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;text-decoration:none;color:var(--ink);font-size:13px;background:#fff}
+.links a b{display:block;color:var(--red);font-size:14px}
+.links a:hover{border-color:var(--red)}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}.hdr-art{display:none}.tab .t{font-size:12px}.tab .n{display:none}.panel{padding:10px 12px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.map{display:grid;grid-template-columns:1.05fr 1fr;gap:14px;align-items:start}
+.zone{cursor:pointer}.zone,.zone:focus,.zone:focus-visible{outline:none}.zone:focus-visible .sh{stroke:#111;stroke-width:4}
+.zone .sh{transition:fill .2s}.zone:hover .sh{filter:brightness(1.08)}
+.zone.on .sh{stroke:#111;stroke-width:3}
+.det h3{color:var(--red);font-size:18px;margin-bottom:4px}
+.det ul{margin:4px 0 8px;padding-left:18px}.det li{margin-bottom:2px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.fb{border:2px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font:600 13px inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.fb[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pc{border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px;text-align:left;font-family:inherit;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;gap:4px;font-size:13px;position:relative;min-height:130px}
+.pc .ico{color:var(--red);width:32px;height:32px}
+.pc b{font-size:14px;line-height:1.15}
+.pc .star{position:absolute;top:6px;right:8px;font-size:20px;line-height:1;color:var(--line)}
+.pc[aria-pressed=true]{border-color:var(--red);background:var(--sand2)}
+.pc[aria-pressed=true] .star{color:var(--red2)}
+.lv{font-size:11px;font-weight:700;border-radius:99px;padding:1px 8px;align-self:flex-start}
+.lv.b{background:#dcefe3;color:#1d5c37}.lv.g{background:#f6e1c6;color:#7a4208}.lv.m{background:#e3e9f4;color:#27457a}
+.dec{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stack{display:flex;height:34px;border-radius:10px;overflow:hidden;background:var(--sand);margin:6px 0}
+.stack div{display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;transition:width .5s;white-space:nowrap}
+.bar-b{background:#2b7a4b}.bar-m{background:#27457a}.bar-g{background:#8a4b0f}
+.opt{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.opt .fb{font-size:13px}
+@media(max-width:760px){.map,.dec{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-clinical" viewBox="0 0 48 48"><path d="M24 41S7 31 7 18.5A8.5 8.5 0 0 1 24 15a8.5 8.5 0 0 1 17 3.500C41 31 24 41 24 41z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M10 24h9l3-6 4 11 3-5h9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-community" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="24" cy="15" r="6"/><path d="M12 38c0-7 5-12 12-12s12 5 12 12"/><circle cx="9" cy="21" r="4"/><path d="M3 36c0-5 2-8 6-9"/><circle cx="39" cy="21" r="4"/><path d="M45 36c0-5-2-8-6-9"/></g></symbol>
+<symbol id="i-admin" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="7" width="30" height="35" rx="3"/><path d="M18 7V4h12v3"/><path d="M15 19l3 3 5-6M15 31l3 3 5-6"/><path d="M28 20h7M28 32h7"/></g></symbol>
+<symbol id="i-research" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 6h10M21 6v13L9 39a3 3 0 0 0 3 5h24a3 3 0 0 0 3-5L27 19V6"/><path d="M14 31h20"/><circle cx="22" cy="37" r="1.500"/><circle cx="29" cy="34" r="1.500"/></g></symbol>
+<symbol id="i-policy" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20L24 8l18 12z"/><path d="M10 22v14M19 22v14M29 22v14M38 22v14M6 40h36"/></g></symbol>
+<symbol id="i-data" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7v34h35"/><rect x="13" y="26" width="6" height="11"/><rect x="23" y="17" width="6" height="20"/><rect x="33" y="22" width="6" height="15"/></g></symbol>
+<symbol id="i-env" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 38C8 20 20 8 40 8c1 20-9 32-26 30"/><path d="M10 38c6-10 12-16 20-20"/></g></symbol>
+<symbol id="i-global" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="24" cy="24" r="17"/><ellipse cx="24" cy="24" rx="7" ry="17"/><path d="M7 24h34M10 14h28M10 34h28"/></g></symbol>
+<symbol id="i-edu" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h36v24H22l-9 8v-8H6z"/><path d="M14 17h20M14 25h12"/></g></symbol>
+<symbol id="i-chw" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 23L24 7l18 16"/><path d="M11 20v21h26V20"/><path d="M24 36s-7-4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5-7 9-7 9z"/></g></symbol>
+<symbol id="i-emerg" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 5l17 7v11c0 10-7 17-17 20C14 40 7 33 7 23V12z"/><path d="M24 15v16M16 23h16"/></g></symbol>
+<symbol id="i-flag" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 43V6"/><path d="M12 8h26l-6 8 6 8H12"/></g></symbol>
+</defs></svg>
+
+<div class="app">
+<header class="hdr"><div><div class="kicker">HSCI 400 &middot; Health Education Programming &middot; Week 2</div>
+<h1>Public Health System Explorer</h1><div class="sub">See where careers fit in a population-focused system.</div></div><svg class="hdr-art" viewBox="0 0 150 56" role="img" aria-label="Network of linked nodes representing the public health system" xmlns="http://www.w3.org/2000/svg"><path d="M30 40L75 14l45 26M30 40h90M75 14v26" stroke="#f2c7c9" stroke-width="2.5" fill="none"/><circle cx="75" cy="14" r="10" fill="#ffffff"/><circle cx="30" cy="40" r="8" fill="#f2c7c9"/><circle cx="120" cy="40" r="8" fill="#f2c7c9"/><circle cx="75" cy="40" r="6" fill="#ffffff"/><path d="M75 9v10M70 14h10" stroke="#a8353a" stroke-width="2.5" stroke-linecap="round"/><path d="M27 40h6M30 37v6" stroke="#a8353a" stroke-width="2" stroke-linecap="round"/></svg></header>
+<div class="tabs" role="tablist" aria-label="Explorer steps">
+<button class="tab" role="tab"><span class="n">1</span><span class="t">System Map</span></button>
+<button class="tab" role="tab"><span class="n">2</span><span class="t">Career Paths</span></button>
+<button class="tab" role="tab"><span class="n">3</span><span class="t">Education Decision</span></button>
+<button class="tab" role="tab"><span class="n">4</span><span class="t">Workforce Barriers</span></button></div>
+<main class="panel">
+<section class="step"><div class="map"><div class="card tint" style="padding:6px">
+<svg id="sys" viewBox="0 0 400 330" role="group" aria-label="Map of the US public health system. Select a layer to learn more." style="width:100%;max-height:340px">
+<g class="zone" data-k="fed" tabindex="0" role="button" aria-label="Federal level"><ellipse class="sh" cx="200" cy="168" rx="190" ry="152" fill="#f2c7c9"/><text x="200" y="38" text-anchor="middle" font-weight="700" font-size="14" fill="#5a1418">FEDERAL</text></g>
+<g class="zone" data-k="state" tabindex="0" role="button" aria-label="State level"><ellipse class="sh" cx="200" cy="172" rx="140" ry="108" fill="#e79ea1"/><text x="200" y="88" text-anchor="middle" font-weight="700" font-size="14" fill="#3e0d10">STATE</text></g>
+<g class="zone" data-k="local" tabindex="0" role="button" aria-label="Local level"><ellipse class="sh" cx="200" cy="176" rx="92" ry="66" fill="#a8353a"/><text x="200" y="140" text-anchor="middle" font-weight="700" font-size="14" fill="#fff">LOCAL</text></g>
+<g aria-hidden="true" style="pointer-events:none"><circle cx="200" cy="190" r="26" fill="#fff"/><use href="#i-community" x="182" y="172" width="36" height="36" style="color:#a8353a"/><text x="200" y="228" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">COMMUNITIES</text></g>
+<g class="zone" data-k="npo" tabindex="0" role="button" aria-label="Nonprofit organizations"><rect class="sh" x="8" y="262" width="118" height="52" rx="12" fill="#2a6f6f"/><text x="67" y="284" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Nonprofits</text><text x="67" y="300" text-anchor="middle" font-size="10" fill="#fff">&amp; community orgs</text></g>
+<g class="zone" data-k="hc" tabindex="0" role="button" aria-label="Healthcare organizations"><rect class="sh" x="141" y="276" width="118" height="46" rx="12" fill="#2f5d8a"/><text x="200" y="296" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Healthcare</text><text x="200" y="311" text-anchor="middle" font-size="10" fill="#fff">organizations</text></g>
+<g class="zone" data-k="acad" tabindex="0" role="button" aria-label="Universities and research"><rect class="sh" x="274" y="262" width="118" height="52" rx="12" fill="#5b3f8c"/><text x="333" y="284" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Universities</text><text x="333" y="300" text-anchor="middle" font-size="10" fill="#fff">&amp; research</text></g>
+</svg></div>
+<div class="card det" id="det" aria-live="polite"></div></div></section>
+
+<section class="step"><div class="lead"><h2>Explore career paths, then build a shortlist</h2>
+<p>Filter by typical entry education. Tap a card to add or remove it from your shortlist (the star).</p></div>
+<div class="filters" id="filt"></div><div class="cards" id="cards"></div></section>
+
+<section class="step"><div class="lead"><h2>Education is a decision point</h2>
+<p>Compare what you can pursue now with what additional study may open.</p></div>
+<div class="dec"><div class="card"><h3 style="font-size:16px">Your shortlist</h3><div id="stackWrap"></div><div id="shortlist" class="note"></div></div>
+<div class="card tint"><h3 style="font-size:16px">What to weigh</h3><ul style="margin:6px 0 8px;padding-left:18px">
+<li>Some roles are open with an undergraduate degree; others call for graduate study.</li>
+<li>Entry-level roles can build experience that informs later education choices.</li>
+<li>Requirements vary by employer and state, so confirm with current job postings.</li></ul>
+<div class="links"><a href="https://www.apha.org/professional-development/public-health-careermart/careers-in-public-health-newsletter/job" target="_blank" rel="noopener"><b>APHA: Advice for Undergrads &#8599;</b>Read guidance for undergraduates</a>
+<a href="https://www.lapu.edu/program/public-health-mph/" target="_blank" rel="noopener"><b>MPH Program Overview &#8599;</b>See what advanced study includes</a></div></div></div></section>
+
+<section class="step"><div class="lead"><h2>Public health workforce development</h2>
+<p>Building the workforce is itself a public health challenge. Pick the barrier you think matters most for early-career professionals (common examples shown), then choose strategies.</p></div>
+<div class="grid2"><div><b>1. Barrier</b><div class="opt" id="barr"></div><b>2. Strategies (choose any)</b><div class="opt" id="strat"></div></div>
+<div class="card tint" id="bout" aria-live="polite"></div></div></section>
+</main>
+<footer class="ftr"><button class="btn" id="prev">&larr; Back</button><span class="ind" id="ind"></span><button class="btn pri" id="next">Next &rarr;</button></footer>
+</div>
+<script>const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function initSteps(){
+  const tabs=$$('.tab'),panels=$$('.step'),prev=$('#prev'),next=$('#next'),ind=$('#ind');let cur=0;
+  function go(i){cur=Math.max(0,Math.min(panels.length-1,i));
+    tabs.forEach((t,k)=>{t.setAttribute('aria-selected',k===cur);t.tabIndex=k===cur?0:-1});
+    panels.forEach((p,k)=>p.hidden=k!==cur);
+    prev.disabled=cur===0;next.disabled=cur===panels.length-1;
+    ind.textContent='Step '+(cur+1)+' of '+panels.length;
+    $('.panel').scrollTop=0;
+    window.dispatchEvent(new CustomEvent('stepchange',{detail:cur}));}
+  tabs.forEach((t,k)=>{t.onclick=()=>go(k);
+    t.onkeydown=e=>{if(e.key==='ArrowRight'){go(k+1);tabs[Math.min(k+1,tabs.length-1)].focus()}
+      if(e.key==='ArrowLeft'){go(k-1);tabs[Math.max(k-1,0)].focus()}}});
+  prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);go(0);return go}
+function copyText(text,btn){
+  const done=()=>{const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1600)};
+  const fb=()=>{const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity=0;document.body.appendChild(t);t.select();
+    try{document.execCommand('copy');done()}catch(e){btn.textContent='Select text & copy manually'}t.remove()};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done,fb)}else fb()}
+
+const SYS={fed:['Federal level','Sets national priorities, funds programs, and conducts surveillance and research.',['Policy analyst','Program officer','Public health scientist'],'Graduate study is common for scientific and policy-leadership roles.'],
+state:['State level','State health departments carry out public health laws, run statewide programs, and support local partners.',['Epidemiologist','Program manager','Preparedness coordinator'],'Entry points vary; many program roles accept a bachelor&rsquo;s degree.'],
+local:['Local level','City and county health departments work closest to communities: outreach, education, inspections, and services.',['Health educator','Community health worker','Environmental health specialist'],'Many roles are open with an undergraduate degree or certificate.'],
+npo:['Nonprofits &amp; community organizations','Partners that deliver programs, advocate, and reach groups that government may not.',['Program coordinator','Outreach specialist','Grant and advocacy staff'],'Often accessible to new graduates through coordinator-level roles.'],
+hc:['Healthcare organizations','Hospitals and clinics partner with public health on prevention, patient education, and community programs.',['Patient educator','Population health coordinator','Quality improvement staff'],'Entry-level support roles can lead to leadership with experience.'],
+acad:['Universities &amp; research','Train the workforce and study population health problems and solutions.',['Research assistant','Project coordinator','Faculty (advanced degree)'],'Research support roles are an entry point; leading projects typically needs more training.']};
+function showSys(k){$$('.zone').forEach(z=>z.classList.toggle('on',z.dataset.k===k));const d=SYS[k];
+ $('#det').innerHTML='<h3>'+d[0]+'</h3><p>'+d[1]+'</p><b>Example roles</b><ul>'+d[2].map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="note" style="margin:0"><b>Education:</b> '+d[3]+'</p>'}
+$$('.zone').forEach(z=>{z.onclick=()=>showSys(z.dataset.k);z.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showSys(z.dataset.k)}}});
+$('#det').innerHTML='<h3>Select a layer</h3><p>Public health works through government at three levels, plus partners. Tap any layer on the map to see what it does and the careers connected to it.</p><p class="note">Government, nonprofit, and healthcare organizations all play a role.</p>';
+const CAR=[['Health educator','i-edu','b','Local, nonprofit, healthcare','Designs programs and materials that help people make healthy choices.'],
+['Community health worker','i-chw','b','Local, community','Connects residents with services and health information they trust.'],
+['Environmental health specialist','i-env','b','Local, state','Assesses risks in air, water, food, and housing.'],
+['Emergency preparedness coordinator','i-emerg','b','State, local, healthcare','Plans and coordinates responses to health emergencies.'],
+['Epidemiologist','i-data','g','State, federal, academia','Investigates patterns and causes of disease in populations.'],
+['Biostatistician','i-research','g','Federal, academia, research','Applies statistics to health data and study design.'],
+['Health policy analyst','i-policy','m','Federal, state, nonprofit','Evaluates policies and recommends changes.'],
+['Global health program manager','i-global','g','Nonprofit, federal, international','Leads programs that address health across borders.']];
+const LVL={b:["Entry: undergrad degree or certificate","b"],m:["Undergrad entry; graduate study to advance","m"],g:["Graduate study often expected","g"]};
+let flt='all',pick=new Set();
+const fl=[['all','All'],['b','Undergrad / certificate entry'],['m','Mixed'],['g','Graduate often expected']];
+function drawF(){$('#filt').innerHTML=fl.map(f=>'<button class="fb" aria-pressed="'+(flt===f[0])+'" data-f="'+f[0]+'">'+f[1]+'</button>').join('');$$('#filt .fb').forEach(b=>b.onclick=()=>{flt=b.dataset.f;drawF();drawC()})}
+function drawC(){$('#cards').innerHTML=CAR.map((c,i)=>flt!=='all'&&c[2]!==flt?'':'<button class="pc" aria-pressed="'+pick.has(i)+'" data-i="'+i+'"><span class="star" aria-hidden="true">&#9733;</span><svg class="ico"><use href="#'+c[1]+'"/></svg><b>'+c[0]+'</b><span class="lv '+c[2]+'">'+LVL[c[2]][0]+'</span><span>'+c[4]+'</span></button>').join('');
+ $$('#cards .pc').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;pick.has(i)?pick.delete(i):pick.add(i);b.setAttribute('aria-pressed',pick.has(i));drawD()})}
+function drawD(){const n={b:0,m:0,g:0};pick.forEach(i=>n[CAR[i][2]]++);const t=pick.size;
+ $('#stackWrap').innerHTML=t?'<div class="stack" role="img" aria-label="Shortlist by education level">'+['b','m','g'].map(k=>n[k]?'<div class="bar-'+k+'" style="width:'+(n[k]/t*100)+'%">'+n[k]+'</div>':'').join('')+'</div><div class="note"><span class="lv b">Undergrad entry</span> <span class="lv m">Mixed</span> <span class="lv g">Graduate expected</span></div>':'<p class="note">Star some careers in Step 2 to see how they compare.</p>';
+ $('#shortlist').innerHTML=t?'<ul style="padding-left:18px;margin:8px 0 0">'+[...pick].map(i=>'<li>'+CAR[i][0]+'</li>').join('')+'</ul><p style="margin-top:8px">'+(n.g>=n.b+n.m?'Most of your shortlist leans toward graduate study. Review the MPH overview to see what that involves.':'Several of your choices can start with an undergraduate degree. Compare with entry-level postings to plan experience first.')+'</p>':''}
+const BAR=[['Limited entry-level openings','Few openings can make it hard to get a first role.'],['Pay compared with other sectors','Competitive pay elsewhere can pull early-career talent away.'],['Few mentors or unclear career ladders','Without guidance, it is hard to see how to advance.'],['Unstable program funding','Short-term funding makes roles feel uncertain.']];
+const STG=[['Mentoring','Pairs newer professionals with experienced guides.',[2]],['Training &amp; internships','Builds skills and a pipeline into first roles.',[0,2]],['Organizational support','Clear advancement paths, flexible work, and recognition.',[1,2,3]],['Stable funding commitments','Predictable resources make roles sustainable.',[0,3]]];
+let bsel=null,ssel=new Set();
+function drawB(){$('#barr').innerHTML=BAR.map((b,i)=>'<button class="fb" aria-pressed="'+(bsel===i)+'" data-i="'+i+'">'+b[0]+'</button>').join('');
+ $('#strat').innerHTML=STG.map((s,i)=>'<button class="fb" aria-pressed="'+ssel.has(i)+'" data-i="'+i+'">'+s[0]+'</button>').join('');
+ $$('#barr .fb').forEach(b=>b.onclick=()=>{bsel=+b.dataset.i;drawB()});$$('#strat .fb').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;ssel.has(i)?ssel.delete(i):ssel.add(i);drawB()});
+ let h='<h3 style="font-size:16px;color:var(--red)">Your reasoning</h3>';
+ if(bsel===null)h+='<p class="note">Choose a barrier to begin.</p>';else{h+='<p><b>'+BAR[bsel][0]+':</b> '+BAR[bsel][1]+'</p>';
+  if(!ssel.size)h+='<p class="note">Now choose one or more strategies.</p>';else{h+='<ul style="padding-left:18px;margin:0 0 8px">'+[...ssel].map(i=>'<li><b>'+STG[i][0]+'</b>: '+STG[i][1]+' <span class="pill">'+(STG[i][2].includes(bsel)?'Direct fit':'Indirect fit')+'</span></li>').join('')+'</ul>';}
+  h+='<p class="note" style="margin:0">Compare your reasoning with the barriers described in the assigned article, <i>Rebuilding to Shape a Better Future</i>, before you post to Discussion 2.</p>';}
+ $('#bout').innerHTML=h}
+window.addEventListener('stepchange',e=>{if(e.detail===2)drawD()});
+drawF();drawC();drawD();drawB();initSteps();
+</script></body></html>
