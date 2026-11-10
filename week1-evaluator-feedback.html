@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 1 | From Evaluator Feedback to Resubmission</title>
+<style>
+:root{--crimson:#a63238;--crimson-d:#7e2227;--ink:#27262b;--muted:#5f5b63;--bg:#fbf8f6;--card:#fff;--line:#e6dfda;--teal:#23757c;--gold:#e3a72f;--green:#2e7d4f;--red:#b3261e;--soft:#f6ecea}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{height:100%;display:flex;flex-direction:column;padding:12px 16px}
+.top{display:flex;align-items:center;gap:16px;background:linear-gradient(100deg,var(--crimson),var(--crimson-d));color:#fff;border-radius:14px;padding:6px 20px 6px 10px;flex:none}
+.top svg{height:82px;width:auto;flex:none}
+.wk{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.88;font-weight:700}
+h1{font-size:22px;line-height:1.15;margin:1px 0 3px}
+.sub{font-size:13.5px;opacity:.93}
+.tabs{display:flex;gap:6px;margin:10px 0 0;flex:none;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font-weight:650;cursor:pointer}
+.tab:hover{border-color:var(--crimson)}
+.tab[aria-selected=true]{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.panel{flex:1;min-height:0;overflow:hidden;padding-top:10px}
+.panel[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.btn{border:0;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;background:var(--crimson);color:#fff}
+.btn:hover{background:var(--crimson-d)}
+.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.alt:hover{border-color:var(--crimson)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+h2{font-size:18px;line-height:1.2}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.note{font-size:12.5px;color:var(--muted);margin-top:6px}
+.sr{position:absolute;left:-9999px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:640px){
+ .app{padding:8px 10px}.top{padding:6px 12px;gap:10px}.top svg{height:54px}h1{font-size:17px}.sub{display:none}
+ .tab{padding:6px 12px;font-size:14px}.tabs{margin:8px 0 6px}
+}
+
+.stations{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;position:relative;margin-bottom:10px}
+.st{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 4px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;font-weight:650;font-size:13px;text-align:center;line-height:1.2;transition:transform .15s,border-color .15s}
+.st:hover{transform:translateY(-2px);border-color:var(--crimson)}
+.st svg{width:44px;height:44px}
+.st[aria-pressed=true]{border-color:var(--crimson);background:var(--soft)}
+.st .n{position:absolute;top:-8px;left:-6px;background:var(--ink);color:#fff;width:22px;height:22px;border-radius:50%;font-size:12px;display:grid;place-items:center}
+.st .ck{position:absolute;top:-8px;right:-6px;background:var(--green);color:#fff;width:22px;height:22px;border-radius:50%;font-size:13px;display:none;place-items:center}
+.st.seen .ck{display:grid}
+.detail{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;min-height:0}
+.detail .big{background:var(--soft);border-radius:14px;height:100%;min-height:130px;display:grid;place-items:center;padding:12px}
+.detail .big svg{width:110px;height:110px}
+.detail ul{margin:8px 0 10px 20px}.detail li{margin:3px 0}
+.take{background:#fff7e3;border-left:5px solid var(--gold);padding:8px 12px;border-radius:8px;font-weight:650}
+.prog{margin-top:8px;font-size:13px;color:var(--muted)}
+.play{display:grid;grid-template-columns:1fr 210px;gap:16px;height:100%}
+.qcard{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.quote{font-size:18px;line-height:1.35;padding:14px 16px;background:var(--soft);border-radius:12px;border-left:5px solid var(--crimson)}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid var(--line);background:#fff;border-radius:12px;cursor:pointer;font-weight:700;text-align:left}
+.choice svg{width:38px;height:38px;flex:none}
+.choice:hover:not(:disabled){border-color:var(--crimson)}
+.choice.right{border-color:var(--green);background:#e9f6ee}.choice.wrong{border-color:var(--red);background:#fdeceb}
+.fb{min-height:44px;font-size:14px}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}.dot.ok{background:var(--green)}.dot.no{background:var(--red)}.dot.cur{outline:2px solid var(--ink)}
+.side{display:flex;align-items:center;justify-content:center}
+.side svg{width:100%;height:auto;max-height:260px}
+.done{text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;height:100%}
+.done .score{font-size:42px;font-weight:800;color:var(--crimson)}
+@media (max-width:640px){
+ .stations{gap:4px}.st{font-size:11px;padding:6px 2px}.st svg{width:30px;height:30px}.st .n,.st .ck{width:18px;height:18px;font-size:10px}
+ .detail{grid-template-columns:1fr}.detail .big{display:none}.detail ul{margin:4px 0 6px 18px;font-size:14px}
+ .play{grid-template-columns:1fr}.side{display:none}.quote{font-size:16px;padding:10px 12px}.choices{grid-template-columns:1fr}
+}
+</style></head><body>
+<div class="app">
+<header class="top"><svg viewBox="0 0 230 110" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Clipboard with rubric rows and a magnifying glass">
+<circle cx="115" cy="58" r="50" fill="#fff" opacity=".13"/>
+<rect x="52" y="12" width="84" height="92" rx="9" fill="#fff"/>
+<rect x="76" y="6" width="36" height="14" rx="5" fill="#e3a72f"/>
+<rect x="62" y="30" width="64" height="11" rx="3" fill="#f3e3e1"/><rect x="62" y="30" width="30" height="11" rx="3" fill="#a63238" opacity=".85"/>
+<rect x="62" y="48" width="64" height="11" rx="3" fill="#f3e3e1"/><rect x="62" y="48" width="48" height="11" rx="3" fill="#23757c" opacity=".85"/>
+<rect x="62" y="66" width="64" height="11" rx="3" fill="#f3e3e1"/><rect x="62" y="66" width="22" height="11" rx="3" fill="#a63238" opacity=".85"/>
+<rect x="62" y="84" width="64" height="11" rx="3" fill="#f3e3e1"/><rect x="62" y="84" width="40" height="11" rx="3" fill="#23757c" opacity=".85"/>
+<circle cx="150" cy="60" r="24" fill="#fff" fill-opacity=".35" stroke="#27262b" stroke-width="6"/>
+<line x1="168" y1="78" x2="190" y2="100" stroke="#27262b" stroke-width="9" stroke-linecap="round"/>
+<path d="M139 60l8 8 14-17" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="30" cy="30" r="5" fill="#e3a72f"/><circle cx="205" cy="26" r="4" fill="#fff" opacity=".7"/><circle cx="212" cy="64" r="3" fill="#e3a72f"/>
+</svg><div><div class="wk">Week 1</div><h1>From Feedback to Resubmission</h1><div class="sub">Explore the five ideas that guide your CalTPA revision, then practice reading feedback as data.</div></div></header>
+<div class="tabs" role="tablist"><button class="tab" role="tab" id="t-0" aria-controls="p-ideas" aria-selected="true" tabindex="0">Five Big Ideas</button><button class="tab" role="tab" id="t-1" aria-controls="p-sort" aria-selected="false" tabindex="-1">Try It: Evidence or Interpretation</button></div>
+
+<section id="p-ideas" class="panel" role="tabpanel" aria-labelledby="t-0">
+ <div class="stations" id="stations"></div>
+ <div class="card detail" id="detail" aria-live="polite">
+  <div class="big" id="d-icon"></div>
+  <div><h2 id="d-title"></h2><ul id="d-list"></ul><div class="take" id="d-take"></div></div>
+ </div>
+ <p class="prog">Explored <b id="expl">0</b> of 5 ideas. Select each icon to learn the key moves.</p>
+</section>
+<section id="p-sort" class="panel" role="tabpanel" aria-labelledby="t-1" hidden>
+ <div class="card play" id="play">
+  <div class="qcard">
+   <div class="dots" id="dots" aria-label="Progress"></div>
+   <p class="muted small">Sample comments for practice. Decide: is this what the evaluator observed, or an interpretation?</p>
+   <div class="quote" id="quote"></div>
+   <div class="choices">
+    <button class="choice" id="c-obs"><svg viewBox="0 0 38 38" aria-hidden="true"><rect x="7" y="5" width="24" height="29" rx="4" fill="#fff" stroke="#23757c" stroke-width="3"/><rect x="13" y="2" width="12" height="7" rx="2.5" fill="#23757c"/><g stroke="#23757c" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="16" x2="26" y2="16"/><line x1="12" y1="22" x2="26" y2="22"/><line x1="12" y1="28" x2="20" y2="28"/></g></svg><span>The evaluator observed this</span></button>
+    <button class="choice" id="c-int"><svg viewBox="0 0 38 38" aria-hidden="true"><path d="M8 6h22a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H20l-7 7v-7H8a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fff" stroke="#a63238" stroke-width="3" stroke-linejoin="round"/><text x="19" y="22" font-size="15" font-weight="800" text-anchor="middle" fill="#a63238" font-family="Arial">?</text></svg><span>This is an interpretation</span></button>
+   </div>
+   <div class="fb" id="fb" aria-live="polite"></div>
+   <div><button class="btn" id="next" hidden>Next</button></div>
+  </div>
+  <div class="side"><svg viewBox="0 0 200 250" role="img" aria-label="Two bins: evaluator observed and my interpretation">
+<rect x="14" y="10" width="172" height="104" rx="12" fill="#e3f1f2" stroke="#23757c" stroke-width="3"/>
+<rect x="76" y="2" width="48" height="14" rx="5" fill="#23757c"/>
+<g stroke="#23757c" stroke-width="5" stroke-linecap="round"><line x1="36" y1="44" x2="164" y2="44"/><line x1="36" y1="64" x2="150" y2="64"/><line x1="36" y1="84" x2="120" y2="84"/></g>
+<text x="100" y="106" font-size="13" font-weight="800" text-anchor="middle" fill="#17565b" font-family="Arial">WHAT THE EVALUATOR OBSERVED</text>
+<path d="M30 136h140a14 14 0 0 1 14 14v52a14 14 0 0 1-14 14H80l-24 24v-24H30a14 14 0 0 1-14-14v-52a14 14 0 0 1 14-14z" fill="#f9e3e4" stroke="#a63238" stroke-width="3" stroke-linejoin="round"/>
+<g fill="#a63238"><circle cx="64" cy="168" r="6"/><circle cx="100" cy="168" r="6"/><circle cx="136" cy="168" r="6"/></g>
+<text x="100" y="204" font-size="13" font-weight="800" text-anchor="middle" fill="#7e2227" font-family="Arial">MY INTERPRETATION</text>
+</svg></div>
+ </div>
+</section>
+
+</div>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tab'));
+ function show(id){tabs.forEach(function(t){var on=t.getAttribute('aria-controls')===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!on;});}
+ tabs.forEach(function(t,i){
+  t.addEventListener('click',function(){show(t.getAttribute('aria-controls'))});
+  t.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;var n=tabs[(i+d+tabs.length)%tabs.length];n.focus();n.click();});
+ });
+ window.copyText=function(txt,btn){
+  function done(){var o=btn.textContent;btn.textContent='Copied!';setTimeout(function(){btn.textContent=o},1600)}
+  function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){btn.textContent='Select text to copy'}document.body.removeChild(ta)}
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done,fallback)}else fallback();
+ };
+})();
+</script>
+<script>
+var IDEAS=[{"t": "Reading Evaluator Feedback as Data", "s": "Read feedback as data", "p": ["Locate each rubric element where the evaluator\u2019s comments show your portfolio did not pass.", "Keep what the evaluator observed separate from your own interpretation of it.", "Send a copy of the Pearson evaluator rubric to your CalTPA Coach so you can review your score together (Part 1)."], "k": "Feedback is your starting point. Use the evaluator\u2019s comments to decide what to revise, rather than starting over without a plan.", "icon": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><rect x=\"6\" y=\"34\" width=\"9\" height=\"22\" rx=\"2\" fill=\"#23757c\"/><rect x=\"19\" y=\"24\" width=\"9\" height=\"32\" rx=\"2\" fill=\"#a63238\"/><rect x=\"32\" y=\"40\" width=\"9\" height=\"16\" rx=\"2\" fill=\"#e3a72f\"/><circle cx=\"42\" cy=\"24\" r=\"13\" fill=\"#fff\" fill-opacity=\".6\" stroke=\"#27262b\" stroke-width=\"4\"/><line x1=\"52\" y1=\"34\" x2=\"60\" y2=\"42\" stroke=\"#27262b\" stroke-width=\"5\" stroke-linecap=\"round\"/></svg>"}, {"t": "Reflecting Honestly on Why You Did Not Pass", "s": "Reflect honestly", "p": ["Respond to each comment from your Pearson reviewer.", "Explain, in your own words, why your submission did not pass.", "Use your reflection to decide what needs to change in your revised portfolio (Part 2)."], "k": "Reflection makes revision purposeful. Explaining why shows you understand what must change.", "icon": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><path d=\"M8 12h40a4 4 0 0 1 4 4v26a4 4 0 0 1-4 4H26l-12 10V46H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z\" fill=\"#fff\" stroke=\"#a63238\" stroke-width=\"3.5\" stroke-linejoin=\"round\"/><g stroke=\"#a63238\" stroke-width=\"3.5\" stroke-linecap=\"round\"><line x1=\"14\" y1=\"23\" x2=\"42\" y2=\"23\"/><line x1=\"14\" y1=\"32\" x2=\"34\" y2=\"32\"/></g><path d=\"M44 50l12-12 5 5-12 12-7 2z\" fill=\"#e3a72f\" stroke=\"#27262b\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/></svg>"}, {"t": "Planning a Realistic Timeline", "s": "Plan a timeline", "p": ["Provide a timeline for TPA resubmission and completion in your reflection.", "Keep the due dates in mind: Part 1 in Week 2, Part 2 in Week 3, and Part 3 in Week 7.", "Revisit your timeline as you work, and tell your coach early if you need support."], "k": "A timeline keeps you on track. Decide what will change and when, so you can finish in time to resubmit.", "icon": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><rect x=\"6\" y=\"12\" width=\"52\" height=\"46\" rx=\"6\" fill=\"#fff\" stroke=\"#27262b\" stroke-width=\"3.5\"/><path d=\"M6 18a6 6 0 0 1 6-6h40a6 6 0 0 1 6 6v8H6z\" fill=\"#23757c\"/><line x1=\"20\" y1=\"6\" x2=\"20\" y2=\"17\" stroke=\"#27262b\" stroke-width=\"4\" stroke-linecap=\"round\"/><line x1=\"44\" y1=\"6\" x2=\"44\" y2=\"17\" stroke=\"#27262b\" stroke-width=\"4\" stroke-linecap=\"round\"/><g fill=\"#d9cfca\"><rect x=\"12\" y=\"32\" width=\"8\" height=\"7\" rx=\"1.5\"/><rect x=\"24\" y=\"32\" width=\"8\" height=\"7\" rx=\"1.5\"/><rect x=\"36\" y=\"32\" width=\"8\" height=\"7\" rx=\"1.5\"/><rect x=\"12\" y=\"44\" width=\"8\" height=\"7\" rx=\"1.5\"/><rect x=\"36\" y=\"44\" width=\"8\" height=\"7\" rx=\"1.5\"/></g><rect x=\"24\" y=\"44\" width=\"8\" height=\"7\" rx=\"1.5\" fill=\"#a63238\"/><rect x=\"47\" y=\"32\" width=\"6\" height=\"7\" rx=\"1.5\" fill=\"#e3a72f\"/></svg>"}, {"t": "Working with Your CalTPA Coach", "s": "Work with your coach", "p": ["Review your Pearson evaluator feedback together.", "Refine your portfolio for resubmission with your coach\u2019s guidance.", "Confirm everything is in order before you resubmit to Pearson. Do not resubmit until after your third coaching session."], "k": "Your coach is a partner in the process. Meet regularly, ask questions, and confirm your portfolio is ready.", "icon": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><circle cx=\"20\" cy=\"20\" r=\"9\" fill=\"#e3a72f\" stroke=\"#27262b\" stroke-width=\"3\"/><path d=\"M4 50c0-10 7-16 16-16s16 6 16 16z\" fill=\"#e3a72f\" stroke=\"#27262b\" stroke-width=\"3\" stroke-linejoin=\"round\"/><circle cx=\"44\" cy=\"22\" r=\"9\" fill=\"#23757c\" stroke=\"#27262b\" stroke-width=\"3\"/><path d=\"M30 52c0-10 6-16 14-16s16 6 16 16z\" fill=\"#23757c\" stroke=\"#27262b\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M26 6h16a4 4 0 0 1 4 4v3a4 4 0 0 1-4 4h-6l-5 5v-5h-5a4 4 0 0 1-4-4v-3a4 4 0 0 1 4-4z\" fill=\"#fff\" stroke=\"#a63238\" stroke-width=\"2.5\" stroke-linejoin=\"round\" transform=\"translate(-4 -2) scale(.9)\"/></svg>"}, {"t": "Keeping Literacy at the Center: TPE 7", "s": "Literacy: TPE 7", "p": ["In 2024, California passed SB 488, a comprehensive literacy expectation.", "Study evidence-based teaching of foundational reading skills: print concepts, phonological awareness, phonics and word recognition, and fluency.", "Include tiered supports for pupils with reading difficulties, English learners, and pupils with exceptional needs. Align with the ELA and ELD Standards, the ELA/ELD Framework, and the California Dyslexia Guidelines."], "k": "Literacy instruction is the overarching goal of this program. Familiarize yourself with TPE 7: Literacy.", "icon": "<svg viewBox=\"0 0 64 64\" aria-hidden=\"true\"><path d=\"M32 14C25 9 14 8 5 10v40c9-2 20-1 27 4 7-5 18-6 27-4V10c-9-2-20-1-27 4z\" fill=\"#fff\" stroke=\"#27262b\" stroke-width=\"3.5\" stroke-linejoin=\"round\"/><line x1=\"32\" y1=\"14\" x2=\"32\" y2=\"54\" stroke=\"#27262b\" stroke-width=\"3\"/><g stroke=\"#a63238\" stroke-width=\"3\" stroke-linecap=\"round\"><line x1=\"12\" y1=\"22\" x2=\"26\" y2=\"23\"/><line x1=\"12\" y1=\"31\" x2=\"26\" y2=\"32\"/></g><g stroke=\"#23757c\" stroke-width=\"3\" stroke-linecap=\"round\"><line x1=\"38\" y1=\"23\" x2=\"52\" y2=\"22\"/><line x1=\"38\" y1=\"32\" x2=\"52\" y2=\"31\"/></g><circle cx=\"48\" cy=\"46\" r=\"8\" fill=\"#e3a72f\" stroke=\"#27262b\" stroke-width=\"2.5\"/><text x=\"48\" y=\"50\" font-size=\"10\" font-weight=\"800\" text-anchor=\"middle\" fill=\"#27262b\" font-family=\"Arial\">7</text></svg>"}], QS=[["The evaluator wrote: \u201cThe lesson plan does not include a formative assessment.\u201d", "obs", "That is the evaluator\u2019s own statement, so it is an observation. Quote it exactly in your notes."], ["The evaluator probably thought my lesson was too hard for English learners.", "int", "That is a guess about what the evaluator was thinking. Mark it as your interpretation and check it with your coach."], ["Rubric element 3 is marked as not passing.", "obs", "A score or mark on the rubric is something the evaluator recorded. That makes it an observation."], ["I think I lost points because I rushed the video clip.", "int", "That is your own explanation. It may be right, but it is not what the evaluator said. Look for a comment that supports it."], ["Comment: \u201cEvidence of phonics instruction is not shown in the submitted clip.\u201d", "obs", "It is a direct quote of a comment from the reviewer, so it is an observation."], ["That reviewer was just too strict.", "int", "That is a judgment, not data. Reframe it: which specific comment will you act on?"]];
+(function(){
+ var st=document.getElementById('stations'),seen={},cur=-1;
+ IDEAS.forEach(function(x,i){
+  var b=document.createElement('button');b.className='st';b.setAttribute('aria-pressed','false');
+  b.innerHTML='<span class="n">'+(i+1)+'</span><span class="ck" aria-hidden="true">✓</span>'+x.icon+'<span>'+x.s+'</span>';
+  b.onclick=function(){sel(i)};st.appendChild(b);
+ });
+ function sel(i){
+  cur=i;seen[i]=1;var bs=st.children;
+  for(var j=0;j<bs.length;j++){bs[j].setAttribute('aria-pressed',j===i);bs[j].classList.toggle('seen',!!seen[j]);}
+  var x=IDEAS[i];
+  document.getElementById('d-icon').innerHTML=x.icon;
+  document.getElementById('d-title').textContent=x.t;
+  document.getElementById('d-list').innerHTML=x.p.map(function(p){return '<li>'+p+'</li>'}).join('');
+  document.getElementById('d-take').textContent=x.k;
+  document.getElementById('expl').textContent=Object.keys(seen).length;
+ }
+ sel(0);
+ // sorting activity
+ var qi=0,score=0,res=[],answered=false;
+ var quote=document.getElementById('quote'),fb=document.getElementById('fb'),nx=document.getElementById('next'),
+     co=document.getElementById('c-obs'),ci=document.getElementById('c-int'),dots=document.getElementById('dots');
+ function dotsDraw(){dots.innerHTML=QS.map(function(_,i){return '<span class="dot '+(res[i]===1?'ok':res[i]===0?'no':'')+(i===qi?' cur':'')+'"></span>'}).join('')+'<span class="small muted" style="margin-left:6px">'+Math.min(qi+1,QS.length)+' of '+QS.length+'</span>';}
+ function load(){
+  answered=false;var q=QS[qi];quote.textContent=q[0];fb.textContent='';nx.hidden=true;
+  [co,ci].forEach(function(b){b.disabled=false;b.className='choice'});dotsDraw();
+ }
+ function pick(kind){
+  if(answered)return;answered=true;var q=QS[qi],ok=kind===q[1];
+  res[qi]=ok?1:0;if(ok)score++;
+  var chosen=kind==='obs'?co:ci,right=q[1]==='obs'?co:ci;
+  right.classList.add('right');if(!ok)chosen.classList.add('wrong');
+  co.disabled=ci.disabled=true;
+  fb.innerHTML='<b>'+(ok?'Yes. ':'Not quite. ')+'</b>'+q[2];
+  nx.textContent=qi===QS.length-1?'See my result':'Next';nx.hidden=false;nx.focus();dotsDraw();
+ }
+ co.onclick=function(){pick('obs')};ci.onclick=function(){pick('int')};
+ nx.onclick=function(){
+  if(qi<QS.length-1){qi++;load();return}
+  var p=document.getElementById('play');
+  p.innerHTML='<div class="done" style="grid-column:1/-1"><div class="score">'+score+' / '+QS.length+'</div><h2>'+(score>=5?'Strong feedback reader':score>=3?'Good start':'Keep practicing')+'</h2><p style="max-width:520px">Next, open your own Pearson rubric. For each element that did not pass, write the evaluator’s exact words in one column and your own thoughts in another. Bring both columns to your coach.</p><button class="btn alt" id="again">Try again</button></div>';
+  document.getElementById('again').onclick=function(){location.reload()};
+ };
+ load();
+})();
+</script>
+</body></html>
