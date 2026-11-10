@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 460 Leadership and Change | Course Introduction and Success Tips</title>
+<style>
+:root{
+  --red:#d34147; --red-d:#a92f35; --ink:#222; --muted:#5b5b5b; --sand:#edebe8; --paper:#fff;
+  --navy:#1f2f46; --teal:#2a8c8c; --gold:#e8a33d; --green:#3f8f5a;
+}
+*{box-sizing:border-box}
+/* No double scrollbar: the page itself never scrolls; only the active panel can. */
+html,body{height:100%;margin:0;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column}
+header{flex:0 0 auto;background:var(--navy);color:#fff;padding:10px 18px;display:flex;align-items:center;gap:14px}
+header svg{flex:0 0 auto}
+header h1{font-size:1.1rem;margin:0;line-height:1.2}
+header p{margin:0;font-size:.8rem;opacity:.8}
+nav{flex:0 0 auto;display:flex;gap:4px;background:var(--sand);padding:6px 10px 0;overflow-x:auto}
+nav button{border:0;background:transparent;font:inherit;font-weight:600;font-size:.9rem;padding:9px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);white-space:nowrap}
+nav button[aria-selected=true]{background:var(--paper);color:var(--red-d);box-shadow:inset 0 3px 0 var(--red)}
+nav button:hover{color:var(--ink)}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #1a73e8;outline-offset:2px}
+main{flex:1 1 auto;min-height:0;position:relative}
+.panel{position:absolute;inset:0;overflow-y:auto;padding:18px 22px 24px;display:none}
+.panel.active{display:block}
+h2{margin:0 0 6px;font-size:1.35rem;color:var(--navy)}
+h3{margin:0 0 4px;font-size:1.02rem;color:var(--navy)}
+.lead{color:var(--muted);margin:0 0 14px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}.hero{flex-direction:column}}
+@media(max-width:520px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{background:var(--paper);border:1px solid #ddd;border-radius:12px;padding:14px}
+.hero{display:flex;gap:18px;align-items:center;background:linear-gradient(135deg,#fdf3f3,var(--sand));border-radius:16px;padding:16px 20px;margin-bottom:16px}
+.hero svg{flex:0 0 280px;max-width:100%;height:auto}
+.btn{display:inline-block;border:0;background:var(--red);color:#fff;font:inherit;font-weight:600;padding:9px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--red-d)}
+.btn.alt{background:var(--navy)}
+.skill{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:var(--sand);font-weight:600;font-size:.92rem}
+.skill svg{flex:0 0 34px}
+/* Timeline */
+.weeks{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:6px 0 14px}
+@media(max-width:760px){.weeks{grid-template-columns:repeat(4,1fr)}}
+.wk{border:2px solid #ddd;background:#fff;border-radius:12px;padding:8px 2px;font:inherit;cursor:pointer;text-align:center;position:relative}
+.wk b{display:block;font-size:1.25rem;color:var(--navy)}
+.wk span{font-size:.72rem;color:var(--muted)}
+.wk[aria-pressed=true]{border-color:var(--red);background:#fdf3f3}
+.wk .star{position:absolute;top:-8px;right:-4px;background:var(--gold);color:#fff;border-radius:50%;width:20px;height:20px;font-size:.75rem;line-height:20px}
+.detail{border-left:5px solid var(--red);background:var(--sand);border-radius:10px;padding:12px 16px}
+.detail ul{margin:6px 0 0;padding-left:20px}
+.tag{display:inline-block;background:var(--gold);color:#fff;border-radius:99px;padding:1px 10px;font-size:.75rem;font-weight:700;margin-left:6px}
+/* Flip cards */
+.flip{perspective:900px;height:150px;border:0;background:none;padding:0;font:inherit;cursor:pointer;text-align:left}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip[aria-pressed=true] .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:12px;padding:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center}
+.flip .f{background:var(--navy);color:#fff;align-items:center;text-align:center}
+.flip .b{background:var(--sand);transform:rotateY(180deg);font-size:.9rem}
+@media(prefers-reduced-motion:reduce){.flip .in{transition:none}}
+/* Activities */
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.acts button{border:2px solid #ddd;background:#fff;border-radius:99px;font:inherit;font-weight:600;padding:6px 14px;cursor:pointer}
+.acts button[aria-selected=true]{border-color:var(--red);color:var(--red-d);background:#fdf3f3}
+.act{display:none}.act.on{display:block}
+.act-top{display:flex;gap:16px;align-items:center;margin-bottom:10px}
+.act-top svg{flex:0 0 150px;height:auto}
+.opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.opt{border:2px solid #ccc;background:#fff;font:inherit;border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600}
+.opt:hover{border-color:var(--navy)}
+.opt.ok{border-color:var(--green);background:#e8f5ec;color:#1e5f37}
+.opt.no{border-color:var(--red);background:#fdeaea;color:var(--red-d)}
+.fb{min-height:1.4em;margin-top:8px;font-size:.92rem}
+.q{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px 14px}
+.prog{height:8px;background:#ddd;border-radius:9px;overflow:hidden;margin:6px 0 10px}
+.prog i{display:block;height:100%;width:0;background:var(--green);transition:width .4s}
+/* Tips */
+.tip{display:flex;gap:12px;align-items:flex-start;border:2px solid #ddd;border-radius:12px;padding:12px;background:#fff;width:100%;font:inherit;text-align:left;cursor:pointer}
+.tip svg{flex:0 0 46px}
+.tip[aria-pressed=true]{border-color:var(--green);background:#f0f8f3}
+.tip .chk{margin-left:auto;flex:0 0 26px;height:26px;border-radius:50%;border:2px solid #bbb;display:grid;place-items:center;color:#fff;font-size:.85rem}
+.tip[aria-pressed=true] .chk{background:var(--green);border-color:var(--green)}
+.tip small{color:var(--muted);display:block}
+.calc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:600px){.calc{grid-template-columns:1fr 1fr}}
+.calc label{font-size:.8rem;font-weight:600;color:var(--muted)}
+.calc input{width:100%;padding:6px;border:1px solid #bbb;border-radius:6px;font:inherit}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="22" fill="#d34147"/><path d="M12 31l7-9 5 5 8-12" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="15" r="3" fill="#e8a33d"/></svg>
+  <div><h1>ORGS 460: Leadership and Change</h1><p>Course Introduction and Success Tips</p></div>
+</header>
+<nav role="tablist" aria-label="Sections">
+  <button role="tab" id="t0" aria-selected="true" aria-controls="p0">Welcome</button>
+  <button role="tab" id="t1" aria-selected="false" aria-controls="p1">Course Map</button>
+  <button role="tab" id="t2" aria-selected="false" aria-controls="p2">What You'll Achieve</button>
+  <button role="tab" id="t3" aria-selected="false" aria-controls="p3">Try 4 Weeks</button>
+  <button role="tab" id="t4" aria-selected="false" aria-controls="p4">Success Tips</button>
+</nav>
+<main>
+
+<!-- WELCOME -->
+<section class="panel active" id="p0" role="tabpanel" aria-labelledby="t0">
+  <div class="hero">
+    <svg viewBox="0 0 280 190" role="img" aria-label="Illustration of a leader guiding a team up steps toward a flag">
+      <rect width="280" height="190" rx="14" fill="#fff" opacity=".6"/>
+      <path d="M20 165h60v-25h50v-30h50v-30h50v-30" fill="none" stroke="#1f2f46" stroke-width="0"/>
+      <rect x="20" y="145" width="60" height="25" fill="#1f2f46"/><rect x="80" y="120" width="60" height="50" fill="#2a8c8c"/>
+      <rect x="140" y="95" width="60" height="75" fill="#e8a33d"/><rect x="200" y="70" width="60" height="100" fill="#d34147"/>
+      <line x1="230" y1="70" x2="230" y2="26" stroke="#1f2f46" stroke-width="3"/><path d="M230 26l30 10-30 10z" fill="#d34147"/>
+      <g><circle cx="48" cy="125" r="8" fill="#f1c9a5"/><rect x="41" y="133" width="14" height="12" rx="4" fill="#d34147"/></g>
+      <g><circle cx="108" cy="100" r="8" fill="#c68b5b"/><rect x="101" y="108" width="14" height="12" rx="4" fill="#1f2f46"/></g>
+      <g><circle cx="168" cy="75" r="8" fill="#f1c9a5"/><rect x="161" y="83" width="14" height="12" rx="4" fill="#2a8c8c"/></g>
+      <g><circle cx="228" cy="50" r="0" fill="none"/></g>
+      <path d="M58 118q22-24 40-12M118 93q22-24 40-12M178 68q22-24 40-12" fill="none" stroke="#1f2f46" stroke-dasharray="4 4" stroke-width="2"/>
+      <text x="20" y="184" font-size="11" fill="#5b5b5b" font-family="Arial">Lead change. Raise others up.</text>
+    </svg>
+    <div>
+      <h2>Welcome to ORGS 460!</h2>
+      <p class="lead" style="margin-bottom:10px">Over eight weeks you will evaluate transformational and servant leadership in a rapidly changing environment, examine models for leading change, and learn how to develop the leadership of others.</p>
+      <button class="btn" data-go="1">Explore the course map</button>
+      <button class="btn alt" data-go="4">Jump to success tips</button>
+    </div>
+  </div>
+  <h3>Skills you will build</h3>
+  <p class="lead" style="margin-bottom:8px">Select a skill to see what it looks like in the workplace.</p>
+  <div class="grid g3" id="skills"></div>
+  <p id="skillDetail" class="detail" style="margin-top:12px" aria-live="polite">Select a skill above.</p>
+</section>
+
+<!-- COURSE MAP -->
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+  <h2>Your 8-Week Journey</h2>
+  <p class="lead">Select a week to see its topic and what is due. A star <span class="tag" style="margin:0">★</span> marks a week with a major assignment.</p>
+  <svg viewBox="0 0 800 60" width="100%" role="img" aria-label="Road with eight stops from week 1 to week 8" style="margin-bottom:4px">
+    <path d="M20 40 C 150 5, 250 60, 400 30 S 650 5, 780 35" fill="none" stroke="#edebe8" stroke-width="16" stroke-linecap="round"/>
+    <path d="M20 40 C 150 5, 250 60, 400 30 S 650 5, 780 35" fill="none" stroke="#d34147" stroke-width="3" stroke-dasharray="8 8"/>
+    <g fill="#1f2f46"><circle cx="20" cy="40" r="7"/><circle cx="780" cy="35" r="7" fill="#e8a33d"/></g>
+    <text x="30" y="58" font-size="12" fill="#5b5b5b" font-family="Arial">Start</text><text x="725" y="58" font-size="12" fill="#5b5b5b" font-family="Arial">Finish: your leadership philosophy</text>
+  </svg>
+  <div class="weeks" id="weeks"></div>
+  <div class="detail" id="weekDetail" aria-live="polite"></div>
+</section>
+
+<!-- OUTCOMES -->
+<section class="panel" id="p2" role="tabpanel" aria-labelledby="t2">
+  <h2>What You'll Achieve</h2>
+  <p class="lead">Select a card to flip it and see how each outcome is assessed.</p>
+  <div class="grid g3" id="clos"></div>
+  <h3 style="margin-top:18px">How the work fits together</h3>
+  <svg viewBox="0 0 800 130" width="100%" role="img" aria-label="Flow: weekly discussions and readings lead to four major assignments, ending in a personal leadership philosophy">
+    <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4 0 8z" fill="#1f2f46"/></marker></defs>
+    <g font-family="Arial" font-size="13" text-anchor="middle">
+      <rect x="10" y="35" width="150" height="60" rx="12" fill="#1f2f46"/><text x="85" y="62" fill="#fff" font-weight="700">Deep Dives</text><text x="85" y="80" fill="#fff" font-size="11">readings + media</text>
+      <rect x="215" y="35" width="150" height="60" rx="12" fill="#2a8c8c"/><text x="290" y="62" fill="#fff" font-weight="700">Discussions</text><text x="290" y="80" fill="#fff" font-size="11">weeks 1 to 8</text>
+      <rect x="420" y="35" width="170" height="60" rx="12" fill="#e8a33d"/><text x="505" y="62" fill="#fff" font-weight="700">Change Leadership</text><text x="505" y="80" fill="#fff" font-size="11">Analysis Parts 1 and 2</text>
+      <rect x="645" y="35" width="145" height="60" rx="12" fill="#d34147"/><text x="717" y="62" fill="#fff" font-weight="700">Leadership</text><text x="717" y="80" fill="#fff" font-size="11">Philosophy</text>
+      <path d="M160 65h50M365 65h50M590 65h50" stroke="#1f2f46" stroke-width="2.5" marker-end="url(#ar)"/>
+    </g>
+  </svg>
+</section>
+
+<!-- TRY 4 WEEKS -->
+<section class="panel" id="p3" role="tabpanel" aria-labelledby="t3">
+  <h2>Try Four Weeks</h2>
+  <p class="lead">A quick taste of Weeks 1, 4, 6 and 8. Each activity previews a big idea from the course.</p>
+  <div class="acts" role="tablist" aria-label="Activities">
+    <button role="tab" aria-selected="true" data-act="0">Week 1: VUCA</button>
+    <button role="tab" aria-selected="false" data-act="1">Week 4: Raising Others Up</button>
+    <button role="tab" aria-selected="false" data-act="2">Week 6: Serve and Be True</button>
+    <button role="tab" aria-selected="false" data-act="3">Week 8: Growth Mindset</button>
+  </div>
+  <div id="actBox"></div>
+</section>
+
+<!-- TIPS -->
+<section class="panel" id="p4" role="tabpanel" aria-labelledby="t4">
+  <h2>Success Tips</h2>
+  <p class="lead">Select each tip you commit to. Watch your readiness meter fill up.</p>
+  <div style="display:flex;gap:12px;align-items:center"><div class="prog" style="flex:1;margin:0"><i id="tipBar"></i></div><b id="tipCount">0 / 8</b></div>
+  <div class="grid g2" id="tips" style="margin-top:12px"></div>
+  <p id="tipMsg" class="detail" style="margin-top:12px" aria-live="polite">Commit to at least five tips to earn your "Ready to Lead" badge.</p>
+  <h3 style="margin-top:18px">Grade planner</h3>
+  <p class="lead" style="margin-bottom:8px">Enter points earned and points possible to see your current percentage and letter grade (APU Global scale).</p>
+  <div class="calc">
+    <div><label for="ge">Points earned</label><input id="ge" type="number" min="0" inputmode="decimal"></div>
+    <div><label for="gp">Points possible so far</label><input id="gp" type="number" min="0" inputmode="decimal"></div>
+    <div style="grid-column:span 2"><label>Result</label><div id="gr" class="detail" style="padding:6px 10px" aria-live="polite">Enter your points.</div></div>
+  </div>
+  <p class="lead" style="margin-top:10px;font-size:.85rem">Questions about the course? Contact your professor through the Professor Corner. Career support: careerservices@apuglobal.edu. Canvas help: use the Help button in Global Navigation.</p>
+</section>
+
+</main>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Tabs ---------- */
+const tabs=$$('nav [role=tab]'), panels=$$('.panel');
+function go(i){
+  tabs.forEach((t,k)=>t.setAttribute('aria-selected',k===i));
+  panels.forEach((p,k)=>{p.classList.toggle('active',k===i); if(k===i)p.scrollTop=0;});
+}
+tabs.forEach((t,i)=>{t.onclick=()=>go(i);
+  t.onkeydown=e=>{let n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;
+    if(n!==null){go(n);tabs[n].focus();}}});
+$$('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
+
+/* ---------- Skills (Welcome) ---------- */
+const ico=(c,p)=>`<svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="17" fill="${c}"/>${p}</svg>`;
+const skills=[
+ ['Leading Change in a VUCA World','#d34147','<path d="M8 22l5-8 4 5 4-9 4 6" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>','Recognize, anticipate, and lead change in volatile, uncertain, complex, and ambiguous environments.'],
+ ['Casting Vision','#e8a33d','<circle cx="17" cy="17" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M5 17c4-7 20-7 24 0-4 7-20 7-24 0z" fill="none" stroke="#fff" stroke-width="2"/>','Communicate an inspiring, moral-purpose-driven vision that shapes organizational culture.'],
+ ['Developing Others','#2a8c8c','<circle cx="12" cy="13" r="3.5" fill="#fff"/><circle cx="23" cy="13" r="3.5" fill="#fff"/><path d="M6 25c1-6 11-6 12 0M17 25c1-6 11-6 12 0" fill="none" stroke="#fff" stroke-width="2.5"/>','Apply transformational leadership strategies to build the leadership skills of the people around you.'],
+ ['Collaboration and Communication','#1f2f46','<path d="M7 9h16v10H15l-5 4v-4H7z" fill="#fff"/><path d="M25 13h3v10h-3v4l-4-4h-5" fill="none" stroke="#fff" stroke-width="2"/>','Build relationships and write and present professionally for leadership contexts.'],
+ ['Reflective Leadership','#3f8f5a','<path d="M17 6v14M11 14l6 6 6-6M8 27h18" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>','Integrate a growth mindset into a personal leadership philosophy and evaluate progress over time.']
+];
+$('#skills').innerHTML=skills.map((s,i)=>`<button class="skill" style="border:0;font:inherit;cursor:pointer;text-align:left" data-s="${i}">${ico(s[1],s[2])}<span>${esc(s[0])}</span></button>`).join('');
+$$('#skills .skill').forEach(b=>b.onclick=()=>{const s=skills[+b.dataset.s];$('#skillDetail').innerHTML=`<b>${esc(s[0])}</b><br>${esc(s[3])}`;});
+
+/* ---------- Course map ---------- */
+const W=[
+ ['Leading in a VUCA World','Leadership in a VUCA and rapidly changing world',['Deep Dive: Leading in a VUCA World','Discussion 1: Understanding and Embracing Complexity'],false],
+ ['Foundations for Change','Why, moral purpose, and an inspiring vision',['Deep Dive: Foundations for Leading Change','Discussion 2: Foundations for Leading Change'],false],
+ ['Relationships','Relationships make the difference',['Discussion 3: Relationships, Relationships, Relationships!','Assignment: Foundations for Leading Effective Organizational Change'],true],
+ ['Transformational Leadership','Raising others up and coherence making',['Discussion 4: Embracing Transformational Leadership','Assignment: Change Leadership Analysis Part 1 (10 to 12 minute narrated presentation, Revive LA case study)'],true],
+ ['Developing Leaders','Developing the leaders within and advancing the organization',['Discussion 5: Developing Leaders, Advancing the Organization','Assignment: Change Leadership Analysis Part 2 (follow-up email on servant and authentic leadership)'],true],
+ ['Servant and Authentic','Servanthood, care, transparency, and character',['Discussion 6: Modeling Compassion with Servant and Authentic Leadership'],false],
+ ['Culture and Collaboration','Creating culture and igniting collaboration',['Discussion 7: Inclusive Leadership Through Culture and Collaboration','Assignment: Integrating a Growth Mindset Into One\u2019s Personal Leadership Philosophy'],true],
+ ['Growth Mindset','Integrating a growth mindset in leadership, including AI as a learning tool',['Discussion 8: Growth Mindset in Leadership: Using Artificial Intelligence'],false]
+];
+$('#weeks').innerHTML=W.map((w,i)=>`<button class="wk" aria-pressed="${i===0}" data-w="${i}">${w[3]?'<em class="star" style="font-style:normal" title="Assignment week">\u2605</em>':''}<span>Week</span><b>${i+1}</b></button>`).join('');
+function showWeek(i){
+  $$('.wk').forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+  const w=W[i];
+  $('#weekDetail').innerHTML=`<h3>Week ${i+1}: ${esc(w[1])}</h3><p style="margin:2px 0 0;color:var(--muted)">${esc(w[0])}</p><ul>${w[2].map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+}
+$$('.wk').forEach(b=>b.onclick=()=>showWeek(+b.dataset.w));showWeek(0);
+
+/* ---------- CLOs ---------- */
+const clos=[
+ ['CLO 1','Evaluate','change initiatives for advancing organizational effectiveness.','Discussions; Foundations for Leading Effective Organizational Change'],
+ ['CLO 2','Analyze','models, methods, and elements for leading organizational change.','Discussions; Change Leadership Analysis; Foundations assignment'],
+ ['CLO 3','Examine','transformational leadership strategies for developing the leadership skills of others.','Discussions; Change Leadership Analysis'],
+ ['CLO 4','Evaluate','servant leadership and the impact leadership styles have on culture and collaboration through a Christian worldview.','Discussions; Change Leadership Analysis'],
+ ['CLO 5','Integrate','a growth mindset as part of a personal leadership philosophy.','Discussions; Change Leadership Analysis; Growth Mindset assignment']
+];
+$('#clos').innerHTML=clos.map(c=>`<button class="flip" aria-pressed="false" aria-label="${esc(c[0]+': '+c[1]+' '+c[2])}"><div class="in"><div class="f"><div style="font-size:.8rem;opacity:.8">${c[0]}</div><div style="font-size:1.3rem;font-weight:700;color:#f6c667">${c[1]}</div><div style="font-size:.78rem;opacity:.8">Select to flip</div></div><div class="b"><b>You will ${c[1].toLowerCase()}</b> ${esc(c[2])}<div style="margin-top:6px;font-size:.8rem;color:var(--muted)"><b>Assessed by:</b> ${esc(c[3])}</div></div></div></button>`).join('')
+ +`<div class="card" style="display:flex;align-items:center;gap:10px"><svg width="60" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="28" fill="#fdf3f3" stroke="#d34147" stroke-width="3"/><path d="M18 31l8 8 16-18" fill="none" stroke="#d34147" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Every assignment has a rubric.</b><br><span style="font-size:.88rem;color:var(--muted)">Review it before you start.</span></div></div>`;
+$$('.flip').forEach(b=>b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true'));
+
+/* ---------- Activities ---------- */
+const G={ // graphics
+ vuca:`<svg viewBox="0 0 150 110" role="img" aria-label="Storm cloud over a winding road"><rect width="150" height="110" rx="12" fill="#edebe8"/><ellipse cx="62" cy="34" rx="34" ry="16" fill="#1f2f46"/><ellipse cx="92" cy="38" rx="26" ry="13" fill="#2f4666"/><path d="M70 50l-8 16h9l-6 16" fill="none" stroke="#e8a33d" stroke-width="4" stroke-linejoin="round"/><path d="M10 105C50 85 40 70 80 72s40 14 60 30" fill="none" stroke="#d34147" stroke-width="5" stroke-linecap="round"/></svg>`,
+ trans:`<svg viewBox="0 0 150 110" role="img" aria-label="Hands lifting a figure upward"><rect width="150" height="110" rx="12" fill="#edebe8"/><circle cx="75" cy="30" r="12" fill="#d34147"/><path d="M75 44v22M60 54l15 6 15-6" stroke="#d34147" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M20 98c10-20 25-22 35-14M130 98c-10-20-25-22-35-14" stroke="#2a8c8c" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M75 78v-8M70 74l5-6 5 6" stroke="#e8a33d" stroke-width="3" fill="none"/></svg>`,
+ serve:`<svg viewBox="0 0 150 110" role="img" aria-label="A heart and a mirror"><rect width="150" height="110" rx="12" fill="#edebe8"/><path d="M45 72C20 55 25 30 42 30c9 0 13 6 15 10 2-4 6-10 15-10 17 0 22 25-3 42L57 86z" fill="#d34147"/><ellipse cx="108" cy="44" rx="20" ry="26" fill="#cfe8e8" stroke="#2a8c8c" stroke-width="5"/><path d="M108 70v28" stroke="#2a8c8c" stroke-width="6"/><path d="M98 36q6-8 14-4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
+ grow:`<svg viewBox="0 0 150 110" role="img" aria-label="A seedling growing from a book"><rect width="150" height="110" rx="12" fill="#edebe8"/><path d="M30 90l45-12 45 12V68L75 56 30 68z" fill="#1f2f46"/><path d="M75 78V40" stroke="#3f8f5a" stroke-width="5" stroke-linecap="round"/><path d="M75 52C55 52 50 38 52 28c18 0 24 10 23 24z" fill="#3f8f5a"/><path d="M75 44c18 0 24-10 22-20-17 0-24 8-22 20z" fill="#5ab077"/></svg>`
+};
+const ACTS=[
+ {g:G.vuca,title:'Name the Challenge',intro:'VUCA stands for Volatile, Uncertain, Complex, Ambiguous. Which condition best describes each workplace scenario?',
+  opts:['Volatile','Uncertain','Complex','Ambiguous'],
+  q:[['A competitor launches a surprise product and your sales swing sharply in one week.',0,'Volatile: change that is rapid, unexpected, and hard to predict.'],
+     ['Leadership cannot forecast next year\u2019s funding, even with plenty of data.',1,'Uncertain: outcomes are hard to forecast even when you have information.'],
+     ['A new policy affects five departments, two vendors, and a union, and each influences the others.',2,'Complex: many interconnected factors, people, and systems.'],
+     ['Two managers read the same customer survey and reach opposite conclusions about what it means.',3,'Ambiguous: unclear meaning or cause and effect, so a situation can be read more than one way.']],
+  wrap:'Great start. In Week 1 you will learn how leaders make complexity work for them rather than being paralyzed by it.'},
+ {g:G.trans,title:'Raise Others Up',intro:'Transformational leaders raise others up through encouragement, modeling, and support. Which does each action show?',
+  opts:['Encouragement','Modeling','Support'],
+  q:[['A leader tells a nervous new team member, "I have seen you handle harder problems. I believe you can lead this launch."',0,'Encouragement: building belief in people so they stretch.'],
+     ['A leader arrives early to help set up, admits her own mistake in a meeting, and follows the values she asks of others.',1,'Modeling: showing the behavior you want to see.'],
+     ['A leader clears a scheduling conflict and provides training time so a team can finish a challenging project.',2,'Support: providing the resources and backing people need.'],
+     ['A leader publicly thanks an analyst for a risky idea that failed and asks what the team learned.',0,'Encouragement: affirming effort and courage keeps people willing to try.']],
+  wrap:'Nice work. In Week 4 you will role-play a leader in the Revive LA case study and explain leadership styles in a narrated presentation.'},
+ {g:G.serve,title:'Serve and Be True',intro:'Servant leaders share power and serve for the greater good. Authentic leaders are transparent, trustworthy, and true. Which style is each behavior showing most?',
+  opts:['Servant','Authentic','Both'],
+  q:[['A director shares decision-making power with the team and measures success by the team\u2019s good.',0,'Servant: shares power instead of hoarding it.'],
+     ['A leader explains openly why a budget cut happened, including what she does not yet know.',1,'Authentic: transparent, trustworthy, and true.'],
+     ['A leader admits a mistake and then asks the team how he can better serve them.',2,'Both: humility and character underpin both styles.'],
+     ['A leader steps back so a junior colleague can present to executives, then supports her afterward.',0,'Servant: empowers and cares for others.']],
+  wrap:'Well done. In Week 6 you will reflect on Jesus as an example of both styles and consider your own leadership style.'},
+ {g:G.grow,title:'Reframe Your Mindset',intro:'Carol Dweck distinguishes fixed from growth mindsets. Choose the growth-mindset response to each leadership moment.',
+  opts:null,
+  q:[['A leader\u2019s change proposal is rejected.',['"I am just not a persuasive leader."','"What can I learn from the feedback to strengthen my next proposal?"'],1,'Growth mindset responds to setbacks with curiosity and learning.'],
+     ['The organization adopts a new AI tool.',['"This is too complicated. I will let others deal with it."','"I will experiment, weigh the benefits and ethical concerns, and follow the University\u2019s AI policy."'],1,'Approaching new technology with curiosity and care is a growth mindset in action.'],
+     ['You review your personal leadership philosophy.',['"It is finished. A good philosophy never changes."','"It should grow as I learn. What successes and failures should shape my revision?"'],1,'Philosophies can be revised, and reflection drives growth.']],
+  wrap:'Excellent. In Week 8 you will revise your personal leadership philosophy to integrate a growth mindset.'}
+];
+let curAct=0, state=ACTS.map(()=>({i:0,score:0,done:false}));
+function renderAct(){
+  const a=ACTS[curAct], s=state[curAct], box=$('#actBox');
+  const head=`<div class="act-top">${a.g}<div><h3>${esc(a.title)}</h3><p class="lead" style="margin:0">${esc(a.intro)}</p></div></div>`;
+  const pct=Math.round(100*(s.done?a.q.length:s.i)/a.q.length);
+  const bar=`<div class="prog" aria-hidden="true"><i style="width:${pct}%"></i></div>`;
+  if(s.done){
+    box.innerHTML=head+bar+`<div class="q"><h3>You scored ${s.score} of ${a.q.length}</h3><p style="margin:4px 0 10px">${esc(a.wrap)}</p><button class="btn" id="redo">Try again</button> <button class="btn alt" id="nxt">${curAct<3?'Next week':'See success tips'}</button></div>`;
+    $('#redo').onclick=()=>{state[curAct]={i:0,score:0,done:false};renderAct();};
+    $('#nxt').onclick=()=>{if(curAct<3)setAct(curAct+1);else go(4);};
+    return;}
+  const q=a.q[s.i];
+  const choices=a.opts?a.opts:q[1];
+  const ans=a.opts?q[1]:q[2], text=q[0], why=a.opts?q[2]:q[3];
+  box.innerHTML=head+bar+`<div class="q"><div style="font-size:.8rem;color:var(--muted)">Question ${s.i+1} of ${a.q.length}</div><p style="margin:4px 0 0;font-weight:600">${esc(text)}</p>
+    <div class="opts" id="opts">${choices.map((c,k)=>`<button class="opt" data-k="${k}">${esc(c)}</button>`).join('')}</div>
+    <div class="fb" id="fb" aria-live="polite"></div></div>`;
+  let locked=false;
+  $$('#opts .opt').forEach(b=>b.onclick=()=>{
+    if(locked)return; const k=+b.dataset.k;
+    if(k===ans){locked=true;b.classList.add('ok');if(!b.dataset.miss&&!box.dataset.miss)s.score++;
+      $('#fb').innerHTML=`<b style="color:var(--green)">Correct.</b> ${esc(why)} <button class="btn" id="go" style="margin-left:6px;padding:5px 12px">${s.i+1<a.q.length?'Continue':'Finish'}</button>`;
+      $('#go').focus();box.dataset.miss='';
+      $('#go').onclick=()=>{s.i++;if(s.i>=a.q.length)s.done=true;renderAct();};
+    }else{b.classList.add('no');b.disabled=true;box.dataset.miss='1';$('#fb').innerHTML='<b style="color:var(--red-d)">Not quite.</b> Try another option.';}
+  });
+}
+function setAct(i){curAct=i;$$('.acts button').forEach((b,k)=>b.setAttribute('aria-selected',k===i));$('#p3').scrollTop=0;renderAct();}
+$$('.acts button').forEach(b=>b.onclick=()=>setAct(+b.dataset.act));
+renderAct();
+
+/* ---------- Tips ---------- */
+const tipIco=(c,p)=>`<svg viewBox="0 0 46 46" aria-hidden="true"><rect width="46" height="46" rx="12" fill="${c}"/>${p}</svg>`;
+const TIPS=[
+ ['Watch the intro, then plan your week','Course weeks run Monday to the following Monday (the final week ends Friday). Check the Course Calendar and block time for readings, your discussion post, and replies.','#d34147','<rect x="11" y="12" width="24" height="22" rx="3" fill="#fff"/><rect x="11" y="12" width="24" height="7" fill="#f6c667"/><path d="M17 26l4 4 8-8" stroke="#d34147" stroke-width="3" fill="none" stroke-linecap="round"/>'],
+ ['Start with the Deep Dive','Each week\u2019s Deep Dive previews key concepts, readings, and takeaways. Read it first so you know what to look for.','#1f2f46','<path d="M10 14h12c3 0 4 1 4 3v17c0-2-1-3-4-3H10zM36 14H24c-3 0-4 1-4 3v17c0-2 1-3 4-3h12z" fill="#fff"/>'],
+ ['Use the rubrics','Every major assignment and discussion has a rubric. Read it before you write and check your work against it before you submit.','#e8a33d','<rect x="12" y="10" width="22" height="26" rx="3" fill="#fff"/><path d="M16 18h14M16 24h14M16 30h8" stroke="#e8a33d" stroke-width="3" stroke-linecap="round"/>'],
+ ['Post early, reply thoughtfully','Discussions are where you test ideas with peers. Post early in the week so classmates have time to respond, and add new insight in your replies.','#2a8c8c','<path d="M10 12h20v14H20l-6 5v-5h-4z" fill="#fff"/><path d="M34 20h2v12h-4v4l-5-4h-6" fill="none" stroke="#fff" stroke-width="2.5"/>'],
+ ['Start the multi-part assignment early','Change Leadership Analysis Part 1 (Week 4) and Part 2 (Week 5) use the same Revive LA case study. Read the case early and take notes as you go.','#3f8f5a','<circle cx="23" cy="23" r="12" fill="#fff"/><path d="M23 15v8l6 4" stroke="#3f8f5a" stroke-width="3" fill="none" stroke-linecap="round"/>'],
+ ['Reflect through your own lens','Keep a short running note on what you learn each week and how it changes your leadership philosophy. It will make the Week 7 assignment much easier.','#8a5bb5','<path d="M23 10v18M15 21l8 8 8-8M12 36h22" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/>'],
+ ['Follow the AI policy','Week 8 explores AI as a learning tool. Use AI with a growth mindset, weigh the ethical implications, and always follow the University\u2019s policy on AI use.','#c25d1e','<rect x="12" y="14" width="22" height="18" rx="4" fill="#fff"/><circle cx="19" cy="23" r="2.5" fill="#c25d1e"/><circle cx="27" cy="23" r="2.5" fill="#c25d1e"/><path d="M23 14v-4" stroke="#fff" stroke-width="3"/>'],
+ ['Ask early, use your resources','Message your professor with questions, use Canvas Help in Global Navigation, and explore Career Services. Reaching out early solves small problems before they grow.','#4a6fa5','<circle cx="23" cy="23" r="13" fill="#fff"/><path d="M18 19c0-6 11-6 11 0 0 4-6 4-6 8" stroke="#4a6fa5" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="23" cy="33" r="2" fill="#4a6fa5"/>']
+];
+$('#tips').innerHTML=TIPS.map((t,i)=>`<button class="tip" aria-pressed="false" data-t="${i}">${tipIco(t[2],t[3])}<span><b>${esc(t[0])}</b><small>${esc(t[1])}</small></span><span class="chk" aria-hidden="true">\u2713</span></button>`).join('');
+function updTips(){
+  const n=$$('.tip[aria-pressed=true]').length;
+  $('#tipBar').style.width=(100*n/TIPS.length)+'%';$('#tipCount').textContent=n+' / '+TIPS.length;
+  $('#tipMsg').innerHTML=n>=5?'<b style="color:var(--green)">\u2605 Ready to Lead!</b> You have a strong plan. Screenshot this page or write your commitments in your planner.':'Commit to at least five tips to earn your "Ready to Lead" badge.';
+}
+$$('.tip').forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');updTips();});
+
+/* ---------- Grade planner (APU Global scale) ---------- */
+function letter(p){return p>=93?'A':p>=90?'A-':p>=87?'B+':p>=83?'B':p>=80?'B-':p>=77?'C+':p>=73?'C':p>=70?'C-':p>=67?'D+':p>=63?'D':p>=60?'D-':'F';}
+function calc(){
+  const e=parseFloat($('#ge').value), p=parseFloat($('#gp').value);
+  if(!(p>0)||isNaN(e)||e<0){$('#gr').textContent='Enter your points.';return;}
+  const pc=100*e/p;$('#gr').innerHTML=`<b>${pc.toFixed(1)}%</b> is a <b>${letter(Math.floor(pc))}</b>`;
+}
+$('#ge').oninput=calc;$('#gp').oninput=calc;
+</script>
+</body>
+</html>
