@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Week 1: Measurements, Matter, and the Periodic Table</title><style>
+:root{--crimson:#a73439;--crimson-d:#7e2327;--ink:#1f1f1f;--muted:#55555a;--paper:#f7f6f4;--card:#fff;--line:#dcd9d4;--teal:#1f6f78;--gold:#b7791f;--green:#2b7a45;--blue:#2f5fa7;--purple:#6b4c9a;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 18px;background:linear-gradient(100deg,#1b1b1b 0%,#2a2224 55%,var(--crimson-d) 100%);color:#fff}
+.hero svg{flex:0 0 auto;height:56px;width:auto}
+.hero h1{margin:0;font-size:1.25rem;line-height:1.2;font-weight:700}
+.hero p{margin:2px 0 0;font-size:.85rem;opacity:.92}
+.tabs{flex:0 0 auto;display:flex;gap:4px;padding:8px 18px 0;background:var(--paper);border-bottom:2px solid var(--line)}
+.tab{appearance:none;border:2px solid transparent;border-bottom:0;background:transparent;color:var(--muted);font:inherit;font-weight:600;padding:7px 14px;border-radius:10px 10px 0 0;cursor:pointer;margin-bottom:-2px}
+.tab:hover{color:var(--crimson)}
+.tab[aria-selected=true]{background:var(--card);color:var(--crimson);border-color:var(--line);border-bottom:2px solid var(--card)}
+:focus-visible{outline:3px solid #1d5fd1;outline-offset:2px}
+main{flex:1 1 auto;min-height:0;position:relative}
+.panel{position:absolute;inset:0;padding:12px 18px;overflow-x:hidden;overflow-y:auto;display:none;background:var(--card)}
+.panel.active{display:block}
+.row{display:flex;gap:16px;height:100%}
+.col{flex:1 1 0;min-width:0}
+h2{margin:0 0 4px;font-size:1.05rem}
+.lead{margin:0 0 8px;color:var(--muted);font-size:.92rem}
+.btn{appearance:none;border:0;background:var(--crimson);color:#fff;font:inherit;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer}
+.btn:hover{background:var(--crimson-d)}
+.btn.ghost{background:#fff;color:var(--crimson);border:2px solid var(--crimson)}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.chip{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--crimson);background:#f6e4e5;border-radius:999px;padding:2px 10px}
+.note{font-size:.78rem;color:var(--muted)}
+/* sorter */
+.sorter{display:flex;flex-direction:column;gap:8px;height:100%}
+.prog{display:flex;gap:6px}.prog i{flex:1;height:6px;border-radius:3px;background:var(--line)}.prog i.done{background:var(--green)}.prog i.cur{background:var(--crimson)}
+.card{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--crimson);border-radius:var(--r);padding:10px 14px}
+.card .lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.05em}
+.card .q{margin:4px 0 0;font-size:1.05rem;font-weight:600}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(var(--n,2),1fr)}
+.opt{appearance:none;text-align:left;font:inherit;background:#fff;border:2px solid var(--c,var(--line));border-radius:var(--r);padding:8px 12px;cursor:pointer;color:var(--ink)}
+.opt b{display:block;color:var(--c)}.opt small{display:block;color:var(--muted);font-size:.78rem;line-height:1.25}
+.opt:hover:not(:disabled){background:color-mix(in srgb,var(--c) 10%,#fff)}
+.opt:disabled{cursor:default}.opt.right{background:#e3f3e8;border-color:var(--green)}.opt.wrong{background:#fbe5e5;border-color:#b3261e}
+.fb{min-height:20px;font-size:.92rem}.fb .ok{color:var(--green);font-weight:700}.fb .no{color:#b3261e;font-weight:700}
+.fb .btn{margin-top:6px;padding:6px 14px}
+.result{text-align:center;padding:16px}.result .big{font-size:2.4rem;font-weight:800;color:var(--crimson)}
+/* tiles */
+.tiles{display:grid;gap:8px}
+.tile{appearance:none;text-align:left;font:inherit;border:2px solid var(--line);background:#fff;border-radius:var(--r);padding:8px 10px;cursor:pointer;color:var(--ink)}
+.tile:hover{border-color:var(--crimson)}.tile[aria-pressed=true],.tile[aria-selected=true]{border-color:var(--crimson);background:#fbeff0}
+.tile b{display:block}
+.detail{background:#fff;border:2px solid var(--crimson);border-radius:var(--r);padding:10px 14px}
+.detail h3{margin:0 0 4px;font-size:1rem;color:var(--crimson)}
+.detail p{margin:0 0 4px}
+.seg{display:inline-flex;border:2px solid var(--crimson);border-radius:999px;overflow:hidden}
+.seg button{appearance:none;border:0;background:#fff;color:var(--crimson);font:inherit;font-weight:600;padding:4px 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--crimson);color:#fff}
+input[type=range]{width:100%;accent-color:var(--crimson)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){
+ .hero svg{display:none}.hero h1{font-size:1.05rem}.hero p{font-size:.78rem}
+ .tabs{padding:6px 8px 0;gap:2px}.tab{padding:6px 8px;font-size:.82rem}
+ .panel{padding:8px 10px}.row{flex-direction:column;gap:8px;height:auto}
+ .opts{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body><div class="app"><header class="hero"><svg viewBox="0 0 120 56" role="img" aria-label="Ruler and target" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="10" width="62" height="14" rx="2" fill="#fff"/><path d="M16 10v7M26 10v5M36 10v7M46 10v5M56 10v7M66 10v5" stroke="#a73439" stroke-width="2"/><circle cx="92" cy="38" r="16" fill="none" stroke="#fff" stroke-width="3"/><circle cx="92" cy="38" r="9" fill="none" stroke="#fff" stroke-width="2"/><circle cx="92" cy="38" r="3" fill="#f3c969"/></svg><div><h1>Week 1: Measurements, Matter, and the Periodic Table</h1><p>Measure carefully, count significant figures and classify matter</p></div></header><div class="tabs" role="tablist" aria-label="Activity sections"><button class="tab" role="tab" id="t0" aria-controls="p0" aria-selected="false">Accuracy vs. Precision</button><button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="false">Count Sig Figs</button><button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">Sig Fig Quiz</button><button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false">Matter Sorter</button></div><main><section class="panel" role="tabpanel" id="p0" aria-labelledby="t0"><div class="row"><div class="col" style="flex:0 0 250px;text-align:center"><svg id="tg" viewBox="0 0 220 220" style="width:100%;max-width:230px" role="img" aria-label="Target"><circle cx="110" cy="110" r="100" fill="#fff" stroke="#55555a" stroke-width="2"/><circle cx="110" cy="110" r="72" fill="#f6e4e5" stroke="#a73439"/><circle cx="110" cy="110" r="44" fill="#fff" stroke="#a73439"/><circle cx="110" cy="110" r="16" fill="#a73439"/><g id="dd"></g></svg></div>
+<div class="col"><h2>Accuracy vs. precision</h2><p class="lead"><b>Accurate</b> means close to the true value. <b>Precise</b> means repeated measurements agree with each other.</p>
+<p>Accuracy: <span class="seg" id="sa"></span></p><p>Precision: <span class="seg" id="sp"></span></p>
+<div class="detail" aria-live="polite" id="ap"></div></div></div></section><section class="panel" role="tabpanel" id="p1" aria-labelledby="t1"><div class="row"><div class="col"><h2>Count the significant figures</h2><p class="lead">Type a number (scientific notation like 1.20e3 works too). Significant digits are highlighted.</p><input id="sfi" value="0.00450" aria-label="Number to analyze" style="font:inherit;font-size:1.3rem;padding:6px 10px;border:2px solid #a73439;border-radius:10px;width:100%;max-width:300px"><div id="sfo" class="box" style="margin-top:10px;font-size:2rem;font-weight:700;letter-spacing:.06em" aria-live="polite"></div><p id="sfn" style="font-weight:700;color:#a73439;font-size:1.1rem;margin:6px 0"></p></div>
+<div class="col"><h2>The rules</h2><div class="tiles"><div class="box"><b>1.</b> Non-zero digits always count.</div><div class="box"><b>2.</b> Zeros between non-zero digits count.</div><div class="box"><b>3.</b> Leading zeros never count.</div><div class="box"><b>4.</b> Trailing zeros count only if the number has a decimal point.</div></div><p class="note">Significant figures show how precisely a value is known.</p></div></div></section><section class="panel" role="tabpanel" id="p2" aria-labelledby="t2"><div id="q1" style="height:100%"></div></section><section class="panel" role="tabpanel" id="p3" aria-labelledby="t3"><div id="q2" style="height:100%"></div></section></main></div><script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+ function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).classList.toggle('active',on)});}
+ tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t)});t.addEventListener('keydown',function(e){var n=null;if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];if(n){n.focus();show(n);e.preventDefault();}})});
+ show(tabs[0]);
+})();
+function esc(s){return s}
+function sorter(id,cfg){
+ var el=document.getElementById(id),i=0,score=0;
+ el.style.setProperty('--n',cfg.cols||cfg.cats.length);
+ function dots(){return '<div class="prog" aria-hidden="true">'+cfg.items.map(function(_,k){return '<i class="'+(k<i?'done':k===i?'cur':'')+'"></i>'}).join('')+'</div>'}
+ function render(){
+  if(i>=cfg.items.length){
+   el.innerHTML='<div class="result"><div class="big">'+score+' / '+cfg.items.length+'</div><p>'+cfg.end(score)+'</p><button class="btn" id="'+id+'r">Try again</button></div>';
+   document.getElementById(id+'r').onclick=function(){i=0;score=0;render()};return;}
+  var it=cfg.items[i];
+  el.innerHTML='<div class="sorter">'+dots()+'<div class="card"><span class="lbl">'+cfg.prompt+' ('+(i+1)+' of '+cfg.items.length+')</span><p class="q">'+it.t+'</p></div><div class="opts">'+cfg.cats.map(function(c){return '<button class="opt" data-k="'+c.k+'" style="--c:'+c.col+'"><b>'+c.l+'</b>'+(c.s?'<small>'+c.s+'</small>':'')+'</button>'}).join('')+'</div><div class="fb" role="status" aria-live="polite"></div></div>';
+  var btns=[].slice.call(el.querySelectorAll('.opt')),fb=el.querySelector('.fb');
+  btns.forEach(function(b){b.onclick=function(){
+   var ok=b.dataset.k===it.c;if(ok)score++;
+   btns.forEach(function(x){x.disabled=true;if(x.dataset.k===it.c)x.classList.add('right');});
+   if(!ok)b.classList.add('wrong');
+   var cat=cfg.cats.filter(function(c){return c.k===it.c})[0];
+   fb.innerHTML=(ok?'<span class="ok">Yes.</span> ':'<span class="no">Not quite.</span> This is <b>'+cat.l+'</b>. ')+it.w+'<br><button class="btn" id="'+id+'n">'+(i+1<cfg.items.length?'Next':'See result')+'</button>';
+   var n=document.getElementById(id+'n');n.focus();n.onclick=function(){i++;render()};
+  }});
+ }
+ render();
+}
+
+function sf(s){s=s.trim().replace(/^[+-]/,'');if(!/^(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(s))return null;var m=s.split(/e/i)[0],dot=m.indexOf('.')>=0,d=m.replace('.',''),st=-1,last=-1;for(var i=0;i<d.length;i++){if(d[i]!=='0'){if(st<0)st=i;last=i}}
+ var en=dot?d.length-1:last;if(st<0){st=0;en=0}var out='',n=0,k=0;for(var j=0;j<s.length;j++){var c=s[j];if(/e/i.test(c)){out+='<span style="color:#55555a;font-size:1.2rem"> '+s.slice(j)+'</span>';break}if(c==='.'){out+='.';continue}var on=k>=st&&k<=en;if(on)n++;out+='<span style="'+(on?'background:#fbe1a6;border-bottom:3px solid #a73439':'color:#9a9a9f')+';padding:0 1px">'+c+'</span>';k++}return {h:out,n:n}}
+(function(){
+ var $=function(i){return document.getElementById(i)};
+ var A=[10.01,9.99,10.00,10.02,9.98],sets={ap:{a:1,p:1,v:[10.01,9.99,10.00,10.02,9.98],t:'Accurate and precise: the values agree with each other and with the true value.'},an:{a:1,p:0,v:[10.45,9.52,10.61,9.40,10.02],t:'Accurate but not precise: the average is close to the true value, but the values are scattered.'},pn:{a:0,p:1,v:[11.51,11.49,11.50,11.52,11.48],t:'Precise but not accurate: the values agree with each other but miss the true value, often a sign of a systematic error.'},nn:{a:0,p:0,v:[12.6,10.9,13.4,11.2,9.8],t:'Neither accurate nor precise: scattered and off target.'}};
+ var U=[[1,0],[-.5,.87],[-.8,-.5],[.3,-.95],[.1,.2]],st={a:1,p:1};
+ function seg(id,key,lab){$(id).innerHTML=lab.map(function(l,i){var v=1-i;return '<button aria-pressed="'+(st[key]===v)+'" data-v="'+v+'">'+l+'</button>'}).join('');[].forEach.call($(id).children,function(b){b.onclick=function(){st[key]=+b.dataset.v;draw()}})}
+ function draw(){seg('sa','a',['Accurate','Not accurate']);seg('sp','p',['Precise','Not precise']);var k=(st.a?'a':'n')+'x';var key=st.a&&st.p?'ap':st.a?'an':st.p?'pn':'nn',S=sets[key],o=st.a?[0,0]:[48,-38],sp=st.p?9:36;
+  $('dd').innerHTML=U.map(function(u){return '<circle cx="'+(110+o[0]+u[0]*sp)+'" cy="'+(110+o[1]+u[1]*sp)+'" r="6" fill="#1f6f78" stroke="#fff" stroke-width="2" style="transition:all .3s"/>'}).join('');
+  $('tg').setAttribute('aria-label','Target with five darts: '+S.t);$('ap').innerHTML='<h3>'+S.t.split(':')[0]+'</h3><p>'+S.t.split(':')[1].trim().replace(/^./,function(c){return c.toUpperCase()})+'</p><p class="note">True value 10.00 g. Five measurements: <b>'+S.v.map(function(x){return x.toFixed(2)}).join(', ')+'</b></p>'}
+ draw();
+ function run(){var r=sf($('sfi').value);$('sfo').innerHTML=r?r.h:'<span style="font-size:1rem;color:#b3261e">Enter a number such as 0.00450 or 1.20e3</span>';$('sfn').textContent=r?r.n+' significant figure'+(r.n===1?'':'s'):''}
+ $('sfi').oninput=run;run();
+ sorter('q1',{prompt:'How many significant figures?',cols:4,cats:[{k:'1',l:'1',col:'#a73439'},{k:'2',l:'2',col:'#1f6f78'},{k:'3',l:'3',col:'#b7791f'},{k:'4',l:'4',col:'#2f5fa7'}],items:[
+ {t:'0.0072',c:'2',w:'Leading zeros do not count, so only 7 and 2 do.'},{t:'100',c:'1',w:'Without a decimal point, trailing zeros do not count.'},{t:'100.',c:'3',w:'The decimal point makes the trailing zeros significant.'},{t:'4.050',c:'4',w:'The zero between digits and the trailing zero after the decimal both count.'},{t:'0.00450',c:'3',w:'Leading zeros do not count, but the trailing zero after the decimal does.'},{t:'3.0',c:'2',w:'The trailing zero after a decimal point counts.'}],end:function(s){return s>=5?'Great work. Remember: leading zeros never count.':'Check the rules: leading zeros never count, and trailing zeros need a decimal point.'}});
+ sorter('q2',{prompt:'Element, compound or mixture?',cols:3,cats:[{k:'e',l:'Element',s:'One kind of atom',col:'#a73439'},{k:'c',l:'Compound',s:'Atoms bonded in a fixed ratio',col:'#1f6f78'},{k:'m',l:'Mixture',s:'Substances combined, not bonded',col:'#b7791f'}],items:[
+ {t:'Gold (Au)',c:'e',w:'Gold is made of only one kind of atom.'},{t:'Table salt (NaCl)',c:'c',w:'Sodium and chlorine are bonded in a fixed 1:1 ratio.'},{t:'Air',c:'m',w:'Air is a mixture of gases such as nitrogen and oxygen.'},{t:'Water (H2O)',c:'c',w:'Hydrogen and oxygen are bonded in a fixed 2:1 ratio.'},{t:'Oxygen gas (O2)',c:'e',w:'Both atoms are oxygen, so it is an element.'},{t:'Salt dissolved in water',c:'m',w:'The salt and water are mixed, not bonded to each other.'},{t:'Sugar (C12H22O11)',c:'c',w:'Carbon, hydrogen and oxygen are bonded in fixed ratios.'},{t:'Granite',c:'m',w:'Granite is a mixture of different minerals.'}],end:function(s){return s>=7?'Excellent. Elements, compounds and mixtures are the base of the periodic table work ahead.':'Tip: ask whether it has one kind of atom, bonded atoms in a fixed ratio, or simply mixed substances.'}});
+})();</script></body></html>
