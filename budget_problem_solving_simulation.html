@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Problem Solving Simulation</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Ensure high visible focus states across all interactive elements */
+    *:focus-visible {
+      outline: 2px solid #4338ca;
+      outline-offset: 2px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+  <!-- Skip Link for Keyboard & Screen Reader Users -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-indigo-900 focus:text-white focus:rounded-lg focus:shadow-lg focus:ring-2 focus:ring-white">
+    Skip to main content
+  </a>
+
+  <!-- Navigation / Header -->
+  <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-40 border-b border-indigo-800" role="banner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 bg-indigo-700 rounded-lg text-indigo-100" aria-hidden="true">
+          <i data-lucide="microscope" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold leading-tight">Budget Problem Solving Simulation</h1>
+          <p class="text-xs text-indigo-100 hidden sm:block">Department of Finance &bull; FY 2021-2022 Healthcare Service</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2" role="toolbar" aria-label="Simulation Utilities">
+        <button id="resetBtn" aria-label="Reset simulation to initial baseline figures" class="flex items-center space-x-1 px-3 py-1.5 text-xs sm:text-sm font-medium bg-indigo-800 hover:bg-indigo-700 focus:ring-2 focus:ring-white text-indigo-50 rounded-lg transition border border-indigo-600/60 shadow-sm">
+          <i data-lucide="rotate-ccw" class="w-4 h-4" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Reset Baseline</span>
+        </button>
+        <button id="guidelinesBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="briefModal" class="flex items-center space-x-1 px-3 py-1.5 text-xs sm:text-sm font-medium bg-emerald-700 hover:bg-emerald-600 focus:ring-2 focus:ring-white text-white rounded-lg transition shadow-sm">
+          <i data-lucide="help-circle" class="w-4 h-4" aria-hidden="true"></i>
+          <span>Scenario Brief</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Scenario & Instruction Banner Modal (accessible dialog) -->
+  <div id="briefModal" role="dialog" aria-modal="true" aria-labelledby="briefModalTitle" aria-describedby="briefModalDesc" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar border border-slate-200" tabIndex="-1">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-amber-100 text-amber-900 rounded-xl" aria-hidden="true">
+            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 id="briefModalTitle" class="text-xl font-bold text-slate-900">Executive Directive</h2>
+            <p class="text-xs text-slate-600 font-medium">Finance Manager Briefing & Instructions</p>
+          </div>
+        </div>
+        <button id="closeBriefModal" aria-label="Close scenario brief dialog" class="p-1 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 focus:ring-2 focus:ring-indigo-600 transition">
+          <i data-lucide="x" class="w-6 h-6" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div id="briefModalDesc" class="space-y-4 my-5 text-sm leading-relaxed text-slate-700">
+        <p class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          When balancing budgets, both <strong class="text-slate-900">revenues and expenses</strong> have to be considered as well as how different decisions may affect <strong class="text-slate-900">process, finances, and patient outcomes</strong>.
+        </p>
+        <p>
+          A clinical laboratory is a healthcare entity that receives revenues by providing laboratory testing and services as well as incurring operational expenses. The number of laboratory tests is growing and now accounts for billions of dollars in annual medical care costs.
+        </p>
+        <div class="p-4 bg-rose-50 border-l-4 border-rose-600 rounded-r-xl" role="note" aria-label="Budget reduction scenario context">
+          <h3 class="font-bold text-rose-900 text-sm flex items-center gap-1.5">
+            <i data-lucide="trending-down" class="w-4 h-4 text-rose-700" aria-hidden="true"></i> The Challenge
+          </h3>
+          <p class="text-rose-900 text-xs mt-1">
+            You are the finance manager for the laboratory service area. The healthcare organization has reduced your budget by 5% and now you need to recommend costs to reduce or ways to increase revenue. Use the Budget Decision Simulation to make your decision and determine the outcome.
+          </p>
+        </div>
+        <p>
+          The goal is to make budget decisions that will contribute to reducing and balancing the budget.
+        </p>
+      </div>
+
+      <div class="pt-4 border-t border-slate-100 flex justify-end">
+        <button id="startSimBtn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 text-white font-medium text-sm rounded-xl shadow-md transition flex items-center gap-2">
+          <span>Enter Decision Room</span>
+          <i data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen Reader Live Status Region -->
+  <div id="a11yStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Main Content Layout -->
+  <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8" role="main">
+
+    <!-- KPI / Top Summary Cards -->
+    <section aria-label="Key Financial Performance Indicators" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Total Revenue -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow transition">
+        <div class="flex items-center justify-between text-slate-600 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Total Revenue</span>
+          <span class="p-2 bg-emerald-50 text-emerald-700 rounded-lg" aria-hidden="true"><i data-lucide="arrow-down-left" class="w-4 h-4"></i></span>
+        </div>
+        <div class="text-2xl font-extrabold text-slate-900" id="kpiRevenue" aria-label="Current Total Revenue: $4,850,000">$4,850,000</div>
+        <div class="mt-2 text-xs flex items-center gap-1 text-slate-600" id="kpiRevDiff">
+          <span>Baseline: $4,850,000</span>
+        </div>
+      </div>
+
+      <!-- Total Expenses -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow transition">
+        <div class="flex items-center justify-between text-slate-600 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Total Expenses</span>
+          <span class="p-2 bg-rose-50 text-rose-700 rounded-lg" aria-hidden="true"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+        </div>
+        <div class="text-2xl font-extrabold text-slate-900" id="kpiExpenses" aria-label="Current Total Expenses: $5,092,500">$5,092,500</div>
+        <div class="mt-2 text-xs flex items-center gap-1 text-slate-600" id="kpiExpDiff">
+          <span>Baseline: $5,092,500</span>
+        </div>
+      </div>
+
+      <!-- Net Balance / Deficit -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow transition">
+        <div class="flex items-center justify-between text-slate-600 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Net Position</span>
+          <span class="p-2 rounded-lg bg-rose-100 text-rose-800" id="kpiNetBadge" aria-hidden="true"><i data-lucide="scale" class="w-4 h-4"></i></span>
+        </div>
+        <div class="text-2xl font-extrabold text-rose-700" id="kpiNetMargin" aria-label="Net Balance Deficit: -$242,500">-$242,500</div>
+        <div class="mt-2 text-xs font-medium text-slate-700" id="kpiNetStatus">Initial Deficit: -$242,500</div>
+      </div>
+
+      <!-- Balanced Status / Progress Gauge -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow transition">
+        <div class="flex items-center justify-between text-slate-600 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Budget Balance Health</span>
+          <span class="p-2 bg-indigo-50 text-indigo-700 rounded-lg" aria-hidden="true"><i data-lucide="activity" class="w-4 h-4"></i></span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-extrabold text-slate-900" id="kpiCoverage">95.2%</span>
+          <span class="text-xs text-slate-600">funded</span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2.5 mt-2.5 overflow-hidden" role="progressbar" aria-valuenow="95.2" aria-valuemin="0" aria-valuemax="100" id="coverageProgress" aria-label="Percentage of expenses covered by revenues">
+          <div id="coverageBar" class="bg-rose-600 h-2.5 rounded-full transition-all duration-500" style="width: 95.2%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Grid: Left Column = Decisions; Right Column = Live Financial Breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- DECISION SECTION (Left 7 Cols) -->
+      <section aria-labelledby="decision-heading" class="lg:col-span-7 space-y-6">
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-5 sm:p-6">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+              <h2 id="decision-heading" class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="sliders" class="w-5 h-5 text-indigo-600" aria-hidden="true"></i>
+                Do you want to balance the budget by……
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-600">Select YES or NO for each proposal to view immediate feedback and budgetary impacts.</p>
+            </div>
+            <span class="text-xs font-semibold bg-indigo-50 text-indigo-800 px-2.5 py-1 rounded-full border border-indigo-200">
+              4 Decisions
+            </span>
+          </div>
+
+          <!-- Questions Container -->
+          <div class="divide-y divide-slate-100 mt-2 space-y-4 pt-2">
+            
+            <!-- DECISION 1 -->
+            <fieldset class="pt-4 first:pt-2 group transition" id="group-q1">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <legend class="pr-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-bold bg-slate-200 text-slate-800 rounded-md" aria-hidden="true">Q1</span>
+                    <span class="font-semibold text-slate-900 text-sm sm:text-base">Reduce Salary & Benefits - Technical, Regular - 2%</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1">Target line item: Salary & Benefits - Technical, Regular ($1,552,000).</p>
+                </legend>
+                <!-- Accessible Radio Group Pill -->
+                <div role="radiogroup" aria-label="Decision for Q1: Reduce Salary and Benefits - Technical, Regular by 2%" class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start sm:self-center shrink-0">
+                  <button type="button" role="radio" aria-checked="true" data-question="q1" data-val="no" class="q-btn active-choice px-3 py-1.5 text-xs font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    NO
+                  </button>
+                  <button type="button" role="radio" aria-checked="false" data-question="q1" data-val="yes" class="q-btn px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    YES (-2%)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Real-time Feedback Drawer for Q1 -->
+              <div id="feedback-q1" role="region" aria-live="polite" aria-atomic="true" class="mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700">
+                <!-- Injected via JS -->
+              </div>
+            </fieldset>
+
+            <!-- DECISION 2 -->
+            <fieldset class="pt-4 group transition" id="group-q2">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <legend class="pr-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-bold bg-slate-200 text-slate-800 rounded-md" aria-hidden="true">Q2</span>
+                    <span class="font-semibold text-slate-900 text-sm sm:text-base">Increase Revenue by applying for additional grant money</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1">Target line item: Federal Grants ($350,000 baseline).</p>
+                </legend>
+                <!-- Accessible Radio Group Pill -->
+                <div role="radiogroup" aria-label="Decision for Q2: Increase Revenue by applying for additional grant money" class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start sm:self-center shrink-0">
+                  <button type="button" role="radio" aria-checked="true" data-question="q2" data-val="no" class="q-btn active-choice px-3 py-1.5 text-xs font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    NO
+                  </button>
+                  <button type="button" role="radio" aria-checked="false" data-question="q2" data-val="yes" class="q-btn px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    YES
+                  </button>
+                </div>
+              </div>
+
+              <!-- Real-time Feedback Drawer for Q2 -->
+              <div id="feedback-q2" role="region" aria-live="polite" aria-atomic="true" class="mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700">
+                <!-- Injected via JS -->
+              </div>
+            </fieldset>
+
+            <!-- DECISION 3 -->
+            <fieldset class="pt-4 group transition" id="group-q3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <legend class="pr-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-bold bg-slate-200 text-slate-800 rounded-md" aria-hidden="true">Q3</span>
+                    <span class="font-semibold text-slate-900 text-sm sm:text-base">Reduce Office Supplies by 2%</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1">Target line item: Office Supplies ($291,000 baseline).</p>
+                </legend>
+                <!-- Accessible Radio Group Pill -->
+                <div role="radiogroup" aria-label="Decision for Q3: Reduce Office Supplies by 2%" class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start sm:self-center shrink-0">
+                  <button type="button" role="radio" aria-checked="true" data-question="q3" data-val="no" class="q-btn active-choice px-3 py-1.5 text-xs font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    NO
+                  </button>
+                  <button type="button" role="radio" aria-checked="false" data-question="q3" data-val="yes" class="q-btn px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    YES (-2%)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Real-time Feedback Drawer for Q3 -->
+              <div id="feedback-q3" role="region" aria-live="polite" aria-atomic="true" class="mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700">
+                <!-- Injected via JS -->
+              </div>
+            </fieldset>
+
+            <!-- DECISION 4 -->
+            <fieldset class="pt-4 group transition" id="group-q4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <legend class="pr-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-bold bg-slate-200 text-slate-800 rounded-md" aria-hidden="true">Q4</span>
+                    <span class="font-semibold text-slate-900 text-sm sm:text-base">Reduce Medical Equipment Maintenance by 2%</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1">Target line item: Medical Equipment Maintenance ($436,500 baseline).</p>
+                </legend>
+                <!-- Accessible Radio Group Pill -->
+                <div role="radiogroup" aria-label="Decision for Q4: Reduce Medical Equipment Maintenance by 2%" class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start sm:self-center shrink-0">
+                  <button type="button" role="radio" aria-checked="true" data-question="q4" data-val="no" class="q-btn active-choice px-3 py-1.5 text-xs font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    NO
+                  </button>
+                  <button type="button" role="radio" aria-checked="false" data-question="q4" data-val="yes" class="q-btn px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900 focus:ring-2 focus:ring-indigo-600">
+                    YES (-2%)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Real-time Feedback Drawer for Q4 -->
+              <div id="feedback-q4" role="region" aria-live="polite" aria-atomic="true" class="mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700">
+                <!-- Injected via JS -->
+              </div>
+            </fieldset>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- FINANCIAL LEDGER (Right 5 Cols) -->
+      <section aria-labelledby="ledger-heading" class="lg:col-span-5 space-y-6">
+        
+        <!-- Tabbed Financial Statements: Revenue & Expense Tables -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden flex flex-col">
+          <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div>
+              <h3 id="ledger-heading" class="text-base font-bold text-slate-900">ANNUAL DEPARTMENT BUDGET - LABORATORY 2021-2022</h3>
+              <p class="text-xs text-slate-600">Interactive financial ledger</p>
+            </div>
+            <div role="tablist" aria-label="Budget Ledger Categories" class="flex bg-slate-200/80 p-0.5 rounded-lg text-xs font-semibold">
+              <button id="tabExpensesBtn" role="tab" aria-selected="true" aria-controls="viewExpenses" tabindex="0" class="px-3 py-1 rounded-md bg-white text-slate-900 shadow-sm transition focus:ring-2 focus:ring-indigo-600">Expenses</button>
+              <button id="tabRevenueBtn" role="tab" aria-selected="false" aria-controls="viewRevenue" tabindex="-1" class="px-3 py-1 rounded-md text-slate-700 hover:text-slate-900 transition focus:ring-2 focus:ring-indigo-600">Revenue</button>
+            </div>
+          </div>
+
+          <!-- Expenses View Accessible Table -->
+          <div id="viewExpenses" role="tabpanel" aria-labelledby="tabExpensesBtn" class="p-4 sm:p-5 space-y-4">
+            <table class="w-full text-xs sm:text-sm text-left border-collapse" aria-label="Annual Expenses Table">
+              <caption class="sr-only">Annual Laboratory Expenses 2021-2022</caption>
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-600 uppercase text-[10px] tracking-wider">
+                  <th scope="col" class="pb-2 font-bold">Personnel Line Item</th>
+                  <th scope="col" class="pb-2 text-center font-bold">Expense %</th>
+                  <th scope="col" class="pb-2 text-right font-bold">Expense $</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Salary & Benefits - Technical, Regular</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">32%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-sal-tech">$1,552,000</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Salary & Benefits - Technical, Overtime</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">12%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-sal-ot">$582,000</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Salary & Benefits - Administration</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">9%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-sal-admin">$436,500</td>
+                </tr>
+              </tbody>
+
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-600 uppercase text-[10px] tracking-wider">
+                  <th scope="col" class="pt-4 pb-2 font-bold" colspan="2">Supplies & Services Line Item</th>
+                  <th scope="col" class="pt-4 pb-2 text-right font-bold">Expense $</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Contracted Professional Fees</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">12%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-supp-contract">$582,000</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Medical Equipment Leases</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">17%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-supp-lease">$824,500</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Medical Equipment Maintenance</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">9%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-supp-maint">$436,500</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Medical Supplies</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">8%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-supp-med">$388,000</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-1.5 font-normal text-slate-700">Office Supplies</th>
+                  <td class="py-1.5 text-center text-slate-600 font-medium">6%</td>
+                  <td class="py-1.5 text-right font-semibold text-slate-900" id="row-supp-off">$291,000</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="border-t-2 border-slate-300 font-bold text-slate-900 text-sm">
+                  <th scope="row" colspan="2" class="pt-3">TOTAL EXPENSE</th>
+                  <td id="row-expense-total" class="pt-3 text-right text-rose-700 font-extrabold text-base">$5,092,500</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Revenue View Accessible Table (Hidden by default) -->
+          <div id="viewRevenue" role="tabpanel" aria-labelledby="tabRevenueBtn" class="p-4 sm:p-5 space-y-3 hidden">
+            <table class="w-full text-xs sm:text-sm text-left border-collapse" aria-label="Annual Revenue Table">
+              <caption class="sr-only">Annual Laboratory Revenue 2021-2022</caption>
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-600 uppercase text-[10px] tracking-wider">
+                  <th scope="col" class="pb-2 font-bold">Revenue Line Item</th>
+                  <th scope="col" class="pb-2 text-right font-bold">Revenue $</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <th scope="row" class="py-2 font-normal text-slate-700">Collected Fees and Reimbursements for Lab Services</th>
+                  <td class="py-2 text-right font-semibold text-slate-900" id="row-rev-fees">$2,500,000</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-2 font-normal text-slate-700">Outpatient Charges for Services</th>
+                  <td class="py-2 text-right font-semibold text-slate-900" id="row-rev-out">$700,000</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-2 font-normal text-slate-700">Inpatient Charges for Services</th>
+                  <td class="py-2 text-right font-semibold text-slate-900" id="row-rev-in">$1,300,000</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-2 font-normal text-slate-700">Federal Grants</th>
+                  <td class="py-2 text-right font-semibold text-slate-900" id="row-rev-grant">$350,000</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="border-t-2 border-slate-300 font-bold text-slate-900 text-sm">
+                  <th scope="row" class="pt-3">TOTAL REVENUE</th>
+                  <td id="row-rev-total" class="pt-3 text-right text-emerald-800 font-extrabold text-base">$4,850,000</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Budget Variance Callout Footer -->
+          <div class="p-4 bg-slate-50 border-t border-slate-200 text-xs text-slate-700 flex items-center justify-between" aria-live="polite">
+            <span>Variance to Breakeven:</span>
+            <span id="ledgerVariance" class="font-bold text-rose-700">-$242,500</span>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- Summary / Conclusion Section (strictly using provided text) -->
+    <section aria-labelledby="summary-heading" class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-6 sm:p-8">
+      <div class="max-w-4xl space-y-3">
+        <h3 id="summary-heading" class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="book-open" class="w-5 h-5 text-indigo-600" aria-hidden="true"></i>
+          Summary/Conclusion Feedback :
+        </h3>
+        <p class="text-slate-800 text-sm sm:text-base leading-relaxed">
+          There is no right or wrong way to approach budgeting. Finance professionals have many variables to consider when making budget adjustments that affect more than just balancing a budget. Some non-financial factors to consider are impacts on maintaining or improving staff morale, matching industry standards and practices, maintaining positive relationships with suppliers and customers and improving your business reputation with the local community.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Simulation Logic & Accessible Interactive Controller Script -->
+  <script>
+    // BASELINE FINANCIAL MODEL DATA
+    const BASE_REVENUES = {
+      fees: 2500000,
+      outpatient: 700000,
+      inpatient: 1300000,
+      grants: 350000
+    };
+
+    const BASE_EXPENSES = {
+      salTech: 1552000,
+      salOT: 582000,
+      salAdmin: 436500,
+      contractFees: 582000,
+      equipLease: 824500,
+      equipMaint: 436500,
+      medSupplies: 388000,
+      offSupplies: 291000
+    };
+
+    // Active state choices: 'no' or 'yes'
+    const choices = {
+      q1: 'no',
+      q2: 'no',
+      q3: 'no',
+      q4: 'no'
+    };
+
+    // Format currency helper
+    function fmt(val) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(val);
+    }
+
+    // Recalculate financials based on choices
+    function calculateBudget() {
+      const rev = { ...BASE_REVENUES };
+      const exp = { ...BASE_EXPENSES };
+
+      // Q1: Reduce Salary & Benefits - Technical, Regular - 2%
+      if (choices.q1 === 'yes') {
+        const salaryReduction = BASE_EXPENSES.salTech * 0.02;
+        exp.salTech -= salaryReduction;
+        const contractIncrease = (BASE_EXPENSES.contractFees * 0.04) + 18000;
+        exp.contractFees += contractIncrease;
+        exp.salOT += 12000;
+      }
+
+      // Q2: Increase Revenue by applying for additional grant money
+      if (choices.q2 === 'yes') {
+        const totalBaseRev = Object.values(BASE_REVENUES).reduce((a, b) => a + b, 0);
+        const totalBaseExp = Object.values(BASE_EXPENSES).reduce((a, b) => a + b, 0);
+        rev.grants += (totalBaseRev * 0.04);
+        exp.contractFees += (totalBaseExp * 0.02);
+      }
+
+      // Q3: Reduce Office Supplies by 2%
+      if (choices.q3 === 'yes') {
+        exp.offSupplies -= (BASE_EXPENSES.offSupplies * 0.02);
+      }
+
+      // Q4: Reduce Medical Equipment Maintenance by 2%
+      if (choices.q4 === 'yes') {
+        exp.equipMaint -= (BASE_EXPENSES.equipMaint * 0.02);
+      }
+
+      const totalRev = Object.values(rev).reduce((a, b) => a + b, 0);
+      const totalExp = Object.values(exp).reduce((a, b) => a + b, 0);
+      const net = totalRev - totalExp;
+
+      return { rev, exp, totalRev, totalExp, net };
+    }
+
+    // Render DOM elements
+    function updateUI(announcementText = null) {
+      const { rev, exp, totalRev, totalExp, net } = calculateBudget();
+      const baseRevTotal = Object.values(BASE_REVENUES).reduce((a, b) => a + b, 0);
+      const baseExpTotal = Object.values(BASE_EXPENSES).reduce((a, b) => a + b, 0);
+      const baseNet = baseRevTotal - baseExpTotal;
+
+      // Update KPI Revenue
+      const kpiRev = document.getElementById('kpiRevenue');
+      kpiRev.textContent = fmt(totalRev);
+      kpiRev.setAttribute('aria-label', `Current Total Revenue: ${fmt(totalRev)}`);
+
+      const revDiff = totalRev - baseRevTotal;
+      const revDiffEl = document.getElementById('kpiRevDiff');
+      if (revDiff > 0) {
+        revDiffEl.innerHTML = `<span class="text-emerald-700 font-bold flex items-center"><i data-lucide="trending-up" class="w-3.5 h-3.5 mr-0.5" aria-hidden="true"></i>+${fmt(revDiff)}</span> <span>vs baseline</span>`;
+      } else {
+        revDiffEl.innerHTML = `<span>Baseline: ${fmt(baseRevTotal)}</span>`;
+      }
+
+      // Update KPI Expenses
+      const kpiExp = document.getElementById('kpiExpenses');
+      kpiExp.textContent = fmt(totalExp);
+      kpiExp.setAttribute('aria-label', `Current Total Expenses: ${fmt(totalExp)}`);
+
+      const expDiff = totalExp - baseExpTotal;
+      const expDiffEl = document.getElementById('kpiExpDiff');
+      if (expDiff !== 0) {
+        const color = expDiff < 0 ? 'text-emerald-700' : 'text-rose-700';
+        const sign = expDiff < 0 ? '-' : '+';
+        expDiffEl.innerHTML = `<span class="${color} font-bold flex items-center">${sign}${fmt(Math.abs(expDiff))}</span> <span>vs baseline</span>`;
+      } else {
+        expDiffEl.innerHTML = `<span>Baseline: ${fmt(baseExpTotal)}</span>`;
+      }
+
+      // Net Margin
+      const netEl = document.getElementById('kpiNetMargin');
+      const badgeNet = document.getElementById('kpiNetBadge');
+      const statusNet = document.getElementById('kpiNetStatus');
+      netEl.textContent = fmt(net);
+
+      if (net >= 0) {
+        netEl.className = 'text-2xl font-extrabold text-emerald-700';
+        netEl.setAttribute('aria-label', `Net Balance Surplus: ${fmt(net)}`);
+        badgeNet.className = 'p-2 rounded-lg bg-emerald-100 text-emerald-800';
+        statusNet.textContent = `Balanced! Surplus: ${fmt(net)}`;
+        statusNet.className = 'mt-2 text-xs font-bold text-emerald-700';
+      } else {
+        netEl.className = 'text-2xl font-extrabold text-rose-700';
+        netEl.setAttribute('aria-label', `Net Balance Deficit: ${fmt(net)}`);
+        badgeNet.className = 'p-2 rounded-lg bg-rose-100 text-rose-800';
+        const deficitChange = net - baseNet;
+        const changeTxt = deficitChange > 0 ? `(Improved by ${fmt(deficitChange)})` : deficitChange < 0 ? `(Worsened by ${fmt(Math.abs(deficitChange))})` : `(Initial Deficit)`;
+        statusNet.textContent = `Deficit: ${fmt(net)} ${changeTxt}`;
+        statusNet.className = 'mt-2 text-xs font-medium text-slate-700';
+      }
+
+      // Coverage %
+      const coverage = Math.min(100, Math.round((totalRev / totalExp) * 1000) / 10);
+      document.getElementById('kpiCoverage').textContent = `${coverage}%`;
+      const coverageProgress = document.getElementById('coverageProgress');
+      coverageProgress.setAttribute('aria-valuenow', coverage);
+      const coverageBar = document.getElementById('coverageBar');
+      coverageBar.style.width = `${coverage}%`;
+      coverageBar.className = coverage >= 100 
+        ? 'bg-emerald-600 h-2.5 rounded-full transition-all duration-500' 
+        : coverage > 95 
+          ? 'bg-amber-600 h-2.5 rounded-full transition-all duration-500' 
+          : 'bg-rose-600 h-2.5 rounded-full transition-all duration-500';
+
+      // Update Ledger Rows: Expenses
+      document.getElementById('row-sal-tech').textContent = fmt(exp.salTech);
+      document.getElementById('row-sal-ot').textContent = fmt(exp.salOT);
+      document.getElementById('row-sal-admin').textContent = fmt(exp.salAdmin);
+      document.getElementById('row-supp-contract').textContent = fmt(exp.contractFees);
+      document.getElementById('row-supp-lease').textContent = fmt(exp.equipLease);
+      document.getElementById('row-supp-maint').textContent = fmt(exp.equipMaint);
+      document.getElementById('row-supp-med').textContent = fmt(exp.medSupplies);
+      document.getElementById('row-supp-off').textContent = fmt(exp.offSupplies);
+      document.getElementById('row-expense-total').textContent = fmt(totalExp);
+
+      // Update Ledger Rows: Revenue
+      document.getElementById('row-rev-fees').textContent = fmt(rev.fees);
+      document.getElementById('row-rev-out').textContent = fmt(rev.outpatient);
+      document.getElementById('row-rev-in').textContent = fmt(rev.inpatient);
+      document.getElementById('row-rev-grant').textContent = fmt(rev.grants);
+      document.getElementById('row-rev-total').textContent = fmt(totalRev);
+
+      // Ledger Variance
+      const ledgerVar = document.getElementById('ledgerVariance');
+      ledgerVar.textContent = fmt(net);
+      ledgerVar.className = net >= 0 ? 'font-bold text-emerald-700' : 'font-bold text-rose-700';
+
+      // Update ARIA announcements for assistive technologies
+      if (announcementText) {
+        document.getElementById('a11yStatus').textContent = announcementText;
+      }
+
+      // Render Question Feedbacks
+      renderFeedbacks();
+
+      // Re-trigger icon injection
+      lucide.createIcons();
+    }
+
+    // Detailed feedback text strictly matching user context
+    function renderFeedbacks() {
+      // Q1 FEEDBACK
+      const fb1 = document.getElementById('feedback-q1');
+      if (choices.q1 === 'yes') {
+        fb1.className = 'mt-3 p-4 rounded-xl text-xs sm:text-sm bg-rose-50 border border-rose-200 text-rose-950';
+        fb1.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <i data-lucide="alert-octagon" class="w-5 h-5 text-rose-700 shrink-0 mt-0.5" aria-hidden="true"></i>
+            <div>
+              <p class="font-bold text-rose-950">Feedback:</p>
+              <p class="mt-1 leading-relaxed text-rose-900">
+                Number Salary & Benefits Decrease by 2%<br>
+                Contracted Professional Fees Increase by 4% - There is an increase in overtime because you reduced the number of hours for staff . There is also an increase in contracted service because you need temporary workers to cover the workload. Regular staff will be upset at the change, morale would be negatively impacted. Expenses did not decrease.
+              </p>
+            </div>
+          </div>
+        `;
+      } else {
+        fb1.className = 'mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700';
+        fb1.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-slate-500" aria-hidden="true"></i>
+            <span><strong>Feedback:</strong> No change in budget you have to decide to do something else.</span>
+          </div>
+        `;
+      }
+
+      // Q2 FEEDBACK
+      const fb2 = document.getElementById('feedback-q2');
+      if (choices.q2 === 'yes') {
+        fb2.className = 'mt-3 p-4 rounded-xl text-xs sm:text-sm bg-indigo-50 border border-indigo-200 text-indigo-950';
+        fb2.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <i data-lucide="sparkles" class="w-5 h-5 text-indigo-700 shrink-0 mt-0.5" aria-hidden="true"></i>
+            <div>
+              <p class="font-bold text-indigo-950">Feedback:</p>
+              <p class="mt-1 leading-relaxed text-indigo-950">
+                Revenue Increases 4%<br>
+                Expenses Increase by 2% - There is an increase in contracted professional services for a temporary Grant Writer. Increases depend on availability of Federal and State grant funds. Grant money is also is not a sustainable solution. So although it may help to contribute to balancing the budget in the short term, you may need to find a long-term solution toward balancing the budget.
+              </p>
+            </div>
+          </div>
+        `;
+      } else {
+        fb2.className = 'mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700';
+        fb2.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-slate-500" aria-hidden="true"></i>
+            <span><strong>Feedback:</strong> No change in budget you have to decide on something else.</span>
+          </div>
+        `;
+      }
+
+      // Q3 FEEDBACK
+      const fb3 = document.getElementById('feedback-q3');
+      if (choices.q3 === 'yes') {
+        fb3.className = 'mt-3 p-4 rounded-xl text-xs sm:text-sm bg-emerald-50 border border-emerald-200 text-emerald-950';
+        fb3.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" aria-hidden="true"></i>
+            <div>
+              <p class="font-bold text-emerald-950">Feedback:</p>
+              <p class="mt-1 leading-relaxed text-emerald-950">
+                Expenses decrease by 2%. This helps to reduce expenses and brings the budget closer to being balanced. There may be negative impact on staff if there are not enough general office supplies available to perform their duties.
+              </p>
+            </div>
+          </div>
+        `;
+      } else {
+        fb3.className = 'mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700';
+        fb3.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-slate-500" aria-hidden="true"></i>
+            <span><strong>Feedback:</strong> No change in budget you have to decide on something else.</span>
+          </div>
+        `;
+      }
+
+      // Q4 FEEDBACK
+      const fb4 = document.getElementById('feedback-q4');
+      if (choices.q4 === 'yes') {
+        fb4.className = 'mt-3 p-4 rounded-xl text-xs sm:text-sm bg-amber-50 border border-amber-200 text-amber-950';
+        fb4.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-700 shrink-0 mt-0.5" aria-hidden="true"></i>
+            <div>
+              <p class="font-bold text-amber-950">Feedback:</p>
+              <p class="mt-1 leading-relaxed text-amber-950">
+                Expenses decrease by 2%. This helps to reduce expenses and brings the budget closer to being balanced. There may be a negative impact on equipment efficiency and use life. Maintenance contracts need to be analyzed and reviewed for possible adjustments or change in vendors.
+              </p>
+            </div>
+          </div>
+        `;
+      } else {
+        fb4.className = 'mt-3 p-3.5 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-700';
+        fb4.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-slate-500" aria-hidden="true"></i>
+            <span><strong>Feedback:</strong> No change in budget</span>
+          </div>
+        `;
+      }
+    }
+
+    // Setup interactive events with accessibility keyboard handling
+    function setupInteractions() {
+      // Toggle button selection
+      document.querySelectorAll('.q-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const q = btn.getAttribute('data-question');
+          const val = btn.getAttribute('data-val');
+
+          // Update state
+          choices[q] = val;
+
+          // Toggle styling and aria-checked in radio group
+          const parent = btn.closest('[role="radiogroup"]');
+          parent.querySelectorAll('.q-btn').forEach(b => {
+            b.setAttribute('aria-checked', 'false');
+            b.classList.remove('active-choice', 'bg-white', 'text-slate-900', 'shadow-sm', 'bg-indigo-600', 'text-white');
+            b.classList.add('text-slate-600');
+          });
+
+          btn.setAttribute('aria-checked', 'true');
+          if (val === 'yes') {
+            btn.classList.add('active-choice', 'bg-indigo-600', 'text-white', 'shadow-sm');
+            btn.classList.remove('text-slate-600');
+          } else {
+            btn.classList.add('active-choice', 'bg-white', 'text-slate-900', 'shadow-sm');
+            btn.classList.remove('text-slate-600');
+          }
+
+          const questionNum = q.toUpperCase();
+          const announcement = `${questionNum} set to ${val.toUpperCase()}. Budget figures updated.`;
+          updateUI(announcement);
+        });
+      });
+
+      // Tab switcher: Expenses vs Revenue (accessible tab controls)
+      const tabExp = document.getElementById('tabExpensesBtn');
+      const tabRev = document.getElementById('tabRevenueBtn');
+      const viewExp = document.getElementById('viewExpenses');
+      const viewRev = document.getElementById('viewRevenue');
+
+      function activateExpensesTab() {
+        tabExp.setAttribute('aria-selected', 'true');
+        tabExp.setAttribute('tabindex', '0');
+        tabExp.className = 'px-3 py-1 rounded-md bg-white text-slate-900 shadow-sm transition focus:ring-2 focus:ring-indigo-600';
+
+        tabRev.setAttribute('aria-selected', 'false');
+        tabRev.setAttribute('tabindex', '-1');
+        tabRev.className = 'px-3 py-1 rounded-md text-slate-700 hover:text-slate-900 transition focus:ring-2 focus:ring-indigo-600';
+
+        viewExp.classList.remove('hidden');
+        viewRev.classList.add('hidden');
+        tabExp.focus();
+      }
+
+      function activateRevenueTab() {
+        tabRev.setAttribute('aria-selected', 'true');
+        tabRev.setAttribute('tabindex', '0');
+        tabRev.className = 'px-3 py-1 rounded-md bg-white text-slate-900 shadow-sm transition focus:ring-2 focus:ring-indigo-600';
+
+        tabExp.setAttribute('aria-selected', 'false');
+        tabExp.setAttribute('tabindex', '-1');
+        tabExp.className = 'px-3 py-1 rounded-md text-slate-700 hover:text-slate-900 transition focus:ring-2 focus:ring-indigo-600';
+
+        viewRev.classList.remove('hidden');
+        viewExp.classList.add('hidden');
+        tabRev.focus();
+      }
+
+      tabExp.addEventListener('click', activateExpensesTab);
+      tabRev.addEventListener('click', activateRevenueTab);
+
+      // Keyboard arrow navigation for tabs
+      tabExp.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          activateRevenueTab();
+        }
+      });
+      tabRev.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          activateExpensesTab();
+        }
+      });
+
+      // Reset baseline
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        choices.q1 = 'no';
+        choices.q2 = 'no';
+        choices.q3 = 'no';
+        choices.q4 = 'no';
+
+        document.querySelectorAll('.q-btn').forEach(b => {
+          const val = b.getAttribute('data-val');
+          b.setAttribute('aria-checked', val === 'no' ? 'true' : 'false');
+          b.classList.remove('active-choice', 'bg-white', 'text-slate-900', 'shadow-sm', 'bg-indigo-600', 'text-white');
+          if (val === 'no') {
+            b.classList.add('active-choice', 'bg-white', 'text-slate-900', 'shadow-sm');
+          } else {
+            b.classList.add('text-slate-600');
+          }
+        });
+
+        updateUI("Simulation reset to baseline figures.");
+      });
+
+      // Accessible modal dialog management
+      const briefModal = document.getElementById('briefModal');
+      const closeBrief = document.getElementById('closeBriefModal');
+      const startSim = document.getElementById('startSimBtn');
+      const guidelinesBtn = document.getElementById('guidelinesBtn');
+      let triggerElement = guidelinesBtn;
+
+      function hideModal() {
+        briefModal.classList.add('opacity-0', 'pointer-events-none');
+        guidelinesBtn.setAttribute('aria-expanded', 'false');
+        setTimeout(() => {
+          briefModal.classList.add('hidden');
+          if (triggerElement) triggerElement.focus();
+        }, 200);
+      }
+
+      function showModal() {
+        triggerElement = document.activeElement;
+        guidelinesBtn.setAttribute('aria-expanded', 'true');
+        briefModal.classList.remove('hidden');
+        setTimeout(() => {
+          briefModal.classList.remove('opacity-0', 'pointer-events-none');
+          closeBrief.focus();
+        }, 10);
+      }
+
+      closeBrief.addEventListener('click', hideModal);
+      startSim.addEventListener('click', hideModal);
+      guidelinesBtn.addEventListener('click', showModal);
+
+      // Escape key listener to close modal
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !briefModal.classList.contains('hidden')) {
+          hideModal();
+        }
+      });
+    }
+
+    // Initialization on load
+    window.onload = function() {
+      setupInteractions();
+      updateUI();
+    };
+  </script>
+</body>
+</html>
