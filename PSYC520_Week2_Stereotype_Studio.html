@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 520 | Week 2: Stereotype Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --garnet:#9B2D35; --garnet-d:#74202A; --garnet-t:#F6E7E8;
+  --ink:#1D2536; --muted:#586174; --bg:#EDF0F5; --panel:#FFFFFF; --line:#D3D9E4;
+  --teal:#1C7C7D; --teal-t:#DDF0EF; --gold:#D8A03A; --gold-t:#FBF0D9;
+  --good:#1D7A4D; --good-t:#DFF2E7; --bad:#B03A2E; --bad-t:#F9E3E0;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;line-height:1.45}
+h1,h2,h3{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif;margin:0;letter-spacing:-.01em}
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+.top{flex:none;display:flex;align-items:center;gap:12px;padding:9px 18px;background:var(--garnet);color:#fff}
+.top svg{flex:none}
+.top h1{font-size:1.12rem;line-height:1.2;font-weight:700}
+.top p{margin:0;font-size:.82rem;opacity:.9}
+.tabs{flex:none;display:flex;gap:4px;padding:8px 14px 0;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{appearance:none;border:1px solid transparent;border-bottom:none;background:transparent;color:var(--muted);
+  font:600 .95rem 'Atkinson Hyperlegible',system-ui,sans-serif;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;white-space:nowrap}
+.tab:hover{background:var(--bg)}
+.tab[aria-selected=true]{color:var(--garnet-d);background:var(--bg);border-color:var(--line);box-shadow:inset 0 3px 0 var(--garnet)}
+:focus-visible{outline:3px solid #1B5FD6;outline-offset:2px}
+.stage{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 18px 14px;scrollbar-width:thin}
+.panel[hidden]{display:none}
+.panel{height:100%}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;height:100%;min-height:0}
+.viz{min-height:0;display:flex;align-items:center;justify-content:center}
+.viz svg{max-width:100%;max-height:100%;width:100%;height:100%}
+.side{min-height:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;scrollbar-width:thin;padding-right:2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.card h2{font-size:1.1rem;margin-bottom:4px}
+.card p{margin:0 0 6px}
+.muted{color:var(--muted);font-size:.92rem}
+.btn{appearance:none;border:2px solid var(--garnet);background:var(--garnet);color:#fff;font:700 .95rem 'Atkinson Hyperlegible',system-ui,sans-serif;
+  padding:8px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--garnet-d);border-color:var(--garnet-d)}
+.btn.ghost{background:#fff;color:var(--garnet-d)}
+.btn.ghost:hover{background:var(--garnet-t)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{appearance:none;text-align:left;width:100%;border:2px solid var(--line);background:#fff;color:var(--ink);
+  font:inherit;font-size:.95rem;padding:8px 12px;border-radius:8px;cursor:pointer}
+.chip:hover{border-color:var(--garnet)}
+.chip[aria-pressed=true],.chip.on{border-color:var(--garnet);background:var(--garnet-t)}
+.chip.right{border-color:var(--good);background:var(--good-t)}
+.chip.wrong{border-color:var(--bad);background:var(--bad-t)}
+.chip[disabled]{cursor:default}
+.fb{border-left:5px solid var(--teal);background:var(--teal-t);padding:8px 12px;border-radius:6px;font-size:.95rem}
+.fb.good{border-color:var(--good);background:var(--good-t)}
+.fb.bad{border-color:var(--bad);background:var(--bad-t)}
+.fb.gold{border-color:var(--gold);background:var(--gold-t)}
+.fb strong{font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+input[type=text],textarea{width:100%;font:inherit;font-size:.95rem;padding:7px 10px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{resize:none}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+@media (max-width:760px){
+  .split{grid-template-columns:1fr;height:auto}
+  .viz{height:min(60vw,340px)}
+  .panel{height:auto}
+  .side{overflow:visible}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+svg text{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif}
+.bin{cursor:pointer}
+.bin .bg{transition:fill .2s,stroke .2s}
+.bin:hover .bg,.bin:focus-visible .bg{fill:#F6E7E8;stroke:#9B2D35}
+.bin.shake{animation:shake .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.bin.pop .bg{fill:#DFF2E7;stroke:#1D7A4D}
+.qcard{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:14px 16px;box-shadow:5px 5px 0 var(--garnet)}
+.qcard .n{font-size:.85rem;color:var(--muted)}
+.qcard .q{font:700 1.2rem/1.3 'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif;margin:4px 0 0}
+.qcard .clue{margin-top:8px;font-size:.88rem;color:var(--muted)}
+.opts{display:grid;gap:6px}
+.door{transition:transform .6s cubic-bezier(.3,.8,.3,1);transform-box:fill-box;transform-origin:left center}
+.door.open{transform:perspective(500px) rotateY(-62deg)}
+.glow{transition:opacity .6s;opacity:0}
+.glow.on{opacity:1}
+.comp{cursor:pointer}
+.comp circle{transition:opacity .2s,stroke-width .2s}
+.comp:hover circle,.comp:focus-visible circle{opacity:.95}
+.comp.sel circle{stroke:#1D2536;stroke-width:4}
+.tiny{font-size:.85rem}
+.scaf{display:grid;gap:6px;font-size:.92rem}
+.scaf div{padding:6px 10px;border-radius:8px;border-left:5px solid}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><circle cx="13" cy="19" r="9" fill="#fff"/><circle cx="25" cy="19" r="9" fill="#fff" opacity=".7"/><path d="M19 12.2a9 9 0 0 1 0 13.6a9 9 0 0 1 0-13.6Z" fill="#74202A"/></svg>
+    <div><h1>PSYC 520 | Week 2: Stereotype Studio</h1><p>Sort the pattern, then turn a stereotype into a question worth asking.</p></div>
+  </header>
+  <nav class="tabs" role="tablist" aria-label="Activity steps">
+    <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">1. Belief, feeling, or action?</button>
+    <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">2. Start a conversation</button>
+    <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false">3. Sue and Sue model</button>
+  </nav>
+  <main class="stage">
+
+    <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+      <div class="split">
+        <div class="viz"><svg id="bins" viewBox="0 0 420 430" role="group" aria-label="Three bins: stereotype, prejudice, discrimination"></svg></div>
+        <div class="side">
+          <div class="qcard" id="card1"></div>
+          <div id="fb1" role="status" aria-live="polite"></div>
+          <div class="card"><div class="row" style="justify-content:space-between"><strong id="prog1">Card 1 of 9</strong><span class="muted tiny" id="score1"></span></div>
+            <div class="progress" style="height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:6px"><b id="bar1" style="display:block;height:100%;width:0;background:var(--garnet);transition:width .3s"></b></div></div>
+          <div class="row"><button class="btn" id="next1" hidden>Next card</button><button class="btn" id="go2" hidden>Next: start a conversation</button><button class="btn ghost" id="redo1" hidden>Sort again</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+      <div class="split">
+        <div class="viz"><svg id="doorSvg" viewBox="0 0 420 400" role="img" aria-label="A door that opens when you choose a question instead of a conclusion"></svg></div>
+        <div class="side">
+          <div class="qcard" id="card2"></div>
+          <div class="opts" id="opts2"></div>
+          <div id="fb2" role="status" aria-live="polite"></div>
+          <div class="row"><button class="btn" id="next2" hidden>Next</button><button class="btn" id="go3" hidden>Next: Sue and Sue model</button><button class="btn ghost" id="redo2" hidden>Try again</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+      <div class="split">
+        <div class="viz"><svg id="model" viewBox="0 0 420 420" role="group" aria-label="Sue and Sue model: three components of cultural competence over race and culture-specific characteristics"></svg></div>
+        <div class="side">
+          <div class="card" id="mCard"></div>
+          <div class="card">
+            <label for="assump"><strong>Try it on an assumption</strong></label>
+            <p class="muted tiny" style="margin:2px 0 6px">Type one assumption you notice yourself making about a group (for the Application on Poverty, or any group).</p>
+            <div class="row" style="flex-wrap:nowrap"><input type="text" id="assump" maxlength="80" placeholder="e.g. people on a tight budget…"><button class="btn" id="build" style="white-space:nowrap">Build prompts</button></div>
+            <div class="scaf" id="scaf" style="margin-top:8px" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const el=(n,a={},h='')=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(h)e.innerHTML=h;return e};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function show(n){[1,2,3].forEach(i=>{$('#p'+i).hidden=i!==n;$('#t'+i).setAttribute('aria-selected',i===n)});$('.stage').scrollTop=0}
+[1,2,3].forEach(i=>$('#t'+i).addEventListener('click',()=>show(i)));
+
+/* =================== TAB 1: SORT =================== */
+const TYPES={
+  stereo:{name:'Stereotype',sub:'a belief about a group',color:'#4B5FA8',explain:'A stereotype is a belief about what a group is like.',
+    icon:'<circle cx="0" cy="-4" r="11" fill="none"/><path d="M-16 20c0-9 7-13 16-13s16 4 16 13" fill="none"/><circle cx="17" cy="-22" r="3"/><circle cx="26" cy="-30" r="4.5"/>'},
+  prej:{name:'Prejudice',sub:'an attitude or feeling',color:'#9B2D35',explain:'Prejudice is an attitude or feeling toward a group and its members.',
+    icon:'<path d="M0 22C-26 4 -22 -16 -10 -16C-4 -16 0 -11 0 -9C0 -11 4 -16 10 -16C22 -16 26 4 0 22Z" fill="none"/>'},
+  disc:{name:'Discrimination',sub:'a behavior',color:'#1C7C7D',explain:'Discrimination is behavior: people are treated differently because of group membership.',
+    icon:'<path d="M-12 22V4L-16 -4M-12 4V-14M-4 4V-20M4 4V-18M12 4V-12M12 4L18 -2M-12 22H12V10" fill="none"/>'}
+};
+const ORDER=['stereo','prej','disc'];
+const CARDS=[
+ {t:'stereo',s:'Older adults & tech',x:'“Older adults can’t learn new technology.”',clue:'Is this a belief about what a group is like?'},
+ {t:'prej',s:'Neighborhood distrust',x:'“I just don’t trust people from that neighborhood.”',clue:'Is this a feeling toward a group, with no action yet?'},
+ {t:'disc',s:'Hiring decision',x:'A manager passes over a qualified candidate because she “might leave to start a family.”',clue:'Does someone act on group membership here?'},
+ {t:'stereo',s:'Men & emotion',x:'“Men aren’t good at expressing emotions.”',clue:'A claim about what a group is like.'},
+ {t:'prej',s:'Accent discomfort',x:'“I feel uneasy around people with a strong accent.”',clue:'A feeling toward a group.'},
+ {t:'disc',s:'Apartment showing',x:'A landlord says the apartment is taken, then shows it to another family.',clue:'Someone is treated differently. Is it thought, feeling, or action?'},
+ {t:'stereo',s:'Rural students',x:'“Students from rural areas are less ambitious.”',clue:'A claim about what a group is like.'},
+ {t:'prej',s:'Looking down',x:'“I look down on people who didn’t go to college.”',clue:'A negative attitude toward a group.'},
+ {t:'disc',s:'Following a customer',x:'A shopkeeper follows one customer around the store but not others.',clue:'Look for what someone does.'}
+];
+let q1,i1,ok1,placed1,tries1;
+function reset1(){q1=shuffle(CARDS);i1=0;ok1=0;placed1={stereo:[],prej:[],disc:[]};tries1=0;
+  $('#fb1').innerHTML='';['#next1','#go2','#redo1'].forEach(s=>$(s).hidden=true);draw1();card1()}
+function draw1(){
+  const svg=$('#bins');svg.innerHTML='';
+  ORDER.forEach((k,idx)=>{
+    const T=TYPES[k],y=8+idx*140;
+    const g=el('g',{class:'bin','data-k':k,tabindex:0,role:'button','aria-label':`${T.name}, ${T.sub}. ${placed1[k].length} sorted.`});
+    g.appendChild(el('rect',{class:'bg',x:6,y:y,width:408,height:118,rx:14,fill:'#fff',stroke:'#D3D9E4','stroke-width':3}));
+    g.appendChild(el('rect',{x:6,y:y,width:12,height:118,rx:6,fill:T.color}));
+    const ic=el('g',{transform:`translate(64 ${y+52}) scale(1.35)`,stroke:T.color,fill:T.color,'stroke-width':3,'stroke-linecap':'round','stroke-linejoin':'round'},T.icon);
+    g.appendChild(ic);
+    const t=el('text',{x:116,y:y+30,'font-size':20,'font-weight':700,fill:'#1D2536'});t.textContent=T.name;g.appendChild(t);
+    const u=el('text',{x:116,y:y+49,'font-size':13.5,fill:'#586174'});u.textContent=T.sub;g.appendChild(u);
+    placed1[k].forEach((c,j)=>{
+      const px=116+(j%2)*148,py=y+62+Math.floor(j/2)*24;
+      g.appendChild(el('rect',{x:px,y:py,width:142,height:20,rx:10,fill:T.color,opacity:.14}));
+      const pt=el('text',{x:px+8,y:py+14,'font-size':11.5,fill:'#1D2536','font-weight':700});pt.textContent=c.length>24?c.slice(0,23)+'…':c;g.appendChild(pt);
+    });
+    svg.appendChild(g);
+    g.addEventListener('click',()=>answer(k,g));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();answer(k,g)}});
+    if(idx<2){svg.appendChild(el('path',{d:`M210 ${y+120}v14m-6 -6l6 7l6 -7`,fill:'none',stroke:'#586174','stroke-width':2.5,'stroke-linecap':'round','stroke-linejoin':'round'}))}
+  });
+}
+function card1(){
+  const c=$('#card1');
+  if(i1>=q1.length){
+    c.innerHTML=`<div class="n">All nine sorted</div><p class="q">Belief, feeling, action: three steps of one pattern.</p><p class="clue">Noticing which step you are on is how you interrupt it. You can question a belief before it hardens into a feeling or an action.</p>`;
+    $('#prog1').textContent='Done';$('#bar1').style.width='100%';
+    $('#score1').textContent=`${ok1} of 9 correct on the first try`;
+    $('#go2').hidden=false;$('#redo1').hidden=false;return;
+  }
+  const k=q1[i1];
+  c.innerHTML=`<div class="n">Which bin does this belong in?</div><p class="q">${esc(k.x)}</p><p class="clue">Hint: ${esc(k.clue)}</p>`;
+  $('#prog1').textContent=`Card ${i1+1} of 9`;$('#bar1').style.width=(i1/9*100)+'%';
+  $('#score1').textContent=ok1?`${ok1} correct on the first try`:'';
+}
+function answer(k,g){
+  if(i1>=q1.length||!$('#next1').hidden)return;
+  const cur=q1[i1];
+  if(k===cur.t){
+    if(tries1===0)ok1++;
+    placed1[k].push(cur.s);tries1=0;i1++;
+    $('#fb1').innerHTML=`<div class="fb good"><strong>Yes.</strong> ${esc(TYPES[k].explain)}</div>`;
+    draw1();
+    const ng=$(`#bins [data-k="${k}"]`);ng.classList.add('pop');setTimeout(()=>ng.classList.remove('pop'),600);
+    card1();
+    if(i1<q1.length){ /* next card shown immediately */ }
+  }else{
+    tries1++;
+    g.classList.add('shake');setTimeout(()=>g.classList.remove('shake'),400);
+    $('#fb1').innerHTML=`<div class="fb bad"><strong>Not quite.</strong> ${esc(TYPES[k].explain)} Does this card describe that? Look again at the hint.</div>`;
+  }
+}
+$('#go2').onclick=()=>show(2);$('#redo1').onclick=reset1;
+
+/* =================== TAB 2: CONVERSATION =================== */
+const ITEMS=[
+ {s:'Older coworkers resist change.',o:[
+   {x:'I’ll skip the new-process training for older staff. It won’t stick.',k:'close',w:'This treats the stereotype as a conclusion about every older coworker and removes their chance to show otherwise.'},
+   {x:'I’ll avoid the topic so I don’t offend anyone.',k:'avoid',w:'Avoiding the topic leaves the assumption untested and the person unheard.'},
+   {x:'I’m curious how change has worked for you before. What helps you take on something new?',k:'open',w:'An open question treats the stereotype as a hypothesis and lets the person describe their own experience.'}]},
+ {s:'People who live in poverty don’t value education.',o:[
+   {x:'I’ll focus my time on clients who care more about school.',k:'close',w:'This acts on the belief as if it were fact.'},
+   {x:'I’ll ask about their goals, and what has helped or gotten in the way of school.',k:'open',w:'This asks about goals and barriers, so the answer comes from the person, not the stereotype.'},
+   {x:'I won’t bring up school at all.',k:'avoid',w:'Silence keeps the assumption in place and may close off a useful conversation.'}]},
+ {s:'Students from other countries rarely speak up in class.',o:[
+   {x:'I’ll call on them less so they don’t feel put on the spot.',k:'close',w:'This decides for the student, based on the group, what they want.'},
+   {x:'I’ll ask how discussion worked in their earlier classes, and what would make it easier to join in here.',k:'open',w:'This asks for the student’s own experience and invites them to shape the environment.'},
+   {x:'I’ll assume they don’t have opinions and move on.',k:'avoid',w:'This turns a hunch into a conclusion and silences a voice.'}]},
+ {s:'People from big families are always close.',o:[
+   {x:'I’ll ask how family shows up in your life. What does support look like for you?',k:'open',w:'This keeps the question open and lets the person define their own family experience.'},
+   {x:'I’ll assume she has plenty of family help and offer fewer resources.',k:'close',w:'This acts on the stereotype and could withhold support that is needed.'},
+   {x:'I’d better never mention family.',k:'avoid',w:'Avoiding the topic prevents the learning the stereotype could have prompted.'}]}
+];
+let i2,ok2,done2;
+function reset2(){i2=0;ok2=0;done2=false;['#next2','#go3','#redo2'].forEach(s=>$(s).hidden=true);$('#fb2').innerHTML='';drawDoor(0);card2()}
+function card2(){
+  const c=$('#card2'),o=$('#opts2');
+  if(i2>=ITEMS.length){
+    c.innerHTML=`<div class="n">Finished</div><p class="q">${ok2} of ${ITEMS.length} chosen as open questions on the first try.</p><p class="clue">Treat a stereotype as a hypothesis to test, not a conclusion about a person. Ask open questions, listen, and stay humble about what you do not yet know.</p>`;
+    o.innerHTML='';$('#go3').hidden=false;$('#redo2').hidden=false;return;
+  }
+  const it=ITEMS[i2];done2=false;it._first=true;
+  c.innerHTML=`<div class="n">Stereotype ${i2+1} of ${ITEMS.length}</div><p class="q">${esc(it.s)}</p><p class="clue">Which response treats this as a hypothesis to test?</p>`;
+  it._opts=it._opts||shuffle(it.o);
+  o.innerHTML=it._opts.map((p,k)=>`<button class="chip" data-k="${k}">${esc(p.x)}</button>`).join('');
+  o.querySelectorAll('.chip').forEach(b=>b.onclick=()=>pick(b,it));
+  $('#fb2').innerHTML='';drawDoor(0);
+}
+function pick(b,it){
+  if(done2)return;
+  const p=it._opts[+b.dataset.k];
+  if(p.k==='open'){
+    done2=true;if(it._first)ok2++;
+    b.classList.add('right');
+    document.querySelectorAll('#opts2 .chip').forEach(x=>x.disabled=true);
+    $('#fb2').innerHTML=`<div class="fb good"><strong>A door opens.</strong> ${esc(p.w)}</div>`;
+    drawDoor(1);
+    if(i2<ITEMS.length-1){$('#next2').hidden=false}else{$('#next2').hidden=false;$('#next2').textContent='See results'}
+  }else{
+    it._first=false;b.classList.add('wrong');b.disabled=true;
+    $('#fb2').innerHTML=`<div class="fb bad"><strong>The door stays shut.</strong> ${esc(p.w)} Try another response.</div>`;
+    drawDoor(0);
+  }
+}
+$('#next2').onclick=()=>{i2++;$('#next2').hidden=true;$('#next2').textContent='Next';card2()};
+$('#go3').onclick=()=>show(3);
+$('#redo2').onclick=()=>{ITEMS.forEach(i=>{delete i._opts});reset2()};
+
+function drawDoor(open){
+  const svg=$('#doorSvg');svg.innerHTML='';
+  // wall
+  svg.appendChild(el('rect',{x:20,y:30,width:380,height:340,rx:18,fill:'#E3E8F0'}));
+  svg.appendChild(el('rect',{x:110,y:70,width:200,height:280,rx:10,fill:'#fff',stroke:'#1D2536','stroke-width':4}));
+  // what is behind
+  const behind=el('g',{class:'glow'+(open?' on':'')});
+  behind.appendChild(el('rect',{x:114,y:74,width:192,height:272,rx:7,fill:'#FBF0D9'}));
+  behind.appendChild(el('circle',{cx:210,cy:200,r:56,fill:'#fff',opacity:.8}));
+  // two people talking
+  behind.appendChild(el('circle',{cx:176,cy:188,r:14,fill:'#9B2D35'}));
+  behind.appendChild(el('path',{d:'M154 238q0-30 22-30t22 30z',fill:'#9B2D35'}));
+  behind.appendChild(el('circle',{cx:246,cy:188,r:14,fill:'#1C7C7D'}));
+  behind.appendChild(el('path',{d:'M224 238q0-30 22-30t22 30z',fill:'#1C7C7D'}));
+  behind.appendChild(el('path',{d:'M158 142h42a9 9 0 0 1 9 9v14a9 9 0 0 1-9 9h-22l-10 10v-10h-10a9 9 0 0 1-9-9v-14a9 9 0 0 1 9-9z',fill:'#fff',stroke:'#9B2D35','stroke-width':2.5}));
+  const q=el('text',{x:180,y:168,'text-anchor':'middle','font-size':22,'font-weight':700,fill:'#9B2D35'});q.textContent='?';behind.appendChild(q);
+  svg.appendChild(behind);
+  // door leaf
+  const door=el('g',{class:'door'+(open?' open':'')});
+  door.appendChild(el('rect',{x:114,y:74,width:192,height:272,rx:7,fill:open?'#74202A':'#9B2D35'}));
+  door.appendChild(el('rect',{x:134,y:96,width:152,height:100,rx:5,fill:'none',stroke:'#fff','stroke-width':3,opacity:.5}));
+  door.appendChild(el('rect',{x:134,y:216,width:152,height:100,rx:5,fill:'none',stroke:'#fff','stroke-width':3,opacity:.5}));
+  door.appendChild(el('circle',{cx:278,cy:214,r:8,fill:'#FBF0D9'}));
+  svg.appendChild(door);
+  const cap=el('text',{x:210,y:392,'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#1D2536'});
+  cap.textContent=open?'A question opens the conversation':'A conclusion keeps the door shut';svg.appendChild(cap);
+}
+
+/* =================== TAB 3: MODEL =================== */
+const COMP={
+ aware:{name:'Awareness',color:'#9B2D35',desc:'Notice what you already assume, and where it came from.',
+   ask:['What assumptions do I hold about this group?','Where did my information come from: family, school, media, work?','How do I feel when my assumption is challenged?']},
+ know:{name:'Knowledge',color:'#1C7C7D',desc:'Learn about the group’s values, beliefs, strengths, and the barriers people describe.',
+   ask:['What do I actually know, and how do I know it?','Whose voices and sources am I relying on?','What would I need to learn before I could understand this group better?']},
+ skill:{name:'Skills',color:'#D8A03A',desc:'Practice the respectful questions and listening that let individuals correct your picture.',
+   ask:['What open question could I ask?','How will I listen for how a person describes their own culture?','How will I check my understanding without defending my assumption?']},
+ dim1:{name:'Dimension 1: Race and culture-specific characteristics',color:'#4B5FA8',desc:'The key values and beliefs of a racial or cultural group. Use this dimension to see what a group may emphasize, then hold it loosely.',
+   ask:['What values and beliefs might matter in this group?','Which of those have I assumed rather than confirmed?','How might an individual differ from the group picture?']}
+};
+let sel3=null;const seen=new Set();
+function drawModel(){
+  const svg=$('#model');svg.innerHTML='';
+  const b=el('g',{class:'comp','data-k':'dim1',tabindex:0,role:'button','aria-label':'Dimension 1, race and culture-specific characteristics'+(seen.has('dim1')?', viewed':'')});
+  b.appendChild(el('rect',{x:18,y:318,width:384,height:82,rx:14,fill:COMP.dim1.color,opacity:.9,stroke:sel3==='dim1'?'#1D2536':'none','stroke-width':4}));
+  const t1=el('text',{x:210,y:350,'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#fff'});t1.textContent='Dimension 1';b.appendChild(t1);
+  const t2=el('text',{x:210,y:372,'text-anchor':'middle','font-size':13,fill:'#fff'});t2.textContent='Race and culture-specific characteristics';b.appendChild(t2);
+  const t3=el('text',{x:210,y:390,'text-anchor':'middle','font-size':12,fill:'#fff',opacity:.9});t3.textContent='Key values and beliefs'+(seen.has('dim1')?'  ✓':'');b.appendChild(t3);
+  svg.appendChild(b);
+  const hd=el('text',{x:210,y:26,'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#1D2536'});hd.textContent='Dimension 2: components of cultural competence';svg.appendChild(hd);
+  const pos={aware:[150,130],know:[270,130],skill:[210,226]};
+  Object.keys(pos).forEach(k=>{
+    const g=el('g',{class:'comp'+(sel3===k?' sel':''),'data-k':k,tabindex:0,role:'button','aria-label':COMP[k].name+(seen.has(k)?', viewed':'')});
+    g.appendChild(el('circle',{cx:pos[k][0],cy:pos[k][1],r:78,fill:COMP[k].color,opacity:.78}));
+    svg.appendChild(g);
+  });
+  Object.keys(pos).forEach(k=>{
+    const [x,y]=pos[k];
+    const lx=k==='aware'?x-12:k==='know'?x+12:x,ly=k==='skill'?y+30:y-18;
+    const t=el('text',{x:lx,y:ly,'text-anchor':'middle','font-size':16,'font-weight':700,fill:k==='skill'?'#1D2536':'#fff','pointer-events':'none'});
+    t.textContent=COMP[k].name+(seen.has(k)?' ✓':'');svg.appendChild(t);
+  });
+  const c=el('text',{x:210,y:158,'text-anchor':'middle','font-size':11.5,'font-weight':700,fill:'#1D2536','pointer-events':'none'});c.textContent='competence';svg.appendChild(c);
+  svg.querySelectorAll('.comp').forEach(g=>{
+    const k=g.dataset.k;
+    g.addEventListener('click',()=>pickC(k));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pickC(k)}});
+  });
+}
+function pickC(k){sel3=k;seen.add(k);drawModel();cardM();
+  const f=document.querySelector(`#model [data-k="${k}"]`);if(f)f.focus({preventScroll:true});}
+function cardM(){
+  const c=$('#mCard');
+  if(!sel3){c.innerHTML='<h2>Select a part of the model</h2><p class="muted">The model gives you a structure for the Application on Poverty and your Cultural Exploration Paper. Select each circle, and the band beneath them, to see questions to ask yourself.</p>';return}
+  const m=COMP[sel3];
+  c.innerHTML=`<h2 style="color:${m.color==='#D8A03A'?'#8a6215':m.color}">${esc(m.name)}</h2><p>${esc(m.desc)}</p><ul style="margin:4px 0 0;padding-left:18px;font-size:.93rem">${m.ask.map(a=>`<li>${esc(a)}</li>`).join('')}</ul><p class="muted tiny" style="margin-top:6px">${seen.size} of 4 parts viewed</p>`;
+}
+$('#build').onclick=buildScaf;
+$('#assump').addEventListener('keydown',e=>{if(e.key==='Enter')buildScaf()});
+function buildScaf(){
+  const v=$('#assump').value.trim();
+  if(!v){$('#scaf').innerHTML='<div class="fb bad" style="border-left-width:5px">Type an assumption first, then select Build prompts.</div>';return}
+  $('#scaf').innerHTML=`
+   <div style="border-color:#9B2D35;background:#F6E7E8"><strong>Awareness:</strong> I assume “${esc(v)}”. Where did I learn that?</div>
+   <div style="border-color:#1C7C7D;background:#DDF0EF"><strong>Knowledge:</strong> What do reliable sources and people from this group say about it?</div>
+   <div style="border-color:#D8A03A;background:#FBF0D9"><strong>Skills:</strong> What open question could I ask to test “${esc(v)}” respectfully?</div>`;
+}
+
+reset1();reset2();drawModel();cardM();
+})();
+</script>
+</body>
+</html>

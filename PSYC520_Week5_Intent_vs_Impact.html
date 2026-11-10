@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 520 | Week 5: Intent vs. Impact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --garnet:#9B2D35; --garnet-d:#74202A; --garnet-t:#F6E7E8;
+  --ink:#1D2536; --muted:#586174; --bg:#EDF0F5; --panel:#FFFFFF; --line:#D3D9E4;
+  --teal:#1C7C7D; --teal-t:#DDF0EF; --gold:#D8A03A; --gold-t:#FBF0D9;
+  --good:#1D7A4D; --good-t:#DFF2E7; --bad:#B03A2E; --bad-t:#F9E3E0;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;line-height:1.45}
+h1,h2,h3{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif;margin:0;letter-spacing:-.01em}
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+.top{flex:none;display:flex;align-items:center;gap:12px;padding:9px 18px;background:var(--garnet);color:#fff}
+.top svg{flex:none}
+.top h1{font-size:1.12rem;line-height:1.2;font-weight:700}
+.top p{margin:0;font-size:.82rem;opacity:.9}
+.tabs{flex:none;display:flex;gap:4px;padding:8px 14px 0;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{appearance:none;border:1px solid transparent;border-bottom:none;background:transparent;color:var(--muted);
+  font:600 .95rem 'Atkinson Hyperlegible',system-ui,sans-serif;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;white-space:nowrap}
+.tab:hover{background:var(--bg)}
+.tab[aria-selected=true]{color:var(--garnet-d);background:var(--bg);border-color:var(--line);box-shadow:inset 0 3px 0 var(--garnet)}
+:focus-visible{outline:3px solid #1B5FD6;outline-offset:2px}
+.stage{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 18px 14px;scrollbar-width:thin}
+.panel[hidden]{display:none}
+.panel{height:100%}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;height:100%;min-height:0}
+.viz{min-height:0;display:flex;align-items:center;justify-content:center}
+.viz svg{max-width:100%;max-height:100%;width:100%;height:100%}
+.side{min-height:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;scrollbar-width:thin;padding-right:2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.card h2{font-size:1.1rem;margin-bottom:4px}
+.card p{margin:0 0 6px}
+.muted{color:var(--muted);font-size:.92rem}
+.btn{appearance:none;border:2px solid var(--garnet);background:var(--garnet);color:#fff;font:700 .95rem 'Atkinson Hyperlegible',system-ui,sans-serif;
+  padding:8px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--garnet-d);border-color:var(--garnet-d)}
+.btn.ghost{background:#fff;color:var(--garnet-d)}
+.btn.ghost:hover{background:var(--garnet-t)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{appearance:none;text-align:left;width:100%;border:2px solid var(--line);background:#fff;color:var(--ink);
+  font:inherit;font-size:.95rem;padding:8px 12px;border-radius:8px;cursor:pointer}
+.chip:hover{border-color:var(--garnet)}
+.chip[aria-pressed=true],.chip.on{border-color:var(--garnet);background:var(--garnet-t)}
+.chip.right{border-color:var(--good);background:var(--good-t)}
+.chip.wrong{border-color:var(--bad);background:var(--bad-t)}
+.chip[disabled]{cursor:default}
+.fb{border-left:5px solid var(--teal);background:var(--teal-t);padding:8px 12px;border-radius:6px;font-size:.95rem}
+.fb.good{border-color:var(--good);background:var(--good-t)}
+.fb.bad{border-color:var(--bad);background:var(--bad-t)}
+.fb.gold{border-color:var(--gold);background:var(--gold-t)}
+.fb strong{font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+input[type=text],textarea{width:100%;font:inherit;font-size:.95rem;padding:7px 10px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{resize:none}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+@media (max-width:760px){
+  .split{grid-template-columns:1fr;height:auto}
+  .viz{height:min(60vw,340px)}
+  .panel{height:auto}
+  .side{overflow:visible}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+svg text{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif}
+.scene{display:flex;flex-direction:column;gap:4px;width:100%;height:100%;min-height:0}
+.setting{font-size:.88rem;color:var(--muted);text-align:center}
+.bubble{position:relative;background:#fff;border:3px solid var(--garnet);border-radius:18px;padding:12px 16px;font:700 1.12rem/1.3 'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif;margin:2px 10px 12px 10px}
+.bubble::after{content:"";position:absolute;left:62px;bottom:-16px;width:22px;height:22px;background:#fff;border-right:3px solid var(--garnet);border-bottom:3px solid var(--garnet);transform:rotate(45deg) skew(8deg,8deg)}
+.bubble small{display:block;font:400 .85rem 'Atkinson Hyperlegible',system-ui,sans-serif;color:var(--muted);margin-top:6px}
+.scene svg{flex:1;min-height:0}
+.stage-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pill{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--garnet-t);color:var(--garnet-d)}
+.stones{display:flex;gap:5px}
+.stones i{width:22px;height:14px;border-radius:50%;background:var(--line);display:block;transition:background .3s}
+.stones i.on{background:#6B7587}
+.q2{font:700 1.02rem/1.3 'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif;margin:0 0 8px}
+.opts{display:grid;gap:6px}
+.sumlist{margin:0;padding:0;list-style:none;display:grid;gap:5px}
+.sumlist li{display:flex;gap:8px;align-items:center;font-size:.92rem;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line)}
+.sumlist li b{margin-left:auto;font-weight:700}
+.sumlist .g{color:var(--good)}.sumlist .r{color:var(--bad)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><rect x="17" y="6" width="4" height="24" fill="#fff"/><path d="M5 12h28" stroke="#fff" stroke-width="3" stroke-linecap="round" transform="rotate(-8 19 12)"/><ellipse cx="9" cy="17" rx="6" ry="2.5" fill="#fff" opacity=".75"/><ellipse cx="29" cy="9" rx="6" ry="2.5" fill="#fff"/><rect x="11" y="31" width="16" height="3" rx="1.5" fill="#fff"/></svg>
+    <div><h1>PSYC 520 | Week 5: Intent vs. Impact</h1><p>Small moments, real effects. Practice noticing impact and repairing harm.</p></div>
+  </header>
+  <nav class="tabs" role="tablist" aria-label="Activity steps">
+    <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">1. Four moments</button>
+    <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">2. What they add up to</button>
+  </nav>
+  <main class="stage">
+
+    <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+      <div class="split">
+        <div class="viz"><div class="scene">
+          <div class="setting" id="setting"></div>
+          <div class="bubble" id="bubble"></div>
+          <svg id="people" viewBox="0 0 420 220" role="img" aria-label="Two people in conversation"></svg>
+        </div></div>
+        <div class="side">
+          <div class="card">
+            <div class="stage-h"><span class="pill" id="stepPill">Moment 1 of 4</span><span class="stones" id="stones" aria-label="Stones added to the scale"></span></div>
+            <div style="margin-top:8px" id="qbox"></div>
+          </div>
+          <div id="fb" role="status" aria-live="polite"></div>
+          <div class="row"><button class="btn" id="cont" hidden>Continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+      <div class="split">
+        <div class="viz"><svg id="scale" viewBox="0 0 420 380" role="img" aria-label="A balance scale. A single feather of intent on one side, accumulated stones of impact on the other."></svg></div>
+        <div class="side">
+          <div class="card" id="sumCard"></div>
+          <div class="card">
+            <label for="repair"><strong>Write a repair sentence you could use</strong></label>
+            <textarea id="repair" rows="3" style="margin-top:6px" placeholder="Name what happened, thank the person, say what you will do differently."></textarea>
+            <div class="row" style="margin-top:6px"><button class="btn" id="copy">Copy text</button><span class="muted" id="copied" role="status"></span><button class="btn ghost" id="restart" style="margin-left:auto">Start over</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const el=(n,a={},h='')=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(h)e.innerHTML=h;return e};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function show(n){[1,2].forEach(i=>{$('#p'+i).hidden=i!==n;$('#t'+i).setAttribute('aria-selected',i===n)});if(n===2)renderSummary();$('.stage').scrollTop=0}
+[1,2].forEach(i=>$('#t'+i).addEventListener('click',()=>show(i)));
+
+const SC=[
+ {setting:'Team meeting',sp:'Dana',spRole:'colleague',li:'Luis',liRole:'colleague',
+  line:'“Your English is so good! Where are you really from?”',ctx:'Luis was born and raised in Texas.',stone:'Origin assumed',
+  impact:[
+   {x:'Luis is treated as a foreigner in his own country, and his belonging is questioned.',ok:1,f:'He may have heard this many times. The question, however kind, can signal that he does not fully belong.'},
+   {x:'Luis feels welcomed, because Dana meant it as a compliment.',f:'Dana’s intent may have been kind, but intent is not impact. A compliment can still carry a message about who “counts” as from here.'},
+   {x:'Very little. It was a single, friendly question.',f:'Small and friendly does not mean harmless. Comments like this are easy to dismiss, but they are common, and their effect adds up.'}],
+  resp:{good:'Thank you for telling me. I assumed, and I’ll ask about your work and interests instead.',
+    def:'I didn’t mean anything by it. You’re being too sensitive.',
+    dis:'Let’s get back to the agenda.'}},
+ {setting:'Group project chat',sp:'Sam',spRole:'classmate',li:'Priya',liRole:'classmate',
+  line:'“Let’s have Priya take notes. Women are always so organized.”',ctx:'Priya has not been asked what role she wants.',stone:'Gender role',
+  impact:[
+   {x:'Priya’s role is chosen by her gender, not her strengths, and she may carry extra clerical work.',ok:1,f:'A “positive” stereotype still assigns people to roles by group, and it can limit who gets to lead.'},
+   {x:'She has been praised, so it can only be positive.',f:'Praise based on a group stereotype still reduces a person to the group. Positive and harmless are not the same thing.'},
+   {x:'It has no effect, since Sam meant it kindly.',f:'Kind intent does not remove the effect. Roles shaped by stereotypes can quietly follow people from project to project.'}],
+  resp:{good:'You’re right. I’ll ask everyone which role they want, and we’ll rotate note-taking.',
+    def:'It was a compliment! Why is everyone so touchy?',
+    dis:'Fine, forget I said anything.'}},
+ {setting:'Client intake',sp:'Alex',spRole:'counselor in training',li:'Mr. Okafor',liRole:'client, age 68',
+  line:'“Do you need me to walk you through the online portal? Most people your age find it tricky.”',ctx:'Mr. Okafor has not said he needs help.',stone:'Age assumed',
+  impact:[
+   {x:'He is assumed to be less capable because of his age, before he has said anything.',ok:1,f:'Offers of help built on an age assumption can erode trust at the start of a helping relationship.'},
+   {x:'He feels cared for, because Alex offered help.',f:'Helping can be kind, but this offer rests on an assumption about people his age. Impact depends on how it lands, not on how it was meant.'},
+   {x:'Nothing important, since it is just about a website.',f:'The website is small. The message about his abilities is not, and clients may carry past experiences of being underestimated.'}],
+  resp:{good:'I assumed something about you. Would you like a walkthrough, or shall we just get started?',
+    def:'I was only trying to help. There’s no need to be rude.',
+    dis:'Never mind. I’ll just hand you the paper form.'}},
+ {setting:'Class discussion',sp:'Jordan',spRole:'classmate',li:'Mia',liRole:'classmate with a chronic illness',
+  line:'“You don’t look like you have a disability. Are you sure you need extra time?”',ctx:'Mia uses an approved accommodation.',stone:'Disbelief',
+  impact:[
+   {x:'Her condition is doubted, and her accommodation is treated as if it might be cheating.',ok:1,f:'Many conditions are not visible. Questioning someone’s need can feel like being asked to prove it.'},
+   {x:'Mia feels reassured that Jordan is thinking carefully about fairness.',f:'Jordan may believe the question is about fairness, but the impact on Mia is doubt and exposure.'},
+   {x:'It has no impact, because Jordan was only curious.',f:'Curiosity does not erase the effect of a question that implies someone is not being truthful.'}]
+  ,resp:{good:'I’m sorry. That wasn’t mine to question. Thank you for telling me what you need.',
+    def:'I’m just asking questions. It’s not fair if some people get extra time.',
+    dis:'Forget I asked.'}}
+];
+const RESP={good:'Accountability and repair: name what happened, thank the person, and change course. This keeps trust intact.',
+  def:'Defending your intent puts the burden back on the person who was harmed. Intent and impact are different, and good intentions do not erase the effect.',
+  dis:'Moving on or withdrawing leaves the harm unaddressed. The other person is left carrying it alone.'};
+
+let idx,stage,res,order,cur,angle=0;
+function start(){idx=0;stage=0;res=SC.map(()=>({impactFirst:true,respFirst:true,done:false}));order=SC.map(()=>null);$('#fb').innerHTML='';$('#cont').hidden=true;drawScene();renderStones();q()}
+function renderStones(){$('#stones').innerHTML=SC.map((s,i)=>`<i class="${res[i].done?'on':''}"></i>`).join('')}
+
+function person(g,x,color,name,face){
+  const gg=el('g',{transform:`translate(${x} 0)`});
+  gg.appendChild(el('ellipse',{cx:0,cy:200,rx:62,ry:8,fill:'#000',opacity:.07}));
+  gg.appendChild(el('path',{d:'M-56 200c0-52 24-76 56-76s56 24 56 76z',fill:color}));
+  gg.appendChild(el('circle',{cx:0,cy:90,r:36,fill:'#F3D2B8'}));
+  gg.appendChild(el('path',{d:`M-38 86c0-30 18-44 38-44s38 14 38 44c-10-14-24-20-38-20s-28 6-38 20z`,fill:'#1D2536'}));
+  gg.appendChild(el('circle',{cx:face*12-9,cy:94,r:3.4,fill:'#1D2536'}));
+  gg.appendChild(el('circle',{cx:face*12+9,cy:94,r:3.4,fill:'#1D2536'}));
+  gg.appendChild(el('path',{d:`M${face*12-8} 109q8 5 16 0`,fill:'none',stroke:'#1D2536','stroke-width':2.5,'stroke-linecap':'round'}));
+  const t=el('text',{x:0,y:182,'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#fff'});t.textContent=name;gg.appendChild(t);
+  g.appendChild(gg);
+}
+function drawScene(){
+  const s=SC[idx],svg=$('#people');svg.innerHTML='';
+  $('#setting').textContent=s.setting;
+  $('#bubble').innerHTML=`<span><strong style="color:var(--garnet-d)">${esc(s.sp)}</strong> <span style="font:400 .85rem 'Atkinson Hyperlegible',system-ui,sans-serif;color:var(--muted)">(${esc(s.spRole)})</span></span><br>${esc(s.line)}<small>${esc(s.li)} (${esc(s.liRole)}). ${esc(s.ctx)}</small>`;
+  svg.appendChild(el('rect',{x:0,y:200,width:420,height:20,fill:'#E3E8F0'}));
+  person(svg,110,'#9B2D35',s.sp,1);
+  person(svg,310,'#1C7C7D',s.li,-1);
+  $('#stepPill').textContent=`Moment ${idx+1} of ${SC.length}`;
+}
+function q(){
+  const s=SC[idx],box=$('#qbox');$('#fb').innerHTML='';$('#cont').hidden=true;
+  if(stage===0){
+    box.innerHTML=`<p class="q2">1. What message might ${esc(s.li)} receive?</p><div class="opts" id="opts"></div>`;
+    cur=shuffle(s.impact);
+    $('#opts').innerHTML=cur.map((o,k)=>`<button class="chip" data-k="${k}">${esc(o.x)}</button>`).join('');
+    $('#opts').querySelectorAll('.chip').forEach(b=>b.onclick=()=>pickImpact(b));
+  }else{
+    box.innerHTML=`<p class="q2">2. ${esc(s.li)} tells ${esc(s.sp)} how it landed. What does ${esc(s.sp)} say?</p><div class="opts" id="opts"></div>`;
+    cur=shuffle([{k:'good',x:s.resp.good},{k:'def',x:s.resp.def},{k:'dis',x:s.resp.dis}]);
+    $('#opts').innerHTML=cur.map((o,k)=>`<button class="chip" data-k="${k}">${esc(o.x)}</button>`).join('');
+    $('#opts').querySelectorAll('.chip').forEach(b=>b.onclick=()=>pickResp(b));
+  }
+}
+function pickImpact(b){
+  const o=cur[+b.dataset.k];
+  if(o.ok){
+    document.querySelectorAll('#opts .chip').forEach(x=>x.disabled=true);b.classList.add('right');
+    $('#fb').innerHTML=`<div class="fb good"><strong>Yes.</strong> ${esc(o.f)}</div>`;
+    const c=$('#cont');c.textContent='Next: repair';c.hidden=false;c.onclick=()=>{stage=1;q()};
+  }else{
+    res[idx].impactFirst=false;b.classList.add('wrong');b.disabled=true;
+    $('#fb').innerHTML=`<div class="fb bad"><strong>Think about impact.</strong> ${esc(o.f)} Try another.</div>`;
+  }
+}
+function pickResp(b){
+  const o=cur[+b.dataset.k];
+  if(o.k==='good'){
+    document.querySelectorAll('#opts .chip').forEach(x=>x.disabled=true);b.classList.add('right');
+    res[idx].done=true;renderStones();
+    $('#fb').innerHTML=`<div class="fb good"><strong>A repair.</strong> ${esc(RESP.good)}</div>`;
+    const last=idx===SC.length-1;
+    const c=$('#cont');c.textContent=last?'See what they add up to':'Next moment';c.hidden=false;
+    c.onclick=()=>{if(last){show(2)}else{idx++;stage=0;drawScene();q()}};
+  }else{
+    res[idx].respFirst=false;b.classList.add('wrong');b.disabled=true;
+    $('#fb').innerHTML=`<div class="fb bad"><strong>${o.k==='def'?'That defends the intent.':'That avoids the repair.'}</strong> ${esc(RESP[o.k])} Try another.</div>`;
+  }
+}
+
+/* ---------- Scale ---------- */
+const stoneColors=['#6B7587','#586174','#7A8396','#4B5568'];
+function drawScale(a,n){
+  const svg=$('#scale');svg.innerHTML='';
+  const cx=210,cy=90,L=140,th=a*Math.PI/180;
+  const lx=cx-L*Math.cos(th),ly=cy-L*Math.sin(th),rx=cx+L*Math.cos(th),ry=cy+L*Math.sin(th);
+  svg.appendChild(el('rect',{x:0,y:340,width:420,height:40,fill:'#E3E8F0'}));
+  svg.appendChild(el('path',{d:'M150 340h120l-20-14h-80z',fill:'#74202A'}));
+  svg.appendChild(el('rect',{x:202,y:96,width:16,height:232,fill:'#9B2D35'}));
+  svg.appendChild(el('line',{x1:lx,y1:ly,x2:rx,y2:ry,stroke:'#1D2536','stroke-width':8,'stroke-linecap':'round'}));
+  svg.appendChild(el('circle',{cx:cx,cy:cy,r:12,fill:'#D8A03A',stroke:'#1D2536','stroke-width':3}));
+  [[lx,ly,'left'],[rx,ry,'right']].forEach(([x,y,side])=>{
+    svg.appendChild(el('line',{x1:x,y1:y,x2:x-46,y2:y+86,stroke:'#586174','stroke-width':2.5}));
+    svg.appendChild(el('line',{x1:x,y1:y,x2:x+46,y2:y+86,stroke:'#586174','stroke-width':2.5}));
+    svg.appendChild(el('path',{d:`M${x-60} ${y+86}h120a0 0 0 0 1 0 0c0 22-27 30-60 30s-60-8-60-30z`,fill:'#fff',stroke:'#1D2536','stroke-width':3}));
+  });
+  // feather on left pan
+  const fx=lx,fy=ly+84;
+  svg.appendChild(el('g',{transform:`translate(${fx} ${fy}) rotate(-20)`},'<path d="M-30 0C-14-22 14-22 30-6C16 8-10 10-30 0Z" fill="#DDF0EF" stroke="#1C7C7D" stroke-width="2.5"/><path d="M-34 4L26-6" stroke="#1C7C7D" stroke-width="2.5" stroke-linecap="round"/>'));
+  const tl=el('text',{x:lx,y:ly+138,'text-anchor':'middle','font-size':13.5,'font-weight':700,fill:'#1C7C7D'});tl.textContent='Intent: a kind word';svg.appendChild(tl);
+  const tr=el('text',{x:rx,y:ry+138,'text-anchor':'middle','font-size':13.5,'font-weight':700,fill:'#9B2D35'});tr.textContent='Impact: they add up';svg.appendChild(tr);
+  // stones on right pan
+  for(let i=0;i<n;i++){
+    const row=Math.floor(i/2),col=i%2;
+    const sx=rx+(col?20:-20)+(row%2?4:-4),sy=ry+84-8-row*0+(row?-0:0)- (row*17);
+    const sxx=rx+(n===1?0:(col?22:-22)),syy=ry+84-8-row*17;
+    svg.appendChild(el('ellipse',{cx:sxx,cy:syy,rx:26,ry:11,fill:stoneColors[i%4],stroke:'#1D2536','stroke-width':2}));
+  }
+}
+function tween(to,n){
+  const from=angle,t0=performance.now(),d=900;
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){angle=to;drawScale(angle,n);return}
+  (function step(t){
+    const k=Math.min(1,(t-t0)/d),e=1-Math.pow(1-k,3);
+    angle=from+(to-from)*e;drawScale(angle,n);
+    if(k<1)requestAnimationFrame(step);
+  })(t0);
+}
+function renderSummary(){
+  const n=res.filter(r=>r.done).length;
+  const rep=res.filter(r=>r.done&&r.respFirst).length;
+  const imp=res.filter(r=>r.done&&r.impactFirst).length;
+  drawScale(angle,n);tween(n*5.2,n);
+  const items=SC.map((s,i)=>`<li>${esc(s.stone)}<b class="${res[i].done?(res[i].respFirst?'g':''):'r'}">${res[i].done?(res[i].respFirst?'repaired on first try':'repaired'):'not finished'}</b></li>`).join('');
+  $('#sumCard').innerHTML=`<h2>${n===4?'Four small moments. One heavy scale.':'Finish the four moments to load the scale.'}</h2>
+   <p class="muted" style="margin-bottom:8px">Each comment looked light on its own. For the person receiving them, they accumulate. Intent is real, but it is not the whole story.</p>
+   <ul class="sumlist">${items}</ul>
+   <p class="muted" style="margin:8px 0 0;font-size:.9rem">${n?`You identified the impact on the first try in ${imp} of ${n} moments, and chose a repair first in ${rep}.`:''}</p>`;
+}
+$('#copy').onclick=()=>{const t=$('#repair');t.focus();t.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}
+  if(!ok&&navigator.clipboard){navigator.clipboard.writeText(t.value).then(()=>{$('#copied').textContent='Copied.'}).catch(()=>{});return}
+  $('#copied').textContent=ok?'Copied.':'Press Ctrl+C (or Cmd+C) to copy.'};
+$('#restart').onclick=()=>{angle=0;start();show(1)};
+
+start();
+})();
+</script>
+</body>
+</html>

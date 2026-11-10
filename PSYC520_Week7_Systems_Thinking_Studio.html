@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYC 520 | Week 7: Systems Thinking Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --garnet:#9B2D35; --garnet-d:#74202A; --garnet-t:#F6E7E8;
+  --ink:#1D2536; --muted:#586174; --bg:#EDF0F5; --panel:#FFFFFF; --line:#D3D9E4;
+  --teal:#1C7C7D; --teal-t:#DDF0EF; --gold:#D8A03A; --gold-t:#FBF0D9;
+  --good:#1D7A4D; --good-t:#DFF2E7; --bad:#B03A2E; --bad-t:#F9E3E0;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;line-height:1.45}
+h1,h2,h3{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif;margin:0;letter-spacing:-.01em}
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+.top{flex:none;display:flex;align-items:center;gap:12px;padding:9px 18px;background:var(--garnet);color:#fff}
+.top svg{flex:none}
+.top h1{font-size:1.12rem;line-height:1.2;font-weight:700}
+.top p{margin:0;font-size:.82rem;opacity:.9}
+.tabs{flex:none;display:flex;gap:4px;padding:8px 14px 0;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{appearance:none;border:1px solid transparent;border-bottom:none;background:transparent;color:var(--muted);
+  font:600 .95rem 'Atkinson Hyperlegible',system-ui,sans-serif;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;white-space:nowrap}
+.tab:hover{background:var(--bg)}
+.tab[aria-selected=true]{color:var(--garnet-d);background:var(--bg);border-color:var(--line);box-shadow:inset 0 3px 0 var(--garnet)}
+:focus-visible{outline:3px solid #1B5FD6;outline-offset:2px}
+.stage{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 18px 14px;scrollbar-width:thin}
+.panel[hidden]{display:none}
+.panel{height:100%}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;height:100%;min-height:0}
+.viz{min-height:0;display:flex;align-items:center;justify-content:center}
+.viz svg{max-width:100%;max-height:100%;width:100%;height:100%}
+.side{min-height:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;scrollbar-width:thin;padding-right:2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.card h2{font-size:1.1rem;margin-bottom:4px}
+.card p{margin:0 0 6px}
+.muted{color:var(--muted);font-size:.92rem}
+.btn{appearance:none;border:2px solid var(--garnet);background:var(--garnet);color:#fff;font:700 .95rem 'Atkinson Hyperlegible',system-ui,sans-serif;
+  padding:8px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--garnet-d);border-color:var(--garnet-d)}
+.btn.ghost{background:#fff;color:var(--garnet-d)}
+.btn.ghost:hover{background:var(--garnet-t)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{appearance:none;text-align:left;width:100%;border:2px solid var(--line);background:#fff;color:var(--ink);
+  font:inherit;font-size:.95rem;padding:8px 12px;border-radius:8px;cursor:pointer}
+.chip:hover{border-color:var(--garnet)}
+.chip[aria-pressed=true],.chip.on{border-color:var(--garnet);background:var(--garnet-t)}
+.chip.right{border-color:var(--good);background:var(--good-t)}
+.chip.wrong{border-color:var(--bad);background:var(--bad-t)}
+.chip[disabled]{cursor:default}
+.fb{border-left:5px solid var(--teal);background:var(--teal-t);padding:8px 12px;border-radius:6px;font-size:.95rem}
+.fb.good{border-color:var(--good);background:var(--good-t)}
+.fb.bad{border-color:var(--bad);background:var(--bad-t)}
+.fb.gold{border-color:var(--gold);background:var(--gold-t)}
+.fb strong{font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+input[type=text],textarea{width:100%;font:inherit;font-size:.95rem;padding:7px 10px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{resize:none}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+@media (max-width:760px){
+  .split{grid-template-columns:1fr;height:auto}
+  .viz{height:min(60vw,340px)}
+  .panel{height:auto}
+  .side{overflow:visible}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+svg text{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif}
+.tg{display:grid;gap:6px}
+.tg .chip{display:flex;flex-direction:column;gap:1px}
+.tg .chip b{font-size:.98rem}
+.tg .chip span{font-size:.86rem;color:var(--muted)}
+.seerow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.see{border-radius:10px;padding:6px 8px;text-align:center;font-weight:700;font-size:.9rem;border:2px solid var(--line);background:#fff;transition:background .4s,border-color .4s}
+.see small{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}
+.see.yes{background:var(--good-t);border-color:var(--good);color:var(--good)}
+.see.no{background:var(--bad-t);border-color:var(--bad);color:var(--bad)}
+.pp{transition:transform .8s cubic-bezier(.3,.8,.3,1)}
+.bx{transition:opacity .5s,transform .8s cubic-bezier(.3,.8,.3,1)}
+.fence{transition:transform .9s cubic-bezier(.3,.8,.3,1);transform-box:fill-box;transform-origin:bottom center}
+.node{cursor:pointer}
+.node circle.base{transition:fill .2s}
+.node:hover circle.base,.node:focus-visible circle.base{fill:#F6E7E8}
+.node.used{cursor:default}
+.node.used circle.base{fill:#DDF0EF}
+.ring{transition:stroke-dashoffset .8s,stroke .8s}
+.edge{stroke:#9AA3B5;stroke-width:2.5;fill:none;transition:stroke .3s,stroke-width .3s}
+.edge.flash{stroke:#D8A03A;stroke-width:6}
+.logli{font-size:.92rem;margin:0 0 4px}
+.logli b{color:var(--garnet-d)}
+.mini{font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><g stroke="#fff" stroke-width="2.5" fill="none"><path d="M19 8L8 26M19 8L30 26M8 26H30"/></g><circle cx="19" cy="8" r="5" fill="#fff"/><circle cx="8" cy="26" r="5" fill="#fff"/><circle cx="30" cy="26" r="5" fill="#fff" opacity=".75"/></svg>
+    <div><h1>PSYC 520 | Week 7: Systems Thinking Studio</h1><p>See the whole system before you decide what fair looks like.</p></div>
+  </header>
+  <nav class="tabs" role="tablist" aria-label="Activity steps">
+    <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">1. Over the fence</button>
+    <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">2. The web behind one student</button>
+  </nav>
+  <main class="stage">
+
+    <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+      <div class="split">
+        <div class="viz"><svg id="fenceSvg" viewBox="0 0 420 340" role="img" aria-label="Three people of different heights try to watch a game over a fence"></svg></div>
+        <div class="side">
+          <div class="tg" id="modes" role="radiogroup" aria-label="Approach"></div>
+          <div class="seerow" id="seerow" aria-live="polite"></div>
+          <div class="fb" id="modeFb"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+      <div class="split">
+        <div class="viz"><svg id="web" viewBox="0 0 440 410" role="group" aria-label="Web of five factors that affect whether Maya arrives on time"></svg></div>
+        <div class="side">
+          <div class="card">
+            <h2>Why is Maya late to class?</h2>
+            <p class="muted" style="margin-bottom:6px">Maya is a working parent who often arrives late. Her instructor sees a lack of effort. Look at the web instead.</p>
+            <p style="margin:0;font-size:.95rem"><strong>Your goal:</strong> raise her on-time reliability to <strong>65%</strong> with <strong>two</strong> changes. Select a factor to change it.</p>
+            <div class="row" style="margin-top:8px;justify-content:space-between"><span><strong id="left">2</strong> <span id="leftw">changes left</span></span><button class="btn ghost" id="reset" style="padding:5px 12px">Reset</button></div>
+          </div>
+          <div class="card" id="log" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const el=(n,a={},h='')=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(h)e.innerHTML=h;return e};
+function show(n){[1,2].forEach(i=>{$('#p'+i).hidden=i!==n;$('#t'+i).setAttribute('aria-selected',i===n)});$('.stage').scrollTop=0}
+[1,2].forEach(i=>$('#t'+i).addEventListener('click',()=>show(i)));
+
+/* ===================== TAB 1: FENCE ===================== */
+const GROUND=300,BOX=30;
+const PEOPLE=[{n:'Shorter',eye:78,x:80,c:'#1C7C7D'},{n:'Medium',eye:108,x:210,c:'#9B2D35'},{n:'Taller',eye:138,x:340,c:'#4B5FA8'}];
+const MODES=[
+ {id:'none',t:'No boxes',s:'Everyone stands on the ground.',boxes:[0,0,0],fence:130,
+  d:'Without any support, only the tallest person can see over the fence. The barrier is working as it was built, for some people and not others.'},
+ {id:'eq',t:'Equality',s:'The same box for everyone.',boxes:[1,1,1],fence:130,
+  d:'Equality means the same resources for everyone. It sounds fair, but the shortest person still cannot see, and the tallest did not need a box at all.'},
+ {id:'eqy',t:'Equity',s:'Boxes based on what each person needs.',boxes:[2,1,0],fence:130,
+  d:'Equity means providing what each person needs so that everyone can succeed. Now all three can see, although the system still asks some people to stand on more boxes than others.'},
+ {id:'sys',t:'Change the system',s:'Lower the fence.',boxes:[0,0,0],fence:70,
+  d:'A system-level view asks what a more equitable design would require. Here, changing the fence means no one needs boxes, and everyone sees the whole field.'}
+];
+let mode=0;const visited=new Set([0]);
+function buildFence(){
+  const svg=$('#fenceSvg');svg.innerHTML='';
+  svg.appendChild(el('rect',{x:0,y:0,width:420,height:340,fill:'#DCEBF7'}));
+  svg.appendChild(el('circle',{cx:366,cy:44,r:20,fill:'#F4D58A'}));
+  // field behind
+  svg.appendChild(el('rect',{x:0,y:96,width:420,height:204,fill:'#BFE0C4'}));
+  svg.appendChild(el('path',{d:'M0 96h420',stroke:'#6FAF7E','stroke-width':3}));
+  // goal + ball (visible over a tall fence)
+  svg.appendChild(el('path',{d:'M300 140v-34h60v34',fill:'none',stroke:'#fff','stroke-width':4}));
+  svg.appendChild(el('g',{},'<circle cx="150" cy="128" r="9" fill="#fff" stroke="#1D2536" stroke-width="2"/><path d="M144 126l6-4 6 4-2 7h-8z" fill="#1D2536"/>'));
+  // runners at ground level (revealed when fence is lowered)
+  svg.appendChild(el('g',{},'<circle cx="110" cy="182" r="7" fill="#F3D2B8"/><path d="M104 190h12l4 22h-6l-4-10-4 10h-6z" fill="#D8A03A"/><circle cx="300" cy="198" r="7" fill="#F3D2B8"/><path d="M294 206h12l4 22h-6l-4-10-4 10h-6z" fill="#9B2D35"/><circle cx="262" cy="158" r="7" fill="#F3D2B8"/><path d="M256 166h12l4 20h-6l-4-9-4 9h-6z" fill="#4B5FA8"/>'));
+  // fence
+  const f=el('g',{class:'fence',id:'fence'});
+  f.appendChild(el('rect',{x:0,y:GROUND-130,width:420,height:130,fill:'#C99B63'}));
+  for(let x=14;x<420;x+=28)f.appendChild(el('line',{x1:x,y1:GROUND-130,x2:x,y2:GROUND,stroke:'#A9793F','stroke-width':3}));
+  f.appendChild(el('rect',{x:0,y:GROUND-134,width:420,height:9,fill:'#8C5F2B'}));
+  svg.appendChild(f);
+  svg.appendChild(el('rect',{x:0,y:GROUND,width:420,height:40,fill:'#8FA7C0'}));
+  // people + boxes
+  PEOPLE.forEach((p,i)=>{
+    const bg=el('g',{id:'bx'+i});
+    for(let k=0;k<2;k++){
+      bg.appendChild(el('rect',{class:'bx',id:`b${i}_${k}`,x:p.x-34,y:GROUND-BOX*(k+1),width:68,height:BOX,fill:'#E9C46A',stroke:'#1D2536','stroke-width':2.5,opacity:0}));
+    }
+    svg.appendChild(bg);
+    const g=el('g',{class:'pp',id:'pp'+i});
+    const top=GROUND-(p.eye+14);
+    g.appendChild(el('path',{d:`M${p.x-22} ${GROUND}V${top+34}q0-14 22-14t22 14V${GROUND}z`,fill:p.c}));
+    g.appendChild(el('circle',{cx:p.x,cy:GROUND-p.eye+2,r:15,fill:'#1D2536'}));
+    g.appendChild(el('circle',{cx:p.x,cy:GROUND-p.eye+2,r:15,fill:'none'}));
+    svg.appendChild(g);
+    // eye mark
+    const e=el('g',{class:'pp',id:'eye'+i});
+    e.appendChild(el('path',{d:`M${p.x-11} ${GROUND-p.eye-20}q11-11 22 0q-11 11-22 0z`,fill:'#fff',stroke:'#1D2536','stroke-width':2}));
+    e.appendChild(el('circle',{cx:p.x,cy:GROUND-p.eye-20,r:3.5,fill:'#1D2536'}));
+    svg.appendChild(e);
+    const t=el('text',{x:p.x,y:GROUND+26,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'#1D2536'});t.textContent=p.n;svg.appendChild(t);
+  });
+}
+function applyMode(animate){
+  const m=MODES[mode];
+  const fence=$('#fence');fence.style.transform=`scaleY(${m.fence/130})`;
+  const rows=[];
+  PEOPLE.forEach((p,i)=>{
+    const n=m.boxes[i],lift=n*BOX;
+    $('#pp'+i).style.transform=`translateY(${-lift}px)`;
+    $('#eye'+i).style.transform=`translateY(${-lift}px)`;
+    for(let k=0;k<2;k++){const b=$(`#b${i}_${k}`);b.style.opacity=k<n?1:0;}
+    const eyeH=p.eye+lift,can=eyeH>=m.fence;
+    rows.push(`<div class="see ${can?'yes':'no'}">${p.n}<small>${can?'Can see the game':'View blocked'}</small></div>`);
+  });
+  $('#seerow').innerHTML=rows.join('');
+  $('#modeFb').innerHTML=`<strong>${esc(m.t)}.</strong> ${esc(m.d)}`;
+  document.querySelectorAll('#modes .chip').forEach((c,i)=>{c.classList.toggle('on',i===mode);c.setAttribute('aria-checked',i===mode)});
+}
+function buildModes(){
+  $('#modes').innerHTML=MODES.map((m,i)=>`<button class="chip" role="radio" aria-checked="${i===mode}" data-i="${i}"><b>${esc(m.t)}</b><span>${esc(m.s)}</span></button>`).join('');
+  $('#modes').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{mode=+c.dataset.i;visited.add(mode);applyMode(true)});
+}
+
+/* ===================== TAB 2: WEB ===================== */
+const NODES=[
+ {id:'sleep',n:'Sleep',v:35,act:'Sleep coaching',w:.20,ang:0},
+ {id:'work',n:'Work shifts',v:30,act:'Flexible schedule',w:.25,ang:72},
+ {id:'child',n:'Childcare',v:40,act:'Childcare vouchers',w:.15,ang:144},
+ {id:'support',n:'Support',v:25,act:'Peer mentor and carpool',w:.10,ang:216},
+ {id:'trans',n:'Transportation',v:30,act:'Free transit pass',w:.30,ang:288}
+];
+const EDGES=[['support','trans',.3],['support','child',.4],['child','work',.3],['trans','sleep',.3],['work','sleep',.4]];
+const TOPO=['support','child','trans','work','sleep'];
+const CX=220,CY=205,RR=136,NR=38;
+const ICON={
+ sleep:'<path d="M6 -12a14 14 0 1 0 10 18a11 11 0 0 1-10-18z" fill="none"/>',
+ work:'<circle r="13" fill="none"/><path d="M0 -7v7l5 4" fill="none"/>',
+ child:'<circle cx="-6" cy="-6" r="4.5" fill="none"/><circle cx="8" cy="-1" r="3.5" fill="none"/><path d="M-14 12c0-6 4-9 8-9s8 3 8 9M3 12c0-4 2-6 5-6s5 2 5 6" fill="none"/>',
+ support:'<path d="M-13 -9h26v14h-10l-6 7v-7h-10z" fill="none"/><path d="M0 2c-5-3-6-6-3-8c2-1 3 0 3 1c0-1 1-2 3-1c3 2 2 5-3 8z" fill="#1D2536"/>',
+ trans:'<rect x="-14" y="-10" width="28" height="18" rx="4" fill="none"/><path d="M-14 -2h28" fill="none"/><circle cx="-8" cy="12" r="3" fill="#1D2536"/><circle cx="8" cy="12" r="3" fill="#1D2536"/>'
+};
+let vals,used,flash;
+function init2(){vals={};NODES.forEach(n=>vals[n.id]=n.v);used=[];flash=new Set();draw2();log2()}
+const pos=n=>{const a=n.ang*Math.PI/180;return [CX+RR*Math.sin(a),CY-RR*Math.cos(a)]};
+const score=()=>NODES.reduce((s,n)=>s+vals[n.id]*n.w,0);
+function colorFor(v){return v>=65?'#1C7C7D':v>=40?'#D8A03A':'#9B2D35'}
+function draw2(){
+  const svg=$('#web');svg.innerHTML='';
+  const defs=el('defs',{},'<marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7A8396"/></marker>');
+  svg.appendChild(defs);
+  const P={};NODES.forEach(n=>P[n.id]=pos(n));
+  // faint spokes to center
+  NODES.forEach(n=>{const [x,y]=P[n.id];svg.appendChild(el('line',{x1:x,y1:y,x2:CX,y2:CY,stroke:'#D3D9E4','stroke-width':2,'stroke-dasharray':'3 5'}))});
+  EDGES.forEach(([a,b])=>{
+    const [x1,y1]=P[a],[x2,y2]=P[b];const dx=x2-x1,dy=y2-y1,d=Math.hypot(dx,dy);
+    const sx=x1+dx/d*(NR+4),sy=y1+dy/d*(NR+4),ex=x2-dx/d*(NR+10),ey=y2-dy/d*(NR+10);
+    svg.appendChild(el('line',{class:'edge'+(flash.has(a+'>'+b)?' flash':''),x1:sx,y1:sy,x2:ex,y2:ey,'marker-end':'url(#ah)'}));
+  });
+  // center gauge
+  const s=score(),circ=2*Math.PI*52;
+  svg.appendChild(el('circle',{cx:CX,cy:CY,r:62,fill:'#fff',stroke:'#D3D9E4','stroke-width':2}));
+  svg.appendChild(el('circle',{cx:CX,cy:CY,r:52,fill:'none',stroke:'#E3E8F0','stroke-width':10}));
+  svg.appendChild(el('circle',{class:'ring',cx:CX,cy:CY,r:52,fill:'none',stroke:s>=65?'#1C7C7D':'#9B2D35','stroke-width':10,'stroke-linecap':'round',
+     'stroke-dasharray':circ,'stroke-dashoffset':circ*(1-s/100),transform:`rotate(-90 ${CX} ${CY})`}));
+  const ga=(65/100)*2*Math.PI-Math.PI/2;
+  svg.appendChild(el('line',{x1:CX+44*Math.cos(ga),y1:CY+44*Math.sin(ga),x2:CX+60*Math.cos(ga),y2:CY+60*Math.sin(ga),stroke:'#1D2536','stroke-width':3}));
+  const t1=el('text',{x:CX,y:CY+4,'text-anchor':'middle','font-size':26,'font-weight':700,fill:'#1D2536'});t1.textContent=Math.round(s)+'%';svg.appendChild(t1);
+  const t2=el('text',{x:CX,y:CY+22,'text-anchor':'middle','font-size':11,fill:'#586174'});t2.textContent='on time';svg.appendChild(t2);
+  const t3=el('text',{x:CX,y:CY-26,'text-anchor':'middle','font-size':11,fill:'#586174'});t3.textContent='Maya';svg.appendChild(t3);
+  // nodes
+  NODES.forEach(n=>{
+    const [x,y]=P[n.id],v=vals[n.id],isUsed=used.includes(n.id),dis=isUsed||used.length>=2;
+    const g=el('g',{class:'node'+(isUsed?' used':''),tabindex:dis?-1:0,role:'button','aria-disabled':dis,
+      'aria-label':`${n.n}, ${Math.round(v)} out of 100.${dis?'':' Select to apply: '+n.act}`});
+    if(dis&&!isUsed)g.style.cursor='not-allowed';
+    g.appendChild(el('circle',{class:'base',cx:x,cy:y,r:NR,fill:'#fff',stroke:'#D3D9E4','stroke-width':2}));
+    g.appendChild(el('circle',{class:'ring',cx:x,cy:y,r:NR-4,fill:'none',stroke:colorFor(v),'stroke-width':6,'stroke-linecap':'round',
+      'stroke-dasharray':2*Math.PI*(NR-4),'stroke-dashoffset':2*Math.PI*(NR-4)*(1-v/100),transform:`rotate(-90 ${x} ${y})`}));
+    g.appendChild(el('g',{transform:`translate(${x} ${y-2}) scale(.78)`,stroke:'#1D2536','stroke-width':2.4,'stroke-linecap':'round','stroke-linejoin':'round'},ICON[n.id]));
+    const lab=el('text',{x:x,y:y+NR+16,'text-anchor':'middle','font-size':13.5,'font-weight':700,fill:'#1D2536','paint-order':'stroke',stroke:'#EDF0F5','stroke-width':4});
+    lab.textContent=n.n+' '+Math.round(v);g.appendChild(lab);
+    if(!dis){const h=el('text',{x:x,y:y+NR+30,'text-anchor':'middle','font-size':11,fill:'#586174','paint-order':'stroke',stroke:'#EDF0F5','stroke-width':4});h.textContent=n.act;g.appendChild(h)}
+    if(isUsed){const c=el('text',{x:x+NR-6,y:y-NR+12,'font-size':18,'font-weight':700,fill:'#1D7A4D'});c.textContent='✓';g.appendChild(c)}
+    svg.appendChild(g);
+    if(!dis){
+      g.addEventListener('click',()=>apply(n.id));
+      g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();apply(n.id)}});
+    }
+  });
+}
+function apply(id){
+  if(used.length>=2||used.includes(id))return;
+  const before={...vals},delta={};NODES.forEach(n=>delta[n.id]=0);
+  delta[id]=Math.min(50,100-vals[id]);
+  const fl=new Set();
+  TOPO.forEach(s=>EDGES.forEach(([a,b,w])=>{if(a===s&&delta[a]>.01){delta[b]+=delta[a]*w;fl.add(a+'>'+b)}}));
+  NODES.forEach(n=>vals[n.id]=Math.min(100,vals[n.id]+delta[n.id]));
+  used.push(id);flash=fl;
+  const prev=Object.assign({},before);
+  draw2();log2(id,before);
+  setTimeout(()=>{flash=new Set();draw2()},1400);
+}
+function log2(id,before){
+  const L=$('#log'),s=score();$('#left').textContent=2-used.length;$('#leftw').textContent=(2-used.length)===1?'change left':'changes left';
+  if(!used.length){L.innerHTML='<h2>What changes ripple through?</h2><p class="muted">Nothing yet. Arrows show how one factor feeds another. Choose a factor to change and watch where else it reaches.</p>';return}
+  const items=used.map(u=>{
+    const n=NODES.find(x=>x.id===u);return `<p class="logli"><b>${esc(n.act)}</b> raises ${esc(n.n.toLowerCase())}.</p>`}).join('');
+  const ripple=NODES.filter(n=>before&&Math.round(vals[n.id])-Math.round(before[n.id])>0&&n.id!==id).map(n=>`${n.n.toLowerCase()} +${Math.round(vals[n.id]-before[n.id])}`);
+  let msg='';
+  if(used.length===2){
+    msg=s>=65?`<div class="fb good"><strong>Goal reached: ${Math.round(s)}%.</strong> It took two changes that worked together. Fixing one factor in isolation would not have been enough, and blaming Maya would have left the whole web untouched.</div>`
+      :`<div class="fb gold"><strong>${Math.round(s)}%, short of 65%.</strong> Some changes ripple into other factors and some do not. Reset and try a different pair, looking at which arrows each change travels along.</div>`;
+  }else{
+    msg=`<div class="fb"><strong>${Math.round(s)}% on time.</strong> One change helped, but one factor alone rarely solves a system. Choose one more.</div>`;
+  }
+  L.innerHTML=`<h2>What changed</h2>${items}${ripple.length?`<p class="logli">Ripple from the last change: ${esc(ripple.join(', '))}.</p>`:'<p class="logli">That change did not ripple into other factors.</p>'}${msg}`;
+}
+$('#reset').onclick=init2;
+
+buildFence();buildModes();applyMode(false);init2();
+})();
+</script>
+</body>
+</html>
