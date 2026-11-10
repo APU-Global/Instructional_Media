@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HIST420 | Week 7 | The Civil War and Reconstruction: Freedom Redefined</title>
+<!--
+  HIST420 United States History and the Constitution
+  Week 7 Interactive: The Civil War and Reconstruction: Freedom Redefined
+  File: HIST420_Week7_War_and_Reconstruction.html
+  Self-contained (no external libraries, fonts or images). Designed for a Canvas iframe at ~720px tall.
+  html/body overflow is hidden and the layout fills 100% of the iframe, so only the Canvas page scrolls (no double scrollbar).
+-->
+<style>
+:root{--navy:#1f2a44;--red:#a8353a;--red2:#d34147;--gold:#b8892b;--paper:#f8f3e8;--card:#fff;--ink:#222;--muted:#5d6272;--line:#ddd3bb;--ok:#2f6f4e;--okbg:#e6f3ec;--badbg:#fbe9ea}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.4}
+.app{height:100%;display:flex;flex-direction:column;gap:8px;padding:10px 16px 10px;overflow-y:auto;overflow-x:hidden}
+.hdr{display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--red);padding-bottom:7px;flex:none}
+.tag{background:var(--red);color:#fff;font-weight:700;font-size:12px;letter-spacing:.08em;padding:4px 9px;border-radius:3px;white-space:nowrap}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:21px;margin:0;color:var(--navy);line-height:1.15}
+.hdr .sub{margin-left:auto;font-size:12.5px;color:var(--muted);text-align:right;max-width:34%}
+.main{flex:1;min-height:0;display:grid;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 3px rgba(31,42,68,.08)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,[role=button]:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:6px;padding:7px 14px;font-weight:600}
+.btn:hover{background:#2f3d63}.btn[disabled]{opacity:.4;cursor:default}
+.btn.alt{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.seg{display:inline-flex;border:1.5px solid var(--navy);border-radius:6px;overflow:hidden}
+.seg button{background:#fff;border:0;padding:6px 12px;font-weight:600;color:var(--navy);font-size:13.5px}
+.seg button[aria-pressed=true]{background:var(--navy);color:#fff}
+.chip{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:2px 10px;border:1px solid var(--line);background:#fff;color:var(--muted)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.fb{border-radius:6px;padding:7px 10px;font-size:13.5px;margin-top:6px}
+.fb.ok{background:var(--okbg);border-left:4px solid var(--ok)}.fb.no{background:var(--badbg);border-left:4px solid var(--red)}
+.opts{display:grid;gap:5px;margin-top:6px}
+.opt{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:6px 10px;font-size:14px}
+.opt:hover:not([disabled]){border-color:var(--navy);background:#f1f4fb}
+.opt.right{background:var(--okbg);border-color:var(--ok)}.opt.wrong{background:var(--badbg);border-color:var(--red)}
+.sr{position:absolute;left:-9999px}
+.foot{flex:none;font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:10px}
+@media (max-width:760px){html,body{overflow:auto}.app{height:auto;overflow:visible}.main{display:block!important}.main>*{margin-bottom:12px}.hdr .sub{display:none}h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.tabs{flex:none;display:flex;gap:6px;align-items:center}
+.tabs .seg button{padding:7px 16px}
+.tabs .meta{margin-left:auto;font-size:12.5px;color:var(--muted)}
+.main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr)}
+.pane{min-height:0;display:flex;flex-direction:column;gap:8px}
+.pane[hidden]{display:none!important}
+.tl{flex:none;position:relative;display:flex;justify-content:space-between}
+.tl:before{content:"";position:absolute;left:30px;right:30px;top:15px;height:3px;background:var(--line)}
+.node{position:relative;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 1px;min-width:60px}
+.node i{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--navy);display:block;margin-top:5px;transition:.2s}
+.node span{font-size:12px;font-weight:700;color:var(--navy)}
+.node.seen i{background:var(--gold);border-color:var(--gold)}
+.node[aria-current=true] i{background:var(--red);border-color:var(--red);transform:scale(1.3)}
+.split{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:14px}
+.scene{display:flex;flex-direction:column;overflow:hidden}
+.scene .art{flex:none;width:100%;aspect-ratio:400/260}
+.scene .cap{padding:6px 12px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line)}
+.meter{flex:1;min-height:0;padding:8px 12px;background:#fbf7ec;border-top:1px solid var(--line);display:flex;flex-direction:column}
+.meter b{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--red)}
+.meter small{color:var(--muted);font-size:11.5px}
+.meter svg{flex:1;min-height:0;width:100%}
+.info{padding:12px 14px;display:flex;flex-direction:column;gap:7px;min-height:0;overflow:auto}
+.info h2{font-family:Georgia,serif;font-size:20px;margin:0;color:var(--navy)}
+.info .date{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--red);text-transform:uppercase}
+.info p{margin:0}
+.box{border-left:4px solid var(--navy);background:#f2f5fb;padding:8px 11px;border-radius:0 6px 6px 0;font-size:14px}
+.box.free{border-color:var(--red);background:#fdf6f6}
+.box b{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.prog{font-size:12.5px;color:var(--muted)}
+/* match game */
+.match{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:14px}
+.ams{display:grid;grid-template-rows:repeat(3,1fr);gap:10px;min-height:0}
+.am{display:flex;align-items:center;gap:12px;padding:8px 14px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px}
+.am:hover{border-color:var(--navy);background:#f1f4fb}
+.am svg{width:62px;height:62px;flex:none}
+.am h3{font-family:Georgia,serif;margin:0;font-size:18px;color:var(--navy)}
+.am small{color:var(--muted);font-size:13px}
+.am .ct{margin-left:auto;font-weight:700;color:var(--ok);font-size:13px;white-space:nowrap}
+.am.flash-ok{background:var(--okbg);border-color:var(--ok)}.am.flash-no{background:var(--badbg);border-color:var(--red)}
+.st{padding:14px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto}
+.st .n{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--red);text-transform:uppercase}
+.st .prompt{font-family:Georgia,serif;font-size:19px;color:var(--navy);line-height:1.3;background:#fbf7ec;border:1px dashed var(--gold);border-radius:8px;padding:12px}
+.st .hint{font-size:13px;color:var(--muted)}
+.bar{height:7px;background:var(--line);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);transition:width .3s}
+.row{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.score{font-weight:700;color:var(--navy)}
+@media (max-width:760px){.split,.match{display:block}.scene{margin-bottom:12px}.tabs .meta{display:none}.node{min-width:34px}.node span{font-size:9.5px}.ams{grid-template-rows:none;margin-bottom:12px}.am{margin-bottom:8px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="hdr"><span class="tag">HIST420 · WEEK 7</span><h1>The Civil War and Reconstruction: Freedom Redefined</h1><div class="sub">Explore the timeline, then match the amendments.</div></div>
+
+<div class="tabs"><span class="seg" role="tablist"><button role="tab" id="t1" aria-pressed="true">War &amp; Reconstruction Timeline</button><button role="tab" id="t2" aria-pressed="false">Amendment Match</button></span><span class="meta" id="meta"></span></div>
+<div class="main">
+ <section class="pane" id="p1">
+  <nav class="tl" id="tl" aria-label="Timeline"></nav>
+  <div class="split">
+   <div class="card scene"><div class="art" id="art"></div><div class="cap" id="cap"></div>
+    <div class="meter"><b>Promise of equal rights</b><small>Illustrative scale of how fully federal law and enforcement protected freed people</small><div id="mt" style="flex:1;min-height:0"></div></div></div>
+   <div class="card info" aria-live="polite">
+    <div class="date" id="date"></div><h2 id="title"></h2><p id="text"></p>
+    <div><span class="seg" role="group" aria-label="Choose a lens"><button id="bW" aria-pressed="true">Why it mattered</button><button id="bF" aria-pressed="false">Freedom &amp; citizenship</button></span></div>
+    <div class="box" id="box"></div>
+    <div class="nav"><button class="btn alt" id="prev">‹ Previous</button><span class="prog" id="prog"></span><button class="btn" id="next">Next ›</button></div>
+   </div>
+  </div>
+ </section>
+ <section class="pane" id="p2" hidden>
+  <div class="match">
+   <div class="ams" id="ams"></div>
+   <div class="card st">
+    <div class="n" id="num"></div><div class="bar"><i id="bar" style="width:0"></i></div>
+    <div class="prompt" id="prompt"></div><div class="hint" id="hint">Choose the amendment that fits the statement.</div>
+    <div id="fb" aria-live="polite"></div>
+    <div class="row"><span class="score" id="score"></span><span><button class="btn alt" id="again" hidden>Play again</button> <button class="btn" id="mnext" hidden>Next ›</button></span></div>
+   </div>
+  </div>
+ </section>
+</div>
+
+<div class="foot"><span>HIST420 | United States History and the Constitution</span><span>Week 7 Interactive</span></div>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function postH(){try{parent.postMessage({type:'hist420-resize',height:document.documentElement.scrollHeight},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+function waves(y,c,op){let d='M0 '+y;for(let i=0;i<9;i++)d+=(i?' t 50 0':' q 25 -8 50 0');return '<path d="'+d+' V260 H0Z" fill="'+c+'" opacity="'+(op||1)+'"/>'}
+function ship(x,y,s,sail){sail=sail||'#f4ecd8';return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M-62 0 L62 0 L48 24 L-48 24Z" fill="#5b3a21"/><path d="M-62 0 L62 0" stroke="#3b2614" stroke-width="3"/><rect x="-2" y="-92" width="4" height="92" fill="#3b2614"/><path d="M-4 -86 Q-46 -55 -42 -12 L-4 -12Z" fill="'+sail+'" stroke="#cbbf9f"/><path d="M4 -86 Q46 -55 42 -12 L4 -12Z" fill="'+sail+'" stroke="#cbbf9f"/><path d="M2 -92 L26 -85 L2 -78Z" fill="#a8353a"/></g>'}
+function stars(n,seed){let o='',r=seed||7;for(let i=0;i<n;i++){r=(r*9301+49297)%233280;const x=r/233280*400;r=(r*9301+49297)%233280;const y=r/233280*120;o+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="1.2" fill="#fff" opacity=".8"/>'}return o}
+function sky(a,b){return '<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset="1" stop-color="'+b+'"/></linearGradient></defs><rect width="400" height="260" fill="url(#sk)"/>'}
+function wrapSvg(inner,label){return '<svg viewBox="0 0 400 260" role="img" aria-label="'+label+'" style="width:100%;height:100%;display:block">'+inner+'</svg>'}
+function usFlag(x,y,s){let o='<g transform="translate('+x+' '+y+') scale('+s+')">';for(let i=0;i<7;i++)o+='<rect x="0" y="'+i*5+'" width="46" height="5" fill="'+(i%2?'#fff':'#a8353a')+'"/>';o+='<rect width="20" height="20" fill="#1f2a44"/>';for(let r=0;r<3;r++)for(let c=0;c<4;c++)o+='<circle cx="'+(3+c*4.5)+'" cy="'+(4+r*6)+'" r="1" fill="#fff"/>';return o+'</g>'}
+
+function soldier(x,y,s,c,flip){return '<g transform="translate('+x+' '+y+') scale('+(flip?-s:s)+' '+s+')"><circle cy="-30" r="4.5" fill="'+c+'"/><rect x="-6" y="-34" width="12" height="3" fill="'+c+'"/><rect x="-5" y="-25" width="10" height="17" rx="2" fill="'+c+'"/><rect x="-5" y="-9" width="4" height="10" fill="'+c+'"/><rect x="1" y="-9" width="4" height="10" fill="'+c+'"/><path d="M6 -22 L16 -38" stroke="#2a2a2a" stroke-width="2"/></g>'}
+function chain(x,y,s,broken){let o='<g transform="translate('+x+' '+y+') scale('+s+')" fill="none" stroke="#3a3a3a" stroke-width="5">';o+='<rect x="-60" y="-12" width="44" height="24" rx="12"/><rect x="-36" y="-12" width="44" height="24" rx="12"/>';if(!broken)o+='<rect x="-12" y="-12" width="44" height="24" rx="12"/>';else o+='<path d="M-6 -14 l10 14 l-10 14" stroke="#a8353a"/><rect x="20" y="-12" width="44" height="24" rx="12" transform="rotate(18 40 0)"/>';return o+'</g>'}
+function scale(x,y,s,c){return '<g transform="translate('+x+' '+y+') scale('+s+')" stroke="'+c+'" stroke-width="5" fill="none" stroke-linecap="round"><path d="M0 -50 V45 M-22 45 h44 M-50 -34 h100"/><path d="M-50 -34 l-18 38 h36z M50 -34 l-18 38 h36z" stroke-width="4"/></g>'}
+function ballot(x,y,s){return '<g transform="translate('+x+' '+y+') scale('+s+')"><rect x="-40" y="-10" width="80" height="55" rx="4" fill="#1f2a44"/><rect x="-22" y="-10" width="44" height="8" fill="#0c1426"/><g transform="rotate(-8)"><rect x="-22" y="-52" width="44" height="46" fill="#fff" stroke="#8a6a35"/><path d="M-12 -30 l8 9 l16 -20" stroke="#2f6f4e" stroke-width="5" fill="none" stroke-linecap="round"/></g></g>'}
+const EV=[
+{y:'1861',t:'Fort Sumter',cap:'Illustration: Confederate guns firing on Fort Sumter.',v:2,
+ txt:'In April 1861 Confederate forces fired on the Union-held fort in Charleston Harbor. The Civil War began.',
+ w:'Southern states had already seceded after Lincoln’s election. Sumter turned a political crisis into armed conflict.',
+ f:'At the outset the Union’s stated goal was preserving the Union. Ending slavery was not yet a stated war aim.',
+ sc:()=>sky('#6d7fa6','#f2c28a')+waves(185,'#2d4a6e')+'<path d="M120 190 L125 120 H235 L240 190Z" fill="#8c6f55" stroke="#5a4535" stroke-width="2"/>'+[0,1,2,3,4].map(i=>'<rect x="'+(133+i*21)+'" y="130" width="10" height="12" fill="#2a2018"/>').join('')+'<rect x="177" y="60" width="3" height="62" fill="#4a3a2a"/>'+usFlag(180,62,.9)+'<g fill="#f6c453"><circle cx="330" cy="160" r="9"/><circle cx="352" cy="140" r="6"/><circle cx="318" cy="135" r="5"/></g><g fill="#ffe9a0"><circle cx="330" cy="160" r="5"/></g><path d="M300 175 l30 -15" stroke="#333" stroke-width="8" stroke-linecap="round"/><path d="M276 200 l20 -8" stroke="#555" stroke-width="3"/>'+waves(205,'#1f3a5a',.95)},
+{y:'1862',t:'Antietam',cap:'Illustration: Union and Confederate lines in a Maryland cornfield.',v:6,
+ txt:'On September 17, 1862 the armies fought the bloodiest single day of the war. Lee’s invasion of Maryland was turned back.',
+ w:'A turning point: the Union stopped Lee’s advance and gained the opening Lincoln wanted to announce emancipation.',
+ f:'Days later Lincoln issued the preliminary Emancipation Proclamation, shifting the purpose of the war.',
+ sc:()=>sky('#c9c4b3','#eadfc0')+'<rect y="150" width="400" height="110" fill="#b9a45a"/><g stroke="#8a7a34" stroke-width="2">'+[...Array(30)].map((_,i)=>'<path d="M'+(i*14)+' 260 l4 -60"/>').join('')+'</g><path d="M0 170 H400" stroke="#6b4b2a" stroke-width="4"/>'+[0,1,2,3,4,5].map(i=>'<path d="M'+(i*70+10)+' 170 v-24 M'+(i*70+30)+' 170 v-24" stroke="#6b4b2a" stroke-width="3"/>').join('')+[60,110,160,210].map(x=>soldier(x,200,1,'#1f3f91')).join('')+[260,300,340,380].map(x=>soldier(x,176,.85,'#6b6b6b',true)).join('')+'<g fill="#fff" opacity=".7"><circle cx="150" cy="175" r="16"/><circle cx="175" cy="168" r="12"/><circle cx="245" cy="185" r="14"/></g>'},
+{y:'Jan 1863',t:'Emancipation Proclamation',cap:'Illustration: the proclamation and a broken chain.',v:12,
+ txt:'The Emancipation Proclamation took effect January 1, 1863, and declared enslaved people in Confederate-held areas free.',
+ w:'The war to preserve the Union became also a war to end slavery. It also allowed African American men to enlist.',
+ f:'African American men joined the Union army and navy in large numbers, fighting for their own freedom and citizenship.',
+ sc:()=>sky('#e9d8b0','#fbf1d6')+'<rect x="95" y="25" width="210" height="150" rx="5" fill="#f8ecc9" stroke="#8a6a35" stroke-width="2.5"/><text x="200" y="52" text-anchor="middle" font-family="Georgia" font-size="10.5" font-weight="700" fill="#4a2f1d">EMANCIPATION PROCLAMATION</text><text x="200" y="68" text-anchor="middle" font-family="Georgia" font-size="10" fill="#6b4b21">January 1, 1863</text>'+[0,1,2,3,4,5].map(i=>'<rect x="115" y="'+(82+i*13)+'" width="'+(170-(i%3)*18)+'" height="3" fill="#6b4b21" opacity=".55"/>').join('')+chain(200,215,1.1,true)+'<rect y="240" width="400" height="20" fill="#7a9a63"/>'},
+{y:'Jul 1863',t:'Gettysburg',cap:'Illustration: Union artillery on Cemetery Ridge.',v:18,
+ txt:'The three-day battle at Gettysburg in July 1863 ended Lee’s second invasion of the North.',
+ w:'With Antietam, Gettysburg is a major turning point. The Confederacy never again mounted a large invasion of the North.',
+ f:'Months later Lincoln’s Gettysburg Address tied the war to “a new birth of freedom.”',
+ sc:()=>sky('#e07b4a','#f7d08a')+'<circle cx="280" cy="140" r="30" fill="#fff0b5" opacity=".9"/><path d="M0 170 Q120 140 240 165 T400 160 V260 H0Z" fill="#5d7a47"/><path d="M0 200 Q150 180 400 195 V260 H0Z" fill="#46603a"/><path d="M30 190 h120" stroke="#7d7a70" stroke-width="10"/><g fill="#5a5a5a">'+[0,1,2,3,4,5,6,7].map(i=>'<rect x="'+(30+i*15)+'" y="182" width="12" height="9" fill="#8d8a7f" stroke="#5a574d"/>').join('')+'</g><g transform="translate(260 200)"><circle cx="-18" cy="0" r="12" fill="none" stroke="#2a1a0e" stroke-width="4"/><rect x="-8" y="-10" width="46" height="9" fill="#444" transform="rotate(-8)"/></g>'+[190,215].map(x=>soldier(x,208,1,'#1f3f91')).join('')},
+{y:'Apr 1865',t:'Appomattox',cap:'Illustration: a farmhouse and a white flag of surrender.',v:24,
+ txt:'Lee surrendered to Grant at Appomattox Court House in April 1865. The fighting ended.',
+ w:'The surrender ended the largest armed challenge to the Union. Rebuilding the country and defining freedom remained.',
+ f:'About four million people had been enslaved. Their status and rights were now unsettled and urgent.',
+ sc:()=>sky('#bcd2e8','#f4ecd4')+'<rect y="200" width="400" height="60" fill="#7a9a63"/><rect x="120" y="120" width="160" height="85" fill="#efe6cf" stroke="#9c8e6b" stroke-width="2"/><path d="M110 120 L200 70 L290 120Z" fill="#8f4a3a"/><rect x="190" y="155" width="26" height="50" fill="#5b3a21"/><rect x="140" y="140" width="28" height="28" fill="#9fc0d8" stroke="#6b5a3a" stroke-width="2"/><rect x="234" y="140" width="28" height="28" fill="#9fc0d8" stroke="#6b5a3a" stroke-width="2"/><rect x="320" y="70" width="3" height="135" fill="#5b3a21"/><path d="M323 72 h44 q-8 14 0 28 h-44z" fill="#fff" stroke="#bbb"/>'+soldier(60,225,1.1,'#1f3f91')+soldier(90,225,1.1,'#6b6b6b',true)},
+{y:'Dec 1865',t:'Thirteenth Amendment',cap:'Illustration: a broken chain.',v:34,
+ txt:'The Thirteenth Amendment, ratified in December 1865, abolished slavery throughout the United States.',
+ w:'The amendment made emancipation permanent. It no longer depended on war powers or on Union victory.',
+ f:'Slavery ended in law, but Black Codes soon limited African Americans’ rights, showing that abolition was not full equality.',
+ sc:()=>sky('#e6efe0','#faf5e2')+chain(200,125,1.9,true)+'<text x="200" y="215" text-anchor="middle" font-family="Georgia" font-size="16" font-weight="700" fill="#1f2a44">13th AMENDMENT</text><text x="200" y="236" text-anchor="middle" font-family="Georgia" font-size="12" fill="#6b4b21">Slavery abolished · December 1865</text>'},
+{y:'1867–68',t:'Reconstruction Acts and the 14th Amendment',cap:'Illustration: the scales of equal protection.',v:60,
+ txt:'Congress passed the Reconstruction Acts in 1867 and extended federal protection to freed people. The Fourteenth Amendment followed in 1868.',
+ w:'Radical Reconstruction replaced the lenient presidential plan. The Freedmen’s Bureau provided aid and education.',
+ f:'The Fourteenth Amendment addressed citizenship and equal protection of the laws.',
+ sc:()=>sky('#d9e3f2','#f6f0df')+scale(200,115,1.3,'#1f2a44')+'<text x="200" y="228" text-anchor="middle" font-family="Georgia" font-size="16" font-weight="700" fill="#a8353a">14th AMENDMENT</text><text x="200" y="245" text-anchor="middle" font-family="Georgia" font-size="12" fill="#4a3a2a">Citizenship · Equal protection · 1868</text>'},
+{y:'1870',t:'Fifteenth Amendment',cap:'Illustration: a ballot going into the box.',v:75,
+ txt:'The Fifteenth Amendment addressed voting rights by prohibiting denial of the vote based on race.',
+ w:'Together, the 13th, 14th, and 15th amendments changed the Constitution’s treatment of slavery, citizenship, and voting.',
+ f:'Black men voted and held office in the South. Resistance and intimidation soon threatened these gains.',
+ sc:()=>sky('#e4ecd9','#f8f3df')+ballot(200,115,1.8)+'<text x="200" y="232" text-anchor="middle" font-family="Georgia" font-size="16" font-weight="700" fill="#1f2a44">15th AMENDMENT</text><text x="200" y="249" text-anchor="middle" font-family="Georgia" font-size="12" fill="#4a3a2a">Voting rights not denied because of race · 1870</text>'},
+{y:'1877',t:'Reconstruction Ends',cap:'Illustration: federal troops leaving; Jim Crow ahead.',v:20,
+ txt:'Reconstruction ended in 1877 as federal troops withdrew from the South.',
+ w:'Black Codes and later Jim Crow laws sought to limit African American rights. Reconstruction was transformative but unfinished.',
+ f:'Without federal enforcement, the promise of equal rights was largely left unfulfilled for nearly a century.',
+ sc:()=>sky('#8e8aa8','#e9c6a0')+'<rect y="200" width="400" height="60" fill="#6f7e56"/><path d="M0 200 Q200 170 400 205" fill="none" stroke="#5a4a2e" stroke-width="3"/>'+[70,100,130,160].map((x,i)=>soldier(x,215-i*2,1,'#1f3f91')).join('')+'<g transform="translate(300 130)"><rect x="-40" y="0" width="80" height="60" fill="#d9cdb0" stroke="#8a7a52" stroke-width="2"/><rect x="-40" y="-14" width="80" height="14" fill="#a8353a"/><text y="40" text-anchor="middle" font-size="9" font-weight="700" font-family="Georgia" fill="#4a3a2a"><tspan x="0">UNFINISHED</tspan></text></g><path d="M200 218 h60" stroke="#fff" stroke-width="3" stroke-dasharray="4 4"/><path d="M262 218 l-9 -6 v12z" fill="#fff"/>'}
+];
+let cur=0,lens='W',seen=new Set([0]),tab=1;
+const tl=$('#tl');
+EV.forEach((e,i)=>{const b=document.createElement('button');b.className='node';b.innerHTML='<i></i><span>'+e.y+'</span>';b.setAttribute('aria-label',(i+1)+': '+e.y+' '+e.t);b.onclick=()=>go(i);tl.appendChild(b)});
+function go(i){cur=i;seen.add(i);render()}
+function meter(){const W=300,H=70,pts=EV.map((e,i)=>[10+i*(W-20)/(EV.length-1),H-8-(e.v/100)*(H-18)]);
+ let o='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Illustrative line chart of the promise of equal rights rising through 1870 and falling in 1877"><polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#c9b98f" stroke-width="2.5"/>';
+ o+='<polyline points="'+pts.slice(0,cur+1).map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#a8353a" stroke-width="3.5"/>';
+ pts.forEach((p,i)=>{o+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(i===cur?6:3.5)+'" fill="'+(i===cur?'#a8353a':(i<cur?'#a8353a':'#fff'))+'" stroke="#a8353a" stroke-width="2"/>'});
+ $('#mt').innerHTML=o+'</svg>'}
+function render(){
+ const e=EV[cur];
+ $('#art').innerHTML=wrapSvg(e.sc(),e.cap);$('#cap').textContent=e.cap;
+ $('#date').textContent=e.y;$('#title').textContent=e.t;$('#text').textContent=e.txt;
+ $$('.node').forEach((n,i)=>{n.classList.toggle('seen',seen.has(i));n.setAttribute('aria-current',i===cur)});
+ const bx=$('#box');bx.className='box'+(lens==='F'?' free':'');bx.innerHTML='<b>'+(lens==='W'?'Why it mattered':'Freedom &amp; citizenship')+'</b>'+(lens==='W'?e.w:e.f);
+ $('#bW').setAttribute('aria-pressed',lens==='W');$('#bF').setAttribute('aria-pressed',lens==='F');
+ $('#prev').disabled=cur===0;$('#next').disabled=cur===EV.length-1;$('#prog').textContent='Explored '+seen.size+'/'+EV.length;
+ meter();postH();
+}
+$('#bW').onclick=()=>{lens='W';render()};$('#bF').onclick=()=>{lens='F';render()};
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+
+/* Amendment match */
+const AM=[
+{k:13,n:'13th Amendment',s:'1865',ic:chain(0,0,.9,true)},
+{k:14,n:'14th Amendment',s:'1868',ic:scale(0,2,.55,'#1f2a44')},
+{k:15,n:'15th Amendment',s:'1870',ic:ballot(0,0,.7)}
+];
+const ST=[
+{q:'“Neither slavery nor involuntary servitude shall exist within the United States.”',a:13,e:'The 13th Amendment abolished slavery throughout the United States (ratified December 1865).'},
+{q:'All persons born or naturalized in the United States are citizens.',a:14,e:'The 14th Amendment defines citizenship and applies to people born or naturalized in the United States.'},
+{q:'The right to vote cannot be denied because of race.',a:15,e:'The 15th Amendment (1870) prohibited denying the vote because of race.'},
+{q:'No state may deny any person the equal protection of the laws.',a:14,e:'Equal protection is in the 14th Amendment, which restricts the states.'},
+{q:'This amendment ended the legal institution of slavery for good, even after the war.',a:13,e:'The 13th Amendment made emancipation permanent. The war alone had not settled the question.'},
+{q:'Black men gained constitutional protection for voting in the South.',a:15,e:'The 15th Amendment addressed voting rights. Enforcement, however, weakened after Reconstruction ended in 1877.'}
+];
+let i=0,score=0,answered=false,wrongK=null;
+const ams=$('#ams');
+AM.forEach(a=>{const b=document.createElement('button');b.className='am';b.dataset.k=a.k;b.innerHTML='<svg viewBox="-40 -40 80 80" aria-hidden="true">'+a.ic+'</svg><span><h3>'+a.n+'</h3><small>Ratified '+a.s+'</small></span><span class="ct" id="c'+a.k+'"></span>';b.onclick=()=>pick(a.k);ams.appendChild(b)});
+const cnt={13:0,14:0,15:0};
+function showQ(){const s=ST[i];$('#num').textContent='Statement '+(i+1)+' of '+ST.length;$('#bar').style.width=(i/ST.length*100)+'%';$('#prompt').textContent=s.q;$('#hint').hidden=false;$('#fb').innerHTML='';answered=false;$('#mnext').hidden=true;$('#again').hidden=true;$('#score').textContent='Score: '+score;$$('.am').forEach(a=>a.classList.remove('flash-ok','flash-no'));meta();postH()}
+function pick(k){if(answered)return;answered=true;const s=ST[i],ok=k===s.a;if(ok){score++;cnt[k]++;$('#c'+k).textContent='✓ '+cnt[k]}
+ $$('.am').forEach(a=>{if(+a.dataset.k===s.a)a.classList.add('flash-ok');else if(+a.dataset.k===k)a.classList.add('flash-no')});
+ $('#hint').hidden=true;$('#fb').innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+(ok?'':'This is the '+AM.find(a=>a.k===s.a).n+'. ')+s.e+'</div>';
+ $('#score').textContent='Score: '+score;meta();
+ if(i<ST.length-1)$('#mnext').hidden=false;else{$('#bar').style.width='100%';$('#fb').innerHTML+='<div class="fb ok" style="margin-top:8px"><b>Finished.</b> You scored '+score+' of '+ST.length+'. The Reconstruction amendments addressed slavery, citizenship, and voting, but enforcement was not guaranteed.</div>';$('#again').hidden=false}
+ postH()}
+$('#mnext').onclick=()=>{i++;showQ()};$('#again').onclick=()=>{i=0;score=0;cnt[13]=cnt[14]=cnt[15]=0;$$('.ct').forEach(c=>c.textContent='');showQ()};
+function meta(){$('#meta').textContent=tab===1?'Click each event on the timeline':'Score '+score+'/'+ST.length}
+function setTab(n){tab=n;$('#p1').hidden=n!==1;$('#p2').hidden=n!==2;$('#t1').setAttribute('aria-pressed',n===1);$('#t2').setAttribute('aria-pressed',n===2);meta();postH()}
+$('#t1').onclick=()=>setTab(1);$('#t2').onclick=()=>setTab(2);
+render();showQ();
+</script>
+</body>
+</html>

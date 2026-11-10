@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HIST420 | Week 2 | The Constitution: Checks &amp; Balances Challenge</title>
+<!--
+  HIST420 United States History and the Constitution
+  Week 2 Interactive: The Constitution: Checks &amp; Balances Challenge
+  File: HIST420_Week2_Checks_and_Balances.html
+  Self-contained (no external libraries, fonts or images). Designed for a Canvas iframe at ~720px tall.
+  html/body overflow is hidden and the layout fills 100% of the iframe, so only the Canvas page scrolls (no double scrollbar).
+-->
+<style>
+:root{--navy:#1f2a44;--red:#a8353a;--red2:#d34147;--gold:#b8892b;--paper:#f8f3e8;--card:#fff;--ink:#222;--muted:#5d6272;--line:#ddd3bb;--ok:#2f6f4e;--okbg:#e6f3ec;--badbg:#fbe9ea}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.4}
+.app{height:100%;display:flex;flex-direction:column;gap:8px;padding:10px 16px 10px;overflow-y:auto;overflow-x:hidden}
+.hdr{display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--red);padding-bottom:7px;flex:none}
+.tag{background:var(--red);color:#fff;font-weight:700;font-size:12px;letter-spacing:.08em;padding:4px 9px;border-radius:3px;white-space:nowrap}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:21px;margin:0;color:var(--navy);line-height:1.15}
+.hdr .sub{margin-left:auto;font-size:12.5px;color:var(--muted);text-align:right;max-width:34%}
+.main{flex:1;min-height:0;display:grid;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 3px rgba(31,42,68,.08)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,[role=button]:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:6px;padding:7px 14px;font-weight:600}
+.btn:hover{background:#2f3d63}.btn[disabled]{opacity:.4;cursor:default}
+.btn.alt{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.seg{display:inline-flex;border:1.5px solid var(--navy);border-radius:6px;overflow:hidden}
+.seg button{background:#fff;border:0;padding:6px 12px;font-weight:600;color:var(--navy);font-size:13.5px}
+.seg button[aria-pressed=true]{background:var(--navy);color:#fff}
+.chip{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:2px 10px;border:1px solid var(--line);background:#fff;color:var(--muted)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.fb{border-radius:6px;padding:7px 10px;font-size:13.5px;margin-top:6px}
+.fb.ok{background:var(--okbg);border-left:4px solid var(--ok)}.fb.no{background:var(--badbg);border-left:4px solid var(--red)}
+.opts{display:grid;gap:5px;margin-top:6px}
+.opt{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:6px 10px;font-size:14px}
+.opt:hover:not([disabled]){border-color:var(--navy);background:#f1f4fb}
+.opt.right{background:var(--okbg);border-color:var(--ok)}.opt.wrong{background:var(--badbg);border-color:var(--red)}
+.sr{position:absolute;left:-9999px}
+.foot{flex:none;font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:10px}
+@media (max-width:760px){html,body{overflow:auto}.app{height:auto;overflow:visible}.main{display:block!important}.main>*{margin-bottom:12px}.hdr .sub{display:none}h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.tabs{flex:none;display:flex;gap:6px;align-items:center}
+.tabs .seg button{padding:7px 16px}
+.tabs .meta{margin-left:auto;font-size:12.5px;color:var(--muted)}
+.main{grid-template-columns:1fr}
+.pane[hidden]{display:none!important}
+.pane{min-height:0}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:12px;height:100%}
+.fc{perspective:900px;background:none;border:0;padding:0;min-height:0}
+.fc .in{position:relative;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d}
+.fc.flip .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 14px;text-align:center}
+.front{background:#fff}.front svg{width:76px;height:76px}
+.front h3{font-family:Georgia,serif;margin:6px 0 2px;color:var(--navy);font-size:18px}
+.front small{color:var(--muted)}
+.back{background:var(--navy);color:#fff;transform:rotateY(180deg);font-size:14px;gap:6px}
+.back b{color:#f2c96b;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.chal{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:14px;height:100%}
+.dia{display:flex;align-items:center;justify-content:center;padding:4px;min-height:0}
+.dia svg{width:100%;height:100%}
+.node-g{cursor:pointer}.node-g:hover circle.bg{stroke:var(--gold);stroke-width:5}
+.sc{padding:14px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto}
+.sc .n{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--red);text-transform:uppercase}
+.sc .prompt{font-family:Georgia,serif;font-size:18px;color:var(--navy);line-height:1.3}
+.sc .hint{font-size:13px;color:var(--muted)}
+.sc .row{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.score{font-weight:700;color:var(--navy)}
+.bar{height:7px;background:var(--line);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);transition:width .3s}
+@media (max-width:760px){.cards{grid-template-columns:1fr 1fr;grid-template-rows:none;height:auto}.fc{height:190px}.chal{display:block}.dia{height:300px}.tabs .meta{display:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="hdr"><span class="tag">HIST420 · WEEK 2</span><h1>The Constitution: Checks &amp; Balances Challenge</h1><div class="sub">Flip the six big ideas, then test your knowledge.</div></div>
+
+<div class="tabs"><span class="seg" role="tablist"><button role="tab" id="t1" aria-pressed="true">Six Big Ideas</button><button role="tab" id="t2" aria-pressed="false">Checks &amp; Balances Challenge</button></span><span class="meta" id="meta"></span></div>
+<div class="main">
+ <section class="pane" id="p1"><div class="cards" id="cards"></div></section>
+ <section class="pane" id="p2" hidden>
+  <div class="chal">
+   <div class="card dia" id="dia"></div>
+   <div class="card sc">
+    <div class="n" id="num"></div><div class="bar"><i id="bar" style="width:0"></i></div>
+    <div class="prompt" id="prompt"></div>
+    <div class="hint" id="hint">Click the branch in the diagram that provides the check.</div>
+    <div id="fb" aria-live="polite"></div>
+    <div class="row"><span class="score" id="score"></span><span><button class="btn alt" id="again" hidden>Play again</button> <button class="btn" id="next" hidden>Next ›</button></span></div>
+   </div>
+  </div>
+ </section>
+</div>
+
+<div class="foot"><span>HIST420 | United States History and the Constitution</span><span>Week 2 Interactive</span></div>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function postH(){try{parent.postMessage({type:'hist420-resize',height:document.documentElement.scrollHeight},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+function waves(y,c,op){let d='M0 '+y;for(let i=0;i<9;i++)d+=(i?' t 50 0':' q 25 -8 50 0');return '<path d="'+d+' V260 H0Z" fill="'+c+'" opacity="'+(op||1)+'"/>'}
+function ship(x,y,s,sail){sail=sail||'#f4ecd8';return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M-62 0 L62 0 L48 24 L-48 24Z" fill="#5b3a21"/><path d="M-62 0 L62 0" stroke="#3b2614" stroke-width="3"/><rect x="-2" y="-92" width="4" height="92" fill="#3b2614"/><path d="M-4 -86 Q-46 -55 -42 -12 L-4 -12Z" fill="'+sail+'" stroke="#cbbf9f"/><path d="M4 -86 Q46 -55 42 -12 L4 -12Z" fill="'+sail+'" stroke="#cbbf9f"/><path d="M2 -92 L26 -85 L2 -78Z" fill="#a8353a"/></g>'}
+function stars(n,seed){let o='',r=seed||7;for(let i=0;i<n;i++){r=(r*9301+49297)%233280;const x=r/233280*400;r=(r*9301+49297)%233280;const y=r/233280*120;o+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="1.2" fill="#fff" opacity=".8"/>'}return o}
+function sky(a,b){return '<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset="1" stop-color="'+b+'"/></linearGradient></defs><rect width="400" height="260" fill="url(#sk)"/>'}
+function wrapSvg(inner,label){return '<svg viewBox="0 0 400 260" role="img" aria-label="'+label+'" style="width:100%;height:100%;display:block">'+inner+'</svg>'}
+function usFlag(x,y,s){let o='<g transform="translate('+x+' '+y+') scale('+s+')">';for(let i=0;i<7;i++)o+='<rect x="0" y="'+i*5+'" width="46" height="5" fill="'+(i%2?'#fff':'#a8353a')+'"/>';o+='<rect width="20" height="20" fill="#1f2a44"/>';for(let r=0;r<3;r++)for(let c=0;c<4;c++)o+='<circle cx="'+(3+c*4.5)+'" cy="'+(4+r*6)+'" r="1" fill="#fff"/>';return o+'</g>'}
+
+const ic=(b)=>'<svg viewBox="0 0 64 64" fill="none" stroke="#a8353a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+b+'</svg>';
+const IDEAS=[
+{n:'Popular Sovereignty',s:'The people rule',d:'The people are the source of government’s authority. “We the People” begins the Constitution.',w:'The Preamble',
+ i:ic('<circle cx="32" cy="18" r="7"/><path d="M20 40 q12 -18 24 0"/><circle cx="12" cy="28" r="5"/><circle cx="52" cy="28" r="5"/><path d="M4 46 q8 -12 16 0 M44 46 q8 -12 16 0"/><path d="M14 54 h36"/>')},
+{n:'Limited Government',s:'Power has boundaries',d:'Government may use only the powers the Constitution gives it. No official is above the law.',w:'Articles I–III; Bill of Rights',
+ i:ic('<rect x="14" y="26" width="36" height="24" rx="2"/><path d="M10 26 L32 10 L54 26"/><path d="M22 50 V32 M32 50 V32 M42 50 V32"/><path d="M6 58 h52" stroke-dasharray="4 4"/>')},
+{n:'Republicanism',s:'Rule through representatives',d:'Citizens elect representatives to make laws on their behalf, instead of voting on every issue directly.',w:'Article I; Guarantee Clause (Art. IV)',
+ i:ic('<rect x="12" y="30" width="40" height="24" rx="2"/><path d="M12 30 h40 M26 30 v-6 h12 v6"/><path d="M24 14 l6 8 l12 -14" stroke-width="4"/><rect x="22" y="38" width="20" height="3" fill="#a8353a"/>')},
+{n:'Federalism',s:'Shared power',d:'Power is divided between the national government and the states. Each has its own sphere of authority.',w:'Tenth Amendment; Supremacy Clause (Art. VI)',
+ i:ic('<circle cx="32" cy="32" r="26"/><circle cx="22" cy="24" r="7"/><circle cx="42" cy="26" r="7"/><circle cx="32" cy="44" r="7"/>')},
+{n:'Separation of Powers',s:'Three branches',d:'Authority is divided among Congress (makes laws), the President (carries them out), and the courts (interpret them).',w:'Articles I, II, and III',
+ i:ic('<path d="M8 52 h48"/><path d="M12 52 V20 M32 52 V20 M52 52 V20"/><path d="M8 20 h8 M28 20 h8 M48 20 h8"/><path d="M6 14 h52"/>')},
+{n:'Checks and Balances',s:'Each branch restrains the others',d:'Every branch has ways to limit the others, so no single branch can dominate.',w:'Veto, impeachment, judicial review',
+ i:ic('<path d="M32 10 V54 M20 54 h24"/><path d="M12 22 h40"/><path d="M12 22 l-8 16 h16z M52 22 l-8 16 h16z"/>')}
+];
+const flipped=new Set();
+const cards=$('#cards');
+IDEAS.forEach((c,i)=>{const b=document.createElement('button');b.className='fc';b.setAttribute('aria-label',c.n+'. Click to flip.');
+ b.innerHTML='<div class="in"><div class="face front">'+c.i+'<h3>'+c.n+'</h3><small>'+c.s+'</small></div><div class="face back"><b>'+c.n+'</b><span>'+c.d+'</span><span><b>Find it:</b> '+c.w+'</span></div></div>';
+ b.onclick=()=>{b.classList.toggle('flip');flipped.add(i);meta();};cards.appendChild(b)});
+let tab=1;
+function meta(){$('#meta').textContent=tab===1?'Flipped '+flipped.size+'/6 · click a card to read it':'Score '+score+'/'+SC.length}
+function setTab(n){tab=n;$('#p1').hidden=n!==1;$('#p2').hidden=n!==2;$('#t1').setAttribute('aria-pressed',n===1);$('#t2').setAttribute('aria-pressed',n===2);meta();postH()}
+$('#t1').onclick=()=>setTab(1);$('#t2').onclick=()=>setTab(2);
+
+const BR={C:{n:'Congress',x:210,y:92,c:'#a8353a'},P:{n:'President',x:78,y:262,c:'#1f2a44'},J:{n:'Courts',x:342,y:262,c:'#b8892b'}};
+const SC=[
+{f:'C',t:'P',l:'Veto',q:'Congress passes a bill the President opposes. Which branch can check Congress?',e:'The President can veto the bill. Congress can then override with a two-thirds vote of both houses.'},
+{f:'P',t:'C',l:'Veto override',q:'The President vetoes a bill. Which branch can overrule that veto?',e:'Congress. A two-thirds vote in both the House and Senate overrides a veto.'},
+{f:'P',t:'C',l:'Treaty approval',q:'The President signs a treaty with another nation. Which branch must approve it?',e:'The Senate must ratify treaties by a two-thirds vote, which makes Congress the check.'},
+{f:'J',t:'P',l:'Appoints judges',q:'Which branch nominates federal judges and Supreme Court justices?',e:'The President nominates them (and the Senate confirms), giving the executive a check on the courts.'},
+{f:'C',t:'J',l:'Judicial review',q:'Congress passes a law that violates the Constitution. Which branch can strike it down?',e:'The courts, through judicial review, a power established by the Supreme Court in Marbury v. Madison (1803).'},
+{f:'P',t:'J',l:'Judicial review',q:'A President takes an action that goes beyond his constitutional authority. Which branch can rule it unlawful?',e:'The courts can declare executive actions unconstitutional.'},
+{f:'P',t:'C',l:'Impeachment',q:'The President is accused of “high crimes and misdemeanors.” Which branch can remove him?',e:'Congress. The House impeaches, and the Senate holds the trial and decides whether to convict.'},
+{f:'J',t:'C',l:'Creates courts',q:'Which branch decides how many justices sit on the Supreme Court and creates lower federal courts?',e:'Congress, which sets the size of the Supreme Court and establishes lower courts by law.'}
+];
+let i=0,score=0,answered=false;
+function arrowPath(a,b,off){const A=BR[a],B=BR[b];const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,px=-uy,py=ux;
+ const r=52;return {x1:A.x+ux*r+px*off,y1:A.y+uy*r+py*off,x2:B.x-ux*(r+6)+px*off,y2:B.y-uy*(r+6)+py*off}}
+function dia(hl,pick,ok){
+ let o='<svg viewBox="0 0 420 340" role="group" aria-label="Diagram of the three branches"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#9aa0b0"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#2f6f4e"/></marker></defs>';
+ const keys=Object.keys(BR);
+ keys.forEach(a=>keys.forEach(b=>{if(a===b)return;const p=arrowPath(a,b,9);const on=hl&&hl.t===a&&hl.f===b;
+  o+='<line x1="'+p.x1+'" y1="'+p.y1+'" x2="'+p.x2+'" y2="'+p.y2+'" stroke="'+(on?'#2f6f4e':'#c4c8d4')+'" stroke-width="'+(on?5:2)+'" marker-end="url(#'+(on?'ahg':'ah')+')"/>';
+  if(on){const mx=(p.x1+p.x2)/2,my=(p.y1+p.y2)/2;o+='<g transform="translate('+mx+' '+my+')"><rect x="-44" y="-12" width="88" height="22" rx="11" fill="#2f6f4e"/><text y="3" text-anchor="middle" font-size="11.5" font-weight="700" fill="#fff">'+hl.l+'</text></g>'}}));
+ const icons={C:'<path d="M-22 14 h44 M-16 14 v-18 M-6 14 v-18 M6 14 v-18 M16 14 v-18 M-22 -4 h44 M-24 -4 q24 -32 48 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M0 -26 v-10" stroke="#fff" stroke-width="3"/>',
+ P:'<path d="M-22 14 h44 M-16 14 v-16 M-5 14 v-16 M5 14 v-16 M16 14 v-16" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-24 -2 h48 L0 -22Z" fill="#fff"/>',
+ J:'<path d="M0 -24 V18 M-12 18 h24 M-22 -14 h44" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-22 -14 l-8 18 h16z M22 -14 l-8 18 h16z" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>'};
+ keys.forEach(k=>{const b=BR[k];let st='#fff',sw=3;if(pick===k){st=ok?'#2f6f4e':'#a8353a';sw=7}
+  o+='<g class="node-g" data-k="'+k+'" role="button" tabindex="0" aria-label="'+b.n+'"><circle class="bg" cx="'+b.x+'" cy="'+b.y+'" r="48" fill="'+b.c+'" stroke="'+st+'" stroke-width="'+sw+'"/><g transform="translate('+b.x+' '+b.y+')">'+icons[k]+'</g><text x="'+b.x+'" y="'+(k==='C'?b.y-58:b.y+68)+'" text-anchor="middle" font-family="Georgia" font-size="15" font-weight="700" fill="#1f2a44">'+b.n+'</text></g>'});
+ $('#dia').innerHTML=o+'</svg>';
+ $$('.node-g').forEach(g=>{g.onclick=()=>pickB(g.dataset.k);g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pickB(g.dataset.k)}}});
+}
+function show(){const s=SC[i];$('#num').textContent='Scenario '+(i+1)+' of '+SC.length;$('#bar').style.width=(i/SC.length*100)+'%';
+ $('#prompt').textContent=s.q;$('#hint').hidden=false;$('#fb').innerHTML='';answered=false;$('#next').hidden=true;$('#again').hidden=true;$('#score').textContent='Score: '+score;dia();meta();postH()}
+function pickB(k){if(answered||i>=SC.length)return;const s=SC[i];answered=true;const ok=k===s.t;if(ok)score++;
+ $('#hint').hidden=true;dia(s,ok?k:k,ok);if(!ok){dia(s,k,false)}
+ $('#fb').innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+(ok?'':'The answer is '+BR[s.t].n+'. ')+s.e+'</div>';
+ $('#score').textContent='Score: '+score;meta();
+ if(i<SC.length-1){$('#next').hidden=false}else{$('#bar').style.width='100%';$('#fb').innerHTML+='<div class="fb ok" style="margin-top:8px"><b>Finished.</b> You scored '+score+' out of '+SC.length+'. Each arrow in the diagram is a check one branch has on another.</div>';$('#again').hidden=false}
+ postH()}
+$('#next').onclick=()=>{i++;show()};$('#again').onclick=()=>{i=0;score=0;show()};
+show();
+</script>
+</body>
+</html>

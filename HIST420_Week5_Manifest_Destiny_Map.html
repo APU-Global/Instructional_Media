@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HIST420 | Week 5 | Manifest Destiny: Who Gained, Who Paid?</title>
+<!--
+  HIST420 United States History and the Constitution
+  Week 5 Interactive: Manifest Destiny: Who Gained, Who Paid?
+  File: HIST420_Week5_Manifest_Destiny_Map.html
+  Self-contained (no external libraries, fonts or images). Designed for a Canvas iframe at ~720px tall.
+  html/body overflow is hidden and the layout fills 100% of the iframe, so only the Canvas page scrolls (no double scrollbar).
+-->
+<style>
+:root{--navy:#1f2a44;--red:#a8353a;--red2:#d34147;--gold:#b8892b;--paper:#f8f3e8;--card:#fff;--ink:#222;--muted:#5d6272;--line:#ddd3bb;--ok:#2f6f4e;--okbg:#e6f3ec;--badbg:#fbe9ea}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.4}
+.app{height:100%;display:flex;flex-direction:column;gap:8px;padding:10px 16px 10px;overflow-y:auto;overflow-x:hidden}
+.hdr{display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--red);padding-bottom:7px;flex:none}
+.tag{background:var(--red);color:#fff;font-weight:700;font-size:12px;letter-spacing:.08em;padding:4px 9px;border-radius:3px;white-space:nowrap}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:21px;margin:0;color:var(--navy);line-height:1.15}
+.hdr .sub{margin-left:auto;font-size:12.5px;color:var(--muted);text-align:right;max-width:34%}
+.main{flex:1;min-height:0;display:grid;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 3px rgba(31,42,68,.08)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,[role=button]:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:6px;padding:7px 14px;font-weight:600}
+.btn:hover{background:#2f3d63}.btn[disabled]{opacity:.4;cursor:default}
+.btn.alt{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.seg{display:inline-flex;border:1.5px solid var(--navy);border-radius:6px;overflow:hidden}
+.seg button{background:#fff;border:0;padding:6px 12px;font-weight:600;color:var(--navy);font-size:13.5px}
+.seg button[aria-pressed=true]{background:var(--navy);color:#fff}
+.chip{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:2px 10px;border:1px solid var(--line);background:#fff;color:var(--muted)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.fb{border-radius:6px;padding:7px 10px;font-size:13.5px;margin-top:6px}
+.fb.ok{background:var(--okbg);border-left:4px solid var(--ok)}.fb.no{background:var(--badbg);border-left:4px solid var(--red)}
+.opts{display:grid;gap:5px;margin-top:6px}
+.opt{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:6px 10px;font-size:14px}
+.opt:hover:not([disabled]){border-color:var(--navy);background:#f1f4fb}
+.opt.right{background:var(--okbg);border-color:var(--ok)}.opt.wrong{background:var(--badbg);border-color:var(--red)}
+.sr{position:absolute;left:-9999px}
+.foot{flex:none;font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:10px}
+@media (max-width:760px){html,body{overflow:auto}.app{height:auto;overflow:visible}.main{display:block!important}.main>*{margin-bottom:12px}.hdr .sub{display:none}h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.main{grid-template-columns:minmax(0,6fr) minmax(0,4fr)}
+.map{display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.map .art{flex:1;min-height:0;background:#cfe3ee;position:relative}
+.map svg{width:100%;height:100%;display:block}
+.reg{transition:opacity .6s}
+.reg.hide{opacity:0;pointer-events:none}
+.reg.new{animation:pulse 1.2s ease-in-out 2}
+@keyframes pulse{50%{filter:brightness(1.25)}}
+.ctl{flex:none;padding:8px 14px 10px;border-top:1px solid var(--line);background:#fff}
+.ctl input[type=range]{width:100%;accent-color:var(--red)}
+.ticks{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--navy)}
+.ticks button{background:none;border:0;padding:2px 0;font-weight:700;color:var(--navy);font-size:12.5px;flex:1}
+.ticks button[aria-current=true]{color:var(--red);text-decoration:underline}
+.info{padding:12px 14px;display:flex;flex-direction:column;gap:7px;min-height:0;overflow:auto}
+.info h2{font-family:Georgia,serif;font-size:19px;margin:0;color:var(--navy)}
+.info .date{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--red);text-transform:uppercase}
+.info p{margin:0}
+.box{border-left:4px solid var(--navy);background:#f2f5fb;padding:8px 11px;border-radius:0 6px 6px 0;font-size:14px}
+.box.cost{border-color:var(--red);background:#fdf6f6}
+.box b{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--muted)}
+.stat{margin-top:auto;display:flex;justify-content:space-between;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:7px}
+.stat b{color:var(--navy)}
+@media (max-width:760px){.map .art{height:300px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="hdr"><span class="tag">HIST420 · WEEK 5</span><h1>Manifest Destiny: Who Gained, Who Paid?</h1><div class="sub">Drag the slider through time and compare perspectives.</div></div>
+
+<div class="main">
+ <div class="card map">
+  <div class="art" id="art"></div>
+  <div class="ctl">
+   <div class="ticks" id="ticks"></div>
+   <input type="range" id="rng" min="0" max="5" step="1" value="0" aria-label="Move through time from before 1830 to the Fort Laramie treaties">
+  </div>
+ </div>
+ <div class="card info" aria-live="polite">
+  <div class="date" id="date"></div><h2 id="title"></h2>
+  <p id="text"></p>
+  <div><span class="seg" role="group" aria-label="Choose a view"><button id="bG" aria-pressed="true">Expansion view</button><button id="bC" aria-pressed="false">Cost view</button></span></div>
+  <div class="box" id="box"></div>
+  <div class="chips" id="chips"></div>
+  <div class="stat"><span>Area added in this step: <b id="area"></b></span><span>1845–48 total: <b id="tot"></b></span></div>
+ </div>
+</div>
+
+<div class="foot"><span>HIST420 | United States History and the Constitution</span><span>Week 5 Interactive</span></div>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function postH(){try{parent.postMessage({type:'hist420-resize',height:document.documentElement.scrollHeight},'*')}catch(e){}}
+window.addEventListener('load',postH);window.addEventListener('resize',postH);
+function waves(y,c,op){let d='M0 '+y;for(let i=0;i<9;i++)d+=(i?' t 50 0':' q 25 -8 50 0');return '<path d="'+d+' V260 H0Z" fill="'+c+'" opacity="'+(op||1)+'"/>'}
+function ship(x,y,s,sail){sail=sail||'#f4ecd8';return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M-62 0 L62 0 L48 24 L-48 24Z" fill="#5b3a21"/><path d="M-62 0 L62 0" stroke="#3b2614" stroke-width="3"/><rect x="-2" y="-92" width="4" height="92" fill="#3b2614"/><path d="M-4 -86 Q-46 -55 -42 -12 L-4 -12Z" fill="'+sail+'" stroke="#cbbf9f"/><path d="M4 -86 Q46 -55 42 -12 L4 -12Z" fill="'+sail+'" stroke="#cbbf9f"/><path d="M2 -92 L26 -85 L2 -78Z" fill="#a8353a"/></g>'}
+function stars(n,seed){let o='',r=seed||7;for(let i=0;i<n;i++){r=(r*9301+49297)%233280;const x=r/233280*400;r=(r*9301+49297)%233280;const y=r/233280*120;o+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="1.2" fill="#fff" opacity=".8"/>'}return o}
+function sky(a,b){return '<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset="1" stop-color="'+b+'"/></linearGradient></defs><rect width="400" height="260" fill="url(#sk)"/>'}
+function wrapSvg(inner,label){return '<svg viewBox="0 0 400 260" role="img" aria-label="'+label+'" style="width:100%;height:100%;display:block">'+inner+'</svg>'}
+function usFlag(x,y,s){let o='<g transform="translate('+x+' '+y+') scale('+s+')">';for(let i=0;i<7;i++)o+='<rect x="0" y="'+i*5+'" width="46" height="5" fill="'+(i%2?'#fff':'#a8353a')+'"/>';o+='<rect width="20" height="20" fill="#1f2a44"/>';for(let r=0;r<3;r++)for(let c=0;c<4;c++)o+='<circle cx="'+(3+c*4.5)+'" cy="'+(4+r*6)+'" r="1" fill="#fff"/>';return o+'</g>'}
+
+const P=(lo,la)=>[((lo+126)*13.2).toFixed(1),((50.5-la)*17.6).toFixed(1)];
+const poly=a=>a.map(p=>P(p[0],p[1]).join(',')).join(' ');
+const R={
+ orig:[[-67,45],[-70.5,43],[-70,41.7],[-74,40.5],[-75.5,38],[-75.7,36.9],[-76,35],[-78,33.8],[-81,31.5],[-85,31],[-88.5,31],[-89.6,31],[-91,33],[-91,36],[-89.1,37],[-90.2,38.7],[-91.4,40.5],[-91,42.5],[-92,44],[-93,45.5],[-95,49],[-89,48],[-84.5,46.5],[-82.5,45.3],[-83,42],[-79,42.9],[-76,44],[-74.7,45],[-71.5,45],[-69.2,47.4],[-67.8,47]],
+ louis:[[-89.4,29],[-94,29.6],[-94,33.5],[-100,34.5],[-100,36.5],[-106,37.5],[-106,39],[-106,41],[-109,42.5],[-111,44],[-113,47],[-114,49],[-95,49],[-93,45.5],[-92,44],[-91,42.5],[-91.4,40.5],[-90.2,38.7],[-89.1,37],[-91,36],[-91,33],[-89.6,31]],
+ fla:[[-87.5,31],[-85,31],[-81.3,30.7],[-80,25.3],[-82,26],[-83,29.5],[-85,29.7],[-87.5,30.4]],
+ it:[[-103,37],[-94.6,37],[-94.6,33.7],[-100,34.5],[-103,36.5]],
+ texas:[[-106.5,32],[-103,32],[-103,36.5],[-100,36.5],[-100,34.5],[-94.5,33.7],[-94,33.5],[-94,29.6],[-97,26],[-99,26.5],[-101,29.7],[-104.5,29.6],[-106.5,31.8]],
+ oregon:[[-124.7,49],[-114,49],[-113,47],[-111,44],[-111,42],[-124.5,42]],
+ cess:[[-124.5,42],[-111,42],[-106.5,41],[-106.5,32],[-108.2,31.8],[-108.2,31.3],[-111,31.3],[-114.8,32.5],[-117.1,32.5]],
+ sioux:[[-104,46],[-100.4,46],[-100,44.3],[-99.9,43],[-103,43],[-104,43]],
+ mex:[[-117.1,32.5],[-114.8,32.5],[-111,31.3],[-108.2,31.3],[-108.2,31.8],[-106.5,31.8],[-104.5,29.6],[-101,29.7],[-99,26.5],[-97,25.9],[-97,22],[-118,22],[-118,28]]
+};
+const [tx,ty]=P(-96,36);
+const trail=[[-84.5,34.5],[-86.5,36],[-89,37],[-92,36.6],[-94.6,35.4]].map(p=>P(p[0],p[1]).join(',')).join(' ');
+const COL={orig:'#8ea9d1',louis:'#a9c2e2',fla:'#8ea9d1',it:'#b79bd0',texas:'#e2b866',oregon:'#8ec39b',cess:'#df9a86',sioux:'#f1dc86'};
+const STEPS=[
+{y:'Before 1830',t:'The Young Republic',layers:['orig','louis','fla'],nw:[],
+ txt:'By the 1820s the United States reached the Rocky Mountains. Native nations, however, already lived across the continent, in the East and the West.',
+ g:'Farm families pushed west for land. Growth in population and cotton made land more valuable every year.',
+ c:'Native nations differed in language, economy, government, and belief. Settlement east of the Mississippi pressed them to give up their homelands.',
+ m:['Economic opportunity'],add:'—',ar:0},
+{y:'1830',t:'Indian Removal Act',layers:['orig','louis','fla','it','trail'],nw:['it','trail'],
+ txt:'The Indian Removal Act authorized the president to negotiate the exchange of Native lands in the East for lands west of the Mississippi.',
+ g:'Southern states and settlers gained access to millions of acres of farmland in Georgia, Alabama, and Mississippi.',
+ c:'The Cherokee removal of 1838–1839, the Trail of Tears, caused thousands of deaths. Treaty rights were often changed or violated.',
+ m:['Economic opportunity','National security'],add:'Lands east of the Mississippi opened to settlement',ar:0},
+{y:'1845',t:'Texas Annexed',layers:['orig','louis','fla','it','trail','texas'],nw:['texas'],
+ txt:'The Republic of Texas, the “Lone Star Republic,” joined the Union in 1845. Annexation brought the United States close to war with Mexico.',
+ g:'Cotton planters, ranchers, and settlers gained a vast new territory, about 390,000 square miles.',
+ c:'Critics argued annexation expanded slavery. Mexico never accepted the loss of Texas, and war followed.',
+ m:['Economic opportunity','National mission'],add:'≈ 390,000 sq mi',ar:390},
+{y:'1846',t:'Oregon Boundary Settled',layers:['orig','louis','fla','it','trail','texas','oregon'],nw:['oregon'],
+ txt:'The United States and Britain settled the Oregon boundary in 1846 at the 49th parallel, without a war.',
+ g:'Settlers and traders gained Pacific ports and farmland, about 286,000 square miles. Supporters called it national destiny.',
+ c:'Native nations of the Pacific Northwest faced a growing number of settlers and new pressure on land and resources.',
+ m:['National security','National mission'],add:'≈ 286,000 sq mi',ar:286},
+{y:'1848',t:'Mexican Cession',layers:['orig','louis','fla','it','trail','texas','oregon','cess'],nw:['cess'],
+ txt:'The Mexican-American War (1846–1848) ended with the Treaty of Guadalupe Hidalgo and the Mexican Cession: California, the Southwest, and more.',
+ g:'The United States reached the Pacific, adding about 529,000 square miles and the ports and resources of California.',
+ c:'Mexico lost roughly half of its territory. Westward expansion intensified the national argument over whether slavery would spread to new territories.',
+ m:['Economic opportunity','National security','National mission'],add:'≈ 529,000 sq mi',ar:529},
+{y:'1851 / 1868',t:'Fort Laramie Treaties',layers:['orig','louis','fla','it','trail','texas','oregon','cess','sioux'],nw:['sioux'],
+ txt:'Treaties in 1851 and 1868 recognized Sioux lands in the northern Plains. Settlement, railroads, and gold then pressured the government to change those promises.',
+ g:'Settlers, railroad companies, and miners gained access to Plains land as the government altered treaty terms.',
+ c:'The Sioux saw agreements made and then broken. Examine this treaty to judge federal policy using principles of justice.',
+ m:['Economic opportunity','National mission'],add:'Treaty lands later reduced',ar:0}
+];
+const ALL=['Economic opportunity','National security','National mission'];
+let cur=0,view='G';
+function mapSvg(){
+ let o='<svg viewBox="0 0 800 470" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of the United States showing territory acquired step by step"><rect width="800" height="470" fill="#cfe3ee"/>';
+ o+='<rect x="0" y="0" width="800" height="26" fill="#e9e2cf"/><text x="400" y="17" text-anchor="middle" font-size="11" fill="#8a7c58" letter-spacing="2">BRITISH NORTH AMERICA</text>';
+ o+='<polygon points="'+poly(R.mex)+'" fill="#e9e2cf"/><text x="'+P(-110,26.5)[0]+'" y="'+P(-110,26.5)[1]+'" text-anchor="middle" font-size="12" fill="#8a7c58" letter-spacing="2">MEXICO</text>';
+ ['texas','oregon','cess'].forEach(k=>{o+='<polygon points="'+poly(R[k])+'" fill="#e9e2cf" stroke="#d6ccb0" stroke-width="1"/>'});
+
+ const L=(k,fill,extra,name)=>'<polygon class="reg" data-k="'+k+'" points="'+poly(R[k])+'" fill="'+fill+'" stroke="#fff" stroke-width="1.5" '+(extra||'')+'><title>'+name+'</title></polygon>';
+ o+=L('orig',COL.orig,'','Original United States (1783)')+L('louis',COL.louis,'','Louisiana Purchase (1803)')+L('fla',COL.fla,'','Florida (1819)')+L('texas',COL.texas,'','Texas (annexed 1845)')+L('oregon',COL.oregon,'','Oregon Country (1846)')+L('cess',COL.cess,'','Mexican Cession (1848)');
+ o+=L('it',COL.it,'stroke="#6b4a8a" stroke-dasharray="5 3"','Indian Territory (removal destination)');
+ o+=L('sioux',COL.sioux,'stroke="#a8353a" stroke-width="2.5" stroke-dasharray="6 3"','Sioux lands, Fort Laramie 1868');
+ o+='<g class="reg" data-k="trail"><polyline points="'+trail+'" fill="none" stroke="#a8353a" stroke-width="4" stroke-dasharray="8 6" stroke-linecap="round"/><circle cx="'+trail.split(' ')[0].split(',')[0]+'" cy="'+trail.split(' ')[0].split(',')[1]+'" r="5" fill="#a8353a"/><title>Trail of Tears (Cherokee removal 1838–39)</title></g>';
+ const lab=(k,lo,la,t,c)=>'<text class="reg" data-k="'+k+'" x="'+P(lo,la)[0]+'" y="'+P(lo,la)[1]+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+(c||'#1f2a44')+'">'+t+'</text>';
+ o+=lab('orig',-81,40.5,'ORIGINAL U.S.')+lab('louis',-103,43,'LOUISIANA PURCHASE')+lab('texas',-99,31,'TEXAS')+lab('oregon',-119,45.5,'OREGON')+lab('cess',-116,36.5,'MEXICAN CESSION')+lab('it',-98.5,35.3,'IND. TERR.','#4a2f6a')+lab('sioux',-101.8,43.5,'SIOUX','#7a2328')+lab('fla',-82,28.4,'FL','#1f2a44');
+ // icons
+ o+='<g class="reg" data-k="oregon" transform="translate('+P(-121,46.6).join(' ')+')"><rect x="-10" y="-8" width="20" height="9" rx="2" fill="#f7f2e7" stroke="#5b3a21"/><circle cx="-6" cy="3" r="4" fill="none" stroke="#5b3a21" stroke-width="2"/><circle cx="6" cy="3" r="4" fill="none" stroke="#5b3a21" stroke-width="2"/></g>';
+ o+='<g class="reg" data-k="sioux" transform="translate('+P(-101.8,45.2).join(' ')+')"><path d="M0 -14 L-9 4 H9Z" fill="#f7f2e7" stroke="#5b3a21" stroke-width="1.5"/><path d="M0 -14 V-20 M-2 -17 L2 -17" stroke="#5b3a21"/></g>';
+ o+='<g transform="translate(755 420)"><circle r="20" fill="#fff" opacity=".7"/><path d="M0 -15 L5 0 L0 15 L-5 0Z" fill="#a8353a"/><text y="-19" text-anchor="middle" font-size="10" font-weight="700" fill="#1f2a44">N</text></g>';
+ return o+'</svg>';
+}
+$('#art').innerHTML=mapSvg();
+const tk=$('#ticks');STEPS.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.y;b.onclick=()=>go(i);tk.appendChild(b)});
+function go(i){cur=i;$('#rng').value=i;render(true)}
+function render(anim){
+ const s=STEPS[cur];
+ $$('[data-k]').forEach(el=>{const k=el.dataset.k;const on=s.layers.includes(k);el.classList.toggle('hide',!on);el.classList.remove('new');if(anim&&on&&s.nw.includes(k)){void el.getBoundingClientRect();el.classList.add('new')}});
+ $('#date').textContent=s.y;$('#title').textContent=s.t;$('#text').textContent=s.txt;
+ $$('#ticks button').forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+ const bx=$('#box');bx.className='box'+(view==='C'?' cost':'');bx.innerHTML='<b>'+(view==='G'?'Who gained':'Who bore the costs')+'</b>'+(view==='G'?s.g:s.c);
+ $('#bG').setAttribute('aria-pressed',view==='G');$('#bC').setAttribute('aria-pressed',view==='C');
+ $('#chips').innerHTML='<span>Motives cited:</span>'+ALL.map(m=>'<span class="chip'+(s.m.includes(m)?' on':'')+'">'+m+'</span>').join('');
+ $('#area').textContent=s.add;
+ let tot=0;STEPS.slice(0,cur+1).forEach(x=>tot+=x.ar);$('#tot').textContent=tot?'≈ '+tot.toLocaleString()+' sq mi':'—';
+ postH();
+}
+$('#rng').oninput=e=>go(+e.target.value);
+$('#bG').onclick=()=>{view='G';render()};$('#bC').onclick=()=>{view='C';render()};
+render(false);
+</script>
+</body>
+</html>
