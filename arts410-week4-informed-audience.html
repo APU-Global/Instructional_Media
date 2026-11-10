@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARTS 410 Week 4 | Climb the Five Stages of Looking</title>
+<style>
+:root{--red:#d34147;--dred:#a8353a;--ink:#2b2d42;--bg:#faf7f5;--card:#fff;--line:#e6dfda;--teal:#2a9d8f;--vio:#5b54d6;--org:#d9731a;--ok:#1f8a4c;--bad:#b3261e;--muted:#5d6075}
+@media (prefers-color-scheme:dark){:root{--ink:#f1eeee;--bg:#1b1b22;--card:#25252e;--line:#3a3a46;--muted:#b4b4c2}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible{outline:3px solid #ffb703;outline-offset:2px}
+#app{height:100%;display:flex;flex-direction:column}
+nav{display:flex;gap:6px;padding:8px 10px 0;background:var(--card);border-bottom:3px solid var(--red);flex:none}
+nav button{flex:1;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;background:var(--bg);padding:7px 6px;font-weight:600;font-size:13px;line-height:1.2}
+nav button small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+nav button[aria-selected=true]{background:var(--red);color:#fff;border-color:var(--red)}
+nav button[aria-selected=true] small{color:#ffe3e4}
+.panel{flex:1;min-height:0;display:none;flex-direction:column;overflow:hidden}
+.panel.on{display:flex}
+.hero{position:relative;height:66px;flex:none;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero div{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 18px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.45)}
+.hero h2{margin:0;font-size:19px}.hero p{margin:0;font-size:13px;opacity:.95}
+.body{flex:1;min-height:0;padding:10px 14px 12px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.q{margin:0;font-size:13.5px;color:var(--muted)}.q b{color:var(--ink)}
+.row{display:flex;gap:12px;flex:1;min-height:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.btn{border:0;border-radius:8px;padding:7px 14px;background:var(--red);color:#fff;font-weight:600}
+.btn.alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.msg{min-height:22px;font-weight:600;font-size:14px}.ok{color:var(--ok)}.bad{color:var(--bad)}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;flex:1}.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .4s}
+.status{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+/* W1 */
+.pool{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;min-height:84px;align-content:flex-start}
+.chip{border:2px solid var(--line);background:var(--card);border-radius:20px;padding:6px 14px;font-weight:600;touch-action:none}
+.chip.sel{border-color:#ffb703;box-shadow:0 0 0 3px #ffb70355}
+.chip.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:1;min-height:0}
+.bin{border-radius:12px;border:2px dashed;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);cursor:pointer;min-height:0}
+.bin.over{background:#ffb70322}
+.bin img{width:46px;height:46px}.bin h3{margin:0;font-size:16px}
+.bin .got{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.bin .got span{background:var(--bg);border-radius:14px;padding:3px 10px;font-size:13px;font-weight:600;border:1px solid var(--line)}
+/* W3 */
+.mapwrap{flex:1.55;min-width:0;display:flex;flex-direction:column;justify-content:center;background:#d7eef0;border-radius:12px}
+.mapwrap svg{width:100%;height:auto;max-height:100%}
+@media (prefers-color-scheme:dark){.mapwrap{background:#16363b}}
+.land{fill:#f4e9d6;stroke:#c9b48f;stroke-width:1}
+@media (prefers-color-scheme:dark){.land{fill:#3d4a46;stroke:#566761}}
+.hot{cursor:pointer}.hot circle.ring{pointer-events:none;fill:none;stroke:var(--red);stroke-width:2;animation:pl 2s infinite;transform-origin:center;transform-box:fill-box}
+.hot circle.dot{fill:var(--red);stroke:#fff;stroke-width:2}.hot.seen circle.dot{fill:var(--ok)}.hot.seen circle.ring{animation:none;opacity:0}
+.hot.cur circle.dot{stroke:#ffb703;stroke-width:4}
+.hot:focus{outline:none}.hot:focus-visible circle.dot{stroke:#ffb703;stroke-width:4}.hot text{font-size:15px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#fff8;stroke-width:3px}
+@keyframes pl{0%{transform:scale(.6);opacity:1}100%{transform:scale(2.2);opacity:0}}
+.info{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
+.info h3{margin:0;font-size:18px}.tag{display:inline-block;background:var(--red);color:#fff;border-radius:10px;padding:1px 9px;font-size:12px;font-weight:600;margin-right:4px}
+.react{display:flex;gap:6px;flex-wrap:wrap}
+.react button{flex:1;border:2px solid var(--line);background:var(--card);border-radius:10px;padding:6px 4px;font-weight:600;font-size:13px}
+.react button.on{border-color:var(--teal);background:#2a9d8f22}
+/* W4 */
+.stairs{display:flex;align-items:flex-end;gap:5px;height:240px;flex:none}
+.stairs button{flex:1;border:0;border-radius:8px 8px 0 0;background:var(--vio);color:#fff;font-weight:700;font-size:12.5px;padding:4px 2px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;opacity:.55}
+.stairs button.done{opacity:1;background:var(--ok)}
+.stairs button b{font-size:16px}
+.stmt{font-size:16px;font-style:italic;padding:12px;border-left:5px solid var(--vio);background:var(--card);border-radius:8px;min-height:74px;display:flex;align-items:center}
+.stage{flex:none;width:36%;max-width:340px}
+.stage img{width:100%;border-radius:12px;display:block}
+.build{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.build label{font-size:12.5px;font-weight:600;display:block}
+.build textarea,#out{width:100%;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13.5px;background:var(--card);color:var(--ink);resize:none}
+/* W6 */
+.slots{display:grid;grid-template-columns:1fr;gap:5px;flex:1;min-height:0}
+.slot{display:flex;align-items:center;gap:8px;border:2px dashed var(--line);border-radius:10px;padding:3px 8px;min-height:0;font-size:13px}
+.slot .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--org);color:#fff;font-weight:700;display:grid;place-items:center}
+.slot .grp{flex:none;font-size:11px;font-weight:700;color:var(--org);width:92px}
+.slot.good{border-color:var(--ok);border-style:solid;background:#1f8a4c14}.slot.wrong{border-color:var(--bad);border-style:solid;background:#b3261e12}
+.slot.filled{cursor:pointer}
+.slot .nm{font-weight:700;flex:none;width:130px}
+.cards{width:42%;flex:none;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.cards button{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:10px;padding:6px 10px;font-size:13px}
+.cards button:hover{border-color:var(--org)}
+.loop{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12.5px;font-weight:600}
+.loop span{background:var(--org);color:#fff;border-radius:14px;padding:3px 10px}
+.loop i{font-style:normal;color:var(--muted)}
+@media (max-width:700px){
+ .row{flex-direction:column;overflow:auto}.stage{display:none}.cards{width:100%}.build{grid-template-columns:1fr}
+ nav button small{display:none}.bins{grid-template-columns:1fr}.hero p{display:none}
+ .panel,.body{overflow:auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<section class="panel on" id="p4" role="tabpanel">
+ <div class="hero"><img src="assets/arts410-week4.svg" alt=""><div><h2>Climb the Five Stages of Looking</h2><p>Week 4 | Becoming an Informed Audience</p></div></div>
+ <div class="body">
+  <div class="row" id="r4">
+   <div class="stage"><img src="assets/arts410-week4-stage.svg" alt="A dancer in blue light reaching upward on a dark stage, with a drummer seated at the side"><p class="q" style="margin:6px 0 0">Study the scene, then match each audience response to the stage of looking it shows.</p></div>
+   <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+    <div class="stmt" id="st4">…</div>
+    <div class="stairs" id="stairs4"></div>
+    <div class="msg" id="m4" aria-live="polite"></div>
+   </div>
+  </div>
+ </div>
+</section>
+</div>
+<script>
+
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function report(){try{parent.postMessage(JSON.stringify({subject:'lti.frameResize',height:document.documentElement.clientHeight}),'*')}catch(e){}}
+
+
+(()=>{
+ const stages=[['Observation','Notice what you see and hear'],['Description','Put observations into words'],['Explanation','Explain how and why elements work'],['Interpretation','Decide what it means'],['Evaluation','Judge how well it achieves its aim']];
+ const stm=[
+ [0,'I see one dancer in a pool of blue light and a drummer seated at the side of the stage.'],
+ [3,'I think this piece is about someone finding courage, rising up despite fear.'],
+ [1,'The dancer travels slowly from a low, crouched shape to a high reach while the drum keeps a soft, steady beat.'],
+ [4,'It succeeds because the lighting, movement, and drum all point toward “rising,” though the ending felt rushed.'],
+ [2,'The slow time and rising levels build tension because the steady drum makes each lift feel deliberate.']];
+ let i=0,got=[];const st=$('#st4'),sb=$('#stairs4'),m=$('#m4');
+ sb.innerHTML=stages.map((s,k)=>`<button data-k="${k}" style="height:${70+k*38}px" title="${s[1]}"><b>${k+1}</b>${s[0]}</button>`).join('');
+ function next(){
+  if(i<stm.length){st.textContent='“'+stm[i][1]+'”';return}
+  st.innerHTML='🎉 You climbed all five stages. Now build your own informed response below.';
+  buildForm()}
+ function onStep(e){const b=e.target.closest('button');if(!b||i>=stm.length)return;const k=+b.dataset.k;
+  if(k===stm[i][0]){b.classList.add('done');m.className='msg ok';m.textContent='✔ '+stages[k][0]+': '+stages[k][1].toLowerCase()+'.';i++;next()}
+  else{m.className='msg bad';m.textContent=`Not quite. Ask: is this statement noticing, describing, explaining how/why, deciding meaning, or judging success?`}}
+ sb.onclick=onStep;
+ function buildForm(){
+  const right=sb.parentElement;
+  right.innerHTML=`<div class="stmt" style="min-height:0;padding:8px 12px">🎉 You climbed all five stages. Now write your own response to a performance you choose, using these starters.</div>
+  <div class="build">${[['Observation','I notice…'],['Description','I see and hear…'],['Explanation','This works because the…'],['Interpretation','I think it means…'],['Evaluation','It succeeds / falls short because…']].map((s,k)=>`<div><label for="t${k}">${k+1}. ${s[0]}</label><textarea id="t${k}" rows="2" placeholder="${s[1]}"></textarea></div>`).join('')}
+  <div style="display:flex;align-items:flex-end;gap:6px"><button class="btn" id="mk4">Build my response</button><button class="btn alt" id="rp4">Replay</button></div></div>
+  <textarea id="out" rows="5" readonly aria-label="Your compiled response" placeholder="Your response will appear here."></textarea><div class="msg" id="m4b" aria-live="polite"></div>`;
+  $('#mk4').onclick=()=>{const v=[0,1,2,3,4].map(k=>$('#t'+k).value.trim());if(v.some(x=>!x)){$('#m4b').className='msg bad';$('#m4b').textContent='Fill in all five stages first.';return}
+   $('#out').value=v.join(' ');navigator.clipboard&&navigator.clipboard.writeText($('#out').value).then(()=>{$('#m4b').className='msg ok';$('#m4b').textContent='Copied to your clipboard. Great evidence-based judgment!'},()=>{$('#m4b').className='msg ok';$('#m4b').textContent='Built! Select the text to copy it.'})};
+  $('#rp4').onclick=()=>location.reload();
+ }
+ next();
+})();
+
+
+report();addEventListener("resize",report);
+</script>
+</body>
+</html>
