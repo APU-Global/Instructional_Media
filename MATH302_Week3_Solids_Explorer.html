@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH302 | Week 3: Area, Volume, and Surface Area</title>
+<style>
+:root{--red:#a8353a;--red2:#d34147;--tint:#fbeeee;--ink:#222;--mut:#5b5b5b;--line:#e3dcdc;--bg:#fff;--blue:#1f5f8b;--green:#2f7d4f;--gold:#d9a21b;--card:#faf7f7}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column}
+header{flex:none;background:linear-gradient(100deg,var(--red),var(--red2));color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.badge{background:#fff;color:var(--red);font-weight:800;letter-spacing:.5px;border-radius:6px;padding:3px 9px;font-size:13px;white-space:nowrap}
+header h1{margin:0;font-size:18px;line-height:1.2}
+header p{margin:0;font-size:12.5px;opacity:.92}
+nav{flex:none;display:flex;gap:4px;padding:8px 12px 0;border-bottom:2px solid var(--line);background:#fff;overflow-x:auto}
+nav button{border:0;background:#f1ecec;color:var(--ink);padding:8px 14px;border-radius:8px 8px 0 0;font:600 13.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{background:var(--red);color:#fff}
+nav button:focus-visible,.btn:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #f2a900;outline-offset:1px}
+main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 16px 18px}
+section.panel{display:none}section.panel.on{display:block}
+.lead{margin:0 0 10px;color:var(--mut)}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.col{flex:1 1 320px;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:14.5px;color:var(--red)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:10px}
+.ctrl label{display:flex;flex-direction:column;font-size:12px;font-weight:600;color:var(--mut);gap:3px}
+select,input[type=number],input[type=text]{font:inherit;padding:6px 8px;border:1px solid #bbb;border-radius:7px;background:#fff;min-width:0}
+input[type=range]{accent-color:var(--red);width:150px}
+.btn{font:600 13.5px inherit;font-family:inherit;border:0;border-radius:8px;padding:8px 13px;background:var(--red);color:#fff;cursor:pointer}
+.btn:hover{background:#8d2a2f}.btn.alt{background:#fff;color:var(--red);border:1.5px solid var(--red)}.btn.alt:hover{background:var(--tint)}
+.btn.sel{background:var(--ink)}
+svg{max-width:100%;height:auto;display:block}
+.big{font-size:20px;font-weight:700}
+.ok{color:var(--green);font-weight:700}.no{color:var(--red);font-weight:700}
+.tcard{margin-top:12px;border-left:5px solid var(--gold);background:#fff8e6;border-radius:6px;padding:9px 12px;font-size:13.5px}
+.tcard b{color:#7a5a00}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:8px}
+.kv div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.kv small{display:block;color:var(--mut);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.kv span{font-size:19px;font-weight:700}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.15}
+.frac>span:first-child{border-bottom:2px solid var(--ink);padding:0 6px 2px}.frac>span:last-child{padding:2px 6px 0}
+.cx{text-decoration:line-through;text-decoration-color:var(--red2);text-decoration-thickness:2.5px;color:var(--red)}
+.sr{position:absolute;left:-9999px}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.shake{animation:shake .3s}
+@keyframes pop{from{transform:scale(.85);opacity:.4}to{transform:none;opacity:1}}.pop{animation:pop .25s}
+@media(max-width:520px){header h1{font-size:15px}header p{display:none}main{padding:10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="app">
+<header><span class="badge">MATH302</span><div><h1>Week 3 · Area, Volume, and Surface Area</h1><p>Interactive: 3D Solids Explorer & Choosing the Right Measure</p></div></header>
+<nav role="tablist" aria-label="Activities"><button role="tab" id="t0" aria-selected="true" aria-controls="p0" data-t="0">Solids Explorer</button><button role="tab" id="t1" aria-selected="false" aria-controls="p1" data-t="1">Choose the Measure</button></nav>
+<main id="main">
+<section class="panel on" id="p0" role="tabpanel" aria-labelledby="t0">
+<p class="lead">Change the dimensions and watch volume and surface area respond. Switch to the net view to see where the surface area formula comes from.</p>
+<div class="ctrl">
+ <label>Solid<select id="shape"><option value="box">Rectangular solid</option><option value="cyl">Cylinder</option><option value="cone">Cone</option><option value="sph">Sphere</option></select></label>
+ <label>Unit<select id="unit"><option>cm</option><option>in</option><option>m</option><option>ft</option></select></label>
+ <label id="Ll">Length <output id="Lo">6</output><input type="range" id="L" min="1" max="12" value="6"></label>
+ <label id="Wl">Width <output id="Wo">4</output><input type="range" id="W" min="1" max="12" value="4"></label>
+ <label id="Rl">Radius <output id="Ro">3</output><input type="range" id="R" min="1" max="8" value="3"></label>
+ <label id="Hl">Height <output id="Ho">5</output><input type="range" id="H" min="1" max="12" value="5"></label>
+</div>
+<div class="ctrl"><button class="btn sel" id="v3d">3D view</button><button class="btn alt" id="vnet">Net (unfolded)</button></div>
+<div class="row">
+ <div class="col" style="flex:1 1 340px"><div class="card" style="padding:4px"><svg id="fig" viewBox="0 0 360 300" role="img" aria-label="Drawing of the selected solid"></svg></div></div>
+ <div class="col"><div class="card"><h3>Volume — space filled</h3><div id="vol"></div></div>
+ <div class="card" style="margin-top:10px"><h3>Surface area — surface covered</h3><div id="sa"></div></div></div>
+</div>
+<div class="tcard" id="tip"></div>
+</section>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+<p class="lead">Before calculating, decide what the situation is asking for. Tap the measure that fits each scenario.</p>
+<div class="row">
+ <div class="col" style="flex:1 1 280px"><div class="card" style="padding:4px"><svg id="sicon" viewBox="0 0 300 200" role="img" aria-label="Scenario picture"></svg></div></div>
+ <div class="col"><div class="card"><h3 id="sn">Scenario</h3><p id="st" class="big" style="font-size:17px;margin:4px 0 10px"></p>
+  <div class="ctrl" style="flex-direction:column;align-items:stretch" id="sopts"></div><div id="sf" style="min-height:48px"></div>
+  <div class="ctrl" style="margin:6px 0 0"><button class="btn" id="snext" style="display:none">Next scenario →</button><span id="sc"></span></div></div></div>
+</div>
+</section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+$$('nav button').forEach(b=>b.onclick=()=>{$$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));$$('section.panel').forEach((p,i)=>p.classList.toggle('on',i==b.dataset.t));$('#main').scrollTop=0;});
+
+const PI=Math.PI,f2=n=>Number(n.toFixed(2)).toLocaleString('en-US'),sv=$('#fig');
+const st={shape:'box',net:false};
+const col={f:'#d34147',t:'#e98a8e',s:'#a8353a',n:'#f4c9cb'};
+function ln(x1,y1,x2,y2,c='#222',w=1.5,d=''){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${d?`stroke-dasharray="${d}"`:''}/>`}
+function tx(x,y,t,a='middle',s=13,c='#222',b=700){return `<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" fill="${c}" font-weight="${b}">${t}</text>`}
+function box(l,w,h){const k=Math.min(200/(l+.5*w),160/(h+.35*w)),W=l*k,H=h*k,dx=.5*w*k,dy=.35*w*k;
+ const x0=(360-W-dx)/2,y0=(300-H-dy)/2+dy+H;const A=[x0,y0-H],B=[x0+W,y0-H];
+ let s=`<polygon points="${x0},${y0-H} ${x0+W},${y0-H} ${x0+W+dx},${y0-H-dy} ${x0+dx},${y0-H-dy}" fill="${col.t}" stroke="#222" stroke-width="2"/>`;
+ s+=`<polygon points="${x0+W},${y0-H} ${x0+W+dx},${y0-H-dy} ${x0+W+dx},${y0-dy} ${x0+W},${y0}" fill="${col.s}" stroke="#222" stroke-width="2"/>`;
+ s+=`<rect x="${x0}" y="${y0-H}" width="${W}" height="${H}" fill="${col.f}" stroke="#222" stroke-width="2"/>`;
+ s+=tx(x0+W/2,y0+18,`l = ${l}`)+tx(x0+W+dx+8,y0-H/2-dy/2+4,`h = ${h}`,'start')+tx(x0+dx/2-8,y0-H-dy/2+4,`w = ${w}`,'end');return s;}
+function cyl(r,h){const k=Math.min(180/(2*r),180/(h+.7*r)),rx=r*k,ry=rx*.32,H=h*k,cx=180,top=(300-H-2*ry)/2+ry+8;
+ let s=`<path d="M${cx-rx} ${top} v${H} a${rx} ${ry} 0 0 0 ${2*rx} 0 v${-H}" fill="${col.f}" stroke="#222" stroke-width="2"/>`;
+ s+=`<ellipse cx="${cx}" cy="${top}" rx="${rx}" ry="${ry}" fill="${col.t}" stroke="#222" stroke-width="2"/>`;
+ s+=ln(cx,top,cx+rx,top,'#222',2,'4 3')+tx(cx+rx/2,top-ry-3,`r = ${r}`)+tx(cx+rx+10,top+H/2+4,`h = ${h}`,'start');return s;}
+function cone(r,h){const k=Math.min(180/(2*r),190/(h+.7*r)),rx=r*k,ry=rx*.32,H=h*k,cx=180,base=(300+H)/2+ry-6;
+ let s=`<path d="M${cx-rx} ${base} L${cx} ${base-H} L${cx+rx} ${base} A${rx} ${ry} 0 0 1 ${cx-rx} ${base}Z" fill="${col.f}" stroke="#222" stroke-width="2"/>`;
+ s+=`<path d="M${cx-rx} ${base} A${rx} ${ry} 0 0 0 ${cx+rx} ${base}" fill="${col.t}" stroke="#222" stroke-width="2" opacity=".9"/>`;
+ s+=ln(cx,base-H,cx,base,'#222',2,'4 3')+ln(cx,base,cx+rx,base,'#222',2,'4 3')+tx(cx+6,base-H/2,`h = ${h}`,'start')+tx(cx+rx/2,base+16,`r = ${r}`);return s;}
+function sph(r){const k=Math.min(200/r/2,200/r/2),R=r*k*0.95+10,cx=180,cy=150;
+ let s=`<defs><radialGradient id="rg" cx=".35" cy=".3"><stop offset="0" stop-color="#f4a1a4"/><stop offset="1" stop-color="#8d2a2f"/></radialGradient></defs>`;
+ s+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#rg)" stroke="#222" stroke-width="2"/><ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R*.3}" fill="none" stroke="#fff" stroke-dasharray="5 4" stroke-width="1.5"/>`;
+ s+=ln(cx,cy,cx+R,cy,'#fff',2.5)+tx(cx+R/2,cy-6,`r = ${r}`,'middle',13,'#fff');return s;}
+function netCyl(r,h){const C=2*PI*r,k=Math.min(330/C,200/(h+4*r)),w=C*k,H=h*k,rr=r*k,x0=(360-w)/2,y0=150-H/2;
+ let s=`<rect x="${x0}" y="${y0}" width="${w}" height="${H}" fill="${col.f}" stroke="#222" stroke-width="2"/>`;
+ s+=`<circle cx="${x0+w/2}" cy="${y0-rr}" r="${rr}" fill="${col.t}" stroke="#222" stroke-width="2"/><circle cx="${x0+w/2}" cy="${y0+H+rr}" r="${rr}" fill="${col.t}" stroke="#222" stroke-width="2"/>`;
+ s+=tx(x0+w/2,y0+H/2+5,`2πr = ${f2(C)}`,'middle',14,'#fff')+tx(x0+w+4,y0+H/2,`h=${h}`,'start',11)+tx(x0+w/2,y0-rr+4,'πr²','middle',13)+tx(x0+w/2,y0+H+rr+4,'πr²','middle',13);return s;}
+function netBox(l,w,h){const k=Math.min(330/(2*l+2*w),270/(h+2*w)),L=l*k,Wd=w*k,H=h*k,x0=(360-(2*l+2*w)*k)/2,y0=(300-(h+2*w)*k)/2;
+ const R=(x,y,a,b,c,t)=>`<rect x="${x}" y="${y}" width="${a}" height="${b}" fill="${c}" stroke="#222" stroke-width="2"/>`+tx(x+a/2,y+b/2+4,t,'middle',Math.min(12,a/5+4),'#222');
+ return R(x0,y0,L,Wd,col.n,`top ${l}×${w}`)+R(x0,y0+Wd,L,H,col.f,`front ${l}×${h}`)+R(x0+L,y0+Wd,Wd,H,col.s,`side ${w}×${h}`)+R(x0+L+Wd,y0+Wd,L,H,col.f,`back ${l}×${h}`)+R(x0+2*L+Wd,y0+Wd,Wd,H,col.s,`side ${w}×${h}`)+R(x0,y0+Wd+H,L,Wd,col.n,`bottom ${l}×${w}`);}
+function upd(){
+ const sh=$('#shape').value,u=$('#unit').value,l=+$('#L').value,w=+$('#W').value,r=+$('#R').value,h=+$('#H').value;
+ ['L','W','R','H'].forEach(i=>$('#'+i+'o').textContent=$('#'+i).value);
+ $('#Ll').style.display=$('#Wl').style.display=sh=='box'?'':'none';$('#Rl').style.display=sh=='box'?'none':'';$('#Hl').style.display=sh=='sph'?'none':'';
+ const canNet=sh=='box'||sh=='cyl';if(!canNet&&st.net){st.net=false;}
+ $('#vnet').disabled=!canNet;$('#vnet').style.opacity=canNet?1:.45;$('#v3d').className='btn '+(st.net?'alt':'sel');$('#vnet').className='btn '+(st.net?'sel':'alt');
+ let fig,V,S;
+ if(sh=='box'){fig=st.net?netBox(l,w,h):box(l,w,h);
+  V=[`V = lwh = ${l} × ${w} × ${h}`,l*w*h,`${l*w*h}`];S=[`SA = 2lw + 2lh + 2wh<br>= 2(${l*w}) + 2(${l*h}) + 2(${w*h})`,2*l*w+2*l*h+2*w*h];
+  $('#vol').innerHTML=`${V[0]}<div class="big">= ${V[1]} ${u}³</div>`;$('#sa').innerHTML=`${S[0]}<div class="big">= ${S[1]} ${u}²</div>`;
+  $('#tip').innerHTML='<b>Notice:</b> The net shows six rectangles — the three pairs of faces. Adding their areas gives the surface area formula.';}
+ else if(sh=='cyl'){fig=st.net?netCyl(r,h):cyl(r,h);
+  $('#vol').innerHTML=`V = πr²h = π(${r})²(${h}) = ${r*r*h}π<div class="big">≈ ${f2(PI*r*r*h)} ${u}³</div>`;
+  $('#sa').innerHTML=`SA = 2πr² + 2πrh = 2π(${r})² + 2π(${r})(${h}) = ${2*r*r+2*r*h}π<div class="big">≈ ${f2(PI*(2*r*r+2*r*h))} ${u}²</div>`;
+  $('#tip').innerHTML='<b>Notice:</b> The label that wraps the side unrolls into a rectangle whose width is the circumference <i>2πr</i> and whose height is <i>h</i>. That is where 2πrh comes from.';}
+ else if(sh=='cone'){fig=cone(r,h);const sl=Math.sqrt(r*r+h*h);
+  $('#vol').innerHTML=`V = ⅓πr²h = ⅓π(${r})²(${h}) = ${f2(r*r*h/3)}π<div class="big">≈ ${f2(PI*r*r*h/3)} ${u}³</div>`;
+  $('#sa').innerHTML=`SA = πr² + πrs, where slant s = √(r²+h²) ≈ ${f2(sl)}<div class="big">≈ ${f2(PI*r*r+PI*r*sl)} ${u}²</div>`;
+  $('#tip').innerHTML='<b>Notice:</b> A cone holds exactly one-third the volume of a cylinder with the same base and height. Switch to Cylinder with the same r and h to compare.';}
+ else{fig=sph(r);
+  $('#vol').innerHTML=`V = (4/3)πr³ = (4/3)π(${r})³ = ${f2(4*r*r*r/3)}π<div class="big">≈ ${f2(4/3*PI*r**3)} ${u}³</div>`;
+  $('#sa').innerHTML=`SA = 4πr² = 4π(${r})² = ${4*r*r}π<div class="big">≈ ${f2(4*PI*r*r)} ${u}²</div>`;
+  $('#tip').innerHTML='<b>Notice:</b> Double the radius and the surface area becomes 4 times larger but the volume becomes 8 times larger. Try it!';}
+ sv.innerHTML=fig;}
+['shape','unit','L','W','R','H'].forEach(i=>$('#'+i).addEventListener('input',upd));
+$('#v3d').onclick=()=>{st.net=false;upd()};$('#vnet').onclick=()=>{if(!$('#vnet').disabled){st.net=true;upd()}};upd();
+
+/* Choose the measure */
+const O=[['Distance around','Perimeter or circumference · linear units (cm, ft)'],['Surface covered','Area or surface area · square units (cm², ft²)'],['Space filled','Volume · cubic units (cm³, ft³)']];
+const I={
+ fence:'<rect width="300" height="200" fill="#e8f3e4"/><rect x="60" y="50" width="180" height="100" fill="#9fd08a"/>'+[60,100,140,180,220].map(x=>`<rect x="${x-4}" y="44" width="8" height="14" fill="#8a5a2b"/><rect x="${x-4}" y="142" width="8" height="14" fill="#8a5a2b"/>`).join('')+'<rect x="56" y="48" width="188" height="5" fill="#a9743a"/><rect x="56" y="147" width="188" height="5" fill="#a9743a"/><rect x="56" y="48" width="5" height="104" fill="#a9743a"/><rect x="239" y="48" width="5" height="104" fill="#a9743a"/>',
+ sod:'<rect width="300" height="200" fill="#dff1ff"/><polygon points="30,170 270,170 240,70 60,70" fill="#6cbf4b" stroke="#2f7d4f" stroke-width="3"/>'+[0,1,2,3,4].map(i=>`<line x1="${60+i*45-i*0}" y1="70" x2="${30+i*60}" y2="170" stroke="#4a9a33"/>`).join('')+'<circle cx="250" cy="35" r="18" fill="#ffd54a"/>',
+ soil:'<rect width="300" height="200" fill="#f6efe2"/><polygon points="60,90 200,90 240,60 100,60" fill="#6b4226" stroke="#222" stroke-width="2"/><rect x="60" y="90" width="140" height="80" fill="#a8353a" stroke="#222" stroke-width="2"/><polygon points="200,90 240,60 240,140 200,170" fill="#7d2327" stroke="#222" stroke-width="2"/><g stroke="#2f7d4f" stroke-width="3" fill="none"><path d="M130 75 q-4 -22 4 -30"/><path d="M160 75 q6 -20 -2 -32"/></g>',
+ cake:'<rect width="300" height="200" fill="#fff4f6"/><ellipse cx="150" cy="150" rx="90" ry="26" fill="#e9b88a" stroke="#222" stroke-width="2"/><rect x="60" y="85" width="180" height="65" fill="#e9b88a"/><line x1="60" y1="85" x2="60" y2="150" stroke="#222" stroke-width="2"/><line x1="240" y1="85" x2="240" y2="150" stroke="#222" stroke-width="2"/><ellipse cx="150" cy="85" rx="90" ry="26" fill="#f7d6e0" stroke="#222" stroke-width="2"/><path d="M60 118 Q150 150 240 118" fill="none" stroke="#d34147" stroke-width="7"/><path d="M60 125 Q150 157 240 125" fill="none" stroke="#d34147" stroke-width="0"/>',
+ can:'<rect width="300" height="200" fill="#eef3f8"/><path d="M95 60 v90 a55 16 0 0 0 110 0 v-90" fill="#c9d3dd" stroke="#222" stroke-width="2"/><path d="M95 85 v45 a55 16 0 0 0 110 0 v-45 a55 16 0 0 1 -110 0z" fill="#d34147" stroke="#222" stroke-width="2"/><ellipse cx="150" cy="60" rx="55" ry="16" fill="#e5ebf1" stroke="#222" stroke-width="2"/><text x="150" y="122" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">SOUP</text>',
+ tank:'<rect width="300" height="200" fill="#f2f8fc"/><rect x="50" y="50" width="200" height="110" fill="#bfe4f7" stroke="#222" stroke-width="3"/><rect x="50" y="85" width="200" height="75" fill="#4aa8d8" opacity=".75"/><circle cx="110" cy="125" r="6" fill="#fff" opacity=".8"/><circle cx="200" cy="110" r="4" fill="#fff" opacity=".8"/><path d="M150 135 l24 -10 l-8 10 l8 10z" fill="#f2a900" stroke="#222"/>'};
+const S=[['Fence for a garden','You are buying fencing to go around the edge of a rectangular garden.',0,'fence','Fencing is measured along the edge — a perimeter, in linear units (feet).'],
+['Sod for a lawn','You need enough sod to cover a lawn.',1,'sod','Covering a flat region is area, in square units (square feet).'],
+['Soil for a planter','How much soil fits inside a planter box?',2,'soil','Filling the inside of a solid is volume, in cubic units (cubic feet).'],
+['Ribbon on a cake','A ribbon will be wrapped once around a round cake.',0,'cake','The distance around a circle is its circumference, in linear units.'],
+['Label for a can','A paper label covers the side of a soup can.',1,'can','The label covers a surface: surface area (a square-unit measure).'],
+['Fill an aquarium','How much water does it take to fill the aquarium?',2,'tank','Water fills space, so it is volume — measured in cubic units (or liters).']];
+let si=0,score=0,done=false,miss=false;
+function showS(){const s=S[si];$('#sn').textContent=`Scenario ${si+1} of ${S.length}: ${s[0]}`;$('#st').textContent=s[1];$('#sicon').innerHTML=I[s[3]];done=false;miss=false;$('#sf').innerHTML='';$('#snext').style.display='none';$('#sc').textContent=`Score: ${score}`;
+ const o=$('#sopts');o.innerHTML='';O.forEach((x,i)=>{const b=document.createElement('button');b.className='btn alt';b.style.textAlign='left';b.innerHTML=`<b>${x[0]}</b><br><small style="font-weight:400">${x[1]}</small>`;
+  b.onclick=()=>{if(done)return;if(i==s[2]){done=true;if(!miss)score++;$('#sf').innerHTML=`<span class="ok">✔ Yes!</span> ${s[4]}`;$('#snext').style.display='';$('#snext').textContent=si==S.length-1?'See result':'Next scenario →';$('#sc').textContent=`Score: ${score}`;}else{miss=true;b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);$('#sf').innerHTML='<span class="no">Not that one.</span> Ask: am I measuring along an edge, covering a surface, or filling a space?';}};o.appendChild(b);});}
+const nx=()=>{if(si==S.length-1){$('#sf').innerHTML=`<div class="big">You matched all the measures. First-try score: ${score} of ${S.length}.</div>`;$('#snext').textContent='Play again';$('#snext').onclick=()=>{si=0;score=0;$('#snext').textContent='Next scenario →';$('#snext').onclick=nx;showS();};return;}si++;showS();};$('#snext').onclick=nx;
+showS();
+
+</script></body></html>

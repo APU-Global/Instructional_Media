@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH302 | Week 5: Combinations and the Fundamentals of Probability</title>
+<style>
+:root{--red:#a8353a;--red2:#d34147;--tint:#fbeeee;--ink:#222;--mut:#5b5b5b;--line:#e3dcdc;--bg:#fff;--blue:#1f5f8b;--green:#2f7d4f;--gold:#d9a21b;--card:#faf7f7}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.app{height:100%;display:flex;flex-direction:column}
+header{flex:none;background:linear-gradient(100deg,var(--red),var(--red2));color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.badge{background:#fff;color:var(--red);font-weight:800;letter-spacing:.5px;border-radius:6px;padding:3px 9px;font-size:13px;white-space:nowrap}
+header h1{margin:0;font-size:18px;line-height:1.2}
+header p{margin:0;font-size:12.5px;opacity:.92}
+nav{flex:none;display:flex;gap:4px;padding:8px 12px 0;border-bottom:2px solid var(--line);background:#fff;overflow-x:auto}
+nav button{border:0;background:#f1ecec;color:var(--ink);padding:8px 14px;border-radius:8px 8px 0 0;font:600 13.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{background:var(--red);color:#fff}
+nav button:focus-visible,.btn:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #f2a900;outline-offset:1px}
+main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 16px 18px}
+section.panel{display:none}section.panel.on{display:block}
+.lead{margin:0 0 10px;color:var(--mut)}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.col{flex:1 1 320px;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:14.5px;color:var(--red)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:10px}
+.ctrl label{display:flex;flex-direction:column;font-size:12px;font-weight:600;color:var(--mut);gap:3px}
+select,input[type=number],input[type=text]{font:inherit;padding:6px 8px;border:1px solid #bbb;border-radius:7px;background:#fff;min-width:0}
+input[type=range]{accent-color:var(--red);width:150px}
+.btn{font:600 13.5px inherit;font-family:inherit;border:0;border-radius:8px;padding:8px 13px;background:var(--red);color:#fff;cursor:pointer}
+.btn:hover{background:#8d2a2f}.btn.alt{background:#fff;color:var(--red);border:1.5px solid var(--red)}.btn.alt:hover{background:var(--tint)}
+.btn.sel{background:var(--ink)}
+svg{max-width:100%;height:auto;display:block}
+.big{font-size:20px;font-weight:700}
+.ok{color:var(--green);font-weight:700}.no{color:var(--red);font-weight:700}
+.tcard{margin-top:12px;border-left:5px solid var(--gold);background:#fff8e6;border-radius:6px;padding:9px 12px;font-size:13.5px}
+.tcard b{color:#7a5a00}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:8px}
+.kv div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.kv small{display:block;color:var(--mut);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.kv span{font-size:19px;font-weight:700}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.15}
+.frac>span:first-child{border-bottom:2px solid var(--ink);padding:0 6px 2px}.frac>span:last-child{padding:2px 6px 0}
+.cx{text-decoration:line-through;text-decoration-color:var(--red2);text-decoration-thickness:2.5px;color:var(--red)}
+.sr{position:absolute;left:-9999px}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.shake{animation:shake .3s}
+@keyframes pop{from{transform:scale(.85);opacity:.4}to{transform:none;opacity:1}}.pop{animation:pop .25s}
+@media(max-width:520px){header h1{font-size:15px}header p{display:none}main{padding:10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="app">
+<header><span class="badge">MATH302</span><div><h1>Week 5 · Combinations and the Fundamentals of Probability</h1><p>Interactive: Two-Dice Probability Lab & Order Matters</p></div></header>
+<nav role="tablist" aria-label="Activities"><button role="tab" id="t0" aria-selected="true" aria-controls="p0" data-t="0">Dice Probability Lab</button><button role="tab" id="t1" aria-selected="false" aria-controls="p1" data-t="1">Order Matters</button></nav>
+<main id="main">
+<section class="panel on" id="p0" role="tabpanel" aria-labelledby="t0">
+<p class="lead">Two fair dice have 36 equally likely outcomes. Roll them and compare what you observe (empirical) with what the sample space predicts (theoretical).</p>
+<div class="ctrl"><label>Event: the sum is<select id="tsum"></select></label>
+ <button class="btn" data-n="1">Roll 1</button><button class="btn" data-n="10">Roll 10</button><button class="btn" data-n="100">Roll 100</button><button class="btn" data-n="1000">Roll 1000</button><button class="btn alt" id="rst">Reset</button></div>
+<div class="row">
+ <div class="col" style="flex:1 1 330px"><div class="card" style="padding:4px"><svg id="grid" viewBox="0 0 340 340" role="img" aria-label="36-outcome sample space for two dice"></svg></div></div>
+ <div class="col" style="flex:1.3 1 360px"><div class="card" style="padding:4px"><svg id="bars" viewBox="0 0 440 240" role="img" aria-label="Bar chart of empirical versus theoretical probability of each sum"></svg></div>
+ <div class="kv"><div><small>Trials</small><span id="s1">0</span></div><div><small>Theoretical</small><span id="s2"></span></div><div><small>Empirical</small><span id="s3">—</span></div></div>
+ <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><svg id="last" viewBox="0 0 130 62" width="130" aria-label="Last roll"></svg><span id="sm" style="font-size:13.5px;color:var(--mut)"></span></div></div>
+</div>
+<div class="tcard"><b>Classroom connection:</b> Grade 7 students compare theoretical and experimental probability (7.SP.C.5–7). Why does Roll 1000 usually look closer to the dashed blue outlines than Roll 10?</div>
+</section>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+<p class="lead">Choose how many items to pick. Then decide: does rearranging the same chosen items create a <i>new</i> outcome?</p>
+<div class="ctrl"><label>Items to choose from (n)<select id="n"><option>4</option><option selected>5</option><option>6</option></select></label>
+ <label>Pick (r)<select id="r"><option>2</option><option selected>3</option><option>4</option></select></label>
+ <button class="btn sel" id="mp">Order matters (permutations)</button><button class="btn alt" id="mc">Order doesn’t matter (combinations)</button></div>
+<div class="card" style="margin-bottom:10px"><svg id="tok" style="max-width:420px" viewBox="0 0 420 70" role="img" aria-label="The items to choose from"></svg></div>
+<div class="row"><div class="col" style="flex:1 1 220px"><div class="card"><h3 id="ch">Count</h3><div id="fm"></div><div class="big" id="cnt" style="margin-top:4px"></div><p id="ex" style="margin:6px 0 0;font-size:13.5px"></p></div></div>
+<div class="col" style="flex:3 1 380px"><div class="card"><h3 id="lh">All outcomes</h3><div id="chips" style="display:flex;flex-wrap:wrap;gap:6px"></div></div></div></div>
+<div class="tcard"><b>Remember:</b> P(n, r) = C(n, r) × r!. Each combination has r! orderings, so combinations are the permutations divided into groups.</div>
+</section>
+</main></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+$$('nav button').forEach(b=>b.onclick=()=>{$$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));$$('section.panel').forEach((p,i)=>p.classList.toggle('on',i==b.dataset.t));$('#main').scrollTop=0;});
+
+const SUMS=[...Array(11)].map((_,i)=>i+2),cnt=Array(13).fill(0);let N=0,last=null;
+const tc=s=>6-Math.abs(s-7);
+$('#tsum').innerHTML=SUMS.map(s=>`<option ${s==7?'selected':''}>${s}</option>`).join('');
+function die(x,y,n,sz,fill='#fff',ink='#222'){const p={1:[[.5,.5]],2:[[.25,.25],[.75,.75]],3:[[.25,.25],[.5,.5],[.75,.75]],4:[[.25,.25],[.75,.25],[.25,.75],[.75,.75]],5:[[.25,.25],[.75,.25],[.5,.5],[.25,.75],[.75,.75]],6:[[.25,.25],[.75,.25],[.25,.5],[.75,.5],[.25,.75],[.75,.75]]}[n];
+ return `<rect x="${x}" y="${y}" width="${sz}" height="${sz}" rx="${sz*.18}" fill="${fill}" stroke="#222" stroke-width="1.5"/>`+p.map(q=>`<circle cx="${x+q[0]*sz}" cy="${y+q[1]*sz}" r="${sz*.075}" fill="${ink}"/>`).join('');}
+function draw(){
+ const T=+$('#tsum').value;let g='',c=44,o=46;
+ for(let i=1;i<=6;i++){g+=die(o+(i-1)*c+7,4,i,30)+die(5,o+(i-1)*c+7,i,30);}
+ for(let a=1;a<=6;a++)for(let b=1;b<=6;b++){const s=a+b,hit=s==T,isL=last&&last[0]==a&&last[1]==b;
+  g+=`<rect x="${o+(b-1)*c}" y="${o+(a-1)*c}" width="${c-2}" height="${c-2}" rx="6" fill="${hit?'#d34147':'#f3ecec'}" stroke="${isL?'#222':'#fff'}" stroke-width="${isL?4:1}"/><text x="${o+(b-1)*c+c/2-1}" y="${o+(a-1)*c+c/2+5}" text-anchor="middle" font-size="15" font-weight="700" fill="${hit?'#fff':'#444'}">${s}</text>`;}
+ $('#grid').innerHTML=g;
+ // bars
+ let h='',x0=36,bw=26,gap=8,Y=200,sc=190/.2;
+ [0,.05,.1,.15,.2].forEach(v=>{h+=`<line x1="${x0-4}" x2="430" y1="${Y-v*sc}" y2="${Y-v*sc}" stroke="#eee"/><text x="${x0-8}" y="${Y-v*sc+4}" text-anchor="end" font-size="10" fill="#666">${v.toFixed(2)}</text>`;});
+ SUMS.forEach((s,i)=>{const x=x0+i*(bw+gap),th=tc(s)/36,em=N?cnt[s]/N:0;
+  h+=`<rect x="${x}" y="${Y-em*sc}" width="${bw}" height="${em*sc}" fill="${s==T?'#a8353a':'#e98a8e'}"/>`;
+  h+=`<rect x="${x-2}" y="${Y-th*sc}" width="${bw+4}" height="${th*sc}" fill="none" stroke="#1f5f8b" stroke-width="2" stroke-dasharray="4 3"/>`;
+  h+=`<text x="${x+bw/2}" y="${Y+16}" text-anchor="middle" font-size="12" font-weight="${s==T?800:500}">${s}</text>`;});
+ h+=`<text x="${x0}" y="14" font-size="11" fill="#444"><tspan fill="#a8353a" font-weight="700">■ observed</tspan>   <tspan fill="#1f5f8b" font-weight="700">▭ theoretical</tspan>  (probability of each sum)</text>`;
+ $('#bars').innerHTML=h;
+ $('#s1').textContent=N;$('#s2').textContent=`${tc(T)}/36 ≈ ${(tc(T)/36).toFixed(3)}`;$('#s3').textContent=N?`${cnt[T]}/${N} ≈ ${(cnt[T]/N).toFixed(3)}`:'—';
+ $('#s2').style.fontSize=$('#s3').style.fontSize='15px';
+ $('#last').innerHTML=last?die(4,16,last[0],42)+die(66,16,last[1],42)+`<text x="65" y="12" text-anchor="middle" font-size="11" font-weight="700">sum = ${last[0]+last[1]}</text>`:'<text x="4" y="36" font-size="12" fill="#888">No rolls yet</text>';
+ $('#sm').textContent=N?`Difference between empirical and theoretical: ${Math.abs(cnt[T]/N-tc(T)/36).toFixed(3)}`:'Press a Roll button.';}
+function roll(n){for(let i=0;i<n;i++){const a=1+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*6);cnt[a+b]++;N++;last=[a,b];}draw();}
+$$('[data-n]').forEach(b=>b.onclick=()=>roll(+b.dataset.n));
+$('#rst').onclick=()=>{cnt.fill(0);N=0;last=null;draw();};$('#tsum').oninput=draw;draw();
+
+/* Order matters */
+const COL=['#d34147','#1f5f8b','#2f7d4f','#d9a21b','#7a4fa3','#e07b39'],L='ABCDEF';let mode='p';
+const fact=n=>n<2?1:n*fact(n-1);
+const dot=i=>`<span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:${COL[i]};color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center">${L[i]}</span>`;
+function perms(n,r,pre=[]){if(pre.length==r)return[pre];let o=[];for(let i=0;i<n;i++)if(!pre.includes(i))o=o.concat(perms(n,r,[...pre,i]));return o;}
+function ord(){const n=+$('#n').value;const rs=$('#r');[...rs.options].forEach(o=>o.disabled=+o.value>n-0);if(+rs.value>n)rs.value=n;
+ const r=+rs.value,P=fact(n)/fact(n-r),C=P/fact(r);
+ let t=`<defs/>`;for(let i=0;i<n;i++)t+=`<circle cx="${35+i*62}" cy="35" r="24" fill="${COL[i]}" stroke="#222" stroke-width="2"/><text x="${35+i*62}" y="42" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">${L[i]}</text>`;$('#tok').innerHTML=t;
+ $('#mp').className='btn '+(mode=='p'?'sel':'alt');$('#mc').className='btn '+(mode=='c'?'sel':'alt');
+ const all=perms(n,r),ch=$('#chips');ch.innerHTML='';
+ if(mode=='p'){$('#ch').textContent='Permutations — order matters';
+  $('#fm').innerHTML=`P(${n}, ${r}) = ${[...Array(r)].map((_,i)=>n-i).join(' × ')}`;$('#cnt').textContent=`= ${P} arrangements`;
+  $('#ex').textContent='Example: awarding gold, silver, and bronze medals. ABC and CBA are different results.';$('#lh').textContent=`All ${P} ordered outcomes`;
+  ch.innerHTML=all.map(p=>`<span style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:2px 4px;display:inline-flex;gap:2px">${p.map(dot).join('')}</span>`).join('');}
+ else{const g={};all.forEach(p=>{const k='k'+[...p].sort().join('');(g[k]=g[k]||[]).push(p);});
+  $('#ch').textContent='Combinations — order does not matter';
+  $('#fm').innerHTML=`C(${n}, ${r}) = P(${n}, ${r}) ÷ ${r}! = ${P} ÷ ${fact(r)}`;$('#cnt').textContent=`= ${C} groups`;
+  $('#ex').textContent='Example: choosing teammates for a committee. ABC and CBA are the same group.';$('#lh').textContent=`${C} groups — click one to see its ${fact(r)} orderings`;
+  Object.values(g).forEach(arr=>{const d=document.createElement('button');d.className='btn alt pop';d.style.cssText='padding:5px 7px;display:inline-flex;gap:2px;align-items:center';d.innerHTML=arr[0].slice().sort().map(dot).join('')+`<small style="margin-left:4px">×${arr.length}</small>`;
+   d.onclick=()=>{$('#ex').innerHTML=`This group has ${arr.length} orderings:<br>`+arr.map(p=>p.map(i=>L[i]).join('')).join(', ')+`<br>…but they all count as <b>one</b> combination.`;};ch.appendChild(d);});}}
+$('#n').oninput=ord;$('#r').oninput=ord;$('#mp').onclick=()=>{mode='p';ord()};$('#mc').onclick=()=>{mode='c';ord()};ord();
+
+</script></body></html>
