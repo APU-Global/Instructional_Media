@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero’s Journey – Level 1: Accept the Call</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#0e1030; --bg2:#1c1f55; --panel:#1f2460; --panel2:#2a307a; --line:#5560d6;
+  --text:#f6f7ff; --muted:#c9ccf5; --gold:#ffd24a; --gold-d:#b8891a; --teal:#4de1c1; --pink:#ff7aa8; --ink:#1a1440;
+  --pixel:'Press Start 2P','Courier New',monospace;
+  --body:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--body);font-size:18px;line-height:1.55;color:var(--text);min-height:100vh;
+  background:
+    radial-gradient(2px 2px at 20px 30px,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 90px 120px,rgba(255,255,255,.7),transparent),
+    radial-gradient(2px 2px at 160px 60px,var(--gold),transparent),
+    radial-gradient(1.5px 1.5px at 130px 170px,rgba(255,255,255,.6),transparent),
+    linear-gradient(var(--bg1),var(--bg2));
+  background-size:200px 200px,200px 200px,200px 200px,200px 200px,100% 100%;
+}
+.app{max-width:980px;margin:0 auto;padding:14px 14px 40px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+h1,h2,h3{margin:0}
+:focus-visible{outline:4px solid var(--teal);outline-offset:3px}
+[tabindex="-1"]:focus{outline:none}
+
+/* HUD */
+.hud{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;background:#0a0c2a;border:3px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:16px}
+.lvl{font-family:var(--pixel);font-size:12px;color:var(--gold)}
+.hud-name{font-size:15px;color:var(--muted);margin-left:10px}
+.hud-m{display:flex;gap:6px}
+.hud-r{display:flex;align-items:center;gap:10px}
+.xpbar{width:150px;height:16px;background:#1a1d4d;border:2px solid var(--line);border-radius:10px;overflow:hidden}
+.xpbar span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .6s}
+.xplabel{font-family:var(--pixel);font-size:10px;color:var(--teal)}
+
+/* panels */
+.panel{background:var(--panel);border:4px solid var(--line);border-radius:16px;box-shadow:0 8px 0 #0a0c2a;padding:20px;margin-bottom:22px}
+.sub{font-family:var(--pixel);font-size:13px;line-height:1.6;color:var(--gold);margin-bottom:14px}
+.small{font-size:15px;color:var(--muted)}
+.note{margin:16px 0 0;padding:10px 14px;border-left:5px solid var(--teal);background:rgba(77,225,193,.12);border-radius:0 10px 10px 0;font-size:16px}
+
+/* title */
+.scene{border:4px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 0 #0a0c2a;background:#141a52}
+.scene svg{display:block;width:100%;height:auto}
+.titleblock{text-align:center;padding:26px 10px 10px}
+.kicker{font-family:var(--pixel);font-size:11px;color:var(--teal);margin:0 0 14px}
+h1.main{font-family:var(--pixel);font-size:clamp(22px,5.2vw,44px);line-height:1.3;color:var(--text);text-shadow:4px 4px 0 #ff4f8b,8px 8px 0 #0a0c2a;letter-spacing:1px}
+.level{font-family:var(--pixel);font-size:clamp(12px,2.6vw,20px);color:var(--gold);margin:22px 0 14px;line-height:1.5}
+.tag{max-width:34ch;margin:0 auto 26px;font-size:20px}
+.how{margin-top:30px}
+.how ol{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:10px}
+.how li{display:flex;gap:12px;align-items:center}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-family:var(--pixel);font-size:12px}
+
+/* buttons */
+.btn{font-family:var(--pixel);font-size:13px;line-height:1.4;background:var(--gold);color:var(--ink);border:0;border-radius:12px;padding:16px 22px;cursor:pointer;box-shadow:0 6px 0 var(--gold-d);transition:transform .08s,box-shadow .08s}
+.btn:hover:not([disabled]){filter:brightness(1.07)}
+.btn:active:not([disabled]){transform:translateY(4px);box-shadow:0 2px 0 var(--gold-d)}
+.btn[disabled]{background:#6b6f9f;color:#e2e4fa;box-shadow:0 6px 0 #424675;cursor:not-allowed}
+.btn.big{font-size:clamp(14px,3vw,18px);padding:20px 30px}
+.btn.secondary{background:var(--panel2);color:var(--text);border:3px solid var(--line);box-shadow:0 6px 0 #0a0c2a}
+.btnrow{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;margin:8px 0 6px}
+.btnrow.center{justify-content:center}
+.gate{min-height:1.6em;margin:10px 0 0;text-align:right;color:var(--muted);font-size:16px}
+
+/* guide */
+.guide{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:end;margin:0 0 22px}
+.owl svg{width:96px;height:96px;display:block}
+.bubble{position:relative;background:#fff8dc;color:var(--ink);border:4px solid var(--gold);border-radius:18px;padding:14px 18px 16px;font-size:18px}
+.bubble::before{content:"";position:absolute;left:-16px;bottom:26px;border:10px solid transparent;border-right:12px solid var(--gold);border-left:0}
+.bubble .who{display:block;font-family:var(--pixel);font-size:10px;color:#7a5a00;margin-bottom:6px}
+.bubble p{margin:0 0 10px}.bubble p:last-child{margin:0}
+.mission{margin:16px 0 4px;padding:14px;text-align:center;background:var(--ink);color:var(--gold);border-radius:12px;font-family:var(--pixel);font-size:clamp(11px,2.4vw,15px);line-height:1.7}
+.dots{display:flex;gap:8px;justify-content:center;margin:6px 0 18px}
+.dots i{width:12px;height:12px;border-radius:50%;background:#3b4098}
+.dots i.on{background:var(--gold)}
+
+/* quest header */
+.qtag{font-family:var(--pixel);font-size:11px;color:var(--teal);margin:6px 0 10px}
+.qtitle{font-family:var(--pixel);font-size:clamp(15px,3.6vw,24px);line-height:1.5;color:var(--text);margin-bottom:18px}
+.gain{display:inline-block;margin:0 0 14px;padding:10px 16px;background:var(--teal);color:var(--ink);font-family:var(--pixel);font-size:12px;border-radius:10px;animation:pop .6s}
+@keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+label.card{position:relative;display:block;cursor:pointer}
+.card input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.card-inner{position:relative;display:flex;flex-direction:column;gap:6px;height:100%;background:var(--panel2);border:3px solid var(--line);border-radius:14px;padding:14px;transition:transform .12s,border-color .12s}
+.card:hover .card-inner{transform:translateY(-3px);border-color:#8d97ff}
+.card input:focus-visible + .card-inner{outline:4px solid var(--teal);outline-offset:3px}
+.card input:checked + .card-inner{border-color:var(--gold);background:#3b3f9a;box-shadow:0 0 0 3px rgba(255,210,74,.35)}
+.card input:checked + .card-inner::after{content:"✓";position:absolute;top:8px;right:10px;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-weight:800}
+.card .art{height:100px;display:grid;place-items:center}
+.card .art svg{max-height:100px}
+.card .cname{font-family:var(--pixel);font-size:11px;line-height:1.6;color:var(--gold)}
+.card .cdesc{font-size:16px;line-height:1.45}
+
+/* creator */
+.creator{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:start}
+.preview{background:radial-gradient(circle at 50% 70%,#3b3f9a,#1a1d4d);border:3px solid var(--line);border-radius:14px;padding:12px;display:grid;place-items:center}
+.controls .row{margin-bottom:14px}
+.controls .lab{display:block;font-size:16px;color:var(--muted);margin-bottom:6px}
+.swrow{display:flex;flex-wrap:wrap;gap:10px}
+.sw{position:relative}
+.sw input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.sw span.dot{display:block;width:38px;height:38px;border-radius:50%;border:3px solid rgba(255,255,255,.35)}
+.sw input:checked + span.dot{border-color:#fff;box-shadow:0 0 0 3px var(--gold)}
+.sw input:focus-visible + span.dot{outline:3px solid var(--teal);outline-offset:3px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span.t{display:block;padding:8px 14px;border-radius:10px;border:3px solid var(--line);background:var(--panel2);font-size:16px}
+.chip input:checked + span.t{border-color:var(--gold);background:#3b3f9a}
+.chip input:focus-visible + span.t{outline:3px solid var(--teal);outline-offset:3px}
+
+/* fields */
+.field{margin:0 0 18px}
+.field label{display:block;font-size:18px;font-weight:600;margin-bottom:8px}
+.field .req{font-size:13px;font-weight:600;color:var(--ink);background:var(--pink);border-radius:6px;padding:1px 8px;margin-left:8px}
+.field .opt{font-size:13px;font-weight:600;color:var(--ink);background:var(--muted);border-radius:6px;padding:1px 8px;margin-left:8px}
+.field textarea,.field input[type=text]{width:100%;font:inherit;color:var(--text);background:#12153d;border:3px solid var(--line);border-radius:10px;padding:12px}
+.field textarea{min-height:96px;resize:vertical}
+.field textarea:focus,.field input:focus{outline:4px solid var(--teal);outline-offset:2px}
+
+/* backpack */
+.bagrow{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.slots{display:flex;gap:14px;flex-wrap:wrap}
+.slot{width:150px;min-height:120px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;text-align:center;font-size:15px}
+.slot.empty{border:3px dashed #7b86ff;color:var(--muted)}
+.slot.full{border:3px solid var(--gold);background:#3b3f9a;animation:pop .4s}
+.limit{min-height:1.6em;color:var(--gold);margin:12px 0 0}
+.encounter{display:flex;gap:18px;align-items:center;background:#3a1f5c;border:4px solid var(--pink);border-radius:14px;padding:16px;margin-bottom:20px}
+.encounter .enc-t{font-family:var(--pixel);font-size:12px;color:var(--pink);margin:0 0 8px}
+.encounter p{margin:0 0 6px}
+
+/* done */
+.badge{text-align:center;margin-bottom:18px}
+.badge svg{width:90px;height:112px;animation:float 3s ease-in-out infinite}
+.badge h2{font-family:var(--pixel);font-size:clamp(16px,4vw,26px);line-height:1.5;color:var(--gold);margin-top:8px}
+.herocard{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;background:linear-gradient(135deg,#2a307a,#3a1f5c);border:5px solid var(--gold);border-radius:18px;padding:22px;margin-bottom:22px;box-shadow:0 8px 0 #0a0c2a}
+.herocard .hname{font-family:var(--pixel);font-size:clamp(14px,3vw,20px);line-height:1.5;color:var(--gold);margin-bottom:4px}
+.herocard .hrole{font-size:19px;margin-bottom:14px}
+.herocard h3{font-family:var(--pixel);font-size:10px;color:var(--teal);margin:12px 0 8px;line-height:1.6}
+.mini{display:flex;align-items:center;gap:10px;margin:6px 0}
+.log h3{font-family:var(--pixel);font-size:12px;color:var(--gold);margin:18px 0 8px;line-height:1.6}
+.log .q{font-weight:700;margin:12px 0 2px}
+.log .a{margin:0;padding:10px 14px;background:#12153d;border-radius:10px;white-space:pre-wrap}
+details{margin:14px 0}
+summary{cursor:pointer;font-weight:700}
+textarea.export{width:100%;min-height:200px;font:15px/1.5 ui-monospace,Menlo,Consolas,monospace;background:#12153d;color:var(--text);border:3px solid var(--line);border-radius:10px;padding:12px;margin-top:10px}
+.status{min-height:1.6em;color:var(--teal);margin:8px 0 0}
+.next-teaser{text-align:center;color:var(--muted)}
+footer{margin-top:26px;text-align:center;font-size:14px;color:var(--muted)}
+footer button{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;padding:4px}
+
+.bob svg,.bob{animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.screen{animation:fade .35s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:50;animation:fall linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(115vh) rotate(720deg)}}
+
+@media (max-width:640px){
+  body{font-size:17px}
+  .creator{grid-template-columns:1fr}
+  .herocard{grid-template-columns:1fr;text-align:center}
+  .herocard .mini{justify-content:center}
+  .guide{grid-template-columns:64px 1fr}
+  .owl svg{width:64px;height:64px}
+  .encounter{flex-direction:column;text-align:center}
+  .gate{text-align:left}
+  .btnrow .btn{flex:1 1 100%}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  body{background:#fff;color:#000;font-size:12pt}
+  .hud,.btnrow,.no-print,.scene,.guide,footer,.gate,.confetti{display:none!important}
+  .panel,.herocard{background:#fff!important;border:2px solid #000!important;box-shadow:none!important;color:#000!important}
+  .herocard *,.panel *,.badge h2{color:#000!important;text-shadow:none!important}
+  .log .a{background:#fff!important;border:1px solid #999}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* =====================================================================
+   INSTRUCTOR EDIT ZONE – change the words here, no coding needed.
+   Keep the quotes " " and commas , exactly as they are.
+   Set required:false on any question you want students to be able to skip.
+   ===================================================================== */
+const MIN_CHARS = 10;   // shortest answer allowed for required questions
+
+const CONTENT = {
+  introPages: [
+    ["Every hero begins somewhere. Your journey starts here.",
+     "In every great adventure, there comes a moment when the hero is invited to step into something new. The path ahead may be exciting, uncertain, or a little of both. The hero doesn’t need to know everything about the journey before taking the first step. Starting college can feel the same way."],
+    ["Maybe you have a career goal you’re working toward. Maybe you’re creating new opportunities for yourself or your family. Maybe you’re returning to school after time away, starting over, or still figuring out what you want your future to look like.",
+     "Whatever brought you here, you have a starting point, a story, and something valuable to bring to this journey."],
+    ["In ISTU 101, you’ll build skills to help you find your way through college, notice your strengths, get past challenges, and connect your education to the life you want to build.",
+     "You don’t have to have everything figured out. You just have to be willing to begin."],
+    ["Your first mission is to discover who you are, what you’re bringing with you, and what might be waiting for you along the way."]
+  ],
+  mission: "MISSION: CREATE YOUR COLLEGE CHARACTER",
+  missionText: "Before you start a game, you need a character. Your character shows who you are as you begin this journey. It is not who you have to be forever.",
+
+  roles: [
+    {id:"dream",     name:"The Dream Chaser",  desc:"I have a goal I’m working toward, and college is helping me get there."},
+    {id:"explorer",  name:"The Explorer",      desc:"I’m still figuring out what I want, and I’m excited to discover new possibilities."},
+    {id:"reinventor",name:"The Reinventor",    desc:"I’m ready for a new chapter and looking for new opportunities."},
+    {id:"provider",  name:"The Provider",      desc:"I’m working toward a future that could benefit my family or the people I care about."},
+    {id:"challenger",name:"The Challenger",    desc:"I want to challenge myself, learn new things, and discover what I’m capable of."},
+    {id:"custom",    name:"The Custom Character", desc:"My journey is unique, and I’d describe my starting point differently."}
+  ],
+  equipment: [
+    {id:"determination", name:"Determination",   desc:"I’m willing to keep going when things get difficult."},
+    {id:"curiosity",     name:"Curiosity",       desc:"I’m ready to learn and explore new ideas."},
+    {id:"experience",    name:"Life Experience", desc:"I’ve learned things outside the classroom that I can bring to college."},
+    {id:"support",       name:"Support",         desc:"I have people who encourage me or want to see me succeed."},
+    {id:"openmind",      name:"An Open Mind",    desc:"I’m willing to try new things and learn from my experiences."},
+    {id:"customeq",      name:"Custom Equipment",desc:"I bring a quality, experience, or resource of my own."}
+  ],
+  challenges: [
+    {id:"time",     text:"Managing my time and balancing responsibilities."},
+    {id:"online",   text:"Learning to use online courses and digital tools."},
+    {id:"expect",   text:"Understanding college assignments and what is expected of me."},
+    {id:"help",     text:"Feeling comfortable asking questions or asking for help."},
+    {id:"balance",  text:"Balancing college with work, family, or other commitments."},
+    {id:"goals",    text:"Figuring out my goals and deciding what comes next."},
+    {id:"other",    text:"Something else."}
+  ],
+
+  q1: {
+    title: "Choose Your Starting Point",
+    guide: ["Every hero has a story. Which character is closest to where you are <b>right now</b>?",
+            "Tap one card to choose it. Or pick the Custom Character to describe your own."],
+    note: "There is no right or wrong choice. Your character may even change as you grow.",
+    prompts: [
+      {key:"r1a", required:true,  label:"Why did you choose this character? What part of your story does it show?"},
+      {key:"r1b", required:false, label:"Finish this sentence: By the end of this course, my hero hopes to…"}
+    ]
+  },
+  q2: {
+    title: "Choose Your Starting Equipment",
+    guide: ["Every hero brings something useful on the journey. Your equipment is a strength, experience, or helper you can count on when things get hard.",
+            "Your backpack holds <b>2 items</b>. Choose one or two."],
+    note: "You don’t have to start with every tool you’ll need. Part of the journey is learning what else you can build, and where to find help.",
+    prompts: [
+      {key:"r2a", required:true,  label:"Pick one item from your backpack. Tell about a time in real life when you used it."},
+      {key:"r2b", required:false, label:"What is one tool you would like to add to your backpack this semester? Where could you look for it?"}
+    ]
+  },
+  q3: {
+    title: "Identify Your First Challenge",
+    guide: ["Every journey has obstacles. Spotting one early helps you get ready for it.",
+            "Which challenge do you think could be the hardest for you as you start college? Choose one."],
+    note: "Naming a challenge doesn’t mean you’re giving up. It’s the beginning of a plan.",
+    prompts: [
+      {key:"r3a", required:true,  label:"Why might this challenge be hard for you right now?"},
+      {key:"r3b", required:true,  label:"Look at your backpack. Which item could help you face this challenge? Who or what else could help?"}
+    ]
+  },
+  done: {
+    guide: ["You did it! You made your college character. This hero card shows who is starting the journey.",
+            "Take a look at it, then answer one last question."],
+    finalPrompt: {key:"final", required:false, label:"Look at your hero card. What stands out to you? What is one thing you noticed about yourself while playing?"},
+    submit: "To turn this in: copy your answers and paste them into the assignment box in Canvas. You can also download them as a file.",
+    teaser: "Level 2 unlocks next week."
+  }
+};
+/* =================== END OF INSTRUCTOR EDIT ZONE =================== */
+
+const SKINS=['#fde0c8','#f1c27d','#d9a273','#b57a4f','#8a5a3a','#5e3a24'];
+const HAIRS=['#2b1b14','#5a3825','#a8522b','#e3c16f','#c8c8d4','#d6457a'];
+const OUTFITS=['#3b82f6','#10b981','#ef4444','#a855f7','#f59e0b','#14b8a6'];
+const HAIR_NAMES=['Black','Brown','Auburn','Blonde','Silver','Pink'];
+const OUTFIT_NAMES=['Blue','Green','Red','Purple','Orange','Teal'];
+const HAIRSTYLES=[['short','Short'],['long','Long'],['curly','Curly'],['bun','Bun']];
+
+const app=document.getElementById('app');
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- state ---------- */
+function fresh(){return{screen:'title',introPage:0,done:{},gain:'',role:'',customRole:'',heroName:'',skin:SKINS[2],hair:HAIRS[0],hairStyle:'short',outfit:OUTFITS[0],r1a:'',r1b:'',equip:[],customEq:'',r2a:'',r2b:'',challenge:'',customChallenge:'',r3a:'',r3b:'',final:''}}
+function load(){try{const s=sessionStorage.getItem('hj_level1');return s?Object.assign(fresh(),JSON.parse(s)):null}catch(e){return null}}
+function save(){try{sessionStorage.setItem('hj_level1',JSON.stringify(state))}catch(e){}}
+let state=load()||fresh();
+
+/* ---------- graphics ---------- */
+function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=n>>16,g=(n>>8)&255,b=n&255;const t=p<0?0:255,k=Math.abs(p);r=Math.round((t-r)*k+r);g=Math.round((t-g)*k+g);b=Math.round((t-b)*k+b);return'#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function starPts(cx,cy,R,r){let p=[];for(let i=0;i<10;i++){const a=(-90+i*36)*Math.PI/180,d=i%2?r:R;p.push((cx+d*Math.cos(a)).toFixed(1)+','+(cy+d*Math.sin(a)).toFixed(1))}return p.join(' ')}
+function sparkle(x,y,r){return`M${x} ${y-r}Q${x} ${y} ${x+r} ${y}Q${x} ${y} ${x} ${y+r}Q${x} ${y} ${x-r} ${y}Q${x} ${y} ${x} ${y-r}Z`}
+
+function heroInner(o){
+  const sk=o.skin,hr=o.hair,ou=o.outfit,hs=o.hairStyle,role=o.role;
+  const dk=shade(ou,-.35),skD=shade(sk,-.12);
+  let b=`<ellipse cx="60" cy="146" rx="30" ry="4" fill="#000" opacity=".25"/>`;
+  b+=`<path d="M42 76L26 132Q60 146 94 132L78 76Z" fill="${dk}"/>`;
+  if(hs==='long')b+=`<path d="M33 48C30 18 90 18 87 48L90 86C82 92 76 84 76 72L44 72C44 84 38 92 30 86Z" fill="${hr}"/>`;
+  if(hs==='curly')b+=[[40,34,11],[60,27,13],[80,34,11],[34,48,9],[86,48,9]].map(c=>`<circle cx="${c[0]}" cy="${c[1]}" r="${c[2]}" fill="${hr}"/>`).join('');
+  if(hs==='bun')b+=`<circle cx="60" cy="17" r="10" fill="${hr}"/>`;
+  // legs + boots
+  b+=`<rect x="44" y="112" width="14" height="26" rx="5" fill="#33385f"/><rect x="62" y="112" width="14" height="26" rx="5" fill="#33385f"/>`;
+  b+=`<rect x="41" y="133" width="19" height="11" rx="5" fill="#5b3a29"/><rect x="60" y="133" width="19" height="11" rx="5" fill="#5b3a29"/>`;
+  // torso, belt, arms
+  b+=`<rect x="40" y="74" width="40" height="42" rx="12" fill="${ou}"/>`;
+  b+=`<rect x="40" y="104" width="40" height="6" fill="${dk}"/><rect x="56" y="103" width="8" height="8" rx="2" fill="#ffd24a"/>`;
+  b+=`<rect x="29" y="78" width="13" height="32" rx="6.5" fill="${ou}"/><rect x="78" y="78" width="13" height="32" rx="6.5" fill="${ou}"/>`;
+  // neck, ears, head
+  b+=`<rect x="53" y="66" width="14" height="12" fill="${skD}"/><circle cx="36" cy="52" r="4.5" fill="${sk}"/><circle cx="84" cy="52" r="4.5" fill="${sk}"/>`;
+  b+=`<circle cx="60" cy="48" r="24" fill="${sk}"/>`;
+  b+=`<path d="M35 48C33 12 87 12 85 48C80 38 70 33 60 33C50 33 40 38 35 48Z" fill="${hr}"/>`;
+  b+=`<circle cx="51" cy="50" r="2.8" fill="#2b2b3a"/><circle cx="69" cy="50" r="2.8" fill="#2b2b3a"/><path d="M52 59Q60 66 68 59" fill="none" stroke="#2b2b3a" stroke-width="2.4" stroke-linecap="round"/><circle cx="46" cy="57" r="4" fill="#ff7a8a" opacity=".25"/><circle cx="74" cy="57" r="4" fill="#ff7a8a" opacity=".25"/>`;
+  // role extras
+  if(role==='dream'){
+    b+=`<polygon points="${starPts(60,91,9,4)}" fill="#ffd24a"/>`;
+    b+=`<rect x="87" y="26" width="3" height="104" fill="#8a6a3b"/><polygon points="${starPts(88.5,15,12,5)}" fill="#ffd24a" stroke="#b8891a" stroke-width="1.5"/>`;
+  }else if(role==='explorer'){
+    b+=`<rect x="46" y="76" width="4" height="30" fill="#7a5230"/><rect x="70" y="76" width="4" height="30" fill="#7a5230"/>`;
+    b+=`<ellipse cx="60" cy="31" rx="31" ry="7" fill="#c8944f"/><path d="M42 31C42 10 78 10 78 31Z" fill="#d9a65e"/><rect x="42" y="25" width="36" height="5" fill="#7a4a1f"/>`;
+    b+=`<circle cx="88" cy="100" r="8" fill="#e8d9b0" stroke="#8a6a3b" stroke-width="2"/><path d="M88 94L90.5 100L88 106L85.5 100Z" fill="#e63946"/>`;
+  }else if(role==='reinventor'){
+    b+=`<circle cx="60" cy="90" r="10" fill="#fff" opacity=".95"/><path d="${sparkle(60,90,8)}" fill="${ou}"/>`;
+    b+=`<path d="${sparkle(97,28,8)}" fill="#ffd24a"/><path d="${sparkle(23,38,6)}" fill="#ffd24a"/><path d="${sparkle(102,58,4)}" fill="#fff"/>`;
+  }else if(role==='provider'){
+    b+=`<path d="M60 102C52 94 50 87 55 85C58 84 60 86 60 88C60 86 62 84 65 85C70 87 68 94 60 102Z" fill="#ff6b81"/>`;
+    b+=`<path d="M75 94L85 83L95 94Z" fill="#e0524f"/><rect x="77" y="93" width="16" height="12" fill="#f6e3b4"/><rect x="83" y="97" width="4" height="8" fill="#8a6a3b"/>`;
+  }else if(role==='challenger'){
+    b+=`<rect x="36" y="36" width="48" height="7" fill="#e63946"/><path d="M84 38L98 33L95 40L99 46L84 43Z" fill="#e63946"/>`;
+    b+=`<polygon points="62,80 53,94 59,94 56,106 68,90 61,90 66,80" fill="#ffd24a"/>`;
+  }else{ // custom
+    b+=`<circle cx="60" cy="91" r="11" fill="#fff"/><text x="60" y="97" text-anchor="middle" font-size="16" font-weight="800" fill="${dk}" font-family="Arial,sans-serif">?</text>`;
+    b+=`<path d="${sparkle(97,30,8)}" fill="#ffd24a"/><path d="${sparkle(22,40,6)}" fill="#4de1c1"/>`;
+  }
+  // hands last
+  b+=`<circle cx="35.5" cy="112" r="6.5" fill="${sk}"/><circle cx="84.5" cy="112" r="6.5" fill="${sk}"/>`;
+  return b;
+}
+function heroSVG(o,size,bob){
+  return`<svg viewBox="0 0 120 150" width="${size}" height="${Math.round(size*1.25)}" role="img" aria-label="Your hero character" class="${bob?'bob':''}">${heroInner(o)}</svg>`;
+}
+function look(role){return{skin:state.skin,hair:state.hair,outfit:state.outfit,hairStyle:state.hairStyle,role:role}}
+
+function owlSVG(){return`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="60" rx="30" ry="32" fill="#8b5e3c"/><ellipse cx="50" cy="68" rx="19" ry="22" fill="#f0d5a8"/><ellipse cx="21" cy="62" rx="8" ry="20" fill="#6e4528" transform="rotate(10 21 62)"/><ellipse cx="79" cy="62" rx="8" ry="20" fill="#6e4528" transform="rotate(-10 79 62)"/><circle cx="38" cy="50" r="12" fill="#fff"/><circle cx="62" cy="50" r="12" fill="#fff"/><circle cx="40" cy="51" r="6" fill="#1a1440"/><circle cx="60" cy="51" r="6" fill="#1a1440"/><circle cx="42" cy="48" r="2" fill="#fff"/><circle cx="62" cy="48" r="2" fill="#fff"/><path d="M45 58L50 67L55 58Z" fill="#ffb627"/><path d="M34 24V32Q50 40 66 32V24L50 30Z" fill="#333"/><path d="M50 6L84 19L50 32L16 19Z" fill="#222"/><line x1="80" y1="20" x2="84" y2="38" stroke="#ffb627" stroke-width="2.5"/><circle cx="84" cy="40" r="3" fill="#ffb627"/><path d="M40 93H46M54 93H60" stroke="#ffb627" stroke-width="4" stroke-linecap="round"/></svg>`}
+
+const EQUIP_ICONS={
+  determination:`<path d="M32 6L54 14V30C54 44 44 54 32 59C20 54 10 44 10 30V14Z" fill="#4c6fff" stroke="#fff" stroke-width="3"/><path d="M32 16V50C23 45 18 38 18 30V20Z" fill="#7d96ff"/><path d="M24 30L30 37L42 23" fill="none" stroke="#ffd24a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  curiosity:`<circle cx="27" cy="27" r="16" fill="#bdf3ff" fill-opacity=".35" stroke="#4de1c1" stroke-width="5"/><line x1="39" y1="39" x2="56" y2="56" stroke="#ffd24a" stroke-width="7" stroke-linecap="round"/><path d="${sparkle(27,27,9)}" fill="#fff"/>`,
+  experience:`<path d="M6 14L22 10L42 16L58 12V50L42 54L22 48L6 52Z" fill="#f1dfae" stroke="#8a6a3b" stroke-width="3" stroke-linejoin="round"/><path d="M22 10V48M42 16V54" stroke="#8a6a3b" stroke-width="2"/><path d="M12 42Q22 24 32 32T48 26" fill="none" stroke="#e63946" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="round"/><path d="M46 20L54 28M54 20L46 28" stroke="#e63946" stroke-width="3" stroke-linecap="round"/>`,
+  support:`<path d="M32 57C8 41 6 23 18 15C25 11 31 15 32 21C33 15 39 11 46 15C58 23 56 41 32 57Z" fill="#ff5d8f" stroke="#fff" stroke-width="3"/><path d="M15 24Q17 18 24 19" stroke="#fff" fill="none" stroke-width="3" opacity=".7" stroke-linecap="round"/>`,
+  openmind:`<circle cx="20" cy="22" r="12" fill="none" stroke="#ffd24a" stroke-width="7"/><path d="M29 31L55 57M45 47L51 41M51 53L57 47" stroke="#ffd24a" stroke-width="7" stroke-linecap="round"/><path d="${sparkle(50,14,7)}" fill="#fff"/>`,
+  customeq:`<rect x="8" y="30" width="48" height="26" rx="4" fill="#b8733a" stroke="#5b3a1e" stroke-width="3"/><path d="M8 32C8 14 56 14 56 32Z" fill="#d18a4a" stroke="#5b3a1e" stroke-width="3"/><rect x="26" y="30" width="12" height="12" rx="2" fill="#ffd24a" stroke="#5b3a1e" stroke-width="2"/><circle cx="32" cy="35" r="2" fill="#5b3a1e"/><path d="${sparkle(54,12,6)}" fill="#ffd24a"/>`
+};
+const CHALLENGE_ICONS={
+  time:`<circle cx="32" cy="34" r="22" fill="#fff" stroke="#ff9f43" stroke-width="5"/><path d="M32 20V34L42 40" stroke="#1a1440" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 10L22 16M50 10L42 16" stroke="#ff9f43" stroke-width="5" stroke-linecap="round"/>`,
+  online:`<rect x="12" y="12" width="40" height="30" rx="3" fill="#1a1440" stroke="#bdf3ff" stroke-width="3"/><rect x="17" y="17" width="30" height="20" fill="#4de1c1"/><path d="M5 46H59L55 53H9Z" fill="#c9ccf5"/>`,
+  expect:`<rect x="14" y="8" width="36" height="48" rx="4" fill="#f6f1de" stroke="#8a6a3b" stroke-width="3"/><path d="M21 20H43M21 29H43M21 38H34" stroke="#8a6a3b" stroke-width="3" stroke-linecap="round"/><circle cx="44" cy="46" r="7" fill="#e63946"/><text x="44" y="50.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Arial,sans-serif">?</text>`,
+  help:`<path d="M8 10H56V42H30L18 54V42H8Z" fill="#fff" stroke="#ff7aa8" stroke-width="4" stroke-linejoin="round"/><circle cx="21" cy="26" r="3.5" fill="#ff7aa8"/><circle cx="32" cy="26" r="3.5" fill="#ff7aa8"/><circle cx="43" cy="26" r="3.5" fill="#ff7aa8"/>`,
+  balance:`<path d="M32 8V54M18 54H46M10 18H54" stroke="#ffd24a" stroke-width="5" stroke-linecap="round"/><path d="M10 18L3 36H17ZM54 18L47 36H61Z" fill="#c9ccf5" stroke="#ffd24a" stroke-width="3" stroke-linejoin="round"/>`,
+  goals:`<circle cx="32" cy="32" r="24" fill="#1a1440" stroke="#4de1c1" stroke-width="5"/><g transform="rotate(35 32 32)"><path d="M32 11L39 32H25Z" fill="#e63946"/><path d="M32 53L39 32H25Z" fill="#fff"/></g><circle cx="32" cy="32" r="3" fill="#ffd24a"/>`,
+  other:`<rect x="12" y="14" width="40" height="42" rx="6" fill="#a855f7" stroke="#fff" stroke-width="3"/><text x="32" y="46" text-anchor="middle" font-size="30" font-weight="800" fill="#ffd24a" font-family="Arial,sans-serif">?</text>`
+};
+const icon=(set,id,size)=>`<svg viewBox="0 0 64 64" width="${size}" height="${size}" aria-hidden="true">${set[id]}</svg>`;
+
+function sceneSVG(){
+  let stars='',seed=7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+  for(let i=0;i<45;i++)stars+=`<circle cx="${(rnd()*800).toFixed(0)}" cy="${(rnd()*130).toFixed(0)}" r="${(rnd()*1.6+.6).toFixed(1)}" fill="#fff" opacity="${(rnd()*.6+.4).toFixed(2)}"/>`;
+  const hero=heroInner(look(state.role||'dream'));
+  return`<svg viewBox="0 0 800 280" role="img" aria-label="A hero stands at the start of a winding path. At the end of the path, a castle glows on a hill at sunrise.">
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141a52"/><stop offset=".55" stop-color="#6a3f9c"/><stop offset="1" stop-color="#ff9b6b"/></linearGradient></defs>
+  <rect width="800" height="280" fill="url(#sky)"/>${stars}
+  <circle cx="560" cy="200" r="100" fill="#ffd24a" opacity=".18"/><circle cx="560" cy="200" r="60" fill="#ffd24a" opacity=".9"/>
+  <polygon points="0,210 90,140 170,200 260,120 360,205 450,150 560,210 680,130 800,200 800,280 0,280" fill="#3b2c6e"/>
+  <g transform="translate(600,130)"><circle cx="40" cy="88" r="34" fill="#ffd24a" opacity=".25"/>
+    <rect x="10" y="30" width="60" height="70" fill="#2e2b73"/><rect x="-6" y="10" width="22" height="90" fill="#38358a"/><rect x="64" y="10" width="22" height="90" fill="#38358a"/>
+    <polygon points="-8,10 5,-14 18,10" fill="#ff6b9d"/><polygon points="62,10 75,-14 88,10" fill="#ff6b9d"/>
+    <rect x="14" y="24" width="8" height="8" fill="#2e2b73"/><rect x="28" y="24" width="8" height="8" fill="#2e2b73"/><rect x="42" y="24" width="8" height="8" fill="#2e2b73"/><rect x="56" y="24" width="8" height="8" fill="#2e2b73"/>
+    <line x1="40" y1="24" x2="40" y2="-6" stroke="#ddd" stroke-width="2"/><polygon points="40,-6 58,1 40,8" fill="#ffd24a"/>
+    <rect x="0" y="34" width="6" height="10" fill="#ffd24a"/><rect x="74" y="34" width="6" height="10" fill="#ffd24a"/>
+    <path d="M30 100V80a10 10 0 0 1 20 0V100Z" fill="#ffd24a"/></g>
+  <path d="M0 250Q200 205 400 245T800 235V280H0Z" fill="#24215a"/>
+  <path d="M0 268Q220 240 420 266T800 258V280H0Z" fill="#1a1a48"/>
+  <path d="M120 280C190 262 150 244 250 240S380 250 460 238S570 236 640 230" fill="none" stroke="#f3d9a4" stroke-width="7" opacity=".35" stroke-linecap="round"/>
+  <path d="M120 280C190 262 150 244 250 240S380 250 460 238S570 236 640 230" fill="none" stroke="#f3d9a4" stroke-width="4" stroke-dasharray="2 12" stroke-linecap="round"/>
+  <g transform="translate(92,150) scale(.62)">${hero}</g></svg>`;
+}
+function medalSVG(){return`<svg viewBox="0 0 80 100" aria-hidden="true"><path d="M20 0L40 36L60 0Z" fill="#ff6b9d"/><circle cx="40" cy="62" r="32" fill="#ffd24a" stroke="#b8891a" stroke-width="4"/><circle cx="40" cy="62" r="24" fill="none" stroke="#fff3b0" stroke-width="2"/><polygon points="${starPts(40,62,17,7)}" fill="#fff3b0"/></svg>`}
+const starIcon=on=>`<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><polygon points="${starPts(12,12.5,11,4.6)}" fill="${on?'#ffd24a':'#2a2f78'}" stroke="${on?'#b8891a':'#5560d6'}" stroke-width="1.2"/></svg>`;
+
+/* ---------- helpers ---------- */
+const roleObj=()=>CONTENT.roles.find(r=>r.id===state.role);
+const roleName=()=>state.role==='custom'?(state.customRole.trim()||'Custom Character'):(roleObj()?roleObj().name:'');
+const equipName=id=>id==='customeq'?(state.customEq.trim()||'Custom Equipment'):CONTENT.equipment.find(e=>e.id===id).name;
+const challengeText=()=>state.challenge==='other'?(state.customChallenge.trim()||'Something else'):(CONTENT.challenges.find(c=>c.id===state.challenge)||{text:''}).text;
+const heroLabel=()=>state.heroName.trim()||'Your Hero';
+const xp=()=>Object.values(state.done).filter(Boolean).length*100;
+
+function guide(paras){return`<div class="guide"><div class="owl" aria-hidden="true">${owlSVG()}</div><div class="bubble"><span class="who">PROFESSOR HOOT, YOUR GUIDE</span>${paras.map(p=>`<p>${p}</p>`).join('')}</div></div>`}
+function hud(){const stars=[1,2,3].map(i=>starIcon(state.done['q'+i])).join('');
+  return`<header class="hud"><div><span class="lvl">LEVEL 1</span><span class="hud-name">Accept the Call</span></div><div class="hud-m" role="img" aria-label="${Object.values(state.done).filter(Boolean).length} of 3 quests complete">${stars}</div><div class="hud-r"><div class="xpbar" role="progressbar" aria-label="Experience points" aria-valuemin="0" aria-valuemax="300" aria-valuenow="${xp()}"><span style="width:${xp()/3}%"></span></div><span class="xplabel">XP ${xp()}/300</span></div></header>`}
+function prompts(list){return list.map(p=>`<div class="field"><label for="f_${p.key}">${p.label}<span class="${p.required?'req':'opt'}">${p.required?'Required':'Optional'}</span></label><textarea id="f_${p.key}" data-bind="${p.key}" rows="3">${esc(state[p.key])}</textarea></div>`).join('')}
+function line(key,label,ph){return`<div class="field"><label for="f_${key}">${label}</label><input type="text" id="f_${key}" data-bind="${key}" maxlength="80" placeholder="${ph||''}" value="${esc(state[key])}"></div>`}
+function swatches(name,list,names,cur){return`<div class="swrow" role="radiogroup" aria-label="${name}">${list.map((c,i)=>`<label class="sw"><input type="radio" name="${name}" value="${c}" ${cur===c?'checked':''}><span class="dot" style="background:${c}"></span><span class="sr">${names?names[i]:'Skin tone '+(i+1)}</span></label>`).join('')}</div>`}
+
+/* ---------- screens ---------- */
+function screenTitle(){return`<section class="screen" aria-labelledby="h">
+  <div class="scene">${sceneSVG()}</div>
+  <div class="titleblock"><p class="kicker">ISTU 101</p><h1 class="main" id="h" tabindex="-1">HERO’S JOURNEY</h1>
+  <p class="level">LEVEL 1: ACCEPT THE CALL</p><p class="tag">Every hero begins somewhere. Your journey starts here.</p>
+  <button class="btn big" data-act="start">▶ PRESS START</button></div>
+  <div class="panel how"><h2 class="sub">How to play</h2>
+  <ol><li><span class="num">1</span><span>Tap or click a card to make your choice.</span></li><li><span class="num">2</span><span>Answer a few short questions about your choice.</span></li><li><span class="num">3</span><span>Press the yellow button to keep going.</span></li></ol>
+  <p class="small" style="margin:0">No timer. No score to beat. No wrong answers. This takes about 10 to 15 minutes.</p></div></section>`}
+
+function screenIntro(){const i=state.introPage,pages=CONTENT.introPages,last=i===pages.length-1;
+  return`<section class="screen" aria-labelledby="h"><h2 class="sr" id="h" tabindex="-1">The Call, part ${i+1} of ${pages.length}</h2>
+  ${guide(pages[i])}
+  ${last?`<div class="panel"><div class="mission">${CONTENT.mission}</div><p style="text-align:center;margin:14px 0 0">${CONTENT.missionText}</p></div>`:''}
+  <div class="dots" aria-hidden="true">${pages.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+  <div class="btnrow"><button class="btn secondary" data-act="introBack">◀ BACK</button><button class="btn" data-act="introNext">${last?'⚔ I ACCEPT THE CALL':'NEXT ▶'}</button></div></section>`}
+
+function shell(n,c,body,nextLabel){
+  const gain=state.gain?`<p class="gain" role="status">${state.gain}</p>`:'';
+  return`<section class="screen" aria-labelledby="h">${gain}<p class="qtag">QUEST ${n} OF 3</p><h2 class="qtitle" id="h" tabindex="-1">${c.title}</h2>${guide(c.guide)}${body}
+  <div class="btnrow"><button class="btn secondary" data-act="back">◀ BACK</button><button class="btn" id="nextBtn" data-act="next" disabled>${n===3?'FINISH LEVEL ★':'NEXT QUEST ▶'}</button></div><p class="gate" id="gate" role="status" aria-live="polite"></p></section>`}
+
+function screenQ1(){const c=CONTENT.q1;
+  const cards=CONTENT.roles.map(r=>`<label class="card"><input type="radio" name="role" value="${r.id}" ${state.role===r.id?'checked':''}><span class="card-inner"><span class="art" data-role="${r.id}">${heroSVG(look(r.id),80)}</span><span class="cname">${r.name}</span><span class="cdesc">${r.desc}</span></span></label>`).join('');
+  const body=`<div class="panel"><h3 class="sub">Pick your character</h3><div class="grid" role="radiogroup" aria-label="Choose your character">${cards}</div><p class="note">${c.note}</p></div>
+  <div id="more" ${state.role?'':'hidden'}>
+    <div class="panel"><h3 class="sub">Make it look like you</h3>
+      <div id="customWrap" ${state.role==='custom'?'':'hidden'}>${line('customRole','Describe your starting point in your own words:','For example: The Comeback Kid')}</div>
+      <div class="creator"><div class="preview" id="preview">${state.role?heroSVG(look(state.role),160,true):''}</div>
+      <div class="controls">${line('heroName','Name your hero. You can use your own name or make one up.','Hero name')}
+        <div class="row"><span class="lab">Skin tone</span>${swatches('skin',SKINS,null,state.skin)}</div>
+        <div class="row"><span class="lab">Hair style</span><div class="swrow" role="radiogroup" aria-label="Hair style">${HAIRSTYLES.map(h=>`<label class="chip"><input type="radio" name="hairStyle" value="${h[0]}" ${state.hairStyle===h[0]?'checked':''}><span class="t">${h[1]}</span></label>`).join('')}</div></div>
+        <div class="row"><span class="lab">Hair color</span>${swatches('hair',HAIRS,HAIR_NAMES,state.hair)}</div>
+        <div class="row"><span class="lab">Outfit color</span>${swatches('outfit',OUTFITS,OUTFIT_NAMES,state.outfit)}</div>
+      </div></div></div>
+    <div class="panel"><h3 class="sub">Tell us about your hero</h3>${prompts(c.prompts)}</div>
+  </div>`;
+  return shell(1,c,body)}
+
+function slotsHTML(){return[0,1].map(i=>{const id=state.equip[i];return id?`<div class="slot full">${icon(EQUIP_ICONS,id,56)}<span>${esc(equipName(id))}</span></div>`:`<div class="slot empty"><span>Empty slot</span></div>`}).join('')}
+function screenQ2(){const c=CONTENT.q2;
+  const cards=CONTENT.equipment.map(e=>`<label class="card"><input type="checkbox" name="equip" value="${e.id}" ${state.equip.includes(e.id)?'checked':''}><span class="card-inner"><span class="art">${icon(EQUIP_ICONS,e.id,80)}</span><span class="cname">${e.name}</span><span class="cdesc">${e.desc}</span></span></label>`).join('');
+  const body=`<div class="panel"><div class="bagrow"><div class="bob" id="bagHero">${heroSVG(look(state.role||'dream'),90)}</div><div><h3 class="sub">Your backpack <span class="small" style="font-family:var(--body)">(holds 2 items)</span></h3><div class="slots" id="slots">${slotsHTML()}</div></div></div></div>
+  <div class="panel"><h3 class="sub">Choose 1 or 2 items</h3><div class="grid" role="group" aria-label="Choose your equipment">${cards}</div><p class="limit" id="limit" role="status" aria-live="polite"></p><p class="note">${c.note}</p></div>
+  <div id="more" ${state.equip.length?'':'hidden'}><div class="panel"><div id="customWrap" ${state.equip.includes('customeq')?'':'hidden'}>${line('customEq','Name your custom equipment:','For example: My two jobs taught me to stay calm')}</div><h3 class="sub">Tell us about your equipment</h3>${prompts(c.prompts)}</div></div>`;
+  return shell(2,c,body)}
+
+function encounterHTML(){return state.challenge?`<div class="encounter"><div>${icon(CHALLENGE_ICONS,state.challenge,80)}</div><div><p class="enc-t">CHALLENGE SPOTTED!</p><p><b id="encText">${esc(challengeText())}</b></p><p class="small" style="color:#f0e4ff">Good scouting. Knowing what is ahead is how heroes get ready.</p></div></div>`:''}
+function screenQ3(){const c=CONTENT.q3;
+  const cards=CONTENT.challenges.map(ch=>`<label class="card"><input type="radio" name="challenge" value="${ch.id}" ${state.challenge===ch.id?'checked':''}><span class="card-inner"><span class="art">${icon(CHALLENGE_ICONS,ch.id,80)}</span><span class="cdesc">${ch.text}</span></span></label>`).join('');
+  const body=`<div class="panel"><h3 class="sub">Pick one challenge</h3><div class="grid" role="radiogroup" aria-label="Choose your first challenge">${cards}</div><p class="note">${c.note}</p></div>
+  <div id="more" ${state.challenge?'':'hidden'}><div id="enc">${encounterHTML()}</div><div class="panel"><div id="customWrap" ${state.challenge==='other'?'':'hidden'}>${line('customChallenge','Describe your challenge in your own words:','')}</div><h3 class="sub">Make a plan</h3>${prompts(c.prompts)}</div></div>`;
+  return shell(3,c,body)}
+
+function answersLog(){
+  const sec=(t,rows)=>`<h3>${t}</h3>`+rows.map(r=>`<p class="q">${r[0]}</p><p class="a">${esc(r[1]||'(no answer)')}</p>`).join('');
+  const P=(list)=>list.map(p=>[p.label,state[p.key]]);
+  return sec('QUEST 1: STARTING POINT',[['Character',roleName()],['Hero name',state.heroName]].concat(P(CONTENT.q1.prompts)))
+    +sec('QUEST 2: STARTING EQUIPMENT',[['Equipment',state.equip.map(equipName).join(', ')]].concat(P(CONTENT.q2.prompts)))
+    +sec('QUEST 3: FIRST CHALLENGE',[['Challenge',challengeText()]].concat(P(CONTENT.q3.prompts)))}
+function buildText(){
+  const L=["HERO’S JOURNEY – LEVEL 1: ACCEPT THE CALL",""];
+  const add=(t,rows)=>{L.push(t);rows.forEach(r=>{L.push("");L.push(r[0]);L.push(r[1]&&r[1].trim()?r[1].trim():"(no answer)")});L.push("")};
+  const P=l=>l.map(p=>[p.label,state[p.key]]);
+  add("QUEST 1: STARTING POINT",[["Hero name",state.heroName],["Character",roleName()]].concat(P(CONTENT.q1.prompts)));
+  add("QUEST 2: STARTING EQUIPMENT",[["Equipment",state.equip.map(equipName).join(", ")]].concat(P(CONTENT.q2.prompts)));
+  add("QUEST 3: FIRST CHALLENGE",[["Challenge",challengeText()]].concat(P(CONTENT.q3.prompts)));
+  add("FINAL REFLECTION",[[CONTENT.done.finalPrompt.label,state.final]]);
+  return L.join("\n")}
+
+function screenDone(){const d=CONTENT.done;
+  return`<section class="screen" aria-labelledby="h">
+  <div class="badge"><div>${medalSVG()}</div><h2 id="h" tabindex="-1">LEVEL 1 COMPLETE!</h2><p class="small" style="margin:6px 0 0">+300 XP</p></div>
+  <div class="no-print">${guide(d.guide)}</div>
+  <div class="herocard"><div class="bob">${heroSVG(look(state.role||'dream'),170)}</div><div>
+    <p class="hname">${esc(heroLabel())}</p><p class="hrole">${esc(roleName())}</p>
+    <h3>STARTING EQUIPMENT</h3>${state.equip.map(id=>`<div class="mini">${icon(EQUIP_ICONS,id,40)}<span>${esc(equipName(id))}</span></div>`).join('')}
+    <h3>FIRST CHALLENGE</h3><div class="mini">${icon(CHALLENGE_ICONS,state.challenge||'other',40)}<span>${esc(challengeText())}</span></div></div></div>
+  <div class="panel log"><h2 class="sub">Your quest log</h2>${answersLog()}
+    <div class="field" style="margin-top:22px"><label for="f_final">${d.finalPrompt.label}<span class="${d.finalPrompt.required?'req':'opt'}">${d.finalPrompt.required?'Required':'Optional'}</span></label><textarea id="f_final" data-bind="final" rows="3">${esc(state.final)}</textarea></div></div>
+  <div class="panel no-print"><h2 class="sub">Save your answers</h2><p style="margin-top:0">${d.submit}</p>
+    <div class="btnrow center"><button class="btn" data-act="copy">COPY MY ANSWERS</button><button class="btn secondary" data-act="download">DOWNLOAD FILE</button><button class="btn secondary" data-act="print">PRINT / SAVE PDF</button></div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+    <details><summary>See my answers as plain text</summary><textarea class="export" id="exportBox" readonly aria-label="Your answers as plain text"></textarea></details></div>
+  <p class="next-teaser no-print">${d.teaser}</p>
+  <div class="btnrow no-print"><button class="btn secondary" data-act="back">◀ BACK TO QUEST 3</button></div></section>`}
+
+/* ---------- gating ---------- */
+function missing(){
+  const s=state.screen,m=[];
+  if(s==='q1'){if(!state.role)m.push('choose a character card');else if(state.role==='custom'&&!state.customRole.trim())m.push('describe your custom character')}
+  if(s==='q2'){if(!state.equip.length)m.push('choose at least one item');else if(state.equip.includes('customeq')&&!state.customEq.trim())m.push('name your custom equipment')}
+  if(s==='q3'){if(!state.challenge)m.push('choose a challenge');else if(state.challenge==='other'&&!state.customChallenge.trim())m.push('describe your challenge')}
+  if(!m.length&&CONTENT[s]&&CONTENT[s].prompts){
+    const short=CONTENT[s].prompts.filter(p=>p.required&&state[p.key].trim().length<MIN_CHARS);
+    if(short.length)m.push('answer the questions marked Required (a sentence or two is fine)');
+  }
+  return m}
+function refreshGate(){
+  const btn=$('#nextBtn');if(!btn)return;const m=missing();
+  btn.disabled=m.length>0;
+  $('#gate').textContent=m.length?'To keep going: '+m.join(', ')+'.':'Ready when you are!';
+}
+
+/* ---------- render + events ---------- */
+const FLOW=['q1','q2','q3','done'];
+const SCREENS={title:screenTitle,intro:screenIntro,q1:screenQ1,q2:screenQ2,q3:screenQ3,done:screenDone};
+function render(){
+  const s=state.screen;
+  app.innerHTML=(s==='title'?'':hud())+SCREENS[s]()+`<footer>Hero’s Journey · Level 1 · ISTU 101<br><button data-act="reset">Restart Level 1</button></footer>`;
+  state.gain='';save();
+  bind();refreshGate();
+  const h=$('#h');if(h)h.focus({preventScroll:true});
+  window.scrollTo(0,0);
+  if(s==='done'){const b=$('#exportBox');if(b)b.value=buildText();if(!reduceMotion)confetti()}
+}
+function go(screen){state.screen=screen;save();render()}
+
+function updateAvatars(){
+  app.querySelectorAll('.art[data-role]').forEach(el=>el.innerHTML=heroSVG(look(el.dataset.role),80));
+  const p=$('#preview');if(p&&state.role)p.innerHTML=heroSVG(look(state.role),160,true);
+}
+function toggle(id,show){const e=$('#'+id);if(e)e.hidden=!show}
+
+function bind(){
+  app.querySelectorAll('[data-bind]').forEach(el=>el.addEventListener('input',()=>{
+    state[el.dataset.bind]=el.value;save();
+    if(el.dataset.bind==='customEq'){$('#slots').innerHTML=slotsHTML()}
+    if(el.dataset.bind==='customChallenge'){const t=$('#encText');if(t)t.textContent=challengeText()}
+    if(state.screen==='done')$('#exportBox').value=buildText();
+    refreshGate();
+  }));
+  app.querySelectorAll('input[name=role]').forEach(el=>el.addEventListener('change',()=>{
+    state.role=el.value;save();toggle('more',true);toggle('customWrap',state.role==='custom');updateAvatars();refreshGate()}));
+  ['skin','hair','outfit','hairStyle'].forEach(n=>app.querySelectorAll(`input[name=${n}]`).forEach(el=>el.addEventListener('change',()=>{state[n]=el.value;save();updateAvatars()})));
+  app.querySelectorAll('input[name=equip]').forEach(el=>el.addEventListener('change',()=>{
+    const id=el.value,lim=$('#limit');
+    if(el.checked){
+      if(state.equip.length>=2){el.checked=false;lim.textContent='Your backpack holds 2 items. Tap one you already picked to put it back, then choose again.';return}
+      state.equip.push(id);
+    }else state.equip=state.equip.filter(x=>x!==id);
+    lim.textContent='';save();
+    $('#slots').innerHTML=slotsHTML();toggle('more',state.equip.length>0);toggle('customWrap',state.equip.includes('customeq'));refreshGate()}));
+  app.querySelectorAll('input[name=challenge]').forEach(el=>el.addEventListener('change',()=>{
+    state.challenge=el.value;save();$('#enc').innerHTML=encounterHTML();toggle('more',true);toggle('customWrap',state.challenge==='other');refreshGate()}));
+}
+
+let resetTimer=null;
+app.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;
+  if(a==='start'){state.introPage=0;go('intro')}
+  else if(a==='introNext'){if(state.introPage<CONTENT.introPages.length-1){state.introPage++;save();render()}else go('q1')}
+  else if(a==='introBack'){if(state.introPage>0){state.introPage--;save();render()}else go('title')}
+  else if(a==='next'){const s=state.screen;if(missing().length)return;state.done[s]=true;state.gain='★ Quest complete! +100 XP';go(FLOW[FLOW.indexOf(s)+1])}
+  else if(a==='back'){const i=FLOW.indexOf(state.screen);if(i<=0){state.introPage=CONTENT.introPages.length-1;go('intro')}else go(FLOW[i-1])}
+  else if(a==='copy')copyText();
+  else if(a==='download')downloadText();
+  else if(a==='print')window.print();
+  else if(a==='reset'){
+    if(t.dataset.armed){state=fresh();save();render()}
+    else{t.dataset.armed='1';t.textContent='Click again to erase everything and restart';clearTimeout(resetTimer);resetTimer=setTimeout(()=>{t.removeAttribute('data-armed');t.textContent='Restart Level 1'},4000)}
+  }
+});
+
+function status(msg){const s=$('#status');if(s)s.textContent=msg}
+function copyText(){
+  const txt=buildText(),box=$('#exportBox');
+  const fallback=()=>{const d=box.closest('details');if(d)d.open=true;box.focus();box.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}
+    status(ok?'Copied! Now paste it into Canvas.':'Your answers are selected below. Press Ctrl+C (or Cmd+C on a Mac) to copy them.')};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>status('Copied! Now paste it into Canvas.'),fallback)}else fallback()}
+function downloadText(){
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buildText()],{type:'text/plain'}));
+    a.download='heros-journey-level-1.txt';document.body.appendChild(a);a.click();a.remove();status('Your file is downloading.')}
+  catch(e){status('Download did not work here. Use Copy My Answers instead.')}}
+function confetti(){const cols=['#ffd24a','#4de1c1','#ff7aa8','#8d97ff','#fff'];
+  for(let i=0;i<70;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=cols[i%cols.length];
+    c.style.animationDuration=(2.5+Math.random()*2.5)+'s';c.style.animationDelay=(Math.random()*1.2)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),7000)}}
+
+render();
+</script>
+</body>
+</html>
