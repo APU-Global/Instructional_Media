@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Toolkit Builder | Level 4: Discover Your Tools | ISTU 101</title>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #edf0f5;
+  --surface: #ffffff;
+  --surface2: #e2e7f0;
+  --ink: #1b2233;
+  --muted: #56607a;
+  --line: #c4ccdc;
+  --gold: #a86a00;
+  --on-dom: #ffffff;
+  --exec: #6b3fb5;
+  --infl: #b45309;
+  --rel: #0e7c66;
+  --strat: #1d5fb8;
+  --shadow: 0 2px 0 rgba(27, 34, 51, .12);
+  --display: "Alegreya", Georgia, "Times New Roman", serif;
+  --body: "Alegreya Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1322;
+    --surface: #171e33;
+    --surface2: #202945;
+    --ink: #eaeefb;
+    --muted: #a3add0;
+    --line: #34406a;
+    --gold: #f0c05a;
+    --on-dom: #0e1322;
+    --exec: #b89cf5;
+    --infl: #f2a65a;
+    --rel: #52d6bd;
+    --strat: #86b8f5;
+    --shadow: 0 2px 0 rgba(0, 0, 0, .4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1322;
+  --surface: #171e33;
+  --surface2: #202945;
+  --ink: #eaeefb;
+  --muted: #a3add0;
+  --line: #34406a;
+  --gold: #f0c05a;
+  --on-dom: #0e1322;
+  --exec: #b89cf5;
+  --infl: #f2a65a;
+  --rel: #52d6bd;
+  --strat: #86b8f5;
+  --shadow: 0 2px 0 rgba(0, 0, 0, .4);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--bg);
+}
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 1.1rem; }
+.skip {
+  position: absolute; left: -999px; top: 0;
+  background: var(--ink); color: var(--bg); padding: .5rem .9rem; border-radius: 0 0 8px 0; z-index: 20;
+}
+.skip:focus { left: 0; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* Header */
+.top { padding: 2rem 0 1.2rem; }
+.top .lvl { color: var(--muted); font-weight: 700; margin-bottom: .35rem; }
+.top h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); font-weight: 700; letter-spacing: -.01em; }
+.top .sub { font-size: 1.3rem; max-width: 40rem; margin-top: .5rem; }
+.top .meta { color: var(--muted); margin-top: .6rem; }
+
+.intro {
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 1rem; margin-bottom: 1.4rem;
+}
+.card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+.card h2 { font-size: 1.45rem; margin-bottom: .5rem; }
+.how { margin: 0; padding-left: 1.25rem; }
+.how li { margin-bottom: .3rem; }
+.verse { border-left: 6px solid var(--gold); }
+.verse blockquote { margin: 0; font-family: var(--display); font-size: 1.25rem; line-height: 1.4; }
+.verse cite { display: block; margin-top: .5rem; font-style: normal; color: var(--muted); font-size: 1rem; }
+
+/* Mode switch */
+.modebar { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem 1.2rem; margin-bottom: 1rem; }
+.seg { display: inline-flex; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.seg button {
+  border: 0; background: transparent; padding: .55rem 1.25rem; font-weight: 700; cursor: pointer; min-height: 44px;
+}
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.modenote { flex: 1 1 18rem; color: var(--muted); }
+
+/* Main layout */
+.stage { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr); gap: 1.2rem; align-items: start; }
+.board { min-width: 0; }
+.pickbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9;
+  background: var(--surface); border: 2px solid var(--ink); border-radius: 14px;
+  padding: .7rem .9rem; margin-bottom: 1rem; box-shadow: var(--shadow);
+  display: grid; grid-template-columns: 1fr auto; gap: .5rem .8rem; align-items: center;
+}
+.pickinfo { font-weight: 700; display: flex; flex-wrap: wrap; gap: .1rem .9rem; }
+.pickinfo #pickHero { font-weight: 500; color: var(--muted); }
+.pickinfo #pickHero:not(:empty)::before { content: "\2022"; margin-right: .9rem; color: var(--line); }
+.chips { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .4rem; min-height: 2.1rem; align-items: center; }
+.chips .empty { color: var(--muted); font-style: italic; }
+.chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  border: 2px solid var(--dom); background: var(--dom); color: var(--on-dom);
+  border-radius: 999px; padding: .15rem .35rem .15rem .75rem; font-weight: 700; cursor: pointer; min-height: 36px;
+}
+.chip .x { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(0, 0, 0, .18); font-size: .95rem; line-height: 1; }
+.btn {
+  border: 2px solid var(--ink); background: var(--surface); border-radius: 10px; padding: .45rem 1rem;
+  font-weight: 700; cursor: pointer; min-height: 44px; box-shadow: var(--shadow);
+}
+.btn:hover { background: var(--surface2); }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.primary:hover { filter: brightness(1.15); }
+.btn.quiet { box-shadow: none; border-color: var(--line); }
+.limit { min-height: 1.5rem; color: var(--gold); font-weight: 700; margin: -.4rem 0 .6rem; }
+
+.dom { margin-bottom: 1.1rem; }
+.dom h3 { display: flex; align-items: center; gap: .55rem; font-size: 1.35rem; color: var(--dom); margin-bottom: .1rem; }
+.dom h3 .ico { flex: none; }
+.dom .blurb { color: var(--muted); margin-bottom: .55rem; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(172px, 1fr)); gap: .5rem; }
+.tile {
+  text-align: left; cursor: pointer; min-height: 46px;
+  background: var(--surface); border: 2px solid var(--line); border-left: 7px solid var(--dom);
+  border-radius: 10px; padding: .45rem .6rem; font-weight: 700; font-size: 1.02rem;
+  display: flex; align-items: center; gap: .35rem; overflow-wrap: anywhere;
+}
+.tile:hover { border-color: var(--dom); }
+.tile .tick { display: none; }
+.tile[aria-pressed="true"] .tick { display: inline-block; width: 1rem; }
+.tile[aria-pressed="true"] { background: var(--dom); color: var(--on-dom); border-color: var(--dom); }
+.tile[aria-pressed="true"] .tick::before { content: "\2713"; }
+
+/* Hero panel */
+.panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 1rem); }
+.panel .card { padding: 1rem 1.1rem 1.2rem; }
+.panel .your { color: var(--muted); font-weight: 700; }
+.panel h2 { font-size: 1.9rem; }
+.panel .tag { font-size: 1.15rem; margin: .15rem 0 .4rem; }
+.hero-svg { display: block; width: 100%; max-width: 340px; height: auto; margin: .2rem auto .5rem; }
+.halo { fill: none; stroke: var(--gold); stroke-width: 3; stroke-dasharray: 1 9; stroke-linecap: round; opacity: 0; transition: opacity .5s; }
+.halo.full { opacity: 1; }
+.link { stroke: var(--line); stroke-width: 2.5; stroke-dasharray: 4 6; fill: none; }
+.link.on { stroke: var(--dom); stroke-dasharray: none; stroke-width: 4; }
+.cloak { stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.figure-ink { fill: var(--ink); }
+.slot .disc { fill: var(--surface); stroke: var(--muted); stroke-width: 2.5; stroke-dasharray: 6 6; }
+.slot .ic { color: var(--muted); opacity: .8; }
+.slot .ring { fill: none; stroke: var(--dom); stroke-width: 4; opacity: 0; }
+.slot .badge { opacity: 0; }
+.slot .badge circle { fill: var(--ink); }
+.slot .badge text { fill: var(--bg); font: 700 13px var(--body); text-anchor: middle; }
+.slot .lab { font: 700 13px var(--body); fill: var(--ink); text-anchor: middle; }
+.slot.on .disc { fill: var(--dom); stroke: var(--dom); stroke-dasharray: none; }
+.slot.on .ic { color: var(--on-dom); opacity: 1; }
+.slot.on .badge { opacity: 1; }
+.slot.strong .ring { opacity: .6; }
+.slot.pop .disc { animation: pop .45s ease; transform-box: fill-box; transform-origin: center; }
+@keyframes pop { 0% { transform: scale(.82); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+
+.meter { list-style: none; margin: .4rem 0 .9rem; padding: 0; display: grid; gap: .25rem; }
+.meter li { display: flex; align-items: center; gap: .5rem; color: var(--muted); }
+.meter li.on { color: var(--ink); font-weight: 700; }
+.meter .ico { color: var(--dom); flex: none; }
+.meter .n { margin-left: auto; font-variant-numeric: tabular-nums; }
+.panel h3 { font-size: 1.15rem; margin: .7rem 0 .15rem; }
+.watch { border-left: 5px solid var(--gold); padding-left: .7rem; margin-top: .7rem; }
+
+/* Card */
+.sec { margin-top: 1.6rem; }
+.sec[hidden], [hidden] { display: none !important; }
+.sec h2 { font-size: 1.8rem; margin-bottom: .3rem; }
+.approach { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin: .8rem 0; }
+.approach .col { border: 2px solid var(--line); border-radius: 12px; padding: .7rem .85rem; background: var(--surface); }
+.approach h3 { font-size: 1.25rem; margin-bottom: .35rem; }
+.approach ul { margin: 0; padding: 0; list-style: none; display: grid; gap: .5rem; }
+.approach li .from { display: inline-flex; align-items: center; gap: .3rem; font-weight: 700; color: var(--dom); }
+.callout { border: 2px dashed var(--line); border-radius: 12px; padding: .75rem 1rem; margin-top: .8rem; }
+.nudge { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; align-items: center; justify-content: space-between; }
+.form { display: grid; gap: .8rem; margin: 1rem 0; }
+.form label { font-weight: 700; display: grid; gap: .25rem; }
+.form small { font-weight: 400; color: var(--muted); }
+.form input, .form textarea {
+  font: inherit; color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: .55rem .7rem; width: 100%;
+}
+.notes {
+  background: var(--surface); border: 2px solid var(--ink); border-radius: 12px; padding: 1rem 1.15rem; line-height: 1.55;
+}
+.notes #notesOut { white-space: pre-wrap; }
+.notes h3 { font-size: 1.3rem; margin-bottom: .4rem; }
+.actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .8rem; }
+.status { min-height: 1.5rem; margin-top: .5rem; font-weight: 700; }
+.fallback { width: 100%; min-height: 9rem; margin-top: .6rem; font: inherit; padding: .6rem; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); }
+.foot { color: var(--muted); font-size: 1rem; padding: 1.6rem 0 2.4rem; max-width: 48rem; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .intro, .stage { grid-template-columns: 1fr; }
+  .panel { position: static; }
+  .approach { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slot.pop .disc { animation: none; }
+  .halo { transition: none; }
+}
+@media print {
+  body * { visibility: hidden; }
+  #notesCard, #notesCard * { visibility: visible; }
+  #notesCard { position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; border-color: #000; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#activity">Skip to the activity</a>
+
+<header class="top">
+  <div class="wrap">
+    <p class="lvl">Level 4: Discover Your Tools</p>
+    <h1>The Toolkit Builder</h1>
+    <p class="sub">Every hero carries a different set of tools. See how your strengths work together, then find the approach that fits you.</p>
+    <p class="meta">This takes about 5 to 10 minutes. It is not graded, and nothing you do here is saved or sent.</p>
+  </div>
+</header>
+
+<main class="wrap" id="activity">
+  <div class="intro">
+    <section class="card" aria-labelledby="howh">
+      <h2 id="howh">How this works</h2>
+      <ol class="how">
+        <li>Start in <strong>Experiment</strong>. Add a few strengths and watch your hero change. Take one out and see what shifts.</li>
+        <li>Switch to <strong>My Top 5</strong> and add the five themes from your CliftonStrengths results.</li>
+        <li>Read your approach, add a few thoughts of your own, and copy your notes for your discussion post.</li>
+      </ol>
+    </section>
+    <aside class="card verse" aria-label="Scripture">
+      <blockquote>“Each of you should use whatever gift you have received to serve others, as faithful stewards of God’s grace in its various forms.”</blockquote>
+      <cite>(NIV, 1 Peter 4:10)</cite>
+    </aside>
+  </div>
+
+  <div class="modebar">
+    <div class="seg" role="group" aria-label="Choose a mode">
+      <button type="button" data-mode="explore" aria-pressed="true">Experiment</button>
+      <button type="button" data-mode="mine" aria-pressed="false">My Top 5</button>
+    </div>
+    <p class="modenote" id="modeNote"></p>
+  </div>
+
+  <div class="stage">
+    <div class="board">
+      <div class="pickbar">
+        <div class="pickinfo"><span id="pickCount">0 of 5 added</span><span id="pickHero"></span></div>
+        <button type="button" class="btn quiet" id="clearBtn">Clear all</button>
+        <div class="chips" id="chips" aria-label="Strengths you have added"></div>
+      </div>
+      <p class="limit" id="limitMsg" role="status"></p>
+      <div id="tiles"></div>
+    </div>
+
+    <aside class="panel" aria-label="Your hero">
+      <div class="card">
+        <p class="your">Your hero</p>
+        <h2 id="heroName">Waiting for a first strength</h2>
+        <p class="tag" id="heroTag">Pick a strength to begin. Try a few, and watch what changes.</p>
+        <div id="heroArt"></div>
+        <ul class="meter" id="meter" aria-label="Strengths by domain"></ul>
+        <h3>How this hero approaches a challenge</h3>
+        <p id="heroApproach">Each strength belongs to a family, called a domain. Your hero’s tools light up as you add strengths from each one.</p>
+        <p class="watch" id="heroWatch" hidden></p>
+      </div>
+    </aside>
+  </div>
+
+  <section class="sec nudge card" id="nudge" aria-label="Next step">
+    <p><strong>Ready to try it with your own results?</strong> These practice heroes do not describe you. They show how strengths can work together.</p>
+    <button type="button" class="btn primary" id="toMine">Switch to My Top 5</button>
+  </section>
+
+  <section class="sec" id="cardSec" hidden aria-labelledby="cardH">
+    <h2 id="cardH">Your approach card</h2>
+    <p id="cardIntro"></p>
+    <div id="approach"></div>
+    <div class="callout" id="ally"></div>
+
+    <div class="form">
+      <label for="inName">Your name <small>(optional)</small>
+        <input id="inName" type="text" autocomplete="off">
+      </label>
+      <label for="inChallenge">A college challenge I will use this on
+        <small>Something real, like a big reading, a tight deadline, or a tricky assignment.</small>
+        <textarea id="inChallenge" rows="2"></textarea>
+      </label>
+      <label for="inTake">My one-line takeaway
+        <small>Try finishing this: When ___, my ___ helps me ___.</small>
+        <textarea id="inTake" rows="2"></textarea>
+      </label>
+    </div>
+
+    <div class="notes" id="notesCard">
+      <h3>My Discussion Notes: Level 4, Discover Your Tools</h3>
+      <div id="notesOut" tabindex="0"></div>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn primary" id="copyBtn">Copy my notes</button>
+      <button type="button" class="btn" id="printBtn">Print or save as PDF</button>
+    </div>
+    <p class="status" id="status" role="status"></p>
+    <textarea class="fallback" id="fallback" readonly hidden aria-label="Your notes, ready to copy"></textarea>
+  </section>
+
+  <p class="foot">Your work is not saved, so copy your notes before you close this page. Write your discussion post in your own words. This activity is practice, not a CliftonStrengths report. Your official results and theme descriptions come from Gallup.</p>
+</main>
+
+<div class="sr" id="live" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var ORDER = ["exec", "infl", "rel", "strat"];
+
+  var DOMAINS = {
+    exec: {
+      name: "Executing", short: "Executing", icon: "hammer",
+      blurb: "Strengths that turn plans into finished work.",
+      lean: "follow-through and finishing tasks",
+      themes: ["Achiever", "Arranger", "Belief", "Consistency", "Deliberative", "Discipline", "Focus", "Responsibility", "Restorative"],
+      study: "Turn each reading into a checklist and tick it off as you go.",
+      time: "Block your study sessions on the calendar and protect them like appointments.",
+      solve: "Break the stuck moment into the next small, doable step, and take it.",
+      watch: "It can be hard to rest or ask for help while something is still on the list."
+    },
+    infl: {
+      name: "Influencing", short: "Influencing", icon: "banner",
+      blurb: "Strengths that move people and ideas forward.",
+      lean: "speaking up and getting momentum",
+      themes: ["Activator", "Command", "Communication", "Competition", "Maximizer", "Self-Assurance", "Significance", "Woo"],
+      study: "Explain what you are learning out loud, to a friend or even to yourself, so it sticks.",
+      time: "Tell someone your goal and deadline so your plan has momentum behind it.",
+      solve: "Take a first step, even a small one, and invite others to join you.",
+      watch: "Moving fast can skip the details or leave out quieter voices."
+    },
+    rel: {
+      name: "Relationship Building", short: "Relationships", icon: "heart",
+      blurb: "Strengths that connect people and hold a team together.",
+      lean: "support and connection",
+      themes: ["Adaptability", "Connectedness", "Developer", "Empathy", "Harmony", "Includer", "Individualization", "Positivity", "Relator"],
+      study: "Find a study partner or small group and talk through the material together.",
+      time: "Plan study blocks around the people in your life, and tell them when you need focus time.",
+      solve: "Reach out to an instructor, coach, or classmate early instead of struggling alone.",
+      watch: "It can be hard to say no, or to protect your own work when others need you."
+    },
+    strat: {
+      name: "Strategic Thinking", short: "Strategic", icon: "compass",
+      blurb: "Strengths that explore ideas and see what is ahead.",
+      lean: "big-picture planning and ideas",
+      themes: ["Analytical", "Context", "Futuristic", "Ideation", "Input", "Intellection", "Learner", "Strategic"],
+      study: "Start with the big question, then read to answer it, connecting new ideas to what you already know.",
+      time: "Look at the whole course calendar first, then work backward from the big deadlines.",
+      solve: "Step back, list a few different ways forward, and weigh them before you choose.",
+      watch: "Thinking and planning can run so long that the work never starts."
+    }
+  };
+
+  var ICONS = {
+    hammer: '<g transform="rotate(35)"><rect x="-2.6" y="-3" width="5.2" height="20" rx="1.8" fill="currentColor"/><rect x="-12" y="-13" width="24" height="9.5" rx="2.2" fill="currentColor"/></g>',
+    banner: '<path d="M-9 -16 V16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M-8 -15 L15 -8 L-8 0Z" fill="currentColor"/>',
+    heart: '<path d="M0 13 C-20 -2 -10 -17 0 -6 C10 -17 20 -2 0 13Z" fill="currentColor"/>',
+    compass: '<circle r="14" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M0 -9 L5 0 L0 9 L-5 0Z" fill="currentColor"/>'
+  };
+
+  function icon(key, size) {
+    return '<svg class="ico" viewBox="-18 -18 36 36" width="' + size + '" height="' + size + '" aria-hidden="true" focusable="false">' + ICONS[DOMAINS[key].icon] + '</svg>';
+  }
+
+  var PROFILES = {
+    exec: { name: "The Builder", tag: "You turn plans into finished work.",
+      approach: "This hero meets a challenge by getting started and getting things done: making a clear list, setting steady routines, and following through.",
+      watch: "Rest is part of the plan too. Schedule it as firmly as the work." },
+    infl: { name: "The Trailblazer", tag: "You move things forward and bring others along.",
+      approach: "This hero meets a challenge by taking the first step, speaking up, and getting momentum going.",
+      watch: "Pause to check the details, and make space for quieter voices." },
+    rel: { name: "The Connector", tag: "You hold the group together.",
+      approach: "This hero meets a challenge by drawing on people: asking, listening, and building support before the hard part begins.",
+      watch: "Protect your own study time so you have something to give." },
+    strat: { name: "The Navigator", tag: "You see the road ahead.",
+      approach: "This hero meets a challenge by stepping back, spotting the pattern, and choosing a route before moving.",
+      watch: "A good plan only helps once you start. Pick a time to begin." },
+    "exec+infl": { name: "The Captain", tag: "You get things done and rally others.",
+      approach: "This hero sets a clear goal, takes charge of the plan, and brings people along to finish it.",
+      watch: "Doing a lot, fast, can overlook what others need. Check in before you charge ahead." },
+    "exec+rel": { name: "The Steady Anchor", tag: "You finish the work and bring people with you.",
+      approach: "This hero gets things done while keeping others in the loop: studying with a partner, sharing the load, and checking in.",
+      watch: "Be careful not to take on everyone else’s work. Saying no can be a way of caring well." },
+    "exec+strat": { name: "The Architect", tag: "You plan it, then you build it.",
+      approach: "This hero lays out the big picture and then works through it step by step, working backward from deadlines and checking off milestones.",
+      watch: "A perfect plan can delay the start, and a full list can crowd out rest. Begin before it feels ready." },
+    "infl+rel": { name: "The Rallier", tag: "You inspire people and care about them.",
+      approach: "This hero energizes a group and makes sure each person feels included, using encouragement and connection to keep everyone moving.",
+      watch: "Build in quiet time to plan the details, and do not carry everyone’s morale alone." },
+    "infl+strat": { name: "The Visionary", tag: "You see where it could go and make the case for it.",
+      approach: "This hero imagines the bigger picture and inspires others to move toward it, explaining the idea and then proposing a route.",
+      watch: "Big ideas need follow-through. Pair your vision with a small first step and someone who loves the details." },
+    "rel+strat": { name: "The Counselor", tag: "You understand both people and ideas.",
+      approach: "This hero thinks carefully about the problem and talks it through with others, listening, asking good questions, and weighing options together.",
+      watch: "It is easy to over-think or wait for everyone to agree. Set a point where you decide." },
+    spread: { name: "The Adaptable Hero", tag: "You have a tool for almost every moment.",
+      approach: "This hero reads the situation and chooses the approach that fits: planning alone, talking it through with others, or moving ahead.",
+      watch: "With so many options, it can be hard to choose where to start. Ask what the moment needs most." }
+  };
+
+  // theme -> domain
+  var THEME_DOMAIN = {};
+  ORDER.forEach(function (k) {
+    DOMAINS[k].themes.forEach(function (t) { THEME_DOMAIN[t] = k; });
+  });
+
+  var MAX = 5;
+  var state = { mode: "explore", sel: { explore: [], mine: [] } };
+
+  var el = function (id) { return document.getElementById(id); };
+
+  function current() { return state.sel[state.mode]; }
+
+  function countsFor(list) {
+    var c = { exec: 0, infl: 0, rel: 0, strat: 0 };
+    list.forEach(function (t) { c[THEME_DOMAIN[t]]++; });
+    return c;
+  }
+
+  function pairId(keys) {
+    return ORDER.filter(function (k) { return keys.indexOf(k) > -1; }).join("+");
+  }
+
+  function profileFor(c) {
+    var total = ORDER.reduce(function (s, k) { return s + c[k]; }, 0);
+    if (!total) { return null; }
+    var sorted = ORDER.slice().sort(function (a, b) {
+      return c[b] - c[a] || ORDER.indexOf(a) - ORDER.indexOf(b);
+    });
+    var top = c[sorted[0]];
+    var tied = ORDER.filter(function (k) { return c[k] === top; });
+    var doms;
+    if (tied.length >= 3) {
+      doms = sorted.filter(function (k) { return c[k] > 0; });
+      return { id: "spread", domains: doms };
+    }
+    if (tied.length === 2) {
+      return { id: pairId(tied), domains: tied };
+    }
+    if (c[sorted[1]] >= 2) {
+      doms = [sorted[0], sorted[1]];
+      return { id: pairId(doms), domains: doms };
+    }
+    return { id: sorted[0], domains: [sorted[0]] };
+  }
+
+  function domainNames(keys) {
+    return keys.map(function (k) { return DOMAINS[k].name; }).join(" + ");
+  }
+
+  // ---------- Build static pieces ----------
+  function buildTiles() {
+    var html = "";
+    ORDER.forEach(function (k) {
+      var d = DOMAINS[k];
+      html += '<section class="dom" style="--dom:var(--' + k + ')" aria-labelledby="dh-' + k + '">' +
+        '<h3 id="dh-' + k + '">' + icon(k, 26) + d.name + '</h3>' +
+        '<p class="blurb">' + d.blurb + '</p><div class="tiles">';
+      d.themes.forEach(function (t) {
+        html += '<button type="button" class="tile" data-theme="' + t + '" aria-pressed="false">' +
+          '<span class="tick" aria-hidden="true"></span><span>' + t + '</span></button>';
+      });
+      html += '</div></section>';
+    });
+    el("tiles").innerHTML = html;
+  }
+
+  var POS = { strat: [62, 68], infl: [258, 68], rel: [62, 222], exec: [258, 222] };
+
+  function buildHero() {
+    var s = '<svg class="hero-svg" id="heroSvg" viewBox="0 0 320 300" role="img" aria-label="Your hero">' +
+      '<defs><linearGradient id="cloakGrad" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop id="st0" offset="0"/><stop id="st1" offset=".35"/><stop id="st2" offset=".7"/><stop id="st3" offset="1"/></linearGradient></defs>' +
+      '<circle id="halo" class="halo" cx="160" cy="150" r="128"/>';
+    ORDER.forEach(function (k) {
+      s += '<line id="link-' + k + '" class="link" style="--dom:var(--' + k + ')" x1="' + POS[k][0] + '" y1="' + POS[k][1] + '" x2="160" y2="150"/>';
+    });
+    s += '<rect class="figure-ink" x="138" y="236" width="15" height="36" rx="7"/>' +
+      '<rect class="figure-ink" x="167" y="236" width="15" height="36" rx="7"/>' +
+      '<path id="cloak" class="cloak" fill="url(#cloakGrad)" d="M128 122 Q160 108 192 122 L214 240 Q160 256 106 240 Z"/>' +
+      '<circle class="figure-ink" cx="160" cy="92" r="23"/>';
+    ORDER.forEach(function (k) {
+      s += '<g class="slot" id="slot-' + k + '" transform="translate(' + POS[k][0] + ',' + POS[k][1] + ')" style="--dom:var(--' + k + ')">' +
+        '<circle class="ring" r="42"/><circle class="disc" r="32"/>' +
+        '<g class="ic" transform="scale(1.15)">' + ICONS[DOMAINS[k].icon] + '</g>' +
+        '<g class="badge" transform="translate(25,-25)"><circle r="11"/><text y="4.5" id="badge-' + k + '">0</text></g>' +
+        '<text class="lab" y="58">' + DOMAINS[k].short + '</text></g>';
+    });
+    s += '</svg>';
+    el("heroArt").innerHTML = s;
+  }
+
+  function buildMeter() {
+    var html = "";
+    ORDER.forEach(function (k) {
+      html += '<li id="m-' + k + '" style="--dom:var(--' + k + ')">' + icon(k, 20) + '<span>' + DOMAINS[k].name + '</span><span class="n" id="mn-' + k + '">0</span></li>';
+    });
+    el("meter").innerHTML = html;
+  }
+
+  // ---------- Render ----------
+  var prevCounts = { exec: 0, infl: 0, rel: 0, strat: 0 };
+
+  function setStops(doms) {
+    var n = doms.length;
+    for (var i = 0; i < 4; i++) {
+      var stop = el("st" + i);
+      var color = n ? "var(--" + doms[Math.min(n - 1, Math.floor(i * n / 4))] + ")" : "var(--line)";
+      stop.style.stopColor = color;
+    }
+  }
+
+  function render(announce) {
+    var list = current();
+    var c = countsFor(list);
+    var prof = profileFor(c);
+    var P = prof ? PROFILES[prof.id] : null;
+
+    // tiles
+    var tiles = document.querySelectorAll(".tile");
+    for (var i = 0; i < tiles.length; i++) {
+      var on = list.indexOf(tiles[i].getAttribute("data-theme")) > -1;
+      tiles[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+
+    // pick bar
+    el("pickCount").textContent = list.length + " of " + MAX + " added";
+    el("pickHero").textContent = P ? "Your hero: " + P.name : "";
+    var chips = "";
+    list.forEach(function (t) {
+      var k = THEME_DOMAIN[t];
+      chips += '<button type="button" class="chip" style="--dom:var(--' + k + ')" data-remove="' + t + '" aria-label="Remove ' + t + '">' + t + ' <span class="x" aria-hidden="true">\u00d7</span></button>';
+    });
+    el("chips").innerHTML = chips || '<span class="empty">Nothing added yet. Choose from the families below.</span>';
+
+    // hero text
+    if (P) {
+      el("heroName").textContent = P.name;
+      el("heroTag").textContent = P.tag;
+      el("heroApproach").textContent = P.approach;
+      el("heroWatch").hidden = false;
+      el("heroWatch").textContent = "Watch-out: " + P.watch;
+    } else {
+      el("heroName").textContent = "Waiting for a first strength";
+      el("heroTag").textContent = "Pick a strength to begin. Try a few, and watch what changes.";
+      el("heroApproach").textContent = "Each strength belongs to a family, called a domain. Your hero’s tools light up as you add strengths from each one.";
+      el("heroWatch").hidden = true;
+    }
+
+    // hero art
+    setStops(prof ? prof.domains : []);
+    ORDER.forEach(function (k) {
+      var slot = el("slot-" + k);
+      slot.classList.toggle("on", c[k] > 0);
+      slot.classList.toggle("strong", c[k] > 1);
+      el("badge-" + k).textContent = c[k];
+      el("link-" + k).classList.toggle("on", c[k] > 0);
+      el("m-" + k).classList.toggle("on", c[k] > 0);
+      el("mn-" + k).textContent = c[k];
+      if (c[k] !== prevCounts[k] && c[k] > 0) {
+        slot.classList.remove("pop");
+        void slot.getBoundingClientRect();
+        slot.classList.add("pop");
+      }
+    });
+    prevCounts = c;
+    el("halo").classList.toggle("full", list.length === MAX);
+    el("heroSvg").setAttribute("aria-label", P ? "Your hero, " + P.name + ", built from " + domainNames(prof.domains) : "Your hero, with no strengths added yet");
+
+    // mode-specific
+    var mine = state.mode === "mine";
+    el("nudge").hidden = mine;
+    el("cardSec").hidden = !(mine && list.length > 0);
+    if (mine && list.length > 0) { renderCard(list, c, prof, P); }
+
+    if (announce) {
+      el("live").textContent = list.length + " of " + MAX + " strengths added." + (P ? " Your hero is " + P.name + "." : "");
+    }
+  }
+
+  function approachDomains(c, prof) {
+    var doms = prof.domains.slice();
+    doms.sort(function (a, b) { return c[b] - c[a] || ORDER.indexOf(a) - ORDER.indexOf(b); });
+    return doms.slice(0, 3);
+  }
+
+  function renderCard(list, c, prof, P) {
+    el("cardIntro").textContent = list.length < MAX
+      ? "You have added " + list.length + " of 5. Add all five for the fullest picture. Here is your approach so far."
+      : "Here is how your five strengths can work together for study, time, and problem-solving.";
+
+    var doms = approachDomains(c, prof);
+    var cols = [["Study", "study"], ["Time", "time"], ["Problem-solving", "solve"]];
+    var html = '<div class="approach">';
+    cols.forEach(function (col) {
+      html += '<div class="col"><h3>' + col[0] + '</h3><ul>';
+      doms.forEach(function (k) {
+        html += '<li style="--dom:var(--' + k + ')"><span class="from">' + icon(k, 16) + DOMAINS[k].name + '</span><br>' + DOMAINS[k][col[1]] + '</li>';
+      });
+      html += '</ul></div>';
+    });
+    html += '</div>';
+    el("approach").innerHTML = html;
+
+    var ally = allyText(c);
+    el("ally").textContent = ally;
+    updateNotes(list, c, prof, P, doms, ally);
+  }
+
+  function allyText(c) {
+    var min = Math.min(c.exec, c.infl, c.rel, c.strat);
+    var max = Math.max(c.exec, c.infl, c.rel, c.strat);
+    if (min === max) {
+      return "Ally tip: your strengths are spread evenly, so think about which situations call for a teammate, and ask someone from your alliance in Level 3.";
+    }
+    var light = ORDER.filter(function (k) { return c[k] === min; });
+    var names = light.map(function (k) { return DOMAINS[k].name; }).join(" and ");
+    var leans = light.map(function (k) { return DOMAINS[k].lean; }).join(" or ");
+    return "Ally tip: your lightest area is " + names + ". That is a good place to lean on someone from your alliance in Level 3. Who do you know who is strong at " + leans + "?";
+  }
+
+  function notesText(list, c, prof, P, doms, ally) {
+    var lines = [];
+    var name = el("inName").value.trim();
+    var challenge = el("inChallenge").value.trim();
+    var take = el("inTake").value.trim();
+    if (name) { lines.push("Name: " + name); }
+    lines.push("My Top 5: " + list.join(", "));
+    lines.push("My hero: " + P.name + " (" + domainNames(prof.domains) + ")");
+    lines.push("How my hero approaches a challenge: " + P.approach);
+    [["Study", "study"], ["Time", "time"], ["Problem-solving", "solve"]].forEach(function (col) {
+      lines.push("");
+      lines.push(col[0] + ":");
+      doms.forEach(function (k) { lines.push("- (" + DOMAINS[k].name + ") " + DOMAINS[k][col[1]]); });
+    });
+    lines.push("");
+    lines.push("My watch-out: " + P.watch);
+    lines.push(ally.replace(/^Ally tip: /, "My ally tip: "));
+    lines.push("");
+    lines.push("A college challenge I will use this on: " + (challenge || "(add yours)"));
+    lines.push("My one-line takeaway: " + (take || "When ___, my ___ helps me ___."));
+    return lines.join("\n");
+  }
+
+  var lastCtx = null;
+  function updateNotes(list, c, prof, P, doms, ally) {
+    lastCtx = { list: list, c: c, prof: prof, P: P, doms: doms, ally: ally };
+    el("notesOut").textContent = notesText(list, c, prof, P, doms, ally);
+  }
+
+  // ---------- Events ----------
+  function toggle(theme) {
+    var list = current();
+    var idx = list.indexOf(theme);
+    el("limitMsg").textContent = "";
+    if (idx > -1) {
+      list.splice(idx, 1);
+    } else if (list.length >= MAX) {
+      el("limitMsg").textContent = "A hero can only carry five. Remove one to make room for " + theme + ".";
+      el("live").textContent = "You already have five. Remove one to add " + theme + ".";
+      return;
+    } else {
+      list.push(theme);
+    }
+    render(true);
+  }
+
+  function setMode(m) {
+    state.mode = m;
+    var btns = document.querySelectorAll(".seg button");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-mode") === m ? "true" : "false");
+    }
+    el("limitMsg").textContent = "";
+    el("modeNote").textContent = m === "explore"
+      ? "Try any combination. There is no wrong hero. Add a strength, take one out, and notice what changes."
+      : "Now it is your turn. Add the five themes from your CliftonStrengths results.";
+    prevCounts = { exec: 0, infl: 0, rel: 0, strat: 0 };
+    render(true);
+    window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+
+  el("tiles").addEventListener("click", function (e) {
+    var b = e.target.closest(".tile");
+    if (b) { toggle(b.getAttribute("data-theme")); }
+  });
+  el("chips").addEventListener("click", function (e) {
+    var b = e.target.closest(".chip");
+    if (b) { toggle(b.getAttribute("data-remove")); }
+  });
+  el("clearBtn").addEventListener("click", function () {
+    state.sel[state.mode] = [];
+    el("limitMsg").textContent = "";
+    render(true);
+  });
+  var modeBtns = document.querySelectorAll(".seg button");
+  for (var i = 0; i < modeBtns.length; i++) {
+    modeBtns[i].addEventListener("click", function (e) { setMode(e.currentTarget.getAttribute("data-mode")); });
+  }
+  el("toMine").addEventListener("click", function () { setMode("mine"); });
+
+  ["inName", "inChallenge", "inTake"].forEach(function (id) {
+    el(id).addEventListener("input", function () {
+      if (lastCtx && state.mode === "mine") {
+        updateNotes(lastCtx.list, lastCtx.c, lastCtx.prof, lastCtx.P, lastCtx.doms, lastCtx.ally);
+      }
+    });
+  });
+
+  el("copyBtn").addEventListener("click", function () {
+    var text = el("notesCard").innerText.replace(/\n{3,}/g, "\n\n");
+    var done = function () {
+      el("status").textContent = "Copied. Paste your notes into your discussion post, then write your response in your own words.";
+      el("fallback").hidden = true;
+    };
+    var fail = function () {
+      el("status").textContent = "Your browser blocked automatic copying. Select the text below and copy it.";
+      var f = el("fallback");
+      f.hidden = false;
+      f.value = text;
+      f.focus();
+      f.select();
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fail);
+      } else { fail(); }
+    } catch (err) { fail(); }
+  });
+
+  el("printBtn").addEventListener("click", function () {
+    try { window.print(); } catch (err) {
+      el("status").textContent = "Printing is not available here. Use Copy my notes instead.";
+    }
+  });
+
+  // ---------- Init ----------
+  buildTiles();
+  buildHero();
+  buildMeter();
+  setMode("explore");
+  window.scrollTo(0, 0);
+})();
+</script>
+</body>
+</html>
