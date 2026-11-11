@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISTU 490 | Worldview Explorer</title>
+<style>
+:root{
+  --navy:#16284b; --navy2:#22407a; --gold:#e0a526; --gold-soft:#fdf3d8;
+  --ink:#1d2433; --muted:#5a6578; --bg:#f5f7fb; --card:#ffffff; --line:#d9dfec;
+  --good:#1f8a5b; --bad:#c2410c;
+  --c1:#2f6fd0; --c2:#d9623b; --c3:#2a9d8f; --c4:#8a5cc7; --c5:#e0a526;
+}
+*{box-sizing:border-box}
+/* No inner scroll containers: the page flows naturally so only ONE scrollbar (the iframe's, if any) can appear */
+html,body{margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+body{padding:14px}
+.app{max-width:980px;margin:0 auto}
+header.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:14px;
+  padding:16px 20px;display:flex;align-items:center;gap:16px}
+header.hero svg{flex:0 0 64px}
+header.hero h1{font-size:1.25rem;margin:0}
+header.hero p{margin:2px 0 0;font-size:.9rem;opacity:.85}
+  cursor:pointer;font:inherit;text-align:left;display:flex;align-items:center;gap:8px;color:var(--ink)}
+section.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.93rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.btn{border:0;background:var(--navy2);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn.alt{background:#fff;color:var(--navy2);border:2px solid var(--navy2)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.note{background:var(--gold-soft);border-left:4px solid var(--gold);padding:8px 12px;border-radius:8px;font-size:.88rem}
+.small{font-size:.82rem;color:var(--muted)}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--navy2);border-color:var(--navy2);color:#fff}
+
+.row-end{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+footer{margin-top:10px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* W4 */
+.wvgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:680px){.wvgrid{grid-template-columns:1fr}}
+.wvcard{border:2px solid var(--line);border-radius:12px;padding:10px;text-align:center;background:#fff}
+.wvcard svg{width:76px;height:76px}
+.wvcard h3{margin:2px 0;font-size:1rem}
+.wvcard p{margin:4px 0 0;font-size:.88rem;text-align:left}
+.seg{display:inline-flex;border:2px solid var(--navy2);border-radius:999px;overflow:hidden;margin-bottom:10px}
+.seg button{border:0;background:#fff;color:var(--navy2);padding:6px 16px;font:inherit;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--navy2);color:#fff}
+.quizq{font-size:1.02rem;font-weight:600;margin:8px 0}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:680px){.opts{grid-template-columns:1fr}}
+.opt{border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink)}
+.opt svg{width:44px;height:44px}
+.opt.right{border-color:var(--good);background:#e8f7ef}
+.opt.wrong{border-color:var(--bad);background:#fdeee6}
+.feedback{margin-top:10px;padding:8px 12px;border-radius:8px;background:#f0f4fb;font-size:.9rem;min-height:40px}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<header class="hero">
+  <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Compass graphic">
+    <circle cx="32" cy="32" r="29" fill="none" stroke="#e0a526" stroke-width="3"/>
+    <circle cx="32" cy="32" r="22" fill="#ffffff22"/>
+    <polygon points="32,10 38,32 32,54 26,32" fill="#e0a526"/>
+    <polygon points="32,10 38,32 26,32" fill="#fff"/>
+    <circle cx="32" cy="32" r="3.5" fill="#16284b"/>
+  </svg>
+  <div>
+    <h1>ISTU 490 | Interdisciplinary Studies Capstone I</h1>
+    <p>Week 4 Interactive: Theism and Its Alternatives</p>
+  </div>
+</header>
+
+<div style="height:12px"></div>
+<section class="panel" id="p4">
+  <h2>Three Worldviews, One Set of Questions</h2>
+  <p class="lead">Compare how Christian theism, deism, and naturalism answer the same basic questions, then test yourself.</p>
+  <div class="seg" role="group" aria-label="Mode">
+    <button id="w4explore" aria-pressed="true">Explore</button>
+    <button id="w4quiz" aria-pressed="false">Quiz</button>
+  </div>
+
+  <div id="w4exp">
+    <div class="small">Choose a question:</div>
+    <div class="chiprow" id="w4chips"></div>
+    <div class="wvgrid" id="w4cards"></div>
+  </div>
+
+  <div id="w4q" hidden>
+    <div class="small" id="w4qcount"></div>
+    <div class="quizq" id="w4qtext"></div>
+    <div class="opts" id="w4opts"></div>
+    <div class="feedback" id="w4fb" role="status">Pick the worldview that best fits the statement.</div>
+    <div class="row-end"><span class="small" id="w4score"></span><button class="btn" id="w4next" disabled>Next</button></div>
+  </div>
+</section>
+
+<footer class="small">ISTU 490 · Interactive study aids supporting the Deep Dive pages</footer>
+</div>
+
+<script>
+
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+const $ = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ---------- iframe auto-height (one scrollbar only: the host page's) ---------- */
+function postHeight(){
+  const h = Math.ceil(document.getElementById("app").getBoundingClientRect().height + 32);
+  try{ parent.postMessage({type:"istu490-resize",height:h},"*"); }catch(e){}
+}
+if("ResizeObserver" in window){ new ResizeObserver(postHeight).observe(document.getElementById("app")); }
+window.addEventListener("load",postHeight);
+window.addEventListener("resize",postHeight);
+
+
+const ICON={
+  T:`<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="22" fill="#2a9d8f"/><path d="M40 4 L40 18 M12 14 L21 24 M68 14 L59 24" stroke="#e0a526" stroke-width="4" stroke-linecap="round"/><path d="M40 18 C28 30 28 52 40 62 C52 52 52 30 40 18Z" fill="#fff" opacity=".9"/><path d="M40 70 L40 60 M30 66 L50 66" stroke="#e0a526" stroke-width="4" stroke-linecap="round"/></svg>`,
+  D:`<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="42" r="30" fill="#fff" stroke="#8a5cc7" stroke-width="5"/><path d="M40 42 L40 22 M40 42 L54 50" stroke="#8a5cc7" stroke-width="5" stroke-linecap="round"/><circle cx="40" cy="42" r="3.5" fill="#8a5cc7"/><rect x="34" y="4" width="12" height="8" rx="2" fill="#8a5cc7"/></svg>`,
+  N:`<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="6" fill="#d9623b"/><ellipse cx="40" cy="40" rx="32" ry="12" fill="none" stroke="#d9623b" stroke-width="3"/><ellipse cx="40" cy="40" rx="32" ry="12" fill="none" stroke="#d9623b" stroke-width="3" transform="rotate(60 40 40)"/><ellipse cx="40" cy="40" rx="32" ry="12" fill="none" stroke="#d9623b" stroke-width="3" transform="rotate(120 40 40)"/></svg>`
+};
+const WV={T:{name:"Christian Theism",color:"#2a9d8f"},D:{name:"Deism",color:"#8a5cc7"},N:{name:"Naturalism",color:"#d9623b"}};
+const QS=[
+  {q:"What is prime reality?",T:"A personal, infinite God who created the universe and remains involved with it.",D:"God exists but acts like a clockmaker: he made the universe and then left it to run on its own.",N:"Matter and the physical universe are all that exist. There is no God."},
+  {q:"What is a human being?",T:"Made in God’s image, with unique worth and the capacity for relationship with God.",D:"Rational beings in an orderly universe who can discover truth by reason.",N:"A complex arrangement of matter, a product of natural processes with no special design."},
+  {q:"Where does morality come from?",T:"From God’s character, so right and wrong are objective.",D:"From a moral order that reason can discover, not from ongoing revelation.",N:"From human nature, culture, and evolution, since there is no transcendent source."},
+  {q:"Can God communicate with us?",T:"Yes. God reveals himself, and prayer is real communication.",D:"Not in any special way. Revelation and miracles are doubted.",N:"No, since there is no God to speak."},
+  {q:"What is the meaning of history?",T:"History is linear and purposeful, moving under God’s direction.",D:"History is the unfolding of a universe running on built-in laws.",N:"History is a sequence of natural events. Meaning is something people create."}
+];
+let w4q=0;
+const chips=$("#w4chips");
+QS.forEach((q,i)=>{
+  const b=document.createElement("button");b.className="chip";b.type="button";b.textContent=q.q;
+  b.setAttribute("aria-pressed",String(i===0));
+  b.addEventListener("click",()=>{w4q=i;$$(".chip",chips).forEach((c,j)=>c.setAttribute("aria-pressed",String(j===i)));renderCards();});
+  chips.appendChild(b);
+});
+function renderCards(){
+  $("#w4cards").innerHTML=["T","D","N"].map(k=>`<div class="wvcard" style="border-color:${WV[k].color}">${ICON[k]}<h3 style="color:${WV[k].color}">${WV[k].name}</h3><p>${esc(QS[w4q][k])}</p></div>`).join("");
+  postHeight();
+}
+renderCards();
+
+const Q=[
+  {s:"“The universe is like a watch. Once it was wound up, it needed no further help.”",a:"D",why:"Deism pictures God as a clockmaker who is no longer involved."},
+  {s:"“God hears our prayers and is active in history.”",a:"T",why:"Christian theism describes a personal God who remains involved."},
+  {s:"“Nothing exists beyond matter and energy, and there is no God.”",a:"N",why:"Naturalism holds that the physical universe is all that exists."},
+  {s:"“Humans are valuable because they are made in the image of God.”",a:"T",why:"Human worth rooted in God’s image is a hallmark of theism."},
+  {s:"“Miracles and special revelation are unlikely. Reason is enough to understand God’s world.”",a:"D",why:"Deists generally trust reason over special revelation."},
+  {s:"“Meaning is not given to us. Any purpose in life is something we create.”",a:"N",why:"Without a transcendent source, naturalism treats meaning as human-made."}
+];
+let qi=0,qscore=0,answered=false;
+function renderQ(){
+  const q=Q[qi];answered=false;
+  $("#w4qcount").textContent="Statement "+(qi+1)+" of "+Q.length;
+  $("#w4qtext").textContent=q.s;
+  $("#w4opts").innerHTML=["T","D","N"].map(k=>`<button class="opt" type="button" data-k="${k}">${ICON[k]}<strong style="color:${WV[k].color}">${WV[k].name}</strong></button>`).join("");
+  $$("#w4opts .opt").forEach(b=>b.addEventListener("click",()=>answerQ(b)));
+  $("#w4fb").textContent="Pick the worldview that best fits the statement.";
+  $("#w4next").disabled=true;$("#w4next").textContent=qi===Q.length-1?"See score":"Next";
+  $("#w4score").textContent="Score: "+qscore+"/"+qi;
+  postHeight();
+}
+function answerQ(btn){
+  if(answered)return;answered=true;
+  const q=Q[qi],k=btn.dataset.k;
+  $$("#w4opts .opt").forEach(b=>{if(b.dataset.k===q.a)b.classList.add("right");});
+  if(k===q.a){qscore++;$("#w4fb").innerHTML="<strong>Correct.</strong> "+esc(q.why);}
+  else{btn.classList.add("wrong");$("#w4fb").innerHTML="<strong>Not quite.</strong> This one is "+WV[q.a].name+". "+esc(q.why);}
+  $("#w4score").textContent="Score: "+qscore+"/"+(qi+1);
+  $("#w4next").disabled=false;
+}
+$("#w4next").addEventListener("click",()=>{
+  if(qi<Q.length-1){qi++;renderQ();}
+  else{
+    $("#w4qcount").textContent="Finished!";
+    $("#w4qtext").textContent="You matched "+qscore+" of "+Q.length+" statements.";
+    $("#w4opts").innerHTML="";
+    $("#w4fb").textContent=qscore>=5?"Strong grasp. Now describe each view fairly before you evaluate it, as the Deep Dive suggests.":"Revisit the Explore view and compare answers to each question side by side, then try again.";
+    $("#w4next").textContent="Try again";$("#w4next").disabled=false;
+    $("#w4next").onclick=()=>{qi=0;qscore=0;$("#w4next").onclick=null;renderQ();};
+    postHeight();
+  }
+});
+function setMode(m){
+  $("#w4explore").setAttribute("aria-pressed",String(m==="e"));
+  $("#w4quiz").setAttribute("aria-pressed",String(m==="q"));
+  $("#w4exp").hidden=m!=="e";$("#w4q").hidden=m!=="q";
+  if(m==="q"){qi=0;qscore=0;renderQ();}
+  postHeight();
+}
+$("#w4explore").addEventListener("click",()=>setMode("e"));
+$("#w4quiz").addEventListener("click",()=>setMode("q"));
+
+
+postHeight();
+})();
+</script>
+</body>
+</html>

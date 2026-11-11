@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISTU 490 | Strengths Spotlight</title>
+<style>
+:root{
+  --navy:#16284b; --navy2:#22407a; --gold:#e0a526; --gold-soft:#fdf3d8;
+  --ink:#1d2433; --muted:#5a6578; --bg:#f5f7fb; --card:#ffffff; --line:#d9dfec;
+  --good:#1f8a5b; --bad:#c2410c;
+  --c1:#2f6fd0; --c2:#d9623b; --c3:#2a9d8f; --c4:#8a5cc7; --c5:#e0a526;
+}
+*{box-sizing:border-box}
+/* No inner scroll containers: the page flows naturally so only ONE scrollbar (the iframe's, if any) can appear */
+html,body{margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+body{padding:14px}
+.app{max-width:980px;margin:0 auto}
+header.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:14px;
+  padding:16px 20px;display:flex;align-items:center;gap:16px}
+header.hero svg{flex:0 0 64px}
+header.hero h1{font-size:1.25rem;margin:0}
+header.hero p{margin:2px 0 0;font-size:.9rem;opacity:.85}
+  cursor:pointer;font:inherit;text-align:left;display:flex;align-items:center;gap:8px;color:var(--ink)}
+section.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.93rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.btn{border:0;background:var(--navy2);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn.alt{background:#fff;color:var(--navy2);border:2px solid var(--navy2)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.note{background:var(--gold-soft);border-left:4px solid var(--gold);padding:8px 12px;border-radius:8px;font-size:.88rem}
+.small{font-size:.82rem;color:var(--muted)}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--navy2);border-color:var(--navy2);color:#fff}
+
+.row-end{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+footer{margin-top:10px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* W1 */
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.pick{grid-template-columns:1fr}}
+.pick .chip{border-radius:12px;text-align:left;padding:8px 10px;line-height:1.3}
+.pick .chip[aria-pressed="true"]{background:#eaf0fc;color:var(--ink);border-color:var(--navy2);box-shadow:inset 0 0 0 1px var(--navy2)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+#w1result{min-height:60px}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<header class="hero">
+  <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Compass graphic">
+    <circle cx="32" cy="32" r="29" fill="none" stroke="#e0a526" stroke-width="3"/>
+    <circle cx="32" cy="32" r="22" fill="#ffffff22"/>
+    <polygon points="32,10 38,32 32,54 26,32" fill="#e0a526"/>
+    <polygon points="32,10 38,32 26,32" fill="#fff"/>
+    <circle cx="32" cy="32" r="3.5" fill="#16284b"/>
+  </svg>
+  <div>
+    <h1>ISTU 490 | Interdisciplinary Studies Capstone I</h1>
+    <p>Week 1 Interactive: Discovering Your Strengths</p>
+  </div>
+</header>
+
+<div style="height:12px"></div>
+<section class="panel" id="p1">
+  <h2>Strengths Spotlight</h2>
+  <p class="lead">Strengths feel natural, so they are easy to overlook. Select every statement that sounds like you and watch your strengths profile take shape.</p>
+  <div class="grid2">
+    <div>
+      <div class="pick" id="w1pick"></div>
+      <div class="row-end"><span class="small" id="w1count">0 selected</span><button class="btn alt" id="w1reset">Clear</button></div>
+    </div>
+    <div>
+      <svg id="w1radar" viewBox="0 0 320 300" width="100%" role="img" aria-label="Radar chart of strength domains"></svg>
+      <div class="legend" id="w1legend"></div>
+      <div class="note" id="w1result" style="margin-top:10px">Select at least one statement to see your emerging pattern.</div>
+    </div>
+  </div>
+  <p class="small" style="margin-top:10px">This activity uses the four domain names from CliftonStrengths for illustration only. It is not the assessment. Complete the official assessment for Part 1 of your Personal Manifesto.</p>
+</section>
+
+<footer class="small">ISTU 490 · Interactive study aids supporting the Deep Dive pages</footer>
+</div>
+
+<script>
+
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+const $ = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ---------- iframe auto-height (one scrollbar only: the host page's) ---------- */
+function postHeight(){
+  const h = Math.ceil(document.getElementById("app").getBoundingClientRect().height + 32);
+  try{ parent.postMessage({type:"istu490-resize",height:h},"*"); }catch(e){}
+}
+if("ResizeObserver" in window){ new ResizeObserver(postHeight).observe(document.getElementById("app")); }
+window.addEventListener("load",postHeight);
+window.addEventListener("resize",postHeight);
+
+
+const DOMAINS=[
+  {k:"E",name:"Executing",color:"#2f6fd0",desc:"making things happen and finishing what you start"},
+  {k:"I",name:"Influencing",color:"#d9623b",desc:"speaking up, persuading, and taking charge"},
+  {k:"R",name:"Relationship Building",color:"#2a9d8f",desc:"building trust and holding teams together"},
+  {k:"S",name:"Strategic Thinking",color:"#8a5cc7",desc:"absorbing information and imagining what could be"}
+];
+const STMTS=[
+  ["E","I feel great ticking items off a checklist."],
+  ["E","I stick with a project until it is truly done."],
+  ["E","People count on me to follow through."],
+  ["I","I speak up when a group needs direction."],
+  ["I","I enjoy persuading others to try an idea."],
+  ["I","I am comfortable presenting in front of people."],
+  ["R","Friends come to me when they need someone to listen."],
+  ["R","I notice when someone on the team feels left out."],
+  ["R","I build close, lasting relationships."],
+  ["S","I love asking “what if?” and exploring options."],
+  ["S","I read and research just because I am curious."],
+  ["S","I spot patterns others miss."]
+];
+const w1sel=new Set();
+const w1pick=$("#w1pick");
+STMTS.forEach((s,i)=>{
+  const b=document.createElement("button");
+  b.className="chip"; b.type="button"; b.setAttribute("aria-pressed","false"); b.textContent=s[1];
+  b.addEventListener("click",()=>{
+    if(w1sel.has(i)){w1sel.delete(i);}else{w1sel.add(i);}
+    b.setAttribute("aria-pressed",String(w1sel.has(i)));
+    drawRadar();
+  });
+  w1pick.appendChild(b);
+});
+$("#w1reset").addEventListener("click",()=>{
+  w1sel.clear(); $$(".chip",w1pick).forEach(b=>b.setAttribute("aria-pressed","false")); drawRadar();
+});
+$("#w1legend").innerHTML=DOMAINS.map(d=>`<span><i style="background:${d.color}"></i>${d.name}</span>`).join("");
+
+function drawRadar(){
+  const svg=$("#w1radar"); svg.innerHTML="";
+  const cx=160,cy=150,R=100;
+  const counts={E:0,I:0,R:0,S:0};
+  w1sel.forEach(i=>counts[STMTS[i][0]]++);
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const pts=DOMAINS.map((d,i)=>{const a=-Math.PI/2+i*Math.PI/2;return (cx+Math.cos(a)*R*f)+","+(cy+Math.sin(a)*R*f);}).join(" ");
+    el("polygon",{points:pts,fill:"none",stroke:"#d9dfec","stroke-width":1},svg);
+  });
+  DOMAINS.forEach((d,i)=>{
+    const a=-Math.PI/2+i*Math.PI/2;
+    el("line",{x1:cx,y1:cy,x2:cx+Math.cos(a)*R,y2:cy+Math.sin(a)*R,stroke:"#d9dfec"},svg);
+    const lx=cx+Math.cos(a)*(R+22), ly=cy+Math.sin(a)*(R+18);
+    const t=el("text",{x:lx,y:ly+4,"text-anchor":"middle","font-size":11,"font-weight":600,fill:d.color},svg);
+    t.textContent=d.name==="Relationship Building"?"Relationships":d.name;
+  });
+  const pts=DOMAINS.map((d,i)=>{
+    const a=-Math.PI/2+i*Math.PI/2; const f=Math.max(counts[d.k]/3,0.04);
+    return [cx+Math.cos(a)*R*f,cy+Math.sin(a)*R*f];
+  });
+  el("polygon",{points:pts.map(p=>p.join(",")).join(" "),fill:"#22407a33",stroke:"#22407a","stroke-width":2.5,"stroke-linejoin":"round"},svg);
+  pts.forEach((p,i)=>el("circle",{cx:p[0],cy:p[1],r:6,fill:DOMAINS[i].color,stroke:"#fff","stroke-width":2},svg));
+  $("#w1count").textContent=w1sel.size+" selected";
+  const out=$("#w1result");
+  if(!w1sel.size){out.textContent="Select at least one statement to see your emerging pattern.";return;}
+  const max=Math.max(...Object.values(counts));
+  const top=DOMAINS.filter(d=>counts[d.k]===max);
+  out.innerHTML="<strong>Emerging pattern:</strong> "+top.map(d=>esc(d.name)).join(" + ")+
+    " — you seem energized by "+top.map(d=>d.desc).join(", and by ")+". Ask yourself: where have I already used this? How could it shape my choice of work?";
+}
+drawRadar();
+
+
+postHeight();
+})();
+</script>
+</body>
+</html>

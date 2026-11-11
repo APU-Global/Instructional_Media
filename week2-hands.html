@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISTU 490 | Build Your HANDS</title>
+<style>
+:root{
+  --navy:#16284b; --navy2:#22407a; --gold:#e0a526; --gold-soft:#fdf3d8;
+  --ink:#1d2433; --muted:#5a6578; --bg:#f5f7fb; --card:#ffffff; --line:#d9dfec;
+  --good:#1f8a5b; --bad:#c2410c;
+  --c1:#2f6fd0; --c2:#d9623b; --c3:#2a9d8f; --c4:#8a5cc7; --c5:#e0a526;
+}
+*{box-sizing:border-box}
+/* No inner scroll containers: the page flows naturally so only ONE scrollbar (the iframe's, if any) can appear */
+html,body{margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+body{padding:14px}
+.app{max-width:980px;margin:0 auto}
+header.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:14px;
+  padding:16px 20px;display:flex;align-items:center;gap:16px}
+header.hero svg{flex:0 0 64px}
+header.hero h1{font-size:1.25rem;margin:0}
+header.hero p{margin:2px 0 0;font-size:.9rem;opacity:.85}
+  cursor:pointer;font:inherit;text-align:left;display:flex;align-items:center;gap:8px;color:var(--ink)}
+section.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.93rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.btn{border:0;background:var(--navy2);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn.alt{background:#fff;color:var(--navy2);border:2px solid var(--navy2)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.note{background:var(--gold-soft);border-left:4px solid var(--gold);padding:8px 12px;border-radius:8px;font-size:.88rem}
+.small{font-size:.82rem;color:var(--muted)}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--navy2);border-color:var(--navy2);color:#fff}
+
+.row-end{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+footer{margin-top:10px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* W2 */
+.hands-wrap svg{width:100%;height:auto;max-width:430px;display:block;margin:0 auto}
+.finger{cursor:pointer}
+.finger .shape{transition:fill .25s,transform .2s}
+.finger:hover .shape{transform:translateY(-4px)}
+.panelbox{border:2px solid var(--line);border-radius:12px;padding:12px;background:#fcfdff}
+.panelbox h3{margin:0 0 4px;font-size:1.05rem}
+.panelbox ul{margin:6px 0 8px 18px;padding:0;font-size:.9rem}
+textarea{width:100%;min-height:78px;border:2px solid var(--line);border-radius:10px;padding:8px;font:inherit;resize:vertical}
+.bar{height:10px;background:#e6eaf3;border-radius:999px;overflow:hidden;margin:8px 0}
+.bar>div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--c3));transition:width .3s}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<header class="hero">
+  <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Compass graphic">
+    <circle cx="32" cy="32" r="29" fill="none" stroke="#e0a526" stroke-width="3"/>
+    <circle cx="32" cy="32" r="22" fill="#ffffff22"/>
+    <polygon points="32,10 38,32 32,54 26,32" fill="#e0a526"/>
+    <polygon points="32,10 38,32 26,32" fill="#fff"/>
+    <circle cx="32" cy="32" r="3.5" fill="#16284b"/>
+  </svg>
+  <div>
+    <h1>ISTU 490 | Interdisciplinary Studies Capstone I</h1>
+    <p>Week 2 Interactive: HANDS, Designed to Make a Difference</p>
+  </div>
+</header>
+
+<div style="height:12px"></div>
+<section class="panel" id="p2">
+  <h2>Build Your HANDS</h2>
+  <p class="lead">Select each finger to reflect on one part of your design. A finger lights up once you write a response.</p>
+  <div class="grid2">
+    <div class="hands-wrap">
+      <svg id="handsvg" viewBox="0 0 400 360" role="group" aria-label="Hand with five fingers: Heart desires, Accumulated experiences, Natural personality, Developing skills, Spiritual gifts"></svg>
+      <div class="bar" aria-hidden="true"><div id="w2bar"></div></div>
+      <div class="small" id="w2prog" style="text-align:center">0 of 5 fingers complete</div>
+    </div>
+    <div>
+      <div class="panelbox" id="w2box"></div>
+      <div class="row-end">
+        <button class="btn alt" id="w2copy">Copy my HANDS summary</button>
+        <span class="small" id="w2msg" role="status"></span>
+      </div>
+      <p class="small">Your responses stay in this browser tab only. Copy them into Discussion 2 or your notes.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="small">ISTU 490 · Interactive study aids supporting the Deep Dive pages</footer>
+</div>
+
+<script>
+
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+const $ = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ---------- iframe auto-height (one scrollbar only: the host page's) ---------- */
+function postHeight(){
+  const h = Math.ceil(document.getElementById("app").getBoundingClientRect().height + 32);
+  try{ parent.postMessage({type:"istu490-resize",height:h},"*"); }catch(e){}
+}
+if("ResizeObserver" in window){ new ResizeObserver(postHeight).observe(document.getElementById("app")); }
+window.addEventListener("load",postHeight);
+window.addEventListener("resize",postHeight);
+
+
+const HANDS=[
+  {l:"H",name:"Heart Desires",color:"#2f6fd0",qs:["What are you passionate about?","Which problems in your community concern you most?","What do you enjoy doing even when no one asks you to?"],ph:"My heart desires are..."},
+  {l:"A",name:"Accumulated Experiences",color:"#d9623b",qs:["Which experiences have prepared you to help others?","What did you learn that others might need to hear?"],ph:"My experiences have taught me..."},
+  {l:"N",name:"Natural Personality",color:"#2a9d8f",qs:["Do you energize others or work best behind the scenes?","How do your strengths results connect to your personality?"],ph:"My natural personality shows up as..."},
+  {l:"D",name:"Developing Skills",color:"#8a5cc7",qs:["Which skills do you use most often?","Which skill would you like to develop next?"],ph:"The skills I am building are..."},
+  {l:"S",name:"Spiritual Gifts",color:"#e0a526",qs:["How has God prepared you to make a positive contribution to society?","Where could your gifts meet a real need?"],ph:"My spiritual gifts may be..."}
+];
+const w2ans=["","","","",""]; let w2cur=0;
+// finger geometry: x, top y, width, height
+const FG=[
+  {x:70,y:130,w:46,h:120,rot:-24},  // H (pinky side) - drawn as thumb-order visual left to right
+  {x:128,y:70,w:48,h:170,rot:-8},
+  {x:186,y:48,w:50,h:190,rot:0},
+  {x:244,y:68,w:48,h:172,rot:8},
+  {x:300,y:128,w:44,h:122,rot:22}
+];
+function drawHand(){
+  const svg=$("#handsvg"); svg.innerHTML="";
+  el("path",{d:"M62 235 Q60 330 150 345 L260 345 Q350 330 350 235 Z",fill:"#fbe3c8",stroke:"#d9a577","stroke-width":3},svg);
+  FG.forEach((f,i)=>{
+    const g=el("g",{class:"finger",tabindex:"0",role:"button","aria-label":HANDS[i].name+(w2ans[i].trim()?" (complete)":""),
+      transform:`rotate(${f.rot} ${f.x+f.w/2} ${f.y+f.h})`},svg);
+    const done=w2ans[i].trim().length>0;
+    el("rect",{class:"shape",x:f.x,y:f.y,width:f.w,height:f.h,rx:f.w/2,fill:done?HANDS[i].color:"#fbe3c8",stroke:i===w2cur?"#16284b":(done?HANDS[i].color:"#d9a577"),"stroke-width":i===w2cur?5:3},g);
+    const t=el("text",{x:f.x+f.w/2,y:f.y+34,"text-anchor":"middle","font-size":28,"font-weight":800,fill:done?"#fff":HANDS[i].color,"pointer-events":"none"},g);
+    t.textContent=HANDS[i].l;
+    if(done){const c=el("text",{x:f.x+f.w/2,y:f.y+f.h-14,"text-anchor":"middle","font-size":20,fill:"#fff","pointer-events":"none"},g);c.textContent="✓";}
+    g.addEventListener("click",()=>selectFinger(i));
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectFinger(i);}});
+  });
+  const nm=el("text",{x:206,y:318,"text-anchor":"middle","font-size":16,"font-weight":700,fill:"#7a5230"},svg);
+  nm.textContent=HANDS[w2cur].name;
+}
+function renderBox(focus){
+  const h=HANDS[w2cur];
+  $("#w2box").innerHTML=`<h3 style="color:${h.color}">${h.l} · ${esc(h.name)}</h3>
+    <div class="small">Think about:</div>
+    <ul>${h.qs.map(q=>"<li>"+esc(q)+"</li>").join("")}</ul>
+    <label class="small" for="w2ta">Your response:</label>
+    <textarea id="w2ta" placeholder="${esc(h.ph)}"></textarea>`;
+  const ta=$("#w2ta"); ta.value=w2ans[w2cur];
+  ta.addEventListener("input",()=>{w2ans[w2cur]=ta.value;updateProg();drawHand();});
+  if(focus)ta.focus({preventScroll:true});
+}
+function updateProg(){
+  const n=w2ans.filter(a=>a.trim()).length;
+  $("#w2bar").style.width=(n*20)+"%";
+  $("#w2prog").textContent=n+" of 5 fingers complete"+(n===5?" — your design is complete!":"");
+}
+function selectFinger(i){w2cur=i;drawHand();renderBox(true);}
+$("#w2copy").addEventListener("click",()=>{
+  const txt=HANDS.map((h,i)=>h.l+" – "+h.name+": "+(w2ans[i].trim()||"(not yet written)")).join("\n\n");
+  const msg=$("#w2msg");
+  const done=()=>{msg.textContent="Copied!";setTimeout(()=>msg.textContent="",2000);};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done,()=>fallback());}else fallback();
+  function fallback(){
+    const t=document.createElement("textarea");t.value=txt;t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.select();
+    try{document.execCommand("copy");done();}catch(e){msg.textContent="Select and copy manually.";}
+    document.body.removeChild(t);
+  }
+});
+drawHand();renderBox(false);updateProg();
+
+
+postHeight();
+})();
+</script>
+</body>
+</html>

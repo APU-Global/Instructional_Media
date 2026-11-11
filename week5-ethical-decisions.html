@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISTU 490 | Six-Step Ethical Model</title>
+<style>
+:root{
+  --navy:#16284b; --navy2:#22407a; --gold:#e0a526; --gold-soft:#fdf3d8;
+  --ink:#1d2433; --muted:#5a6578; --bg:#f5f7fb; --card:#ffffff; --line:#d9dfec;
+  --good:#1f8a5b; --bad:#c2410c;
+  --c1:#2f6fd0; --c2:#d9623b; --c3:#2a9d8f; --c4:#8a5cc7; --c5:#e0a526;
+}
+*{box-sizing:border-box}
+/* No inner scroll containers: the page flows naturally so only ONE scrollbar (the iframe's, if any) can appear */
+html,body{margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+body{padding:14px}
+.app{max-width:980px;margin:0 auto}
+header.hero{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:14px;
+  padding:16px 20px;display:flex;align-items:center;gap:16px}
+header.hero svg{flex:0 0 64px}
+header.hero h1{font-size:1.25rem;margin:0}
+header.hero p{margin:2px 0 0;font-size:.9rem;opacity:.85}
+  cursor:pointer;font:inherit;text-align:left;display:flex;align-items:center;gap:8px;color:var(--ink)}
+section.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+.lead{margin:0 0 12px;color:var(--muted);font-size:.93rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.btn{border:0;background:var(--navy2);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn.alt{background:#fff;color:var(--navy2);border:2px solid var(--navy2)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.note{background:var(--gold-soft);border-left:4px solid var(--gold);padding:8px 12px;border-radius:8px;font-size:.88rem}
+.small{font-size:.82rem;color:var(--muted)}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--navy2);border-color:var(--navy2);color:#fff}
+
+.row-end{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+footer{margin-top:10px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* W5 */
+.stepper svg{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node circle{transition:fill .25s,stroke .25s}
+.scenario{background:#f0f4fb;border-radius:10px;padding:10px 12px;font-size:.9rem;margin:8px 0}
+.choices{display:grid;gap:8px;margin-top:8px}
+.choice{text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 12px;font:inherit;cursor:pointer;color:var(--ink)}
+.choice:hover{border-color:var(--navy2)}
+.choice.right{border-color:var(--good);background:#e8f7ef}
+.choice.wrong{border-color:var(--bad);background:#fdeee6}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<header class="hero">
+  <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Compass graphic">
+    <circle cx="32" cy="32" r="29" fill="none" stroke="#e0a526" stroke-width="3"/>
+    <circle cx="32" cy="32" r="22" fill="#ffffff22"/>
+    <polygon points="32,10 38,32 32,54 26,32" fill="#e0a526"/>
+    <polygon points="32,10 38,32 26,32" fill="#fff"/>
+    <circle cx="32" cy="32" r="3.5" fill="#16284b"/>
+  </svg>
+  <div>
+    <h1>ISTU 490 | Interdisciplinary Studies Capstone I</h1>
+    <p>Week 5 Interactive: Biblical Integration and Ethical Decisions</p>
+  </div>
+</header>
+
+<div style="height:12px"></div>
+<section class="panel" id="p5">
+  <h2>Six Steps to an Ethical Decision</h2>
+  <p class="lead">Work through a practice scenario using the six-step model, in order. Each step builds on the one before it.</p>
+  <div class="stepper"><svg id="w5svg" viewBox="0 0 900 120" role="group" aria-label="Six-step progress path"></svg></div>
+  <div class="scenario"><strong>Practice scenario:</strong> You are a junior marketing analyst. Your manager asks you to publish a campaign saying a supplement “cures” fatigue. Early customer feedback is mixed, and the claim has not been verified. Launch is Friday.</div>
+  <div class="panelbox" id="w5box"></div>
+  <div class="row-end"><span class="small" id="w5score"></span><button class="btn alt" id="w5reset">Restart scenario</button></div>
+  <p class="small">This scenario is for practice only. Your Part 3 case study is in the Week 5 materials.</p>
+</section>
+
+<footer class="small">ISTU 490 · Interactive study aids supporting the Deep Dive pages</footer>
+</div>
+
+<script>
+
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+const $ = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ---------- iframe auto-height (one scrollbar only: the host page's) ---------- */
+function postHeight(){
+  const h = Math.ceil(document.getElementById("app").getBoundingClientRect().height + 32);
+  try{ parent.postMessage({type:"istu490-resize",height:h},"*"); }catch(e){}
+}
+if("ResizeObserver" in window){ new ResizeObserver(postHeight).observe(document.getElementById("app")); }
+window.addEventListener("load",postHeight);
+window.addEventListener("resize",postHeight);
+
+
+const STEPS=[
+  {n:"Describe the situation",ask:"Which is the best description of the situation?",
+   o:[["Facts only: a manager wants an unverified “cure” claim published by Friday, and customer feedback is mixed.",1,"Right. Step 1 states the facts without judgment."],["The manager is trying to deceive customers.",0,"That is a conclusion, not a description. Save judgments for later steps."],["There is no real problem. Marketing always exaggerates.",0,"Dismissing the issue skips the model entirely."]]},
+  {n:"Gather additional information",ask:"What should you do next?",
+   o:[["Ask for the evidence behind the claim and check advertising and health-claim rules.",1,"Right. Step 2 fills gaps with facts and standards before deciding."],["Post the claim and fix it later if someone complains.",0,"This acts before gathering information."],["Ask coworkers to vote on whether the claim is okay.",0,"Opinion is not information. Look for evidence and rules."]]},
+  {n:"Identify ethical issues",ask:"Which names the core ethical issues?",
+   o:[["Honesty with customers, possible harm to buyers, and loyalty to an employer.",1,"Right. Several values compete, and naming them clearly is the point of this step."],["Whether the campaign will be profitable.",0,"Profit matters, but it is a business question, not the ethical issue."],["Whether you will get in trouble.",0,"Self-protection is a concern, but not the full ethical issue."]]},
+  {n:"Set forth guiding moral principles",ask:"Which principle best anchors your worldview here?",
+   o:[["Truthfulness and love of neighbor: do not deceive, and seek the good of others.",1,"Right. Principles drawn from your worldview guide the recommendation. A Christian approach might point to biblical teaching on truthfulness and neighbor-love."],["The end justifies the means if the company benefits.",0,"This principle sets aside the other issues you just identified."],["Whatever the manager decides is right.",0,"Authority alone does not settle what is ethical."]]},
+  {n:"Propose recommendations for resolution",ask:"Which recommendation fits the principles?",
+   o:[["Propose truthful wording, such as “may help support energy,” and request evidence before any stronger claim.",1,"Right. It resolves the issue while respecting the employer and the customer."],["Quietly refuse to work on the project.",0,"This avoids the problem without offering a resolution."],["Leak the plan to the press.",0,"This skips constructive options and could cause serious harm."]]},
+  {n:"Forecast the consequences",ask:"Which forecast is most thorough?",
+   o:[["Customers get honest information, the company avoids legal and trust risks, and you may face short-term friction with your manager.",1,"Right. Good forecasts weigh effects on every stakeholder, short and long term."],["Everything will work out fine.",0,"A forecast should name specific consequences."],["Only consider how the decision affects you.",0,"Forecast the effects on all affected people."]]}
+];
+let w5i=0,w5done=[],w5right=0,w5ans=false;
+function drawPath(){
+  const svg=$("#w5svg");svg.innerHTML="";
+  const xs=STEPS.map((_,i)=>75+i*150);
+  el("line",{x1:xs[0],y1:48,x2:xs[5],y2:48,stroke:"#d9dfec","stroke-width":8,"stroke-linecap":"round"},svg);
+  const prog=Math.min(w5done.filter(Boolean).length,5);
+  if(prog>0)el("line",{x1:xs[0],y1:48,x2:xs[Math.min(prog,5)],y2:48,stroke:"#2a9d8f","stroke-width":8,"stroke-linecap":"round"},svg);
+  STEPS.forEach((s,i)=>{
+    const g=el("g",{class:"node",tabindex:"0",role:"button","aria-label":"Step "+(i+1)+": "+s.n+(w5done[i]?" (done)":""),},svg);
+    const done=w5done[i];
+    el("circle",{cx:xs[i],cy:48,r:26,fill:done?"#2a9d8f":(i===w5i?"#22407a":"#fff"),stroke:i===w5i?"#e0a526":(done?"#2a9d8f":"#9aa6bd"),"stroke-width":i===w5i?5:3},g);
+    const t=el("text",{x:xs[i],y:56,"text-anchor":"middle","font-size":24,"font-weight":800,fill:(done||i===w5i)?"#fff":"#5a6578","pointer-events":"none"},g);
+    t.textContent=done?"✓":(i+1);
+    const lb=el("text",{x:xs[i],y:104,"text-anchor":"middle","font-size":13,"font-weight":600,fill:"#1d2433","pointer-events":"none"},g);
+    const words=s.n.split(" ");const mid=Math.ceil(words.length/2);
+    const l1=words.slice(0,mid).join(" "),l2=words.slice(mid).join(" ");
+    lb.textContent=l1; lb.setAttribute("y",96);
+    if(l2){const t2=el("text",{x:xs[i],y:112,"text-anchor":"middle","font-size":13,"font-weight":600,fill:"#1d2433","pointer-events":"none"},g);t2.textContent=l2;}
+    const go=()=>{ if(i<=firstOpen()){w5i=i;renderStep();} };
+    g.addEventListener("click",go);
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+  });
+}
+function firstOpen(){const i=w5done.findIndex(d=>!d);return i===-1?5:i;}
+function renderStep(){
+  drawPath();
+  const s=STEPS[w5i];w5ans=!!w5done[w5i];
+  const box=$("#w5box");
+  box.innerHTML=`<h3 style="color:#22407a">Step ${w5i+1}: ${esc(s.n)}</h3><div>${esc(s.ask)}</div>
+    <div class="choices">${s.o.map((o,k)=>`<button type="button" class="choice" data-k="${k}">${esc(o[0])}</button>`).join("")}</div>
+    <div class="feedback" id="w5fb" role="status" style="margin-top:10px">${w5done[w5i]?"Completed.":"Choose the best response."}</div>
+    <div class="row-end"><span></span><button class="btn" id="w5next" ${w5done[w5i]?"":"disabled"}>${w5i===5?"Finish":"Next step"}</button></div>`;
+  $$(".choice",box).forEach(b=>b.addEventListener("click",()=>pick(b)));
+  $("#w5next").addEventListener("click",nextStep);
+  $("#w5score").textContent="First-try correct: "+w5right+"/"+w5done.filter(Boolean).length;
+  postHeight();
+}
+let w5tried=[];
+function pick(b){
+  if(w5done[w5i])return;
+  const s=STEPS[w5i],k=+b.dataset.k,o=s.o[k];
+  if(o[1]){
+    b.classList.add("right");
+    if(!w5tried[w5i])w5right++;
+    w5done[w5i]=true;
+    $("#w5fb").innerHTML="<strong>Yes.</strong> "+esc(o[2]);
+    $("#w5next").disabled=false;
+    $("#w5score").textContent="First-try correct: "+w5right+"/"+w5done.filter(Boolean).length;
+    drawPath();
+  }else{
+    w5tried[w5i]=true;b.classList.add("wrong");b.disabled=true;
+    $("#w5fb").innerHTML="<strong>Not the best choice.</strong> "+esc(o[2])+" Try again.";
+  }
+  postHeight();
+}
+function nextStep(){
+  if(w5i<5){w5i++;renderStep();}
+  else{
+    drawPath();
+    $("#w5box").innerHTML=`<h3 style="color:#1f8a5b">Model complete ✓</h3>
+      <p>You moved through all six steps and got <strong>${w5right} of 6</strong> on the first try. In Part 3, repeat this order with your assigned case study: describe, gather information, identify issues, set principles, recommend, and forecast.</p>`;
+    $("#w5score").textContent="";
+    postHeight();
+  }
+}
+function resetW5(){w5i=0;w5done=[];w5right=0;w5tried=[];renderStep();}
+$("#w5reset").addEventListener("click",resetW5);
+renderStep();
+
+
+postHeight();
+})();
+</script>
+</body>
+</html>
