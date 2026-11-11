@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 Interactive | Deciding When the Future Is Uncertain</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:10px 14px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.tg{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tg button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:7px 18px;cursor:pointer}
+.tg button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px;border:3px solid transparent}.stats div.pick{border-color:var(--ok);background:var(--ok-l)}.stats b{display:block;font:700 1.3rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a decision tree branching into three paths with a die and a fog bank">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(100 115)" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"><rect x="-14" y="-14" width="28" height="28" fill="#f6c453" stroke="none"/><path d="M14 0H90M90 0L170 -60M90 0L170 0M90 0L170 60"/><circle cx="170" cy="-60" r="14" fill="#f7dcdd" stroke="none"/><circle cx="170" cy="0" r="14" fill="#f7dcdd" stroke="none"/><circle cx="170" cy="60" r="14" fill="#f7dcdd" stroke="none"/><path d="M184 -60H260M184 0H260M184 60H260"/></g>
+<g transform="translate(470 80)"><rect width="76" height="76" rx="14" fill="#fff"/><g fill="#7d2429"><circle cx="20" cy="20" r="6"/><circle cx="56" cy="20" r="6"/><circle cx="38" cy="38" r="6"/><circle cx="20" cy="56" r="6"/><circle cx="56" cy="56" r="6"/></g></g>
+<g fill="#f7dcdd" opacity=".85"><circle cx="640" cy="130" r="30"/><circle cx="690" cy="112" r="38"/><circle cx="745" cy="130" r="30"/><rect x="620" y="130" width="150" height="30" rx="15"/></g>
+<g transform="translate(610 190)" font-family="system-ui" font-weight="800" fill="#fff" font-size="16"><text>Gather data. Weigh the odds.</text></g>
+</svg>
+<div class="txt"><div class="kick">ECON 530 · Week 6 Interactive</div><h1>Deciding When the Future Is Uncertain</h1><p>Managers rarely know outcomes in advance. Weight each outcome by its probability, ask what information is worth, compare how risk-averse and risk-neutral rules choose, and see how hidden information shapes contracts.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Launch, test, or hold?</h2>
+<p class="lead">A firm can launch a product in a new foreign market now, pay <strong>$0.5M</strong> for a pilot test that reveals how the market will turn out and then decide, or not launch. Demand turns out <strong>strong</strong> (+$8M), <strong>moderate</strong> (+$2M, 30% likely), or <strong>weak</strong> (−$6M). Set how likely strong demand is.</p>
+<div class="ctl"><div><label for="ps">Chance demand is strong <span id="psv">40%</span></label><input type="range" id="ps" min="0" max="70" step="5" value="40"></div>
+<div><label for="pc">Cost of the pilot test <span id="pcv">$0.5M</span></label><input type="range" id="pc" min="0" max="3" step="0.1" value="0.5"></div></div>
+<div class="tg" role="group" aria-label="Decision rule"><button id="r1" aria-pressed="true">Maximize expected value</button><button id="r2" aria-pressed="false">Avoid the worst case</button></div>
+<svg class="chart" id="tr" viewBox="0 0 700 320" role="img" aria-label="Decision tree for launch, pilot, or hold"></svg>
+<div class="stats" aria-live="polite"><div id="s1"><b>–</b><small>Launch now</small></div><div id="s2"><b>–</b><small>Pilot, then decide</small></div><div id="s3"><b>–</b><small>Do not launch</small></div><div><b id="s4">–</b><small>Most a perfect forecast could be worth</small></div></div>
+<div class="note teal live" id="adv" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">Expected value weights each outcome by its probability. It does not capture a decision-maker’s attitude toward risk: a risk-averse manager may reasonably choose differently. The pilot is assumed to reveal the true outcome. All figures are in $ millions and invented for practice.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Who knows what?</h2>
+<p class="lead">Unequal information creates risk. Adverse selection occurs before a deal, when hidden characteristics lead to a poor mix of participants; moral hazard occurs after a deal, when hidden behavior changes because someone else bears the cost.</p>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Design the response</h2>
+<div id="rm"></div>
+<div class="note teal"><strong>Transparency builds trust.</strong> Signals, screening, warranties, and monitoring reduce information gaps. Being open about what you know, and about the limits of what you know, lowers cost and builds trust with partners and customers.</div>
+</section>
+</div>
+<p class="foot">Source: ECON 530 Week 6 and Week 7 Deep Dives. Figures are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var rule="ev";
+function m(n){return(n<0?"−$":"$")+Math.abs(n).toFixed(1)+"M"}
+function upd(){
+ var ps=+document.getElementById("ps").value/100,pm=.3,pw=Math.max(0,1-pm-ps),cost=+document.getElementById("pc").value;
+ document.getElementById("psv").textContent=Math.round(ps*100)+"%";document.getElementById("pcv").textContent="$"+cost.toFixed(1)+"M";
+ var evL=8*ps+2*pm-6*pw,evP=8*ps+2*pm+0*pw-cost,evN=0,perfect=8*ps+2*pm,evpi=perfect-Math.max(evL,0);
+ var wL=-6,wP=-cost,wN=0;
+ var vals=rule==="ev"?[evL,evP,evN]:[wL,wP,wN],bi=vals.indexOf(Math.max.apply(null,vals));
+ var s=document.getElementById("tr");s.innerHTML="";el("rect",{width:700,height:320,fill:"#fcfcfc"},s);
+ var lines=function(d,c,w){el("path",{d:d,stroke:c||"#5b5557","stroke-width":w||3,fill:"none","stroke-linecap":"round"},s)};
+ var txt=function(x,y,t,sz,w,col,an){var e=el("text",{x:x,y:y,"text-anchor":an||"start","font-size":sz||"12","font-weight":w||"700",fill:col||"#231f20","paint-order":"stroke",stroke:"#fcfcfc","stroke-width":4},s);e.textContent=t;return e};
+ // root and branches
+ el("rect",{x:34,y:148,width:28,height:28,fill:"#e0a526",stroke:"#231f20","stroke-width":2},s);
+ var cols=[bi===0?"#2d7a4b":"#8a8286",bi===1?"#2d7a4b":"#8a8286",bi===2?"#2d7a4b":"#8a8286"],wd=[bi===0?5:3,bi===1?5:3,bi===2?5:3];
+ lines("M62 162L200 62",cols[0],wd[0]);lines("M62 162L200 172",cols[1],wd[1]);lines("M62 162L200 276",cols[2],wd[2]);
+ txt(110,96,"Launch now",13,"800",cols[0]);txt(86,198,"Pilot test",13,"800",cols[1]);txt(112,150+0,"",1);txt(100,262,"Do not launch",13,"800",cols[2]);
+ var pilotTxt=txt(86,214,"(cost $"+cost.toFixed(1)+"M)",11,"600","#5b5557");
+ // chance nodes
+ [[200,62,evL,"EV "+m(evL)],[200,172,evP,"EV "+m(evP)]].forEach(function(n,i){el("circle",{cx:n[0],cy:n[1],r:15,fill:"#fff",stroke:cols[i],"stroke-width":wd[i]},s);txt(n[0]-26,n[1]-22,n[3],12,"800",cols[i])});
+ // leaves
+ var rows=[[0,"Strong",ps,8],[1,"Moderate",pm,2],[2,"Weak",pw,-6]];
+ rows.forEach(function(r){var y=24+r[0]*38;lines("M215 62L330 "+(y+2),"#8a8286",2);txt(340,y+6,r[1]+" ("+Math.round(r[2]*100)+"%)",12);txt(640,y+6,m(r[3]),13,"800",r[3]<0?"#b3261e":"#2d7a4b","end")});
+ var pr=[[0,"Strong",ps,8-cost,"launch"],[1,"Moderate",pm,2-cost,"launch"],[2,"Weak",pw,-cost,"do not launch"]];
+ pr.forEach(function(r){var y=134+r[0]*38;lines("M215 172L330 "+(y+2),"#8a8286",2);txt(340,y+6,r[1]+" ("+Math.round(r[2]*100)+"%) → "+r[4],12);txt(640,y+6,m(r[3]),13,"800",r[3]<0?"#b3261e":"#2d7a4b","end")});
+ lines("M200 276H330","#8a8286",2);txt(340,281,"No launch, no pilot",12);txt(640,281,"$0.0M",13,"800","#5b5557","end");
+ var heads=txt(640,14,"payoff",11,"700","#5b5557","end");
+ // stats
+ var setS=function(id,v,i){var d=document.getElementById(id);d.querySelector("b").textContent=rule==="ev"?m(v):m([wL,wP,wN][i])+" worst";d.className=bi===i?"pick":""};
+ setS("s1",evL,0);setS("s2",evP,1);setS("s3",evN,2);
+ document.getElementById("s4").textContent=m(Math.max(0,evpi));
+ var names=["launch now","run the pilot, then decide","not launch"],a=document.getElementById("adv");
+ if(rule==="ev")a.innerHTML="<strong>Highest expected value: "+names[bi]+" ("+m(vals[bi])+").</strong> "+(bi===1?"The pilot is worth buying because it lets you avoid the "+m(-6)+" loss in the weak case; it costs $"+cost.toFixed(1)+"M and a perfect forecast is worth up to "+m(Math.max(0,evpi))+". ":bi===0?"Strong demand is likely enough that launching without testing pays on average, and a perfect forecast would be worth at most "+m(Math.max(0,evpi))+". ":"With these odds, the expected loss from launching outweighs the gain, and testing costs more than the information is worth. ")+"Consider the cost of being wrong in each direction: launching into weak demand loses $6M; skipping a strong market gives up $8M.";
+ else a.innerHTML="<strong>Avoiding the worst case picks: "+names[bi]+".</strong> A risk-averse rule ignores probabilities and compares the worst outcome of each choice (launch "+m(wL)+", pilot "+m(wP)+", hold $0.0M). Expected value and risk attitude can give different answers; neither is “wrong.” The right rule depends on how much a loss would hurt the firm. Switch back to expected value to compare.";
+}
+["ps","pc"].forEach(function(i){document.getElementById(i).oninput=upd});
+document.getElementById("r1").onclick=function(){rule="ev";this.setAttribute("aria-pressed","true");document.getElementById("r2").setAttribute("aria-pressed","false");upd()};
+document.getElementById("r2").onclick=function(){rule="worst";this.setAttribute("aria-pressed","true");document.getElementById("r1").setAttribute("aria-pressed","false");upd()};
+upd();
+function quiz(host,list,labels,fin){var h=document.getElementById(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ labels.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)document.getElementById(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Not quite. Is the problem a hidden characteristic before the deal, or hidden behavior after it?</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"People who know they are likely to get sick are the most eager to buy health insurance.",a:0,w:"Hidden characteristics before the deal lead to a poor mix of customers: adverse selection."},
+{t:"After buying full coverage on a delivery van, a company stops maintaining it carefully.",a:1,w:"Protection from risk changes behavior after the deal: moral hazard."},
+{t:"A used-equipment seller knows which machines are unreliable, but the buyer cannot tell.",a:0,w:"The seller’s hidden quality is known before the sale: adverse selection."},
+{t:"A manager paid a flat salary slacks off because nobody can see how hard they work.",a:1,w:"Hidden action after the contract is signed: moral hazard."}],["Adverse selection","Moral hazard"],"qres");
+quiz("rm",[
+{t:"A lender requires borrowers to submit financial statements and credit history before approving a loan.",a:0,w:"The uninformed party sorts applicants using information before the deal: screening."},
+{t:"A manufacturer offers a long warranty on its product.",a:1,w:"The informed party sends a credible signal of quality: a signal (a warranty)."},
+{t:"An insurer adds a deductible so customers still pay part of any loss.",a:2,w:"Keeping a financial stake in the outcome limits careless behavior: an incentive-based contract."},
+{t:"A company pays its sales team a commission on results and reviews their activity reports.",a:3,w:"Pay tied to results plus oversight reduces hidden-action problems: monitoring and incentives."}],["Screening","Signaling","Incentive contract","Monitoring and incentives"],null);
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

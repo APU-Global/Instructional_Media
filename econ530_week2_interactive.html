@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 Interactive | Count Only the Costs That Change</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.ctl{background:var(--warm);border-radius:14px;padding:10px 14px;margin:10px 0}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.3rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.tg{display:flex;gap:10px;align-items:center;margin:8px 0;font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;font-weight:700;margin:6px 0}.legend span{display:flex;gap:6px;align-items:center}.legend i{width:16px;height:6px;border-radius:3px;display:inline-block}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a magnifying glass over cost tags with one crossed out, beside a balance of benefit and cost">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 50)"><g transform="rotate(-8 40 40)"><path d="M0 0h110l26 28-26 28H0z" fill="#f7dcdd"/><circle cx="16" cy="28" r="6" fill="#a8353a"/><text x="38" y="35" font-size="19" font-weight="800" fill="#7d2429" font-family="system-ui">$120k</text></g><path d="M-6 70L150 -6" stroke="#f6c453" stroke-width="7" stroke-linecap="round"/><text x="4" y="104" font-size="14" font-weight="700" fill="#fff" font-family="system-ui">sunk: ignore</text></g>
+<g transform="translate(90 130)"><g><path d="M0 0h110l26 28-26 28H0z" fill="#fff"/><circle cx="16" cy="28" r="6" fill="#d34147"/><text x="38" y="35" font-size="19" font-weight="800" fill="#7d2429" font-family="system-ui">$75k</text></g><text x="4" y="78" font-size="14" font-weight="700" fill="#f6c453" font-family="system-ui">avoidable: counts</text></g>
+<g transform="translate(470 40)" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"><path d="M130 160h-100M80 160V30M0 50h160"/><path d="M0 50l-28 66h56zM160 50l-28 66h56z" stroke-width="3"/><path d="M-28 116q28 24 56 0M132 116q28 24 56 0" fill="#f6c453"/></g>
+<g font-family="system-ui" font-weight="700" fill="#fff" font-size="15"><text x="470" y="190">benefit</text><text x="640" y="190">cost</text></g>
+<g transform="translate(790 60)" font-family="system-ui" fill="#fff"><text font-size="22" font-weight="800">Look forward.</text><text y="32" font-size="22" font-weight="800">Think at the margin.</text></g>
+</svg>
+<div class="txt"><div class="kick">ECON 530 · Week 2 Interactive</div><h1>Count Only the Costs That Change</h1><p>A good decision compares what changes between the alternatives. Weigh added benefit against added cost, sort relevant costs from sunk ones, and see how a sunk cost can talk you into the wrong choice.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Think at the margin</h2>
+<p class="lead">Take an action when its marginal benefit exceeds its marginal cost. A bakery decides how many special-order cakes to make this week. Each extra cake brings in less added benefit and costs more to make. Choose a quantity.</p>
+<div class="ctl"><label for="mq">Cakes made <span id="mqv">3</span></label><input type="range" id="mq" min="0" max="10" value="3"></div>
+<div class="legend"><span><i style="background:#1f6f78"></i>Marginal benefit of the cake</span><span><i style="background:#d34147"></i>Marginal cost of the cake</span></div>
+<svg class="chart" id="c1" viewBox="0 0 700 280" role="img" aria-label="Bars of marginal benefit and marginal cost for each cake"></svg>
+<div class="stats" aria-live="polite"><div><b id="m1">–</b><small>Total benefit</small></div><div><b id="m2">–</b><small>Total cost</small></div><div><b id="m3">–</b><small>Net benefit</small></div><div><b id="m4">–</b><small>Best possible</small></div></div>
+<div class="note teal live" id="adv1" aria-live="polite"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Relevant or not?</h2>
+<p class="lead">Northwind Bakery is deciding whether to keep running its own oven line or buy loaves from a contract baker. Which of these costs <em>differ</em> between the two alternatives? Only relevant costs matter, and opportunity costs count even when no cash changes hands.</p>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Make or buy?</h2>
+<p class="lead">Use only the relevant costs. Making costs $1.00 per loaf in ingredients and energy, plus $95,000 of avoidable costs per year ($75,000 for wages and the maintenance contract, and $20,000 of rent forgone on warehouse space that would be rented out if the line stopped). Buying costs $2.10 per loaf.</p>
+<div class="ctl"><label for="vol">Loaves per year <span id="volv">60,000</span></label><input type="range" id="vol" min="20000" max="150000" step="1000" value="60000"></div>
+<div class="tg"><label><input type="checkbox" id="sk"> Let the $120,000 already paid for the ovens sway the decision (“we can’t waste it”)</label></div>
+<svg class="chart" id="c2" viewBox="0 0 700 300" role="img" aria-label="Total cost of making versus buying across volumes"></svg>
+<div class="stats" aria-live="polite"><div><b id="k1">–</b><small>Cost to make</small></div><div><b id="k2">–</b><small>Cost to buy</small></div><div><b id="k3">–</b><small>Cheaper choice</small></div><div><b id="k4">–</b><small>Break-even volume</small></div></div>
+<div class="note live" id="adv2" aria-live="polite"></div>
+<div class="note teal"><strong>Ethics belong in the analysis.</strong> The numbers above leave out the two bakers whose jobs would end. Decisions about what to measure and report reflect values; a Christian worldview asks managers to count the people affected, not just the dollars, and to be transparent about how they weighed them.</div>
+</section>
+</div>
+<p class="foot">Source: ECON 530 Week 1 and Week 2 Deep Dives. All figures are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var MB=[20,18,16,14,12,10,8,6,4,2],MC=[2,4,6,8,10,12,14,16,18,20];
+function p1(){var q=+document.getElementById("mq").value;document.getElementById("mqv").textContent=q;
+ var s=document.getElementById("c1");s.innerHTML="";el("rect",{width:700,height:280,fill:"#fcfcfc"},s);
+ el("rect",{x:50,y:20,width:630,height:200,fill:"#fff",stroke:"#e8e3de"},s);
+ for(var i=0;i<10;i++){var x=62+i*62,on=i<q;
+  var hb=MB[i]/20*180,hc=MC[i]/20*180;
+  el("rect",{x:x,y:220-hb,width:25,height:hb,rx:3,fill:"#1f6f78","fill-opacity":on?.95:.25},s);el("rect",{x:x+27,y:220-hc,width:25,height:hc,rx:3,fill:"#d34147","fill-opacity":on?.95:.25},s);
+  var t=el("text",{x:x+26,y:240,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#5b5557"},s);t.textContent="cake "+(i+1);
+  if(MB[i]>MC[i]){var m=el("text",{x:x+26,y:258,"text-anchor":"middle","font-size":"16","font-weight":"800",fill:"#2d7a4b"},s);m.textContent="✓"}else if(MB[i]<MC[i]){var m2=el("text",{x:x+26,y:258,"text-anchor":"middle","font-size":"16","font-weight":"800",fill:"#b3261e"},s);m2.textContent="✗"}else{var m3=el("text",{x:x+26,y:258,"text-anchor":"middle","font-size":"14","font-weight":"800",fill:"#5b5557"},s);m3.textContent="="}}
+ var tb=0,tc=0,best=0;for(var j=0;j<10;j++){if(j<q){tb+=MB[j];tc+=MC[j]}if(MB[j]>MC[j])best+=MB[j]-MC[j]}
+ document.getElementById("m1").textContent="$"+tb;document.getElementById("m2").textContent="$"+tc;document.getElementById("m3").textContent=(tb-tc>=0?"$":"−$")+Math.abs(tb-tc);document.getElementById("m4").textContent="$"+best;
+ var a=document.getElementById("adv1");
+ if(q===0)a.innerHTML="<strong>Nothing made yet.</strong> Add cakes one at a time and ask of each: does it add more benefit than cost?";
+ else{var mbq=MB[q-1],mcq=MC[q-1];a.innerHTML="<strong>The last cake (#"+q+") adds $"+mbq+" of benefit and $"+mcq+" of cost.</strong> "+(mbq>mcq?"Its marginal benefit is higher than its marginal cost, so making it helps. Is there another one worth making?":mbq===mcq?"They are equal, so it adds nothing either way.":"Its marginal benefit is below its marginal cost, so it makes the bakery worse off. Averages can mislead; marginal values guide the decision.")+(tb-tc===best?" <span class='good'>You found the best quantity: stop where marginal benefit meets marginal cost.</span>":"")}}
+document.getElementById("mq").oninput=p1;p1();
+var CL=["Relevant","Not relevant"];
+var Q=[
+{t:"The $120,000 paid last year for the oven line.",a:1,w:"It is a sunk cost: it cannot be recovered whichever alternative you choose, so it does not belong in the comparison."},
+{t:"Ingredients and energy at $1.00 per loaf if the bakery keeps making its own.",a:0,w:"It changes with the decision: you pay it only if you make the loaves. Relevant."},
+{t:"Rent on the bakery building, under a lease that runs the full year either way.",a:1,w:"Unavoidable: it is paid whichever alternative you pick. Not relevant."},
+{t:"Wages for the two bakers who would be let go if the line stops.",a:0,w:"Avoidable: these costs go away if you buy instead. Relevant."},
+{t:"$20,000 the bakery could earn by renting out the oven-room space if the line stops.",a:0,w:"An opportunity cost of making: relevant even though no cash changes hands unless you stop."},
+{t:"The contract baker’s price of $2.10 per loaf.",a:0,w:"It is paid only if you buy, so it differs between the alternatives. Relevant."},
+{t:"Annual insurance on the building that covers either option.",a:1,w:"The same under both alternatives, so it does not change the decision."}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+Q.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ CL.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(dn===Q.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Ask: does this cost differ between the alternatives, and can it still be avoided?</span>'}};o.appendChild(b)});qh.appendChild(d)});
+function fm(n){return"$"+Math.round(n).toLocaleString()}
+function p3(){var v=+document.getElementById("vol").value,sk=document.getElementById("sk").checked;
+ document.getElementById("volv").textContent=v.toLocaleString();
+ function make(x){return 1.0*x+95000-(sk?120000:0)}function buy(x){return 2.1*x}
+ var s=document.getElementById("c2");s.innerHTML="";el("rect",{width:700,height:300,fill:"#fcfcfc"},s);el("rect",{x:70,y:20,width:610,height:230,fill:"#fff",stroke:"#e8e3de"},s);
+ var mx=340000;function X(x){return 70+(x-20000)/130000*610}function Y(c){return 250-Math.max(0,Math.min(c,mx))/mx*230}
+ [0,100000,200000,300000].forEach(function(c){var t=el("text",{x:64,y:Y(c)+4,"text-anchor":"end","font-size":"11",fill:"#5b5557"},s);t.textContent="$"+c/1000+"k";el("path",{d:"M70 "+Y(c)+"H680",stroke:"#f0ece8"},s)});
+ [20000,60000,100000,140000].forEach(function(x){var t=el("text",{x:X(x),y:268,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},s);t.textContent=x/1000+"k"});
+ var xt=el("text",{x:375,y:290,"text-anchor":"middle","font-size":"12","font-weight":"700"},s);xt.textContent="Loaves per year";
+ var pm="",pb="";for(var x=20000;x<=150000;x+=5000){pm+=(pm?"L":"M")+X(x)+" "+Y(make(x));pb+=(pb?"L":"M")+X(x)+" "+Y(buy(x))}
+ el("path",{d:pb,stroke:"#1f6f78","stroke-width":4,fill:"none"},s);el("path",{d:pm,stroke:"#d34147","stroke-width":4,fill:"none"},s);
+ var lm=el("text",{x:84,y:Y(make(20000))-8,"font-size":"12","font-weight":"800",fill:"#d34147"},s);lm.textContent="Make"+(sk?" (with sunk cost “credit”)":"");
+ var lb=el("text",{x:560,y:Y(buy(140000))+22,"font-size":"12","font-weight":"800",fill:"#1f6f78"},s);lb.textContent="Buy";
+ var be=(95000-(sk?120000:0))/1.1;
+ if(be>20000&&be<150000){el("path",{d:"M"+X(be)+" 20V250",stroke:"#e0a526","stroke-width":2,"stroke-dasharray":"5 4"},s);var bt=el("text",{x:X(be)+6,y:40,"font-size":"11","font-weight":"700",fill:"#8a6a10"},s);bt.textContent="break-even ≈ "+Math.round(be).toLocaleString()}
+ el("circle",{cx:X(v),cy:Y(make(v)),r:7,fill:"#d34147",stroke:"#fff","stroke-width":2},s);el("circle",{cx:X(v),cy:Y(buy(v)),r:7,fill:"#1f6f78",stroke:"#fff","stroke-width":2},s);
+ var mk=make(v),by=buy(v);
+ document.getElementById("k1").textContent=fm(mk);document.getElementById("k2").textContent=fm(by);document.getElementById("k3").textContent=mk<by?"Make":"Buy";document.getElementById("k4").textContent=be>0?Math.round(be).toLocaleString():"none";
+ var trueMake=1.0*v+95000,trueBy=2.1*v,trueBest=trueMake<trueBy?"make":"buy",shown=mk<by?"make":"buy";
+ var a=document.getElementById("adv2");
+ a.innerHTML=sk?(shown!==trueBest?"<span class='badbox' style='display:block'><strong>The sunk cost just changed your answer, and made it wrong.</strong> With only relevant costs, the cheaper choice at "+v.toLocaleString()+" loaves is to "+trueBest+" (make "+fm(trueMake)+" vs. buy "+fm(trueBy)+"). The $120,000 is gone whichever you choose, so “not wasting it” is not a reason to keep making.</span>":"<strong>Here the sunk cost happens not to change the answer ("+shown+"), but it still distorts the numbers.</strong> Notice how it moves the break-even volume. Emotion can make sunk costs hard to ignore; look forward, not back."):"<strong>Using only relevant costs: "+trueBest+".</strong> At "+v.toLocaleString()+" loaves, making costs "+fm(trueMake)+" and buying costs "+fm(trueBy)+". Below about "+Math.round(95000/1.1).toLocaleString()+" loaves a year buying is cheaper; above it, making is. Check the box to see how counting the sunk cost can mislead."}
+document.getElementById("vol").oninput=p3;document.getElementById("sk").onchange=p3;p3();
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

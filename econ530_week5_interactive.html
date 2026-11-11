@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive | Price Discrimination: Profit, Access, and Fairness</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.tg{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tg button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 16px;cursor:pointer;text-align:left}
+.tg button[aria-pressed=true]{border-color:var(--red);background:var(--red-l)}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:10px 14px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.chk{display:flex;gap:10px;align-items:center;margin:8px 0;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.3rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.bars{display:grid;gap:8px;margin:12px 0}
+.br{display:grid;grid-template-columns:170px 1fr 80px;gap:10px;align-items:center;font-size:.92rem}@media(max-width:520px){.br{grid-template-columns:110px 1fr 64px}}
+.br .tk{height:20px;background:var(--warm);border-radius:6px;overflow:hidden}.br .tk i{display:block;height:100%;transition:width .4s}.br b{text-align:right}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of two price tags of different values on the same ticket, beside two kinds of customers">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(110 60)"><rect width="200" height="110" rx="14" fill="#fff"/><path d="M0 55h14a10 10 0 000-20H0M200 55h-14a10 10 0 010-20h14" fill="#7d2429" opacity=".2"/><text x="100" y="52" text-anchor="middle" font-size="22" font-weight="800" fill="#a8353a" font-family="system-ui">ONE TICKET</text><text x="100" y="84" text-anchor="middle" font-size="16" font-weight="700" fill="#5b5557" font-family="system-ui">two prices?</text></g>
+<g transform="translate(380 56) rotate(-8)"><path d="M0 0h96l24 26-24 26H0z" fill="#f6c453"/><circle cx="14" cy="26" r="5" fill="#a8353a"/><text x="32" y="33" font-size="19" font-weight="800" fill="#7d2429" font-family="system-ui">$6</text></g>
+<g transform="translate(400 130) rotate(6)"><path d="M0 0h110l26 28-26 28H0z" fill="#f7dcdd"/><circle cx="14" cy="28" r="5" fill="#a8353a"/><text x="34" y="36" font-size="22" font-weight="800" fill="#7d2429" font-family="system-ui">$16</text></g>
+<g transform="translate(640 80)"><circle cx="30" cy="26" r="20" fill="#f7dcdd"/><path d="M0 100q0-48 30-48t30 48z" fill="#f7dcdd"/><circle cx="130" cy="20" r="26" fill="#fff"/><path d="M92 100q0-58 38-58t38 58z" fill="#fff"/></g>
+<g transform="translate(830 76)" font-family="system-ui" fill="#fff"><text font-size="18" font-weight="800">Profit?</text><text y="28" font-size="18" font-weight="800">Access?</text><text y="56" font-size="18" font-weight="800">Fair?</text></g>
+</svg>
+<div class="txt"><div class="kick">ECON 530 · Week 5 Interactive</div><h1>One Product, Different Prices</h1><p>Price discrimination means charging different customers different prices for the same product when costs do not differ. Test when it works, how much profit it adds, who gains access, and where fairness and the law set limits.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Price the product</h2>
+<p class="lead">A software firm sells a design tool to two customer groups with different willingness to pay: <strong style="color:#1f6f78">students</strong> (price-sensitive) and <strong style="color:#a8353a">professionals</strong>. Each extra copy costs <strong>$<span id="mcv">2</span></strong> to serve. Choose a pricing system and set the price.</p>
+<div class="tg" role="group" aria-label="Pricing system" id="modes">
+<button data-m="one" aria-pressed="true">One price for everyone</button>
+<button data-m="two" aria-pressed="false">Two prices (student and professional)</button>
+<button data-m="perfect" aria-pressed="false">Personalized price for every customer</button></div>
+<div class="ctl">
+<div id="pAbox"><label for="pA" id="pAl">Price for everyone <span id="pAv">$10</span></label><input type="range" id="pA" min="2" max="30" step="0.5" value="10"></div>
+<div id="pBbox" hidden><label for="pB">Professional price <span id="pBv">$16</span></label><input type="range" id="pB" min="2" max="30" step="0.5" value="16"></div>
+<div id="mcbox"><label for="mc">Cost per copy <span id="mcv2">$2</span></label><input type="range" id="mc" min="0" max="8" step="0.5" value="2"></div></div>
+<div class="chk" id="rsl" hidden><label><input type="checkbox" id="rs" checked> The firm can stop students from reselling to professionals (verified student accounts)</label></div>
+<div class="two"><svg class="chart" id="cA" viewBox="0 0 360 300" role="img" aria-label="Student demand with price and profit rectangle"></svg><svg class="chart" id="cB" viewBox="0 0 360 300" role="img" aria-label="Professional demand with price and profit rectangle"></svg></div>
+<div class="bars" aria-live="polite" id="bars"></div>
+<div class="note teal live" id="adv" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem"><strong>Shading:</strong> dark = the firm’s profit, light = customers’ surplus (what buyers would have paid beyond the price). Student demand: Q = 60 − 6P. Professional demand: Q = 60 − 2P. Invented for practice. Price discrimination requires market power and a way to prevent resale.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Name the pricing system</h2>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Where are the limits?</h2>
+<div class="grid2">
+<div class="note"><strong>Fairness and reputation.</strong> Discriminatory pricing can raise profit and expand access, as students gain here, and it can also seem unfair. Customers who learn they paid more may leave.</div>
+<div class="note teal"><strong>Law and ethics.</strong> Some forms of discrimination are illegal, such as pricing based on protected characteristics. Evaluate effects on customers and on long-term reputation, and reflect on how your values shape what you consider fair.</div></div>
+</section>
+</div>
+<p class="foot">Source: ECON 530 Week 5 Deep Dive.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var mode="one";
+var QA=function(p){return Math.max(0,60-6*p)},QB=function(p){return Math.max(0,60-2*p)};
+function M(){return +document.getElementById("mc").value}
+function results(){
+ var c=M(),pA=+document.getElementById("pA").value,pB=+document.getElementById("pB").value,rs=document.getElementById("rs").checked,r={};
+ if(mode==="one"){r.pa=pA;r.pb=pA}
+ else if(mode==="two"){ if(!rs&&pA!==pB){var lo=Math.min(pA,pB);r.pa=lo;r.pb=lo;r.arb=true}else{r.pa=pA;r.pb=pB} }
+ else{r.perfect=true}
+ if(r.perfect){var qa=Math.max(0,(10-c)*6),qb=Math.max(0,(30-c)*2);r.qa=qa;r.qb=qb;r.profA=.5*(10-c)*qa*(c<10?1:0);r.profB=.5*(30-c)*qb;r.csA=0;r.csB=0}
+ else{r.qa=QA(r.pa);r.qb=QB(r.pb);r.profA=(r.pa-c)*r.qa;r.profB=(r.pb-c)*r.qb;r.csA=r.qa>0?.5*r.qa*(10-r.pa):0;r.csB=r.qb>0?.5*r.qb*(30-r.pb):0}
+ r.profit=r.profA+r.profB;r.cs=r.csA+r.csB;return r}
+function best(c){ // optimal single price and two-price profits
+ var bs=0,bp=0;for(var p=c;p<=30;p+=.05){var q=QA(p)+QB(p),pr=(p-c)*q;if(pr>bs){bs=pr;bp=p}}
+ var pa=Math.max(c,(10+c)/2),pb=Math.max(c,(30+c)/2),two=(pa-c)*QA(pa)+(pb-c)*QB(pb);
+ var qa=Math.max(0,(10-c)*6),qb=(30-c)*2,perf=.5*(10-c)*qa+.5*(30-c)*qb;
+ return{single:bs,sp:bp,two:two,pa:pa,pb:pb,perfect:perf}}
+function panel(id,Pmax,Qmax,dem,price,profc,csc,col,title,res,perf){
+ var s=document.getElementById(id);s.innerHTML="";el("rect",{width:360,height:300,fill:"#fcfcfc"},s);el("rect",{x:46,y:30,width:296,height:226,fill:"#fff",stroke:"#e8e3de"},s);
+ function X(q){return 46+q/Qmax*296}function Y(p){return 256-p/Pmax*226}
+ [0,10,20,30].forEach(function(p){if(p<=Pmax){var t=el("text",{x:40,y:Y(p)+4,"text-anchor":"end","font-size":"10",fill:"#5b5557"},s);t.textContent="$"+p;el("path",{d:"M46 "+Y(p)+"H342",stroke:"#f0ece8"},s)}});
+ [0,20,40,60].forEach(function(q){var t=el("text",{x:X(q),y:272,"text-anchor":"middle","font-size":"10",fill:"#5b5557"},s);t.textContent=q});
+ var tt=el("text",{x:194,y:20,"text-anchor":"middle","font-size":"13","font-weight":"800",fill:col},s);tt.textContent=title;
+ var xl=el("text",{x:194,y:292,"text-anchor":"middle","font-size":"11","font-weight":"700"},s);xl.textContent="Quantity";
+ var c=M();
+ if(perf){ // personalized: all area above cost is profit
+   var q0=dem(c);el("polygon",{points:X(0)+","+Y(Pmax)+" "+X(0)+","+Y(c)+" "+X(q0)+","+Y(c),fill:col,"fill-opacity":.35},s)}
+ else{var q=dem(price);if(q>0){el("polygon",{points:X(0)+","+Y(Pmax)+" "+X(0)+","+Y(price)+" "+X(q)+","+Y(price),fill:col,"fill-opacity":.13},s);
+   el("rect",{x:X(0),y:Y(price),width:X(q)-X(0),height:Math.max(0,Y(c)-Y(price)),fill:col,"fill-opacity":.38},s)}}
+ el("path",{d:"M"+X(0)+" "+Y(Pmax)+"L"+X(dem(0)>0?Qmax:0)+" "+Y(0),stroke:col,"stroke-width":5,"stroke-linecap":"round",fill:"none"},s);
+ el("path",{d:"M46 "+Y(c)+"H342",stroke:"#5b5557","stroke-width":2,"stroke-dasharray":"6 5"},s);var ct=el("text",{x:340,y:Y(c)-5,"text-anchor":"end","font-size":"10","font-weight":"700",fill:"#5b5557"},s);ct.textContent="cost $"+c;
+ if(!perf){el("path",{d:"M46 "+Y(price)+"H342",stroke:"#231f20","stroke-width":2.5},s);var pt=el("text",{x:340,y:Y(price)-6,"text-anchor":"end","font-size":"11","font-weight":"800"},s);pt.textContent="price $"+price.toFixed(2).replace(/\.00$/,"").replace(/(\.\d)0$/,"$1")}
+
+}
+function fm(n){return"$"+Math.round(n).toLocaleString()}
+function upd(){
+ var c=M(),pA=+document.getElementById("pA").value,pB=+document.getElementById("pB").value;
+ document.getElementById("mcv").textContent=c;document.getElementById("mcv2").textContent="$"+c;
+ document.getElementById("pAv").textContent="$"+pA;document.getElementById("pBv").textContent="$"+pB;
+ document.getElementById("pAl").firstChild.textContent=mode==="one"?"Price for everyone ":"Student price ";
+ document.getElementById("pAbox").hidden=mode==="perfect";document.getElementById("pBbox").hidden=mode!=="two";document.getElementById("rsl").hidden=mode!=="two";
+ var r=results(),b=best(c);
+ panel("cA",10,60,QA,r.pa||0,0,0,"#1f6f78","Students",r,r.perfect);panel("cB",30,60,QB,r.pb||0,0,0,"#a8353a","Professionals",r,r.perfect);
+ var rows=[["Your profit",r.profit,"#e0a526",b.perfect],["Best single price (reference)",b.single,"#b8b0aa",b.perfect],["Customers’ surplus",r.cs,"#3b9a63",b.perfect],["Copies sold to students",r.qa,"#1f6f78",60]];
+ var bh=document.getElementById("bars");bh.innerHTML="";rows.forEach(function(x,i){var d=document.createElement("div");d.className="br";var w=Math.max(0,Math.min(100,x[1]/x[3]*100));
+  d.innerHTML="<span>"+x[0]+"</span><div class='tk'><i style='width:"+w+"%;background:"+x[2]+"'></i></div><b>"+(i===3?Math.round(x[1]):fm(x[1]))+"</b>";bh.appendChild(d)});
+ var a=document.getElementById("adv"),excl=r.qa<1&&!r.perfect;
+ if(mode==="one")a.innerHTML="<strong>With one price you earn "+fm(r.profit)+".</strong> "+(pA>10?"At this price students (who will pay at most $10) buy nothing, so the firm serves only professionals. ":"")+"The best single price is about $"+b.sp.toFixed(1)+" for "+fm(b.single)+": "+(b.sp>10?"it prices students out entirely, because a high price on professionals earns more than a low price on everyone.":"serving both groups.")+" Try two prices.";
+ else if(mode==="two"){if(r.arb)a.innerHTML="<span class='badbox' style='display:block'><strong>Resale collapses the two prices.</strong> Without a way to stop resale, students buy at $"+Math.min(pA,pB)+" and sell to professionals, so everyone ends up paying the lower price. Profit falls to "+fm(r.profit)+". Price discrimination needs a way to prevent resale.</span>";
+  else a.innerHTML="<strong>Two prices earn "+fm(r.profit)+(r.profit>b.single?", "+Math.round((r.profit/b.single-1)*100)+"% more than the best single price.":".")+"</strong> "+(r.qa>0?"Students now buy "+Math.round(r.qa)+" copies they could not afford at a single high price, so access expands as well as profit. ":"")+"The profit-maximizing prices are about $"+b.pa.toFixed(0)+" (students) and $"+b.pb.toFixed(0)+" (professionals), for "+fm(b.two)+". "+(pA>=pB?"Charging students more than professionals reverses the logic: group prices should follow willingness to pay. ":"")+"Price discrimination needs market power and a way to prevent resale."}
+ else a.innerHTML="<strong>Personalized pricing captures "+fm(r.profit)+": all of the surplus.</strong> Every customer pays exactly what they are willing to pay, so customers keep no surplus at all. Profit is highest and everyone who values the product above its cost is served, but it is the form most open to charges of unfairness, and it usually requires detailed knowledge of each buyer."}
+document.querySelectorAll("#modes button").forEach(function(b){b.onclick=function(){mode=b.dataset.m;document.querySelectorAll("#modes button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});
+ if(mode==="two"){document.getElementById("pA").value=6;document.getElementById("pB").value=16}if(mode==="one")document.getElementById("pA").value=10;upd()}});
+["pA","pB","mc"].forEach(function(i){document.getElementById(i).oninput=upd});document.getElementById("rs").onchange=upd;upd();
+var T=["Group pricing","Quantity discount","Bundling","Two-part pricing","Personalized pricing"];
+var Q=[
+{t:"A museum charges less for students and seniors.",a:0,w:"Different prices for identifiable groups with different willingness to pay: group (segment) pricing."},
+{t:"“Buy one box for $20; buy ten for $14 each.”",a:1,w:"The unit price falls as the quantity bought rises: a quantity discount."},
+{t:"A cable company sells channels together in a single package for less than the sum of the separate prices.",a:2,w:"Selling goods together as one package is bundling."},
+{t:"An amusement park charges an entry fee plus a separate price for each ride.",a:3,w:"A fixed fee plus a per-use price is two-part pricing."},
+{t:"A seller uses detailed data on each shopper to quote them an individual price.",a:4,w:"Setting a different price for each customer is the most complete form of discrimination, personalized pricing."}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+Q.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ T.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(dn===Q.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Not that one. How does the price change: by group, by quantity, by package, by fee, or by person?</span>'}};o.appendChild(b)});qh.appendChild(d)});
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

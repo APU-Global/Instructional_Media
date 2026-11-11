@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive | Rivals, Games, and Industry Attractiveness</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.mx{border-collapse:separate;border-spacing:6px;width:100%;max-width:560px;margin:10px auto;text-align:center}
+.mx th{font-weight:700;padding:6px}
+.mx td{border-radius:14px;padding:14px 8px;background:var(--warm);font-weight:700;font-size:1.05rem;position:relative;transition:.3s}
+.mx td small{display:block;font-weight:500;color:var(--mut);font-size:.78rem}
+.mx td.nash{background:var(--gold-l);box-shadow:0 0 0 4px var(--gold)}
+.mx td.sel{outline:4px solid var(--red)}
+.mx td .br{display:block;margin-bottom:6px;font-size:.72rem;font-weight:800;color:#8a6a10;line-height:1.25}
+.mx td .ys{color:#1f6f78}.mx td .rv{color:#a8353a}
+.row2{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.pick button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:8px 22px;cursor:pointer}
+.pick button:hover{border-color:var(--red)}
+.pick button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff}
+.tg{display:flex;gap:10px;align-items:center;margin:8px 0;font-weight:600}
+.strat{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.strat button{font:inherit;font-weight:700;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer;text-align:left}
+.strat button[aria-pressed=true]{border-color:var(--teal);background:var(--teal-l)}
+.hist{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0;text-align:center;font-size:.8rem;font-weight:700}
+.hist div{border-radius:8px;padding:4px 0;background:var(--warm);min-height:50px}
+.hist .H{background:#dff0e4}.hist .L{background:#f9ddda}
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;text-align:center}.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.3rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.sl{background:var(--warm);border-radius:14px;padding:8px 14px;margin-bottom:8px}.sl label{font-weight:700;display:flex;justify-content:space-between}
+.gauge{height:22px;border-radius:12px;background:linear-gradient(90deg,#d34147,#e0a526,#3b9a63);position:relative;margin:12px 0}.gauge i{position:absolute;top:-6px;width:8px;height:34px;background:#231f20;border-radius:4px;transition:left .3s}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of two chess pieces facing each other across a board with a handshake-shaped question mark">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(120 150)" fill="#f7dcdd"><rect x="0" y="0" width="100" height="14" rx="4"/><path d="M14 0l8-70h56l8 70z"/><circle cx="50" cy="-92" r="28"/><rect x="26" y="-74" width="48" height="12" rx="4" fill="#fff"/></g>
+<g transform="translate(560 150)" fill="#f6c453"><rect x="0" y="0" width="100" height="14" rx="4"/><path d="M14 0l8-70h56l8 70z"/><circle cx="50" cy="-92" r="28"/><rect x="26" y="-74" width="48" height="12" rx="4" fill="#fffbe6"/></g>
+<g fill="#fff" font-family="Georgia,serif" font-weight="800" text-anchor="middle"><text x="400" y="110" font-size="72">?</text></g>
+<g stroke="#f7dcdd" stroke-width="3" stroke-dasharray="6 8" fill="none"><path d="M260 110H340M460 110H540"/></g>
+<g transform="translate(740 70)" font-family="system-ui" fill="#fff"><text font-size="22" font-weight="800">Your best move</text><text y="30" font-size="22" font-weight="800">depends on theirs.</text></g>
+</svg>
+<div class="txt"><div class="kick">ECON 530 · Week 4 Interactive</div><h1>Rivals Respond</h1><p>In concentrated markets, firms’ decisions affect one another. Play a pricing game against a rival, find the Nash equilibrium, see how repeated play changes the outcome, and judge how attractive an industry is.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · The pricing game</h2>
+<p class="lead">You (Alpha) and a rival (Beta) each set a High or Low price for the year. Profits ($ millions) are in the table: <span style="color:#1f6f78;font-weight:700">yours in teal</span>, <span style="color:#a8353a;font-weight:700">Beta’s in red</span>. A <strong>Nash equilibrium</strong> is an outcome in which no firm gains by changing its strategy alone.</p>
+<table class="mx" id="mx" aria-label="Payoff matrix"><thead><tr><th></th><th scope="col">Beta: High price</th><th scope="col">Beta: Low price</th></tr></thead><tbody>
+<tr><th scope="row">Alpha: High price</th><td id="c_HH"></td><td id="c_HL"></td></tr>
+<tr><th scope="row">Alpha: Low price</th><td id="c_LH"></td><td id="c_LL"></td></tr></tbody></table>
+<div class="tg"><label><input type="checkbox" id="sbr"> Show each firm’s best response</label></div>
+<div class="row2 pick" id="pk"><span style="font-weight:700;align-self:center">Choose your price:</span><button data-a="H" aria-pressed="false">High price</button><button data-a="L" aria-pressed="false">Low price</button></div>
+<div class="note teal live" id="adv1" aria-live="polite">Pick a price to play one round against a rational rival.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Play it ten times</h2>
+<p class="lead">When firms meet again and again, the rival’s strategy matters. Choose a rival, then set your price for each of 10 rounds. Can you do better than the one-shot equilibrium?</p>
+<div class="strat" id="st" role="group" aria-label="Rival strategy"></div>
+<div class="row2 pick" id="rp"><span style="font-weight:700;align-self:center">Round <span id="rn">1</span> of 10:</span><button data-a="H" type="button">High price</button><button data-a="L" type="button">Low price</button><button id="rr" type="button" style="border-color:var(--red);color:var(--red-d)">Restart</button></div>
+<div class="hist" id="hs" aria-live="polite"></div>
+<svg class="chart" id="ch" viewBox="0 0 700 220" role="img" aria-label="Cumulative profit of Alpha and Beta over rounds"></svg>
+<div class="stats" aria-live="polite"><div><b id="t1">0</b><small>Your total profit</small></div><div><b id="t2">0</b><small>Rival’s total profit</small></div><div><b id="t3">100</b><small>If both held High all 10 rounds</small></div></div>
+<div class="note live" id="adv2" aria-live="polite">Pick a rival, then choose your first price.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · What kind of market, and how attractive?</h2>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+<h3 style="margin-top:18px">Rate the industry</h3>
+<p class="lead">How strong is each competitive force? Slide to 5 for very strong (bad for profit) and 1 for weak. Barriers to entry such as scale economies, patents, and brand loyalty protect incumbents; low barriers tend to erode profits.</p>
+<div id="ff"></div>
+<div class="gauge" aria-hidden="true"><i id="gi"></i></div>
+<div class="note live" id="adv3" aria-live="polite"></div>
+</section>
+</div>
+<p class="foot">Source: ECON 530 Week 4 Deep Dive. Payoffs are invented for practice.</p>
+</div>
+<script>
+var PAY={HH:[10,10],HL:[2,14],LH:[14,2],LL:[5,5]};
+var NAME={H:"High",L:"Low"};
+var cells={HH:"c_HH",HL:"c_HL",LH:"c_LH",LL:"c_LL"};
+function drawM(sel){
+ Object.keys(PAY).forEach(function(k){var td=document.getElementById(cells[k]),p=PAY[k];
+  var br="";if(document.getElementById("sbr").checked){var tags=[];
+   // Alpha best response to Beta's column
+   var bcol=k[1],bestA=PAY["H"+bcol][0]>=PAY["L"+bcol][0]?"H":"L";if(bestA===k[0])tags.push("Alpha’s best reply");
+   var arow=k[0],bestB=PAY[arow+"H"][1]>=PAY[arow+"L"][1]?"H":"L";if(bestB===k[1])tags.push("Beta’s best reply");
+   if(tags.length)br='<span class="br">'+tags.join(" · ")+"</span>"}
+  td.innerHTML=br+'<span class="ys">'+p[0]+'</span> , <span class="rv">'+p[1]+'</span><small>Alpha '+NAME[k[0]]+", Beta "+NAME[k[1]]+"</small>";
+  td.className=(document.getElementById("sbr").checked&&k==="LL"?"nash":"")+(sel===k?" sel":"")});
+}
+document.getElementById("sbr").onchange=function(){drawM(null);if(this.checked)document.getElementById("adv1").innerHTML="<strong>Look at the gold cell.</strong> Whatever Beta does, Low pays Alpha more (14 vs. 10 against High; 5 vs. 2 against Low), and the same is true for Beta. Both firms choose Low, a Nash equilibrium at $5M each, even though both would earn $10M if both held High."};
+drawM(null);
+document.querySelectorAll("#pk button").forEach(function(b){b.onclick=function(){
+ document.querySelectorAll("#pk button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});
+ var a=b.dataset.a,rv="L",k=a+rv,p=PAY[k];drawM(k);
+ document.getElementById("adv1").innerHTML="<strong>You chose "+NAME[a]+"; a rational rival chooses Low</strong> (it earns more from Low whatever you do). Result: you $"+p[0]+"M, Beta $"+p[1]+"M."+(a==="H"?" You were undercut: High left you with just $2M.":" Low protected you from being undercut, but both firms are stuck at $5M instead of $10M.")+" Neither firm can do better by changing alone: that is the Nash equilibrium. Agreeing with a rival to hold prices high would be price fixing, which competition law prohibits."}});
+// repeated game
+var RV=[{n:"Always Low",d:"Undercuts every round",f:function(h){return"L"}},{n:"Always High",d:"Never cuts price",f:function(h){return"H"}},{n:"Tit-for-tat",d:"Starts High, then copies your last move",f:function(h){return h.length?h[h.length-1].a:"H"}},{n:"Unpredictable",d:"Picks High or Low at random",f:function(h){return Math.random()<.5?"H":"L"}}];
+var rs=0,hist=[];
+var sb=document.getElementById("st");
+RV.forEach(function(r,i){var b=document.createElement("button");b.setAttribute("aria-pressed",i===0);b.innerHTML=r.n+"<br><small style='font-weight:500;color:#5b5557'>"+r.d+"</small>";b.onclick=function(){rs=i;[].forEach.call(sb.children,function(x,k){x.setAttribute("aria-pressed",k===i)});reset()};sb.appendChild(b)});
+function reset(){hist=[];document.getElementById("adv2").textContent="New game against "+RV[rs].n.toLowerCase()+". Choose your first price.";draw2();[].forEach.call(document.querySelectorAll("#rp button[data-a]"),function(b){b.disabled=false})}
+function draw2(){var A=0,B=0,hs=document.getElementById("hs");hs.innerHTML="";
+ for(var i=0;i<10;i++){var h=hist[i],d=document.createElement("div");if(h){A+=PAY[h.a+h.b][0];B+=PAY[h.a+h.b][1];d.className=h.a;d.innerHTML="You "+h.a+"<br>Beta "+h.b}else d.textContent=i+1;hs.appendChild(d)}
+ document.getElementById("rn").textContent=Math.min(hist.length+1,10);document.getElementById("t1").textContent=A;document.getElementById("t2").textContent=B;
+ var c=document.getElementById("ch");c.innerHTML="";var ns="http://www.w3.org/2000/svg";
+ function e(t,a,p){var x=document.createElementNS(ns,t);for(var k in a)x.setAttribute(k,a[k]);if(p)p.appendChild(x);return x}
+ e("rect",{width:700,height:220,fill:"#fcfcfc"},c);e("rect",{x:50,y:16,width:630,height:164,fill:"#fff",stroke:"#e8e3de"},c);
+ function X(i){return 50+i/10*630}function Y(v){return 180-v/140*164}
+ [0,50,100,140].forEach(function(v){var t=e("text",{x:44,y:Y(v)+4,"text-anchor":"end","font-size":"11",fill:"#5b5557"},c);t.textContent=v});
+ for(var r=0;r<=10;r+=2){var t2=e("text",{x:X(r),y:198,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},c);t2.textContent=r}
+ var xl=e("text",{x:365,y:215,"text-anchor":"middle","font-size":"11","font-weight":"700"},c);xl.textContent="Round";
+ e("path",{d:"M"+X(0)+" "+Y(0)+"L"+X(10)+" "+Y(100),stroke:"#e0a526","stroke-width":2,"stroke-dasharray":"6 5",fill:"none"},c);
+ [["a","#1f6f78"],["b","#d34147"]].forEach(function(s){var cum=0,path="M"+X(0)+" "+Y(0);hist.forEach(function(h,i){cum+=PAY[h.a+h.b][s[0]==="a"?0:1];path+="L"+X(i+1)+" "+Y(cum)});e("path",{d:path,stroke:s[1],"stroke-width":4,fill:"none"},c)});
+ var done=hist.length>=10;
+ if(done){document.querySelectorAll("#rp button[data-a]").forEach(function(b){b.disabled=true});
+  var allH=hist.every(function(h){return h.a==="H"}),lastLow=hist.filter(function(h){return h.a==="L"}).length;
+  var msg="<strong>Final: you $"+A+"M, "+RV[rs].n.toLowerCase()+" rival $"+B+"M.</strong> ";
+  if(rs===2)msg+=(A>=95?"Against a rival that copies you, holding High keeps both firms near $100M each. Cutting price wins one round but triggers retaliation.":"Against tit-for-tat, each time you cut price the rival cut next round, and you lost the cooperative profits. Try holding High all ten rounds.");
+  else if(rs===0)msg+="A rival that always undercuts makes High a losing choice every round. Low is your best response, and you both end near $50M.";
+  else if(rs===1)msg+="A rival that never cuts price is easy to exploit: choosing Low earns $14M a round. A rival that stays High may not stay passive forever.";
+  else msg+="Against an unpredictable rival there is no pattern to read. Low was a safe best response each round.";
+  document.getElementById("adv2").innerHTML=msg+" <em>Remember: coordinating prices with a competitor is illegal; here the pattern emerges only from each firm reacting to the other.</em>"}
+}
+document.querySelectorAll("#rp button[data-a]").forEach(function(b){b.onclick=function(){if(hist.length>=10)return;var a=b.dataset.a,r=RV[rs].f(hist);hist.push({a:a,b:r});draw2();
+ if(hist.length<10){var h=hist[hist.length-1],p=PAY[h.a+h.b];document.getElementById("adv2").innerHTML="Round "+hist.length+": you "+NAME[h.a]+", Beta "+NAME[h.b]+" → you $"+p[0]+"M, Beta $"+p[1]+"M."}}});
+document.getElementById("rr").onclick=reset;reset();
+// market structure quiz
+var MS=["Perfect competition","Monopolistic competition","Oligopoly","Monopoly"];
+var Q=[
+{t:"Thousands of farms sell identical wheat, and any farmer can enter or leave easily.",a:0,w:"Many sellers, identical products, free entry: perfect competition. Firms are price takers."},
+{t:"Dozens of coffee shops in a city, each with its own menu, atmosphere, and loyal customers.",a:1,w:"Many firms with differentiated products: monopolistic competition."},
+{t:"Three airlines control most routes, and each watches the others’ fares before setting its own.",a:2,w:"A few interdependent firms: oligopoly, where strategic interaction matters."},
+{t:"A single firm holds the patent and is the only supplier of a medicine.",a:3,w:"One seller protected by a barrier to entry: monopoly."},
+{t:"Which of these is a barrier to entry: strong brand loyalty among existing customers?",a:-1,yn:1,w:"Yes. Brand loyalty, scale economies, and patents protect incumbents; low barriers tend to erode profits."}];
+var qh=document.getElementById("qs"),sc=0,dn=0;
+Q.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ (x.yn?["No","Yes"]:MS).forEach(function(c,k){var ans=x.yn?x.yn:x.a;var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===ans){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(dn===Q.length)document.getElementById("qres").textContent="First-try correct: "+sc+" of "+Q.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">Not quite. Count the firms and ask how easy entry is.</span>'}};o.appendChild(b)});qh.appendChild(d)});
+var FF=["Rivalry among existing firms","Threat of new entrants","Threat of substitutes","Bargaining power of buyers","Bargaining power of suppliers"],FV=[4,3,3,3,2];
+var fh=document.getElementById("ff");
+FF.forEach(function(n,i){var d=document.createElement("div");d.className="sl";d.innerHTML='<label for="f'+i+'">'+n+' <span id="fv'+i+'">'+FV[i]+'</span></label><input type="range" id="f'+i+'" min="1" max="5" value="'+FV[i]+'">';fh.appendChild(d);d.querySelector("input").oninput=function(){FV[i]=+this.value;ff()}});
+function ff(){FV.forEach(function(v,i){document.getElementById("fv"+i).textContent=v});var avg=FV.reduce(function(a,b){return a+b},0)/5,att=Math.round((5-avg)/4*100);
+ document.getElementById("gi").style.left="calc("+att+"% - 4px)";
+ var big=FF[FV.indexOf(Math.max.apply(null,FV))];
+ document.getElementById("adv3").innerHTML="<strong>Attractiveness: "+att+"/100 — "+(att>=66?"an attractive industry":att>=34?"a moderately attractive industry":"an unattractive industry")+".</strong> The strongest force is “"+big.toLowerCase()+"”. Strong forces squeeze profit, so position the firm where the forces are weakest, or build barriers that keep them in check."}
+ff();
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
