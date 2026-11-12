@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Week 3 Interactive | Structured Literacy for Students with Dyslexia</title><style>*{box-sizing:border-box}
+:root{--red:#a8353a;--red2:#d34147;--soft:#edebe8;--ink:#222;--line:#d9d4cd;--ok:#1f7a4d;--okbg:#e4f4ea;--bad:#b3261e;--badbg:#fdeceb;--accent:#2a6f97;--accentbg:#e5f0f7}
+html,body{height:100%;margin:0;overflow:hidden;background:#fff}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:16px;line-height:1.45}
+button{font:inherit;cursor:pointer}
+.app{height:100%;display:flex;flex-direction:column;background:#fff;min-height:0}
+.top{flex:none;display:flex;align-items:center;gap:12px;padding:9px 16px;background:var(--red);color:#fff;flex-wrap:wrap}
+.badge{background:#fff;color:var(--red);font-weight:700;border-radius:999px;padding:2px 12px;font-size:.85rem;white-space:nowrap}
+.ttl{font-weight:700;font-size:1.05rem;flex:1;min-width:160px}
+.dots{display:flex;gap:7px}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid #fff;background:transparent;padding:0}
+.dot.done{background:#fff}.dot.cur{box-shadow:0 0 0 3px rgba(255,255,255,.55);background:#ffd9d9}
+.dot:disabled{opacity:.5;cursor:default}
+.stage{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px 20px;background:#fff;scrollbar-width:thin}
+.bar{flex:none;display:flex;align-items:center;gap:10px;padding:9px 16px;border-top:1px solid var(--line);background:var(--soft)}
+.bar .lbl{flex:1;text-align:center;font-size:.88rem;color:#555}
+.btn{border:2px solid var(--red);background:#fff;color:var(--red);border-radius:8px;padding:7px 18px;font-weight:600}
+.btn:hover:not(:disabled){background:#fbeeee}
+.btn.primary{background:var(--red);color:#fff}
+.btn.primary:hover:not(:disabled){background:#8c2a2f}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid #1a73e8;outline-offset:2px}
+.split{display:grid;grid-template-columns:minmax(220px,38%) 1fr;gap:20px;align-items:start}
+.art{background:var(--accentbg);border-radius:14px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.art svg{width:100%;height:auto;max-height:300px}
+.art .cap{font-size:.82rem;color:#444;text-align:center}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:1.7rem;margin:0 0 6px;color:var(--red)}
+h2{font-family:Georgia,"Times New Roman",serif;font-size:1.25rem;margin:0 0 8px}
+h3{margin:0 0 4px;font-size:1rem}
+p{margin:0 0 8px}
+.kicker{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:4px}
+.goals{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:7px}
+.goals li{display:flex;gap:10px;align-items:flex-start;background:var(--soft);border-radius:10px;padding:8px 12px}
+.goals .ic{font-size:1.2rem;line-height:1.2}
+.opts{display:grid;gap:8px;margin:10px 0}
+.opt{display:flex;gap:10px;text-align:left;border:2px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;width:100%;align-items:flex-start;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accentbg)}
+.opt .ltr{flex:none;width:26px;height:26px;border-radius:50%;background:var(--soft);font-weight:700;display:grid;place-items:center;font-size:.85rem}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}.opt.ok .ltr{background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:var(--badbg);opacity:.85}.opt.bad .ltr{background:var(--bad);color:#fff}
+.opt:disabled{cursor:default}
+.fb{min-height:44px;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:.95rem}
+.fb.ok{background:var(--okbg);border-left:5px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:5px solid var(--bad)}
+.fb.empty{background:transparent;border-left:5px solid transparent}
+.qhead{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.prog{height:6px;background:var(--soft);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.ctx{background:var(--soft);border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:.95rem}
+.ctx.quote{font-style:italic;border-left:5px solid var(--red2)}
+.sortcols{display:grid;gap:10px;margin-top:10px}
+.col{border:2px dashed var(--line);border-radius:12px;background:#fff;padding:8px;text-align:left;min-height:120px;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+.col:hover:not(:disabled){border-color:var(--accent);background:var(--accentbg)}
+.col:disabled{cursor:default}
+.col .chd{font-weight:700;display:flex;gap:6px;align-items:center}
+.col .cds{font-size:.8rem;color:#555}
+.chip{font-size:.78rem;background:var(--okbg);border:1px solid #bfe2cc;border-radius:8px;padding:3px 7px}
+.card{background:#fff;border:2px solid var(--accent);border-radius:14px;padding:14px 16px;font-size:1.05rem;box-shadow:0 3px 0 rgba(0,0,0,.08);display:flex;gap:12px;align-items:center}
+.card.shake{animation:shake .35s;border-color:var(--bad)}
+.card.good{border-color:var(--ok);background:var(--okbg)}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.checks{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}
+.checks label{display:flex;gap:10px;align-items:flex-start;background:var(--soft);padding:8px 12px;border-radius:10px;cursor:pointer}
+.checks input{width:20px;height:20px;margin-top:2px;accent-color:var(--red)}
+.scorebox{display:flex;gap:14px;align-items:center;background:var(--accentbg);border-radius:12px;padding:10px 14px;margin:10px 0}
+.scorebox .big{font-size:2rem;font-weight:800;color:var(--accent)}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:10px 0}
+.take div{border:2px solid var(--line);border-radius:12px;padding:9px 12px}
+.take b{color:var(--red);display:block}
+table.plan{width:100%;border-collapse:collapse;font-size:.9rem;margin:8px 0}
+table.plan th,table.plan td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+table.plan th{background:var(--soft);width:28%}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;border-radius:6px;padding:1px 7px;color:#fff;background:var(--accent);margin-right:6px}
+.tag.s{background:#2a6f97}.tag.d{background:#7a4ea3}.tag.i{background:#2f7d5b}.tag.a{background:#c26a1b}
+@media (max-width:720px){.split{grid-template-columns:1fr}.art svg{max-height:190px}.stage{padding:12px}h1{font-size:1.4rem}.ttl{font-size:.95rem}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><script>const $=(s,r=document)=>r.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const App={steps:[],idx:0,done:{},right:0,total:0,cfg:null,cache:{}};
+function kid(skin,hair,shirt,size=56){return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="${shirt}" opacity=".18"/><path d="M12 64c2-14 12-20 20-20s18 6 20 20z" fill="${shirt}"/><circle cx="32" cy="30" r="13" fill="${skin}"/><path d="M18 28c0-12 8-16 15-16s14 5 13 16c-3-6-8-8-14-8s-11 2-14 8z" fill="${hair}"/><circle cx="27" cy="31" r="1.6" fill="#222"/><circle cx="37" cy="31" r="1.6" fill="#222"/><path d="M27 37q5 4 10 0" stroke="#222" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`}
+function init(cfg){
+  App.cfg=cfg;App.steps=cfg.steps;
+  document.title=cfg.title;
+  document.documentElement.style.setProperty('--accent',cfg.accent);
+  document.documentElement.style.setProperty('--accentbg',cfg.accentbg);
+  document.body.innerHTML=`<div class="app"><header class="top"><span class="badge">Week ${cfg.week}</span><span class="ttl">${cfg.title}</span><nav class="dots" id="dots" aria-label="Progress"></nav></header><main class="stage" id="stage" tabindex="-1"></main><footer class="bar"><button class="btn" id="back">&larr; Back</button><span class="lbl" id="lbl"></span><button class="btn primary" id="next">Next &rarr;</button></footer></div>`;
+  $('#back').onclick=()=>go(App.idx-1);$('#next').onclick=()=>go(App.idx+1);
+  go(0);
+}
+function go(i){
+  if(i<0||i>=App.steps.length)return;
+  App.idx=i;const s=App.steps[i];const st=$('#stage');st.innerHTML='';
+  const panel=document.createElement('div');st.appendChild(panel);
+  const api={complete(){App.done[i]=true;nav()},record(ok){App.total++;if(ok)App.right++}};
+  if(s.auto||App.done[i])App.done[i]=true;
+  s.render(panel,api);st.scrollTop=0;nav();
+}
+function nav(){
+  const i=App.idx,n=App.steps.length;
+  $('#dots').innerHTML=App.steps.map((s,k)=>`<button class="dot ${App.done[k]?'done':''} ${k===i?'cur':''}" aria-label="Step ${k+1}: ${s.name}" ${k===i?'aria-current="step"':''} ${(App.done[k]||k<=i||App.done[k-1])?'':'disabled'} data-k="${k}"></button>`).join('');
+  document.querySelectorAll('.dot').forEach(b=>b.onclick=()=>go(+b.dataset.k));
+  $('#back').disabled=i===0;
+  const nx=$('#next');nx.disabled=i===n-1||!App.done[i];nx.style.visibility=i===n-1?'hidden':'visible';
+  $('#lbl').textContent=`Step ${i+1} of ${n}: ${App.steps[i].name}`+((!App.done[i]&&i<n-1)?'  \u2022  finish this activity to continue':'');
+}
+function split(el,art,cap){el.innerHTML=`<div class="split"><div class="art">${art}${cap?`<div class="cap">${cap}</div>`:''}</div><div class="work"></div></div>`;return $('.work',el)}
+function intro(el,o){
+  const w=split(el,o.art,o.cap);
+  w.innerHTML=`<div class="kicker">${o.kicker}</div><h1>${o.title}</h1><p>${o.text}</p><h3>In this interactive you will:</h3><ul class="goals">${o.goals.map(g=>`<li><span class="ic" aria-hidden="true">${g[0]}</span><span>${g[1]}</span></li>`).join('')}</ul><p style="margin-top:10px;font-size:.88rem;color:#555">Takes about 10&ndash;15 minutes. Use the Next button or the dots above to move through.</p>`;
+}
+/* ---- Multiple choice engine ---- */
+function mc(el,api,cfg){
+  let qi=0;const collected=[];const n=cfg.qs.length;
+  function show(){
+    const q=cfg.qs[qi];let tried=false;
+    const opts=cfg.noShuffle?q.o:shuffle(q.o);
+    el.innerHTML=`<div class="qhead"><span>${cfg.label||'Question'} ${qi+1} of ${n}</span><span>${cfg.sub||''}</span></div><div class="prog"><i style="width:${qi/n*100}%"></i></div>${q.ctx?`<div class="ctx ${q.quote?'quote':''}">${q.ctx}</div>`:''}<h2>${q.p}</h2><div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}"><span class="ltr">${'ABCD'[k]}</span><span>${o.t}</span></button>`).join('')}</div><div class="fb empty" aria-live="polite" role="status"></div><div class="row" id="ct"></div>`;
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const o=opts[+b.dataset.k];const fb=$('.fb',el);
+      if(o.ok){
+        if(!tried)api.record(true);
+        el.querySelectorAll('.opt').forEach(x=>x.disabled=true);b.classList.add('ok');
+        fb.className='fb ok';fb.innerHTML='<b>\u2713 Yes.</b> '+o.fb;
+        collected.push({slot:q.slot,t:o.t});
+        const last=qi===n-1;
+        $('#ct',el).innerHTML=`<button class="btn primary" id="cn">${last?(cfg.finish||'Finish'):'Next question'} &rarr;</button>`;
+        $('#cn',el).onclick=()=>{if(last)finish();else{qi++;show()}};$('#cn',el).focus();
+      }else{
+        if(!tried){api.record(false);tried=true}
+        b.disabled=true;b.classList.add('bad');fb.className='fb bad';fb.innerHTML='<b>Not quite.</b> '+o.fb+' Try another choice.';
+      }
+    });
+  }
+  function finish(){
+    api.complete();
+    el.innerHTML=`<div class="prog"><i style="width:100%"></i></div><h2>\u2705 ${cfg.doneTitle||'Activity complete'}</h2>${cfg.summary?cfg.summary(collected):''}<p>${cfg.doneText||'Select <b>Next</b> to continue.'}</p>`;
+    if(cfg.afterFinish)cfg.afterFinish(el,collected);
+  }
+  show();
+}
+/* ---- Sorter engine ---- */
+function sorter(el,api,cfg){
+  let i=0;const items=shuffle(cfg.items);const placed={};cfg.buckets.forEach(b=>placed[b.id]=[]);let tried=false,locked=false;
+  const cols=cfg.buckets.length;
+  function draw(){
+    const it=items[i];
+    el.innerHTML=`<div class="qhead"><span>${cfg.label||'Sort'} ${Math.min(i+1,items.length)} of ${items.length}</span><span>${cfg.sub||'Tap the group it belongs in'}</span></div><div class="prog"><i style="width:${i/items.length*100}%"></i></div>
+    <div class="card" id="card">${it.icon?`<span style="flex:none">${it.icon}</span>`:''}<span>${it.t}</span></div>
+    <div class="fb empty" aria-live="polite" role="status"></div>
+    <div class="row" id="ct"></div>
+    <div class="sortcols" style="grid-template-columns:repeat(auto-fit,minmax(${cols>3?150:170}px,1fr))">${cfg.buckets.map(b=>`<button class="col" data-b="${b.id}" style="border-color:${b.color}"><span class="chd" style="color:${b.color}">${b.icon||''} ${b.label}</span><span class="cds">${b.desc||''}</span>${placed[b.id].map(t=>`<span class="chip">${t}</span>`).join('')}</button>`).join('')}</div>`;
+    tried=false;locked=false;
+    el.querySelectorAll('.col').forEach(c=>c.onclick=()=>{
+      if(locked)return;const fb=$('.fb',el),card=$('#card',el);
+      if(c.dataset.b===it.b){
+        if(!tried)api.record(true);locked=true;
+        placed[it.b].push(it.short||it.t.slice(0,38)+(it.t.length>38?'\u2026':''));
+        card.classList.add('good');fb.className='fb ok';fb.innerHTML='<b>\u2713 Right.</b> '+it.why;
+        const last=i===items.length-1;
+        const cl=$('.col[data-b="'+it.b+'"]',el);cl.insertAdjacentHTML('beforeend',`<span class="chip">${placed[it.b].slice(-1)[0]}</span>`);
+        $('#ct',el).innerHTML=`<button class="btn primary" id="cn">${last?'Finish':'Next card'} &rarr;</button>`;
+        $('#cn',el).onclick=()=>{i++;if(i>=items.length)end();else draw()};$('#cn',el).focus();
+      }else{
+        if(!tried){api.record(false);tried=true}
+        card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');
+        fb.className='fb bad';fb.innerHTML='<b>Not quite.</b> '+(it.hint||'Think about the purpose and try another group.');
+      }
+    });
+  }
+  function end(){api.complete();el.innerHTML=`<div class="prog"><i style="width:100%"></i></div><h2>\u2705 ${cfg.doneTitle||'All sorted!'}</h2><p>${cfg.doneText||'Select <b>Next</b> to continue.'}</p><div class="sortcols" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">${cfg.buckets.map(b=>`<div class="col" style="border-color:${b.color};border-style:solid"><span class="chd" style="color:${b.color}">${b.icon||''} ${b.label}</span>${placed[b.id].map(t=>`<span class="chip">${t}</span>`).join('')}</div>`).join('')}</div>`}
+  draw();
+}
+/* ---- Summary screen ---- */
+function summary(el,api,o){
+  api.complete();
+  const pct=App.total?Math.round(App.right/App.total*100):100;
+  el.innerHTML=`<div class="kicker">Wrap-up</div><h1>${o.title}</h1>
+  <div class="scorebox"><div class="big">${App.right}/${App.total}</div><div><b>First-try accuracy: ${pct}%</b><br><span style="font-size:.9rem">Missing a choice is part of learning &mdash; the feedback is the point. Use the dots above to revisit any activity.</span></div></div>
+  <h3>Key takeaways</h3><div class="take">${o.takeaways.map(t=>`<div><b>${t[0]}</b>${t[1]}</div>`).join('')}</div>
+  <h3>${o.checkTitle}</h3><ul class="checks">${o.checks.map((c,k)=>`<li><label><input type="checkbox"> <span>${c}</span></label></li>`).join('')}</ul>
+  <div class="row"><button class="btn" id="restart">\u21BA Restart this interactive</button></div>`;
+  $('#restart',el).onclick=()=>{App.done={};App.right=0;App.total=0;go(0)};
+}
+function copyText(txt,btn){
+  const done=()=>{const o=btn.textContent;btn.textContent='\u2713 Copied';setTimeout(()=>btn.textContent=o,1500)};
+  try{navigator.clipboard.writeText(txt).then(done,fallback)}catch(e){fallback()}
+  function fallback(){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){btn.textContent='Select & copy manually'}t.remove()}
+}
+
+const heroBook=`<svg viewBox="0 0 360 280" role="img" aria-label="An open book with letter tiles sh, i, p and sound waves above"><path d="M180 120c-40-22-100-22-140 0v110c40-22 100-22 140 0z" fill="#fff" stroke="#5b4b8a" stroke-width="4"/><path d="M180 120c40-22 100-22 140 0v110c-40-22-100-22-140 0z" fill="#f6f3fb" stroke="#5b4b8a" stroke-width="4"/><path d="M180 120v110" stroke="#5b4b8a" stroke-width="4"/><g font-weight="800" font-size="30" text-anchor="middle" fill="#fff"><rect x="62" y="150" width="62" height="50" rx="10" fill="#5b4b8a"/><text x="93" y="186">sh</text><rect x="200" y="150" width="50" height="50" rx="10" fill="#a8353a"/><text x="225" y="186">i</text><rect x="260" y="150" width="50" height="50" rx="10" fill="#2f7d5b"/><text x="285" y="186">p</text></g><g fill="none" stroke="#5b4b8a" stroke-width="4" stroke-linecap="round"><path d="M60 60q10-24 20 0t20 0t20 0t20 0t20 0"/><path d="M160 50q8-34 16 0t16 0t16 0t16 0t16 0t16 0" stroke="#a8353a"/><path d="M262 62q10-20 20 0t20 0" stroke="#2f7d5b"/></g><text x="180" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#444">/sh/ /i/ /p/ &rarr; ship</text></svg>`;
+const layers=[
+ {id:'sem',n:'Semantics',c:'#2f7d5b',d:'The meaning of words, phrases and texts, including vocabulary and multiple meanings.'},
+ {id:'syn',n:'Syntax',c:'#2a6f97',d:'How words combine into sentences: grammar, word order, sentence structure.'},
+ {id:'mor',n:'Morphology',c:'#c26a1b',d:'The smallest units of meaning: base words, prefixes, suffixes and roots.'},
+ {id:'pho',n:'Phonics',c:'#a8353a',d:'Connecting sounds to letters: decoding (reading) and encoding (spelling).'},
+ {id:'ort',n:'Orthography',c:'#7a4ea3',d:'The writing system: spelling patterns and conventions.'},
+ {id:'phl',n:'Phonology',c:'#5b4b8a',d:'The sound structure of spoken language: syllables, rhymes and individual phonemes.'}];
+function layerArt(){return `<svg viewBox="0 0 240 250" id="stack" role="group" aria-label="Six layers of language, from phonology at the base to semantics at the top">${layers.map((l,i)=>{const w=110+i*20,x=120-w/2,y=8+i*38;return `<g class="ly" data-i="${i}" tabindex="0" role="button" aria-label="${l.n}: ${l.d}" style="cursor:pointer"><rect x="${x}" y="${y}" width="${w}" height="32" rx="8" fill="${l.c}"/><text x="120" y="${y+21}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">${l.n}</text></g>`}).join('')}</svg>`}
+function layerStep(el,api){
+  const w=split(el,layerArt(),'Tap a layer to read what it covers');
+  const art=$('.art',el);art.insertAdjacentHTML('beforeend','<div id="ld" class="ctx" style="width:100%;font-size:.85rem;margin:0">Structured literacy is explicit, systematic and cumulative, and attends to <b>all</b> layers of language.</div>');
+  art.querySelectorAll('.ly').forEach(g=>{const f=()=>{const l=layers[+g.dataset.i];$('#ld',el).innerHTML=`<b style="color:${l.c}">${l.n}:</b> ${l.d}`};g.onclick=f;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}}});
+  const O=(n,ok,fb)=>({t:n,ok,fb});
+  mc(w,api,{label:'Which layer?',sub:'Name the layer being taught',doneTitle:'You can see the whole structure',
+   qs:[
+   {p:'Students segment <b>stop</b> into /s/ /t/ /o/ /p/ using counters.',o:[O('Phonology',1,'Manipulating sounds in spoken words, with no print needed, is phonology.'),O('Morphology',0,'Morphology is about meaningful word parts, not sounds.'),O('Syntax',0,'Syntax is about sentence structure.'),O('Semantics',0,'Semantics is about meaning.')]},
+   {p:'Students decode <b>cat, sit, hop</b> by mapping each letter to its sound and blending.',o:[O('Phonics',1,'Connecting letters to sounds to read words is phonics (decoding).'),O('Morphology',0,'No word parts are being analyzed here.'),O('Syntax',0,'This is at the word level, not the sentence level.'),O('Semantics',0,'The focus is reading the word, not its meaning.')]},
+   {p:'Students notice the /k/ at the end of <b>back</b> and <b>kick</b> is spelled <b>ck</b> after a short vowel.',o:[O('Orthography',1,'Spelling patterns and conventions are orthography.'),O('Phonology',0,'This involves print patterns, not only spoken sounds.'),O('Syntax',0,'Nothing about sentences here.'),O('Semantics',0,'The meaning of the words is not the focus.')]},
+   {p:'Students break <b>unhappiness</b> into <b>un- / happy / -ness</b> and discuss what each part means.',o:[O('Morphology',1,'Analyzing meaningful word parts is morphology.'),O('Phonology',0,'The parts are analyzed for meaning, not for individual sounds.'),O('Syntax',0,'This is within a single word.'),O('Orthography',0,'Spelling is not the target; meaning of the parts is.')]},
+   {p:'Students rearrange word cards to build a sentence and discuss why one order sounds right.',o:[O('Syntax',1,'Word order and sentence structure are syntax.'),O('Morphology',0,'Word parts are not being broken down.'),O('Phonics',0,'No sound\u2013letter mapping is being taught.'),O('Orthography',0,'Spelling is not the focus.')]},
+   {p:'Students group words by meaning and discuss two meanings of <b>bat</b>.',o:[O('Semantics',1,'Word meaning and multiple meanings are semantics.'),O('Phonology',0,'The sounds are the same; the meaning is the focus.'),O('Syntax',0,'Sentence structure is not the target.'),O('Phonics',0,'Decoding is not the target.')]}]});
+}
+const elk=[
+ {w:'ship',s:['sh','i','p'],note:'<b>sh</b> is a digraph: two letters, one sound. 4 letters, 3 sounds.'},
+ {w:'frog',s:['f','r','o','g'],note:'A consonant blend keeps two separate sounds: /f/ /r/. 4 letters, 4 sounds.'},
+ {w:'rain',s:['r','ai','n'],note:'The vowel team <b>ai</b> spells one sound, long /a/. 4 letters, 3 sounds.'},
+ {w:'thick',s:['th','i','ck'],note:'Two digraphs: <b>th</b> and <b>ck</b>. 5 letters, 3 sounds.'}];
+function elkonin(el,api){
+  let wi=0;let tried=false;
+  const say=w=>{try{const u=new SpeechSynthesisUtterance(w);u.rate=.7;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}};
+  function stage1(){
+    const e=elk[wi];tried=false;
+    el.innerHTML=`<div class="qhead"><span>Word ${wi+1} of ${elk.length}</span><span>Phoneme tapping</span></div><div class="prog"><i style="width:${wi/elk.length*100}%"></i></div>
+    <h2>How many <i>sounds</i> are in this word?</h2>
+    <div class="card" style="justify-content:space-between"><span style="font-size:2rem;font-weight:800;letter-spacing:.08em">${e.w}</span><button class="btn" id="say" aria-label="Hear the word">\uD83D\uDD0A Say it</button></div>
+    <p style="margin-top:8px">Say the word slowly and tap a sound for each phoneme. Count <b>sounds</b>, not letters.</p>
+    <div class="row" id="nums">${[2,3,4,5].map(n=>`<button class="btn" data-n="${n}" style="min-width:56px;font-size:1.2rem">${n}</button>`).join('')}</div><div class="fb empty" role="status" aria-live="polite"></div>`;
+    $('#say',el).onclick=()=>say(e.w);
+    el.querySelectorAll('#nums .btn').forEach(b=>b.onclick=()=>{
+      const fb=$('.fb',el);
+      if(+b.dataset.n===e.s.length){if(!tried)api.record(true);stage2()}
+      else{if(!tried){api.record(false);tried=true}b.disabled=true;fb.className='fb bad';fb.innerHTML='<b>Not quite.</b> Say it again slowly and count each separate sound.'}
+    });
+  }
+  function stage2(){
+    const e=elk[wi];const boxes=Array(e.s.length).fill(null);const tiles=shuffle(e.s.map((t,i)=>({t,i,used:false})));tried=false;
+    const draw=()=>{
+      el.innerHTML=`<div class="qhead"><span>Word ${wi+1} of ${elk.length}</span><span>Sound boxes</span></div><div class="prog"><i style="width:${(wi+.5)/elk.length*100}%"></i></div>
+      <h2>\u2705 ${e.s.length} sounds! Now spell each sound in a box.</h2>
+      <div class="card" style="justify-content:space-between"><span style="font-size:1.6rem;font-weight:800">${e.w}</span><button class="btn" id="say">\uD83D\uDD0A Say it</button></div>
+      <div style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap" id="bx">${boxes.map((b,i)=>`<button class="btn" data-b="${i}" style="width:70px;height:62px;font-size:1.5rem;border-style:${b?'solid':'dashed'};color:#222;border-color:#5b4b8a;background:${b?'#f6f3fb':'#fff'}" aria-label="Box ${i+1}${b?': '+b.t:' empty'}">${b?b.t:''}</button>`).join('')}</div>
+      <div class="row" id="tl">${tiles.map((t,k)=>`<button class="btn primary" data-k="${k}" style="background:#5b4b8a;border-color:#5b4b8a;font-size:1.3rem;min-width:56px" ${t.used?'disabled':''}>${t.t}</button>`).join('')}</div>
+      <div class="fb empty" role="status" aria-live="polite"></div><div class="row" id="ct"></div>`;
+      $('#say',el).onclick=()=>say(e.w);
+      el.querySelectorAll('#tl .btn').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;const s=boxes.indexOf(null);if(s<0)return;boxes[s]=tiles[k];tiles[k].used=true;draw();check()});
+      el.querySelectorAll('#bx .btn').forEach(b=>b.onclick=()=>{const i=+b.dataset.b;if(!boxes[i])return;boxes[i].used=false;boxes[i]=null;draw()});
+    };
+    const check=()=>{
+      if(boxes.includes(null))return;
+      const fb=$('.fb',el);const ok=boxes.every((b,i)=>b.t===e.s[i]);
+      if(ok){api.record(true);fb.className='fb ok';fb.innerHTML='<b>\u2713 Yes.</b> '+e.note;el.querySelectorAll('.btn:not(#say)').forEach(b=>b.disabled=true);
+        const last=wi===elk.length-1;$('#ct',el).innerHTML=`<button class="btn primary" id="cn">${last?'Finish':'Next word'} \u2192</button>`;
+        $('#cn',el).onclick=()=>{wi++;if(wi>=elk.length)end();else stage1()};$('#cn',el).disabled=false;$('#cn',el).focus()}
+      else{api.record(false);fb.className='fb bad';fb.innerHTML='<b>Not quite.</b> Say the word and listen to the order of the sounds. Tap a box to remove a tile.'}
+    };
+    draw();
+  }
+  function end(){api.complete();el.innerHTML=`<div class="prog"><i style="width:100%"></i></div><h2>\u2705 You tapped, counted and mapped four words</h2><p>This is the <b>phonemic awareness \u2192 phonics</b> bridge: students hear and manipulate sounds, then connect them to print for decoding and encoding. Multisensory support (saying, tapping, moving tiles) helps students with dyslexia.</p><p>For multilingual learners, remember cross-linguistic transfer: check which sounds exist in the home language. Select <b>Next</b> to wrap up.</p>`}
+  stage1();
+}
+const W3=[
+ {name:'Welcome',auto:1,render:el=>intro(el,{art:heroBook,cap:'Sounds \u2192 letters \u2192 words',kicker:'Deep Dive \u2022 Week 3',title:'Understanding & Supporting Students with Dyslexia',text:'Dyslexia is a language-based learning difference, not a lack of intelligence. With explicit, systematic instruction, students with dyslexia can become capable readers and writers.',goals:[['✅','Separate facts about dyslexia from common myths.'],['🧱','Identify the six layers of language in structured literacy.'],['👂','Practice phoneme tapping and sound-to-letter mapping like a student would.']]})},
+ {name:'Fact or myth',render:(el,api)=>{const w=split(el,`<svg viewBox="0 0 240 230" role="img" aria-label="A brain with a lightbulb: a language-based difference, not low intelligence"><path d="M120 28c-34 0-58 22-58 52 0 10 3 18 8 25-6 8-6 22 6 28 2 22 22 32 44 28 22 4 42-6 44-28 12-6 12-20 6-28 5-7 8-15 8-25 0-30-24-52-58-52z" fill="#fff" stroke="#5b4b8a" stroke-width="4"/><path d="M120 32v108M92 70c14 0 20 10 28 10M148 70c-14 0-20 10-28 10M88 112c14-4 22 6 32 6M152 112c-14-4-22 6-32 6" stroke="#5b4b8a" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="120" cy="190" r="14" fill="#ffd54f" stroke="#c28f00" stroke-width="3"/><path d="M114 204h12M116 210h8" stroke="#555" stroke-width="3" stroke-linecap="round"/><text x="120" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#444">Language-based, not intelligence</text></svg>`);
+   sorter(w,api,{label:'Statement',sub:'Fact or myth?',doneTitle:'Facts and myths sorted',buckets:[{id:'f',label:'Fact',desc:'Supported by the California Dyslexia Guidelines',color:'#2f7d5b',icon:'✅'},{id:'m',label:'Myth',desc:'Common misconception',color:'#a8353a',icon:'❌'}],
+   items:[
+    {t:'Reading can be slow and effortful even when oral language and reasoning are strong.',b:'f',short:'Slow, effortful reading',why:'Dyslexia mainly affects accurate and fluent word reading and spelling.'},
+    {t:'Students often have difficulty connecting sounds to letters when decoding and spelling.',b:'f',short:'Sound\u2013letter trouble',why:'This is a core characteristic and the reason foundational skills are the entry point for intervention.'},
+    {t:'Dyslexia means a student has low intelligence.',b:'m',short:'Low intelligence',why:'Dyslexia is not related to intelligence; many students have strong reasoning and language.'},
+    {t:'Students with dyslexia see letters and words backwards.',b:'m',short:'Seeing backwards',why:'Letter reversals are common in all beginning readers. Dyslexia is language-based, not a vision problem.'},
+    {t:'With explicit, systematic instruction, students with dyslexia can become capable readers and writers.',b:'f',short:'Instruction works',why:'Structured, multisensory instruction makes a difference.'},
+    {t:'Students with dyslexia would read fine if they just tried harder.',b:'m',short:'Try harder',why:'The difficulty is not about effort. It is about how the brain processes the sounds of language.'}]})}},
+ {name:'Layers of language',render:(el,api)=>layerStep(el,api)},
+ {name:'Tap & map sounds',render:(el,api)=>{const w=split(el,`<svg viewBox="0 0 240 200" role="img" aria-label="Sound boxes with tiles for the word ship"><g stroke="#5b4b8a" stroke-width="4" fill="#fff"><rect x="14" y="40" width="60" height="60" rx="8"/><rect x="90" y="40" width="60" height="60" rx="8"/><rect x="166" y="40" width="60" height="60" rx="8"/></g><g font-size="30" font-weight="800" text-anchor="middle" fill="#b9b0d3"><text x="44" y="82">?</text><text x="120" y="82">?</text><text x="196" y="82">?</text></g><g fill="#a8353a"><circle cx="44" cy="130" r="9"/><circle cx="120" cy="130" r="9"/><circle cx="196" cy="130" r="9"/></g><text x="120" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#444">One box for each sound</text></svg>`,'Elkonin sound boxes');elkonin(w,api)}},
+ {name:'Wrap-up',render:(el,api)=>summary(el,api,{title:'Teach explicitly, plan for access',takeaways:[['Know the signs','Slow, effortful word reading and spelling difficulty, not low intelligence.'],['Teach explicitly','Structured, systematic, multisensory instruction across all language layers.'],['Screen first','Screening shows who needs a closer look; diagnostic shows why.'],['Plan for access','Build accommodations into lessons for phonology through semantics.']],checkTitle:'Take it to Discussion 3: Structured Literacy for Students with Dyslexia',checks:['I can explain dyslexia without relying on myths.','I can name the six layers of language and give one activity for each.','I can describe how phoneme awareness connects to phonics.','I considered cross-linguistic transfer for multilingual learners.']})}
+];
+init({week:3,title:'Understanding & Supporting Students with Dyslexia',accent:'#5b4b8a',accentbg:'#efeaf8',steps:W3});
+</script></body></html>
