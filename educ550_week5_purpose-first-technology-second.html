@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 550 | Week 5 | Purpose First, Technology Second</title>
+<style>:root{
+  --red:#d34147;--red-dk:#a8353a;--ink:#1a1a1a;--ink2:#444;--paper:#ffffff;--warm:#edebe8;--warm2:#f7f5f2;
+  --ok:#2e7d4f;--ok-bg:#e6f4ea;--bad:#b3261e;--bad-bg:#fdecea;--line:#d9d5cf;
+}
+@media (prefers-color-scheme:dark){
+  :root{--ink:#f2f0ed;--ink2:#cfcac3;--paper:#1f1f1f;--warm:#2b2a28;--warm2:#252422;--line:#4a4743;--ok-bg:#16301f;--bad-bg:#3a1b19;--ok:#6fcf97;--bad:#ff8a80;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column;max-width:1000px;margin:0 auto}
+header.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;background:#000;color:#fff;padding:10px 18px;border-bottom:4px solid var(--red)}
+header.hero svg.logo{flex:0 0 64px;width:64px;height:64px}
+header.hero .t small{display:block;color:#f3b3b6;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-weight:700}
+header.hero h1{margin:0;font-size:22px;line-height:1.15}
+nav.steps{flex:0 0 auto;display:flex;gap:6px;background:var(--warm);padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav.steps button{flex:1 1 0;min-width:110px;border:2px solid transparent;background:var(--paper);color:var(--ink);padding:7px 8px;border-radius:999px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+nav.steps button .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink2);color:var(--paper);font-size:12px;margin-right:6px}
+nav.steps button.active{background:var(--red);color:#fff;border-color:var(--red-dk)}
+nav.steps button.active .n{background:#fff;color:var(--red-dk)}
+nav.steps button.done .n{background:var(--ok);color:#fff}
+/* ONE scroll region only: it scrolls solely when the frame is shorter than the content */
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 18px 18px;scrollbar-width:thin}
+.panel{display:none}.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{margin:0 0 4px;font-size:20px}
+p.lead{margin:0 0 10px;color:var(--ink2)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--red-dk)}.btn.ghost{background:var(--warm);color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.card{background:var(--warm2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px;display:none}
+.fb.show{display:block}.fb.good{background:var(--ok-bg);border-left:5px solid var(--ok)}.fb.try{background:var(--bad-bg);border-left:5px solid var(--bad)}
+.fb.info{background:var(--warm);border-left:5px solid var(--red)}
+.score{margin-left:auto;font-weight:700;color:var(--red-dk)}
+.bottom{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #2b6cb0;outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){header.hero h1{font-size:18px}header.hero svg.logo{display:none}nav.steps button{font-size:12.5px;min-width:90px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+header.hero .score{color:#fff;background:var(--red);padding:4px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.cls{display:grid;gap:8px}
+.cls-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--warm2);border:2px solid var(--line);border-radius:12px;padding:9px 12px}
+.cls-row.right{border-color:var(--ok);background:var(--ok-bg)}.cls-row.wrong{border-color:var(--bad)}
+.cls-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cls-btns button{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.cls-btns button:hover:not(:disabled){border-color:var(--red);color:var(--red-dk)}
+.cls-btns button:disabled{opacity:.4;cursor:default}.cls-btns button.picked{opacity:1;background:var(--ok);color:#fff;border-color:var(--ok)}
+.cls-why{grid-column:1/-1;font-size:14px;display:none}.cls-why.show{display:block}.cls-why.ok{color:var(--ok)}.cls-why.bad{color:var(--bad)}
+.cls-text{font-size:15.5px}
+@media (max-width:640px){.cls-row{grid-template-columns:1fr}.cls-btns{justify-content:flex-start}}
+.qz-head{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--red-dk);font-weight:800}
+.qz-q{font-size:17px;font-weight:600;margin:4px 0 10px}
+.qz-opts{display:grid;gap:8px}
+.qz-opt{text-align:left;font:inherit;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer}
+.qz-opt:hover:not(:disabled){border-color:var(--red)}.qz-opt.right{background:var(--ok-bg);border-color:var(--ok)}.qz-opt.wrong{background:var(--bad-bg);border-color:var(--bad);opacity:.7}
+.ord-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.ord-item{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;border:2px dashed var(--line);background:var(--paper);color:var(--ink);padding:9px 12px;border-radius:12px;cursor:pointer}
+.ord-item .ord-n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--red-dk)}
+.ord-item.placed{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}.ord-item.placed .ord-n{background:var(--ok);color:#fff}
+.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.finish{display:none;margin-top:12px}.finish.show{display:block}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.take div{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:8px 10px;font-size:14.5px}
+.take b{display:block;color:var(--red-dk)}
+.illus{flex:0 0 auto}.illus svg{max-width:100%;height:auto;display:block}
+
+.cls.stack{gap:6px}.cls.stack .cls-row{grid-template-columns:1fr;padding:7px 12px;gap:4px}.cls.stack .cls-btns{justify-content:flex-start}.cls.stack .cls-text{font-size:15px}.cls.stack .cls-btns button{padding:3px 10px;font-size:13px}
+@media (max-width:640px){.row{flex-wrap:wrap!important}.row>*{flex:1 1 100%!important;width:auto!important;max-width:100%}.row>.illus.deco{display:none}}
+
+.flow{display:flex;gap:8px;align-items:center;margin:0 0 8px;flex-wrap:wrap}.flow div{background:var(--warm);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:700;font-size:13.5px}.flow span{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;margin-right:6px}.flow i{color:var(--red-dk);font-style:normal;font-weight:800}
+.gl{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--ink2);padding:0 2px}
+.bar{margin:4px 0}.bar label{font-size:13.5px;font-weight:700}.bar>div{height:16px;background:var(--warm);border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:#6b6b6b;border-radius:999px;transition:width .4s}.bar i.k{background:var(--red)}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:6px}.qgrid button{text-align:left;font:inherit;font-size:14.5px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:8px 12px;cursor:pointer}.qgrid button.sel{border-color:var(--red);background:var(--warm);box-shadow:inset 5px 0 0 var(--red)}
+@media (max-width:640px){#p1 .row{flex-wrap:wrap!important}#p1 .illus{display:none}#p2 .row{flex-wrap:wrap!important}}</style></head>
+<body><div class="app">
+<header class="hero"><svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Tablet with a check mark"><rect width="64" height="64" rx="12" fill="#d34147"/><rect x="13" y="12" width="38" height="40" rx="5" fill="#fff"/><rect x="17" y="17" width="30" height="28" rx="2" fill="#edebe8"/><path d="M23 31l6 6 12-13" fill="none" stroke="#a8353a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="49" r="2" fill="#a8353a"/></svg><div class="t"><small>EDUC 550 · Week 5</small><h1>21st Century Skills & Technology</h1></div><div class="score" id="score" style="margin-left:auto" aria-live="polite">★ 0 / 0</div></header>
+<nav class="steps" role="tablist" aria-label="Activity steps"><button type="button" role="tab" class=active aria-selected="true"><span class="n">1</span>Target → Tool</button><button type="button" role="tab" aria-selected="false"><span class="n">2</span>Evaluate</button><button type="button" role="tab" aria-selected="false"><span class="n">3</span>Keyboarding</button><button type="button" role="tab" aria-selected="false"><span class="n">4</span>Interview</button></nav>
+<main>
+<section class="panel active" id="p0">
+ <h2>Begin with the end in mind</h2>
+ <p class="lead">Choose the learning target first, then ask which tool best supports it.</p>
+ <div class="flow" aria-hidden="true"><div><span>1</span>Learning target</div><i>→</i><div><span>2</span>Best-fit tool</div><i>→</i><div><span>3</span>Check for all learners</div></div>
+ <div id="c0"></div>
+ <div class="bottom"><button class="btn" id="n0" style="display:none">Next: Evaluate tools →</button></div>
+</section>
+
+<section class="panel" id="p1">
+ <h2>Evaluate before you adopt</h2>
+ <p class="lead">Sample tool: <b>“StoryMapper Jr.”</b>, a collaborative map-and-timeline app for grades 3–5. Which question does each feature help answer?</p>
+ <div class="row" style="flex-wrap:nowrap">
+  <div class="illus" style="width:min(30%,230px)" aria-hidden="true">
+   <svg viewBox="0 0 220 170"><rect x="8" y="6" width="204" height="146" rx="14" fill="#1a1a1a"/><rect x="16" y="14" width="188" height="130" rx="6" fill="#f7f5f2"/>
+    <rect x="16" y="14" width="188" height="20" fill="#d34147"/><text x="26" y="29" font-size="12" font-weight="800" fill="#fff" font-family="Segoe UI,Arial">StoryMapper Jr.</text>
+    <path d="M30 120c20-30 40 10 60-20s40 0 60-26 30 8 40-4" fill="none" stroke="#a8353a" stroke-width="3" stroke-dasharray="5 4"/>
+    <circle cx="30" cy="120" r="8" fill="#d34147"/><circle cx="90" cy="100" r="8" fill="#000"/><circle cx="150" cy="74" r="8" fill="#6b6b6b"/><circle cx="190" cy="70" r="8" fill="#d34147"/>
+    <rect x="28" y="44" width="62" height="20" rx="4" fill="#fff" stroke="#ccc"/><text x="34" y="58" font-size="9" fill="#333" font-family="Segoe UI,Arial">Add a place</text>
+    <rect x="100" y="44" width="62" height="20" rx="4" fill="#fff" stroke="#ccc"/><text x="106" y="58" font-size="9" fill="#333" font-family="Segoe UI,Arial">🔊 Read aloud</text>
+    <rect x="86" y="158" width="48" height="6" rx="3" fill="#bbb"/></svg></div>
+  <div id="c1" style="flex:1 1 auto;min-width:0"></div>
+ </div>
+ <div class="bottom"><button class="btn" id="n1" style="display:none">Next: Keyboarding →</button></div>
+</section>
+
+<section class="panel" id="p2">
+ <h2>Keyboarding is a skill built over time</h2>
+ <p class="lead">Slide through the grade bands. Handwriting and language conventions such as spelling keep supporting writing, so you decide when each fits. Visit all four stops to unlock a quick check.</p>
+ <div class="card">
+  <input type="range" id="grade" min="0" max="3" step="1" value="0" aria-label="Grade band" style="width:100%;accent-color:#d34147">
+  <div class="gl"><span>K–2</span><span>Grade 3</span><span>Grade 4</span><span>Grades 5–6</span></div>
+  <div class="row" style="flex-wrap:nowrap;margin-top:8px">
+   <div style="flex:1 1 52%;min-width:0">
+    <div class="bar"><label>✏️ Handwriting &amp; conventions</label><div><i id="b1"></i></div></div>
+    <div class="bar"><label>⌨️ Keyboarding &amp; publishing</label><div><i id="b2" class="k"></i></div></div>
+    <p style="font-size:12px;color:var(--ink2);margin:4px 0 0">Bars show illustrative emphasis, not exact amounts.</p>
+   </div>
+   <div style="flex:1 1 48%;min-width:0"><h3 id="gt" style="margin:0 0 2px;font-size:17px"></h3><p id="gd" style="margin:0;font-size:14.5px"></p></div>
+  </div>
+ </div>
+ <div id="c2" style="margin-top:10px"></div>
+ <div class="bottom"><button class="btn" id="n2" style="display:none">Next: Prepare your interview →</button></div>
+</section>
+
+<section class="panel" id="p3">
+ <h2>Fieldwork Teacher Interview: choose probing questions</h2>
+ <p class="lead">Pick at least three open-ended questions about technology. Yes/no questions will not tell you much.</p>
+ <div id="qs" class="qgrid"></div>
+ <div class="fb" id="qfb"></div>
+ <div class="bottom"><button class="btn" id="build">Build my interview list</button></div>
+ <div class="card" id="out" style="display:none;margin-top:8px"><ol id="outl" style="margin:0;padding-left:20px;font-size:14.5px"></ol><button class="btn ghost" id="copy" style="margin-top:6px">📋 Copy</button> <span id="copied" style="font-size:13px;color:var(--ok)"></span></div>
+ <div class="finish card" id="fin">
+  <h2 style="font-size:18px">🎉 Week 5 complete — your takeaways</h2>
+  <div class="take"><div><b>Start with the target</b>Choose technology after the objective.</div><div><b>Skills build over time</b>Keyboarding grows alongside handwriting.</div><div><b>Evaluate before you adopt</b>Age fit, interest, growth, access.</div><div><b>Learn from practitioners</b>Ask probing questions in your interview.</div></div>
+ </div>
+</section>
+</main></div>
+<script>/* shared: tabs + frame-height reporting (no scrollbar fights) */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function showPanel(i){
+  $$('.panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  $$('nav.steps button').forEach((b,k)=>{b.classList.toggle('active',k===i);b.setAttribute('aria-selected',k===i)});
+  $('main').scrollTop=0;
+}
+function markDone(i){const b=$$('nav.steps button')[i];if(b)b.classList.add('done')}
+function fb(el,type,html){el.className='fb show '+type;el.innerHTML=html}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav.steps button').forEach((b,i)=>b.addEventListener('click',()=>showPanel(i)));
+/* If the host page listens, tell it our natural height so the iframe can match (optional). */
+function reportHeight(){try{const h=Math.ceil($('main').scrollHeight+$('header.hero').offsetHeight+$('nav.steps').offsetHeight);
+  parent.postMessage({subject:'lti.frameResize',height:h},'*');parent.postMessage({type:'educ550-resize',height:h},'*')}catch(e){}}
+addEventListener('load',reportHeight);addEventListener('resize',reportHeight);
+new MutationObserver(reportHeight).observe(document.body,{subtree:true,attributes:true,childList:true});
+
+/* ---------- scoring ---------- */
+const SCORE={got:0,total:0};
+function addScore(got,total){SCORE.got+=got;SCORE.total+=total;const s=$('#score');if(s)s.textContent='★ '+SCORE.got+' / '+SCORE.total}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- classify: sort each item into a category ---------- */
+function classify(root,items,cats,opts={}){
+  root.innerHTML='';let right=0,firstTry=0;const total=items.length;
+  const wrap=document.createElement('div');wrap.className='cls'+(opts.stack?' stack':'');
+  items.forEach((it,idx)=>{
+    const row=document.createElement('div');row.className='cls-row';
+    row.innerHTML='<div class="cls-text">'+(it.html||esc(it.text))+'</div><div class="cls-btns"></div><div class="cls-why"></div>';
+    const btns=row.querySelector('.cls-btns'),why=row.querySelector('.cls-why');let missed=false,done=false;
+    cats.forEach(c=>{
+      const b=document.createElement('button');b.type='button';b.textContent=c.label;b.dataset.cat=c.id;
+      if(c.style)b.setAttribute('style',c.style);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(c.id===it.ans){done=true;right++;if(!missed)firstTry++;
+          row.classList.remove('wrong');row.classList.add('right');
+          $$('button',btns).forEach(x=>{x.disabled=true;x.classList.toggle('picked',x===b)});
+          why.innerHTML='✔ '+(it.why||'Correct.');why.className='cls-why show ok';
+          if(right===total){addScore(firstTry,total);opts.onDone&&opts.onDone(firstTry,total)}
+        }else{missed=true;row.classList.add('wrong');b.disabled=true;
+          why.innerHTML='✖ Not quite'+(it.hint?' — '+esc(it.hint):' — try another category.');why.className='cls-why show bad'}
+      });btns.appendChild(b)});
+    wrap.appendChild(row)});
+  root.appendChild(wrap)}
+
+/* ---------- quiz: one multiple-choice question at a time ---------- */
+function quiz(root,items,opts={}){
+  let i=0,firstTry=0;const total=items.length;
+  function render(){
+    const it=items[i];let missed=false,done=false;
+    root.innerHTML='<div class="qz-head">Question '+(i+1)+' of '+total+'</div><div class="qz-q">'+(it.html||esc(it.q))+'</div><div class="qz-opts"></div><div class="fb"></div><div class="bottom"><button class="btn" type="button" id="qz-next" style="display:none"></button></div>';
+    const o=$('.qz-opts',root),f=$('.fb',root),nx=$('#qz-next',root);
+    shuffle(it.opts.map((t,k)=>({t,k}))).forEach(({t,k})=>{
+      const b=document.createElement('button');b.type='button';b.className='qz-opt';b.innerHTML=esc(t);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(k===it.ans){done=true;if(!missed)firstTry++;b.classList.add('right');$$('.qz-opt',o).forEach(x=>x.disabled=true);
+          fb(f,'good','<b>Yes!</b> '+(it.why||''));nx.style.display='';nx.textContent=i<total-1?'Next question →':'Finish ✓';
+        }else{missed=true;b.classList.add('wrong');b.disabled=true;fb(f,'try','<b>Not the best fit.</b> '+(it.hints&&it.hints[k]?it.hints[k]:'Look again at the purpose of the task.'))}
+      });o.appendChild(b)});
+    nx.addEventListener('click',()=>{if(i<total-1){i++;render()}else{addScore(firstTry,total);root.innerHTML='<div class="fb show good"><b>Step complete!</b> You earned '+firstTry+' of '+total+' on the first try.</div>';opts.onDone&&opts.onDone(firstTry,total)}});
+  }
+  render()}
+
+/* ---------- order: click items in the correct sequence ---------- */
+function orderIt(root,steps,opts={}){
+  const shuf=shuffle(steps.map((t,k)=>({t,k})));let next=0,miss=0;
+  root.innerHTML='<div class="ord-grid"></div><div class="fb"></div>';
+  const g=$('.ord-grid',root),f=$('.fb',root);
+  shuf.forEach(({t,k})=>{const b=document.createElement('button');b.type='button';b.className='ord-item';b.innerHTML='<span class="ord-n"></span>'+esc(t);
+    b.addEventListener('click',()=>{
+      if(b.classList.contains('placed'))return;
+      if(k===next){b.classList.add('placed');b.querySelector('.ord-n').textContent=next+1;next++;fb(f,'info','Good — that comes '+(next===1?'first':'next')+'. '+(steps.length-next)+' to go.');
+        if(next===steps.length){const pts=Math.max(0,1-(miss>2?1:0));addScore(pts,1);fb(f,'good','<b>Sequence complete!</b> '+(opts.done||''));opts.onDone&&opts.onDone()}}
+      else{miss++;b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb(f,'try','Not yet — what has to be decided <i>before</i> that? Try a different step.')}});
+    g.appendChild(b)})}
+
+
+quiz($('#c0'),[
+ {html:'<b>Target:</b> Students will create a timeline of California’s mission period and explain cause and effect.<br>Which tool fits?',opts:['A collaborative digital timeline where students add events and write cause-and-effect captions','A timed trivia game on mission dates','A slideshow the teacher presents while students listen'],ans:0,
+  why:'The tool lets students do what the target asks: sequence events and explain cause and effect.',hints:{1:'Recall drills do not build cause-and-effect explanations.',2:'Passive viewing does not have students create or explain anything.'}},
+ {html:'<b>Target:</b> Students will compose a short piece using rhythm patterns.<br>Which tool fits?',opts:['A beat-maker app where students build and loop rhythm patterns, then share them','A video of a drum solo','A worksheet on music vocabulary'],ans:0,
+  why:'Composing is the target, so the tool should let students make music.',hints:{1:'Watching is not composing.',2:'Vocabulary supports the task but does not let students compose.'}},
+ {html:'<b>Situation:</b> A flashy app has great graphics but no connection to your standard.<br>What should you do?',opts:['Skip it and look for a tool that serves the target','Use it anyway because students will enjoy it','Use it as a reward only, with no link to learning'],ans:0,
+  why:'Purpose first, technology second. Engagement alone does not make a tool worth adopting.',hints:{1:'Fun is not the same as learning toward the target.',2:'A reward tool still takes class time without serving a target.'}}
+],{onDone:()=>{markDone(0);$('#n0').style.display=''}});
+$('#n0').onclick=()=>showPanel(1);
+classify($('#c1'),[
+ {text:'Cartoon icons, large buttons, and simple wording suited to 8–10-year-olds.',ans:'age',why:'Learning design and graphics match the target age.'},
+ {text:'Students add photos and voice notes, so they care about the story they tell.',ans:'int',why:'It promotes student interest and understanding of the topic.'},
+ {text:'Start with pins on a map; later add timelines, evidence, and sources.',ans:'grow',why:'The skill behind it grows more complex over time.'},
+ {text:'Read-aloud, adjustable text size, and keyboard-only navigation.',ans:'acc',why:'It is accessible to all of your students.'}
+],[{id:'age',label:'Age-appropriate?'},{id:'int',label:'Interest & understanding?'},{id:'grow',label:'Grows over time?'},{id:'acc',label:'Accessible?'}],{stack:1,onDone:()=>{markDone(1);$('#n1').style.display=''}});
+$('#n1').onclick=()=>showPanel(2);
+const G=[
+ {t:'Kindergarten–Grade 2',d:'Explore digital tools with guidance and support, often alongside peers. Letter formation and early spelling stay central.',h:90,k:15},
+ {t:'Grade 3',d:'Keyboarding begins. With adult support, students use technology to produce and publish writing.',h:65,k:40},
+ {t:'Grade 4',d:'Students are expected to type at least one page in a single sitting, while still handwriting for many tasks.',h:50,k:65},
+ {t:'Grades 5–6',d:'Typing grows to two pages in Grade 5 and three in Grade 6. Handwriting and conventions still matter.',h:40,k:85}];
+const seenG=new Set();let qDone=false;
+function setG(){const i=+$('#grade').value,g=G[i];$('#gt').textContent=g.t;$('#gd').textContent=g.d;$('#b1').style.width=g.h+'%';$('#b2').style.width=g.k+'%';seenG.add(i);if(seenG.size===4&&!qDone){qDone=true;showKQ()}}
+$('#grade').addEventListener('input',setG);setG();seenG.clear();seenG.add(0);
+function showKQ(){quiz($('#c2'),[{q:'Which statement about keyboarding is most accurate?',opts:['It is a skill built over time, alongside handwriting and conventions.','It is mastered in one unit, so handwriting can stop.','It should wait until students have perfect spelling.'],ans:0,
+  why:'Teachers decide when each tool fits the purpose and the learner.',hints:{1:'Keyboarding is not “one and done.”',2:'Spelling and keyboarding develop together; neither needs to be perfect first.'}}],{onDone:()=>{markDone(2);$('#n2').style.display=''}})}
+$('#n2').onclick=()=>showPanel(3);
+const QS=[
+ ['How do you decide which technology to use for a lesson?',1],['Do you like using technology?',0],
+ ['Describe a time technology helped a struggling learner. What made it work?',1],['Is your classroom well equipped?',0],
+ ['How do you make sure every student can access the tools you choose?',1],['When do your students handwrite, and when do they type?',1],
+ ['What do you do when technology fails mid-lesson?',1],['How does technology support literacy in social studies or the arts?',1]];
+const sel=new Set();QS.forEach((q,i)=>{const b=document.createElement('button');b.type='button';b.textContent=q[0];b.onclick=()=>{b.classList.toggle('sel');sel.has(i)?sel.delete(i):sel.add(i)};$('#qs').appendChild(b)});
+$('#build').onclick=()=>{const f=$('#qfb');const weak=[...sel].filter(i=>!QS[i][1]),good=[...sel].filter(i=>QS[i][1]);
+ if(weak.length){fb(f,'try','<b>Revise:</b> yes/no or vague questions get short answers. Replace them with “how,” “when,” or “describe” questions.');$('#out').style.display='none';return}
+ if(good.length<3){fb(f,'try','Choose at least <b>3</b> probing questions.');return}
+ fb(f,'good','<b>Strong list!</b> Take notes on specific examples and follow up with “Can you tell me more?”');
+ $('#outl').innerHTML=good.map(i=>'<li>'+esc(QS[i][0])+'</li>').join('');$('#out').style.display='';$('#fin').classList.add('show');markDone(3);addScore(1,1)};
+$('#copy').onclick=async()=>{const t=$$('#outl li').map((l,i)=>(i+1)+'. '+l.textContent).join('\n');try{await navigator.clipboard.writeText(t);$('#copied').textContent='Copied!'}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');$('#copied').textContent='Copied!'}catch(_){$('#copied').textContent='Select the list to copy.'}ta.remove()}};
+
+</script></body></html>

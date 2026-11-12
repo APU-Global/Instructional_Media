@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 550 | Week 2 | Unpack the Standards and the 4Cs</title>
+<style>:root{
+  --red:#d34147;--red-dk:#a8353a;--ink:#1a1a1a;--ink2:#444;--paper:#ffffff;--warm:#edebe8;--warm2:#f7f5f2;
+  --ok:#2e7d4f;--ok-bg:#e6f4ea;--bad:#b3261e;--bad-bg:#fdecea;--line:#d9d5cf;
+}
+@media (prefers-color-scheme:dark){
+  :root{--ink:#f2f0ed;--ink2:#cfcac3;--paper:#1f1f1f;--warm:#2b2a28;--warm2:#252422;--line:#4a4743;--ok-bg:#16301f;--bad-bg:#3a1b19;--ok:#6fcf97;--bad:#ff8a80;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column;max-width:1000px;margin:0 auto}
+header.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;background:#000;color:#fff;padding:10px 18px;border-bottom:4px solid var(--red)}
+header.hero svg.logo{flex:0 0 64px;width:64px;height:64px}
+header.hero .t small{display:block;color:#f3b3b6;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-weight:700}
+header.hero h1{margin:0;font-size:22px;line-height:1.15}
+nav.steps{flex:0 0 auto;display:flex;gap:6px;background:var(--warm);padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav.steps button{flex:1 1 0;min-width:110px;border:2px solid transparent;background:var(--paper);color:var(--ink);padding:7px 8px;border-radius:999px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+nav.steps button .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink2);color:var(--paper);font-size:12px;margin-right:6px}
+nav.steps button.active{background:var(--red);color:#fff;border-color:var(--red-dk)}
+nav.steps button.active .n{background:#fff;color:var(--red-dk)}
+nav.steps button.done .n{background:var(--ok);color:#fff}
+/* ONE scroll region only: it scrolls solely when the frame is shorter than the content */
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 18px 18px;scrollbar-width:thin}
+.panel{display:none}.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{margin:0 0 4px;font-size:20px}
+p.lead{margin:0 0 10px;color:var(--ink2)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--red-dk)}.btn.ghost{background:var(--warm);color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.card{background:var(--warm2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px;display:none}
+.fb.show{display:block}.fb.good{background:var(--ok-bg);border-left:5px solid var(--ok)}.fb.try{background:var(--bad-bg);border-left:5px solid var(--bad)}
+.fb.info{background:var(--warm);border-left:5px solid var(--red)}
+.score{margin-left:auto;font-weight:700;color:var(--red-dk)}
+.bottom{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #2b6cb0;outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){header.hero h1{font-size:18px}header.hero svg.logo{display:none}nav.steps button{font-size:12.5px;min-width:90px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+header.hero .score{color:#fff;background:var(--red);padding:4px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.cls{display:grid;gap:8px}
+.cls-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--warm2);border:2px solid var(--line);border-radius:12px;padding:9px 12px}
+.cls-row.right{border-color:var(--ok);background:var(--ok-bg)}.cls-row.wrong{border-color:var(--bad)}
+.cls-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cls-btns button{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.cls-btns button:hover:not(:disabled){border-color:var(--red);color:var(--red-dk)}
+.cls-btns button:disabled{opacity:.4;cursor:default}.cls-btns button.picked{opacity:1;background:var(--ok);color:#fff;border-color:var(--ok)}
+.cls-why{grid-column:1/-1;font-size:14px;display:none}.cls-why.show{display:block}.cls-why.ok{color:var(--ok)}.cls-why.bad{color:var(--bad)}
+.cls-text{font-size:15.5px}
+@media (max-width:640px){.cls-row{grid-template-columns:1fr}.cls-btns{justify-content:flex-start}}
+.qz-head{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--red-dk);font-weight:800}
+.qz-q{font-size:17px;font-weight:600;margin:4px 0 10px}
+.qz-opts{display:grid;gap:8px}
+.qz-opt{text-align:left;font:inherit;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer}
+.qz-opt:hover:not(:disabled){border-color:var(--red)}.qz-opt.right{background:var(--ok-bg);border-color:var(--ok)}.qz-opt.wrong{background:var(--bad-bg);border-color:var(--bad);opacity:.7}
+.ord-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.ord-item{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;border:2px dashed var(--line);background:var(--paper);color:var(--ink);padding:9px 12px;border-radius:12px;cursor:pointer}
+.ord-item .ord-n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--red-dk)}
+.ord-item.placed{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}.ord-item.placed .ord-n{background:var(--ok);color:#fff}
+.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.finish{display:none;margin-top:12px}.finish.show{display:block}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.take div{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:8px 10px;font-size:14.5px}
+.take b{display:block;color:var(--red-dk)}
+.illus{flex:0 0 auto}.illus svg{max-width:100%;height:auto;display:block}
+
+.cls.stack{gap:6px}.cls.stack .cls-row{grid-template-columns:1fr;padding:7px 12px;gap:4px}.cls.stack .cls-btns{justify-content:flex-start}.cls.stack .cls-text{font-size:15px}.cls.stack .cls-btns button{padding:3px 10px;font-size:13px}
+@media (max-width:640px){.row{flex-wrap:wrap!important}.row>*{flex:1 1 100%!important;width:auto!important;max-width:100%}.row>.illus.deco{display:none}}
+
+.std{font-size:17px;line-height:1.6}.std small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:800;color:var(--red-dk);margin-bottom:4px}
+.u{border-bottom:3px solid var(--red);padding-bottom:1px}.four svg{width:100%;max-height:96px;margin-bottom:6px}</style></head>
+<body><div class="app">
+<header class="hero"><svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Open box with a star"><rect width="64" height="64" rx="12" fill="#d34147"/><path d="M12 28l20-8 20 8-20 8z" fill="#fff"/><path d="M12 28v18l20 8V36z" fill="#edebe8"/><path d="M52 28v18l-20 8V36z" fill="#c9c5be"/><path d="M32 6l3 7 7 .6-5.3 4.7 1.7 7-6.4-3.9-6.4 3.9 1.7-7L22 13.600l7-.6z" fill="#fff" transform="translate(0 -1)"/></svg><div class="t"><small>EDUC 550 · Week 2</small><h1>Creating Collaborative Encounters</h1></div><div class="score" id="score" style="margin-left:auto" aria-live="polite">★ 0 / 0</div></header>
+<nav class="steps" role="tablist" aria-label="Activity steps"><button type="button" role="tab" class=active aria-selected="true"><span class="n">1</span>Unpack</button><button type="button" role="tab" aria-selected="false"><span class="n">2</span>Target</button><button type="button" role="tab" aria-selected="false"><span class="n">3</span>4Cs</button><button type="button" role="tab" aria-selected="false"><span class="n">4</span>Inquiry</button></nav>
+<main>
+<section class="panel active" id="p0">
+ <div class="row" style="flex-wrap:nowrap">
+  <div style="flex:1 1 auto">
+   <h2>Unpack the standard</h2>
+   <p class="lead">A standard is a starting point. Break it into what students should <b>KNOW</b> (content) and what they should <b>DO</b> (skills/verbs).</p>
+   <div class="card std"><small>CA History–Social Science · Grade 4 · Standard 4.2.1</small>
+    “<span class="u">Discuss</span> <span class="u">the major nations of California Indians</span>, <span class="u">including their geographic distribution, economic activities, legends, and religious beliefs</span>; <span class="u">and describe</span> <span class="u">how they depended on, adapted to, and modified the environment</span>.”</div>
+  </div>
+  <div class="illus deco" id="ill-unpack" aria-hidden="true">
+   <svg width="150" viewBox="0 0 150 130"><ellipse cx="75" cy="120" rx="55" ry="7" fill="#0001"/>
+    <path d="M25 60l50-20 50 20-50 20z" fill="#a8353a"/><path d="M25 60v42l50 20V80z" fill="#d34147"/><path d="M125 60v42l-50 20V80z" fill="#b93a40"/>
+    <path d="M25 60l-14-24 38-10 26 14z" fill="#e8787d"/><path d="M125 60l14-24-38-10-26 14z" fill="#e8787d"/>
+    <g transform="translate(26 0)"><rect x="0" y="6" width="46" height="20" rx="4" fill="#fff" stroke="#000" stroke-width="2"/><text x="23" y="21" font-size="12" text-anchor="middle" font-weight="800" fill="#000">KNOW</text></g>
+    <g transform="translate(88 -2)" ><rect x="0" y="6" width="34" height="20" rx="4" fill="#000"/><text x="17" y="21" font-size="12" text-anchor="middle" font-weight="800" fill="#fff">DO</text></g></svg>
+  </div></div>
+  <div id="c0" style="margin-top:10px"></div>
+  <div class="bottom"><button class="btn" id="n0" style="display:none">Next: Write a learning target →</button></div>
+</section>
+
+<section class="panel" id="p1">
+ <h2>Turn it into a learning target</h2>
+ <p class="lead">A learning target is a student-friendly “I can…” statement. It names the skill <i>and</i> the content, and it is <b>not</b> an activity.</p>
+ <div id="c1"></div>
+ <div class="bottom"><button class="btn" id="n1" style="display:none">Next: Plan for the 4Cs →</button></div>
+</section>
+
+<section class="panel" id="p2">
+ <h2>Plan for the 4Cs</h2>
+ <p class="lead">Which of the 21st Century Skills is each classroom moment building most?</p>
+ <div class="four" aria-hidden="true">
+  <svg viewBox="0 0 600 78">
+   <g font-family="Segoe UI,Arial" font-weight="700" font-size="13" text-anchor="middle">
+    <g transform="translate(75 0)"><circle cx="0" cy="30" r="26" fill="#d34147"/><path d="M-12 20h24a4 4 0 014 4v10a4 4 0 01-4 4H-3l-8 7v-7h-1a4 4 0 01-4-4V24a4 4 0 014-4z" fill="#fff"/><text y="73" fill="currentColor">Communication</text></g>
+    <g transform="translate(225 0)"><circle cx="0" cy="30" r="26" fill="#000"/><circle cx="-8" cy="24" r="6" fill="#fff"/><circle cx="8" cy="24" r="6" fill="#e8787d"/><path d="M-17 42a9 9 0 0118 0zM-1 42a9 9 0 0118 0z" fill="#fff"/><text y="73" fill="currentColor">Collaboration</text></g>
+    <g transform="translate(375 0)"><circle cx="0" cy="30" r="26" fill="#a8353a"/><circle cx="-3" cy="27" r="10" fill="none" stroke="#fff" stroke-width="3"/><path d="M5 35l9 9" stroke="#fff" stroke-width="4" stroke-linecap="round"/><text y="73" fill="currentColor">Critical Thinking</text></g>
+    <g transform="translate(525 0)"><circle cx="0" cy="30" r="26" fill="#6b6b6b"/><path d="M-12 44l4-12 14-14 8 8-14 14z" fill="#fff"/><path d="M6 18l4-4a3 3 0 014 0l4 4a3 3 0 010 4l-4 4z" fill="#e8787d"/><text y="73" fill="currentColor">Creativity</text></g>
+   </g></svg></div>
+ <div id="c2"></div>
+ <div class="bottom"><button class="btn" id="n2" style="display:none">Next: Choose your inquiry →</button></div>
+</section>
+
+<section class="panel" id="p3">
+ <h2>Choose your Inquiry Arc option</h2>
+ <p class="lead">In carrying out the Inquiry Arc, a teacher has two major options. Which option does each statement describe?</p>
+ <div id="c3"></div>
+ <div class="finish card" id="fin">
+  <h2 style="font-size:18px">🎉 Week 2 complete — your takeaways</h2>
+  <div class="take"><div><b>Learning is social</b>Peer collaboration and teacher support help students build meaning.</div>
+  <div><b>Choose your inquiry approach</b>Guided and student-selected inquiry each have trade-offs.</div>
+  <div><b>Unpack every standard</b>Separate the KNOW from the DO before planning.</div>
+  <div><b>Plan for the 4Cs</b>Communication, collaboration, critical thinking, creativity.</div></div>
+  <p style="margin:8px 0 0;font-size:14px">Next: apply these skills to <b>Lesson Plan Part 1</b> and Discussion 2.</p>
+ </div>
+</section>
+</main></div>
+<script>/* shared: tabs + frame-height reporting (no scrollbar fights) */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function showPanel(i){
+  $$('.panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  $$('nav.steps button').forEach((b,k)=>{b.classList.toggle('active',k===i);b.setAttribute('aria-selected',k===i)});
+  $('main').scrollTop=0;
+}
+function markDone(i){const b=$$('nav.steps button')[i];if(b)b.classList.add('done')}
+function fb(el,type,html){el.className='fb show '+type;el.innerHTML=html}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav.steps button').forEach((b,i)=>b.addEventListener('click',()=>showPanel(i)));
+/* If the host page listens, tell it our natural height so the iframe can match (optional). */
+function reportHeight(){try{const h=Math.ceil($('main').scrollHeight+$('header.hero').offsetHeight+$('nav.steps').offsetHeight);
+  parent.postMessage({subject:'lti.frameResize',height:h},'*');parent.postMessage({type:'educ550-resize',height:h},'*')}catch(e){}}
+addEventListener('load',reportHeight);addEventListener('resize',reportHeight);
+new MutationObserver(reportHeight).observe(document.body,{subtree:true,attributes:true,childList:true});
+
+/* ---------- scoring ---------- */
+const SCORE={got:0,total:0};
+function addScore(got,total){SCORE.got+=got;SCORE.total+=total;const s=$('#score');if(s)s.textContent='★ '+SCORE.got+' / '+SCORE.total}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- classify: sort each item into a category ---------- */
+function classify(root,items,cats,opts={}){
+  root.innerHTML='';let right=0,firstTry=0;const total=items.length;
+  const wrap=document.createElement('div');wrap.className='cls'+(opts.stack?' stack':'');
+  items.forEach((it,idx)=>{
+    const row=document.createElement('div');row.className='cls-row';
+    row.innerHTML='<div class="cls-text">'+(it.html||esc(it.text))+'</div><div class="cls-btns"></div><div class="cls-why"></div>';
+    const btns=row.querySelector('.cls-btns'),why=row.querySelector('.cls-why');let missed=false,done=false;
+    cats.forEach(c=>{
+      const b=document.createElement('button');b.type='button';b.textContent=c.label;b.dataset.cat=c.id;
+      if(c.style)b.setAttribute('style',c.style);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(c.id===it.ans){done=true;right++;if(!missed)firstTry++;
+          row.classList.remove('wrong');row.classList.add('right');
+          $$('button',btns).forEach(x=>{x.disabled=true;x.classList.toggle('picked',x===b)});
+          why.innerHTML='✔ '+(it.why||'Correct.');why.className='cls-why show ok';
+          if(right===total){addScore(firstTry,total);opts.onDone&&opts.onDone(firstTry,total)}
+        }else{missed=true;row.classList.add('wrong');b.disabled=true;
+          why.innerHTML='✖ Not quite'+(it.hint?' — '+esc(it.hint):' — try another category.');why.className='cls-why show bad'}
+      });btns.appendChild(b)});
+    wrap.appendChild(row)});
+  root.appendChild(wrap)}
+
+/* ---------- quiz: one multiple-choice question at a time ---------- */
+function quiz(root,items,opts={}){
+  let i=0,firstTry=0;const total=items.length;
+  function render(){
+    const it=items[i];let missed=false,done=false;
+    root.innerHTML='<div class="qz-head">Question '+(i+1)+' of '+total+'</div><div class="qz-q">'+(it.html||esc(it.q))+'</div><div class="qz-opts"></div><div class="fb"></div><div class="bottom"><button class="btn" type="button" id="qz-next" style="display:none"></button></div>';
+    const o=$('.qz-opts',root),f=$('.fb',root),nx=$('#qz-next',root);
+    shuffle(it.opts.map((t,k)=>({t,k}))).forEach(({t,k})=>{
+      const b=document.createElement('button');b.type='button';b.className='qz-opt';b.innerHTML=esc(t);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(k===it.ans){done=true;if(!missed)firstTry++;b.classList.add('right');$$('.qz-opt',o).forEach(x=>x.disabled=true);
+          fb(f,'good','<b>Yes!</b> '+(it.why||''));nx.style.display='';nx.textContent=i<total-1?'Next question →':'Finish ✓';
+        }else{missed=true;b.classList.add('wrong');b.disabled=true;fb(f,'try','<b>Not the best fit.</b> '+(it.hints&&it.hints[k]?it.hints[k]:'Look again at the purpose of the task.'))}
+      });o.appendChild(b)});
+    nx.addEventListener('click',()=>{if(i<total-1){i++;render()}else{addScore(firstTry,total);root.innerHTML='<div class="fb show good"><b>Step complete!</b> You earned '+firstTry+' of '+total+' on the first try.</div>';opts.onDone&&opts.onDone(firstTry,total)}});
+  }
+  render()}
+
+/* ---------- order: click items in the correct sequence ---------- */
+function orderIt(root,steps,opts={}){
+  const shuf=shuffle(steps.map((t,k)=>({t,k})));let next=0,miss=0;
+  root.innerHTML='<div class="ord-grid"></div><div class="fb"></div>';
+  const g=$('.ord-grid',root),f=$('.fb',root);
+  shuf.forEach(({t,k})=>{const b=document.createElement('button');b.type='button';b.className='ord-item';b.innerHTML='<span class="ord-n"></span>'+esc(t);
+    b.addEventListener('click',()=>{
+      if(b.classList.contains('placed'))return;
+      if(k===next){b.classList.add('placed');b.querySelector('.ord-n').textContent=next+1;next++;fb(f,'info','Good — that comes '+(next===1?'first':'next')+'. '+(steps.length-next)+' to go.');
+        if(next===steps.length){const pts=Math.max(0,1-(miss>2?1:0));addScore(pts,1);fb(f,'good','<b>Sequence complete!</b> '+(opts.done||''));opts.onDone&&opts.onDone()}}
+      else{miss++;b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb(f,'try','Not yet — what has to be decided <i>before</i> that? Try a different step.')}});
+    g.appendChild(b)})}
+
+
+const KD=[{id:'know',label:'KNOW'},{id:'do',label:'DO'}];
+classify($('#c0'),[
+ {text:'“Discuss”',ans:'do',why:'A verb — a skill students perform.'},
+ {text:'“the major nations of California Indians”',ans:'know',why:'The core content knowledge.'},
+ {text:'“including their geographic distribution, economic activities, legends, and religious beliefs”',ans:'know',why:'Specific content details students must learn.'},
+ {text:'“and describe”',ans:'do',why:'A second verb — it asks for a different performance than “discuss.”'},
+ {text:'“how they depended on, adapted to, and modified the environment”',ans:'know',why:'The big idea: people–environment interaction.'}
+],KD,{onDone:()=>{markDone(0);$('#n0').style.display=''}});
+$('#n0').onclick=()=>showPanel(1);
+quiz($('#c1'),[
+ {q:'Which is the strongest learning target for Standard 4.2.1?',opts:['I can describe how two California Indian nations used and changed their environment to meet their needs.','I will make a poster about California Indians.','I can learn about all the people of California.'],ans:0,
+  why:'It names a skill (describe) and the content (environmental interaction), and students can tell when they have met it.',hints:{1:'That is an activity, not a target — it says what students will make, not what they will learn.',2:'Too broad — “learn about” cannot be assessed.'}},
+ {q:'Which one is an ACTIVITY rather than a learning target?',opts:['Students build a diorama of a Chumash village.','I can explain why geography shaped where nations lived.','I can compare how two nations used local resources.'],ans:0,
+  why:'A diorama is a task. The target is the thinking it should reveal — then you choose the task that best shows mastery.',hints:{1:'This begins with “I can” and names a skill and content — it is a target.',2:'This is a skill and content statement — a target.'}}
+],{onDone:()=>{markDone(1);$('#n1').style.display=''}});
+$('#n1').onclick=()=>showPanel(2);
+classify($('#c2'),[
+ {text:'Students present their findings to the class and respond to questions from classmates.',ans:'comm',why:'Sharing ideas clearly and listening to responses.'},
+ {text:'Groups of four divide the research roles, then combine their work into one shared timeline.',ans:'collab',why:'Shared goals, shared responsibility.'},
+ {text:'Students weigh two primary sources and decide which better explains why a nation settled in a place.',ans:'crit',why:'Analyzing and evaluating evidence.'},
+ {text:'Students design an original symbol or song that tells a legend from the region.',ans:'create',why:'Generating original ideas and products.'}
+],[{id:'comm',label:'Communication'},{id:'collab',label:'Collaboration'},{id:'crit',label:'Critical Thinking'},{id:'create',label:'Creativity'}],{onDone:()=>{markDone(2);$('#n2').style.display=''}});
+$('#n2').onclick=()=>showPanel(3);
+classify($('#c3'),[
+ {text:'Students investigate a teacher-presented question with explicit, step-by-step guidelines at each stage.',ans:'o1',why:'Option 1: guided, with a predetermined content outcome.'},
+ {text:'The teacher defines the content framework, and students select the inquiry question.',ans:'o2',why:'Option 2: student-selected inquiry.'},
+ {text:'The investigative results are unknown in advance.',ans:'o2',why:'Option 2: the outcome is open.'},
+ {text:'Learning leads to a predetermined content outcome.',ans:'o1',why:'Option 1: the destination is set by the teacher.'}
+],[{id:'o1',label:'Option 1: Guided'},{id:'o2',label:'Option 2: Student-selected'}],{onDone:()=>{markDone(3);$('#fin').classList.add('show')}});
+
+</script></body></html>

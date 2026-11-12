@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 550 | Week 3 | Bloom’s Question Ladder</title>
+<style>:root{
+  --red:#d34147;--red-dk:#a8353a;--ink:#1a1a1a;--ink2:#444;--paper:#ffffff;--warm:#edebe8;--warm2:#f7f5f2;
+  --ok:#2e7d4f;--ok-bg:#e6f4ea;--bad:#b3261e;--bad-bg:#fdecea;--line:#d9d5cf;
+}
+@media (prefers-color-scheme:dark){
+  :root{--ink:#f2f0ed;--ink2:#cfcac3;--paper:#1f1f1f;--warm:#2b2a28;--warm2:#252422;--line:#4a4743;--ok-bg:#16301f;--bad-bg:#3a1b19;--ok:#6fcf97;--bad:#ff8a80;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column;max-width:1000px;margin:0 auto}
+header.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;background:#000;color:#fff;padding:10px 18px;border-bottom:4px solid var(--red)}
+header.hero svg.logo{flex:0 0 64px;width:64px;height:64px}
+header.hero .t small{display:block;color:#f3b3b6;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-weight:700}
+header.hero h1{margin:0;font-size:22px;line-height:1.15}
+nav.steps{flex:0 0 auto;display:flex;gap:6px;background:var(--warm);padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav.steps button{flex:1 1 0;min-width:110px;border:2px solid transparent;background:var(--paper);color:var(--ink);padding:7px 8px;border-radius:999px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+nav.steps button .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink2);color:var(--paper);font-size:12px;margin-right:6px}
+nav.steps button.active{background:var(--red);color:#fff;border-color:var(--red-dk)}
+nav.steps button.active .n{background:#fff;color:var(--red-dk)}
+nav.steps button.done .n{background:var(--ok);color:#fff}
+/* ONE scroll region only: it scrolls solely when the frame is shorter than the content */
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 18px 18px;scrollbar-width:thin}
+.panel{display:none}.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{margin:0 0 4px;font-size:20px}
+p.lead{margin:0 0 10px;color:var(--ink2)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--red-dk)}.btn.ghost{background:var(--warm);color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.card{background:var(--warm2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px;display:none}
+.fb.show{display:block}.fb.good{background:var(--ok-bg);border-left:5px solid var(--ok)}.fb.try{background:var(--bad-bg);border-left:5px solid var(--bad)}
+.fb.info{background:var(--warm);border-left:5px solid var(--red)}
+.score{margin-left:auto;font-weight:700;color:var(--red-dk)}
+.bottom{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #2b6cb0;outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){header.hero h1{font-size:18px}header.hero svg.logo{display:none}nav.steps button{font-size:12.5px;min-width:90px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+header.hero .score{color:#fff;background:var(--red);padding:4px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.cls{display:grid;gap:8px}
+.cls-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--warm2);border:2px solid var(--line);border-radius:12px;padding:9px 12px}
+.cls-row.right{border-color:var(--ok);background:var(--ok-bg)}.cls-row.wrong{border-color:var(--bad)}
+.cls-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cls-btns button{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.cls-btns button:hover:not(:disabled){border-color:var(--red);color:var(--red-dk)}
+.cls-btns button:disabled{opacity:.4;cursor:default}.cls-btns button.picked{opacity:1;background:var(--ok);color:#fff;border-color:var(--ok)}
+.cls-why{grid-column:1/-1;font-size:14px;display:none}.cls-why.show{display:block}.cls-why.ok{color:var(--ok)}.cls-why.bad{color:var(--bad)}
+.cls-text{font-size:15.5px}
+@media (max-width:640px){.cls-row{grid-template-columns:1fr}.cls-btns{justify-content:flex-start}}
+.qz-head{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--red-dk);font-weight:800}
+.qz-q{font-size:17px;font-weight:600;margin:4px 0 10px}
+.qz-opts{display:grid;gap:8px}
+.qz-opt{text-align:left;font:inherit;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer}
+.qz-opt:hover:not(:disabled){border-color:var(--red)}.qz-opt.right{background:var(--ok-bg);border-color:var(--ok)}.qz-opt.wrong{background:var(--bad-bg);border-color:var(--bad);opacity:.7}
+.ord-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.ord-item{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;border:2px dashed var(--line);background:var(--paper);color:var(--ink);padding:9px 12px;border-radius:12px;cursor:pointer}
+.ord-item .ord-n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--red-dk)}
+.ord-item.placed{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}.ord-item.placed .ord-n{background:var(--ok);color:#fff}
+.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.finish{display:none;margin-top:12px}.finish.show{display:block}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.take div{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:8px 10px;font-size:14.5px}
+.take b{display:block;color:var(--red-dk)}
+.illus{flex:0 0 auto}.illus svg{max-width:100%;height:auto;display:block}
+
+.cls.stack{gap:6px}.cls.stack .cls-row{grid-template-columns:1fr;padding:7px 12px;gap:4px}.cls.stack .cls-btns{justify-content:flex-start}.cls.stack .cls-text{font-size:15px}.cls.stack .cls-btns button{padding:3px 10px;font-size:13px}
+@media (max-width:640px){.row{flex-wrap:wrap!important}.row>*{flex:1 1 100%!important;width:auto!important;max-width:100%}.row>.illus.deco{display:none}}
+
+.lv{cursor:pointer}.lv polygon{transition:filter .15s,transform .15s}.lv:hover polygon,.lv:focus polygon{filter:brightness(1.12)}.lv.sel polygon{stroke:#000;stroke-width:3}
+.lv text{font:700 13px "Segoe UI",Arial;fill:#fff;pointer-events:none}.lv.light text{fill:#222}
+.verbs span{display:inline-block;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:1px 10px;margin:2px 3px 2px 0;font-size:13.5px}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.tiles button{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:6px 2px;font:inherit;font-size:11.5px;font-weight:800;cursor:pointer}
+.tiles button.sel{border-color:#000;box-shadow:0 0 0 2px var(--red)}.tiles button.used{background:var(--ok);color:#fff;border-color:var(--ok)}
+.frames{display:grid;gap:5px}.frames button{text-align:left;font:inherit;font-size:14.5px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer}
+.frames button.sel{border-color:var(--red);background:var(--warm)}
+.qprev{margin-top:8px;padding:8px 10px;background:var(--warm);border-left:5px solid var(--red);border-radius:8px;font-weight:600}
+@media (max-width:640px){#p0 .row,#p3 .row{flex-wrap:wrap!important}.tiles button{font-size:10px}}</style></head>
+<body><div class="app">
+<header class="hero"><svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Pyramid with question mark"><rect width="64" height="64" rx="12" fill="#d34147"/><path d="M32 10l24 40H8z" fill="#fff"/><path d="M20 38h24l-4-7H24z" fill="#edebe8"/><path d="M26 50l6-10 6 10z" fill="#c9c5be"/><text x="32" y="36" font-size="19" font-weight="900" text-anchor="middle" fill="#a8353a" font-family="Arial">?</text></svg><div class="t"><small>EDUC 550 · Week 3</small><h1>Questioning & Project-Based Learning</h1></div><div class="score" id="score" style="margin-left:auto" aria-live="polite">★ 0 / 0</div></header>
+<nav class="steps" role="tablist" aria-label="Activity steps"><button type="button" role="tab" class=active aria-selected="true"><span class="n">1</span>Explore</button><button type="button" role="tab" aria-selected="false"><span class="n">2</span>Sort</button><button type="button" role="tab" aria-selected="false"><span class="n">3</span>Essential Q</button><button type="button" role="tab" aria-selected="false"><span class="n">4</span>Builder</button></nav>
+<main>
+<section class="panel active" id="p0">
+ <h2>Climb Bloom’s Taxonomy</h2>
+ <p class="lead">Tap each level to see how questions grow from simple understanding to complex ideas. Topic: <b>Día de los Muertos</b> (Day of the Dead).</p>
+ <div class="row" style="flex-wrap:nowrap">
+  <div class="illus" style="width:min(46%,340px)"><svg id="pyr" viewBox="0 0 360 318" role="group" aria-label="Bloom's Taxonomy pyramid"></svg></div>
+  <div class="card" id="lvlcard" style="flex:1 1 auto;min-height:230px"><p style="margin:0;color:var(--ink2)">👈 Select a level to begin. Visit all six to continue.</p></div>
+ </div>
+ <div class="bottom"><span id="seen" style="font-size:14px;color:var(--ink2)">Levels explored: 0 / 6</span><button class="btn" id="n0" style="display:none;margin-left:auto">Next: Sort the questions →</button></div>
+</section>
+
+<section class="panel" id="p1">
+ <h2>Which level is the question asking?</h2>
+ <p class="lead">Topic: <b>the California Gold Rush</b>. Sort each question to its Bloom’s level.</p>
+ <div id="c1"></div>
+ <div class="bottom"><button class="btn" id="n1" style="display:none">Next: Essential questions →</button></div>
+</section>
+
+<section class="panel" id="p2">
+ <h2>Start with a question worth asking</h2>
+ <p class="lead">An essential question anchors a lesson or unit and connects classroom learning to real-world life outside the classroom.</p>
+ <div id="c2"></div>
+ <div class="bottom"><button class="btn" id="n2" style="display:none">Next: Hand the questions to students →</button></div>
+</section>
+
+<section class="panel" id="p3">
+ <h2>Question Builder: light up all six levels</h2>
+ <p class="lead">Students who generate their own questions build critical thinking. Choose a level, pick a question frame, add your topic, then add it to your list.</p>
+ <div class="row" style="flex-wrap:nowrap">
+  <div style="flex:1 1 55%;min-width:0">
+   <div class="tiles" id="tiles"></div>
+   <div class="card" style="margin-top:8px">
+    <label for="topic" style="font-weight:700;font-size:14px">Your topic</label>
+    <input id="topic" type="text" maxlength="60" placeholder="e.g., the Gold Rush" style="width:100%;font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);margin:4px 0 8px">
+    <div id="frames" class="frames" aria-live="polite"><span style="color:var(--ink2);font-size:14px">Pick a level above to see question frames.</span></div>
+    <div class="qprev" id="qprev" style="display:none"></div>
+    <button class="btn" id="addq" style="display:none;margin-top:8px">＋ Add to my list</button>
+   </div>
+  </div>
+  <div class="card" style="flex:1 1 40%;min-width:0">
+   <b>My question ladder</b>
+   <ol id="mylist" style="padding-left:20px;margin:6px 0;font-size:14.5px"></ol>
+   <button class="btn ghost" id="copy" style="display:none">📋 Copy my questions</button> <span id="copied" style="font-size:13px;color:var(--ok)"></span>
+  </div>
+ </div>
+ <div class="finish card" id="fin">
+  <h2 style="font-size:18px">🎉 Week 3 complete — your takeaways</h2>
+  <div class="take"><div><b>Begin with an essential question</b>Questions give students a reason to investigate.</div><div><b>Projects make learning authentic</b>Connect students to the world beyond the classroom.</div><div><b>Question at every level</b>Plan across all six levels.</div><div><b>Hand the questions to students</b>Student-generated questions build critical thinking.</div></div>
+ </div>
+</section>
+</main></div>
+<script>/* shared: tabs + frame-height reporting (no scrollbar fights) */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function showPanel(i){
+  $$('.panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  $$('nav.steps button').forEach((b,k)=>{b.classList.toggle('active',k===i);b.setAttribute('aria-selected',k===i)});
+  $('main').scrollTop=0;
+}
+function markDone(i){const b=$$('nav.steps button')[i];if(b)b.classList.add('done')}
+function fb(el,type,html){el.className='fb show '+type;el.innerHTML=html}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav.steps button').forEach((b,i)=>b.addEventListener('click',()=>showPanel(i)));
+/* If the host page listens, tell it our natural height so the iframe can match (optional). */
+function reportHeight(){try{const h=Math.ceil($('main').scrollHeight+$('header.hero').offsetHeight+$('nav.steps').offsetHeight);
+  parent.postMessage({subject:'lti.frameResize',height:h},'*');parent.postMessage({type:'educ550-resize',height:h},'*')}catch(e){}}
+addEventListener('load',reportHeight);addEventListener('resize',reportHeight);
+new MutationObserver(reportHeight).observe(document.body,{subtree:true,attributes:true,childList:true});
+
+/* ---------- scoring ---------- */
+const SCORE={got:0,total:0};
+function addScore(got,total){SCORE.got+=got;SCORE.total+=total;const s=$('#score');if(s)s.textContent='★ '+SCORE.got+' / '+SCORE.total}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- classify: sort each item into a category ---------- */
+function classify(root,items,cats,opts={}){
+  root.innerHTML='';let right=0,firstTry=0;const total=items.length;
+  const wrap=document.createElement('div');wrap.className='cls'+(opts.stack?' stack':'');
+  items.forEach((it,idx)=>{
+    const row=document.createElement('div');row.className='cls-row';
+    row.innerHTML='<div class="cls-text">'+(it.html||esc(it.text))+'</div><div class="cls-btns"></div><div class="cls-why"></div>';
+    const btns=row.querySelector('.cls-btns'),why=row.querySelector('.cls-why');let missed=false,done=false;
+    cats.forEach(c=>{
+      const b=document.createElement('button');b.type='button';b.textContent=c.label;b.dataset.cat=c.id;
+      if(c.style)b.setAttribute('style',c.style);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(c.id===it.ans){done=true;right++;if(!missed)firstTry++;
+          row.classList.remove('wrong');row.classList.add('right');
+          $$('button',btns).forEach(x=>{x.disabled=true;x.classList.toggle('picked',x===b)});
+          why.innerHTML='✔ '+(it.why||'Correct.');why.className='cls-why show ok';
+          if(right===total){addScore(firstTry,total);opts.onDone&&opts.onDone(firstTry,total)}
+        }else{missed=true;row.classList.add('wrong');b.disabled=true;
+          why.innerHTML='✖ Not quite'+(it.hint?' — '+esc(it.hint):' — try another category.');why.className='cls-why show bad'}
+      });btns.appendChild(b)});
+    wrap.appendChild(row)});
+  root.appendChild(wrap)}
+
+/* ---------- quiz: one multiple-choice question at a time ---------- */
+function quiz(root,items,opts={}){
+  let i=0,firstTry=0;const total=items.length;
+  function render(){
+    const it=items[i];let missed=false,done=false;
+    root.innerHTML='<div class="qz-head">Question '+(i+1)+' of '+total+'</div><div class="qz-q">'+(it.html||esc(it.q))+'</div><div class="qz-opts"></div><div class="fb"></div><div class="bottom"><button class="btn" type="button" id="qz-next" style="display:none"></button></div>';
+    const o=$('.qz-opts',root),f=$('.fb',root),nx=$('#qz-next',root);
+    shuffle(it.opts.map((t,k)=>({t,k}))).forEach(({t,k})=>{
+      const b=document.createElement('button');b.type='button';b.className='qz-opt';b.innerHTML=esc(t);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(k===it.ans){done=true;if(!missed)firstTry++;b.classList.add('right');$$('.qz-opt',o).forEach(x=>x.disabled=true);
+          fb(f,'good','<b>Yes!</b> '+(it.why||''));nx.style.display='';nx.textContent=i<total-1?'Next question →':'Finish ✓';
+        }else{missed=true;b.classList.add('wrong');b.disabled=true;fb(f,'try','<b>Not the best fit.</b> '+(it.hints&&it.hints[k]?it.hints[k]:'Look again at the purpose of the task.'))}
+      });o.appendChild(b)});
+    nx.addEventListener('click',()=>{if(i<total-1){i++;render()}else{addScore(firstTry,total);root.innerHTML='<div class="fb show good"><b>Step complete!</b> You earned '+firstTry+' of '+total+' on the first try.</div>';opts.onDone&&opts.onDone(firstTry,total)}});
+  }
+  render()}
+
+/* ---------- order: click items in the correct sequence ---------- */
+function orderIt(root,steps,opts={}){
+  const shuf=shuffle(steps.map((t,k)=>({t,k})));let next=0,miss=0;
+  root.innerHTML='<div class="ord-grid"></div><div class="fb"></div>';
+  const g=$('.ord-grid',root),f=$('.fb',root);
+  shuf.forEach(({t,k})=>{const b=document.createElement('button');b.type='button';b.className='ord-item';b.innerHTML='<span class="ord-n"></span>'+esc(t);
+    b.addEventListener('click',()=>{
+      if(b.classList.contains('placed'))return;
+      if(k===next){b.classList.add('placed');b.querySelector('.ord-n').textContent=next+1;next++;fb(f,'info','Good — that comes '+(next===1?'first':'next')+'. '+(steps.length-next)+' to go.');
+        if(next===steps.length){const pts=Math.max(0,1-(miss>2?1:0));addScore(pts,1);fb(f,'good','<b>Sequence complete!</b> '+(opts.done||''));opts.onDone&&opts.onDone()}}
+      else{miss++;b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb(f,'try','Not yet — what has to be decided <i>before</i> that? Try a different step.')}});
+    g.appendChild(b)})}
+
+
+const LV=[
+ {n:'Knowledge',c:'#f4c5c7',light:1,verbs:['name','list','identify','recall'],q:'On which dates is Día de los Muertos celebrated?',tip:'Recall facts, terms, and details.'},
+ {n:'Comprehension',c:'#ea9a9e',light:1,verbs:['explain','summarize','describe'],q:'In your own words, explain why families build an ofrenda (altar).',tip:'Show understanding of meaning.'},
+ {n:'Application',c:'#df7076',verbs:['use','demonstrate','solve','show'],q:'How could you use what you learned to set up a class ofrenda honoring someone in our community?',tip:'Use knowledge in a new situation.'},
+ {n:'Analysis',c:'#d34147',verbs:['compare','categorize','examine','infer'],q:'How is Día de los Muertos similar to and different from Halloween?',tip:'Break ideas apart and see relationships.'},
+ {n:'Synthesis',c:'#a8353a',verbs:['design','create','propose','compose'],q:'Design a way to teach another class about this tradition.',tip:'Combine ideas to build something new.'},
+ {n:'Evaluation',c:'#5e1f22',verbs:['judge','defend','justify','critique'],q:'Should schools include cultural celebrations like this in the curriculum? Defend your position.',tip:'Make and defend judgments using criteria.'}
+];
+/* pyramid: Knowledge at the base */
+(function(){const svg=$('#pyr');let h='',ids=[5,4,3,2,1,0];
+ ids.forEach((li,k)=>{const y1=10+k*48,y2=y1+45,hw=y=>50+120*(y-10)/290;
+  const pts=[[180-hw(y1),y1],[180+hw(y1),y1],[180+hw(y2),y2],[180-hw(y2),y2]].map(p=>p.join(',')).join(' ');
+  h+=`<g class="lv${LV[li].light?' light':''}" tabindex="0" role="button" aria-label="${LV[li].n}" data-i="${li}"><polygon points="${pts}" fill="${LV[li].c}"/><text x="180" y="${y1+28}" text-anchor="middle">${LV[li].n}</text></g>`});
+ svg.innerHTML=h+'<text x="180" y="313" text-anchor="middle" style="font:600 11px Segoe UI,Arial;fill:var(--ink2)">▲ more complex thinking</text>'})();
+const seen=new Set();
+function showLevel(i){const L=LV[i];seen.add(i);
+ $$('#pyr .lv').forEach(g=>g.classList.toggle('sel',+g.dataset.i===i));
+ $('#lvlcard').innerHTML=`<div style="font-size:12px;font-weight:800;color:var(--red-dk);text-transform:uppercase;letter-spacing:.07em">Level ${i+1} of 6</div><h2 style="margin:2px 0">${L.n}</h2><p style="margin:0 0 6px">${L.tip}</p><div class="verbs">${L.verbs.map(v=>'<span>'+v+'</span>').join('')}</div><div class="qprev" style="margin-top:8px">“${L.q}”</div>`;
+ $('#seen').textContent='Levels explored: '+seen.size+' / 6';
+ if(seen.size===6){markDone(0);$('#n0').style.display=''}}
+$$('#pyr .lv').forEach(g=>{g.addEventListener('click',()=>showLevel(+g.dataset.i));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showLevel(+g.dataset.i)}})});
+$('#n0').onclick=()=>showPanel(1);
+classify($('#c1'),[
+ {text:'Name the year gold was discovered at Sutter’s Mill.',ans:'0',why:'Recalling a fact = Knowledge.'},
+ {text:'Explain in your own words why people moved to California during the Gold Rush.',ans:'1',why:'Explaining shows Comprehension.'},
+ {text:'Use a map to show a route a family from Ohio might have taken to reach California.',ans:'2',why:'Using knowledge in a new situation = Application.'},
+ {text:'Compare the experiences of miners and merchants during the Gold Rush.',ans:'3',why:'Comparing parts and relationships = Analysis.'},
+ {text:'Design a museum exhibit that tells the Gold Rush story from several perspectives.',ans:'4',why:'Building something new = Synthesis.'},
+ {text:'Judge whether the Gold Rush was more helpful or harmful to California Indians, and defend your answer with evidence.',ans:'5',why:'Judging and defending = Evaluation.'}
+],LV.map((l,i)=>({id:''+i,label:l.n})),{stack:1,onDone:()=>{markDone(1);$('#n1').style.display=''}});
+$('#n1').onclick=()=>showPanel(2);
+quiz($('#c2'),[
+ {q:'Which is the best ESSENTIAL question for a Día de los Muertos unit?',opts:['How do traditions help communities remember and honor the people who matter to them?','On what dates is Día de los Muertos celebrated?','Draw an ofrenda and label five items.'],ans:0,
+  why:'It is open-ended, invites investigation, and connects to life outside the classroom.',hints:{1:'That is a Knowledge question with one right answer — a good check, but not an anchor for a unit.',2:'That is a task, not a question.'}},
+ {q:'Which essential question best connects a Gold Rush unit to real life?',opts:['Who gets to decide whose story is told in our history?','When did the Gold Rush begin?','List three tools miners used.'],ans:0,
+  why:'Students can investigate it with real sources and compare it to their own communities today.',hints:{1:'A date is a fact to recall, not a reason to investigate.',2:'This only asks for recall.'}}
+],{onDone:()=>{markDone(2);$('#n2').style.display=''}});
+$('#n2').onclick=()=>showPanel(3);
+/* Question Builder */
+const FR=[
+ ['Who was ___?','What is ___?','Where did ___ happen?'],
+ ['Explain in your own words ___.','What is the main idea of ___?','Summarize ___.'],
+ ['Show how ___ works in a real situation.','How could you use what you learned about ___ in your own life?','Demonstrate ___ for a younger student.'],
+ ['What caused ___?','How is ___ similar to and different from something else you know?','What evidence supports ___?'],
+ ['Design a new way to teach ___.','Create a song, story, or model about ___.','What could you invent to improve ___?'],
+ ['Do you agree with the way ___ happened? Why?','Which part of ___ is most important, and why?','How would you judge whether ___ was successful?']];
+let curL=-1,curF=-1;const used=new Set(),mine=[];
+const tiles=$('#tiles');LV.forEach((l,i)=>{const b=document.createElement('button');b.type='button';b.textContent=l.n.slice(0,5)+(l.n.length>5?'.':'');b.title=l.n;b.setAttribute('aria-label',l.n);b.dataset.i=i;b.onclick=()=>pickLevel(i);tiles.appendChild(b)});
+function pickLevel(i){curL=i;curF=-1;$$('#tiles button').forEach(b=>b.classList.toggle('sel',+b.dataset.i===i));
+ const f=$('#frames');f.innerHTML='';FR[i].forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>{curF=k;$$('button',f).forEach(x=>x.classList.remove('sel'));b.classList.add('sel');prev()};f.appendChild(b)});
+ $('#qprev').style.display='none';$('#addq').style.display='none'}
+function compose(){const t=$('#topic').value.trim()||'your topic';return FR[curL][curF].replace('___',t)}
+function prev(){if(curL<0||curF<0)return;$('#qprev').style.display='';$('#qprev').textContent=compose();$('#addq').style.display=''}
+$('#topic').addEventListener('input',prev);
+$('#addq').onclick=()=>{if(!$('#topic').value.trim()){$('#topic').focus();return}
+ mine.push({l:curL,q:compose()});used.add(curL);$$('#tiles button')[curL].classList.add('used');
+ mine.sort((a,b)=>a.l-b.l);$('#mylist').innerHTML=mine.map(m=>`<li><b>${LV[m.l].n}:</b> ${esc(m.q)}</li>`).join('');$('#copy').style.display='';
+ if(used.size===6){markDone(3);$('#fin').classList.add('show');addScore(1,1)}};
+$('#copy').onclick=async()=>{const txt=mine.map(m=>LV[m.l].n+': '+m.q).join('\n');try{await navigator.clipboard.writeText(txt);$('#copied').textContent='Copied!'}catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');$('#copied').textContent='Copied!'}catch(_){$('#copied').textContent='Select and copy the list manually.'}ta.remove()}};
+
+</script></body></html>
