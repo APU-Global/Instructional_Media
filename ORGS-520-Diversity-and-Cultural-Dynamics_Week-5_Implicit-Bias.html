@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 520 Week 5: Implicit bias in organizations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1e2230; --ink2:#4a5063; --line:#d9dce3; --wash:#f3f4f7; --paper:#ffffff;
+  --brand:#d34147; --brand-d:#a8353a; --brand-t:#fbe9ea;
+  --teal:#1f7a80; --teal-t:#e1f1f2; --plum:#5b4b8a; --plum-t:#ece8f6;
+  --gold:#d9980f; --gold-t:#fcf1d6; --sky:#2f6fb3; --sky-t:#e2eef9;
+  --good:#1d7a4d; --good-t:#e1f3e9; --bad:#b3341f; --bad-t:#fdeae6;
+  --accent:var(--teal); --accent-t:var(--teal-t);
+  --head:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:15px;line-height:1.45}
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;background:var(--ink);color:#fff}
+.top h1{margin:0;font:700 19px/1.15 var(--head);letter-spacing:.1px}
+.top .course{font-size:12.5px;color:#c9cde0;margin-top:2px}
+.wk{flex:none;background:var(--brand);color:#fff;font:700 14px var(--head);padding:6px 13px;border-radius:999px}
+.stage{display:grid;grid-template-columns:minmax(260px,43%) minmax(0,1fr);min-height:0}
+.art{background:var(--accent-t);padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-height:0;border-right:1px solid var(--line)}
+.art{justify-content:center}
+.art svg{width:100%;height:auto;min-height:0;flex:0 1 auto;max-height:100%}
+.work{padding:14px 20px 14px;display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);flex:none}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:7px 12px;font:700 14px var(--head);color:var(--ink2);cursor:pointer;border-radius:6px 6px 0 0}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--brand)}
+.tab:hover{background:var(--wash)}
+.pane{display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}
+.pane[hidden]{display:none}
+h2{margin:0;font:700 18px/1.2 var(--head)}
+p{margin:0}
+.lede{color:var(--ink2);font-size:14.5px}
+.btn{appearance:none;border:2px solid var(--ink);background:var(--paper);color:var(--ink);font:700 14.5px var(--head);padding:9px 14px;border-radius:8px;cursor:pointer;text-align:left;transition:transform .12s,background .12s}
+.btn:hover:not(:disabled){background:var(--wash)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;text-align:center}
+.btn.primary:hover:not(:disabled){background:var(--brand-d)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{border-color:var(--line);color:var(--ink2)}
+.btn.good{background:var(--good-t);border-color:var(--good)}
+.btn.bad{background:var(--bad-t);border-color:var(--bad)}
+.btn small{display:block;font:400 13px var(--body);color:var(--ink2);margin-top:2px}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.fb{border-left:5px solid var(--line);background:var(--wash);padding:9px 12px;border-radius:0 8px 8px 0;font-size:14px}
+.fb.good{border-color:var(--good);background:var(--good-t)}
+.fb.bad{border-color:var(--bad);background:var(--bad-t)}
+.fb.info{border-color:var(--accent);background:var(--accent-t)}
+.fb b{font-family:var(--head)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.meter{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:13px;color:var(--ink2)}
+.meter .bar{height:10px;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .5s}
+.dots{display:flex;gap:5px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.dots i.cur{outline:2px solid var(--ink);outline-offset:1px}
+.card{border:2px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.quote{font:600 17px/1.35 var(--head)}
+.pop{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:640px){
+  html,body{overflow:auto;height:auto}
+  .app{height:auto;display:block;border-radius:0;border-left:0;border-right:0}
+  .stage{display:block}
+  .art{border-right:0;border-bottom:1px solid var(--line)}
+  .art svg{max-height:230px}
+  .top h1{font-size:16px}
+}
+
+.stg{font:700 18px/1.2 var(--head)}
+.sub{font-size:13px;color:var(--ink2)}
+.opts{display:grid;gap:7px}
+.opts .btn{font-size:14px;font-weight:600;padding:8px 12px}
+.pause{display:flex;gap:10px;align-items:center}
+.ring{width:30px;height:30px;flex:none}
+.ring circle{transform-origin:center;animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.6)}50%{transform:scale(1)}}
+.node{cursor:pointer}
+.node:focus-visible circle.nc{stroke:#1e2230;stroke-width:4}
+.trav{transition:transform .6s ease-in-out}
+.refl{display:grid;gap:8px}
+.refl ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14px}
+.link{display:inline-block;text-decoration:none;text-align:center}
+</style>
+</head>
+<body>
+<div class="app" style="--accent:var(--gold);--accent-t:var(--gold-t)">
+  <header class="top">
+    <div><h1>Protect every stage of the journey</h1><div class="course">ORGS 520 Diversity and Cultural Dynamics</div></div>
+    <span class="wk">Week 5</span>
+  </header>
+  <main class="stage">
+<section class="art" aria-label="Employee journey illustration">
+      <svg id="journey" viewBox="0 0 460 560" role="img" aria-labelledby="jT"><title id="jT">A winding path through five stages of an employee's journey: hiring, feedback, stretch assignments, meetings, and promotion. Each stage turns from an amber warning to a green check once you protect it from bias.</title></svg>
+      <div class="meters" id="meters"></div>
+    </section>
+    <section class="work"><div class="pane" id="pane"></div></section>
+  </main>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const ST=[
+ {n:'Hiring and screening',sc:'Two finalists are equally qualified. One attended a school the hiring manager knows, and the manager says that person “just feels like a better fit.”',
+  o:[['Score every finalist against the same written criteria before discussing them, with a diverse panel.',1,'Structured criteria and diverse input make it harder for a gut feeling to decide.'],
+     ['Trust the manager’s instinct. Experienced people can sense fit.',0,'Gut feel is exactly where implicit bias operates, outside our awareness.'],
+     ['Decide from resumes alone, with no interviews.',0,'Resumes carry cues too. Removing the interview does not remove the bias.']]},
+ {n:'Performance feedback',sc:'Some employees get vague, brief feedback. Others get detailed notes they can act on. Nobody intends the difference.',
+  o:[['Let each manager write feedback in their own style.',0,'Without a shared standard, unnoticed patterns continue.'],
+     ['Use one review template, then look at the data for patterns in who gets specific feedback.',1,'A shared standard plus regular review of data turns invisible patterns into visible ones.'],
+     ['Ask employees to rate themselves and skip manager feedback.',0,'Self-ratings shift the problem rather than examine it.']]},
+ {n:'Stretch assignments and mentors',sc:'The high-visibility project goes to the person the director already knows best. Others never hear it was available.',
+  o:[['Rely on word of mouth. Good people get noticed.',0,'Word of mouth favors people already inside the circle.'],
+     ['Post assignments openly with clear criteria, and track who receives them.',1,'Open access and tracking spread opportunity and expose gaps.'],
+     ['Let directors choose whomever they trust most.',0,'Trust built through familiarity can reproduce the same circle every time.']]},
+ {n:'Meetings',sc:'A junior colleague’s idea is passed over. Ten minutes later a senior colleague says nearly the same thing and gets the credit.',
+  o:[['Let the best ideas rise on their own.',0,'Whose ideas get heard is itself shaped by bias.'],
+     ['Facilitate on purpose: invite each person’s input and credit ideas by name.',1,'Deliberate facilitation and credit give every voice a fair chance to be heard.'],
+     ['Limit idea discussions to senior staff.',0,'This narrows input, which the research suggests increases the risk.']]},
+ {n:'Promotion decisions',sc:'Promotions are settled quickly in a closed room at year end, and the loudest advocate usually wins.',
+  o:[['Speed up. Overthinking creates delays.',0,'Speed leaves less room to question assumptions.'],
+     ['Let the top executive decide alone to keep it simple.',0,'One perspective, with no check, is easiest for bias to slip through.'],
+     ['Slow down: apply structured criteria, add diverse reviewers, and review the outcomes for patterns before finalizing.',1,'Slowing down creates space to question assumptions. Criteria, diverse input, and data review do the rest.']]},
+];
+const done=ST.map(()=>false); let cur=-1, paused=false;
+const N=[[100,70],[360,160],[100,250],[360,340],[100,430]];
+const GL=['<path d="M-8 -11 H4 L9 -6 V11 H-8Z M-4 -2 H5 M-4 3 H5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>',
+ '<path d="M-11 -9 H11 V5 H0 L-6 11 V5 H-11Z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>',
+ '<path d="M0 -12 L3.5 -4 L12 -3 L6 3 L7.5 12 L0 8 L-7.5 12 L-6 3 L-12 -3 L-3.5 -4Z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>',
+ '<circle cx="-5" cy="-3" r="4" fill="#fff"/><circle cx="6" cy="-3" r="4" fill="#fff"/><path d="M-12 11 Q-12 3 -5 3 Q2 3 2 11Z M-1 11 Q-1 3 6 3 Q13 3 13 11Z" fill="#fff"/>',
+ '<path d="M0 -12 L9 0 H4 V11 H-4 V0 H-9Z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>'];
+const F='font-family="Bricolage Grotesque,Trebuchet MS,sans-serif"';
+function draw(){
+  let o='<rect x="4" y="4" width="452" height="552" rx="16" fill="#fff" opacity=".6"/>';
+  for(let i=0;i<4;i++){const a=N[i],b=N[i+1],my=(a[1]+b[1])/2;
+    o+=`<path d="M${a[0]} ${a[1]} C${a[0]} ${my+10} ${b[0]} ${my-10} ${b[0]} ${b[1]}" fill="none" stroke="${done[i]&&done[i+1]?'#1d7a4d':'#c9ccd6'}" stroke-width="9" stroke-linecap="round" ${done[i]&&done[i+1]?'':'stroke-dasharray="2 14"'}/>`}
+  N.forEach((p,i)=>{
+    const d=done[i], left=p[0]<230, tx=left?p[0]+46:p[0]-46, an=left?'start':'end', sel=i===cur;
+    o+=`<g class="node" tabindex="0" role="button" aria-label="${ST[i].n}, ${d?'protected':'needs protection'}" data-i="${i}">
+      ${sel?`<circle cx="${p[0]}" cy="${p[1]}" r="41" fill="none" stroke="#1e2230" stroke-width="2.5" stroke-dasharray="4 4"/>`:''}
+      <circle class="nc" cx="${p[0]}" cy="${p[1]}" r="33" fill="${d?'#1d7a4d':'#d9980f'}" stroke="#fff" stroke-width="4"/>
+      <g transform="translate(${p[0]} ${p[1]})">${GL[i]}</g>
+      <circle cx="${p[0]+25}" cy="${p[1]-25}" r="13" fill="#fff" stroke="${d?'#1d7a4d':'#b3341f'}" stroke-width="2.5"/>
+      ${d?`<path d="M${p[0]+19} ${p[1]-25} l4.5 4.5 l8 -9" fill="none" stroke="#1d7a4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`:`<text x="${p[0]+25}" y="${p[1]-19.5}" text-anchor="middle" ${F} font-weight="700" font-size="17" fill="#b3341f">!</text>`}
+      <text x="${tx}" y="${p[1]-2}" text-anchor="${an}" ${F} font-weight="700" font-size="17" fill="#1e2230">${ST[i].n.split(' and ')[0]}</text>
+      ${ST[i].n.includes(' and ')?`<text x="${tx}" y="${p[1]+18}" text-anchor="${an}" ${F} font-weight="700" font-size="17" fill="#1e2230">and ${ST[i].n.split(' and ')[1]}</text>`:`<text x="${tx}" y="${p[1]+18}" text-anchor="${an}" font-family="Atkinson Hyperlegible,Segoe UI,sans-serif" font-size="13.5" fill="${d?'#1d7a4d':'#b3341f'}">${d?'Protected':'Bias risk'}</text>`}
+    </g>`;
+  });
+  const t=cur>=0?N[cur]:[230,505];
+  o+=`<g class="trav" style="transform:translate(${t[0]}px,${t[1]+52}px)"><circle r="12" fill="#1e2230"/><circle cy="-3" r="4" fill="#fff"/><path d="M-6 7 Q0 -1 6 7Z" fill="#fff"/></g>`;
+  const all=done.every(Boolean);
+  o+=`<g transform="translate(300 480)" ${all?'':'opacity=".35"'}><path d="M0 0 V50" stroke="#1e2230" stroke-width="3"/><path d="M0 2 H44 L36 14 L44 26 H0Z" fill="${all?'#1d7a4d':'#9aa0b0'}"/></g>`;
+  $('#journey').innerHTML=o;
+  $$('.node').forEach(g=>{const go=()=>{if(started){cur=+g.dataset.i;paused=false;render()}};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
+  const n=done.filter(Boolean).length;
+  $('#meters').innerHTML=`<div class="meter"><span>Stages protected</span><span class="bar"><i style="width:${n/5*100}%"></i></span><span>${n} of 5</span></div>`;
+}
+let started=false;
+function intro(){
+  cur=-1;started=false;draw();
+  $('#pane').innerHTML=`<h2>Bias without bad intent</h2>
+   <div class="card"><p class="quote" style="font-size:16px">Dana sincerely believes women and men are equally suited to leadership. Yet Dana distrusts feedback from women colleagues and tends to favor equally qualified men when hiring, without noticing.</p></div>
+   <p class="lede">That gap between stated values and automatic behavior is implicit bias (Brownstein, 2019). Explicit bias is conscious. Implicit bias operates automatically and can conflict with what we say we believe.</p>
+   <p class="lede">Follow an employee along their journey. At each stage, choose the practice that best protects against bias. Select a stage on the path at any time.</p>
+   <div class="row"><span class="spacer"></span><button class="btn primary" id="st">Start the journey</button></div>`;
+  $('#st').onclick=()=>{started=true;cur=done.findIndex(d=>!d);if(cur<0)cur=0;paused=false;render()};
+}
+function render(){
+  if(!started)return intro();
+  const s=ST[cur]; draw();
+  const k=cur;
+  $('#pane').innerHTML=`<div><div class="stg">${s.n}</div><div class="sub">Stage ${k+1} of 5${done[k]?' (protected)':''}</div></div>
+   <div class="card pop">${s.sc}</div>
+   <div class="pause"><button class="btn ghost" id="ps" style="padding:6px 10px;font-size:13px">Pause before you choose</button><span class="hint" id="pm" style="font-size:13px;color:var(--ink2)">${paused?'<b>What am I assuming? Who is missing? What would change my mind?</b>':''}</span></div>
+   <div class="opts" id="op">${s.o.map((o,i)=>`<button class="btn" data-i="${i}">${o[0]}</button>`).join('')}</div>
+   <div class="fb" id="fb" hidden aria-live="polite"></div>
+   <div class="row"><span class="spacer"></span><button class="btn primary" id="nx" hidden></button></div>`;
+  $('#ps').onclick=()=>{paused=true;$('#pm').innerHTML='<b>What am I assuming? Who is missing? What would change my mind?</b>'};
+  if(done[k]){ $$('#op .btn').forEach((b,i)=>{b.disabled=true;if(s.o[i][1]){b.classList.add('good');b.style.opacity=1}}); fbOK(k); return }
+  $$('#op .btn').forEach(b=>b.onclick=()=>{
+    const o=s.o[+b.dataset.i],f=$('#fb');f.hidden=false;
+    if(o[1]){done[k]=true;$$('#op .btn').forEach(x=>x.disabled=true);b.classList.add('good');b.style.opacity=1;fbOK(k,true);draw()}
+    else{b.disabled=true;b.classList.add('bad','shake');f.className='fb bad';f.innerHTML='<b>Not quite.</b> '+o[2]+' Try another.'}
+  });
+}
+function fbOK(k,focus){
+  const s=ST[k],f=$('#fb'),o=s.o.find(x=>x[1]);f.hidden=false;f.className='fb good';f.innerHTML='<b>Protected.</b> '+o[2];
+  const nx=$('#nx'),all=done.every(Boolean);nx.hidden=false;
+  nx.textContent=all?'See what you learned':'Next stage';
+  nx.onclick=()=>{if(all)summary();else{let j=(k+1)%5;while(done[j])j=(j+1)%5;cur=j;paused=false;render()}};
+  if(focus)nx.focus();
+}
+function summary(){
+  cur=-1;draw();
+  $('#pane').innerHTML=`<div class="refl"><h2>Every stage is protected.</h2>
+   <p class="lede">Four habits did the work across the journey:</p>
+   <ul><li><b>Structured criteria</b> so decisions rest on the same standard for everyone.</li><li><b>Diverse input</b> so more than one perspective checks the decision.</li><li><b>Slowing down</b> to question assumptions before important choices.</li><li><b>Reviewing the data</b> regularly to see patterns no one intended.</li></ul>
+   <div class="fb info"><b>Reflect.</b> Which of these could help the organization you are studying? How does what you are noticing connect to your beliefs about the dignity of every person?</div>
+   <p class="lede" style="font-size:13px">The Implicit Association Test is a mirror, not a verdict. Researchers still debate what individual scores predict, so use your results as a prompt for reflection.</p>
+   <div class="row"><button class="btn ghost" id="rs">Start over</button><span class="spacer"></span><a class="btn primary link" href="https://implicit.harvard.edu/implicit/takeatest.html" target="_blank" rel="noopener noreferrer">Take the IAT at Project Implicit</a></div></div>`;
+  $('#rs').onclick=()=>{done.fill(false);intro()};
+}
+intro();
+</script>
+</body>
+</html>

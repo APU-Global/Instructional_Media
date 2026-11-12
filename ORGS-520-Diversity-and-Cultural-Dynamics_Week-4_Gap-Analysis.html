@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 520 Week 4: Gap analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1e2230; --ink2:#4a5063; --line:#d9dce3; --wash:#f3f4f7; --paper:#ffffff;
+  --brand:#d34147; --brand-d:#a8353a; --brand-t:#fbe9ea;
+  --teal:#1f7a80; --teal-t:#e1f1f2; --plum:#5b4b8a; --plum-t:#ece8f6;
+  --gold:#d9980f; --gold-t:#fcf1d6; --sky:#2f6fb3; --sky-t:#e2eef9;
+  --good:#1d7a4d; --good-t:#e1f3e9; --bad:#b3341f; --bad-t:#fdeae6;
+  --accent:var(--teal); --accent-t:var(--teal-t);
+  --head:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:15px;line-height:1.45}
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;background:var(--ink);color:#fff}
+.top h1{margin:0;font:700 19px/1.15 var(--head);letter-spacing:.1px}
+.top .course{font-size:12.5px;color:#c9cde0;margin-top:2px}
+.wk{flex:none;background:var(--brand);color:#fff;font:700 14px var(--head);padding:6px 13px;border-radius:999px}
+.stage{display:grid;grid-template-columns:minmax(260px,43%) minmax(0,1fr);min-height:0}
+.art{background:var(--accent-t);padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-height:0;border-right:1px solid var(--line)}
+.art{justify-content:center}
+.art svg{width:100%;height:auto;min-height:0;flex:0 1 auto;max-height:100%}
+.work{padding:14px 20px 14px;display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);flex:none}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:7px 12px;font:700 14px var(--head);color:var(--ink2);cursor:pointer;border-radius:6px 6px 0 0}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--brand)}
+.tab:hover{background:var(--wash)}
+.pane{display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}
+.pane[hidden]{display:none}
+h2{margin:0;font:700 18px/1.2 var(--head)}
+p{margin:0}
+.lede{color:var(--ink2);font-size:14.5px}
+.btn{appearance:none;border:2px solid var(--ink);background:var(--paper);color:var(--ink);font:700 14.5px var(--head);padding:9px 14px;border-radius:8px;cursor:pointer;text-align:left;transition:transform .12s,background .12s}
+.btn:hover:not(:disabled){background:var(--wash)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;text-align:center}
+.btn.primary:hover:not(:disabled){background:var(--brand-d)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{border-color:var(--line);color:var(--ink2)}
+.btn.good{background:var(--good-t);border-color:var(--good)}
+.btn.bad{background:var(--bad-t);border-color:var(--bad)}
+.btn small{display:block;font:400 13px var(--body);color:var(--ink2);margin-top:2px}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.fb{border-left:5px solid var(--line);background:var(--wash);padding:9px 12px;border-radius:0 8px 8px 0;font-size:14px}
+.fb.good{border-color:var(--good);background:var(--good-t)}
+.fb.bad{border-color:var(--bad);background:var(--bad-t)}
+.fb.info{border-color:var(--accent);background:var(--accent-t)}
+.fb b{font-family:var(--head)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.meter{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:13px;color:var(--ink2)}
+.meter .bar{height:10px;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .5s}
+.dots{display:flex;gap:5px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.dots i.cur{outline:2px solid var(--ink);outline-offset:1px}
+.card{border:2px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.quote{font:600 17px/1.35 var(--head)}
+.pop{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:640px){
+  html,body{overflow:auto;height:auto}
+  .app{height:auto;display:block;border-radius:0;border-left:0;border-right:0}
+  .stage{display:block}
+  .art{border-right:0;border-bottom:1px solid var(--line)}
+  .art svg{max-height:230px}
+  .top h1{font-size:16px}
+}
+
+.steps{display:flex;gap:6px;flex:none}
+.steps span{flex:1;font:700 12.5px var(--head);padding:6px 4px;border-radius:8px;background:var(--wash);color:var(--ink2);text-align:center;border-bottom:3px solid transparent}
+.steps span.cur{background:var(--accent-t);color:var(--ink);border-bottom-color:var(--brand)}
+.steps span.ok{background:var(--good-t);color:var(--good)}
+.sl{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center;font-size:14px}
+.sl output{font:700 15px var(--head);text-align:right}
+input[type=range]{width:100%;accent-color:var(--brand);height:26px}
+.read{font-size:15px}
+.read b{font-family:var(--head)}
+.erow{display:grid;gap:5px}
+.erow .q{font-size:14px;font-weight:600}
+.pills{display:grid;grid-template-columns:1fr 1fr 1.7fr;gap:6px}
+.pills .btn{padding:6px 4px;font-size:13px;text-align:center}
+.sum{display:grid;gap:5px;font-size:13.5px}
+.sum div{display:grid;grid-template-columns:84px 1fr;gap:8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum b{font-family:var(--head)}
+.cap{font:700 14px var(--head);color:var(--ink)}
+.chip3{transition:opacity .4s}
+</style>
+</head>
+<body>
+<div class="app" style="--accent:var(--sky);--accent-t:var(--sky-t)">
+  <header class="top">
+    <div><h1>Build a gap analysis</h1><div class="course">ORGS 520 Diversity and Cultural Dynamics</div></div>
+    <span class="wk">Week 4</span>
+  </header>
+  <main class="stage">
+<section class="art" aria-label="Gap analysis graphic">
+      <div class="cap" id="cap">Fictional case: Harbor Pine Logistics</div>
+      <svg id="viz" viewBox="0 0 460 560" role="img" aria-labelledby="vT"><title id="vT">Gap analysis chart for an executive team showing current seats held by women, the seats that must change to reach the goal, and year-by-year targets.</title></svg>
+    </section>
+    <section class="work">
+      <div class="steps" id="steps"></div>
+      <div class="pane" id="pane"></div>
+    </section>
+  </main>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const S={n:8,cur:1,goal:50,yrs:2,smart:null,cause:[null,null,null],fix:[null,null,null],ev:null};
+let step=0; // 0 measure,1 smart,2 cause,3 fix(0..2),4 eval,5 summary
+let sub=0;
+const PH=['1 Measure the gap','2 Write a SMART goal','3 Diagnose the cause','4 Prescribe and evaluate'];
+const goalN=()=>Math.ceil(S.goal*S.n/100), gap=()=>Math.max(0,goalN()-S.cur);
+const C={sky:'#2f6fb3',red:'#d34147',grey:'#9aa0b0',ink:'#1e2230'};
+const F='font-family="Bricolage Grotesque,Trebuchet MS,sans-serif"', B='font-family="Atkinson Hyperlegible,Segoe UI,sans-serif"';
+function person(x,y,fill,ring){
+  return `${ring?`<circle cx="${x}" cy="${y-2}" r="27" fill="none" stroke="${C.red}" stroke-width="2.5" stroke-dasharray="5 4"/>`:''}
+  <circle cx="${x}" cy="${y-9}" r="9" fill="${fill}"/><path d="M${x-15} ${y+16} Q${x-15} ${y+2} ${x} ${y+2} Q${x+15} ${y+2} ${x+15} ${y+16}Z" fill="${fill}"/>`;
+}
+const TRI=[{k:'Knowledge',c:'#2f6fb3',g:'<path d="M-12 -9 H-1 V9 H-12Z M1 -9 H12 V9 H1Z" fill="#fff"/>'},
+ {k:'Motivation',c:'#d9980f',g:'<path d="M0 -13 C7 -5 11 0 8 8 C6 12 -6 12 -8 8 C-11 0 -2 -3 0 -13Z" fill="#fff"/>'},
+ {k:'Org. barriers',c:'#7a4a30',g:'<path d="M-13 -9 H13 V-3 H-13Z M-13 3 H13 V9 H-13Z M-1 -9 V-3 M-7 3 V9 M6 3 V9" fill="#fff" stroke="#7a4a30" stroke-width="1.5"/>'}];
+function viz(){
+  const n=S.n,c=Math.min(S.cur,n),g=gap(),gn=goalN();
+  const per=n<=6?n:6, rows=n<=6?1:2, sp=66, x0=230-(per-1)*sp/2;
+  let out=`<rect x="4" y="4" width="452" height="552" rx="16" fill="#fff" opacity=".6"/>
+  <text x="230" y="34" text-anchor="middle" ${F} font-weight="700" font-size="16" fill="${C.ink}">Executive team: ${n} seats</text>`;
+  for(let i=0;i<n;i++){
+    const r=Math.floor(i/per), col=i%per, cnt=r===0?Math.min(per,n):n-per;
+    const xr=230-(cnt-1)*sp/2+col*sp, y=76+r*66;
+    const isW=i<c, isGap=!isW&&i<c+g;
+    out+=person(xr,y,isW?C.sky:C.grey,isGap);
+  }
+  const top=76+(rows-1)*66+52;
+  out+=`<g ${B} font-size="12.5" fill="#4a5063"><circle cx="76" cy="${top+6}" r="6" fill="${C.sky}"/><text x="88" y="${top+10}">Women today</text>
+   <circle cx="188" cy="${top+6}" r="7" fill="none" stroke="${C.red}" stroke-width="2" stroke-dasharray="3 2"/><text x="200" y="${top+10}">Seats to change</text>
+   <circle cx="316" cy="${top+6}" r="6" fill="${C.grey}"/><text x="328" y="${top+10}">Others</text></g>`;
+  // gauge
+  const gy=top+52, gx=40, gw=380, cp=c/n*100;
+  out+=`<text x="${gx}" y="${gy-12}" ${F} font-weight="700" font-size="14" fill="${C.ink}">Representation of women</text>
+   <rect x="${gx}" y="${gy}" width="${gw}" height="24" rx="12" fill="#eef0f4"/>
+   <rect x="${gx+gw*cp/100}" y="${gy}" width="${Math.max(0,gw*(S.goal-cp)/100)}" height="24" fill="${C.red}" opacity=".25"/>
+   <rect x="${gx}" y="${gy}" width="${Math.max(0.1,gw*cp/100)}" height="24" rx="12" fill="${C.sky}"/>
+   <line x1="${gx+gw*S.goal/100}" x2="${gx+gw*S.goal/100}" y1="${gy-6}" y2="${gy+30}" stroke="${C.ink}" stroke-width="3"/>
+   <text x="${gx}" y="${gy+46}" ${B} font-size="13" fill="${C.sky}" font-weight="700">Today ${Math.round(cp)}%</text>
+   <text x="${gx+gw}" y="${gy+46}" text-anchor="end" ${B} font-size="13" fill="${C.ink}" font-weight="700">Goal ${S.goal}%</text>`;
+  // milestones
+  const my=gy+78; out+=`<text x="${gx}" y="${my}" ${F} font-weight="700" font-size="14" fill="${C.ink}">Women on the team at the end of each year</text>`;
+  const Y=S.yrs, bw=Math.min(54,(gw-(Y-1)*10)/(Y+1)), bx0=gx, base=my+112, maxh=70;
+  const pts=[[0,c]]; for(let y=1;y<=Y;y++) pts.push([y,Math.round(c+g*y/Y)]);
+  pts.forEach((p,i)=>{
+    const h=Math.max(4,maxh*p[1]/Math.max(n,1)), x=bx0+i*(bw+10), last=i===pts.length-1&&g>0;
+    out+=`<rect x="${x}" y="${base-h}" width="${bw}" height="${h}" rx="5" fill="${i===0?C.sky:last?C.red:'#8fb0d8'}" ${last?'':''}/>
+    <text x="${x+bw/2}" y="${base-h-5}" text-anchor="middle" ${F} font-weight="700" font-size="13" fill="${C.ink}">${p[1]}</text>
+    <text x="${x+bw/2}" y="${base+16}" text-anchor="middle" ${B} font-size="12" fill="#4a5063">${i===0?'Now':'Year '+i}</text>`;
+  });
+  // triad
+  const ty=base+56; out+=`<text x="${gx}" y="${ty-8}" ${F} font-weight="700" font-size="14" fill="${C.ink}">Root causes found</text>`;
+  TRI.forEach((t,i)=>{const on=S.cause.includes(i);const x=gx+i*130+20;
+    out+=`<g class="chip3" opacity="${on?1:.3}"><circle cx="${x}" cy="${ty+22}" r="20" fill="${t.c}"/><g transform="translate(${x} ${ty+22})">${t.g}</g>
+    <text x="${x+26}" y="${ty+27}" ${B} font-size="12.5" fill="${C.ink}">${t.k}</text></g>`});
+  $('#viz').innerHTML=out;
+}
+function steps(){
+  const cur=step<=0?0:step===1?1:step===2?2:3;
+  $('#steps').innerHTML=PH.map((p,i)=>`<span class="${i===cur?'cur':i<cur?'ok':''}">${p}</span>`).join('');
+}
+function slider(id,lab,min,max,val,unit){return `<label class="sl" for="${id}"><span>${lab}</span><input type="range" id="${id}" min="${min}" max="${max}" step="${id==='sg'?10:1}" value="${val}"><output id="o_${id}">${val}${unit}</output></label>`}
+function p0(){
+  const g=gap(), gn=goalN();
+  $('#pane').innerHTML=`<p class="lede">A gap exists only in relation to a goal. Set the goal for this fictional executive team and see how large the gap is.</p>
+   ${slider('sn','Executive seats',4,12,S.n,'')}${slider('sc','Women on the team now',0,S.n,Math.min(S.cur,S.n),'')}${slider('sg','Goal: share of women',10,60,S.goal,'%')}${slider('sy','Time to reach it',1,5,S.yrs,' yr')}
+   <div class="fb ${g>0?'info':'bad'}" id="rd" aria-live="polite"></div>
+   <div class="row"><span class="spacer"></span><button class="btn primary" id="go">Write the goal</button></div>`;
+  const upd=()=>{
+    S.n=+$('#sn').value; $('#sc').max=S.n; S.cur=Math.min(+$('#sc').value,S.n); S.goal=+$('#sg').value; S.yrs=+$('#sy').value;
+    $('#o_sn').textContent=S.n; $('#o_sc').textContent=S.cur; $('#o_sg').textContent=S.goal+'%'; $('#o_sy').textContent=S.yrs+' yr';
+    const g=gap(), gn=goalN();
+    $('#rd').className='fb '+(g>0?'info':'bad');
+    $('#rd').innerHTML=g>0?`<b>The gap is ${g} ${g===1?'woman':'women'} on the executive team.</b> A goal of ${S.goal}% means ${gn} of ${S.n} seats. You have ${S.cur}. Closing it in ${S.yrs} ${S.yrs===1?'year':'years'} means about ${(g/S.yrs).toFixed(1).replace('.0','')} per year.`:`<b>There is no gap.</b> Today’s count already meets this goal, so a gap analysis has nothing to close. Raise the goal or lower the number of women today.`;
+    $('#go').disabled=g===0; viz();
+  };
+  $$('#pane input').forEach(i=>i.addEventListener('input',upd)); upd();
+  $('#go').onclick=()=>{step=1;render()};
+}
+function p1(){
+  const g=gap(),gn=goalN();
+  const O=[
+   ['Make our executive team more inclusive as soon as possible.','Not measurable and no deadline. How would anyone know it was done?'],
+   [`Add ${g} ${g===1?'woman':'women'} to the ${S.n}-person executive team within ${S.yrs} ${S.yrs===1?'year':'years'}, reaching ${S.goal}% representation, with progress reported to the board each year.`,'ok'],
+   ['Reach 100% women on the executive team next quarter.','It has a number and a deadline, but it is not achievable or relevant to the real gap.'],
+   ['Improve gender diversity on the executive team.','Too general. It names no number, no target date, and no way to measure progress.']];
+  $('#pane').innerHTML=`<p class="lede">SMART goals are specific, measurable, achievable, relevant, and time-bound (Doran, 1981). Which of these would you give the executive team?</p>
+   <div class="opts" id="op" style="display:grid;gap:8px">${O.map((o,i)=>`<button class="btn" data-i="${i}" style="font-size:14px;font-weight:600">${o[0]}</button>`).join('')}</div>
+   <div class="fb" id="fb" hidden aria-live="polite"></div>
+   <div class="row"><button class="btn ghost" id="bk">Back</button><span class="spacer"></span><button class="btn primary" id="go" hidden>Find the root cause</button></div>`;
+  $$('#op .btn').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i,f=$('#fb'); f.hidden=false;
+    if(O[i][1]==='ok'){$$('#op .btn').forEach(x=>x.disabled=true);b.classList.add('good');b.style.opacity=1;S.smart=O[i][0];
+      f.className='fb good';f.innerHTML='<b>This is SMART.</b> Specific (women on the executive team), measurable (a count and a percentage), achievable and relevant (sized to the real gap), and time-bound (a deadline with yearly reporting).';$('#go').hidden=false;$('#go').focus()}
+    else{b.disabled=true;b.classList.add('bad','shake');f.className='fb bad';f.innerHTML='<b>Not yet.</b> '+O[i][1]}
+  });
+  $('#bk').onclick=()=>{step=0;render()}; $('#go').onclick=()=>{step=2;render()};
+}
+const EV=[['“Several VPs told me they had never seen research linking diverse leadership to results.”',0,'They lack information about the business case: knowledge.'],
+ ['“One senior leader admitted he is uneasy about changing how successors are chosen. It has always worked for him.”',1,'Discomfort with giving up familiar practices: motivation.'],
+ ['“Promotions are settled at an informal after-work gathering most women are not invited to.”',2,'An informal process that marginalizes people: a barrier.']];
+function p2(){
+  $('#pane').innerHTML=`<p class="lede">Diagnose before you prescribe. Sort each piece of interview evidence into a cause from the USC Rossier model (Clark & Estes, 2008).</p>
+   ${EV.map((e,i)=>`<div class="erow" data-i="${i}"><div class="q">${e[0]}</div><div class="pills">${TRI.map((t,j)=>`<button class="btn" data-j="${j}">${t.k==='Org. barriers'?'Organizational barriers':t.k}</button>`).join('')}</div><div class="fb good" hidden style="padding:5px 10px;font-size:13px"></div></div>`).join('')}
+   <div class="row"><button class="btn ghost" id="bk">Back</button><span class="spacer"></span><button class="btn primary" id="go" disabled>Match the fixes</button></div>`;
+  $$('.erow').forEach(r=>{const i=+r.dataset.i;
+    if(S.cause[i]!=null){r.querySelectorAll('.btn').forEach(b=>{b.disabled=true;if(+b.dataset.j===EV[i][1])b.classList.add('good')});const f=r.querySelector('.fb');f.hidden=false;f.textContent=EV[i][2]}
+    r.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{const j=+b.dataset.j;
+      if(j===EV[i][1]){S.cause[i]=j;r.querySelectorAll('.btn').forEach(x=>x.disabled=true);b.classList.add('good');const f=r.querySelector('.fb');f.hidden=false;f.textContent=EV[i][2];viz();$('#go').disabled=S.cause.includes(null)}
+      else{b.disabled=true;b.classList.add('bad','shake')}})});
+  $('#go').disabled=S.cause.includes(null);
+  $('#bk').onclick=()=>{step=1;render()};$('#go').onclick=()=>{step=3;sub=0;render()};
+}
+const FX=[
+ [['Brief the executive team on research linking diverse leadership to performance.',1],['Post a diversity statement on the careers page.',0],['Replace the leaders who have not seen the research.',0]],
+ [['Have the CEO publicly sponsor the goal and report progress at the annual shareholder meeting.',1],['Send everyone a reminder email about the diversity policy.',0],['Hold a one-time slide presentation on bias.',0]],
+ [['Replace the informal circle with posted promotion criteria and a diverse review panel.',1],['Encourage women to apply for promotion more often.',0],['Offer a one-time networking workshop.',0]]];
+const FXW=['Because the cause is missing information, the fix supplies it.','Public sponsorship and accountability address leaders’ discomfort with change.','Because the barrier is the process, the fix changes the process.'];
+function p3(){
+  const k=sub, t=TRI[k];
+  $('#pane').innerHTML=`<div class="cap"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${t.c};margin-right:6px"></span>Fix for the ${k===2?'organizational barrier':t.k.toLowerCase()} cause (${k+1} of 3)</div>
+   <p class="lede">Match each solution to its root cause. Keep it realistic for the organization’s size, resources, and culture. Which is the best fit?</p>
+   <div style="display:grid;gap:8px" id="op">${FX[k].map((o,i)=>`<button class="btn" data-i="${i}" style="font-size:14px;font-weight:600">${o[0]}</button>`).join('')}</div>
+   <div class="fb" id="fb" hidden aria-live="polite"></div>
+   <div class="row"><button class="btn ghost" id="bk">Back</button><span class="spacer"></span><button class="btn primary" id="go" hidden>${k<2?'Next cause':'Plan the evaluation'}</button></div>`;
+  $$('#op .btn').forEach(b=>b.onclick=()=>{const o=FX[k][+b.dataset.i],f=$('#fb');f.hidden=false;
+    if(o[1]){$$('#op .btn').forEach(x=>x.disabled=true);b.classList.add('good');b.style.opacity=1;S.fix[k]=o[0];f.className='fb good';f.innerHTML='<b>Good match.</b> '+FXW[k];$('#go').hidden=false;$('#go').focus()}
+    else{b.disabled=true;b.classList.add('bad','shake');f.className='fb bad';f.innerHTML='<b>Not the best fit.</b> It does not address the root cause you diagnosed. Try another.'}});
+  $('#bk').onclick=()=>{if(sub>0)sub--;else step=2;render()};
+  $('#go').onclick=()=>{if(k<2){sub++}else step=4;render()};
+}
+const EVL=[['Review the seat count and promotion pipeline every quarter, with a final check at the deadline.',1],['Check once, after the deadline passes.',0],['Revisit it if someone asks how it is going.',0]];
+function p4(){
+  $('#pane').innerHTML=`<div class="cap">Plan the evaluation</div>
+   <p class="lede">A solution is not complete until you can show how success will be measured. When will you check whether the gap is closing?</p>
+   <div style="display:grid;gap:8px" id="op">${EVL.map((o,i)=>`<button class="btn" data-i="${i}" style="font-size:14px;font-weight:600">${o[0]}</button>`).join('')}</div>
+   <div class="fb" id="fb" hidden aria-live="polite"></div>
+   <div class="row"><button class="btn ghost" id="bk">Back</button><span class="spacer"></span><button class="btn primary" id="go" hidden>See my gap analysis</button></div>`;
+  $$('#op .btn').forEach(b=>b.onclick=()=>{const o=EVL[+b.dataset.i],f=$('#fb');f.hidden=false;
+    if(o[1]){$$('#op .btn').forEach(x=>x.disabled=true);b.classList.add('good');b.style.opacity=1;S.ev=o[0];f.className='fb good';f.innerHTML='<b>Yes.</b> Regular checkpoints let you adjust before the deadline, and a final check shows whether the goal was met.';$('#go').hidden=false;$('#go').focus()}
+    else{b.disabled=true;b.classList.add('bad','shake');f.className='fb bad';f.innerHTML='<b>Too late to help.</b> Without checkpoints you cannot adjust course. Try another.'}});
+  $('#bk').onclick=()=>{step=3;sub=2;render()};$('#go').onclick=()=>{step=5;render()};
+}
+function p5(){
+  const g=gap(),rows=[['Goal',S.smart],['Current',`${S.cur} of ${S.n} seats held by women (${Math.round(S.cur/S.n*100)}%)`],['Gap',`${g} ${g===1?'woman':'women'} on the executive team`],
+   ['Fixes','Knowledge: executive briefing on the research. Motivation: CEO sponsors the goal and reports to shareholders. Barrier: posted promotion criteria and a diverse review panel.'],['Evaluation','Quarterly reviews, plus a final check at the deadline.']];
+  $('#pane').innerHTML=`<h2>Your gap analysis</h2>
+   <div class="card sum" id="sumb">${rows.map(r=>`<div><b>${r[0]}</b><span>${r[1]}</span></div>`).join('')}</div>
+   <p class="lede" style="font-size:13px">Fictional numbers. For your project, use evidence from your interview and archival sources, and say so when you use industry-level data.</p>
+   <div class="row"><button class="btn ghost" id="bk">Back</button><button class="btn ghost" id="again">Start over</button><span class="spacer"></span><button class="btn primary" id="cp">Copy summary</button></div>`;
+  $('#bk').onclick=()=>{step=4;render()};
+  $('#again').onclick=()=>{Object.assign(S,{n:8,cur:1,goal:50,yrs:2,smart:null,cause:[null,null,null],fix:[null,null,null],ev:null});step=0;sub=0;render()};
+  $('#cp').onclick=()=>{
+    const txt=rows.map(r=>r[0]+': '+r[1]).join('\n'); const done=()=>{$('#cp').textContent='Copied'};
+    const fb=()=>{const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){$('#cp').textContent='Select the text to copy'}t.remove()};
+    if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(done,fb);else fb();
+  };
+}
+function render(){steps();viz();[p0,p1,p2,p3,p4,p5][step]()}
+render();
+</script>
+</body>
+</html>
