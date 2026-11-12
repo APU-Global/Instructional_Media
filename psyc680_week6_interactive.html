@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 Interactive | Original or Secondary? The File Drawer Problem</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 14px}@media(max-width:720px){.three{grid-template-columns:1fr}}
+.three div{background:var(--warm);border-radius:14px;padding:10px 12px;font-size:.88rem}.three b{display:block;color:var(--red-d)}
+.sim{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl div{background:var(--warm);border-radius:14px;padding:10px 14px}.ctl label{font-weight:700;display:flex;justify-content:space-between}
+.pre{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.pre .btn{font-size:.88rem;padding:6px 12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.3rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.stats div.hl{background:var(--gold-l)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;font-weight:700;margin:6px 0}.legend span{display:flex;gap:6px;align-items:center}.legend i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of an original research article with a chart, an arrow to a short summary page, and a filing cabinet drawer stuffed with unpublished papers">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 34)"><rect width="150" height="170" rx="10" fill="#fff"/><rect x="16" y="16" width="118" height="10" rx="3" fill="#a8353a"/><g stroke="#d9d4cf" stroke-width="5" stroke-linecap="round"><path d="M16 42h118M16 56h100"/></g><g fill="#1f6f78"><rect x="22" y="104" width="18" height="40"/><rect x="48" y="84" width="18" height="60"/><rect x="74" y="94" width="18" height="50"/><rect x="100" y="70" width="18" height="74"/></g><path d="M16 146h118" stroke="#5b5557" stroke-width="2"/><text x="75" y="166" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="11" fill="#7d2429">ORIGINAL STUDY</text></g>
+<path d="M265 120h110m-14-14l14 14-14 14" stroke="#f6c453" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(400 54)"><rect width="120" height="130" rx="10" fill="#f7dcdd"/><g stroke="#a8353a" stroke-width="5" stroke-linecap="round" opacity=".6"><path d="M16 28h88M16 46h88M16 64h60"/></g><text x="60" y="108" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="11" fill="#7d2429">SECONDARY</text><text x="60" y="122" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="11" fill="#7d2429">SUMMARY</text></g>
+<g transform="translate(620 40)"><rect width="170" height="160" rx="10" fill="#8e2b31" stroke="#f7dcdd" stroke-width="3"/><rect x="14" y="14" width="142" height="62" rx="6" fill="#a8353a"/><rect x="14" y="86" width="142" height="62" rx="6" fill="#a8353a"/><rect x="62" y="38" width="46" height="8" rx="4" fill="#f7dcdd"/><rect x="62" y="110" width="46" height="8" rx="4" fill="#f7dcdd"/>
+<g fill="#fff" opacity=".95"><path d="M24 14l10-18 22 14-8 8z"/><path d="M70 14l8-22 22 6-2 14z"/><path d="M108 14l12-14 18 16-12 8z"/></g></g>
+<g font-family="system-ui" fill="#fff" font-weight="800"><text x="705" y="222" text-anchor="middle" font-size="15">the file drawer</text><text x="830" y="104" font-size="20">Know the source.</text><text x="830" y="132" font-size="20">Know what is</text><text x="830" y="160" font-size="20">missing.</text></g>
+</svg>
+<div class="txt"><div class="kick">PSYC 680 · Week 6 Interactive</div><h1>Original or Secondary? The File Drawer Problem</h1><p>An original study reports new data; a secondary source summarizes or interprets existing studies. Sort real-world sources, then run a simulation to see how unpublished studies can skew what the published literature seems to show.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Which kind of source?</h2>
+<div class="three"><div><b>Original research</b>The first published account of a study: methods, sampling, analysis, findings, limitations. A primary source.</div><div><b>Secondary source</b>Summarizes or interprets original research (textbooks, reviews, websites, news). Can omit key information.</div><div><b>Secondary data analysis</b>A researcher analyzes data someone else collected, such as a national survey.</div></div>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · The file drawer problem</h2>
+<p class="lead">Studies that reach statistical significance are more likely to be published, so studies without significant results can end up in a “file drawer.” This simulation runs 100 studies (30 participants per group) of the same effect. Chance makes each result vary. Choose the true effect and how often non-significant studies get published.</p>
+<div class="ctl"><div><label for="te">True effect size <span id="tev">0.20</span></label><input type="range" id="te" min="0" max="60" step="5" value="20"></div>
+<div><label for="pq">Chance a non-significant study is published <span id="pqv">10%</span></label><input type="range" id="pq" min="0" max="100" step="5" value="10"></div></div>
+<div class="pre" role="group" aria-label="Presets"><button class="btn" type="button" data-e="20" data-q="10">Small effect, strong bias</button><button class="btn" type="button" data-e="0" data-q="10">No true effect</button><button class="btn" type="button" data-e="20" data-q="100">Everything published</button><button class="btn pri" type="button" id="run">Run 100 new studies</button></div>
+<div class="legend" aria-hidden="true"><span><i style="background:#1f6f78"></i>Significant (p &lt; .05)</span><span><i style="background:#b9b1aa"></i>Not significant</span><span><i style="background:#e0a526;border-radius:2px;height:4px;width:18px"></i>True effect</span></div>
+<svg class="sim" id="sv" viewBox="0 0 700 300" role="img" aria-label="Strip plots of effect sizes for all studies and for published studies only"></svg>
+<div class="stats" aria-live="polite"><div><b id="n1">–</b><small>Studies run</small></div><div><b id="n2">–</b><small>Significant (p &lt; .05)</small></div><div><b id="n3">–</b><small>Published</small></div><div><b id="n4">–</b><small>True effect</small></div><div><b id="n5">–</b><small>Average effect, all studies</small></div><div class="hl"><b id="n6">–</b><small>Average effect, published only</small></div></div>
+<div class="note teal live" id="ins" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">A simplified model for learning: each study’s estimate varies randomly around the true effect, and a result is “significant” when it is larger than chance alone would usually produce.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Choosing sources for your review</h2>
+<div id="qs2"></div>
+<p class="live score" id="qres2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Prefer primary sources</b>Original studies carry the evidence.</div><div><b>Use secondary sources wisely</b>They provide context.</div><div><b>Secondary data has trade-offs</b>Weigh convenience against control.</div><div><b>Cite accurately</b>Credit every source.</div></div>
+</section>
+</div>
+<p class="foot">Source: PSYC 680 Week 6 Deep Dive. Scenarios and the simulation are for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ (x.l||labels).forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Ask who collected the data and who wrote the account.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"A journal article reports a new experiment’s methodology, sampling, analysis, findings, and limitations.",a:0,w:"It is the first published account of the study, with enough detail to replicate it: original research."},
+{t:"A textbook chapter summarizes studies on adolescent development.",a:1,w:"It summarizes research done by others: a secondary source. Useful for context, but it can omit key details."},
+{t:"A newspaper article describes the headline findings of a new study.",a:1,w:"News coverage summarizes a study: a secondary source, and secondary sources are often misquoted or incomplete."},
+{t:"A researcher reanalyzes data from a national drug-use survey collected by SAMHSA to answer a new question.",a:2,w:"The researcher analyzes data someone else collected: secondary data analysis. It saves time and widens the sample but limits control over how data were gathered."},
+{t:"A website post summarizes research on mindfulness.",a:1,w:"A website summary interprets other people’s research: a secondary source."},
+{t:"The first published account of a study, detailed enough that another researcher could replicate it.",a:0,w:"That is the definition of original research, a primary source."},
+{t:"A review article summarizes and interprets many earlier studies.",a:1,w:"Reviews and textbooks are secondary sources: they interpret original studies rather than report new data."},
+{t:"A researcher uses a large national data set to explore a question the original survey was not designed for.",a:2,w:"Using data others collected is secondary data analysis, a convenience that costs some control."}],
+["Original research","Secondary source","Secondary data analysis"],"qres");
+// ---- file drawer simulation (simplified model: effect estimate ~ Normal(true effect, SE for n=30 per group)) ----
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function norm(r){var u=1-r(),v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+var SE=Math.sqrt(2/30),N=100,Z=[],U=[],J=[];
+function draw(seed){var r=rng(seed);Z=[];U=[];J=[];for(var i=0;i<N;i++){Z.push(norm(r));U.push(r());J.push(r())}}
+function sim(){
+ var d=+$("te").value/100,q=+$("pq").value/100;$("tev").textContent=d.toFixed(2);$("pqv").textContent=Math.round(q*100)+"%";
+ var rows=[];for(var i=0;i<N;i++){var dh=d+SE*Z[i],sig=Math.abs(dh/SE)>1.96,pub=sig||U[i]<q;rows.push({d:dh,sig:sig,pub:pub,j:J[i]})}
+ var s=$("sv");s.innerHTML="";el("rect",{width:700,height:300,fill:"#fcfcfc"},s);
+ var x0=60,x1=670,lo=-0.9,hi=1.5;function X(v){return x0+(Math.max(lo,Math.min(hi,v))-lo)/(hi-lo)*(x1-x0)}
+ [-0.5,0,0.5,1,1.5].forEach(function(v){el("path",{d:"M"+X(v)+" 28V262",stroke:v===0?"#b9b1aa":"#eee","stroke-width":v===0?2:1},s);var t=el("text",{x:X(v),y:280,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},s);t.textContent=v.toFixed(1)});
+ var xl=el("text",{x:365,y:296,"text-anchor":"middle","font-size":"11","font-weight":"700",fill:"#231f20"},s);xl.textContent="Estimated effect size";
+ var yA=[44,150],hts=[96,96],titles=["All 100 studies","Published studies only"];
+ [0,1].forEach(function(r){var t=el("text",{x:62,y:yA[r]-6,"font-size":"13","font-weight":"800",fill:"#231f20"},s);t.textContent=titles[r];
+  el("rect",{x:x0,y:yA[r],width:x1-x0,height:hts[r]-10,fill:r?"#fff7e0":"#f6f6f6",rx:8,opacity:.6},s)});
+ var sa=0,na=0,sp=0,np=0,nsig=0;
+ rows.forEach(function(w){sa+=w.d;na++;if(w.sig)nsig++;
+  el("circle",{cx:X(w.d),cy:yA[0]+8+w.j*(hts[0]-34),r:4.6,fill:w.sig?"#1f6f78":"#b9b1aa",opacity:.9,stroke:"#fff","stroke-width":1},s);
+  if(w.pub){sp+=w.d;np++;el("circle",{cx:X(w.d),cy:yA[1]+8+w.j*(hts[1]-34),r:4.6,fill:w.sig?"#1f6f78":"#b9b1aa",opacity:.9,stroke:"#fff","stroke-width":1},s)}});
+ var ma=sa/na,mp=np?sp/np:NaN;
+ [0,1].forEach(function(r){var m=r?mp:ma;if(m===m){el("path",{d:"M"+X(m)+" "+(yA[r]-2)+"V"+(yA[r]+hts[r]-8),stroke:"#a8353a","stroke-width":3.5},s)}});
+ el("path",{d:"M"+X(d)+" 30V262",stroke:"#e0a526","stroke-width":2.5,"stroke-dasharray":"7 5"},s);
+ var tt=el("text",{x:X(d)+5,y:40,"font-size":"11","font-weight":"800",fill:"#8a6a10"},s);tt.textContent="true effect";
+ var tm=el("text",{x:X(mp===mp?mp:ma)+6,y:yA[1]+hts[1]-14,"font-size":"11","font-weight":"800",fill:"#a8353a"},s);tm.textContent="average";
+ $("n1").textContent=N;$("n2").textContent=nsig;$("n3").textContent=np;$("n4").textContent=d.toFixed(2);$("n5").textContent=ma.toFixed(2);$("n6").textContent=mp===mp?mp.toFixed(2):"–";
+ var pubSig=rows.filter(function(w){return w.pub&&w.sig}).length,ins=$("ins");
+ if(d===0)ins.innerHTML="<strong>There is no true effect, yet "+nsig+" of 100 studies came out “significant”</strong> by chance alone (about 5 in 100 is expected). "+(q<1?"Because significant results are favored for publication, "+Math.round(pubSig/Math.max(1,np)*100)+"% of the "+np+" published studies report an effect, even though none exists. ":"")+"Readers of the published record would see a pattern that is not real.";
+ else if(q>=0.99)ins.innerHTML="<strong>When every study is published, the published average ("+mp.toFixed(2)+") matches the average of all studies ("+ma.toFixed(2)+")</strong>, close to the true effect of "+d.toFixed(2)+". The differences come from chance only.";
+ else ins.innerHTML="<strong>The published studies average "+mp.toFixed(2)+", against a true effect of "+d.toFixed(2)+(d>0?" (about "+(mp/d).toFixed(1)+" times too large)":"")+".</strong> Only "+nsig+" of 100 studies were significant, but "+np+" were published, and the significant ones are the ones that happened to land far from zero. The non-significant studies sit in the “file drawer,” so a reader who sees only published work gets an inflated picture. Turn the publication chance up to 100% to see the bias disappear."}
+$("te").oninput=sim;$("pq").oninput=sim;
+[].forEach.call(document.querySelectorAll(".pre [data-e]"),function(b){b.onclick=function(){$("te").value=b.dataset.e;$("pq").value=b.dataset.q;sim()}});
+$("run").onclick=function(){draw(Math.floor(Math.random()*1e9)+1);sim()};
+draw(37);sim();
+quiz("qs2",[
+{t:"Your textbook says a study found that a therapy “works for most people.” What is the best next step?",a:0,l:["Find and read the original study, and cite it","Cite the textbook as the evidence","Leave the claim out"],w:"A strong review draws mainly on original studies. Use secondary sources to locate and understand them, then cite the original accurately.",h:"Which source actually reports the evidence?"},
+{t:"A large national survey data set is available for free. What is the trade-off of using it?",a:0,l:["It can save time and widen the sample, but you have less control over how the data were gathered","It guarantees valid answers to any question","It cannot be used in research"],w:"Secondary data analysis trades convenience for control over how the data were collected.",h:"Think about who designed the data collection."},
+{t:"What should form the main evidence in a strong literature review?",a:0,l:["Original studies","Newspaper summaries","Textbook summaries"],w:"Original studies carry the evidence; secondary sources help with context but should not replace them.",h:"Which sources report new data with full methods?"},
+{t:"The “file drawer problem” means…",a:0,l:["Studies without statistically significant results are less likely to be published, so the published record can be skewed","Researchers lose their papers","Journals publish too many studies"],w:"Significant studies are more likely to be published, so unpublished studies with important results may be missing from what you can read.",h:"Re-read Part 2: who gets published?"}],
+["x"],"qres2");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive | Valid, Reliable, or Neither?</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.board{width:100%;max-width:340px;height:auto;display:block;margin:0 auto;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.sl{background:var(--warm);border-radius:14px;padding:10px 14px;margin-bottom:10px}.sl label{font-weight:700;display:flex;justify-content:space-between;gap:8px}.sl small{color:var(--mut)}
+.pre{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.pre .btn{font-size:.88rem;padding:6px 12px}
+.read{border-left:6px solid var(--teal);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--teal);border-radius:15px;padding:12px 16px;margin-top:10px;min-height:96px}
+.read.good{border-left-color:var(--ok)}.read.warn{border-left-color:var(--gold)}.read.bad{border-left-color:var(--bad)}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of two dartboards: on the left the darts cluster tightly on the bullseye, on the right they cluster tightly but away from the bullseye">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(150 115)"><circle r="82" fill="#fff"/><circle r="64" fill="#f7dcdd"/><circle r="46" fill="#fff"/><circle r="28" fill="#f7dcdd"/><circle r="10" fill="#a8353a"/>
+<g fill="#1f6f78" stroke="#fff" stroke-width="2"><circle cx="-5" cy="-6" r="6"/><circle cx="6" cy="-3" r="6"/><circle cx="1" cy="7" r="6"/><circle cx="-8" cy="4" r="6"/><circle cx="9" cy="8" r="6"/></g></g>
+<text x="150" y="222" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">Reliable and valid</text>
+<g transform="translate(480 115)"><circle r="82" fill="#fff"/><circle r="64" fill="#f7dcdd"/><circle r="46" fill="#fff"/><circle r="28" fill="#f7dcdd"/><circle r="10" fill="#a8353a"/>
+<g fill="#e0a526" stroke="#fff" stroke-width="2"><circle cx="42" cy="-38" r="6"/><circle cx="52" cy="-33" r="6"/><circle cx="47" cy="-26" r="6"/><circle cx="38" cy="-30" r="6"/><circle cx="55" cy="-24" r="6"/></g></g>
+<text x="480" y="222" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">Reliable, not valid</text>
+<g transform="translate(700 70)" font-family="system-ui" fill="#fff"><text font-size="22" font-weight="800">Consistent</text><text y="32" font-size="22" font-weight="800">is not the same</text><text y="64" font-size="22" font-weight="800">as accurate.</text></g>
+</svg>
+<div class="txt"><div class="kick">PSYC 680 · Week 4 Interactive</div><h1>Valid, Reliable, or Neither?</h1><p>Reading research critically means asking whether a measure hits what it claims to measure, whether it does so consistently, and what could limit the conclusions. Explore both ideas on a dartboard, match the types, and spot limitations and bias.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · The dartboard</h2>
+<p class="lead">The bullseye is what a study intends to measure. Each dart is one measurement. <strong>Validity</strong> asks whether the measure hits the target; <strong>reliability</strong> asks whether results are consistent. Move the sliders or try a preset.</p>
+<div class="two"><div>
+<svg class="board" id="bd" viewBox="0 0 280 280" role="img" aria-label="Dartboard with darts"></svg>
+</div><div>
+<div class="sl"><label for="sc">Scatter <span id="scv">low</span></label><small>How spread out the results are (low scatter = consistent)</small><input type="range" id="sc" min="0" max="100" value="15"></div>
+<div class="sl"><label for="of">Off-target <span id="ofv">low</span></label><small>How far the average is from the bullseye (low = accurate)</small><input type="range" id="of" min="0" max="100" value="10"></div>
+<div class="pre" role="group" aria-label="Presets"><button class="btn" type="button" data-s="12" data-o="8">Reliable and valid</button><button class="btn" type="button" data-s="12" data-o="85">Reliable, not valid</button><button class="btn" type="button" data-s="85" data-o="8">Scattered</button><button class="btn" type="button" data-s="85" data-o="85">Neither</button></div>
+<div class="read good live" id="rd" aria-live="polite"></div>
+</div></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Name the type</h2>
+<p class="lead">There are several types of validity and of reliability. Match each description to the type it illustrates.</p>
+<h3>Validity</h3>
+<div id="qv"></div><p class="live score" id="rv" aria-live="polite"></p>
+<h3 style="margin-top:14px">Reliability</h3>
+<div id="qr"></div><p class="live score" id="rr" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Limitation or bias?</h2>
+<p class="lead">Every study has limitations, and authors do not always state them all. Decide which concern each snapshot raises.</p>
+<div id="ql"></div><p class="live score" id="rl" aria-live="polite"></p>
+<div class="note teal"><strong>Ethics and diversity.</strong> Ethical research protects participants and respects diversity, so consider who is represented in a study’s sample. A Christian worldview emphasizes respect for the dignity of persons.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Check validity</b>Does it measure what it claims?</div><div><b>Check reliability</b>Is the measurement consistent?</div><div><b>Name limitations</b>Weigh their effect.</div><div><b>Value people</b>Ethics and diversity matter.</div></div>
+</section>
+</div>
+<p class="foot">Source: PSYC 680 Week 4 Deep Dive. Scenarios are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";
+function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var SEED=[[0.9,-0.4],[-0.7,0.8],[0.2,1.3],[-1.2,-0.3],[0.5,-1.1],[-0.3,-0.6],[1.1,0.6],[-0.8,-1.2],[0.0,0.2],[0.6,0.5],[-0.5,1.0],[1.0,-0.9]];
+function board(){
+ var sc=+$("sc").value/100,of=+$("of").value/100;
+ $("scv").textContent=sc<.35?"low":sc<.65?"medium":"high";$("ofv").textContent=of<.35?"low":of<.65?"medium":"high";
+ var s=$("bd");s.innerHTML="";var cx=140,cy=140;
+ [130,104,78,52,26].forEach(function(r,i){el("circle",{cx:cx,cy:cy,r:r,fill:i%2?"#f7dcdd":"#fff",stroke:"#e8e3de","stroke-width":2},s)});
+ el("circle",{cx:cx,cy:cy,r:9,fill:"#a8353a"},s);
+ var sig=10+sc*52,bx=Math.cos(.62)*of*62,by=-Math.sin(.62)*of*62;
+ var pts=SEED.map(function(p){var x=cx+bx+p[0]*sig*.8,y=cy+by+p[1]*sig*.8;var dx=x-cx,dy=y-cy,d=Math.sqrt(dx*dx+dy*dy);if(d>122){x=cx+dx*122/d;y=cy+dy*122/d}return[x,y]});
+ pts.forEach(function(p){el("circle",{cx:p[0],cy:p[1],r:7,fill:of>.5?"#e0a526":"#1f6f78",stroke:"#fff","stroke-width":2.5},s)});
+ var mx=0,my=0;pts.forEach(function(p){mx+=p[0];my+=p[1]});mx/=pts.length;my/=pts.length;
+ el("path",{d:"M"+(mx-9)+" "+my+"H"+(mx+9)+"M"+mx+" "+(my-9)+"V"+(my+9),stroke:"#231f20","stroke-width":2.5,"stroke-linecap":"round"},s);
+ var t=el("text",{x:140,y:274,"text-anchor":"middle","font-size":"11","font-weight":"700",fill:"#5b5557"},s);t.textContent="+ marks the average of the results";
+ var rel=sc<.35,acc=of<.35,rd=$("rd"),h,k;
+ if(rel&&acc){k="read good";h="<strong>Reliable and valid.</strong> Results are consistent and centered on what the study intends to measure. This is the goal: instruments and studies should be both valid and reliable."}
+ else if(rel){k="read warn";h="<strong>Reliable but not valid.</strong> The results agree with each other, yet they keep missing what is supposed to be measured. A measure can be reliable without being valid."}
+ else if(acc){k="read warn";h="<strong>Not reliable.</strong> The average is near the target, but individual results scatter so widely that no single measurement can be trusted."}
+ else{k="read bad";h="<strong>Neither reliable nor valid.</strong> Results scatter and miss the target, so conclusions drawn from them are weak."}
+ rd.className=k+" live";rd.innerHTML=h;s.setAttribute("aria-label","Dartboard: "+(rel?"darts tightly clustered":"darts widely scattered")+", "+(acc?"centered on the bullseye":"away from the bullseye"))}
+$("sc").oninput=board;$("of").oninput=board;
+[].forEach.call(document.querySelectorAll(".pre .btn"),function(b){b.onclick=function(){$("sc").value=b.dataset.s;$("of").value=b.dataset.o;board()}});board();
+function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ labels.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Re-read what the scenario is checking.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qv",[
+{t:"A depression questionnaire looks, at first glance, like it is asking about depression.",a:0,w:"Whether a measure appears, on its surface, to measure what it should is face validity.",h:"Is this about appearance, coverage, comparison, prediction, or theory?"},
+{t:"A final exam covers every unit taught in the course, not just a few topics.",a:1,w:"Covering the full range of the content being measured is content validity."},
+{t:"Scores on a new anxiety scale are compared with scores on a well-established anxiety measure.",a:2,w:"Comparing a measure with an established outside criterion is criterion validity."},
+{t:"A new measure of self-esteem relates to other measures the way theory says self-esteem should.",a:3,w:"Behaving the way the theory of the construct predicts is construct validity."},
+{t:"College entrance test scores are used to forecast students’ first-year grades.",a:4,w:"Scores that forecast a future outcome show predictive validity."}],
+["Face","Content","Criterion","Construct","Predictive"],"rv");
+quiz("qr",[
+{t:"The same group takes the same survey twice, two weeks apart, and scores are similar.",a:0,w:"Consistency of the same measure over time is test/retest reliability."},
+{t:"Two different versions of a test are given to the same people and the results agree.",a:1,w:"Agreement between different versions of a measure is alternative forms reliability."},
+{t:"A test is divided into two halves, such as odd and even items, and the scores on the halves are compared.",a:2,w:"Comparing two halves of one test is split-half reliability."},
+{t:"Two clinicians independently rate the same interview and their ratings agree.",a:3,w:"Agreement between different raters is interrater reliability."}],
+["Test/retest","Alternative forms","Split-half","Interrater"],"rr");
+quiz("ql",[
+{t:"A study conducted in Australia concludes that its findings apply to everyone in the United States.",a:0,w:"The region of the sample limits generalizability; it should be noted as a limitation."},
+{t:"A study of “workplace happiness” measures only how many emails employees send.",a:1,w:"Email counts do not clearly measure happiness: a validity problem with the measurement."},
+{t:"The researcher who designed a program is the only person who rates participants’ improvement, and expects it to work.",a:2,w:"One interested rater creates a risk of researcher bias. Objective, neutral measures and bracketing help."},
+{t:"Participants were told their answers would be anonymous, but the data file lists their names.",a:3,w:"This breaks promised protections for participants: an ethics concern."},
+{t:"The same people take a scale one week apart with no change in their lives, and their scores differ widely.",a:1,w:"Large changes with nothing changing signal poor reliability, a measurement problem."},
+{t:"All participants came from one wealthy private university, yet results are applied to all college students.",a:0,w:"Age, gender, and socioeconomic background affect who the results apply to: a generalizability limitation."}],
+["Limited generalizability","Measurement problem","Researcher bias","Ethics concern"],"rl");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
