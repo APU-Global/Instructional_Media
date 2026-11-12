@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BIOL 225 Week 5 | Epidemiology &amp; Host Defenses</title>
+<style>
+:root{--red:#d34147;--red2:#a8353a;--dark:#892a36;--deep:#5b262b;--teal:#1f8a8a;--teal2:#146666;--gold:#e8a33d;--green:#2f9e5b;--ink:#25282b;--muted:#6a6f75;--paper:#fbf8f5;--card:#ffffff;--line:#e4dcd5;--soft:#f4ece6;--radius:12px}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--paper);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+.hero{position:relative;flex:0 0 auto;height:78px;background:linear-gradient(100deg,var(--deep),var(--dark) 55%,var(--red));color:#fff;overflow:hidden;display:flex;align-items:center;padding:0 18px;gap:14px}
+.hero svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.hero .txt{position:relative;z-index:1;min-width:0;flex:1}
+.badge{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:2px 9px;border-radius:99px;font-weight:600}
+.hero h1{margin:3px 0 0;font-size:21px;line-height:1.15;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.hero .sub{margin:1px 0 0;font-size:12.5px;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.25);padding:6px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.prog .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);border:1.5px solid rgba(255,255,255,.7);transition:.3s}
+.prog .dot.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,163,61,.3)}
+.tabs{flex:0 0 auto;display:flex;gap:4px;padding:8px 14px 0;background:var(--soft);border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{appearance:none;border:1px solid var(--line);border-bottom:none;background:#efe5de;color:var(--dark);font:inherit;font-weight:600;font-size:14px;padding:8px 14px;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.tab:hover{background:#fff}
+.tab[aria-selected=true]{background:#fff;color:var(--red2);box-shadow:0 -2px 0 var(--red) inset}
+.tab .chk{width:16px;height:16px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;display:none;align-items:center;justify-content:center}
+.tab.done .chk{display:inline-flex}
+.stage{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;background:#fff;padding:14px 18px 18px;scrollbar-width:thin;scrollbar-color:#cdbfb6 transparent}
+.panel{display:none;animation:fade .25s}
+.panel.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{margin:0 0 4px;font-size:18px;color:var(--dark)}
+h3{margin:0 0 6px;font-size:15px;color:var(--dark)}
+p{margin:0 0 8px}
+.lead{color:var(--muted);margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:0 1px 3px rgba(60,30,30,.06)}
+.card.tint{background:var(--soft)}
+.btn{appearance:none;border:none;font:inherit;font-weight:600;font-size:14px;padding:8px 14px;border-radius:9px;cursor:pointer;background:var(--red);color:#fff;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--red2)}
+.btn:disabled{background:#cfc6c0;cursor:not-allowed}
+.btn.alt{background:#fff;color:var(--red2);border:1.5px solid var(--red)}
+.btn.alt:hover{background:var(--soft)}
+.btn.teal{background:var(--teal)}.btn.teal:hover{background:var(--teal2)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:focus-visible,.tab:focus-visible,.opt:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f2b24a;outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fb{min-height:22px;font-weight:600;margin:6px 0}
+.fb.ok{color:var(--green)}.fb.no{color:var(--red2)}
+.note{font-size:12.5px;color:var(--muted)}
+.callout{border-left:4px solid var(--teal);background:#eef8f8;padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:14px}
+.callout.warn{border-color:var(--gold);background:#fff7e8}
+.callout.bad{border-color:var(--red);background:#fdeeee}
+.callout.good{border-color:var(--green);background:#edf8f1}
+label{font-weight:600;font-size:13.5px}
+input[type=range]{width:100%;accent-color:var(--red)}
+select{font:inherit;padding:6px 8px;border-radius:8px;border:1.5px solid var(--line);background:#fff;max-width:100%}
+.svgbox{background:#fdfaf7;border:1px solid var(--line);border-radius:var(--radius);padding:6px;display:flex;justify-content:center}
+.svgbox svg{width:100%;height:auto;max-height:100%;display:block}
+.chip{appearance:none;font:inherit;font-size:13px;font-weight:600;border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--red);color:#fff;border-color:var(--red)}
+.opt{appearance:none;display:block;width:100%;text-align:left;font:inherit;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--red);background:#fff8f8}
+.opt.right{background:#e9f7ee;border-color:var(--green)}
+.opt.wrong{background:#fdeaea;border-color:var(--red)}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:13px;font-weight:600}
+.qdots{display:flex;gap:5px}.qdots i{width:9px;height:9px;border-radius:50%;background:#ddd}.qdots i.r{background:var(--green)}.qdots i.w{background:var(--red)}.qdots i.c{outline:2px solid var(--gold)}
+.sortcard{font-size:16px;font-weight:600;background:#fffaf0;border:2px dashed var(--gold);border-radius:12px;padding:16px;text-align:center;min-height:84px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.buckets{display:grid;gap:8px}
+.bucket{appearance:none;font:inherit;font-weight:700;border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:.15s}
+.bucket:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.bucket .n{font-size:12px;font-weight:600;color:var(--muted)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pulse{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.45}}
+table.t{border-collapse:collapse;width:100%;font-size:13px}
+table.t th,table.t td{border:1px solid var(--line);padding:4px 7px;text-align:center}
+table.t th{background:var(--soft);color:var(--dark)}
+.bar{height:10px;background:#eee;border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--teal);width:0;transition:width .4s}
+.kv{display:flex;justify-content:space-between;font-size:13px;margin:2px 0}
+@media (max-width:760px){
+ .grid2,.grid3{grid-template-columns:1fr}
+ .hero{height:auto;min-height:70px;padding:8px 12px}.hero h1{font-size:17px}.hero .sub{display:none}.prog span{display:none}
+ .stage{padding:10px 12px 16px}
+}
+@media (max-width:760px){table.t{font-size:11px}table.t th,table.t td{padding:3px 3px}.card{overflow-x:auto}.row{gap:6px}}
+.grid2>*,.grid3>*{min-width:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.tg{font-size:12px;padding:4px 9px}
+#scene{max-height:244px}
+#p-lines .lead{margin-bottom:6px}
+.tg[aria-pressed=false]{background:#fdeeee;color:#a8353a;border-color:#e6b3b6;text-decoration:line-through}
+.tg[aria-pressed=true]{background:#e9f7ee;color:#1f6f40;border-color:#9bd3b0}
+table.t tr.dim td{opacity:.28}
+table.t td.pos{color:#1f6f40;font-weight:700}table.t td.neg{color:#a8353a;font-weight:700}
+table.t td:first-child{text-align:left;font-style:italic}
+@media (max-width:900px){#p-lines .grid3{grid-template-columns:1fr 1fr!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hero"><svg class="bg" viewBox="0 0 900 78" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><radialGradient id="g5" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="690" cy="58" r="11.0" fill="#fff" opacity="0.21"/><circle cx="706" cy="41" r="11.4" fill="#fff" opacity="0.19"/><circle cx="704" cy="70" r="4.1" fill="#fff" opacity="0.15"/><rect x="554" y="8" width="16" height="6" rx="3" fill="#fff" opacity="0.18" transform="rotate(71 554 8)"/><circle cx="444" cy="68" r="6.9" fill="#fff" opacity="0.19"/><circle cx="419" cy="48" r="4.3" fill="#fff" opacity="0.08"/><rect x="459" y="17" width="38" height="14" rx="7" fill="#fff" opacity="0.20" transform="rotate(80 459 17)"/><circle cx="879" cy="42" r="9.8" fill="#fff" opacity="0.11"/><rect x="452" y="75" width="20" height="8" rx="4" fill="#fff" opacity="0.08" transform="rotate(42 452 75)"/><circle cx="864" cy="21" r="6.3" fill="#fff" opacity="0.19"/><rect x="344" y="53" width="19" height="7" rx="4" fill="#fff" opacity="0.12" transform="rotate(123 344 53)"/><rect x="731" y="14" width="23" height="8" rx="4" fill="#fff" opacity="0.10" transform="rotate(5 731 14)"/><rect x="872" y="28" width="21" height="8" rx="4" fill="#fff" opacity="0.16" transform="rotate(93 872 28)"/><circle cx="552" cy="66" r="7.5" fill="#fff" opacity="0.18"/><rect x="875" y="15" width="32" height="12" rx="6" fill="#fff" opacity="0.21" transform="rotate(88 875 15)"/><circle cx="628" cy="70" r="5.5" fill="#fff" opacity="0.14"/><circle cx="760" cy="62" r="11.6" fill="#fff" opacity="0.09"/><rect x="458" y="40" width="20" height="7" rx="4" fill="#fff" opacity="0.10" transform="rotate(139 458 40)"/><circle cx="393" cy="54" r="6.1" fill="#fff" opacity="0.19"/><circle cx="425" cy="54" r="13.0" fill="#fff" opacity="0.10"/><circle cx="387" cy="47" r="12.2" fill="#fff" opacity="0.08"/><circle cx="673" cy="64" r="7.6" fill="#fff" opacity="0.14"/><circle cx="888" cy="50" r="11.0" fill="#fff" opacity="0.13"/><rect x="415" y="57" width="37" height="14" rx="7" fill="#fff" opacity="0.17" transform="rotate(27 415 57)"/><circle cx="436" cy="29" r="3.6" fill="#fff" opacity="0.14"/><rect x="595" y="78" width="35" height="13" rx="6" fill="#fff" opacity="0.22" transform="rotate(124 595 78)"/><path d="M650 3.0 l30 10 v22 q0 24 -30 38 q-30 -14 -30 -38 v-22z" fill="#fff" opacity=".18" stroke="#fff" stroke-opacity=".75" stroke-width="3" stroke-linejoin="round"/><path d="M638 39.0 l9 9 l17 -20" stroke="#ffe3a6" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div class="txt"><span class="badge">BIOL 225 · Week 5</span><h1>Epidemiology &amp; Host Defenses</h1><div class="sub">Test the body’s three lines of defense, then identify an unknown with biochemical tests</div></div>
+<div class="prog" title="Complete each tab to fill the dots"><span id="progCount">0 / 4 complete</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+</header>
+<nav class="tabs" role="tablist" aria-label="Activities"><button class="tab" role="tab" id="tab-lines" data-p="lines" aria-selected="false">🛡️ Defense Simulator<span class="chk" aria-hidden="true">✓</span></button><button class="tab" role="tab" id="tab-biochem" data-p="biochem" aria-selected="false">🧪 Biochemical ID Lab<span class="chk" aria-hidden="true">✓</span></button><button class="tab" role="tab" id="tab-sort" data-p="sort" aria-selected="false">⚔️ Which Line?<span class="chk" aria-hidden="true">✓</span></button><button class="tab" role="tab" id="tab-check" data-p="check" aria-selected="false">✅ Check Understanding<span class="chk" aria-hidden="true">✓</span></button></nav>
+<main class="stage">
+<section class="panel" id="p-lines" role="tabpanel">
+<h2>Defense Simulator: can the pathogen get through?</h2>
+<p class="lead">Pick a pathogen, switch defenses off (or load a patient scenario), then <b>send it in</b>. Survive all three lines and we become ill.</p>
+<div class="row" style="margin-bottom:6px"><label>Pathogen:</label><span id="pathChips" class="row"></span><label style="margin-left:8px">Dose:</label><button class="chip" id="doseL" aria-pressed="true">Low</button><button class="chip" id="doseH" aria-pressed="false">High</button><button class="btn" id="sendBtn" style="margin-left:auto">▶ Send pathogen</button></div>
+<div class="svgbox" style="padding:3px"><svg id="scene" viewBox="0 0 640 250" role="img" aria-label="Three lines of defense scene"></svg></div>
+<div class="grid3" style="margin-top:8px;grid-template-columns:1.3fr 1fr 1fr 1.15fr">
+ <div class="card" style="padding:8px 10px"><b style="color:var(--dark);font-size:13px">1st line: barriers</b><div class="row" style="margin-top:5px" id="tg1"></div></div>
+ <div class="card" style="padding:8px 10px"><b style="color:var(--dark);font-size:13px">2nd line</b><div class="row" style="margin-top:5px" id="tg2"></div></div>
+ <div class="card" style="padding:8px 10px"><b style="color:var(--dark);font-size:13px">3rd line (specific)</b><div class="row" style="margin-top:5px" id="tg3"></div></div>
+ <div class="card" style="padding:8px 10px"><b style="color:var(--dark);font-size:13px">Patient scenarios</b><div class="row" style="margin-top:5px;gap:4px" id="presets"></div></div>
+</div>
+<div class="callout" id="outcome" style="margin-top:8px">Press <b>Send pathogen</b> to see where it is stopped.</div>
+</section>
+
+<section class="panel" id="p-biochem" role="tabpanel">
+<h2>Biochemical ID Lab: who is the unknown?</h2>
+<p class="lead">Run tests on your unknown culture and compare the results to the reference chart. Use as few tests as you can.</p>
+<div class="grid2" style="grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)">
+ <div>
+  <div class="row" id="testBtns" style="margin-bottom:6px"></div>
+  <div class="svgbox" style="padding:3px"><svg id="well" viewBox="0 0 360 200" role="img" aria-label="Test result display"></svg></div>
+  <div class="callout" id="testMsg" style="margin-top:6px">Choose a test to run on <b>Unknown #<span id="uNo">1</span></b>.</div>
+ </div>
+ <div>
+  <div class="card" style="padding:8px 10px"><b style="color:var(--dark)">Reference chart</b> <span class="note">(rows that no longer fit your results are dimmed)</span><table class="t" id="ref" style="margin-top:6px"></table></div>
+  <div class="card tint" style="margin-top:8px;padding:8px 10px"><div class="row"><label for="idSel">My identification:</label><select id="idSel"></select><button class="btn sm" id="idBtn">Submit ID</button><button class="btn alt sm" id="newU">New unknown</button></div><div id="idMsg" class="fb" aria-live="polite"></div></div>
+ </div>
+</div>
+</section>
+
+<section class="panel" id="p-sort" role="tabpanel"><h2>Which line of defense?</h2><p class="lead">Barriers, inflammation with phagocytes, or the specific (adaptive) response?</p><div id="sortRoot" style="max-width:720px"></div></section>
+<section class="panel" id="p-check" role="tabpanel"><h2>Check your understanding</h2><p class="lead">Six questions on host defenses and biochemical tests.</p><div id="quizRoot" style="max-width:680px"></div></section>
+</main>
+</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function svgEl(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const doneSet=new Set();
+function markDone(id){doneSet.add(id);const t=$('#tab-'+id);if(t)t.classList.add('done');$$('.prog .dot').forEach((d,i)=>d.classList.toggle('on',i<doneSet.size));const c=$('#progCount');if(c)c.textContent=doneSet.size+' / '+$$('.tab').length+' complete'}
+function showTab(id){$$('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.p===id));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+id));$('.stage').scrollTop=0;const f=window['onShow_'+id];if(f)f()}
+function initTabs(){$$('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.p)));$$('.tab').forEach(t=>t.addEventListener('keydown',e=>{const a=$$('.tab'),i=a.indexOf(t);if(e.key==='ArrowRight'){a[(i+1)%a.length].focus();a[(i+1)%a.length].click()}if(e.key==='ArrowLeft'){a[(i-1+a.length)%a.length].focus();a[(i-1+a.length)%a.length].click()}}));$$('.tab')[0]&&showTab($$('.tab')[0].dataset.p)}
+/* Quiz engine: one question at a time */
+function makeQuiz(root,qs,tabId){
+ let i=0,score=0,res=[];
+ function draw(){
+  if(i>=qs.length){const pct=Math.round(score/qs.length*100);
+   root.innerHTML=`<div class="card tint" style="text-align:center;padding:22px"><div style="font-size:42px">${pct>=80?'🏆':pct>=60?'👍':'🔬'}</div><h2>You scored ${score} / ${qs.length}</h2><p>${pct>=80?'Excellent work — you are ready for this week\u2019s lab and assignment.':pct>=60?'Good progress. Revisit the interactive tabs, then try again.':'Take another look at the Deep Dive and the interactives, then retry.'}</p><button class="btn" id="qr">Try again</button></div>`;
+   $('#qr',root).onclick=()=>{i=0;score=0;res=[];draw()};markDone(tabId);return}
+  const q=qs[i];
+  root.innerHTML=`<div class="qhead"><span>Question ${i+1} of ${qs.length}</span><span class="qdots">${qs.map((_,k)=>`<i class="${res[k]===1?'r':res[k]===0?'w':''} ${k===i?'c':''}"></i>`).join('')}</span></div><h3 style="font-size:16px;color:var(--ink)">${q.q}</h3><div id="qo"></div><div id="qf" class="fb" aria-live="polite"></div><div id="qn"></div>`;
+  const o=$('#qo',root);
+  q.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=t;b.onclick=()=>{
+    $$('.opt',o).forEach((x,j)=>{x.disabled=true;if(j===q.a)x.classList.add('right')});
+    const ok=k===q.a;if(!ok)b.classList.add('wrong');score+=ok?1:0;res[i]=ok?1:0;
+    $('#qf',root).className='fb '+(ok?'ok':'no');$('#qf',root).innerHTML=(ok?'✔ Correct. ':'✘ Not quite. ')+q.why;
+    const n=document.createElement('button');n.className='btn sm';n.textContent=i===qs.length-1?'See my score':'Next question →';n.onclick=()=>{i++;draw()};$('#qn',root).appendChild(n);n.focus()};o.appendChild(b)});
+ }
+ draw();
+}
+/* Tap-to-sort engine */
+function makeSort(root,cfg){
+ const items=cfg.items.slice().sort(()=>Math.random()-.5);let i=0,miss=0,counts={};cfg.cats.forEach(c=>counts[c.id]=0);
+ function draw(){
+  if(i>=items.length){root.innerHTML=`<div class="card tint" style="text-align:center;padding:20px"><div style="font-size:40px">${miss<=2?'🎯':'🧪'}</div><h2>All sorted! ${miss} misclassification${miss===1?'':'s'}</h2><p>${cfg.done||''}</p><button class="btn" id="sr">Sort again</button></div>`;$('#sr',root).onclick=()=>{i=0;miss=0;items.sort(()=>Math.random()-.5);cfg.cats.forEach(c=>counts[c.id]=0);draw()};markDone(cfg.tabId);return}
+  const it=items[i];
+  root.innerHTML=`<div class="qhead"><span>Card ${i+1} of ${items.length}</span><span>Misses: ${miss}</span></div><div class="sortcard" id="sc">${it.t}</div><div id="sf" class="fb" aria-live="polite"></div><div class="buckets" style="grid-template-columns:repeat(${cfg.cats.length},minmax(0,1fr))">${cfg.cats.map(c=>`<button class="bucket" data-c="${c.id}" style="border-color:${c.color}"><span>${c.icon||''}</span><span style="color:${c.color}">${c.label}</span><span class="n">${counts[c.id]} placed</span></button>`).join('')}</div>`;
+  $$('.bucket',root).forEach(b=>b.onclick=()=>{
+   if(b.dataset.c===it.c){counts[it.c]++;$('#sf',root).className='fb ok';$('#sf',root).innerHTML='✔ '+it.why;$$('.bucket',root).forEach(x=>x.disabled=true);
+     setTimeout(()=>{i++;draw()},1500)}
+   else{miss++;$('#sc',root).classList.remove('shake');void $('#sc',root).offsetWidth;$('#sc',root).classList.add('shake');$('#sf',root).className='fb no';$('#sf',root).innerHTML='✘ Try again — think about '+(it.hint||'the key definition')+'.'}});
+ }
+ draw();
+}
+
+
+/* ================= Defense simulator ================= */
+const PATH={
+ sa:{n:'Staphylococcus aureus',kind:'bact',lane:0,route:'skin',lbl:'enters through a skin wound'},
+ flu:{n:'Influenza virus',kind:'virus',lane:1,route:'mucus',lbl:'is inhaled'},
+ sal:{n:'Salmonella',kind:'bact',lane:2,route:'gut',lbl:'is swallowed in contaminated food'}
+};
+const LANEY=[78,138,198];
+const D={skin:true,mucus:true,gut:true,bypass:false,phago:true,tcell:true,bcell:true};
+const S5={path:'sa',dose:1,anim:null,seen:new Set()};
+const TOG={1:[['skin','Skin'],['mucus','Mucus & cilia'],['gut','Stomach acid & flora'],['bypass','💉 Bypass (bite/needle)']],2:[['phago','Phagocytes']],3:[['tcell','T cells'],['bcell','B cells / antibodies']]};
+const PRESETS=[['Healthy',{}],['Severe burn',{skin:0},'sa'],['Smoker',{mucus:0},'flu'],['Antibiotic overuse',{gut:0},'sal'],['Chemo + catheter',{skin:0,phago:0},'sa'],['HIV (T-cell loss)',{tcell:0,bypass:1},'flu'],['Antibody deficiency',{bcell:0,bypass:1},'sa']];
+function pathGlyph(g,kind,x,y,sc=1){const e=svgEl('g',{transform:`translate(${x} ${y}) scale(${sc})`},g);
+ if(kind==='virus'){for(let a=0;a<360;a+=30){const r=a*Math.PI/180;svgEl('line',{x1:8*Math.cos(r),y1:8*Math.sin(r),x2:13*Math.cos(r),y2:13*Math.sin(r),stroke:'#7b3f98','stroke-width':2},e);svgEl('circle',{cx:13*Math.cos(r),cy:13*Math.sin(r),r:1.8,fill:'#d34147'},e)}svgEl('circle',{r:8,fill:'#b08ad0',stroke:'#7b3f98','stroke-width':2},e);svgEl('circle',{r:3,fill:'#fff',opacity:.8},e)}
+ else{svgEl('rect',{x:-12,y:-6,width:24,height:12,rx:6,fill:kind==='bact'?'#2f9e5b':'#e8a33d',stroke:'#14532d','stroke-width':1.5},e);svgEl('circle',{cx:-4,cy:0,r:2,fill:'#fff',opacity:.6},e)}
+ return e}
+function icon(g,k,x,y,on){
+ const e=svgEl('g',{opacity:on?1:.4},g);
+ if(k==='skin'){for(let r=0;r<3;r++)for(let c=0;c<4;c++)svgEl('rect',{x:x-32+c*16+(r%2)*6,y:y-17+r*12,width:15,height:11,rx:3,fill:on?'#e9b98e':'#cfc6c0',stroke:'#b87a4a','stroke-width':1},e);
+  if(!on){svgEl('path',{d:`M${x-4} ${y-20}l8 10l-8 8l8 10l-4 8`,stroke:'#d34147','stroke-width':3.5,fill:'none'},g)}}
+ if(k==='mucus'){svgEl('rect',{x:x-32,y:y-3,width:64,height:16,rx:8,fill:on?'#8cc9c9':'#cfc6c0',opacity:.8},e);for(let i=0;i<8;i++){svgEl('path',{d:on?`M${x-28+i*8} ${y-3}v-14`:`M${x-28+i*8} ${y-3}q3 -6 7 -7`,stroke:on?'#1f8a8a':'#9aa0a6','stroke-width':2.5,'stroke-linecap':'round',fill:'none'},e)}}
+ if(k==='gut'){for(let i=0;i<5;i++){svgEl('circle',{cx:x-26+i*13,cy:y-8+(i%2)*14,r:5.5,fill:on?'#f2d64b':'#cfc6c0',stroke:'#b8a020'},e)}[[x-18,y+16],[x+4,y-16],[x+22,y+14]].forEach(p=>svgEl('circle',{cx:p[0],cy:p[1],r:3.2,fill:on?'#2f9e5b':'#9aa0a6'},e));
+  const t=svgEl('text',{x:x,y:y+4,'text-anchor':'middle','font-size':8,'font-weight':700,fill:'#6b5a00'},e);t.textContent='H⁺'}
+}
+function drawScene(extra){
+ const svg=$('#scene');svg.innerHTML='';const defs=svgEl('defs',{},svg);const rg=svgEl('radialGradient',{id:'inf'},defs);svgEl('stop',{offset:0,'stop-color':'#ff6a6a','stop-opacity':.55},rg);svgEl('stop',{offset:1,'stop-color':'#ff6a6a','stop-opacity':0},rg);
+ [[0,110,'#eaf3f6'],[110,100,'#f6e4d0'],[210,215,'#fbe6e6'],[425,215,'#ebe6f6']].forEach(c=>svgEl('rect',{x:c[0],y:0,width:c[1],height:250,fill:c[2]},svg));
+ [[55,'Outside body',''],[160,'1st line','Barriers'],[317,'2nd line','Phagocytes & inflammation'],[532,'3rd line','T cells & B cells (specific)']].forEach(h=>{let t=svgEl('text',{x:h[0],y:17,'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#892a36'},svg);t.textContent=h[1];t=svgEl('text',{x:h[0],y:31,'text-anchor':'middle','font-size':9.5,fill:'#6a6f75'},svg);t.textContent=h[2]});
+ [110,210,425].forEach(x=>svgEl('line',{x1:x,x2:x,y1:36,y2:250,stroke:'#fff','stroke-width':3},svg));
+ ['skin','mucus','gut'].forEach((k,i)=>{svgEl('line',{x1:0,x2:110,y1:LANEY[i],y2:LANEY[i],stroke:'#c7d6dc','stroke-dasharray':'3 5'},svg);icon(svg,k,160,LANEY[i],D[k]);const t=svgEl('text',{x:160,y:LANEY[i]+34,'text-anchor':'middle','font-size':9,fill:'#5b4a3a'},svg);t.textContent={skin:'Skin',mucus:'Mucus & cilia',gut:'Stomach acid & flora'}[k]});
+ /* second line */
+ const on2=D.phago;svgEl('circle',{cx:310,cy:138,r:80,fill:'url(#inf)',opacity:on2?1:.25},svg);
+ const m=svgEl('g',{opacity:on2?1:.35},svg);svgEl('path',{d:'M262 138c-4-24 16-42 40-38c12-14 38-8 40 12c20 6 18 36-2 44c-8 20-40 22-52 6c-18 0-28-10-26-24z',fill:'#f6d9a8',stroke:'#c4883a','stroke-width':3,'stroke-dasharray':on2?'0':'5 4'},m);svgEl('ellipse',{cx:302,cy:132,rx:16,ry:12,fill:'#9b6fc0'},m);
+ [[364,96],[364,186]].forEach(p=>{const n=svgEl('g',{opacity:on2?1:.35},svg);svgEl('circle',{cx:p[0],cy:p[1],r:17,fill:'#f4e8f7',stroke:'#7b3f98','stroke-width':2.5,'stroke-dasharray':on2?'0':'4 3'},n);[[-6,-4],[3,-7],[6,4]].forEach(o=>svgEl('circle',{cx:p[0]+o[0],cy:p[1]+o[1],r:4.5,fill:'#7b3f98'},n))});
+ let t=svgEl('text',{x:310,y:230,'text-anchor':'middle','font-size':9.5,fill:'#5b4a3a'},svg);t.textContent='Macrophage · neutrophils · inflammation';
+ /* third line */
+ const tc=svgEl('g',{opacity:D.tcell?1:.35},svg);svgEl('circle',{cx:470,cy:96,r:20,fill:'#d6e9f6',stroke:'#2f7fa0','stroke-width':3,'stroke-dasharray':D.tcell?'0':'4 3'},tc);svgEl('circle',{cx:470,cy:96,r:12,fill:'#2f7fa0'},tc);t=svgEl('text',{x:470,y:100,'text-anchor':'middle','font-size':11,'font-weight':800,fill:'#fff'},tc);t.textContent='T';
+ t=svgEl('text',{x:470,y:128,'text-anchor':'middle','font-size':9.5,fill:'#2f5a70'},svg);t.textContent='T cells';
+ const bc=svgEl('g',{opacity:D.bcell?1:.35},svg);svgEl('circle',{cx:470,cy:182,r:20,fill:'#e6f3e0',stroke:'#4a8a3a','stroke-width':3,'stroke-dasharray':D.bcell?'0':'4 3'},bc);svgEl('circle',{cx:470,cy:182,r:12,fill:'#4a8a3a'},bc);t=svgEl('text',{x:470,y:186,'text-anchor':'middle','font-size':11,'font-weight':800,fill:'#fff'},bc);t.textContent='B';
+ t=svgEl('text',{x:470,y:214,'text-anchor':'middle','font-size':9.5,fill:'#2f5a3a'},svg);t.textContent='B cells → antibodies';
+ if(D.bcell){[[540,160],[575,190],[548,212],[600,168],[596,214]].forEach(p=>{const y=svgEl('g',{stroke:'#4a8a3a','stroke-width':3,fill:'none','stroke-linecap':'round',transform:`translate(${p[0]} ${p[1]})`},svg);svgEl('path',{d:'M0 8v-8M0 0l-6 -8M0 0l6 -8'},y)})}
+ if(D.tcell){svgEl('path',{d:'M492 96h30',stroke:'#2f7fa0','stroke-width':2.5,'stroke-dasharray':'3 3'},svg);t=svgEl('text',{x:575,y:100,'text-anchor':'middle','font-size':9,fill:'#2f5a70'},svg);t.textContent='kill infected cells'}
+ const P=PATH[S5.path];if(!S5.anim)pathGlyph(svg,P.kind,28,LANEY[P.lane],1.1);
+ if(extra)extra(svg);
+}
+function mkToggle(parent,k,l){const b=document.createElement('button');b.className='chip tg';b.textContent=l;b.setAttribute('aria-pressed',D[k]);b.dataset.k=k;b.onclick=()=>{D[k]=!D[k];refresh()};parent.appendChild(b)}
+function refresh(){$$('.tg').forEach(b=>b.setAttribute('aria-pressed',D[b.dataset.k]));$$('#pathChips .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===S5.path));$('#doseL').setAttribute('aria-pressed',S5.dose===1);$('#doseH').setAttribute('aria-pressed',S5.dose===2);drawScene()}
+function resolve(){
+ const P=PATH[S5.path],C=S5.dose;let stop=null,why='';
+ const barrier={skin:'intact skin',mucus:'mucus and beating cilia',gut:'stomach acid and normal flora'}[P.route];
+ if(D[P.route]&&!D.bypass){return{stage:1,why:`<b>Stopped at the 1st line.</b> ${P.n} ${P.lbl}, but ${barrier} blocked entry. This is nonspecific innate defense.`}}
+ const c2=P.kind==='bact'?(D.phago?1.2:0):(D.phago?.6:0);
+ if(c2>=C){return{stage:2,why:`<b>Stopped at the 2nd line.</b> Inflammation recruited neutrophils and macrophages that engulfed the bacteria before they could spread. (Still innate and nonspecific.)`}}
+ const Cl=(P.kind==='bact'&&!D.phago)?C*2.5:C;
+ const c3=P.kind==='bact'?((D.bcell?1.5:0)+(D.tcell?.8:0)):((D.tcell?1.5:0)+(D.bcell?.8:0));
+ if(c3>=Cl){const who=P.kind==='bact'?'B cells made antibodies that tag the bacteria for destruction'+(D.tcell?', helped by T cells':''):'cytotoxic T cells destroyed virus-infected cells'+(D.bcell?', and antibodies neutralized free virus':'');
+  return{stage:3,why:`<b>Cleared by the 3rd line.</b> The specific response took several days to ramp up (you may have fever and fatigue), but ${who}. Memory cells now remain.`}}
+ let miss=[];if(P.kind==='bact'){if(!D.phago)miss.push('phagocytes (bacteria multiplied unchecked during the days the adaptive response needs)');if(!D.bcell)miss.push('B cells and antibodies');else if(!D.tcell&&C>1)miss.push('T-cell help')}else{if(!D.tcell)miss.push('T cells (the key defense against intracellular viruses)');else if(!D.bcell)miss.push('B cells and antibodies')}
+ if(S5.dose===2&&!miss.length)miss.push('capacity: the high dose overwhelmed an otherwise intact system');
+ return{stage:4,why:`<b>The pathogen got through all three lines: illness.</b> Weak point${miss.length>1?'s':''}: ${miss.join(', ')||'a low-strength defense'}.`}
+}
+function send(){
+ if(S5.anim)return;const P=PATH[S5.path],R=resolve(),y0=LANEY[P.lane];
+ const way=[[28,y0],[R.stage===1?100:150,y0]];
+ if(R.stage>1){way.push([200,y0],[262,138])}
+ if(R.stage===2){way.push([290,138])}
+ if(R.stage>2){way.push([410,138]);if(R.stage===3)way.push([440,138]);else way.push([530,138],[618,138])}
+ let seg=0,t0=null;const sp=170;
+ S5.anim=true;$('#sendBtn').disabled=true;$('#outcome').className='callout';$('#outcome').innerHTML='<span class="pulse">Pathogen entering…</span>';
+ function frame(ts){if(!t0)t0=ts;let el=(ts-t0)/1000*sp,i=0,x,y,fin=false;
+  while(true){const a=way[i],b=way[i+1];if(!b){x=a[0];y=a[1];fin=true;break}const d=Math.hypot(b[0]-a[0],b[1]-a[1]);if(el<=d){x=a[0]+(b[0]-a[0])*el/d;y=a[1]+(b[1]-a[1])*el/d;break}el-=d;i++}
+  drawScene(svg=>{pathGlyph(svg,P.kind,x,y,1.1);if(fin){if(R.stage<4){const g=svgEl('g',{},svg);svgEl('circle',{cx:x,cy:y,r:20,fill:'none',stroke:'#2f9e5b','stroke-width':3,opacity:.9},g);const t=svgEl('text',{x:x,y:y-28,'text-anchor':'middle','font-size':12,'font-weight':800,fill:'#1f6f40'},g);t.textContent=R.stage===1?'BLOCKED':R.stage===2?'CONTAINED':'CLEARED'}else{for(let k=0;k<6;k++)pathGlyph(svg,P.kind,x-26+(k%3)*26,y-12+Math.floor(k/3)*28,.9);const t=svgEl('text',{x:x-8,y:y-40,'text-anchor':'middle','font-size':12,'font-weight':800,fill:'#d34147'},svg);t.textContent='ILLNESS'}}});
+  if(!fin)requestAnimationFrame(frame);else{S5.anim=null;$('#sendBtn').disabled=false;$('#outcome').className='callout '+(R.stage===4?'bad':'good');$('#outcome').innerHTML=R.why;S5.seen.add(R.stage);if(S5.seen.size>=3)markDone('lines')}}
+ requestAnimationFrame(frame);
+}
+(function(){
+ Object.entries(PATH).forEach(([k,p])=>{const b=document.createElement('button');b.className='chip';b.dataset.k=k;b.textContent=p.n;b.onclick=()=>{S5.path=k;refresh()};$('#pathChips').appendChild(b)});
+ [1,2,3].forEach(n=>TOG[n].forEach(([k,l])=>mkToggle($('#tg'+n),k,l)));
+ PRESETS.forEach(([l,o,p])=>{const b=document.createElement('button');b.className='chip tg';b.setAttribute('aria-pressed','true');b.style.cssText='font-size:11.5px;padding:3px 8px;text-decoration:none;background:#fff;color:#892a36;border-color:#e4dcd5';b.textContent=l;b.onclick=()=>{Object.keys(D).forEach(k=>D[k]=k==='bypass'?false:true);Object.entries(o).forEach(([k,v])=>D[k]=!!v);if(p)S5.path=p;refresh();$('#outcome').innerHTML='Scenario loaded: <b>'+l+'</b>. Press <b>Send pathogen</b>.';$('#outcome').className='callout'};$('#presets').appendChild(b)});
+ $('#doseL').onclick=()=>{S5.dose=1;refresh()};$('#doseH').onclick=()=>{S5.dose=2;refresh()};$('#sendBtn').onclick=send;
+ $$('#presets .tg').forEach(b=>b.removeAttribute('data-k'));refresh();
+})();
+
+/* ================= Biochemical lab ================= */
+const ORG5={
+ ec:{n:'Escherichia coli',gram:'-',shape:'rod',cat:1,ox:0,ind:1,coag:0},
+ pa:{n:'Pseudomonas aeruginosa',gram:'-',shape:'rod',cat:1,ox:1,ind:0,coag:0},
+ pm:{n:'Proteus mirabilis',gram:'-',shape:'rod',cat:1,ox:0,ind:0,coag:0},
+ sa:{n:'Staphylococcus aureus',gram:'+',shape:'cluster',cat:1,ox:0,ind:0,coag:1},
+ sp:{n:'Streptococcus pyogenes',gram:'+',shape:'chain',cat:0,ox:0,ind:0,coag:0}
+};
+const TESTS=[['gram','Gram stain'],['cat','Catalase'],['ox','Oxidase'],['ind','Indole'],['coag','Coagulase']];
+const B5={u:null,res:{},used:0,solved:false};
+function wellBase(){const s=$('#well');s.innerHTML='';return s}
+function drawWell(test){
+ const s=wellBase(),o=ORG5[B5.u],r=test?(test==='gram'?(o.gram==='+'?1:0):o[test]):null;
+ svgEl('rect',{x:0,y:0,width:360,height:200,fill:'#fdfaf7'},s);
+ const T=(x,y,txt,sz=12,c='#25282b',w=600)=>{const e=svgEl('text',{x,y,'text-anchor':'middle','font-size':sz,fill:c,'font-weight':w},s);e.textContent=txt;return e};
+ if(!test){T(180,100,'Select a test above',15,'#9aa0a6');return}
+ if(test==='gram'){svgEl('circle',{cx:150,cy:100,r:88,fill:'#fbf4ef',stroke:'#444','stroke-width':8},s);const col=o.gram==='+'?'#6a3a9c':'#e0689a';let R=rng(5);
+  const cell=(x,y,a)=>{if(o.shape==='rod'){const g=svgEl('g',{transform:`translate(${x} ${y}) rotate(${a})`},s);svgEl('rect',{x:-10,y:-4,width:20,height:8,rx:4,fill:col},g)}else svgEl('circle',{cx:x,cy:y,r:5,fill:col},s)};
+  if(o.shape==='rod')for(let i=0;i<26;i++){const a=R()*6.28,d=R()*72;cell(150+d*Math.cos(a),100+d*Math.sin(a),R()*180)}
+  if(o.shape==='cluster')for(let k=0;k<5;k++){const cx=100+R()*100,cy=60+R()*80;for(let i=0;i<8;i++){const a=R()*6.28,d=R()*13;cell(cx+d*Math.cos(a),cy+d*Math.sin(a))}}
+  if(o.shape==='chain')for(let k=0;k<4;k++){let x=95+R()*30,y=55+k*28;let a=R()*.6-.3;for(let i=0;i<9;i++){cell(x,y);x+=10;y+=Math.sin(i*.6+k)*3}}
+  T(290,70,'Gram '+(o.gram==='+'?'POSITIVE':'NEGATIVE'),13,col,800);T(290,88,o.gram==='+'?'purple':'pink/red',11,col);T(290,130,{rod:'rods',cluster:'cocci in clusters',chain:'cocci in chains'}[o.shape],11,'#6a6f75');T(290,145,'1000× oil immersion',9,'#9aa0a6',400)}
+ if(test==='cat'){svgEl('rect',{x:50,y:120,width:260,height:26,rx:4,fill:'#e9eef0',stroke:'#aab4b8','stroke-width':2},s);svgEl('ellipse',{cx:150,cy:120,rx:70,ry:18,fill:'#bfe3f2',stroke:'#7fb6cc','stroke-width':2},s);svgEl('ellipse',{cx:150,cy:118,rx:20,ry:6,fill:'#f6edd0'},s);
+  if(r){let R=rng(9);for(let i=0;i<46;i++){const a=R()*6.28,d=R()*52;svgEl('circle',{cx:150+d*1.2*Math.cos(a),cy:112+d*.4*Math.sin(a)-R()*14,r:2.5+R()*5,fill:'#fff',stroke:'#7fb6cc','stroke-width':1,opacity:.95},s)}}
+  T(150,170,'Culture + 3% H₂O₂ on a slide',10.5,'#6a6f75',400);T(290,70,r?'BUBBLES':'No bubbles',15,r?'#1f6f40':'#a8353a',800);T(290,90,r?'Catalase positive (+)':'Catalase negative (−)',11);T(290,106,r?'2H₂O₂ → 2H₂O + O₂':'',10,'#6a6f75',400)}
+ if(test==='ox'){svgEl('rect',{x:40,y:70,width:190,height:60,rx:4,fill:'#fff',stroke:'#c9c2bb','stroke-width':2},s);
+  svgEl('path',{d:'M70 100h130',stroke:r?'#3a2a8c':'#efe6d8','stroke-width':r?12:10,'stroke-linecap':'round',opacity:r?.92:.5},s);if(r)svgEl('path',{d:'M70 100h130',stroke:'#1a1050','stroke-width':5,'stroke-linecap':'round',opacity:.6},s);
+  T(135,152,'Filter paper + oxidase reagent',10.5,'#6a6f75',400);T(290,70,r?'DARK PURPLE':'No color change',14,r?'#3a2a8c':'#a8353a',800);T(290,90,r?'Oxidase positive (+)':'Oxidase negative (−)',11);T(290,106,r?'within 10–30 s':'',10,'#6a6f75',400)}
+ if(test==='ind'){const tube=(x)=>{svgEl('rect',{x:x-18,y:30,width:36,height:140,rx:16,fill:'#f4f1ee',stroke:'#8a8f95','stroke-width':3},s)};tube(120);svgEl('rect',{x:106,y:84,width:28,height:80,rx:12,fill:'#e6c46a',opacity:.8},s);
+  svgEl('rect',{x:105,y:58,width:30,height:r?20:20,fill:r?'#e0394a':'#f2d64b',opacity:.9},s);svgEl('rect',{x:98,y:24,width:44,height:10,rx:3,fill:'#2f7fa0'},s);
+  T(120,188,'Tryptone broth + Kovac’s reagent',10.5,'#6a6f75',400);T(270,70,r?'RED RING':'Yellow ring',14,r?'#d34147':'#a8353a',800);T(270,90,r?'Indole positive (+)':'Indole negative (−)',11);T(270,106,r?'tryptophan → indole':'No indole produced',10,'#6a6f75',400)}
+ if(test==='coag'){const tube=(x,tilt,clot)=>{const g=svgEl('g',{transform:`rotate(${tilt} ${x} 100)`},s);svgEl('rect',{x:x-18,y:30,width:36,height:140,rx:16,fill:'#f4f1ee',stroke:'#8a8f95','stroke-width':3},g);
+   if(clot){svgEl('rect',{x:x-14,y:58,width:28,height:108,rx:13,fill:'#f2dfa3'},g);svgEl('path',{d:`M${x-12} 70q6 8 12 0t12 0M${x-12} 100q6 8 12 0t12 0M${x-12} 130q6 8 12 0t12 0`,stroke:'#c9a85a','stroke-width':2,fill:'none'},g)}
+   else{svgEl('path',{d:`M${x-14} 150q0 14 14 14t14 -14v-28h-28z`,fill:'#f2dfa3',opacity:.8},g);svgEl('path',{d:`M${x-14} 120l28 0`,stroke:'#c9a85a','stroke-width':2},g)}
+   svgEl('rect',{x:x-23,y:24,width:46,height:10,rx:3,fill:'#2f7fa0'},g)};tube(120,r?180:180,r);
+  T(120,188,'Rabbit plasma + culture, tube inverted',10,'#6a6f75',400);T(270,70,r?'CLOT':'No clot',15,r?'#1f6f40':'#a8353a',800);T(270,90,r?'Coagulase positive (+)':'Coagulase negative (−)',11);T(270,106,r?'plasma stays solid':'plasma runs liquid',10,'#6a6f75',400)}
+}
+function refTable(){
+ const t=$('#ref');const cols=TESTS;let h='<thead><tr><th style="text-align:left">Organism</th>'+cols.map(c=>`<th>${c[1].replace(' stain','')}</th>`).join('')+'</tr></thead><tbody>';
+ Object.entries(ORG5).forEach(([k,o])=>{const fit=Object.entries(B5.res).every(([tk,v])=>{const val=tk==='gram'?(o.gram==='+'?1:0):o[tk];return val===v});
+  h+=`<tr class="${fit?'':'dim'}"><td>${o.n}</td>${cols.map(([tk])=>{const v=tk==='gram'?o.gram:(o[tk]?'+':'−');return `<td class="${v==='+'?'pos':'neg'}">${v==='-'?'−':v}</td>`}).join('')}</tr>`});
+ t.innerHTML=h+'</tbody>'}
+function newUnknown(){const keys=Object.keys(ORG5);B5.u=keys[Math.floor(Math.random()*keys.length)];B5.res={};B5.used=0;B5.solved=false;B5.no=(B5.no||0)+1;$('#uNo').textContent=B5.no;$('#idMsg').textContent='';$('#idMsg').className='fb';$('#testMsg').className='callout';$('#testMsg').innerHTML='Choose a test to run on <b>Unknown #'+B5.no+'</b>.';$$('#testBtns .btn').forEach(b=>{b.className='btn sm alt'});drawWell(null);refTable()}
+(function(){
+ TESTS.forEach(([k,l])=>{const b=document.createElement('button');b.className='btn sm alt';b.textContent=l;b.dataset.k=k;b.onclick=()=>{if(!(k in B5.res))B5.used++;const o=ORG5[B5.u];const v=k==='gram'?(o.gram==='+'?1:0):o[k];B5.res[k]=v;b.className='btn sm '+(v?'teal':'');drawWell(k);
+   $('#testMsg').className='callout';$('#testMsg').innerHTML=`<b>${l}:</b> ${k==='gram'?(v?'Gram-positive':'Gram-negative'):(v?'positive (+)':'negative (−)')}. Tests used so far: <b>${B5.used}</b>.`;refTable()};$('#testBtns').appendChild(b)});
+ Object.entries(ORG5).forEach(([k,o])=>{const e=document.createElement('option');e.value=k;e.textContent=o.n;$('#idSel').appendChild(e)});
+ $('#idBtn').onclick=()=>{const ok=$('#idSel').value===B5.u;const m=$('#idMsg');if(ok){const best=B5.used<=3;m.className='fb ok';m.textContent='✔ Correct: '+ORG5[B5.u].n+'. You used '+B5.used+' test'+(B5.used===1?'':'s')+(best?', an efficient workup!':'. Next time try to narrow the list faster by choosing the most discriminating tests first (Gram, then oxidase/catalase).');markDone('biochem')}else{m.className='fb no';m.textContent='✘ Not that one. Check which rows are still bright in the reference chart. Do your results match?'}};
+ $('#newU').onclick=newUnknown;newUnknown();
+})();
+
+/* ================= Sort ================= */
+makeSort($('#sortRoot'),{tabId:'sort',done:'Barriers (1st), inflammation and phagocytes (2nd) are innate. Antibodies, T cells and memory (3rd) are adaptive and specific.',
+ cats:[{id:'1',label:'1st: Barriers',color:'#b87a4a',icon:'🧱'},{id:'2',label:'2nd: Phagocytes & inflammation',color:'#d34147',icon:'🔥'},{id:'3',label:'3rd: Specific response',color:'#2f7fa0',icon:'🎯'}],
+ items:[
+ {t:'Skin',c:'1',why:'Intact skin physically blocks entry.',hint:'prevent entry'},
+ {t:'Mucus and beating cilia in the airway',c:'1',why:'They trap and sweep out microbes before entry.',hint:'prevent entry'},
+ {t:'Stomach acid',c:'1',why:'It is a chemical barrier to swallowed microbes.',hint:'prevent entry'},
+ {t:'Lysozyme in tears and saliva',c:'1',why:'An antimicrobial enzyme at body surfaces: a chemical barrier.',hint:'surface defense'},
+ {t:'Neutrophils engulfing bacteria',c:'2',why:'Phagocytosis is part of the nonspecific cellular defense.',hint:'engulf and ingest'},
+ {t:'Fever',c:'2',why:'Raised body temperature slows microbial growth and boosts defenses.',hint:'after the pathogen is inside'},
+ {t:'Redness, heat and swelling at a wound',c:'2',why:'Inflammation mobilizes phagocytes to the site.',hint:'inflammation'},
+ {t:'Macrophages patrolling tissue',c:'2',why:'Macrophages are nonspecific phagocytes.',hint:'phagocytes'},
+ {t:'Antibodies made by plasma cells',c:'3',why:'B cells produce antibodies specific to one antigen.',hint:'specific to one antigen'},
+ {t:'Memory cells that respond faster the second time',c:'3',why:'Immunological memory is a hallmark of adaptive immunity.',hint:'memory'},
+ {t:'Cytotoxic T cells destroy virus-infected cells',c:'3',why:'T cells fight intracellular pathogens.',hint:'T cells'},
+ {t:'What a vaccine is designed to prime',c:'3',why:'Vaccines train the adaptive response and create memory.',hint:'training memory'}]});
+
+/* ================= Quiz ================= */
+makeQuiz($('#quizRoot'),[
+ {q:'Skin, mucous membranes and the normal microbiome are part of the:',o:['Third line of defense','Adaptive immune response','First line of defense (nonspecific, innate)','Complement system only'],a:2,why:'They physically and chemically block pathogens from entering and are nonspecific.'},
+ {q:'Which cells produce <b>antibodies</b>?',o:['Neutrophils','B cells (plasma cells)','Red blood cells','Macrophages'],a:1,why:'When activated, B cells become plasma cells that secrete antibodies.'},
+ {q:'<b>T cells</b> are especially important against:',o:['Extracellular toxins only','Intracellular pathogens such as viruses','Skin scrapes','Dust particles'],a:1,why:'Cytotoxic T cells recognize and kill infected host cells.'},
+ {q:'<b>Epidemiology</b> is the study of:',o:['Cell structures','How diseases originate, spread and can be prevented','Antibiotic structures','Staining methods'],a:1,why:'Epidemiologists track disease patterns to recommend ways to reduce or eliminate threats.'},
+ {q:'A bacterium is <b>oxidase-positive</b>. What do you see?',o:['Red ring','Bubbles','Dark purple color on the test paper','A solid clot'],a:2,why:'Oxidase reagent turns dark purple in the presence of cytochrome c oxidase.'},
+ {q:'In the catalase test, what indicates a <b>positive</b> result?',o:['Bubbles of O₂ after adding H₂O₂','A red ring','A pink Gram stain','A clot'],a:0,why:'Catalase splits hydrogen peroxide into water and oxygen gas, which bubbles.'}
+],'check');
+
+initTabs();
+</script>
+</body>
+</html>
