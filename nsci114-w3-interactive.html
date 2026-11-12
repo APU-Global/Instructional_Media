@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NSCI 114 Week 3 | DNA: The Blueprint of Life</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--bg:#ffffff;--card:#f7f5f2;--ink:#222;--mute:#555;--line:#ddd;--ok:#2e7d32;--blue:#1d6fa5}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1c1e;--card:#2a2a2d;--ink:#f1f1f1;--mute:#bbb;--line:#444;--ok:#6fcf74;--blue:#6ab7ee}}
+*{box-sizing:border-box}
+/* No inner scrolling: the iframe grows to fit the content (height is reported to the parent page) */
+html,body{margin:0;padding:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.5}
+#app{padding:12px;max-width:980px;margin:0 auto}
+header{background:linear-gradient(135deg,var(--red),var(--red-d));color:#fff;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px}
+header svg{flex:none}
+header h1{font-size:1.25rem;margin:0}
+header p{margin:2px 0 0;font-size:.88rem;opacity:.95}
+nav{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
+nav button{flex:1 1 140px;padding:10px 8px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;cursor:pointer;font:inherit;font-weight:600;font-size:.9rem}
+nav button small{display:block;font-weight:400;color:var(--mute);font-size:.75rem}
+nav button[aria-selected=true]{border-color:var(--red);background:var(--red);color:#fff}
+nav button[aria-selected=true] small{color:#fff}
+nav button:focus-visible,.btn:focus-visible,.opt:focus-visible,.layer:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+section.active{display:block}
+h2{margin:0 0 4px;font-size:1.15rem;color:var(--red)}
+.lead{margin:0 0 10px;color:var(--mute);font-size:.92rem}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
+.btn{background:var(--red);color:#fff;border:0;padding:8px 14px;border-radius:6px;cursor:pointer;font:inherit;font-weight:600;margin:3px 3px 3px 0}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.opt{display:block;width:100%;text-align:left;margin:4px 0;padding:8px 10px;border:2px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);cursor:pointer;font:inherit}
+.opt.right{border-color:var(--ok);background:rgba(46,125,50,.12)}
+.opt.wrong{border-color:var(--red)}
+.msg{min-height:3em;font-size:.92rem;margin-top:6px}
+.meter{height:16px;background:var(--line);border-radius:8px;overflow:hidden}
+.meter>div{height:100%;background:var(--ok);width:0;transition:width .3s}
+svg{max-width:100%;height:auto;display:block}
+.stat{display:flex;justify-content:space-between;font-size:.88rem;margin:6px 0 2px}
+.take{font-size:.85rem;color:var(--mute);margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
+.layer{cursor:pointer}
+.layer:hover rect,.layer:focus rect{stroke:#fff;stroke-width:3}
+input[type=range]{width:100%}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+  <svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="25" fill="#fff" opacity=".18"/><path d="M20 8c0 10 14 12 14 22s-14 12-14 16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M34 8c0 10-14 12-14 22s14 12 14 16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M22 16h10M22 27h10M22 38h10" stroke="#fff" stroke-width="2.5"/></svg>
+  <div><h1>NSCI 114 | A to Z Laboratory Course</h1><p>Week 3 Interactive: DNA: The Blueprint of Life</p></div>
+</header>
+
+<!-- WEEK 2 -->
+
+
+<!-- WEEK 3 -->
+<section id="w3" class="active" role="tabpanel">
+  <h2>NSCI 114 Week 3 | DNA: Build the Other Strand</h2>
+  <p class="lead">A pairs with T, and C pairs with G. Click the base that completes each rung of the double helix.</p>
+  <div class="grid">
+    <div class="panel">
+      <svg id="helix" viewBox="0 0 320 330" role="img" aria-label="DNA ladder with six base pairs to complete"></svg>
+      <div class="stat"><span>Rungs completed</span><strong id="dnaScore">0 / 6</strong></div>
+      <div class="meter"><div id="dnaBar"></div></div>
+    </div>
+    <div class="panel">
+      <strong>Choose the matching base for the highlighted rung:</strong><br>
+      <button class="btn" data-b="A" style="background:#2e7d32">A Adenine</button>
+      <button class="btn" data-b="T" style="background:#c0392b">T Thymine</button>
+      <button class="btn" data-b="C" style="background:#1d6fa5">C Cytosine</button>
+      <button class="btn" data-b="G" style="background:#b7791f">G Guanine</button>
+      <div class="msg" id="dnaMsg"></div>
+      <button class="btn alt" id="dnaReset">New sequence</button>
+      <hr style="border:0;border-top:1px dashed var(--line)">
+      <strong>Strawberry extraction: what does each ingredient do?</strong>
+      <div id="ing"></div>
+      <div class="msg" id="ingMsg"></div>
+    </div>
+  </div>
+  <div class="take">Takeaway: The order of the four bases is the genetic code. Every ingredient in the extraction has a job.</div>
+</section>
+
+<!-- WEEK 4 -->
+
+
+<!-- WEEK 6 -->
+
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s)||document.createElement('div'),$$=s=>[...document.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+
+/* ---- iframe auto-height (no double scrollbar) ---- */
+let last=0;
+function sendHeight(){
+  const h=Math.ceil(document.getElementById('app').getBoundingClientRect().height)+24;
+  if(h!==last){last=h;parent.postMessage({type:'nsci114-resize',height:h},'*');}
+}
+new ResizeObserver(sendHeight).observe(document.getElementById('app'));
+window.addEventListener('load',sendHeight);
+
+/* ---- tabs ---- */
+$$('nav button').forEach(b=>b.onclick=()=>{
+  $$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $$('section').forEach(s=>s.classList.toggle('active',s.id===b.dataset.t));
+  sendHeight();
+});
+
+/* ---- generic quiz ---- */
+function quiz(key,correct,right,wrong,msg){
+  $$('[data-q="'+key+'"]').forEach(o=>o.onclick=()=>{
+    const ok=+o.dataset.a===correct;
+    $$('[data-q="'+key+'"]').forEach(x=>x.classList.remove('right','wrong'));
+    o.classList.add(ok?'right':'wrong');$(msg).textContent=ok?right:wrong;
+  });
+}
+
+/* ================= WEEK 2 ================= */
+const germs=$('#germs');let gs=[];
+function seedGerms(){
+  germs.innerHTML='';gs=[];
+  for(let i=0;i<70;i++){
+    let x,y;do{x=75+Math.random()*135;y=62+Math.random()*190}while(y<170&&(x<105||x>208));
+    const c=el('circle',{cx:x,cy:y,r:3.2,fill:['#e91e63','#9c27b0','#ffc107'][i%3]},germs);gs.push(c);
+  }
+  setPct(100);
+}
+function setPct(p){$('#gpct').textContent=Math.round(p)+'%';$('#gbar').style.width=p+'%'}
+let method='none';
+$$('[data-m]').forEach(b=>b.onclick=()=>{method=b.dataset.m;$$('[data-m]').forEach(x=>x.classList.toggle('on',x===b))});
+$('#scrub').oninput=e=>$('#sec').textContent=e.target.value;
+$('#resetHand').onclick=()=>{seedGerms();$('#water').setAttribute('opacity',0);$('#suds').setAttribute('opacity',0);$('#w2msg').textContent='Hands reset.'};
+$('#washBtn').onclick=()=>{
+  const t=+$('#scrub').value;
+  let rem;
+  if(method==='none')rem=100;
+  else if(method==='water')rem=Math.max(55,100-t*1.5);
+  else rem=Math.max(3,100-(t>=20?97:t*3.6));
+  seedGerms();
+  $('#water').setAttribute('opacity',method==='none'?0:1);
+  $('#suds').setAttribute('opacity',method==='soap'?1:0);
+  const keep=Math.round(gs.length*rem/100);
+  gs.slice(keep).forEach(g=>g.remove());
+  setPct(rem);
+  const m={none:'No washing: nearly everything stays on your hands.',water:'Water alone rinses away some, but oils hold many “germs” in place.',soap:t>=20?'Soap and 20+ seconds of scrubbing removes almost all “germs.”':'Soap helps, but scrub closer to 20 seconds for best results.'};
+  $('#w2msg').textContent=m[method];
+};
+quiz('w2',1,'Correct: a contaminated surface passes germs by indirect contact.','Not quite. Think about the surface in between.','#w2q');
+seedGerms();
+
+/* ================= WEEK 3 ================= */
+const comp={A:'T',T:'A',C:'G',G:'C'},col={A:'#2e7d32',T:'#c0392b',C:'#1d6fa5',G:'#b7791f'};
+let seq=[],done=[],cur=0;
+function drawHelix(){
+  const s=$('#helix');s.innerHTML='';
+  el('rect',{width:320,height:330,rx:8,fill:'#fdf1f3'},s);
+  const rows=seq.length;
+  for(let i=0;i<rows;i++){
+    const y=35+i*48,w=Math.sin(i*0.9)*14;
+    const lx=70+w,rx=250-w;
+    el('path',{d:`M${lx} ${y}H${rx}`,stroke:'#aaa','stroke-width':3},s);
+    const hl=i===cur;
+    if(hl)el('rect',{x:lx-26,y:y-22,width:rx-lx+52,height:44,rx:10,fill:'none',stroke:'#d34147','stroke-width':2.5,'stroke-dasharray':'5 3'},s);
+    [[lx,seq[i]],[rx,done[i]]].forEach(([x,b],k)=>{
+      el('circle',{cx:x,cy:y,r:17,fill:b?col[b]:'none',stroke:b?col[b]:'#999','stroke-width':2,'stroke-dasharray':b?'':'4 3'},s);
+      const t=el('text',{x:x,y:y+6,'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#fff'},s);t.textContent=b||'?';
+      if(!b)t.setAttribute('fill','#999');
+    });
+    if(i<rows-1){
+      const y2=y+48,w2=Math.sin((i+1)*0.9)*14;
+      el('path',{d:`M${lx} ${y}Q${lx-20} ${y+24} ${70+w2} ${y2}`,stroke:'#d34147','stroke-width':4,fill:'none'},s);
+      el('path',{d:`M${rx} ${y}Q${rx+20} ${y+24} ${250-w2} ${y2}`,stroke:'#1d6fa5','stroke-width':4,fill:'none'},s);
+    }
+  }
+}
+function newSeq(){
+  seq=Array.from({length:6},()=>'ATCG'[Math.floor(Math.random()*4)]);
+  done=Array(6).fill(null);cur=0;drawHelix();upDna();$('#dnaMsg').textContent='Rung 1 is highlighted. Pick the matching base.';
+}
+function upDna(){const n=done.filter(Boolean).length;$('#dnaScore').textContent=n+' / 6';$('#dnaBar').style.width=(n/6*100)+'%'}
+$$('[data-b]').forEach(b=>b.onclick=()=>{
+  if(cur>=6)return;
+  const pick=b.dataset.b;
+  if(pick===comp[seq[cur]]){done[cur]=pick;cur++;drawHelix();upDna();
+    $('#dnaMsg').textContent=cur===6?'Double helix complete! The code is preserved.':'Correct! '+seq[cur-1]+' pairs with '+pick+'. Next rung.';
+  }else $('#dnaMsg').textContent='Not quite. Remember A pairs with T, and C pairs with G.';
+});
+$('#dnaReset').onclick=newSeq;
+const ings=[['Dish soap','Breaks down fatty cell and nuclear membranes'],['Salt','Helps DNA molecules clump together'],['Ice-cold alcohol','Makes DNA come out of solution as stringy strands'],['Mashing','Breaks apart tissue and cell walls']];
+const ingBox=$('#ing');
+ings.forEach(([n,d],i)=>{
+  const b=document.createElement('button');b.className='opt';b.textContent=n+' \u2192 ?';b.onclick=()=>{
+    b.textContent=n+' \u2192 '+d;b.classList.add('right');$('#ingMsg').textContent='Each ingredient has one job in freeing and revealing DNA.';sendHeight();
+  };ingBox.appendChild(b);
+});
+newSeq();
+
+/* ================= WEEK 4 ================= */
+const samples=[
+ {n:'Pond',ph:7.4,do:8.2,c:'#8fcfd8',v:'Healthy'},
+ {n:'Stream',ph:6.6,do:5.0,c:'#c9b26a',v:'Stressed'},
+ {n:'Runoff drain',ph:4.8,do:2.1,c:'#7d6b4a',v:'Polluted'}];
+let sel=null;
+const bk=$('#bk');
+samples.forEach((s,i)=>{
+  const g=el('g',{tabindex:0,role:'button','aria-label':s.n+' sample',style:'cursor:pointer'},bk);
+  const x=25+i*100;
+  el('rect',{x:x,y:70,width:70,height:100,rx:6,fill:s.c,opacity:.9},g);
+  el('path',{d:`M${x} 60V170Q${x} 178 ${x+8} 178H${x+62}Q${x+70} 178 ${x+70} 170V60`,fill:'none',stroke:'#555','stroke-width':3},g);
+  el('path',{d:`M${x} 100h12M${x} 130h12`,stroke:'#555','stroke-width':2},g);
+  const t=el('text',{x:x+35,y:196,'text-anchor':'middle','font-size':12,fill:'#333'},g);t.textContent=s.n;
+  const pick=()=>{sel=i;$$('#bk g').forEach((q,j)=>q.setAttribute('opacity',j===i?1:.5));
+    $('#bkLabel').textContent='Selected: '+s.n;$('#w4msg').textContent='Now run a test.';$('#doVal').textContent='\u2013';$('#doBar').style.width='0';drawPH(null);$('#w4v').textContent='';$$('[data-v]').forEach(o=>o.classList.remove('right','wrong'))};
+  g.onclick=pick;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}};
+});
+function phColor(p){const h=p/14*300;return `hsl(${Math.max(0,h)},75%,52%)`}
+function drawPH(v){
+  const s=$('#phScale');s.innerHTML='';
+  for(let i=0;i<14;i++){el('rect',{x:i*21.4,y:8,width:21.4,height:22,fill:phColor(i+0.5)},s);
+    const t=el('text',{x:i*21.4+10.7,y:46,'text-anchor':'middle','font-size':9,fill:'currentColor'},s);t.textContent=i+1}
+  if(v!==null)el('path',{d:`M${v/14*300} 4l-6 -4h12z`,fill:'currentColor'},s);
+}
+drawPH(null);
+$$('[data-t]').forEach(b=>{if(!b.closest('nav'))b.onclick=()=>{
+  if(sel===null){$('#w4msg').textContent='Select a sample first.';return}
+  const s=samples[sel];
+  if(b.dataset.t==='ph'){drawPH(s.ph);$('#w4msg').textContent='pH of '+s.n+': '+s.ph+(s.ph<6.5?' (too acidic for most fresh-water life)':' (in the healthy range)')}
+  else{$('#doVal').textContent=s.do+' mg/L';$('#doBar').style.width=Math.min(100,s.do/10*100)+'%';$('#w4msg').textContent=s.do<4?'Low oxygen: fish and insects are stressed.':s.do<6?'Borderline oxygen for sensitive species.':'Plenty of oxygen for aquatic life.'}
+  sendHeight();
+}});
+$$('[data-v]').forEach(o=>o.onclick=()=>{
+  if(sel===null){$('#w4v').textContent='Select a sample first.';return}
+  const ok=o.dataset.v===samples[sel].v;
+  $$('[data-v]').forEach(x=>x.classList.remove('right','wrong'));o.classList.add(ok?'right':'wrong');
+  $('#w4v').textContent=ok?'Good call. '+samples[sel].n+' is '+samples[sel].v.toLowerCase()+'. Test both indicators before deciding.':'Test pH and DO, then compare with the healthy ranges.';
+});
+
+/* ================= WEEK 6 ================= */
+const layers=[
+ ['Exosphere','500 km and up','Thinnest layer, where the atmosphere fades into space.','#0b1026',0,50],
+ ['Thermosphere','85 to 500 km','Very hot, absorbs X-rays, and is where auroras glow and the ISS orbits.','#1a2456',50,60],
+ ['Mesosphere','50 to 85 km','Coldest layer. Meteors burn up here.','#2b4a8a',110,55],
+ ['Stratosphere','12 to 50 km','Contains the ozone layer, which absorbs harmful UV radiation.','#3f78b8',165,60],
+ ['Troposphere','0 to 12 km','Densest layer. Holds most air and water vapor, and nearly all weather happens here.','#7ec0ee',225,80]];
+const lg=$('#layers');
+layers.forEach(l=>{
+  const g=el('g',{class:'layer',tabindex:0,role:'button','aria-label':l[0]},lg);
+  el('rect',{x:0,y:l[4],width:320,height:l[5],fill:l[3]},g);
+  const t=el('text',{x:12,y:l[4]+l[5]/2+5,'font-size':14,'font-weight':700,fill:'#fff'},g);t.textContent=l[0];
+  const t2=el('text',{x:12,y:l[4]+l[5]/2+21,'font-size':10,fill:'#fff',opacity:.85},g);t2.textContent=l[1];
+  const pick=()=>{$('#layerInfo').innerHTML='<strong>'+l[0]+'</strong> ('+l[1]+')<br>'+l[2];sendHeight()};
+  g.onclick=pick;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}};
+});
+function gh(){
+  const v=+$('#ghs').value;
+  $('#ghl').textContent=v<35?'Low':v<70?'Today':'High';
+  $('#ghv').textContent=v+'%';$('#ghbar').style.width=v+'%';
+  $('#ghBand').setAttribute('opacity',.1+v/150);
+  $('#back').setAttribute('opacity',.1+v/110);
+  $('#h2').setAttribute('opacity',1-v/110);
+  $('#ghmsg').textContent=v<35?'With too little, more heat escapes and Earth would be much colder.':v<70?'A natural level keeps Earth habitable.':'More greenhouse gas traps more heat, strengthening the effect.';
+}
+$('#ghs').oninput=gh;gh();
+sendHeight();
+})();
+</script>
+</body>
+</html>
