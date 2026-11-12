@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 580 Strategic Thinking - Week 4: Plan for More Than One Future</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--ink:#26262b;--mut:#626770;--line:#e4e1dd;--bg:#faf8f6;--card:#fff;--ok:#2e8b57;--okbg:#e6f4ec;--bad:#c0392b;--badbg:#fbeaea;--gold:#e0a526;--goldbg:#fff6df;--blue:#2f6fa8;--blue-bg:#e8f1f9}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.app{height:100vh;display:flex;flex-direction:column;min-height:0}
+.hdr{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 22px;background:linear-gradient(100deg,#26262b 0%,#3a2a2d 55%,#a8353a 100%);color:#fff}
+.hdr .eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;opacity:.8}
+.hdr h1{margin:1px 0 1px;font-size:21px;line-height:1.15;font-weight:700}
+.hdr p{margin:0;font-size:13px;opacity:.88}
+.hdr svg{flex:0 0 auto;height:70px;width:auto}
+.nav{flex:0 0 auto;display:flex;gap:6px;padding:8px 22px 0;background:#fff;border-bottom:1px solid var(--line)}
+.nav button{border:0;background:transparent;padding:8px 14px;border-bottom:3px solid transparent;color:var(--mut);font-weight:600;display:flex;align-items:center;gap:8px}
+.nav button .n{width:22px;height:22px;border-radius:50%;background:#e9e6e2;color:var(--mut);font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.nav button.on{color:var(--dark);border-bottom-color:var(--red)}
+.nav button.on .n{background:var(--red);color:#fff}
+.nav button.done .n{background:var(--ok);color:#fff}
+.nav button:disabled{opacity:.45;cursor:not-allowed}
+.stage{flex:1 1 auto;min-height:0;padding:12px 22px 12px;display:flex;flex-direction:column;gap:10px}
+.view{display:none;flex:1 1 auto;min-height:0}
+.view.on{display:flex;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.btn{border:0;border-radius:8px;padding:9px 16px;font-weight:600;background:var(--red);color:#fff}
+.btn:hover{background:var(--dark)}
+.btn.sec{background:#fff;color:var(--dark);border:1.5px solid var(--red)}
+.btn.sec:hover{background:#fdf1f1}
+.btn:disabled{background:#cfcbc6;color:#fff;cursor:not-allowed;border-color:#cfcbc6}
+.fb{border-radius:10px;padding:9px 12px;font-size:14px;border:1px solid var(--line);background:#fff}
+.fb.ok{background:var(--okbg);border-color:#b6dec6}
+.fb.bad{background:var(--badbg);border-color:#efc2bd}
+.fb.info{background:var(--blue-bg);border-color:#c4dbef}
+.fb.gold{background:var(--goldbg);border-color:#f0dba0}
+.h2{font-size:15.5px;font-weight:700;margin:0 0 4px}
+.small{font-size:13px;color:var(--mut)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:#f1ece8;color:var(--dark)}
+.sr{position:absolute;left:-9999px}
+@media (max-width:780px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .hdr svg{display:none}
+ .view.on{flex-direction:column}
+ .stage{overflow:visible}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.focal{display:flex;gap:12px;align-items:center;background:#26262b;color:#fff;border-radius:12px;padding:7px 12px}
+.focal svg{flex:0 0 auto;width:34px;height:34px}
+.focal b{color:#f3c9cb}
+.forces{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0;align-content:start}
+.force{display:flex;flex-direction:column;gap:5px;padding:7px 11px}
+.force p{margin:0;font-size:13.5px;line-height:1.3}
+.force .bt{display:flex;gap:8px}
+.force .bt button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:4px 8px;font-weight:600;font-size:12.5px}
+.force .bt button:hover:not(:disabled){border-color:var(--red)}
+.force.ok{border-color:#b6dec6;background:var(--okbg)}
+.force .why{font-size:12px;line-height:1.25;color:var(--mut)}
+.force .why.bad{color:var(--bad)}
+.lft{flex:0 0 auto;width:54%;display:flex;flex-direction:column;gap:8px;min-width:0}
+.rgt{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
+.q{cursor:pointer}
+.q rect{transition:fill .15s,stroke .15s}
+.q:hover rect,.q:focus rect{stroke:#26262b;stroke-width:3}
+.q.sel rect{stroke:#26262b;stroke-width:4}
+.q.seen .chk{opacity:1}.chk{opacity:0}
+.scn h3{margin:2px 0 4px;font-size:18px}
+.scn ul{margin:4px 0 0;padding-left:18px;font-size:14px}
+.strats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.strat{border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px;text-align:left;display:flex;flex-direction:column;gap:4px}
+.strat svg{width:100%;height:46px}
+.strat b{font-size:14.5px}.strat span{font-size:12.5px;color:var(--mut)}
+.strat.on{border-color:var(--red);background:#fffafa}
+.heat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cell{border-radius:10px;padding:8px;text-align:center;border:1px solid var(--line);background:#fff}
+.cell .nm{font-size:12.5px;font-weight:700;min-height:32px}
+.cell .bars{display:flex;gap:3px;justify-content:center;margin:4px 0}
+.cell .bars i{width:16px;height:14px;border-radius:3px;background:#e4e1dd;display:block}
+.cell .lab{font-size:12px;color:var(--mut)}
+@media (max-width:780px){.lft{width:100%}.forces,.strats,.heat{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="hdr">
+  <div>
+   <div class="eyebrow">ORGS 580 Strategic Thinking &middot; Week 4</div>
+   <h1>Plan for More Than One Future</h1>
+   <p>Build a scenario matrix, then stress-test strategies against it.</p>
+  </div>
+  <svg viewBox="0 0 260 70" role="img" aria-label="Illustration: a path splitting into four possible futures">
+   <g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 35h50"/><path d="M60 35c30 0 30-24 60-24h40"/><path d="M60 35c30 0 30-8 60-8h40"/><path d="M60 35c30 0 30 8 60 8h40"/><path d="M60 35c30 0 30 24 60 24h40"/>
+   </g>
+   <g fill="#d34147" stroke="#fff" stroke-width="2"><circle cx="170" cy="11" r="8"/><circle cx="170" cy="27" r="8"/><circle cx="170" cy="43" r="8"/><circle cx="170" cy="59" r="8"/></g>
+   <g fill="none" stroke="#f3c9cb" stroke-width="2.5"><rect x="200" y="8" width="50" height="50" rx="6"/><path d="M225 8v50M200 33h50"/></g>
+  </svg>
+ </header>
+ <nav class="nav" aria-label="Activity steps">
+  <button id="t1" class="on" onclick="go(1)"><span class="n">1</span>Sort the forces</button>
+  <button id="t2" onclick="go(2)" disabled><span class="n">2</span>Explore four futures</button>
+  <button id="t3" onclick="go(3)" disabled><span class="n">3</span>Stress-test strategies</button>
+ </nav>
+ <main class="stage">
+  <div class="focal">
+   <svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#d34147"/><path d="M17 18a6 6 0 1 1 9 5c-2 1-3 2-3 4" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="33" r="2.3" fill="#fff"/></svg>
+   <div><div class="small" style="color:#d9d6d2">Focal question &middot; Riverbend Community Health Network</div>
+   <div>How should Riverbend deliver care to its neighborhoods in <b>2032</b>?</div></div>
+  </div>
+
+  <section id="v1" class="view on" style="flex-direction:column">
+   <div class="fb info" id="s1msg" style="padding:6px 10px;font-size:13.5px"><b>Step 1.</b> Scenarios are built from forces. Sort each force: is it a <b>predictable trend</b> (we can count on it) or a <b>critical uncertainty</b> (it could go either way and would reshape the future)?</div>
+   <div class="forces" id="forces" style="margin-top:2px"></div>
+   <div class="row" style="display:flex;justify-content:space-between;align-items:center"><span class="small" id="s1count">0 of 6 sorted</span><button class="btn" id="to2" disabled onclick="go(2)">Build the matrix &rarr;</button></div>
+  </section>
+
+  <section id="v2" class="view">
+   <div class="lft">
+    <svg id="matrix" viewBox="0 0 520 400" style="width:100%;height:auto;max-height:100%" role="img" aria-label="Two by two scenario matrix">
+     <g font-size="12.5" font-weight="700" fill="#26262b" text-anchor="middle"><text x="148" y="16">Funding: stable and public</text><text x="392" y="16">Funding: fragmented, competitive</text>
+     <text transform="translate(14 111) rotate(-90)">Care: home and digital</text><text transform="translate(14 289) rotate(-90)">Care: in-person clinics</text></g>
+     <g class="q" tabindex="0" role="button" data-q="connected" aria-label="Connected Care Network"><rect x="30" y="26" width="236" height="170" rx="12" fill="#dcebf7" stroke="#fff" stroke-width="2"/>
+      <g transform="translate(46 44)" fill="none" stroke="#2f6fa8" stroke-width="2.5" stroke-linecap="round"><circle cx="14" cy="14" r="5"/><circle cx="48" cy="8" r="5"/><circle cx="40" cy="38" r="5"/><path d="M18 12l25-3M16 18l21 17M45 13l-3 20"/></g>
+      <text x="148" y="140" text-anchor="middle" font-size="15" font-weight="700" fill="#1f4e78">Connected Care</text><text x="148" y="158" text-anchor="middle" font-size="15" font-weight="700" fill="#1f4e78">Network</text>
+      <g class="chk"><circle cx="246" cy="46" r="11" fill="#2e8b57"/><path d="M240 46l4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5"/></g></g>
+     <g class="q" tabindex="0" role="button" data-q="lean" aria-label="Lean and Mobile"><rect x="274" y="26" width="236" height="170" rx="12" fill="#ffe9c9" stroke="#fff" stroke-width="2"/>
+      <g transform="translate(290 44)" fill="none" stroke="#b26a00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="14" width="40" height="22" rx="4"/><path d="M44 22h10l6 8v6H44z"/><circle cx="16" cy="40" r="5" fill="#ffe9c9"/><circle cx="50" cy="40" r="5" fill="#ffe9c9"/><path d="M20 18v10M15 23h10"/></g>
+      <text x="392" y="140" text-anchor="middle" font-size="15" font-weight="700" fill="#7a4600">Lean and Mobile</text>
+      <g class="chk"><circle cx="490" cy="46" r="11" fill="#2e8b57"/><path d="M484 46l4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5"/></g></g>
+     <g class="q" tabindex="0" role="button" data-q="anchor" aria-label="Neighborhood Anchor"><rect x="30" y="204" width="236" height="170" rx="12" fill="#dff1e6" stroke="#fff" stroke-width="2"/>
+      <g transform="translate(46 222)" fill="none" stroke="#2e8b57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 40V16l22-12 22 12v24z"/><path d="M26 18v14M19 25h14"/></g>
+      <text x="148" y="338" text-anchor="middle" font-size="15" font-weight="700" fill="#1d5b39">Neighborhood Anchor</text>
+      <g class="chk"><circle cx="246" cy="224" r="11" fill="#2e8b57"/><path d="M240 224l4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5"/></g></g>
+     <g class="q" tabindex="0" role="button" data-q="squeezed" aria-label="Squeezed Clinics"><rect x="274" y="204" width="236" height="170" rx="12" fill="#f9dcdc" stroke="#fff" stroke-width="2"/>
+      <g transform="translate(290 222)" fill="none" stroke="#a8353a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 40V16l22-12 22 12v24z"/><path d="M14 34h24M22 26l4 8 4-8"/></g>
+      <text x="392" y="338" text-anchor="middle" font-size="15" font-weight="700" fill="#7e2327">Squeezed Clinics</text>
+      <g class="chk"><circle cx="490" cy="224" r="11" fill="#2e8b57"/><path d="M484 224l4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5"/></g></g>
+    </svg>
+    <div class="small" style="text-align:center">The two critical uncertainties from Step 1 become the axes.</div>
+   </div>
+   <div class="rgt">
+    <div class="card scn" id="scn" style="flex:1"></div>
+    <div class="row" style="display:flex;justify-content:space-between;align-items:center"><span class="small" id="s2count">Open all four futures: 0 of 4</span><button class="btn" id="to3" disabled onclick="go(3)">Stress-test &rarr;</button></div>
+   </div>
+  </section>
+
+  <section id="v3" class="view" style="flex-direction:column">
+   <div class="fb info"><b>Step 3.</b> A strategy that only wins in one future is a bet. Choose a strategy to see how it performs in each scenario.</div>
+   <div class="strats" id="strats"></div>
+   <div class="heat" id="heat"></div>
+   <div class="fb gold" id="verdict" style="flex:1;min-height:0">Select a strategy above.</div>
+  </section>
+ </main>
+</div>
+<script>
+// Reports height to the parent page (used only if the host listens); layout itself never needs a second scrollbar.
+(function(){function send(){try{var h=Math.ceil(document.documentElement.scrollHeight);parent.postMessage({subject:'lti.frameResize',height:h},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);})();
+
+var F=[
+ ['The population of adults over 65 in Riverbend\u2019s service area keeps growing.','trend','This is a demographic trend already underway, so it is predictable.'],
+ ['Public funding for community clinics may be renewed, cut, or replaced by competitive grants.','unc','Funding could move in opposite directions and would reshape everything. This becomes an axis.'],
+ ['Costs for medical supplies and staffing continue to rise.','trend','Cost pressure is a steady trend leaders can plan around.'],
+ ['Patients may embrace home and digital care, or may insist on visiting clinics in person.','unc','Reasonable people disagree on how this will unfold, and it changes service design. This becomes an axis.'],
+ ['A large share of experienced clinicians will reach retirement age within ten years.','trend','Retirement timelines are known in advance, so this is a predictable trend.'],
+ ['More older adults each year own and use smartphones.','trend','Steady adoption growth is a trend. Whether patients choose digital care is the real uncertainty.']
+];
+var sorted={};
+function go(n){[1,2,3].forEach(function(k){document.getElementById('v'+k).classList.toggle('on',k==n);document.getElementById('t'+k).classList.toggle('on',k==n)});}
+function drawForces(){var h='';F.forEach(function(f,i){var s=sorted[i];h+='<div class="card force'+(s==='ok'?' ok':'')+'" id="f'+i+'"><p>'+f[0]+'</p><div class="bt"><button data-i="'+i+'" data-c="trend"'+(s==='ok'?' disabled':'')+'>Predictable trend</button><button data-i="'+i+'" data-c="unc"'+(s==='ok'?' disabled':'')+'>Critical uncertainty</button></div><div class="why" id="w'+i+'"></div></div>'});
+ document.getElementById('forces').innerHTML=h;
+ document.querySelectorAll('.force button').forEach(function(b){b.onclick=function(){var i=+b.dataset.i,f=F[i],w=document.getElementById('w'+i);
+  if(b.dataset.c==f[1]){sorted[i]='ok';var card=document.getElementById('f'+i);card.classList.add('ok');card.querySelectorAll('button').forEach(function(x){x.disabled=true;if(x.dataset.c==f[1]){x.style.background='#2e8b57';x.style.color='#fff';x.style.borderColor='#2e8b57'}});w.className='why';w.textContent=f[2];}
+  else{w.className='why bad';w.textContent='Try again. '+(f[1]=='trend'?'Ask: could this realistically go either way?':'Ask: is this already clearly happening?');}
+  var n=Object.keys(sorted).length;document.getElementById('s1count').textContent=n+' of 6 sorted';
+  if(n==6){document.getElementById('to2').disabled=false;document.getElementById('t1').classList.add('done');document.getElementById('t2').disabled=false;document.getElementById('s1msg').className='fb ok';document.getElementById('s1msg').innerHTML='<b>Well sorted.</b> Funding and care setting become the matrix axes. The trends hold in every scenario.'}}})}
+drawForces();
+
+var S={
+ connected:{n:'Connected Care Network',d:'Funding stays stable, and patients adopt home and digital care. Riverbend runs a hub-and-spoke model with remote monitoring and virtual visits, backed by reliable public dollars.',sig:['Renewal of multi-year clinic funding','Insurers reimburse virtual visits at parity','Patient portal use passes 60%'],imp:'Invest in digital infrastructure and care teams that work across settings.'},
+ lean:{n:'Lean and Mobile',d:'Funding is fragmented and competitive, yet patients prefer care at home or online. Riverbend survives by winning grants with low-cost mobile units and telehealth.',sig:['Shift from steady funding to short-term grants','Growth in grant-funded pilots for mobile care','Competing providers enter the digital market'],imp:'Stay flexible, keep fixed costs low, and build grant-writing capacity.'},
+ anchor:{n:'Neighborhood Anchor',d:'Funding stays stable and patients keep preferring in-person visits. Clinics are community anchors and demand for physical space grows with the aging population.',sig:['Waiting rooms stay full','Patients decline virtual follow-ups','Capital funding approved for clinic expansion'],imp:'Expand and modernize physical sites and recruit staff before retirements hit.'},
+ squeezed:{n:'Squeezed Clinics',d:'Funding is fragmented and patients still want in-person care. Riverbend has rising costs, demand that outpaces dollars, and tough choices about which sites to keep.',sig:['Funding cuts announced mid-year','Rising staff turnover and overtime','Waitlists lengthen while reimbursement stalls'],imp:'Prepare contingency plans, shared services, and partnerships before the squeeze arrives.'}
+};
+var seen={};
+function showQ(k){var s=S[k];seen[k]=1;document.querySelectorAll('.q').forEach(function(q){q.classList.toggle('sel',q.dataset.q==k);if(seen[q.dataset.q])q.classList.add('seen')});
+ document.getElementById('scn').innerHTML='<span class="pill">Scenario</span><h3>'+s.n+'</h3><p style="margin:0">'+s.d+'</p><div class="h2" style="margin-top:10px">Early signals to monitor</div><ul>'+s.sig.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ul><div class="fb info" style="margin-top:10px"><b>Implication:</b> '+s.imp+'</div>';
+ var n=Object.keys(seen).length;document.getElementById('s2count').textContent='Open all four futures: '+n+' of 4';
+ if(n==4){document.getElementById('to3').disabled=false;document.getElementById('t2').classList.add('done');document.getElementById('t3').disabled=false}}
+document.querySelectorAll('.q').forEach(function(q){q.onclick=function(){showQ(q.dataset.q)};q.onkeydown=function(e){if(e.key=='Enter'||e.key==' '){e.preventDefault();showQ(q.dataset.q)}}});
+document.getElementById('scn').innerHTML='<span class="pill">Tip</span><h3>Select a quadrant</h3><p style="margin:0">Each corner of the matrix is a plausible, internally consistent future. Tap one to read its story, early signals and implications.</p>';
+
+var ST=[
+ {k:'a',n:'A. Build a flagship clinic',d:'One large new facility.',r:{connected:1,lean:1,anchor:4,squeezed:1},v:'<b>A bet on one future.</b> It thrives only if funding is stable and patients come in person, and it is a heavy fixed cost in the other three. Scenario planning exposes how much this plan depends on one outcome.',ic:'<path d="M8 40V14l22-9 22 9v26z" fill="#fff" stroke="#a8353a" stroke-width="3" stroke-linejoin="round"/><path d="M30 16v16M22 24h16" stroke="#d34147" stroke-width="3"/>'},
+ {k:'b',n:'B. Telehealth and mobile units',d:'Shift care to homes and vans.',r:{connected:4,lean:4,anchor:2,squeezed:2},v:'<b>Strong in half the futures.</b> It excels when patients embrace digital and mobile care, but struggles if patients want in-person visits. Monitor patient-preference signals closely before committing fully.',ic:'<rect x="6" y="12" width="30" height="20" rx="3" fill="#fff" stroke="#a8353a" stroke-width="3"/><path d="M36 18h9l6 7v7H36z" fill="#fff" stroke="#a8353a" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="36" r="4.5" fill="#d34147"/><circle cx="44" cy="36" r="4.5" fill="#d34147"/>'},
+ {k:'c',n:'C. Flexible partner network',d:'Shared sites and scalable contracts.',r:{connected:3,lean:3,anchor:3,squeezed:3},v:'<b>The most robust choice.</b> It never wins big but never fails badly. Flexibility lets Riverbend shift emphasis as early signals show which scenario is unfolding. The tradeoff is less control over its own facilities.',ic:'<circle cx="14" cy="14" r="6" fill="#fff" stroke="#a8353a" stroke-width="3"/><circle cx="46" cy="14" r="6" fill="#fff" stroke="#a8353a" stroke-width="3"/><circle cx="30" cy="38" r="6" fill="#d34147" stroke="#a8353a" stroke-width="3"/><path d="M19 17l8 16M41 17l-8 16M20 14h20" stroke="#a8353a" stroke-width="3" fill="none"/>'}
+];
+var cols={1:'#e57373',2:'#f2b45c',3:'#a8c97f',4:'#2e8b57'},lbl={1:'Poor',2:'Weak',3:'Solid',4:'Strong'};
+document.getElementById('strats').innerHTML=ST.map(function(s,i){return'<button class="strat" data-i="'+i+'"><svg viewBox="0 0 60 46">'+s.ic+'</svg><b>'+s.n+'</b><span>'+s.d+'</span></button>'}).join('');
+document.querySelectorAll('.strat').forEach(function(b){b.onclick=function(){document.querySelectorAll('.strat').forEach(function(x){x.classList.remove('on')});b.classList.add('on');var s=ST[+b.dataset.i];
+ document.getElementById('heat').innerHTML=['connected','lean','anchor','squeezed'].map(function(q){var v=s.r[q],bars='';for(var j=1;j<=4;j++)bars+='<i style="'+(j<=v?'background:'+cols[v]:'')+'"></i>';return'<div class="cell"><div class="nm">'+S[q].n+'</div><div class="bars">'+bars+'</div><div class="lab">'+lbl[v]+'</div></div>'}).join('');
+ document.getElementById('verdict').innerHTML=s.v}});
+</script>
+</body>
+</html>

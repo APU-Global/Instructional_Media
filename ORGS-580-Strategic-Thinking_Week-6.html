@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS 580 Strategic Thinking - Week 6: Who Has the D?</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--ink:#26262b;--mut:#626770;--line:#e4e1dd;--bg:#faf8f6;--card:#fff;--ok:#2e8b57;--okbg:#e6f4ec;--bad:#c0392b;--badbg:#fbeaea;--gold:#e0a526;--goldbg:#fff6df;--blue:#2f6fa8;--blue-bg:#e8f1f9}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.4}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.app{height:100vh;display:flex;flex-direction:column;min-height:0}
+.hdr{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 22px;background:linear-gradient(100deg,#26262b 0%,#3a2a2d 55%,#a8353a 100%);color:#fff}
+.hdr .eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;opacity:.8}
+.hdr h1{margin:1px 0 1px;font-size:21px;line-height:1.15;font-weight:700}
+.hdr p{margin:0;font-size:13px;opacity:.88}
+.hdr svg{flex:0 0 auto;height:70px;width:auto}
+.nav{flex:0 0 auto;display:flex;gap:6px;padding:8px 22px 0;background:#fff;border-bottom:1px solid var(--line)}
+.nav button{border:0;background:transparent;padding:8px 14px;border-bottom:3px solid transparent;color:var(--mut);font-weight:600;display:flex;align-items:center;gap:8px}
+.nav button .n{width:22px;height:22px;border-radius:50%;background:#e9e6e2;color:var(--mut);font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.nav button.on{color:var(--dark);border-bottom-color:var(--red)}
+.nav button.on .n{background:var(--red);color:#fff}
+.nav button.done .n{background:var(--ok);color:#fff}
+.nav button:disabled{opacity:.45;cursor:not-allowed}
+.stage{flex:1 1 auto;min-height:0;padding:12px 22px 12px;display:flex;flex-direction:column;gap:10px}
+.view{display:none;flex:1 1 auto;min-height:0}
+.view.on{display:flex;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.btn{border:0;border-radius:8px;padding:9px 16px;font-weight:600;background:var(--red);color:#fff}
+.btn:hover{background:var(--dark)}
+.btn.sec{background:#fff;color:var(--dark);border:1.5px solid var(--red)}
+.btn.sec:hover{background:#fdf1f1}
+.btn:disabled{background:#cfcbc6;color:#fff;cursor:not-allowed;border-color:#cfcbc6}
+.fb{border-radius:10px;padding:9px 12px;font-size:14px;border:1px solid var(--line);background:#fff}
+.fb.ok{background:var(--okbg);border-color:#b6dec6}
+.fb.bad{background:var(--badbg);border-color:#efc2bd}
+.fb.info{background:var(--blue-bg);border-color:#c4dbef}
+.fb.gold{background:var(--goldbg);border-color:#f0dba0}
+.h2{font-size:15.5px;font-weight:700;margin:0 0 4px}
+.small{font-size:13px;color:var(--mut)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:#f1ece8;color:var(--dark)}
+.sr{position:absolute;left:-9999px}
+@media (max-width:780px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh}
+ .hdr svg{display:none}
+ .view.on{flex-direction:column}
+ .stage{overflow:visible}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.dec{display:flex;gap:12px;align-items:center;background:#26262b;color:#fff;border-radius:12px;padding:7px 12px;font-size:13.5px;line-height:1.3}
+.dec svg{flex:0 0 auto;width:36px;height:36px}
+.dec b{color:#f3c9cb}
+.people{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;justify-content:space-between}
+.person{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:6px 10px}
+.person .av{flex:0 0 auto;width:34px;height:34px}
+.person .who{flex:0 0 150px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .who b{font-size:14px}.person .who span{display:block;font-size:12px;color:var(--mut)}
+.seg{display:flex;gap:6px;flex:0 0 auto}
+.seg button{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:5px 8px;font-weight:600;font-size:12.5px}
+.seg button:hover{border-color:var(--red)}
+.seg button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg button.on.D{background:var(--red);border-color:var(--red)}
+.person .note{flex:1 1 100%;font-size:12px;line-height:1.3;min-width:0;padding-left:44px}.person .note:empty{display:none}.person .seg{margin-left:auto}
+.person.ok{border-color:#b6dec6;background:var(--okbg)}
+.person.bad{border-color:#efc2bd;background:var(--badbg)}
+.side{flex:0 0 230px;display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.slot{padding:7px 11px}
+.opts{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:4px 9px;text-align:left;font-size:12.5px;line-height:1.3}
+.opt:hover:not(:disabled){border-color:var(--red)}
+.opt.sel{border-color:var(--ink);background:#f6f3f0}
+.opt.q2{border-color:var(--ok);background:var(--okbg)}.opt.q1{border-color:var(--gold);background:var(--goldbg)}.opt.q0{border-color:var(--bad);background:var(--badbg)}
+.msgwrap{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;justify-content:space-between}
+.slot .h2{font-size:14px;margin:0}
+.mock{overflow:hidden}.mock p{margin:0 0 5px;font-size:13.5px}
+.mock{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14.5px;flex:1;min-height:0}
+.mock .bar{display:flex;gap:6px;margin-bottom:6px}.mock .bar i{width:10px;height:10px;border-radius:50%;background:#e4e1dd;display:block}
+.mock .ph{color:#a6a19b;font-style:italic}
+@media (max-width:920px){.person .who span{display:none}.person .who{flex-basis:64px}}
+@media (max-width:780px){.side{flex-basis:auto}.person{flex-wrap:wrap}.person .who{flex-basis:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="hdr">
+  <div>
+   <div class="eyebrow">ORGS 580 Strategic Thinking &middot; Week 6</div>
+   <h1>Who Has the D?</h1>
+   <p>Clarify decision roles, then frame and communicate a decision that changes strategy.</p>
+  </div>
+  <svg viewBox="0 0 260 70" role="img" aria-label="Illustration: a decision node connected to four role nodes">
+   <g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M130 35L60 12M130 35L60 58M130 35L200 12M130 35L200 58"/></g>
+   <circle cx="130" cy="35" r="19" fill="#d34147" stroke="#fff" stroke-width="2.5"/><text x="130" y="42" text-anchor="middle" font-size="20" font-weight="800" fill="#fff" font-family="Segoe UI,Arial,sans-serif">D</text>
+   <g fill="#fff" stroke="#f3c9cb" stroke-width="2"><circle cx="60" cy="12" r="9"/><circle cx="60" cy="58" r="9"/><circle cx="200" cy="12" r="9"/><circle cx="200" cy="58" r="9"/></g>
+   <g font-size="10" font-weight="800" fill="#a8353a" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif"><text x="60" y="16">R</text><text x="60" y="62">I</text><text x="200" y="16">I</text><text x="200" y="62">E</text></g>
+  </svg>
+ </header>
+ <nav class="nav" aria-label="Activity steps">
+  <button id="t1" class="on" onclick="go(1)"><span class="n">1</span>Assign decision roles</button>
+  <button id="t2" onclick="go(2)" disabled><span class="n">2</span>Frame the message</button>
+ </nav>
+ <main class="stage">
+  <div class="dec">
+   <svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#d34147"/><path d="M23 10v10M23 20L13 30M23 20l10 10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="13" cy="33" r="3.5" fill="#fff"/><circle cx="33" cy="33" r="3.5" fill="#fff"/></svg>
+   <div><div class="small" style="color:#d9d6d2">The decision &middot; Northgate Press</div>
+   <div>Retire the print catalogue line (<b>35% of revenue</b>) and redirect those funds into digital subscriptions. Reader habits have changed, and the plan&rsquo;s assumptions no longer hold.</div></div>
+  </div>
+
+  <section id="v1" class="view on">
+   <div class="people" id="people"></div>
+   <div class="side">
+    <div class="card" style="text-align:center">
+     <div class="h2">Decision speed</div>
+     <svg viewBox="0 0 200 118" style="width:100%;height:auto" role="img" aria-label="Decision speed gauge">
+      <path d="M20 100a80 80 0 0 1 160 0" fill="none" stroke="#e4e1dd" stroke-width="16" stroke-linecap="round"/>
+      <path id="arc" d="M20 100a80 80 0 0 1 160 0" fill="none" stroke="#d34147" stroke-width="16" stroke-linecap="round" stroke-dasharray="0 252" style="transition:stroke-dasharray .6s"/>
+      <g id="needle" style="transform-origin:100px 100px;transform:rotate(-90deg);transition:transform .6s"><path d="M100 100L100 38" stroke="#26262b" stroke-width="4" stroke-linecap="round"/></g>
+      <circle cx="100" cy="100" r="8" fill="#26262b"/>
+      <text x="14" y="116" font-size="10" fill="#626770">Stalled</text><text x="186" y="116" font-size="10" fill="#626770" text-anchor="end">Fast</text>
+     </svg>
+     <div class="small" id="gl">Assign a role to everyone, then check.</div>
+    </div>
+    <div class="fb info" style="font-size:13px"><b>Roles:</b> <b>Recommend</b> proposes a course. <b>Input</b> supplies expertise. <b>Decide</b> makes the call (only one). <b>Execute</b> carries it out.</div>
+    <button class="btn" id="chk" disabled>Check roles</button>
+    <button class="btn" id="to2" disabled onclick="go(2)">Frame the message &rarr;</button>
+   </div>
+  </section>
+
+  <section id="v2" class="view">
+   <div class="msgwrap">
+    <div class="fb info" style="padding:6px 10px;font-size:13px"><b>Step 2.</b> Give the <b>reason before details</b>, link to <b>mission</b>, and plan for <b>stakeholders</b>.</div>
+    <div class="card slot"><div class="h2">1. Open with&hellip;</div><div class="opts" id="o1"></div></div>
+    <div class="card slot"><div class="h2">2. Connect to mission&hellip;</div><div class="opts" id="o2"></div></div>
+    <div class="card slot"><div class="h2">3. Plan for stakeholders&hellip;</div><div class="opts" id="o3"></div></div>
+   </div>
+   <div class="side" style="flex-basis:330px">
+    <div class="mock"><div class="bar"><i></i><i></i><i></i></div><div class="small" style="margin-bottom:4px"><b>All-staff announcement</b></div><div id="mock"><span class="ph">Your message will appear here as you choose each part.</span></div></div>
+    <div class="fb gold" id="final">Choose all three parts to see your readiness.</div>
+   </div>
+  </section>
+ </main>
+</div>
+<script>
+// Reports height to the parent page (used only if the host listens); layout itself never needs a second scrollbar.
+(function(){function send(){try{var h=Math.ceil(document.documentElement.scrollHeight);parent.postMessage({subject:'lti.frameResize',height:h},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);})();
+
+var P=[
+ ['Chief Executive Officer','CEO','D','The CEO owns direction and the final call. One named person has the D, or decisions stall.','#a8353a'],
+ ['Director of Strategy','Strategy','R','The strategy lead analyzes the shifted assumptions and proposes a course. Recommending is not deciding.','#2f6fa8'],
+ ['Chief Financial Officer','CFO','I','Finance supplies key revenue and investment data. Input is not the decision.','#2f7d7a'],
+ ['Sales Manager, Catalogue Line','Sales','I','The front line knows customers and real impact. Their input improves the decision.','#d2762b'],
+ ['Director of Operations','Ops','E','Operations carries out the transition: closing the line and launching digital.','#7b4fa3']
+];
+var LAB={R:'Recommend',I:'Input',D:'Decide',E:'Execute'};
+var pick={},checked=false;
+function go(n){document.querySelector('.dec').style.display=n==2?'none':'flex';document.getElementById('v1').classList.toggle('on',n==1);document.getElementById('v2').classList.toggle('on',n==2);document.getElementById('t1').classList.toggle('on',n==1);document.getElementById('t2').classList.toggle('on',n==2)}
+function av(c,t){return'<svg class="av" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="'+c+'"/><circle cx="20" cy="15" r="6.5" fill="#fff"/><path d="M7 35c2-8 8-11 13-11s11 3 13 11" fill="#fff"/></svg>'}
+function drawPeople(){document.getElementById('people').innerHTML=P.map(function(p,i){var s=pick[i],st='';
+  if(checked){st=s===p[2]?' ok':' bad'}
+  return'<div class="card person'+st+'" id="p'+i+'">'+av(p[4])+'<div class="who"><b>'+p[1]+'</b><span>'+p[0]+'</span></div><div class="seg" data-i="'+i+'">'+['R','I','D','E'].map(function(r){return'<button class="'+r+(s===r?' on':'')+'" data-r="'+r+'" aria-pressed="'+(s===r)+'">'+LAB[r]+'</button>'}).join('')+'</div><div class="note" id="n'+i+'">'+(checked?(s===p[2]?'<b>Right.</b> ':'<b>Think again.</b> ')+p[3]:'')+'</div></div>'}).join('');
+ document.querySelectorAll('.seg button').forEach(function(b){b.onclick=function(){var i=+b.parentNode.dataset.i,r=b.dataset.r;if(pick[i]===r)delete pick[i];else pick[i]=r;checked=false;document.getElementById('to2').disabled=true;drawPeople();upd()}})}
+function upd(){document.getElementById('chk').disabled=Object.keys(pick).length<P.length}
+function gauge(pct,txt){document.getElementById('arc').setAttribute('stroke-dasharray',(252*pct/100)+' 252');document.getElementById('needle').style.transform='rotate('+(-90+180*pct/100)+'deg)';document.getElementById('gl').textContent=txt}
+var speed=0;
+document.getElementById('chk').onclick=function(){checked=true;var ok=0,ds=0;P.forEach(function(p,i){if(pick[i]===p[2])ok++;if(pick[i]==='D')ds++});
+ speed=Math.round(100*ok/P.length);if(ds!==1)speed=Math.min(speed,40);
+ drawPeople();
+ var t=ds===0?'No one has the D: the decision stalls.':ds>1?'Several people have the D: confusion and delay.':ok==P.length?'Clear roles. The decision moves fast.':ok>=3?'Mostly clear. A few roles are blurry.':'Roles are unclear. Expect delays.';
+ gauge(speed,speed+'% \u2014 '+t);
+ document.getElementById('chk').disabled=ok==P.length;
+ if(ok>=3){document.getElementById('to2').disabled=false;document.getElementById('t1').classList.add('done');document.getElementById('t2').disabled=false}};
+var O=[
+ [['The print catalogue line will be closed effective Monday. Details follow below.',0,'Details first leaves people asking why.'],['Our readers have changed how they buy, and the assumptions behind our plan no longer hold. That is why we are changing course.',2,'Reason before details. People can follow the logic.'],['After careful review by senior leaders, a decision has been made.',1,'Mentions a process, but still not the reason.']],
+ [['This is simply a cost-saving measure.',0,'Disconnected from purpose. Staff will read this as retreat.'],['This move protects our mission of connecting communities with local stories by meeting readers where they are.',2,'Ties the change to mission and vision.'],['Our competitors have already made this move.',1,'Gives context but not purpose.']],
+ [['Staff will be told individually as needed.',0,'No plan for stakeholders to respond.'],['Managers will brief teams this week, and open sessions will let you ask questions before the transition plan is final.',2,'Plans how stakeholders will hear and respond.'],['Questions can be sent to HR after the transition.',1,'Offers a channel, but too late to shape anything.']]
+];
+var sel=[null,null,null],lastK=null;
+function drawO(){[0,1,2].forEach(function(k){document.getElementById('o'+(k+1)).innerHTML=O[k].map(function(o,j){var c='opt';if(sel[k]!==null){if(sel[k]===j)c+=' sel q'+o[1]}return'<button class="'+c+'" data-k="'+k+'" data-j="'+j+'">'+o[0]+'</button>'}).join('')});
+ document.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){sel[+b.dataset.k]=+b.dataset.j;lastK=+b.dataset.k;drawO();mock()}})}
+function mock(){var m=document.getElementById('mock'),parts=sel.map(function(s,k){return s===null?null:O[k][s][0]});
+ if(parts.every(function(x){return x===null})){m.innerHTML='<span class="ph">Your message will appear here as you choose each part.</span>';return}
+ m.innerHTML=parts.map(function(x,k){return x?'<p>'+x+'</p>':'<p class="ph">(part '+(k+1)+' not chosen)</p>'}).join('');
+ var f=document.getElementById('final');
+ var lf=(lastK!==null&&sel[lastK]!==null)?'<div style="font-size:12.5px;margin-top:4px"><b>Why:</b> '+O[lastK][sel[lastK]][2]+'</div>':'';
+ if(sel.indexOf(null)>-1){f.className='fb gold';f.innerHTML='Choose all three parts to see your readiness.'+lf;return}
+ var pts=0;sel.forEach(function(s,k){pts+=O[k][s][1]});
+ var cm=Math.round(100*pts/6),total=Math.round((speed+cm)/2);
+ f.className='fb '+(cm>=100?'ok':cm>=60?'gold':'bad');
+ f.innerHTML='<b>Communication '+cm+'%</b> &middot; role clarity '+speed+'% &middot; <b>readiness '+total+'%</b><br>'+(cm<100?'Swap an option to improve your message.':'Clear roles and a clear message let a hard decision land well.')+lf}
+drawPeople();drawO();
+</script>
+</body>
+</html>
