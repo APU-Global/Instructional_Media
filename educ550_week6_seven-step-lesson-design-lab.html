@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 550 | Week 6 | Seven-Step Lesson Design Lab</title>
+<style>:root{
+  --red:#d34147;--red-dk:#a8353a;--ink:#1a1a1a;--ink2:#444;--paper:#ffffff;--warm:#edebe8;--warm2:#f7f5f2;
+  --ok:#2e7d4f;--ok-bg:#e6f4ea;--bad:#b3261e;--bad-bg:#fdecea;--line:#d9d5cf;
+}
+@media (prefers-color-scheme:dark){
+  :root{--ink:#f2f0ed;--ink2:#cfcac3;--paper:#1f1f1f;--warm:#2b2a28;--warm2:#252422;--line:#4a4743;--ok-bg:#16301f;--bad-bg:#3a1b19;--ok:#6fcf97;--bad:#ff8a80;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column;max-width:1000px;margin:0 auto}
+header.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;background:#000;color:#fff;padding:10px 18px;border-bottom:4px solid var(--red)}
+header.hero svg.logo{flex:0 0 64px;width:64px;height:64px}
+header.hero .t small{display:block;color:#f3b3b6;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-weight:700}
+header.hero h1{margin:0;font-size:22px;line-height:1.15}
+nav.steps{flex:0 0 auto;display:flex;gap:6px;background:var(--warm);padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav.steps button{flex:1 1 0;min-width:110px;border:2px solid transparent;background:var(--paper);color:var(--ink);padding:7px 8px;border-radius:999px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+nav.steps button .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink2);color:var(--paper);font-size:12px;margin-right:6px}
+nav.steps button.active{background:var(--red);color:#fff;border-color:var(--red-dk)}
+nav.steps button.active .n{background:#fff;color:var(--red-dk)}
+nav.steps button.done .n{background:var(--ok);color:#fff}
+/* ONE scroll region only: it scrolls solely when the frame is shorter than the content */
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 18px 18px;scrollbar-width:thin}
+.panel{display:none}.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{margin:0 0 4px;font-size:20px}
+p.lead{margin:0 0 10px;color:var(--ink2)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--red-dk)}.btn.ghost{background:var(--warm);color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.card{background:var(--warm2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px;display:none}
+.fb.show{display:block}.fb.good{background:var(--ok-bg);border-left:5px solid var(--ok)}.fb.try{background:var(--bad-bg);border-left:5px solid var(--bad)}
+.fb.info{background:var(--warm);border-left:5px solid var(--red)}
+.score{margin-left:auto;font-weight:700;color:var(--red-dk)}
+.bottom{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #2b6cb0;outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){header.hero h1{font-size:18px}header.hero svg.logo{display:none}nav.steps button{font-size:12.5px;min-width:90px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+header.hero .score{color:#fff;background:var(--red);padding:4px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.cls{display:grid;gap:8px}
+.cls-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--warm2);border:2px solid var(--line);border-radius:12px;padding:9px 12px}
+.cls-row.right{border-color:var(--ok);background:var(--ok-bg)}.cls-row.wrong{border-color:var(--bad)}
+.cls-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cls-btns button{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.cls-btns button:hover:not(:disabled){border-color:var(--red);color:var(--red-dk)}
+.cls-btns button:disabled{opacity:.4;cursor:default}.cls-btns button.picked{opacity:1;background:var(--ok);color:#fff;border-color:var(--ok)}
+.cls-why{grid-column:1/-1;font-size:14px;display:none}.cls-why.show{display:block}.cls-why.ok{color:var(--ok)}.cls-why.bad{color:var(--bad)}
+.cls-text{font-size:15.5px}
+@media (max-width:640px){.cls-row{grid-template-columns:1fr}.cls-btns{justify-content:flex-start}}
+.qz-head{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--red-dk);font-weight:800}
+.qz-q{font-size:17px;font-weight:600;margin:4px 0 10px}
+.qz-opts{display:grid;gap:8px}
+.qz-opt{text-align:left;font:inherit;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer}
+.qz-opt:hover:not(:disabled){border-color:var(--red)}.qz-opt.right{background:var(--ok-bg);border-color:var(--ok)}.qz-opt.wrong{background:var(--bad-bg);border-color:var(--bad);opacity:.7}
+.ord-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.ord-item{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;border:2px dashed var(--line);background:var(--paper);color:var(--ink);padding:9px 12px;border-radius:12px;cursor:pointer}
+.ord-item .ord-n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--red-dk)}
+.ord-item.placed{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}.ord-item.placed .ord-n{background:var(--ok);color:#fff}
+.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.finish{display:none;margin-top:12px}.finish.show{display:block}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.take div{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:8px 10px;font-size:14.5px}
+.take b{display:block;color:var(--red-dk)}
+.illus{flex:0 0 auto}.illus svg{max-width:100%;height:auto;display:block}
+
+.cls.stack{gap:6px}.cls.stack .cls-row{grid-template-columns:1fr;padding:7px 12px;gap:4px}.cls.stack .cls-btns{justify-content:flex-start}.cls.stack .cls-text{font-size:15px}.cls.stack .cls-btns button{padding:3px 10px;font-size:13px}
+@media (max-width:640px){.row{flex-wrap:wrap!important}.row>*{flex:1 1 100%!important;width:auto!important;max-width:100%}.row>.illus.deco{display:none}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{font:inherit;font-size:13.5px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 11px;cursor:pointer}.chips button.sel{background:var(--red);color:#fff;border-color:var(--red-dk)}
+.form{display:grid;gap:7px}.form label{font-weight:700;font-size:13.5px;display:grid;gap:2px}.form input,.form select,.form textarea,.fld{font:inherit;font-weight:400;padding:6px 9px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%}
+.chk{list-style:none;padding:0;margin:6px 0 10px;font-size:14px}.chk li{margin:2px 0}.chk li::before{content:"○ ";color:var(--ink2)}.chk li.ok::before{content:"✔ ";color:var(--ok);font-weight:800}
+.outbox{white-space:pre-wrap;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.5}
+.tok{font:inherit;font-size:16px;border:2px solid transparent;background:transparent;color:var(--ink);border-radius:8px;padding:1px 5px;margin:1px;cursor:pointer}.tok:hover{border-color:var(--line)}.tok.do{background:#000;color:#fff}.tok.know{background:var(--red);color:#fff}
+svg g[tabindex]:focus{outline:none}svg g[tabindex]:focus-visible circle,svg g[tabindex]:focus-visible polygon{stroke:#2b6cb0;stroke-width:4}
+
+.st{cursor:pointer}.st circle{transition:transform .15s}.st:hover circle,.st:focus circle{filter:brightness(1.15)}.st.sel circle{stroke:#000;stroke-width:4}.st text.n{font:800 20px "Segoe UI",Arial;fill:#fff;pointer-events:none}.st text.l{font:700 11.5px "Segoe UI",Arial;fill:var(--ink);pointer-events:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px}.pgrid button{text-align:left;font:inherit;font-size:14px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:6px 10px;cursor:pointer;display:grid;gap:1px}.pgrid button small{color:var(--ink2);font-size:12px}.pgrid button.sel{border-color:var(--red);background:var(--warm);box-shadow:inset 5px 0 0 var(--red)}
+.badge{display:inline-block;background:var(--red);color:#fff;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:700}</style></head>
+<body><div class="app">
+<header class="hero"><svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Seven steps"><rect width="64" height="64" rx="12" fill="#d34147"/><path d="M8 48h9V40h9V32h9V24h9V16h12v32z" fill="#fff"/><path d="M8 48h9V40h9V32h9V24h9V16" fill="none" stroke="#a8353a" stroke-width="3"/></svg><div class="t"><small>EDUC 550 · Week 6</small><h1>Seven-Step Lesson Design Lab</h1></div><div class="score" id="score" style="margin-left:auto" aria-live="polite">★ 0 / 0</div></header>
+<nav class="steps" role="tablist" aria-label="Activity steps"><button type="button" role="tab" class=active aria-selected="true"><span class="n">1</span>Seven Steps</button><button type="button" role="tab" aria-selected="false"><span class="n">2</span>Place Moves</button><button type="button" role="tab" aria-selected="false"><span class="n">3</span>Differentiate</button><button type="button" role="tab" aria-selected="false"><span class="n">4</span>Assessment Menu</button></nav>
+<main>
+<section class="panel active" id="p0">
+ <h2>Walk the seven-step lesson design</h2>
+ <p class="lead">Part 2 uses Madeline Hunter’s seven steps (11–18 slides in all). Tap each step. Visit all seven to continue.</p>
+ <div class="illus"><svg id="road" viewBox="0 0 700 120" role="group" aria-label="Seven lesson design steps" style="width:100%;max-height:120px"></svg></div>
+ <div class="card" id="stepinfo" style="margin-top:6px;min-height:120px"><p style="margin:0;color:var(--ink2)">👆 Select a step to begin.</p></div>
+ <div class="bottom"><span id="seen" style="font-size:14px;color:var(--ink2)">Steps explored: 0 / 7</span><button class="btn" id="n0" style="display:none;margin-left:auto">Next: Place the moves →</button></div>
+</section>
+
+<section class="panel" id="p1">
+ <h2>Which step is this teacher move?</h2>
+ <p class="lead"><b>Lesson:</b> explaining cause and effect from a historical text. Place each move in its step.</p>
+ <div id="c1"></div>
+ <div class="bottom"><button class="btn" id="n1" style="display:none">Next: Differentiate →</button></div>
+</section>
+
+<section class="panel" id="p2">
+ <h2>Differentiate for diverse learners</h2>
+ <p class="lead">Part 2 asks how you check understanding, and how you support English learners and students who may struggle with reading and writing, such as students with dyslexia.</p>
+ <div id="c2"></div>
+ <div class="bottom"><button class="btn" id="n2" style="display:none">Next: Build my assessment menu →</button></div>
+</section>
+
+<section class="panel" id="p3">
+ <div id="amForm">
+  <h2>Build your assessment menu</h2>
+  <p class="lead">Offer <b>at least 4</b> options. Each product is worth the <b>same value</b>. Then plan supports and remediation.</p>
+  <div id="prods"></div>
+  <div class="row" style="flex-wrap:nowrap;margin-top:8px">
+   <div style="flex:1 1 50%;min-width:0"><b style="font-size:14px">Supports for English learners (pick 1+)</b><div id="elc" style="margin-top:4px"></div></div>
+   <div style="flex:1 1 50%;min-width:0"><b style="font-size:14px">Supports for students who struggle (e.g., dyslexia) (pick 1+)</b><div id="dyc" style="margin-top:4px"></div></div>
+  </div>
+  <div class="row" style="margin-top:8px;align-items:center"><label style="font-weight:700;font-size:13.5px;flex:0 0 auto" for="remed">If a student misses the target, I will…</label><input id="remed" class="fld" maxlength="160" style="flex:1 1 260px" placeholder="e.g., reteach in a small group with the graphic organizer, then reassess"></div>
+  <div class="row" style="margin-top:6px;align-items:center"><label style="font-size:14px;flex:1 1 auto"><input type="checkbox" id="eq"> All products carry the same point value</label><span id="mstat" style="font-size:14px;color:var(--ink2)"></span><button class="btn" id="gen" disabled>Build my plan slide</button></div>
+ </div>
+ <div id="amOut" style="display:none"><h2>Your assessment plan slide</h2><div class="outbox" id="outtxt"></div><div class="bottom"><button class="btn ghost" id="back">← Edit</button><button class="btn" id="copy">📋 Copy</button><span id="copied" style="font-size:13px;color:var(--ok)"></span></div></div>
+ <div class="finish card" id="fin"><h2 style="font-size:18px">🎉 Week 6 complete</h2><div class="take"><div><b>Seven steps, in order</b>Review through independent practice.</div><div><b>Check content and language</b>Separate what students know from how they read and write it.</div><div><b>Offer a menu</b>Four or more equal-value products.</div><div><b>Plan supports</b>Differentiate and remediate for EL and struggling readers.</div></div></div>
+</section>
+</main></div>
+<script>/* shared: tabs + frame-height reporting (no scrollbar fights) */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function showPanel(i){
+  $$('.panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  $$('nav.steps button').forEach((b,k)=>{b.classList.toggle('active',k===i);b.setAttribute('aria-selected',k===i)});
+  $('main').scrollTop=0;
+}
+function markDone(i){const b=$$('nav.steps button')[i];if(b)b.classList.add('done')}
+function fb(el,type,html){el.className='fb show '+type;el.innerHTML=html}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav.steps button').forEach((b,i)=>b.addEventListener('click',()=>showPanel(i)));
+/* If the host page listens, tell it our natural height so the iframe can match (optional). */
+function reportHeight(){try{const h=Math.ceil($('main').scrollHeight+$('header.hero').offsetHeight+$('nav.steps').offsetHeight);
+  parent.postMessage({subject:'lti.frameResize',height:h},'*');parent.postMessage({type:'educ550-resize',height:h},'*')}catch(e){}}
+addEventListener('load',reportHeight);addEventListener('resize',reportHeight);
+new MutationObserver(reportHeight).observe(document.body,{subtree:true,attributes:true,childList:true});
+
+/* ---------- scoring ---------- */
+const SCORE={got:0,total:0};
+function addScore(got,total){SCORE.got+=got;SCORE.total+=total;const s=$('#score');if(s)s.textContent='★ '+SCORE.got+' / '+SCORE.total}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- classify: sort each item into a category ---------- */
+function classify(root,items,cats,opts={}){
+  root.innerHTML='';let right=0,firstTry=0;const total=items.length;
+  const wrap=document.createElement('div');wrap.className='cls'+(opts.stack?' stack':'');
+  items.forEach((it,idx)=>{
+    const row=document.createElement('div');row.className='cls-row';
+    row.innerHTML='<div class="cls-text">'+(it.html||esc(it.text))+'</div><div class="cls-btns"></div><div class="cls-why"></div>';
+    const btns=row.querySelector('.cls-btns'),why=row.querySelector('.cls-why');let missed=false,done=false;
+    cats.forEach(c=>{
+      const b=document.createElement('button');b.type='button';b.textContent=c.label;b.dataset.cat=c.id;
+      if(c.style)b.setAttribute('style',c.style);if(c.title)b.title=c.title;
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(c.id===it.ans){done=true;right++;if(!missed)firstTry++;
+          row.classList.remove('wrong');row.classList.add('right');
+          $$('button',btns).forEach(x=>{x.disabled=true;x.classList.toggle('picked',x===b)});
+          why.innerHTML='✔ '+(it.why||'Correct.');why.className='cls-why show ok';
+          if(right===total){addScore(firstTry,total);opts.onDone&&opts.onDone(firstTry,total)}
+        }else{missed=true;row.classList.add('wrong');b.disabled=true;
+          why.innerHTML='✖ Not quite'+(it.hint?' — '+esc(it.hint):' — try another category.');why.className='cls-why show bad'}
+      });btns.appendChild(b)});
+    wrap.appendChild(row)});
+  root.appendChild(wrap)}
+
+/* ---------- quiz: one multiple-choice question at a time ---------- */
+function quiz(root,items,opts={}){
+  let i=0,firstTry=0;const total=items.length;
+  function render(){
+    const it=items[i];let missed=false,done=false;
+    root.innerHTML='<div class="qz-head">Question '+(i+1)+' of '+total+'</div><div class="qz-q">'+(it.html||esc(it.q))+'</div><div class="qz-opts"></div><div class="fb"></div><div class="bottom"><button class="btn" type="button" id="qz-next" style="display:none"></button></div>';
+    const o=$('.qz-opts',root),f=$('.fb',root),nx=$('#qz-next',root);
+    shuffle(it.opts.map((t,k)=>({t,k}))).forEach(({t,k})=>{
+      const b=document.createElement('button');b.type='button';b.className='qz-opt';b.innerHTML=esc(t);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(k===it.ans){done=true;if(!missed)firstTry++;b.classList.add('right');$$('.qz-opt',o).forEach(x=>x.disabled=true);
+          fb(f,'good','<b>Yes!</b> '+(it.why||''));nx.style.display='';nx.textContent=i<total-1?'Next question →':'Finish ✓';
+        }else{missed=true;b.classList.add('wrong');b.disabled=true;fb(f,'try','<b>Not the best fit.</b> '+(it.hints&&it.hints[k]?it.hints[k]:'Look again at the purpose of the task.'))}
+      });o.appendChild(b)});
+    nx.addEventListener('click',()=>{if(i<total-1){i++;render()}else{addScore(firstTry,total);root.innerHTML='<div class="fb show good"><b>Step complete!</b> You earned '+firstTry+' of '+total+' on the first try.</div>';opts.onDone&&opts.onDone(firstTry,total)}});
+  }
+  render()}
+
+/* ---------- order: click items in the correct sequence ---------- */
+function orderIt(root,steps,opts={}){
+  const shuf=shuffle(steps.map((t,k)=>({t,k})));let next=0,miss=0;
+  root.innerHTML='<div class="ord-grid"></div><div class="fb"></div>';
+  const g=$('.ord-grid',root),f=$('.fb',root);
+  shuf.forEach(({t,k})=>{const b=document.createElement('button');b.type='button';b.className='ord-item';b.innerHTML='<span class="ord-n"></span>'+esc(t);
+    b.addEventListener('click',()=>{
+      if(b.classList.contains('placed'))return;
+      if(k===next){b.classList.add('placed');b.querySelector('.ord-n').textContent=next+1;next++;fb(f,'info','Good — that comes '+(next===1?'first':'next')+'. '+(steps.length-next)+' to go.');
+        if(next===steps.length){const pts=Math.max(0,1-(miss>2?1:0));addScore(pts,1);fb(f,'good','<b>Sequence complete!</b> '+(opts.done||''));opts.onDone&&opts.onDone()}}
+      else{miss++;b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb(f,'try','Not yet — what has to be decided <i>before</i> that? Try a different step.')}});
+    g.appendChild(b)})}
+
+async function copyTxt(t,el){try{await navigator.clipboard.writeText(t);el.textContent='Copied!'}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');el.textContent='Copied!'}catch(_){el.textContent='Select the text and copy it manually.'}ta.remove()}}
+function chipGroup(root,labels,onChange){const sel=new Set();root.innerHTML='';root.classList.add('chips');
+  labels.forEach(l=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed','false');
+    b.onclick=()=>{b.classList.toggle('sel');const on=b.classList.contains('sel');b.setAttribute('aria-pressed',on);on?sel.add(l):sel.delete(l);onChange&&onChange(sel)};root.appendChild(b)});return sel}
+
+
+const STEPS=[
+ {n:'Review',s:'Typically at the start',d:'Review previous material that is relevant to this lesson. What do students need to know before this lesson?'},
+ {n:'Anticipatory Set',s:'Getting Students Set to Learn · 3–5 slides (with Step 3)',d:'Get students to focus their attention, interested and prepared for what they are about to learn.'},
+ {n:'Objective',s:'Getting Students Set to Learn · 3–5 slides (with Step 2)',d:'State the standards-based (content and Common Core literacy) essential question(s), vocabulary key terms, objective, and learning targets.'},
+ {n:'Input & Modeling',s:'Instruction · 3–5 slides',d:'Present new information, then use examples to show what is expected as an end product. Differentiate for diverse learners; connect literacy standards and academic language.'},
+ {n:'Checking Understanding',s:'Checking for Understanding · 3–5 slides (with Step 6)',d:'Determine whether students are making sense of the material as it is presented. Check content separately from understanding the reading, writing, and academic language.'},
+ {n:'Guided Practice',s:'Checking for Understanding · 3–5 slides (with Step 5)',d:'Right after instruction, students apply or practice what they learned and get immediate feedback.'},
+ {n:'Independent Practice',s:'Independent Practice · 2–3 slides',d:'Students further apply the new material, in class or as homework, with a short gap before feedback. Differentiate for diverse learners.'}];
+$('#road').innerHTML='<path d="M40 52H660" stroke="#d9d5cf" stroke-width="8" stroke-linecap="round"/>'+STEPS.map((s,i)=>{const x=50+i*100;return `<g class="st" tabindex="0" role="button" aria-label="Step ${i+1}: ${s.n}" data-i="${i}"><circle cx="${x}" cy="52" r="26" fill="${i%2?'#a8353a':'#d34147'}"/><text class="n" x="${x}" y="60" text-anchor="middle">${i+1}</text><text class="l" x="${x}" y="100" text-anchor="middle">${['Review','Anticipatory','Objective','Modeling','Checking','Guided','Independent'][i]}</text></g>`}).join('');
+const seen=new Set();
+function showStep(i){const S=STEPS[i];seen.add(i);$$('#road .st').forEach(g=>g.classList.toggle('sel',+g.dataset.i===i));
+ $('#stepinfo').innerHTML=`<span class="badge">Step ${i+1} of 7</span> <span style="font-size:13px;color:var(--ink2)">${S.s}</span><h2 style="margin:4px 0 2px">${S.n}</h2><p style="margin:0">${S.d}</p>`;
+ $('#seen').textContent='Steps explored: '+seen.size+' / 7';if(seen.size===7){markDone(0);$('#n0').style.display=''}}
+$$('#road .st').forEach(g=>{g.onclick=()=>showStep(+g.dataset.i);g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showStep(+g.dataset.i)}}});
+$('#n0').onclick=()=>showPanel(1);
+const CATS=['1 Review','2 Anticipatory','3 Objective','4 Input','5 Checking','6 Guided','7 Independent'].map((l,i)=>({id:''+i,label:l,title:'Step '+(i+1)+': '+STEPS[i].n}));
+classify($('#c1'),[
+ {text:'Partners recall: “What did we learn yesterday about reading a timeline?”',ans:'0',why:'Reviewing relevant prior knowledge.'},
+ {text:'The teacher shows a sealed bag with a mystery artifact and asks students to predict what it is.',ans:'1',why:'Focuses attention and builds interest.'},
+ {text:'The teacher posts “I can explain how one event led to another” and previews “cause” and “effect.”',ans:'2',why:'Stating the objective, learning target, and key terms.'},
+ {text:'The teacher models a cause-and-effect chart on a sample paragraph and shows a finished example.',ans:'3',why:'Presenting new information with modeling and examples.'},
+ {text:'Mid-lesson, students show fist-to-five and the teacher asks different questions to check the content and the vocabulary.',ans:'4',why:'Checking understanding while teaching, separating content from language.'},
+ {text:'Groups complete a chart for a new paragraph while the teacher circulates and gives feedback.',ans:'5',why:'Guided practice with immediate feedback.'},
+ {text:'Each student charts a cause-and-effect chain for a new event of their choice.',ans:'6',why:'Independent practice applying the skill.'}
+],CATS,{stack:1,onDone:()=>{markDone(1);$('#n1').style.display=''}});
+$('#n1').onclick=()=>showPanel(2);
+quiz($('#c2'),[
+ {q:'A student gives a wrong answer on a written exit card. How can you tell whether the problem is the content or the reading and writing?',opts:['Offer an oral or drawn response to the same question and compare.','Reteach the whole lesson to everyone.','Mark it wrong and move on.'],ans:0,
+  why:'A different mode of response separates what the student knows from how they read or write it.',hints:{1:'You do not yet know what needs reteaching.',2:'This gives the student no way to show what they know.'}},
+ {q:'Which set of supports best fits an English learner during Guided Practice?',opts:['Sentence frames, visuals, and a partner to rehearse with','Longer independent reading with no support','A faster pace so the student keeps up'],ans:0,
+  why:'These scaffolds build the language needed to do the thinking.',hints:{1:'No language support makes the task harder.',2:'Speed does not build language.'}},
+ {q:'For a student who may have dyslexia, which choice best supports remediation in this lesson?',opts:['An audio version of the text, chunked tasks, and an oral response option','Extra copies of the same worksheet','Removing the reading from the lesson'],ans:0,
+  why:'These supports reduce the reading and writing barrier while keeping the same learning target. Refer to the California Dyslexia Guidelines.',hints:{1:'Repeating the same barrier will not help.',2:'The target stays; the barrier is what you reduce.'}}
+],{onDone:()=>{markDone(2);$('#n2').style.display=''}});
+$('#n2').onclick=()=>showPanel(3);
+const P=[['Written assignment','print'],['Set of choral lyrics','print · oral'],['Slide deck','digital'],['Oral presentation','oral'],['Self-made video','multimedia'],['Play about a historical character','oral · performance'],['Illustrated comic or timeline','print · visual'],['Podcast or audio story','digital · oral']];
+const pset=new Set();
+P.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.innerHTML=p[0]+'<small>'+p[1]+'</small>';b.onclick=()=>{b.classList.toggle('sel');pset.has(i)?pset.delete(i):pset.add(i);mchk()};b.setAttribute('aria-pressed','false');$('#prods').appendChild(b)});
+$('#prods').className='pgrid';
+const EL=chipGroup($('#elc'),['Sentence frames and word banks','Home-language drafting or glossary','Oral rehearsal with a partner','Visual supports'],mchk);
+const DY=chipGroup($('#dyc'),['Speech-to-text or audio recording','Audio version of texts','Chunked tasks with a checklist','Extra time and oral response'],mchk);
+$('#eq').onchange=mchk;$('#remed').oninput=mchk;
+function mchk(){$$('#prods button').forEach(b=>b.setAttribute('aria-pressed',b.classList.contains('sel')));
+ const ok=pset.size>=4&&$('#eq').checked&&EL.size>=1&&DY.size>=1&&$('#remed').value.trim().length>=10;
+ $('#mstat').textContent='Options: '+pset.size+' / 4+ · EL: '+EL.size+' · Struggling readers: '+DY.size;$('#gen').disabled=!ok}
+mchk();
+$('#gen').onclick=()=>{const t='ASSESSMENT PLAN (same value for each product)\n\nStudent choice menu:\n'+[...pset].sort((a,b)=>a-b).map(i=>'• '+P[i][0]+' ('+P[i][1]+')').join('\n')+'\n\nDifferentiation for English learners:\n'+[...EL].map(x=>'• '+x).join('\n')+'\n\nSupport for students who struggle (e.g., dyslexia):\n'+[...DY].map(x=>'• '+x).join('\n')+'\n\nRemediation: If a student misses the target, I will '+$('#remed').value.trim()+'\n\nPrinciple: UDL, with multiple means of action and expression.';
+ $('#outtxt').textContent=t;$('#amForm').style.display='none';$('#amOut').style.display='';$('#fin').classList.add('show');markDone(3);if(!window.__g){window.__g=1;addScore(1,1)}};
+$('#back').onclick=()=>{$('#amOut').style.display='none';$('#amForm').style.display=''};
+$('#copy').onclick=()=>copyTxt($('#outtxt').textContent,$('#copied'));
+
+</script></body></html>

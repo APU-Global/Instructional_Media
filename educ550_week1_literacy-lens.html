@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 550 | Week 1 | Literacy Across the Disciplines</title>
+<style>:root{
+  --red:#d34147;--red-dk:#a8353a;--ink:#1a1a1a;--ink2:#444;--paper:#ffffff;--warm:#edebe8;--warm2:#f7f5f2;
+  --ok:#2e7d4f;--ok-bg:#e6f4ea;--bad:#b3261e;--bad-bg:#fdecea;--line:#d9d5cf;
+}
+@media (prefers-color-scheme:dark){
+  :root{--ink:#f2f0ed;--ink2:#cfcac3;--paper:#1f1f1f;--warm:#2b2a28;--warm2:#252422;--line:#4a4743;--ok-bg:#16301f;--bad-bg:#3a1b19;--ok:#6fcf97;--bad:#ff8a80;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column;max-width:1000px;margin:0 auto}
+header.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;background:#000;color:#fff;padding:10px 18px;border-bottom:4px solid var(--red)}
+header.hero svg.logo{flex:0 0 64px;width:64px;height:64px}
+header.hero .t small{display:block;color:#f3b3b6;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-weight:700}
+header.hero h1{margin:0;font-size:22px;line-height:1.15}
+nav.steps{flex:0 0 auto;display:flex;gap:6px;background:var(--warm);padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav.steps button{flex:1 1 0;min-width:110px;border:2px solid transparent;background:var(--paper);color:var(--ink);padding:7px 8px;border-radius:999px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+nav.steps button .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink2);color:var(--paper);font-size:12px;margin-right:6px}
+nav.steps button.active{background:var(--red);color:#fff;border-color:var(--red-dk)}
+nav.steps button.active .n{background:#fff;color:var(--red-dk)}
+nav.steps button.done .n{background:var(--ok);color:#fff}
+/* ONE scroll region only: it scrolls solely when the frame is shorter than the content */
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 18px 18px;scrollbar-width:thin}
+.panel{display:none}.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{margin:0 0 4px;font-size:20px}
+p.lead{margin:0 0 10px;color:var(--ink2)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--red-dk)}.btn.ghost{background:var(--warm);color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.card{background:var(--warm2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px;display:none}
+.fb.show{display:block}.fb.good{background:var(--ok-bg);border-left:5px solid var(--ok)}.fb.try{background:var(--bad-bg);border-left:5px solid var(--bad)}
+.fb.info{background:var(--warm);border-left:5px solid var(--red)}
+.score{margin-left:auto;font-weight:700;color:var(--red-dk)}
+.bottom{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #2b6cb0;outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){header.hero h1{font-size:18px}header.hero svg.logo{display:none}nav.steps button{font-size:12.5px;min-width:90px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+header.hero .score{color:#fff;background:var(--red);padding:4px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.cls{display:grid;gap:8px}
+.cls-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--warm2);border:2px solid var(--line);border-radius:12px;padding:9px 12px}
+.cls-row.right{border-color:var(--ok);background:var(--ok-bg)}.cls-row.wrong{border-color:var(--bad)}
+.cls-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cls-btns button{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.cls-btns button:hover:not(:disabled){border-color:var(--red);color:var(--red-dk)}
+.cls-btns button:disabled{opacity:.4;cursor:default}.cls-btns button.picked{opacity:1;background:var(--ok);color:#fff;border-color:var(--ok)}
+.cls-why{grid-column:1/-1;font-size:14px;display:none}.cls-why.show{display:block}.cls-why.ok{color:var(--ok)}.cls-why.bad{color:var(--bad)}
+.cls-text{font-size:15.5px}
+@media (max-width:640px){.cls-row{grid-template-columns:1fr}.cls-btns{justify-content:flex-start}}
+.qz-head{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--red-dk);font-weight:800}
+.qz-q{font-size:17px;font-weight:600;margin:4px 0 10px}
+.qz-opts{display:grid;gap:8px}
+.qz-opt{text-align:left;font:inherit;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer}
+.qz-opt:hover:not(:disabled){border-color:var(--red)}.qz-opt.right{background:var(--ok-bg);border-color:var(--ok)}.qz-opt.wrong{background:var(--bad-bg);border-color:var(--bad);opacity:.7}
+.ord-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.ord-item{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;border:2px dashed var(--line);background:var(--paper);color:var(--ink);padding:9px 12px;border-radius:12px;cursor:pointer}
+.ord-item .ord-n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--red-dk)}
+.ord-item.placed{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}.ord-item.placed .ord-n{background:var(--ok);color:#fff}
+.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.finish{display:none;margin-top:12px}.finish.show{display:block}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.take div{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:8px 10px;font-size:14.5px}
+.take b{display:block;color:var(--red-dk)}
+.illus{flex:0 0 auto}.illus svg{max-width:100%;height:auto;display:block}
+
+.cls.stack{gap:6px}.cls.stack .cls-row{grid-template-columns:1fr;padding:7px 12px;gap:4px}.cls.stack .cls-btns{justify-content:flex-start}.cls.stack .cls-text{font-size:15px}.cls.stack .cls-btns button{padding:3px 10px;font-size:13px}
+@media (max-width:640px){.row{flex-wrap:wrap!important}.row>*{flex:1 1 100%!important;width:auto!important;max-width:100%}.row>.illus.deco{display:none}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{font:inherit;font-size:13.5px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 11px;cursor:pointer}.chips button.sel{background:var(--red);color:#fff;border-color:var(--red-dk)}
+.form{display:grid;gap:7px}.form label{font-weight:700;font-size:13.5px;display:grid;gap:2px}.form input,.form select,.form textarea,.fld{font:inherit;font-weight:400;padding:6px 9px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%}
+.chk{list-style:none;padding:0;margin:6px 0 10px;font-size:14px}.chk li{margin:2px 0}.chk li::before{content:"○ ";color:var(--ink2)}.chk li.ok::before{content:"✔ ";color:var(--ok);font-weight:800}
+.outbox{white-space:pre-wrap;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.5}
+.tok{font:inherit;font-size:16px;border:2px solid transparent;background:transparent;color:var(--ink);border-radius:8px;padding:1px 5px;margin:1px;cursor:pointer}.tok:hover{border-color:var(--line)}.tok.do{background:#000;color:#fff}.tok.know{background:var(--red);color:#fff}
+svg g[tabindex]:focus{outline:none}svg g[tabindex]:focus-visible circle,svg g[tabindex]:focus-visible polygon{stroke:#2b6cb0;stroke-width:4}
+
+.vn{cursor:pointer}.vn circle{transition:fill-opacity .15s}.vn:hover circle,.vn:focus circle{fill-opacity:.95}.vn.sel circle{stroke:#000;stroke-width:3}.vn text{font:700 13px "Segoe UI",Arial;fill:#fff;pointer-events:none}
+.sk span{display:inline-block;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:1px 10px;margin:2px 3px 2px 0;font-size:13.5px}
+.rowf{display:grid;gap:4px;margin-bottom:6px}</style></head>
+<body><div class="app">
+<header class="hero"><svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Magnifier over an open book"><rect width="64" height="64" rx="12" fill="#d34147"/><path d="M10 20c8-3 14-2 20 2v26c-6-4-12-5-20-2z" fill="#fff"/><path d="M54 20c-8-3-14-2-20 2v26c6-4 12-5 20-2z" fill="#edebe8"/><circle cx="38" cy="34" r="10" fill="none" stroke="#000" stroke-width="4"/><path d="M45 42l9 9" stroke="#000" stroke-width="5" stroke-linecap="round"/></svg><div class="t"><small>EDUC 550 · Week 1</small><h1>Literacy Across the Disciplines</h1></div><div class="score" id="score" style="margin-left:auto" aria-live="polite">★ 0 / 0</div></header>
+<nav class="steps" role="tablist" aria-label="Activity steps"><button type="button" role="tab" class=active aria-selected="true"><span class="n">1</span>Skill Sets</button><button type="button" role="tab" aria-selected="false"><span class="n">2</span>Spot Support</button><button type="button" role="tab" aria-selected="false"><span class="n">3</span>Evidence</button><button type="button" role="tab" aria-selected="false"><span class="n">4</span>Plan Write-up</button></nav>
+<main>
+<section class="panel active" id="p0">
+ <h2>Three skill sets that make a discipline readable</h2>
+ <p class="lead">K–3 often focuses on learning to read; 4th grade and beyond on reading to learn. Tap each circle to explore the skills you will look for in your video.</p>
+ <div class="row" style="flex-wrap:nowrap">
+  <div class="illus" style="width:min(44%,330px)"><svg id="venn" viewBox="0 0 320 290" role="group" aria-label="Three overlapping skill sets"></svg></div>
+  <div class="card" id="info" style="flex:1 1 auto;min-height:220px"><p style="margin:0;color:var(--ink2)">👈 Select a circle. Visit all three to continue.</p></div>
+ </div>
+ <div class="bottom"><span id="seen" style="font-size:14px;color:var(--ink2)">Explored: 0 / 3</span><button class="btn" id="n0" style="display:none;margin-left:auto">Next: Spot the support →</button></div>
+</section>
+
+<section class="panel" id="p1">
+ <h2>Spot the literacy support</h2>
+ <p class="lead"><b>Scenario:</b> Ms. Rivera’s 3rd-grade social studies lesson on how our town began, using a historical photograph and a short text. Which skill set does each teacher move support most?</p>
+ <div id="c1"></div>
+ <div class="bottom"><button class="btn" id="n1" style="display:none">Next: Build strong evidence →</button></div>
+</section>
+
+<section class="panel" id="p2">
+ <h2>Evidence and next steps</h2>
+ <p class="lead">Your write-up needs specific evidence (what exactly the teacher did and said) and specific ideas for helping students with increasingly complex tasks.</p>
+ <div id="c2"></div>
+ <div class="bottom"><button class="btn" id="n2" style="display:none">Next: Plan my write-up →</button></div>
+</section>
+
+<section class="panel" id="p3">
+ <div id="plForm">
+  <h2>Plan your write-up</h2>
+  <p class="lead">Organize your notes from your video. This is a planner, not the paper: write the final in your own words (about 250–400 words, APA, at least one citation).</p>
+  <div class="form"><label>Video you watched (title and channel, for your citation)<input id="v_title" maxlength="140"></label></div>
+  <div class="row" style="flex-wrap:nowrap;margin-top:8px">
+   <div class="card" style="flex:1 1 50%;min-width:0"><b>Three literacy supports I saw</b><div id="sup" class="form" style="margin-top:6px"></div></div>
+   <div class="card" style="flex:1 1 50%;min-width:0"><b>Three skills to teach next</b><div id="gro" class="form" style="margin-top:6px"></div></div>
+  </div>
+  <div class="row" style="margin-top:8px;align-items:center"><ul class="chk" id="chk" style="margin:0;flex:1 1 60%"><li data-k="v">Video named for citation</li><li data-k="s">3 supports with a skill type and specific evidence</li><li data-k="g">3 growth areas with how I would teach each</li></ul><button class="btn" id="gen" disabled>Build my outline</button></div>
+ </div>
+ <div id="plOut" style="display:none"><h2>Your write-up outline</h2><div class="outbox" id="outtxt"></div><div class="bottom"><button class="btn ghost" id="back">← Edit</button><button class="btn" id="copy">📋 Copy outline</button><span id="copied" style="font-size:13px;color:var(--ok)"></span></div></div>
+ <div class="finish card" id="fin"><h2 style="font-size:18px">🎉 Week 1 complete</h2>
+  <div class="take"><div><b>Your experiences shape your teaching</b>Notice what made learning memorable.</div><div><b>Every teacher supports literacy</b>Foundational, language, and cognitive skills.</div><div><b>Evidence is specific</b>Say exactly what the teacher did and said.</div><div><b>Plan for complexity</b>Show how you would build up to harder texts.</div></div></div>
+</section>
+</main></div>
+<script>/* shared: tabs + frame-height reporting (no scrollbar fights) */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function showPanel(i){
+  $$('.panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  $$('nav.steps button').forEach((b,k)=>{b.classList.toggle('active',k===i);b.setAttribute('aria-selected',k===i)});
+  $('main').scrollTop=0;
+}
+function markDone(i){const b=$$('nav.steps button')[i];if(b)b.classList.add('done')}
+function fb(el,type,html){el.className='fb show '+type;el.innerHTML=html}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav.steps button').forEach((b,i)=>b.addEventListener('click',()=>showPanel(i)));
+/* If the host page listens, tell it our natural height so the iframe can match (optional). */
+function reportHeight(){try{const h=Math.ceil($('main').scrollHeight+$('header.hero').offsetHeight+$('nav.steps').offsetHeight);
+  parent.postMessage({subject:'lti.frameResize',height:h},'*');parent.postMessage({type:'educ550-resize',height:h},'*')}catch(e){}}
+addEventListener('load',reportHeight);addEventListener('resize',reportHeight);
+new MutationObserver(reportHeight).observe(document.body,{subtree:true,attributes:true,childList:true});
+
+/* ---------- scoring ---------- */
+const SCORE={got:0,total:0};
+function addScore(got,total){SCORE.got+=got;SCORE.total+=total;const s=$('#score');if(s)s.textContent='★ '+SCORE.got+' / '+SCORE.total}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- classify: sort each item into a category ---------- */
+function classify(root,items,cats,opts={}){
+  root.innerHTML='';let right=0,firstTry=0;const total=items.length;
+  const wrap=document.createElement('div');wrap.className='cls'+(opts.stack?' stack':'');
+  items.forEach((it,idx)=>{
+    const row=document.createElement('div');row.className='cls-row';
+    row.innerHTML='<div class="cls-text">'+(it.html||esc(it.text))+'</div><div class="cls-btns"></div><div class="cls-why"></div>';
+    const btns=row.querySelector('.cls-btns'),why=row.querySelector('.cls-why');let missed=false,done=false;
+    cats.forEach(c=>{
+      const b=document.createElement('button');b.type='button';b.textContent=c.label;b.dataset.cat=c.id;
+      if(c.style)b.setAttribute('style',c.style);if(c.title)b.title=c.title;
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(c.id===it.ans){done=true;right++;if(!missed)firstTry++;
+          row.classList.remove('wrong');row.classList.add('right');
+          $$('button',btns).forEach(x=>{x.disabled=true;x.classList.toggle('picked',x===b)});
+          why.innerHTML='✔ '+(it.why||'Correct.');why.className='cls-why show ok';
+          if(right===total){addScore(firstTry,total);opts.onDone&&opts.onDone(firstTry,total)}
+        }else{missed=true;row.classList.add('wrong');b.disabled=true;
+          why.innerHTML='✖ Not quite'+(it.hint?' — '+esc(it.hint):' — try another category.');why.className='cls-why show bad'}
+      });btns.appendChild(b)});
+    wrap.appendChild(row)});
+  root.appendChild(wrap)}
+
+/* ---------- quiz: one multiple-choice question at a time ---------- */
+function quiz(root,items,opts={}){
+  let i=0,firstTry=0;const total=items.length;
+  function render(){
+    const it=items[i];let missed=false,done=false;
+    root.innerHTML='<div class="qz-head">Question '+(i+1)+' of '+total+'</div><div class="qz-q">'+(it.html||esc(it.q))+'</div><div class="qz-opts"></div><div class="fb"></div><div class="bottom"><button class="btn" type="button" id="qz-next" style="display:none"></button></div>';
+    const o=$('.qz-opts',root),f=$('.fb',root),nx=$('#qz-next',root);
+    shuffle(it.opts.map((t,k)=>({t,k}))).forEach(({t,k})=>{
+      const b=document.createElement('button');b.type='button';b.className='qz-opt';b.innerHTML=esc(t);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(k===it.ans){done=true;if(!missed)firstTry++;b.classList.add('right');$$('.qz-opt',o).forEach(x=>x.disabled=true);
+          fb(f,'good','<b>Yes!</b> '+(it.why||''));nx.style.display='';nx.textContent=i<total-1?'Next question →':'Finish ✓';
+        }else{missed=true;b.classList.add('wrong');b.disabled=true;fb(f,'try','<b>Not the best fit.</b> '+(it.hints&&it.hints[k]?it.hints[k]:'Look again at the purpose of the task.'))}
+      });o.appendChild(b)});
+    nx.addEventListener('click',()=>{if(i<total-1){i++;render()}else{addScore(firstTry,total);root.innerHTML='<div class="fb show good"><b>Step complete!</b> You earned '+firstTry+' of '+total+' on the first try.</div>';opts.onDone&&opts.onDone(firstTry,total)}});
+  }
+  render()}
+
+/* ---------- order: click items in the correct sequence ---------- */
+function orderIt(root,steps,opts={}){
+  const shuf=shuffle(steps.map((t,k)=>({t,k})));let next=0,miss=0;
+  root.innerHTML='<div class="ord-grid"></div><div class="fb"></div>';
+  const g=$('.ord-grid',root),f=$('.fb',root);
+  shuf.forEach(({t,k})=>{const b=document.createElement('button');b.type='button';b.className='ord-item';b.innerHTML='<span class="ord-n"></span>'+esc(t);
+    b.addEventListener('click',()=>{
+      if(b.classList.contains('placed'))return;
+      if(k===next){b.classList.add('placed');b.querySelector('.ord-n').textContent=next+1;next++;fb(f,'info','Good — that comes '+(next===1?'first':'next')+'. '+(steps.length-next)+' to go.');
+        if(next===steps.length){const pts=Math.max(0,1-(miss>2?1:0));addScore(pts,1);fb(f,'good','<b>Sequence complete!</b> '+(opts.done||''));opts.onDone&&opts.onDone()}}
+      else{miss++;b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb(f,'try','Not yet — what has to be decided <i>before</i> that? Try a different step.')}});
+    g.appendChild(b)})}
+
+async function copyTxt(t,el){try{await navigator.clipboard.writeText(t);el.textContent='Copied!'}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');el.textContent='Copied!'}catch(_){el.textContent='Select the text and copy it manually.'}ta.remove()}}
+function chipGroup(root,labels,onChange){const sel=new Set();root.innerHTML='';root.classList.add('chips');
+  labels.forEach(l=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed','false');
+    b.onclick=()=>{b.classList.toggle('sel');const on=b.classList.contains('sel');b.setAttribute('aria-pressed',on);on?sel.add(l):sel.delete(l);onChange&&onChange(sel)};root.appendChild(b)});return sel}
+
+
+const LS=[
+ {n:'Foundational',c:'#d34147',sk:['phonological awareness','phonics','fluency'],d:'Skills for getting words off the page accurately and smoothly.',ex:'Students clap the syllables of “immigrant,” then reread a caption until it sounds smooth.'},
+ {n:'Language',c:'#444',sk:['vocabulary','academic language','speaking & writing'],d:'The words and sentence structures a discipline uses to explain ideas.',ex:'A sentence frame: “A settlement is a place where ___.” Students rehearse it aloud with a partner.'},
+ {n:'Cognitive',c:'#e8787d',sk:['comprehension','inferring','citing evidence','comparing sources'],d:'Thinking with text: making meaning from increasingly complex disciplinary texts.',ex:'“What clues in the photograph tell us when it was taken? What makes you say that?”'}];
+const pos=[[110,100,'Foundational',0],[210,100,'Language',1],[160,185,'Cognitive',2]];
+$('#venn').innerHTML=pos.map(p=>`<g class="vn" tabindex="0" role="button" aria-label="${p[2]}" data-i="${p[3]}"><circle cx="${p[0]}" cy="${p[1]}" r="78" fill="${LS[p[3]].c}" fill-opacity=".78"/><text x="${p[0]+(p[3]==0?-18:p[3]==1?18:0)}" y="${p[1]+(p[3]==2?30:-10)}" text-anchor="middle">${p[2]}</text></g>`).join('');
+const seen=new Set();
+function showLS(i){const L=LS[i];seen.add(i);$$('#venn .vn').forEach(g=>g.classList.toggle('sel',+g.dataset.i===i));
+ $('#info').innerHTML=`<div style="font-size:12px;font-weight:800;color:var(--red-dk);text-transform:uppercase;letter-spacing:.07em">Skill set ${i+1} of 3</div><h2 style="margin:2px 0">${L.n}</h2><p style="margin:0 0 6px">${L.d}</p><div class="sk">${L.sk.map(s=>'<span>'+s+'</span>').join('')}</div><div class="qprev" style="margin-top:8px;padding:8px 10px;background:var(--warm);border-left:5px solid var(--red);border-radius:8px"><b>In the classroom:</b> ${L.ex}</div>`;
+ $('#seen').textContent='Explored: '+seen.size+' / 3';if(seen.size===3){markDone(0);$('#n0').style.display=''}}
+$$('#venn .vn').forEach(g=>{g.onclick=()=>showLS(+g.dataset.i);g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showLS(+g.dataset.i)}}});
+$('#n0').onclick=()=>showPanel(1);
+classify($('#c1'),[
+ {text:'She has students clap the syllables of “immigrant” and “community” before reading the caption.',ans:'f',why:'Phonological awareness is a foundational skill.'},
+ {text:'She reads the first paragraph aloud with expression, then partners echo-read it.',ans:'f',why:'Modeling and repeated reading build fluency.'},
+ {text:'She pre-teaches “settlement” with a picture and the frame “A settlement is a place where ___.”',ans:'l',why:'Vocabulary and academic language, supported by a sentence frame.'},
+ {text:'Students rehearse “The photograph shows ___ because ___” with a partner before writing.',ans:'l',why:'Oral rehearsal builds the language needed for written explanations.'},
+ {text:'She asks, “What clues tell you when this was taken? What makes you say that?”',ans:'c',why:'Inferring and citing evidence are cognitive skills.'},
+ {text:'She thinks aloud while comparing two sources, then students try it with a graphic organizer.',ans:'c',why:'Modeling how to analyze sources builds comprehension of complex text.'}
+],[{id:'f',label:'Foundational'},{id:'l',label:'Language'},{id:'c',label:'Cognitive'}],{stack:1,onDone:()=>{markDone(1);$('#n1').style.display=''}});
+$('#n1').onclick=()=>showPanel(2);
+quiz($('#c2'),[
+ {q:'Which evidence statement is strongest for your write-up?',opts:['The teacher showed a photo of a settlement and had students finish “A settlement is a place where ___,” which supported their language skills.','The teacher helped students with vocabulary.','The video was about social studies and students seemed engaged.'],ans:0,
+  why:'It says exactly what the teacher did and said and names the skill type.',hints:{1:'Too vague: what exactly did the teacher do or say?',2:'Engagement is not evidence of a literacy support.'}},
+ {q:'Students read the caption fluently but cannot explain why the photograph matters. Which skills should the teacher teach next?',opts:['Cognitive skills: inferring and citing evidence, with sentence stems','More phonics drills','A longer spelling list'],ans:0,
+  why:'Fluency is secure; the gap is thinking with the text.',hints:{1:'Students already decode well.',2:'Spelling does not address the gap in explaining meaning.'}},
+ {q:'Which is the strongest description of how YOU would help students handle a more complex task?',opts:['Model a think-aloud comparing two sources, then give a graphic organizer and sentence frame for students to try it.','Give students more time.','Tell students to read more carefully.'],ans:0,
+  why:'It names a specific model, scaffold, and student practice.',hints:{1:'Time alone does not teach a skill.',2:'Directions alone do not show students how.'}}
+],{onDone:()=>{markDone(2);$('#n2').style.display=''}});
+$('#n2').onclick=()=>showPanel(3);
+const SUP=$('#sup'),GRO=$('#gro');
+for(let i=0;i<3;i++){SUP.insertAdjacentHTML('beforeend',`<div class="rowf"><select id="st${i}" aria-label="Support ${i+1} skill type"><option value="">Support ${i+1}: skill type…</option><option>Foundational</option><option>Language</option><option>Cognitive</option></select><textarea id="se${i}" rows="2" aria-label="Support ${i+1} evidence" placeholder="What exactly did the teacher do or say?"></textarea></div>`);
+ GRO.insertAdjacentHTML('beforeend',`<div class="rowf"><input id="gs${i}" aria-label="Skill ${i+1}" placeholder="Skill students need next ${i+1}"><textarea id="gh${i}" rows="2" aria-label="How I would teach skill ${i+1}" placeholder="How I would teach it"></textarea></div>`)}
+$$('#plForm input,#plForm select,#plForm textarea').forEach(e=>e.addEventListener('input',chk));
+function ok(id,n){return $('#'+id).value.trim().length>=n}
+function chk(){const v=ok('v_title',4);let s=true,g=true;for(let i=0;i<3;i++){if(!ok('st'+i,1)||!ok('se'+i,20))s=false;if(!ok('gs'+i,3)||!ok('gh'+i,15))g=false}
+ [['v',v],['s',s],['g',g]].forEach(([k,b])=>$('#chk li[data-k='+k+']').classList.toggle('ok',b));$('#gen').disabled=!(v&&s&&g)}
+$('#gen').onclick=()=>{const val=id=>$('#'+id).value.trim();let t='LITERACY ACROSS THE DISCIPLINES: WRITE-UP OUTLINE\n(250–400 words · APA · cite your video)\n\nVideo: '+val('v_title')+'\n\nPART 1: Three literacy supports I saw\n';
+ for(let i=0;i<3;i++)t+=(i+1)+'. ['+val('st'+i)+'] '+val('se'+i)+'\n';t+='\nPART 2: Three skills to teach next\n';
+ for(let i=0;i<3;i++)t+=(i+1)+'. '+val('gs'+i)+' → '+val('gh'+i)+'\n';t+='\nReminder: write the final in your own words; the submission is checked for originality.';
+ $('#outtxt').textContent=t;$('#plForm').style.display='none';$('#plOut').style.display='';$('#fin').classList.add('show');markDone(3);if(!window.__g){window.__g=1;addScore(1,1)}};
+$('#back').onclick=()=>{$('#plOut').style.display='none';$('#plForm').style.display=''};
+$('#copy').onclick=()=>copyTxt($('#outtxt').textContent,$('#copied'));
+
+</script></body></html>

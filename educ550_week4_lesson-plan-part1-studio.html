@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 550 | Week 4 | Lesson Plan Part 1 Studio</title>
+<style>:root{
+  --red:#d34147;--red-dk:#a8353a;--ink:#1a1a1a;--ink2:#444;--paper:#ffffff;--warm:#edebe8;--warm2:#f7f5f2;
+  --ok:#2e7d4f;--ok-bg:#e6f4ea;--bad:#b3261e;--bad-bg:#fdecea;--line:#d9d5cf;
+}
+@media (prefers-color-scheme:dark){
+  :root{--ink:#f2f0ed;--ink2:#cfcac3;--paper:#1f1f1f;--warm:#2b2a28;--warm2:#252422;--line:#4a4743;--ok-bg:#16301f;--bad-bg:#3a1b19;--ok:#6fcf97;--bad:#ff8a80;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{height:100%;display:flex;flex-direction:column;max-width:1000px;margin:0 auto}
+header.hero{flex:0 0 auto;display:flex;align-items:center;gap:14px;background:#000;color:#fff;padding:10px 18px;border-bottom:4px solid var(--red)}
+header.hero svg.logo{flex:0 0 64px;width:64px;height:64px}
+header.hero .t small{display:block;color:#f3b3b6;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-weight:700}
+header.hero h1{margin:0;font-size:22px;line-height:1.15}
+nav.steps{flex:0 0 auto;display:flex;gap:6px;background:var(--warm);padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav.steps button{flex:1 1 0;min-width:110px;border:2px solid transparent;background:var(--paper);color:var(--ink);padding:7px 8px;border-radius:999px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+nav.steps button .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink2);color:var(--paper);font-size:12px;margin-right:6px}
+nav.steps button.active{background:var(--red);color:#fff;border-color:var(--red-dk)}
+nav.steps button.active .n{background:#fff;color:var(--red-dk)}
+nav.steps button.done .n{background:var(--ok);color:#fff}
+/* ONE scroll region only: it scrolls solely when the frame is shorter than the content */
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px 18px 18px;scrollbar-width:thin}
+.panel{display:none}.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{margin:0 0 4px;font-size:20px}
+p.lead{margin:0 0 10px;color:var(--ink2)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--red-dk)}.btn.ghost{background:var(--warm);color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.card{background:var(--warm2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px;display:none}
+.fb.show{display:block}.fb.good{background:var(--ok-bg);border-left:5px solid var(--ok)}.fb.try{background:var(--bad-bg);border-left:5px solid var(--bad)}
+.fb.info{background:var(--warm);border-left:5px solid var(--red)}
+.score{margin-left:auto;font-weight:700;color:var(--red-dk)}
+.bottom{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid #2b6cb0;outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){header.hero h1{font-size:18px}header.hero svg.logo{display:none}nav.steps button{font-size:12.5px;min-width:90px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+header.hero .score{color:#fff;background:var(--red);padding:4px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.cls{display:grid;gap:8px}
+.cls-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--warm2);border:2px solid var(--line);border-radius:12px;padding:9px 12px}
+.cls-row.right{border-color:var(--ok);background:var(--ok-bg)}.cls-row.wrong{border-color:var(--bad)}
+.cls-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cls-btns button{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.cls-btns button:hover:not(:disabled){border-color:var(--red);color:var(--red-dk)}
+.cls-btns button:disabled{opacity:.4;cursor:default}.cls-btns button.picked{opacity:1;background:var(--ok);color:#fff;border-color:var(--ok)}
+.cls-why{grid-column:1/-1;font-size:14px;display:none}.cls-why.show{display:block}.cls-why.ok{color:var(--ok)}.cls-why.bad{color:var(--bad)}
+.cls-text{font-size:15.5px}
+@media (max-width:640px){.cls-row{grid-template-columns:1fr}.cls-btns{justify-content:flex-start}}
+.qz-head{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--red-dk);font-weight:800}
+.qz-q{font-size:17px;font-weight:600;margin:4px 0 10px}
+.qz-opts{display:grid;gap:8px}
+.qz-opt{text-align:left;font:inherit;border:2px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer}
+.qz-opt:hover:not(:disabled){border-color:var(--red)}.qz-opt.right{background:var(--ok-bg);border-color:var(--ok)}.qz-opt.wrong{background:var(--bad-bg);border-color:var(--bad);opacity:.7}
+.ord-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.ord-item{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;border:2px dashed var(--line);background:var(--paper);color:var(--ink);padding:9px 12px;border-radius:12px;cursor:pointer}
+.ord-item .ord-n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--red-dk)}
+.ord-item.placed{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}.ord-item.placed .ord-n{background:var(--ok);color:#fff}
+.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.finish{display:none;margin-top:12px}.finish.show{display:block}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.take div{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:8px 10px;font-size:14.5px}
+.take b{display:block;color:var(--red-dk)}
+.illus{flex:0 0 auto}.illus svg{max-width:100%;height:auto;display:block}
+
+.cls.stack{gap:6px}.cls.stack .cls-row{grid-template-columns:1fr;padding:7px 12px;gap:4px}.cls.stack .cls-btns{justify-content:flex-start}.cls.stack .cls-text{font-size:15px}.cls.stack .cls-btns button{padding:3px 10px;font-size:13px}
+@media (max-width:640px){.row{flex-wrap:wrap!important}.row>*{flex:1 1 100%!important;width:auto!important;max-width:100%}.row>.illus.deco{display:none}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{font:inherit;font-size:13.5px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 11px;cursor:pointer}.chips button.sel{background:var(--red);color:#fff;border-color:var(--red-dk)}
+.form{display:grid;gap:7px}.form label{font-weight:700;font-size:13.5px;display:grid;gap:2px}.form input,.form select,.form textarea,.fld{font:inherit;font-weight:400;padding:6px 9px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%}
+.chk{list-style:none;padding:0;margin:6px 0 10px;font-size:14px}.chk li{margin:2px 0}.chk li::before{content:"○ ";color:var(--ink2)}.chk li.ok::before{content:"✔ ";color:var(--ok);font-weight:800}
+.outbox{white-space:pre-wrap;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.5}
+.tok{font:inherit;font-size:16px;border:2px solid transparent;background:transparent;color:var(--ink);border-radius:8px;padding:1px 5px;margin:1px;cursor:pointer}.tok:hover{border-color:var(--line)}.tok.do{background:#000;color:#fff}.tok.know{background:var(--red);color:#fff}
+svg g[tabindex]:focus{outline:none}svg g[tabindex]:focus-visible circle,svg g[tabindex]:focus-visible polygon{stroke:#2b6cb0;stroke-width:4}
+
+.bl-row{display:grid;grid-template-columns:112px 250px 1fr;gap:6px;align-items:center}.bl-row b{font-size:13.5px}
+@media (max-width:760px){.bl-row{grid-template-columns:1fr}}</style></head>
+<body><div class="app">
+<header class="hero"><svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Slide with a target"><rect width="64" height="64" rx="12" fill="#d34147"/><rect x="10" y="14" width="44" height="32" rx="3" fill="#fff"/><circle cx="32" cy="30" r="10" fill="none" stroke="#a8353a" stroke-width="3"/><circle cx="32" cy="30" r="4" fill="#a8353a"/><rect x="26" y="48" width="12" height="4" rx="1" fill="#edebe8"/></svg><div class="t"><small>EDUC 550 · Week 4</small><h1>Lesson Plan Part 1 Studio</h1></div><div class="score" id="score" style="margin-left:auto" aria-live="polite">★ 0 / 0</div></header>
+<nav class="steps" role="tablist" aria-label="Activity steps"><button type="button" role="tab" class=active aria-selected="true"><span class="n">1</span>Unpack</button><button type="button" role="tab" aria-selected="false"><span class="n">2</span>Foundations</button><button type="button" role="tab" aria-selected="false"><span class="n">3</span>Thinking</button><button type="button" role="tab" aria-selected="false"><span class="n">4</span>Assemble</button></nav>
+<main>
+<section class="panel active" id="p0">
+ <h2>Unpack your standard</h2>
+ <p class="lead">Paste a standard from your lesson (or use the practice one). Tap a word once for <b>DO</b> (skill), twice for <b>KNOW</b> (content), a third time to clear.</p>
+ <div class="row" style="flex-wrap:nowrap;align-items:flex-end"><textarea id="std" class="fld" rows="2" aria-label="Standard text" placeholder="Paste a content or literacy standard here" style="flex:1 1 auto"></textarea><div style="display:grid;gap:6px;flex:0 0 150px"><button class="btn" id="unpack">Unpack it</button><button class="btn ghost" id="sample">Use practice standard</button></div></div>
+ <div class="card" id="toks" style="margin-top:8px;min-height:70px;line-height:2"><span style="color:var(--ink2);font-size:14px">Your words will appear here.</span></div>
+ <div class="row" style="margin-top:8px;flex-wrap:nowrap"><div style="flex:1 1 55%;min-width:0"><label style="font-weight:700;font-size:13.5px" for="tgt">My learning target (edit freely)</label><input id="tgt" class="fld" placeholder="I can …"><ul class="chk" id="tchk" style="margin:6px 0 0"><li data-k="do">Names a skill (DO)</li><li data-k="know">Names the content (KNOW)</li><li data-k="can">Starts with “I can”</li></ul></div>
+ <div style="flex:1 1 45%;min-width:0" class="card"><b>Unpacked</b><div style="font-size:14.5px;margin-top:4px"><b>DO:</b> <span id="doList">—</span></div><div style="font-size:14.5px;margin-top:4px"><b>KNOW:</b> <span id="knowList">—</span></div></div></div>
+ <div class="bottom"><button class="btn" id="n0" style="display:none">Next: Foundational skills →</button></div>
+</section>
+
+<section class="panel" id="p1">
+ <h2>Foundational skills and language</h2>
+ <p class="lead">Your slide 3 names which foundational skills and language (phonics, phonological awareness, fluency, vocabulary, comprehension) your lesson addresses. Match each activity.</p>
+ <div id="c1"></div>
+ <div id="fnote" style="display:none;margin-top:8px"><label style="font-weight:700;font-size:13.5px" for="f_found">Which will you address in your lesson, and how?</label><input id="f_found" class="fld" maxlength="200" placeholder="e.g., Vocabulary: students sort and use key words in sentence frames"></div>
+ <div class="bottom"><button class="btn" id="n1" style="display:none">Next: Higher-order thinking →</button></div>
+</section>
+
+<section class="panel" id="p2">
+ <h2>Higher-order thinking and Bloom’s questions</h2>
+ <p class="lead"><b>Slide 4:</b> choose cognitive skills (at least 2). <b>Slide 5:</b> one question at each Bloom’s level.</p>
+ <div id="cog"></div>
+ <div class="row" style="flex-wrap:nowrap;margin:8px 0 6px;align-items:center"><label for="topic" style="font-weight:700;font-size:13.5px;flex:0 0 auto">Lesson topic</label><input id="topic" class="fld" maxlength="60" placeholder="e.g., how our town began"></div>
+ <div id="bl" class="form"></div>
+ <div class="bottom"><span id="bstat" style="font-size:14px;color:var(--ink2)"></span><button class="btn" id="n2" style="display:none;margin-left:auto">Next: Assemble Part 1 →</button></div>
+</section>
+
+<section class="panel" id="p3">
+ <div id="asmForm">
+  <h2>Assemble your Part 1 slides</h2>
+  <div class="row" style="flex-wrap:nowrap">
+   <div class="form" style="flex:1 1 55%;min-width:0">
+    <label>Theme<input id="a_theme" maxlength="100"></label>
+    <label>State content standard (HSS or Arts)<input id="a_content" maxlength="160"></label>
+    <label>CCSS literacy standard<input id="a_lit" maxlength="160"></label>
+    <label>ELD standard or framework<input id="a_eld" maxlength="160"></label>
+    <label>Why I chose these<textarea id="a_why" rows="2" maxlength="300"></textarea></label>
+   </div>
+   <div style="flex:1 1 45%;min-width:0" class="card"><b>Part 1 checklist</b><ul class="chk" id="achk">
+    <li data-k="s1">Slides 1–2: theme, three standards, and why</li><li data-k="s3">Slide 3: foundational skills and language</li><li data-k="s4">Slide 4: higher-order cognitive skills</li><li data-k="s5">Slide 5: six Bloom’s questions</li></ul>
+    <label style="font-size:14px;display:block;margin:4px 0"><input type="checkbox" id="x1"> Unique slide titles, alt text, readable fonts and contrast</label>
+    <label style="font-size:14px;display:block;margin:4px 0"><input type="checkbox" id="x2"> Spelling and grammar checked</label>
+    <button class="btn" id="gen" style="margin-top:6px">Build my slide outline</button></div>
+  </div>
+ </div>
+ <div id="asmOut" style="display:none"><h2>Your Part 1 slide outline</h2><div class="outbox" id="outtxt"></div><div class="bottom"><button class="btn ghost" id="back">← Edit</button><button class="btn" id="copy">📋 Copy outline</button><span id="copied" style="font-size:13px;color:var(--ok)"></span></div></div>
+ <div class="finish card" id="fin"><b>🎉 Part 1 outline ready.</b> Standards first, then unpack, plan the thinking, and submit with alt text and checked writing.</div>
+</section>
+</main></div>
+<script>/* shared: tabs + frame-height reporting (no scrollbar fights) */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function showPanel(i){
+  $$('.panel').forEach((p,k)=>p.classList.toggle('active',k===i));
+  $$('nav.steps button').forEach((b,k)=>{b.classList.toggle('active',k===i);b.setAttribute('aria-selected',k===i)});
+  $('main').scrollTop=0;
+}
+function markDone(i){const b=$$('nav.steps button')[i];if(b)b.classList.add('done')}
+function fb(el,type,html){el.className='fb show '+type;el.innerHTML=html}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+$$('nav.steps button').forEach((b,i)=>b.addEventListener('click',()=>showPanel(i)));
+/* If the host page listens, tell it our natural height so the iframe can match (optional). */
+function reportHeight(){try{const h=Math.ceil($('main').scrollHeight+$('header.hero').offsetHeight+$('nav.steps').offsetHeight);
+  parent.postMessage({subject:'lti.frameResize',height:h},'*');parent.postMessage({type:'educ550-resize',height:h},'*')}catch(e){}}
+addEventListener('load',reportHeight);addEventListener('resize',reportHeight);
+new MutationObserver(reportHeight).observe(document.body,{subtree:true,attributes:true,childList:true});
+
+/* ---------- scoring ---------- */
+const SCORE={got:0,total:0};
+function addScore(got,total){SCORE.got+=got;SCORE.total+=total;const s=$('#score');if(s)s.textContent='★ '+SCORE.got+' / '+SCORE.total}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- classify: sort each item into a category ---------- */
+function classify(root,items,cats,opts={}){
+  root.innerHTML='';let right=0,firstTry=0;const total=items.length;
+  const wrap=document.createElement('div');wrap.className='cls'+(opts.stack?' stack':'');
+  items.forEach((it,idx)=>{
+    const row=document.createElement('div');row.className='cls-row';
+    row.innerHTML='<div class="cls-text">'+(it.html||esc(it.text))+'</div><div class="cls-btns"></div><div class="cls-why"></div>';
+    const btns=row.querySelector('.cls-btns'),why=row.querySelector('.cls-why');let missed=false,done=false;
+    cats.forEach(c=>{
+      const b=document.createElement('button');b.type='button';b.textContent=c.label;b.dataset.cat=c.id;
+      if(c.style)b.setAttribute('style',c.style);if(c.title)b.title=c.title;
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(c.id===it.ans){done=true;right++;if(!missed)firstTry++;
+          row.classList.remove('wrong');row.classList.add('right');
+          $$('button',btns).forEach(x=>{x.disabled=true;x.classList.toggle('picked',x===b)});
+          why.innerHTML='✔ '+(it.why||'Correct.');why.className='cls-why show ok';
+          if(right===total){addScore(firstTry,total);opts.onDone&&opts.onDone(firstTry,total)}
+        }else{missed=true;row.classList.add('wrong');b.disabled=true;
+          why.innerHTML='✖ Not quite'+(it.hint?' — '+esc(it.hint):' — try another category.');why.className='cls-why show bad'}
+      });btns.appendChild(b)});
+    wrap.appendChild(row)});
+  root.appendChild(wrap)}
+
+/* ---------- quiz: one multiple-choice question at a time ---------- */
+function quiz(root,items,opts={}){
+  let i=0,firstTry=0;const total=items.length;
+  function render(){
+    const it=items[i];let missed=false,done=false;
+    root.innerHTML='<div class="qz-head">Question '+(i+1)+' of '+total+'</div><div class="qz-q">'+(it.html||esc(it.q))+'</div><div class="qz-opts"></div><div class="fb"></div><div class="bottom"><button class="btn" type="button" id="qz-next" style="display:none"></button></div>';
+    const o=$('.qz-opts',root),f=$('.fb',root),nx=$('#qz-next',root);
+    shuffle(it.opts.map((t,k)=>({t,k}))).forEach(({t,k})=>{
+      const b=document.createElement('button');b.type='button';b.className='qz-opt';b.innerHTML=esc(t);
+      b.addEventListener('click',()=>{
+        if(done)return;
+        if(k===it.ans){done=true;if(!missed)firstTry++;b.classList.add('right');$$('.qz-opt',o).forEach(x=>x.disabled=true);
+          fb(f,'good','<b>Yes!</b> '+(it.why||''));nx.style.display='';nx.textContent=i<total-1?'Next question →':'Finish ✓';
+        }else{missed=true;b.classList.add('wrong');b.disabled=true;fb(f,'try','<b>Not the best fit.</b> '+(it.hints&&it.hints[k]?it.hints[k]:'Look again at the purpose of the task.'))}
+      });o.appendChild(b)});
+    nx.addEventListener('click',()=>{if(i<total-1){i++;render()}else{addScore(firstTry,total);root.innerHTML='<div class="fb show good"><b>Step complete!</b> You earned '+firstTry+' of '+total+' on the first try.</div>';opts.onDone&&opts.onDone(firstTry,total)}});
+  }
+  render()}
+
+/* ---------- order: click items in the correct sequence ---------- */
+function orderIt(root,steps,opts={}){
+  const shuf=shuffle(steps.map((t,k)=>({t,k})));let next=0,miss=0;
+  root.innerHTML='<div class="ord-grid"></div><div class="fb"></div>';
+  const g=$('.ord-grid',root),f=$('.fb',root);
+  shuf.forEach(({t,k})=>{const b=document.createElement('button');b.type='button';b.className='ord-item';b.innerHTML='<span class="ord-n"></span>'+esc(t);
+    b.addEventListener('click',()=>{
+      if(b.classList.contains('placed'))return;
+      if(k===next){b.classList.add('placed');b.querySelector('.ord-n').textContent=next+1;next++;fb(f,'info','Good — that comes '+(next===1?'first':'next')+'. '+(steps.length-next)+' to go.');
+        if(next===steps.length){const pts=Math.max(0,1-(miss>2?1:0));addScore(pts,1);fb(f,'good','<b>Sequence complete!</b> '+(opts.done||''));opts.onDone&&opts.onDone()}}
+      else{miss++;b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);fb(f,'try','Not yet — what has to be decided <i>before</i> that? Try a different step.')}});
+    g.appendChild(b)})}
+
+async function copyTxt(t,el){try{await navigator.clipboard.writeText(t);el.textContent='Copied!'}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');el.textContent='Copied!'}catch(_){el.textContent='Select the text and copy it manually.'}ta.remove()}}
+function chipGroup(root,labels,onChange){const sel=new Set();root.innerHTML='';root.classList.add('chips');
+  labels.forEach(l=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed','false');
+    b.onclick=()=>{b.classList.toggle('sel');const on=b.classList.contains('sel');b.setAttribute('aria-pressed',on);on?sel.add(l):sel.delete(l);onChange&&onChange(sel)};root.appendChild(b)});return sel}
+
+
+const STD='Describe the relationship between a series of historical events, scientific ideas or concepts, or steps in technical procedures in a text, using language that pertains to time, sequence, and cause/effect.';
+let toks=[],tgtEdited=false;
+$('#sample').onclick=()=>{$('#std').value=STD;unpack()};
+$('#unpack').onclick=unpack;
+function unpack(){const s=$('#std').value.trim();if(!s){$('#std').focus();return}
+ toks=s.split(/\s+/).map(w=>({w,s:0}));tgtEdited=false;render()}
+function render(){const box=$('#toks');box.innerHTML='';
+ toks.forEach((t,i)=>{const b=document.createElement('button');b.type='button';b.className='tok'+(t.s==1?' do':t.s==2?' know':'');b.textContent=t.w;b.setAttribute('aria-label',t.w+(t.s==1?' (DO)':t.s==2?' (KNOW)':''));
+  b.onclick=()=>{t.s=(t.s+1)%3;render()};box.appendChild(b)});
+ const clean=w=>w.replace(/^[^\w]+|[^\w]+$/g,'');
+ const d=toks.filter(t=>t.s==1).map(t=>clean(t.w)).filter(Boolean),k=toks.filter(t=>t.s==2).map(t=>clean(t.w)).filter(Boolean);
+ $('#doList').textContent=d.length?d.join(', '):'—';$('#knowList').textContent=k.length?k.join(' '):'—';
+ if(!tgtEdited&&(d.length||k.length))$('#tgt').value='I can '+(d[0]||'___').toLowerCase()+' '+(k.length?k.join(' ').toLowerCase():'___')+'.';
+ tchk(d,k)}
+$('#tgt').addEventListener('input',()=>{tgtEdited=true;tchk()});
+function tchk(d,k){d=d||toks.filter(t=>t.s==1);k=k||toks.filter(t=>t.s==2);const v=$('#tgt').value.trim();
+ $('#tchk li[data-k=do]').classList.toggle('ok',d.length>0);$('#tchk li[data-k=know]').classList.toggle('ok',k.length>0);$('#tchk li[data-k=can]').classList.toggle('ok',/^i can\b/i.test(v));
+ if(d.length&&k.length&&/^i can\b/i.test(v)&&v.length>14&&!window.__u){window.__u=1;markDone(0);addScore(1,1);$('#n0').style.display=''}}
+$('#n0').onclick=()=>showPanel(1);
+classify($('#c1'),[
+ {text:'Students segment the word “govern-ment” into syllables aloud.',ans:'pa',why:'Phonological awareness: working with the sounds of spoken words.'},
+ {text:'Students match “-tion” to its sound in “celebration” and “migration.”',ans:'ph',why:'Phonics: letter–sound relationships.'},
+ {text:'Partners reread a caption three times for smooth, expressive reading.',ans:'fl',why:'Fluency: accuracy, pacing, and expression.'},
+ {text:'Students sort words (settler, trade, route) on a concept map and use each in a sentence.',ans:'vo',why:'Vocabulary: learning and using key words.'},
+ {text:'Students summarize a passage in two sentences and answer “why” questions.',ans:'co',why:'Comprehension: making meaning from text.'}
+],[{id:'ph',label:'Phonics'},{id:'pa',label:'Phonological Awareness'},{id:'fl',label:'Fluency'},{id:'vo',label:'Vocabulary'},{id:'co',label:'Comprehension'}],{stack:1,onDone:()=>{markDone(1);$('#fnote').style.display='';$('#n1').style.display=''}});
+$('#n1').onclick=()=>showPanel(2);
+const COG=chipGroup($('#cog'),['Making inferences','Citing text evidence','Comparing sources','Analyzing cause and effect','Summarizing key ideas','Evaluating point of view'],()=>bchk());
+const LV=['Knowledge','Comprehension','Application','Analysis','Synthesis','Evaluation'];
+const FR=[['Who was ___?','What is ___?','Where did ___ happen?'],['Explain in your own words ___.','What is the main idea of ___?','Summarize ___.'],['Show how ___ works in a real situation.','How could you use what you learned about ___ in your own life?','Demonstrate ___ for a younger student.'],['What caused ___?','How is ___ similar to and different from something else you know?','What evidence supports ___?'],['Design a new way to teach ___.','Create a song, story, or model about ___.','What could you invent to improve ___?'],['Do you agree with the way ___ happened? Why?','Which part of ___ is most important, and why?','How would you judge whether ___ was successful?']];
+LV.forEach((l,i)=>{$('#bl').insertAdjacentHTML('beforeend',`<div class="bl-row"><b>${i+1}. ${l}</b><select id="bs${i}" aria-label="${l} frame"><option value="">Pick a frame…</option>${FR[i].map((f,k)=>`<option value="${k}">${f}</option>`).join('')}</select><input id="bq${i}" aria-label="${l} question" placeholder="Your ${l.toLowerCase()} question"></div>`);
+ $('#bs'+i).onchange=e=>{if(e.target.value!=='')$('#bq'+i).value=FR[i][e.target.value].replace('___',$('#topic').value.trim()||'[topic]');bchk()};$('#bq'+i).oninput=bchk});
+function bn(){return LV.filter((l,i)=>$('#bq'+i).value.trim().length>=12).length}
+function bchk(){const n=bn();$('#bstat').textContent='Cognitive skills: '+COG.size+' · Bloom’s questions: '+n+' / 6';if(COG.size>=2&&n===6&&!window.__b){window.__b=1;markDone(2);addScore(1,1);$('#n2').style.display=''}}
+$('#n2').onclick=()=>{showPanel(3);achk()};bchk();
+const AF=['a_theme','a_content','a_lit','a_eld','a_why'];
+function achk(){const l=id=>$('#'+id).value.trim().length;
+ $('#achk li[data-k=s1]').classList.toggle('ok',l('a_theme')>2&&l('a_content')>2&&l('a_lit')>2&&l('a_eld')>2&&l('a_why')>14);
+ $('#achk li[data-k=s3]').classList.toggle('ok',l('f_found')>9);$('#achk li[data-k=s4]').classList.toggle('ok',COG.size>=2);$('#achk li[data-k=s5]').classList.toggle('ok',bn()===6)}
+AF.concat(['f_found']).forEach(id=>$('#'+id).addEventListener('input',achk));
+$('#gen').onclick=()=>{achk();const v=id=>$('#'+id).value.trim()||'[to complete]';const q=LV.map((l,i)=>'   '+l+': '+($('#bq'+i).value.trim()||'[to complete]')).join('\n');
+ const t='LESSON PLAN PART 1: SLIDE OUTLINE\n\nSLIDES 1–2: Theme and standards\n• Theme: '+v('a_theme')+'\n• Content standard: '+v('a_content')+'\n• CCSS literacy standard: '+v('a_lit')+'\n• ELD standard/framework: '+v('a_eld')+'\n• Why I chose these: '+v('a_why')+'\n• Learning target: '+($('#tgt').value.trim()||'[to complete]')+'\n\nSLIDE 3: Foundational skills and language\n• '+v('f_found')+'\n\nSLIDE 4: Higher-order cognitive skills\n• '+(COG.size?[...COG].join('; '):'[to complete]')+'\n\nSLIDE 5: Bloom’s Taxonomy questions\n'+q+'\n\nBefore submitting: '+($('#x1').checked?'✔':'☐')+' unique titles, alt text, readable fonts/contrast   '+($('#x2').checked?'✔':'☐')+' spelling and grammar checked\nWrite your final slides in your own words; submissions are checked for plagiarism and AI-generated content.';
+ $('#outtxt').textContent=t;$('#asmForm').style.display='none';$('#asmOut').style.display='';
+ if($$('#achk li.ok').length===4){$('#fin').classList.add('show');markDone(3);if(!window.__a){window.__a=1;addScore(1,1)}}};
+$('#back').onclick=()=>{$('#asmOut').style.display='none';$('#asmForm').style.display='';$('#fin').classList.remove('show')};
+$('#copy').onclick=()=>copyTxt($('#outtxt').textContent,$('#copied'));
+
+</script></body></html>
