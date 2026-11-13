@@ -155,13 +155,13 @@ var F={
  util:{label:"Utility cost",unit:"$/month",fmt:function(v){return "$"+v},v:[182,241,156,207,134],dir:-1},
  ins:{label:"Insurance premium",unit:"$/year",fmt:function(v){return "$"+v.toLocaleString()},v:[1480,2310,1260,1920,1710],dir:-1},
  sqft:{label:"Home size",unit:"sq ft",fmt:function(v){return v.toLocaleString()+" sq ft"},v:[2150,1680,2480,1950,1420],dir:1},
- crime:{label:"Violent crime index",unit:"index (lower is safer)",fmt:function(v){return String(v)},v:[38,72,21,45,63],dir:-1},
+ crime:{label:"Violent crime index",unit:"lower is safer",fmt:function(v){return String(v)},v:[38,72,21,45,63],dir:-1},
  age:{label:"Average homeowner age",unit:"years",fmt:function(v){return v+" yrs"},v:[41,36,47,39,33],dir:1}
 };
 var KEYS=Object.keys(F);
 var PAL=["#d34147","#2d6a8f","#e0a030","#4f9a6a","#7a5ea8"];
 var GRAY="#b9b5af";
-function $(id){return document.getElementById(id)}
+function $(id){return document.getElementById(id)}function niceAxis(lo,hi,n){var raw=(hi-lo)/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=[1,2,5,10,20,50],j,s,a;for(j=0;j<m.length;j++){s=m[j]*p;if(s<raw)continue;a=Math.floor(lo/s)*s;if(a+n*s>=hi)return {min:a,max:a+n*s}}return {min:lo,max:hi}}
 function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e}
 function niceMax(v){var p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p}
 
@@ -176,7 +176,7 @@ var NAMES={bar:"Bar chart",line:"Line chart",scatter:"Scatter plot",box:"Box-and
 var QS=[
  {q:"Which of the five neighborhoods has the lowest monthly utility cost?",a:"bar",why:"Bars compare a value across separate categories, and length is easy to judge."},
  {q:"How has the average insurance premium in one neighborhood changed over the last ten years?",a:"line",why:"Lines show change over time and make the direction of a trend easy to see."},
- {q:"Do larger homes tend to sit in neighborhoods with a lower crime index?",a:"scatter",why:"A scatter plot shows the relationship between two numeric variables, one point per neighborhood."},
+ {q:"In these five neighborhoods, do larger homes seem to sit where the crime index is lower?",a:"scatter",why:"A scatter plot shows the relationship between two numeric variables, one point per neighborhood. With only five points, treat any pattern as a clue to explore, not proof."},
  {q:"How spread out are homeowner ages within one neighborhood, and are there outliers?",a:"box",why:"A box-and-whisker plot summarizes the distribution: median, quartiles, spread, and outliers."}
 ];
 var answered=0,correct=0;
@@ -214,11 +214,11 @@ function drawBar(){
  var W=640,H=380,L=74,R=20,T=46,B=70,pw=W-L-R,ph=H-T-B;
  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
  var top=niceMax(mx*1.05),base=0;
- if($("trunc").checked){var step=niceMax((mx-mn)||1)/5;base=Math.floor(mn*0.9/step)*step;top=Math.ceil(mx*1.03/step)*step}
+ var nt=5;if($("trunc").checked){var rg=(mx-mn)||1,p10=Math.pow(10,Math.floor(Math.log10(rg/6))),fr=(rg/6)/p10,step=(fr<=1?1:fr<=2?2:fr<=5?5:10)*p10;base=Math.max(0,Math.floor((mn-rg*0.2)/step)*step);top=Math.ceil((mx+rg*0.1)/step)*step;nt=Math.round((top-base)/step)}
  var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Bar chart of "+f.label+" by neighborhood"});
  svg.appendChild(el("text",{x:L,y:26,"font-size":17,"font-weight":700,fill:"#1c1c1c"},f.label+" by neighborhood"));
  var y=function(v){return T+ph-(v-base)/(top-base)*ph};
- for(var t=0;t<=5;t++){var v=base+(top-base)*t/5,yy=y(v);
+ for(var t=0;t<=nt;t++){var v=base+(top-base)*t/nt,yy=y(v);
   svg.appendChild(el("line",{x1:L,x2:W-R,y1:yy,y2:yy,stroke:t?"#e6e3de":"#555","stroke-width":t?1:1.5}));
   svg.appendChild(el("text",{x:L-8,y:yy+4,"text-anchor":"end","font-size":12,fill:"#555"},(Math.round(v*10)/10).toLocaleString()));}
  var bw=pw/N.length,h=+hl.value,gray=$("gray").checked;
@@ -230,7 +230,7 @@ function drawBar(){
   var nm=N[i].split(" ");
   nm.forEach(function(p,q){svg.appendChild(el("text",{x:x+w/2,y:T+ph+20+q*15,"text-anchor":"middle","font-size":13,fill:"#333"},p))});
  });
- var yl=el("text",{x:16,y:T+ph/2,"text-anchor":"middle","font-size":13,fill:"#333",transform:"rotate(-90 16 "+(T+ph/2)+")"},f.unit);svg.appendChild(yl);
+ var yl=el("text",{x:16,y:T+ph/2,"text-anchor":"middle","font-size":13,fill:"#333",transform:"rotate(-90 16 "+(T+ph/2)+")"},(k==="crime"?"Index, ":"")+f.unit);svg.appendChild(yl);
  if($("trunc").checked){svg.appendChild(el("text",{x:W-R,y:26,"text-anchor":"end","font-size":12,"font-weight":700,fill:"#d34147"},"Axis starts at "+Math.round(base).toLocaleString()+", not 0"))}
  // message
  var o=vals.map(function(v,i){return i}).sort(function(a,b){return vals[a]-vals[b]}),lo=o[0],hi=o[o.length-1];
@@ -247,7 +247,7 @@ function drawScatter(){
  var W=640,H=380,L=74,R=30,T=46,B=58,pw=W-L-R,ph=H-T-B;
  var xs=X.v,ys=Y.v,xmn=Math.min.apply(null,xs),xmx=Math.max.apply(null,xs),ymn=Math.min.apply(null,ys),ymx=Math.max.apply(null,ys);
  var xp=(xmx-xmn)*0.15||1,yp=(ymx-ymn)*0.15||1,x0=xmn-xp,x1=xmx+xp,y0=ymn-yp,y1=ymx+yp;
- var sx=function(v){return L+(v-x0)/(x1-x0)*pw},sy=function(v){return T+ph-(v-y0)/(y1-y0)*ph};
+ var ax=niceAxis(x0,x1,4),ay=niceAxis(y0,y1,4);x0=ax.min;x1=ax.max;y0=ay.min;y1=ay.max;var sx=function(v){return L+(v-x0)/(x1-x0)*pw},sy=function(v){return T+ph-(v-y0)/(y1-y0)*ph};
  var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Scatter plot of "+Y.label+" against "+X.label});
  svg.appendChild(el("text",{x:L,y:26,"font-size":17,"font-weight":700,fill:"#1c1c1c"},Y.label+" vs. "+X.label.toLowerCase()));
  for(var t=0;t<=4;t++){
@@ -312,7 +312,7 @@ function renderRank(){
   return {n:n,s:s/tw*100,i:i}}).sort(function(a,b){return b.s-a.s});
  host.innerHTML=sc.map(function(o,j){
   return '<div style="display:grid;grid-template-columns:120px 1fr 46px;gap:10px;align-items:center;margin:7px 0"><div style="font-weight:'+(j?500:800)+'">'+(j+1)+'. '+o.n+'</div><div style="background:#f0eeea;border-radius:8px;height:22px;overflow:hidden"><div style="height:100%;width:'+o.s.toFixed(1)+'%;background:'+(j?GRAY:"#d34147")+';border-radius:8px"></div></div><div style="text-align:right;font-weight:700">'+o.s.toFixed(0)+'</div></div>'}).join("");
- var top=sc[0],gap=sc[0].s-sc[1].s;
+ var top=sc[0],gap=Math.round(sc[0].s)-Math.round(sc[1].s);
  $("rankMsg").innerHTML="<b>Result:</b> With these priorities, <b>"+top.n+"</b> ranks first"+(gap<5?", but the lead over "+sc[1].n+" is small ("+gap.toFixed(0)+" points), so a different chart or priority could change the recommendation.":" by "+gap.toFixed(0)+" points. Scores are rescaled 0 to 100 between the best and worst neighborhood on each factor.");
 }
 renderStudio();renderRank();
