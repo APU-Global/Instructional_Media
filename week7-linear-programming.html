@@ -128,7 +128,7 @@ th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing
     <button class="btn" type="button" id="reveal">Reveal the optimal corner</button>
   </div>
 
-  <div class="chart" id="chart"></div>
+  <div class="controls" style="margin:0 0 12px"><span style="font-size:14px;font-weight:600">Try a what-if:</span><button class="btn alt" type="button" id="sc_land">Tighter land: 80 acres</button><button class="btn alt" type="button" id="sc_dem">Carrot demand limit: 60 acres</button><button class="btn alt" type="button" id="sc_def">Back to Carroto defaults</button></div><div class="chart" id="chart"></div>
   <div class="legend" id="lg"></div>
   <div class="callout" id="pt" aria-live="polite"><b>Your test point:</b> click the graph to try a plan.</div>
 </section>
@@ -151,7 +151,7 @@ th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing
   </details>
 </section>
 
-<p class="foot">Defaults come from the Week 7 Carroto scenario: 250 acres, a $200,000 budget, costs of $2,000 and $5,000 per acre, and profits of $8,000 and $10,000 per acre.</p>
+<p class="foot">Defaults come from the Week 7 Carroto scenario: 250 acres, a $200,000 budget, costs of $2,000 and $5,000 per acre, and profits of $8,000 and $10,000 per acre. Demand limits start switched off. With these numbers the budget is the only binding limit, and the what-if buttons above the graph show how a tighter land limit or a demand limit changes the best plan.</p>
 </div>
 
 <script>
@@ -289,10 +289,10 @@ function corners(poly,opt,cs){
  cs.forEach(function(k){var u=k.use(opt.x,opt.y),sl=k.c-u,bind=sl<1e-6;if(!bind)nb.push(k);
   t+="<tr><td>"+k.name+"</td><td>"+(k.unit==="$"?$$(u):(Math.round(u*10)/10)+" ac")+"</td><td>"+(k.unit==="$"?$$(k.c):k.c+" ac")+"</td><td>"+(k.unit==="$"?$$(sl):(Math.round(sl*10)/10)+" ac")+"</td><td><span class='badge "+(bind?"red":"no")+"'>"+(bind?"Binding":"Slack")+"</span></td></tr>"});
  $("slack").innerHTML=t;
- $("slackMsg").innerHTML=nb.length?"<b>Insight:</b> "+nb.map(function(k){return k.name.toLowerCase()}).join(" and ")+" "+(nb.length>1?"are":"is")+" not binding at the optimum. Having more of "+(nb.length>1?"those resources":"that resource")+" would not raise profit, because other limits stop production first. Always check that the model's constraints reflect the real situation.":"<b>Insight:</b> every constraint is binding at the optimum. Relaxing any of them would change the best plan.";
+ $("slackMsg").innerHTML=nb.length?"<b>Insight:</b> "+nb.map(function(k){return k.name.toLowerCase()}).join(" and ")+" "+(nb.length>1?"are":"is")+" not binding at the optimum. Having more of "+(nb.length>1?"those resources":"that resource")+" would not raise profit, because other limits stop production first. Always check that the model's constraints reflect the real situation."+(nb.some(function(k){return k.id==="land"})?" Try the what-if buttons above the graph to see land, or a demand limit, become a binding constraint.":""):"<b>Insight:</b> every constraint is binding at the optimum. Relaxing any of them would change the best plan.";
 }
 
-$("zs").addEventListener("input",update);$("zoom").addEventListener("change",update);
+function scen(o){for(var k in DEF){P[k]=(k in o)?o[k]:DEF[k];$("p_"+k).value=P[k]}pts=[];best=null;revealed=false;update()}$("sc_land").onclick=function(){scen({land:80})};$("sc_dem").onclick=function(){scen({dc:60})};$("sc_def").onclick=function(){scen({})};$("zs").addEventListener("input",update);$("zoom").addEventListener("change",update);
 $("reveal").onclick=function(){revealed=true;update()};
 document.addEventListener("input",function(e){if(e.target&&/^p_/.test(e.target.id)){revealed=false;best=null;pts=[]}});
 
