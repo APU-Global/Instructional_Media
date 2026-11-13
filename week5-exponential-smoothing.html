@@ -116,8 +116,8 @@ th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing
   <div class="grid2" style="align-items:end">
     <div>
       <label for="alpha">Smoothing parameter α = <b id="av">0.30</b></label>
-      <input type="range" id="alpha" min="0.05" max="0.95" step="0.05" value="0.30">
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute)"><span>0.05 · smooth, slow to react</span><span>0.95 · jumpy, reacts fast</span></div>
+      <input type="range" id="alpha" min="0.05" max="0.99" step="0.01" value="0.30">
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute)"><span>0.05 · smooth, slow to react</span><span>0.99 · jumpy, reacts fast</span></div>
     </div>
     <div class="controls" style="margin:0">
       <label><input type="checkbox" id="cmp">Compare α = 0.1 and α = 0.9</label>
@@ -128,7 +128,7 @@ th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing
 
   <div class="grid3" style="margin:14px 0">
     <div class="stat"><div class="k">Damping factor</div><div class="v" id="damp">0.70</div><div class="d">= 1 − α (Excel's input)</div></div>
-    <div class="stat"><div class="k">Next-month forecast</div><div class="v" id="nxt">–</div><div class="d">Jan, in $ thousands</div></div>
+    <div class="stat"><div class="k">Next-month forecast</div><div class="v" id="nxt">–</div><div class="d">Jan* (next year), in $ thousands</div></div>
     <div class="stat"><div class="k">Typical error (RMSE)</div><div class="v" id="rmse">–</div><div class="d" id="mae"></div></div>
   </div>
 
@@ -216,12 +216,12 @@ function draw(){
  // table
  var h="<tr><th>Month</th><th>Sales</th><th>Forecast</th><th>Error</th></tr>";
  for(var t=0;t<12;t++)h+="<tr><td>"+MO[t]+"</td><td>"+data[t]+"</td><td>"+(t?f[t].toFixed(1):"–")+"</td><td>"+(t?(data[t]-f[t]).toFixed(1):"–")+"</td></tr>";
- h+="<tr><td><b>Jan (next)</b></td><td>–</td><td><b>"+f[12].toFixed(1)+"</b></td><td>–</td></tr>";
+ h+="<tr><td><b>Jan* (next year)</b></td><td>–</td><td><b>"+f[12].toFixed(1)+"</b></td><td>–</td></tr>";
  $("tbl").innerHTML=h;
  // message
  var late=data[11]-f[11],m="<b>Reading:</b> ";
  m+=late>25?"Sales climbed through the year, so the forecast keeps <b>lagging below</b> actual sales (December missed by "+late.toFixed(0)+"K). Exponential smoothing works best without a strong trend, and this data has a holiday-season rise. ":"The forecast tracks the actual line closely. ";
- m+=a<0.25?"A small α produces a smooth forecast that reacts slowly to new data.":a>0.65?"A large α makes the forecast chase recent changes, so it is jumpy.":"A moderate α balances smoothness and responsiveness.";
+ m+=a<0.25?(late>25?"A small α gives a smooth forecast, but with trending data it reacts too slowly, so the forecast falls far behind.":"A small α produces a smooth forecast that reacts slowly to new data."):a>0.65?(late>25?"A large α makes the forecast chase recent changes. With trending data like this, that helps: the forecast stays closest to actual sales, even though it is jumpier.":"A large α makes the forecast chase recent changes, so it is jumpy."):(late>25?"A moderate α smooths out some noise, but with trending data it still lags behind the rise. A higher α fits this data better.":"A moderate α balances smoothness and responsiveness.");
  $("msg").innerHTML=m;
  weights(a);shock(a);
 }
@@ -245,8 +245,8 @@ $("shR").onclick=function(){$("shP").value=0;draw()};
 $("a03").onclick=function(){$("alpha").value=.3;draw()};
 $("best").onclick=function(){
  var bestA=.01,bestE=1e9;for(var a=1;a<=99;a++){var al=a/100,e=stats(data,smooth(data,al)).rmse;if(e<bestE){bestE=e;bestA=al}}
- $("alpha").value=Math.min(.95,Math.max(.05,Math.round(bestA*20)/20));draw();
- $("msg").innerHTML+=" <b>Best fit:</b> the lowest historical error on this data occurs near α = "+bestA.toFixed(2)+" (the slider is set to the nearest value it allows, between 0.05 and 0.95). A very high best α is a sign of a trend that simple smoothing cannot capture.";
+ $("alpha").value=Math.min(.99,Math.max(.05,bestA));draw();
+ $("msg").innerHTML+=" <b>Best fit:</b> the lowest historical error on this data occurs near α = "+bestA.toFixed(2)+" (the slider is now set to that value). A very high best α is a sign of a trend that simple smoothing cannot capture.";
 };
 
 (function(){
