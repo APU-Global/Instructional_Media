@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 581 Week 6 | Sustaining a Safe, Positive Learning Environment</title>
+<style>
+:root{--a1:#047857;--a2:#1d4ed8;--bg:#f3faf7;--ink:#10261f;--muted:#3f5f54;--line:#cfe5db;--tint:#e7f6ef;--tabbg:#e2f1ea;--focus:#c2410c}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:1100px;margin:0 auto}
+.hdr{display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(120deg,var(--a1),var(--a2));color:#fff;flex:0 0 auto}
+.hdr svg.logo{width:46px;height:46px;flex:0 0 auto}
+.hdr .t{min-width:0}
+.hdr .wk{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.92}
+.hdr h1{margin:0;font-size:21px;line-height:1.15;font-weight:800}
+.hdr .sub{font-size:13px;opacity:.95}
+.tabs{display:flex;gap:4px;padding:8px 14px 0;background:var(--tabbg);border-bottom:2px solid var(--line);flex:0 0 auto;overflow:hidden}
+.tab{border:0;background:transparent;padding:9px 14px;border-radius:10px 10px 0 0;font-weight:700;font-size:14.5px;color:var(--muted);white-space:nowrap;flex:1 1 0;min-width:0;text-overflow:ellipsis;overflow:hidden}
+.tab[aria-selected=true]{background:#fff;color:var(--a1);box-shadow:0 -2px 0 var(--a1) inset,0 0 0 1px var(--line);margin-bottom:-2px;border-bottom:2px solid #fff}
+.tab:hover{color:var(--a1)}
+.stage{flex:1 1 auto;min-height:0;overflow:hidden;position:relative}
+.pane{display:none;height:100%;padding:14px 18px;overflow:hidden}
+.pane.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pane.on{animation:none}*{transition:none!important}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;height:100%}
+.col{min-height:0;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h2,.card h3{margin:0 0 6px;font-size:17px;line-height:1.25}
+.card p{margin:0 0 8px}
+.card p:last-child{margin-bottom:0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--a1)}
+.lead{font-size:15px;color:var(--muted);margin:0 0 8px}
+.btn{border:2px solid var(--a1);background:var(--a1);color:#fff;border-radius:10px;padding:8px 16px;font-weight:700}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:#fff;color:var(--a1)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:600;font-size:14.5px;margin-bottom:6px;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--a1);background:var(--tint)}
+.opt.sel{border-color:var(--a1);background:var(--tint)}
+.opt.ok{border-color:#15803d;background:#ecfdf3}
+.opt.no{border-color:#b91c1c;background:#fef2f2}
+.fb{border-left:5px solid var(--a1);background:var(--tint);border-radius:8px;padding:9px 12px;font-size:14.5px;min-height:20px}
+.fb.good{border-color:#15803d;background:#ecfdf3}
+.fb.bad{border-color:#b45309;background:#fffbeb}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2));width:0;transition:width .4s ease}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--tint);color:var(--a1);font-weight:700;font-size:12.5px;border:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:10px}
+.sp{flex:1}
+.small{font-size:13.5px;color:var(--muted)}
+.dots{display:flex;gap:6px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--a1)}
+.ftr{flex:0 0 auto;padding:5px 14px;font-size:11.5px;color:var(--muted);text-align:center;border-top:1px solid var(--line);background:#fff}
+.sr{position:absolute;left:-9999px}
+/* small screens: single inner scroll fallback, stacked layout */
+@media (max-width:760px){
+  .two{grid-template-columns:1fr;height:auto}
+  .pane{overflow-y:auto;overflow-x:hidden}
+  .hdr h1{font-size:17px}.hdr .sub{display:none}
+  .tab{font-size:12.5px;padding:8px 4px}
+}
+@media (max-height:640px){.pane{overflow-y:auto}}
+
+.meter{margin-bottom:7px}
+.meter .l{display:flex;justify-content:space-between;font-size:13px;font-weight:700}
+.meter .bar{height:12px}
+.delta{display:inline-block;font-size:12.5px;font-weight:800;border-radius:99px;padding:1px 9px;margin:4px 4px 0 0}
+.delta.p{background:#dcfce7;color:#14532d}.delta.n{background:#fee2e2;color:#7f1d1d}.delta.z{background:#e5e7eb;color:#374151}
+.sel2{width:100%;font:inherit;padding:7px 10px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-weight:600}
+.lab{font-size:12.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--a1);display:block;margin:8px 0 3px}
+.out{white-space:pre-wrap;background:#fbfffd;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;flex:1;overflow:hidden}
+textarea{width:100%;font:inherit;font-size:14px;border:2px solid var(--line);border-radius:10px;padding:7px 10px;resize:none;color:var(--ink);background:#fff}
+textarea:focus{border-color:var(--a1)}
+.chk{display:flex;gap:9px;align-items:flex-start;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:14.5px}
+.chk:hover{background:var(--tint)}.chk input{margin-top:3px;flex:0 0 18px;width:18px;height:18px;accent-color:var(--a1)}
+a{color:var(--a2);font-weight:700}
+.mouth{transition:d .4s}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="hdr">
+  <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="rgba(255,255,255,.18)"/><path d="M32 52S12 40 12 26a10 10 0 0 1 20-3 10 10 0 0 1 20 3c0 14-20 26-20 26z" fill="#fde68a"/><path d="M24 30l6 6 11-12" stroke="#047857" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="t"><div class="wk">EDUC 581 &bull; Week 6</div><h1>Sustaining a Safe, Positive Learning Environment</h1><div class="sub">Routines, relationships, academic language, reflection, and preparing for evaluations</div></div>
+ </header>
+ <div class="tabs" role="tablist" aria-label="Week 6 activities">
+  <button class="tab" role="tab" aria-selected="true" data-p="p1">1 &middot; Climate Simulator</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p2">2 &middot; Language Goal Builder</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p3">3 &middot; Reflection Loop</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p4">4 &middot; Evaluation Prep</button>
+ </div>
+ <main class="stage">
+
+  <!-- PANE 1 -->
+  <section class="pane on" id="p1" role="tabpanel">
+   <div class="two" style="grid-template-columns:.95fr 1.05fr">
+    <div class="col">
+     <div class="card" style="padding:8px">
+      <svg viewBox="0 0 400 230" style="width:100%;height:auto;display:block" role="img" aria-label="Classroom scene. Student faces become happier as the classroom climate improves.">
+       <rect width="400" height="230" rx="10" fill="#e7f6ef"/><rect y="170" width="400" height="60" fill="#d6c3a4"/>
+       <rect x="24" y="22" width="150" height="80" rx="6" fill="#0f5a4d" stroke="#b45309" stroke-width="5"/><path d="M38 46h80M38 64h110M38 82h60" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+       <rect x="250" y="22" width="64" height="70" rx="4" fill="#bfe3f5" stroke="#8aa0c8" stroke-width="4"/><path d="M282 22v70M250 57h64" stroke="#8aa0c8" stroke-width="3"/>
+       <rect x="330" y="30" width="48" height="36" rx="3" fill="#fff" stroke="#047857" stroke-width="3"/><path d="M338 42h32M338 52h22" stroke="#047857" stroke-width="3"/>
+       <circle cx="205" cy="92" r="15" fill="#1d4ed8"/><path d="M180 148c0-20 10-33 25-33s25 13 25 33z" fill="#1d4ed8"/><path d="M227 126l22-22" stroke="#1d4ed8" stroke-width="5" stroke-linecap="round"/>
+       <g id="stu"></g>
+      </svg>
+     </div>
+     <div class="card" style="flex:1">
+      <h3 style="margin-bottom:8px">Classroom climate</h3>
+      <div class="meter"><div class="l"><span>Routines and expectations</span><span id="vR">5</span></div><div class="bar"><i id="bR"></i></div></div>
+      <div class="meter"><div class="l"><span>Relationships and respect</span><span id="vL">5</span></div><div class="bar"><i id="bL"></i></div></div>
+      <div class="meter"><div class="l"><span>Belonging and access</span><span id="vB">5</span></div><div class="bar"><i id="bB"></i></div></div>
+     </div>
+    </div>
+    <div class="col">
+     <div class="row"><div class="eyebrow" id="sProg">Scenario 1 of 4</div><span class="sp"></span></div>
+     <div class="card" style="flex:1;display:flex;flex-direction:column">
+      <h3 id="sT"></h3><p id="sD" style="margin-bottom:8px"></p>
+      <div id="sO"></div>
+      <div class="fb" id="sF" style="margin-top:2px">Choose how you would respond.</div><div id="sDel"></div>
+      <div class="row" style="margin-top:auto;padding-top:8px"><span class="sp"></span><button class="btn" id="sN" disabled>Next scenario</button></div>
+     </div>
+    </div>
+   </div>
+   <div id="sDone" class="card" style="display:none;position:absolute;inset:14px 18px;z-index:5;text-align:center;padding-top:50px">
+    <div class="eyebrow">Climate report</div><h2 style="font-size:24px" id="sRes"></h2><p id="sMsg" style="max-width:560px;margin:8px auto 14px"></p><button class="btn" id="sAgain">Try again</button>
+   </div>
+  </section>
+
+  <!-- PANE 2 -->
+  <section class="pane" id="p2" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="card" style="padding:10px 14px"><div class="eyebrow">Lesson context &bull; Grade 4 science</div><strong>How do plants make their own food?</strong>
+      <div class="small">Students need language to talk, read, write, and reason about this content.</div></div>
+     <div class="card" style="display:flex;justify-content:center;padding:6px">
+      <svg viewBox="0 0 400 150" style="width:100%;height:auto;max-height:150px" role="img" aria-label="Four speech bubbles labeled talk, read, write, and reason">
+       <g><rect x="8" y="10" width="86" height="54" rx="14" fill="#047857"/><path d="M30 64l-8 16 24-16z" fill="#047857"/><text x="51" y="42" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">Talk</text></g>
+       <g><rect x="106" y="10" width="86" height="54" rx="14" fill="#1d4ed8"/><path d="M128 64l-8 16 24-16z" fill="#1d4ed8"/><text x="149" y="42" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">Read</text></g>
+       <g><rect x="204" y="10" width="86" height="54" rx="14" fill="#b45309"/><path d="M226 64l-8 16 24-16z" fill="#b45309"/><text x="247" y="42" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">Write</text></g>
+       <g><rect x="302" y="10" width="90" height="54" rx="14" fill="#7c3aed"/><path d="M324 64l-8 16 24-16z" fill="#7c3aed"/><text x="347" y="42" font-size="16" font-weight="800" fill="#fff" text-anchor="middle">Reason</text></g>
+       <text x="200" y="118" font-size="14" font-weight="700" fill="#10261f" text-anchor="middle">Name the language, then plan supports for it.</text>
+      </svg>
+     </div>
+     <div class="fb" id="gH"></div>
+     <div class="card" style="flex:1"><h3>Literacy across the day</h3>
+      <p class="small" style="margin-bottom:4px">TPE 7 guides literacy. Review these California resources:</p>
+      <ul style="margin:0;padding-left:20px;font-size:14px">
+       <li><a href="https://www.cde.ca.gov/ci/rl/cf/elaeldfrmwrksbeadopted.asp" target="_blank" rel="noopener">California ELA/ELD Framework</a></li>
+       <li><a href="https://www.cde.ca.gov/sp/se/ac/documents/cadyslexiaguidelines.pdf" target="_blank" rel="noopener">California Dyslexia Guidelines (PDF)</a></li>
+      </ul></div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column">
+      <h3>Build an academic language goal</h3>
+      <label class="lab" for="gF">1. Language function</label>
+      <select class="sel2" id="gF"></select>
+      <label class="lab" for="gM">2. Where students use it</label>
+      <select class="sel2" id="gM"></select>
+      <label class="lab" for="gS">3. UDL support</label>
+      <select class="sel2" id="gS"></select>
+      <div class="out" id="gOut" style="margin-top:8px"></div>
+      <div class="row" style="margin-top:8px"><button class="btn" id="gC">Copy goal</button><span class="small" id="gM2"></span></div>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- PANE 3 -->
+  <section class="pane" id="p3" role="tabpanel">
+   <div class="two" style="grid-template-columns:.8fr 1.2fr">
+    <div class="col">
+     <div class="eyebrow">Reflect while you teach and after you teach</div>
+     <div class="card" style="flex:1;display:flex;align-items:center;justify-content:center;padding:6px">
+      <svg viewBox="0 0 320 300" style="width:100%;max-height:100%" role="img" aria-label="Reflection loop: teach, notice, reflect, adjust">
+       <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0l8 4-8 4z" fill="#3f5f54"/></marker></defs>
+       <g fill="none" stroke="#3f5f54" stroke-width="3" marker-end="url(#ar)"><path d="M190 52Q250 60 262 105"/><path d="M262 190Q250 238 190 250"/><path d="M130 250Q70 240 58 195"/><path d="M58 108Q70 60 130 52"/></g>
+       <g font-weight="800" font-size="15" text-anchor="middle" fill="#fff"><circle cx="160" cy="50" r="40" fill="#047857"/><text x="160" y="56">Teach</text><circle cx="270" cy="150" r="40" fill="#1d4ed8"/><text x="270" y="156">Notice</text><circle cx="160" cy="250" r="40" fill="#b45309"/><text x="160" y="256">Reflect</text><circle cx="50" cy="150" r="40" fill="#7c3aed"/><text x="50" y="156">Adjust</text></g>
+       <text x="160" y="156" font-size="13" font-weight="700" fill="#10261f" text-anchor="middle">Reflective</text><text x="160" y="172" font-size="13" font-weight="700" fill="#10261f" text-anchor="middle">practice</text>
+      </svg>
+     </div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column">
+      <h3>Your reflection</h3>
+      <label class="lab" for="rM">Moment to reflect on</label>
+      <select class="sel2" id="rM"><option>A routine I taught or reinforced</option><option>A moment I built a relationship with a student</option><option>A time a student did not feel safe or included</option><option>A transition that did not go as planned</option></select>
+      <label class="lab" for="rW">What worked?</label><textarea id="rW" rows="2" placeholder="Describe what you did and how students responded."></textarea>
+      <label class="lab" for="rC">What would I change?</label><textarea id="rC" rows="2" placeholder="What would you do differently next time?"></textarea>
+      <label class="lab" for="rE">What evidence supports my answer?</label><textarea id="rE" rows="2" placeholder="What did you see and hear students say or do?"></textarea>
+      <div class="row" style="margin-top:8px"><span class="small">Evidence strength</span><div class="bar sp"><i id="rBar"></i></div></div>
+      <div class="fb" id="rF" style="margin-top:8px">Be specific about what you saw and heard.</div>
+      <div class="row" style="margin-top:auto;padding-top:6px"><button class="btn" id="rC2">Copy reflection</button><span class="small" id="rM2"></span></div>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- PANE 4 -->
+  <section class="pane" id="p4" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="eyebrow">The road to the final evaluations</div>
+     <div class="card" style="padding:8px 10px">
+      <svg viewBox="0 0 400 200" style="width:100%;height:auto;display:block" role="img" aria-label="Road with three milestones across weeks 6, 7, and 8">
+       <rect width="400" height="200" rx="10" fill="#e7f6ef"/>
+       <path d="M20 160C120 160 100 60 200 100S300 40 380 60" stroke="#8aa0c8" stroke-width="18" fill="none" stroke-linecap="round"/><path d="M20 160C120 160 100 60 200 100S300 40 380 60" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="10 12"/>
+       <g text-anchor="middle" font-weight="800"><circle cx="70" cy="148" r="24" fill="#047857"/><text x="70" y="154" fill="#fff" font-size="15">Wk 6</text><circle cx="205" cy="98" r="24" fill="#1d4ed8"/><text x="205" y="104" fill="#fff" font-size="15">Wk 7</text><circle cx="340" cy="68" r="24" fill="#b45309"/><text x="340" y="74" fill="#fff" font-size="15">Wk 8</text></g>
+       <g font-size="12" font-weight="700" fill="#10261f" text-anchor="middle"><text x="70" y="190">Remind your CT</text><text x="205" y="52">Evaluations + survey link</text><text x="340" y="28">Finish the survey</text></g>
+      </svg>
+     </div>
+     <div class="card" style="flex:1"><h3>Evaluation checklist</h3>
+      <label class="chk"><input type="checkbox"> Remind my Cooperating Teacher about the evaluation form</label>
+      <label class="chk"><input type="checkbox"> Check that my GoReact comments have timestamps</label>
+      <label class="chk"><input type="checkbox"> Choose one or two recordings that best show my teaching</label>
+      <label class="chk"><input type="checkbox"> Check my university email (and spam) for the survey</label>
+      <div class="bar" style="margin-top:6px"><i id="evBar"></i></div><div class="small" id="evMsg" style="margin-top:4px">0 of 4 complete</div>
+     </div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column">
+      <h3>Friendly reminder to your Cooperating Teacher</h3>
+      <p class="small">Edit the name, then copy. Keep it warm and brief.</p>
+      <label class="lab" for="evN">Cooperating Teacher&rsquo;s name</label><input class="sel2" id="evN" value="Ms. Rivera" style="font-weight:500">
+      <div class="out" id="evOut" style="margin-top:10px"></div>
+      <div class="row" style="margin-top:8px"><button class="btn" id="evC">Copy message</button><span class="small" id="evM">Thank your mentors and ask how to stay in touch.</span></div>
+     </div>
+    </div>
+   </div>
+  </section>
+ </main>
+ <div class="ftr">EDUC 581 Student Teaching I &bull; Interactive learning aid &bull; Based on the Week 6 Deep Dive</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t.dataset.p));});
+$('.tabs').addEventListener('keydown',e=>{const t=$$('.tab'),i=t.indexOf(document.activeElement);if(i<0)return;if(e.key==='ArrowRight'){t[(i+1)%t.length].focus();t[(i+1)%t.length].click()}if(e.key==='ArrowLeft'){t[(i+t.length-1)%t.length].focus();t[(i+t.length-1)%t.length].click()}});
+const NS='http://www.w3.org/2000/svg';
+function el(n,a,txt){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(txt)e.textContent=txt;return e}
+function copy(txt,msgEl){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>msgEl.textContent='Copied!').catch(()=>msgEl.textContent='Select the text to copy.')}else msgEl.textContent='Select the text to copy.'}
+
+/* ---- Pane 1 ---- */
+const SC=[
+ {t:'Monday after recess',d:'Students trickle in loudly and unsettled. Several are still talking about a recess disagreement.',o:[
+  ['Raise your voice and assign silent seat work as a consequence.',[0,-2,-1],'Loud consequences can quiet a room but damage relationships and how safe students feel.'],
+  ['Greet students at the door, point to the posted entry steps, use your practiced calm signal, and reteach one step.',[2,1,1],'Routines taught explicitly and rehearsed give students a predictable way to reset, with respect.'],
+  ['Ignore the noise and start the lesson.',[-1,0,-1],'Without clear expectations, the noise becomes the routine.']]},
+ {t:'A quiet English learner',d:'Maya knows the answer and whispers it to her partner, but she will not share with the class.',o:[
+  ['Call on her anyway to build her confidence.',[0,-1,-1],'Putting a student on the spot can raise anxiety and reduce belonging.'],
+  ['Offer a sentence frame and partner rehearsal, and let her choose whether to share her idea or her partner\u2019s.',[0,1,2],'Language supports and choice give access and keep the classroom feeling safe.'],
+  ['Stop calling on her so she is not uncomfortable.',[0,-1,-2],'Avoiding her removes access to practice and signals low expectations.']]},
+ {t:'Off-task during group work',d:'Two students are off task while their group works on a poster.',o:[
+  ['Write their names on the board as a public warning.',[0,-2,-1],'Public shaming harms trust and rarely teaches the expectation.'],
+  ['Move near, check in privately, restate the expectation, and offer a role in the group task.',[1,2,1],'A private, respectful check-in protects relationships and re-engages students.'],
+  ['Send them out of the room right away.',[-1,-2,-1],'Removing students immediately loses learning time and strains the relationship.']]},
+ {t:'Disagreement in discussion',d:'A student shares an unpopular opinion and a few classmates laugh.',o:[
+  ['Move on quickly to the next speaker.',[0,0,-1],'Moving on lets the message stand that some ideas are not welcome.'],
+  ['Pause, revisit your discussion norms, invite the student to continue, and ask peers to respond to the idea.',[1,1,2],'Reteaching norms and responding to ideas builds respect and belonging.'],
+  ['Reprimand the laughing students in front of the class.',[0,-1,-1],'A public reprimand can silence the whole room, not just the laughter.']]}];
+let si=0,m=[5,5,5],sa=false;const mk=[$('#bR'),$('#bL'),$('#bB')],mv=[$('#vR'),$('#vL'),$('#vB')],ML=['Routines','Relationships','Belonging'];
+const stu=$('#stu'),SX=[70,140,210,280,350];
+SX.forEach(x=>{const g=el('g',{});g.append(el('circle',{cx:x,cy:176,r:15,fill:'#e8b48f'}),el('path',{d:`M${x-22} 226c0-18 9-30 22-30s22 12 22 30z`,fill:['#047857','#1d4ed8','#b45309','#7c3aed','#be185d'][SX.indexOf(x)]}),el('circle',{cx:x-5,cy:173,r:1.8,fill:'#10261f'}),el('circle',{cx:x+5,cy:173,r:1.8,fill:'#10261f'}),el('path',{class:'mouth',d:`M${x-6} 182Q${x} 186 ${x+6} 182`,stroke:'#10261f','stroke-width':2,fill:'none','stroke-linecap':'round'}));stu.append(g)});
+function meters(){let t=0;m.forEach((v,i)=>{mk[i].style.width=(v*10)+'%';mv[i].textContent=v;t+=v});const avg=t/3;const k=Math.round((avg-5)*2);$$('#stu .mouth').forEach((p,i)=>{const x=SX[i];const kk=Math.max(-5,Math.min(7,k));p.setAttribute('d',`M${x-7} 182Q${x} ${182+kk*2.4} ${x+7} 182`)})}
+function sc(){sa=false;const s=SC[si];$('#sProg').textContent='Scenario '+(si+1)+' of 4';$('#sT').textContent=s.t;$('#sD').textContent=s.d;$('#sF').className='fb';$('#sF').textContent='Choose how you would respond.';$('#sDel').innerHTML='';$('#sN').disabled=true;$('#sN').textContent=si===3?'See climate report':'Next scenario';
+ const o=$('#sO');o.innerHTML='';s.o.forEach(([t,dl,why],i)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(sa)return;sa=true;const best=s.o.reduce((a,c,j)=>c[1].reduce((x,y)=>x+y,0)>s.o[a][1].reduce((x,y)=>x+y,0)?j:a,0);b.classList.add(i===best?'ok':'no');if(i!==best)$$('#sO .opt')[best].classList.add('ok');
+  dl.forEach((d,k)=>{m[k]=Math.max(0,Math.min(10,m[k]+d))});meters();$('#sF').className='fb '+(i===best?'good':'bad');$('#sF').innerHTML='<strong>'+(i===best?'Strong move. ':'Think about how students experience this. ')+'</strong>'+why+(i!==best?' <em>Strongest response: '+s.o[best][0]+'</em>':'');
+  $('#sDel').innerHTML=dl.map((d,k)=>'<span class="delta '+(d>0?'p':d<0?'n':'z')+'">'+ML[k]+' '+(d>0?'+':'')+d+'</span>').join('');$('#sN').disabled=false};o.append(b)})}
+$('#sN').onclick=()=>{if(si<3){si++;sc()}else{const tot=m.reduce((a,b)=>a+b,0),lo=m.indexOf(Math.min(...m));$('#sDone').style.display='block';$('#sRes').textContent=tot>=24?'A safe, positive classroom':tot>=17?'A classroom on its way':'A classroom that needs rebuilding';$('#sMsg').textContent='Routines '+m[0]+', Relationships '+m[1]+', Belonging '+m[2]+' (out of 10). Your next focus: '+ML[lo].toLowerCase()+'. Reflect on how students experience your classroom, not only on what you intended.'}};
+$("#sAgain").onclick=()=>{si=0;m=[5,5,5];$('#sDone').style.display='none';meters();sc()};meters();sc();
+
+/* ---- Pane 2 ---- */
+const GF=[['Describe the steps plants use to make food','describe the steps plants use to make food','Describing builds vocabulary of sequence: first, next, then.'],['Explain cause and effect (why plants need sunlight)','explain why plants need sunlight, using cause-and-effect language','Cause and effect uses connectors such as because, so, and as a result.'],['Compare plants and animals','compare how plants and animals get energy','Comparing needs language such as both, however, and in contrast.'],['Justify a claim with evidence','justify a claim about what a plant needs, with evidence from an investigation','Justifying needs claim and evidence language: I think, because I observed.']];
+const GM=[['Talk with partners and the class','in partner and whole-class talk'],['Read an informational text','while reading a short informational text'],['Write an explanation with a diagram','in a written explanation with a labeled diagram']];
+const GS=[['Sentence frames','sentence frames such as \u201cPlants need ___ because ___.\u201d','Frames model the grammar and structure students need.'],['Word bank with pictures','a word bank with pictures (sunlight, chlorophyll, energy)','Pictures link new words to meaning, which helps English learners and all students.'],['Labeled diagram reference','a labeled diagram students can point to and refer to','Visuals offer another way to represent the content.'],['Partner rehearsal','partner rehearsal before sharing with the class','Rehearsal lowers risk and builds confidence in using new language.']];
+[['#gF',GF],['#gM',GM],['#gS',GS]].forEach(([id,a])=>a.forEach((x,i)=>{const o=document.createElement('option');o.value=i;o.textContent=x[0];$(id).append(o)}));
+function gl(){const f=GF[$('#gF').value],mo=GM[$('#gM').value],s=GS[$('#gS').value];$('#gH').innerHTML='<strong>Why it fits:</strong> '+f[2]+' '+s[2];
+ $('#gOut').textContent='Academic language goal: Students will '+f[1]+' '+mo[1]+'.\n\nUDL support: '+s[1]+'.\n\nHow I will know: students use the target language in their talk or writing, and I note who needs more support.'}
+['#gF','#gM','#gS'].forEach(i=>$(i).onchange=gl);gl();$('#gC').onclick=()=>copy($('#gOut').textContent,$('#gM2'));
+
+/* ---- Pane 3 ---- */
+function rf(){const e=$('#rE').value.trim(),w=$('#rW').value.trim(),c=$('#rC').value.trim();let sc=0;if(w.length>30)sc+=25;if(c.length>30)sc+=25;if(e.length>40)sc+=25;if(/(saw|heard|said|asked|raised|wrote|\d)/i.test(e))sc+=25;
+ $('#rBar').style.width=sc+'%';$('#rF').className='fb'+(sc===100?' good':'');$('#rF').textContent=sc===100?'Specific and evidence-based. Nice reflective practice.':sc>=50?'Getting there. Add what you saw or heard students say or do.':'Be specific about what you saw and heard.'}
+['#rW','#rC','#rE'].forEach(i=>$(i).oninput=rf);rf();
+$('#rC2').onclick=()=>copy('Moment: '+$('#rM').value+'\nWhat worked: '+$('#rW').value+'\nWhat I would change: '+$('#rC').value+'\nEvidence: '+$('#rE').value,$('#rM2'));
+
+/* ---- Pane 4 ---- */
+function ev(){const n=$$('#p4 .chk input:checked').length;$('#evBar').style.width=(n/4*100)+'%';$('#evMsg').textContent=n+' of 4 complete'+(n===4?' \u2014 ready!':'')}
+$$('#p4 .chk input').forEach(i=>i.onchange=ev);
+function msg(){const n=$('#evN').value.trim()||'[Name]';$('#evOut').textContent='Hello '+n+',\n\nThank you again for welcoming me into your classroom. I have learned so much from you. A quick reminder that the Cooperating Teacher evaluation form was emailed to you earlier in the term. If you cannot find it, please let me know and I will help track it down.\n\nThank you for your time and your mentorship. I would love to stay in touch.\n\nWarmly,\n[Your name]'}
+$('#evN').oninput=msg;msg();$('#evC').onclick=()=>copy($('#evOut').textContent,$('#evM'));
+</script>
+</body>
+</html>

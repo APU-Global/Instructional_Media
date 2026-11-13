@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 581 Week 1 | Launching Student Teaching</title>
+<style>
+:root{--a1:#1d4ed8;--a2:#0d9488;--bg:#f4f7fb;--ink:#14213d;--muted:#4b5a73;--line:#d5deeb;--tint:#eaf1ff;--tabbg:#e9eef7;--focus:#f59e0b}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:1100px;margin:0 auto}
+.hdr{display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(120deg,var(--a1),var(--a2));color:#fff;flex:0 0 auto}
+.hdr svg.logo{width:46px;height:46px;flex:0 0 auto}
+.hdr .t{min-width:0}
+.hdr .wk{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.92}
+.hdr h1{margin:0;font-size:21px;line-height:1.15;font-weight:800}
+.hdr .sub{font-size:13px;opacity:.95}
+.tabs{display:flex;gap:4px;padding:8px 14px 0;background:var(--tabbg);border-bottom:2px solid var(--line);flex:0 0 auto;overflow:hidden}
+.tab{border:0;background:transparent;padding:9px 14px;border-radius:10px 10px 0 0;font-weight:700;font-size:14.5px;color:var(--muted);white-space:nowrap;flex:1 1 0;min-width:0;text-overflow:ellipsis;overflow:hidden}
+.tab[aria-selected=true]{background:#fff;color:var(--a1);box-shadow:0 -2px 0 var(--a1) inset,0 0 0 1px var(--line);margin-bottom:-2px;border-bottom:2px solid #fff}
+.tab:hover{color:var(--a1)}
+.stage{flex:1 1 auto;min-height:0;overflow:hidden;position:relative}
+.pane{display:none;height:100%;padding:14px 18px;overflow:hidden}
+.pane.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pane.on{animation:none}*{transition:none!important}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;height:100%}
+.col{min-height:0;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h2,.card h3{margin:0 0 6px;font-size:17px;line-height:1.25}
+.card p{margin:0 0 8px}
+.card p:last-child{margin-bottom:0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--a1)}
+.lead{font-size:15px;color:var(--muted);margin:0 0 8px}
+.btn{border:2px solid var(--a1);background:var(--a1);color:#fff;border-radius:10px;padding:8px 16px;font-weight:700}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:#fff;color:var(--a1)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:600;font-size:14.5px;margin-bottom:6px;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--a1);background:var(--tint)}
+.opt.sel{border-color:var(--a1);background:var(--tint)}
+.opt.ok{border-color:#15803d;background:#ecfdf3}
+.opt.no{border-color:#b91c1c;background:#fef2f2}
+.fb{border-left:5px solid var(--a1);background:var(--tint);border-radius:8px;padding:9px 12px;font-size:14.5px;min-height:20px}
+.fb.good{border-color:#15803d;background:#ecfdf3}
+.fb.bad{border-color:#b45309;background:#fffbeb}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2));width:0;transition:width .4s ease}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--tint);color:var(--a1);font-weight:700;font-size:12.5px;border:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:10px}
+.sp{flex:1}
+.small{font-size:13.5px;color:var(--muted)}
+.dots{display:flex;gap:6px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--a1)}
+.ftr{flex:0 0 auto;padding:5px 14px;font-size:11.5px;color:var(--muted);text-align:center;border-top:1px solid var(--line);background:#fff}
+.sr{position:absolute;left:-9999px}
+/* small screens: single inner scroll fallback, stacked layout */
+@media (max-width:760px){
+  .two{grid-template-columns:1fr;height:auto}
+  .pane{overflow-y:auto;overflow-x:hidden}
+  .hdr h1{font-size:17px}.hdr .sub{display:none}
+  .tab{font-size:12.5px;padding:8px 4px}
+}
+@media (max-height:640px){.pane{overflow-y:auto}}
+
+.ring-wrap{display:flex;justify-content:center;align-items:center;flex:1;min-height:0}
+.ring-wrap svg{max-height:100%;width:100%;max-width:420px}
+.seg{cursor:pointer;transition:transform .2s,filter .2s;transform-origin:170px 170px}
+.seg:hover,.seg:focus{filter:brightness(1.12)}
+.seg.act{transform:scale(1.05)}
+.seg.seen path{stroke:#fff}
+.sw{width:100%;accent-color:var(--a1)}
+.stations{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stn{border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px;text-align:center;font-weight:700;font-size:14px}
+.stn.on{border-color:var(--a1);background:var(--tint);color:var(--a1)}
+.chk{display:flex;gap:9px;align-items:flex-start;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:14.5px}
+.chk:hover{background:var(--tint)}
+.chk input{margin-top:3px;flex:0 0 18px;width:18px;height:18px;accent-color:var(--a1)}
+.q{font-size:17px;font-weight:700;margin:0 0 10px}
+.std{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.std .opt{margin:0;font-size:13.5px;padding:7px 9px}
+.flip{perspective:800px;border:0;background:none;padding:0;height:100px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:14px;padding:12px;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.flip .f{background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-weight:800;font-size:15px;gap:4px}
+.flip .b{background:#fff;border:2px solid var(--a1);transform:rotateY(180deg);font-size:13.5px;font-weight:500}
+.cards4{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.score{font-size:42px;font-weight:800;color:var(--a1);line-height:1}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="hdr">
+  <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="rgba(255,255,255,.18)"/><path d="M8 24 32 12l24 12-24 12z" fill="#fff"/><path d="M18 31v12c0 4 6 8 14 8s14-4 14-8V31l-14 7z" fill="#fde68a"/><path d="M54 25v16" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="54" cy="44" r="3" fill="#fde68a"/></svg>
+  <div class="t"><div class="wk">EDUC 581 &bull; Week 1</div><h1>Launching Student Teaching</h1><div class="sub">Standards, a gradual transition, and the literacy lens that frame your placement</div></div>
+ </header>
+ <div class="tabs" role="tablist" aria-label="Week 1 activities">
+  <button class="tab" role="tab" aria-selected="true" data-p="p1">1 &middot; CSTP Compass</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p2">2 &middot; Launch Pathway</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p3">3 &middot; Match the Moment</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p4">4 &middot; Literacy Lens</button>
+ </div>
+ <main class="stage">
+
+  <!-- PANE 1 -->
+  <section class="pane on" id="p1" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="eyebrow">Explore the six standards</div>
+     <p class="lead" style="margin:0">Select each section of the compass. The CSTP are the lens for your observations and evaluations.</p>
+     <div class="ring-wrap"><svg id="ring" viewBox="0 0 340 340" role="group" aria-label="Compass of the six California Standards for the Teaching Profession"></svg></div>
+    </div>
+    <div class="col">
+     <div class="card" id="stdCard" style="flex:1;display:flex;flex-direction:column">
+      <div class="eyebrow" id="sNum">Standard</div>
+      <h2 id="sName">Choose a section to begin</h2>
+      <p id="sDesc">The six California Standards for the Teaching Profession (CSTP) describe effective teaching. Your Cooperating Teacher and Clinical Supervisor will use them to frame your growth.</p>
+      <div id="sEx" class="fb" style="display:none"></div>
+      <svg viewBox="0 0 420 150" style="width:100%;height:auto;max-height:150px;margin-top:auto;display:block" role="img" aria-label="Illustration of a teacher at a board with students">
+       <rect width="420" height="150" rx="12" fill="#eaf1ff"/><rect x="24" y="16" width="190" height="78" rx="6" fill="#0f5a4d"/><rect x="24" y="16" width="190" height="78" rx="6" fill="none" stroke="#b45309" stroke-width="5"/>
+       <path d="M40 40h70M40 56h110M40 72h50" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".85"/>
+       <circle cx="262" cy="50" r="14" fill="#1d4ed8"/><path d="M236 108c0-20 11-32 26-32s26 12 26 32z" fill="#1d4ed8"/><path d="M286 78l30-26" stroke="#1d4ed8" stroke-width="5" stroke-linecap="round"/>
+       <g fill="#0d9488"><circle cx="60" cy="112" r="10"/><path d="M42 140c0-12 7-20 18-20s18 8 18 20z"/></g>
+       <g fill="#b45309"><circle cx="110" cy="112" r="10"/><path d="M92 140c0-12 7-20 18-20s18 8 18 20z"/></g>
+       <g fill="#7c3aed"><circle cx="160" cy="112" r="10"/><path d="M142 140c0-12 7-20 18-20s18 8 18 20z"/></g>
+       <g fill="#be185d"><circle cx="210" cy="112" r="10"/><path d="M192 140c0-12 7-20 18-20s18 8 18 20z"/></g>
+       <path d="M330 30l12 24 26-4-18 20 8 26-24-12-22 16 4-26-20-16 26-6z" fill="#fde68a" stroke="#f59e0b" stroke-width="2" transform="translate(10 0) scale(.9)"/>
+      </svg>
+     </div>
+     <div class="card">
+      <div class="row"><strong>Standards explored</strong><span class="sp"></span><span class="pill" id="seenCt">0 of 6</span></div>
+      <div class="bar" style="margin-top:8px"><i id="seenBar"></i></div>
+      <p class="small" id="seenMsg" style="margin-top:6px">Explore all six to unlock your launch tip.</p>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- PANE 2 -->
+  <section class="pane" id="p2" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="eyebrow">Plan the transition with your Cooperating Teacher</div>
+     <div class="card">
+      <svg id="trans" viewBox="0 0 440 168" style="width:100%;height:auto;display:block" role="img" aria-label="Illustration of teaching responsibility shifting from the Cooperating Teacher to the candidate">
+       <rect x="0" y="0" width="440" height="168" rx="12" fill="#eaf1ff"/>
+       <rect x="14" y="132" width="412" height="22" rx="11" fill="#cfdcf3"/>
+       <rect id="tBar" x="14" y="132" width="40" height="22" rx="11" fill="#0d9488"/>
+       <text x="22" y="148" font-size="11" fill="#fff" font-weight="700" id="tPct">10%</text>
+       <g id="ctFig"><circle cx="90" cy="44" r="15" fill="#1d4ed8"/><path d="M62 96c0-20 12-32 28-32s28 12 28 32z" fill="#1d4ed8"/><text x="90" y="114" font-size="11" fill="#14213d" text-anchor="middle" font-weight="700">Cooperating Teacher</text></g>
+       <g id="stFig"><circle cx="350" cy="44" r="15" fill="#0d9488"/><path d="M322 96c0-20 12-32 28-32s28 12 28 32z" fill="#0d9488"/><text x="350" y="114" font-size="11" fill="#14213d" text-anchor="middle" font-weight="700">You</text></g>
+       <path d="M135 60h150" stroke="#8aa0c8" stroke-width="3" stroke-dasharray="6 6"/>
+       <path id="arrow" d="M285 60l-10-7v14z" fill="#8aa0c8"/>
+       <text x="210" y="50" font-size="10.5" fill="#4b5a73" text-anchor="middle">teaching responsibility</text>
+      </svg>
+      <label for="slide" class="small" style="display:block;margin-top:8px"><strong>Drag to set your share of teaching</strong></label>
+      <input id="slide" class="sw" type="range" min="0" max="100" value="10" aria-describedby="phaseTxt">
+      <div class="stations" style="margin-top:8px">
+       <div class="stn on" id="s0">Observe</div><div class="stn" id="s1">Co-teach</div><div class="stn" id="s2">Lead</div>
+      </div>
+     </div>
+     <div class="card" style="flex:1"><h3 id="phT">Phase: Observe</h3><div id="phaseTxt"></div></div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1">
+      <h3>Your launch checklist</h3>
+      <p class="small">Check each item you have done or scheduled.</p>
+      <label class="chk"><input type="checkbox"> Review the Student Teacher Handbook, including Teacher Candidate Absences</label>
+      <label class="chk"><input type="checkbox"> Purchase your GoReact code and finish the access tutorial</label>
+      <label class="chk"><input type="checkbox"> Meet your Cooperating Teacher and agree on a transition schedule</label>
+      <label class="chk"><input type="checkbox"> Read the CSTP and the Teaching Performance Expectations</label>
+      <label class="chk"><input type="checkbox"> Review TPE 7: Literacy and SB 488</label>
+      <label class="chk"><input type="checkbox"> Plan to submit lesson plans 48 hours before your supervisor meeting</label>
+      <div class="bar" style="margin-top:10px"><i id="ckBar"></i></div>
+      <p class="small" id="ckMsg" style="margin-top:6px">0 of 6 complete</p>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- PANE 3 -->
+  <section class="pane" id="p3" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="eyebrow" id="mmProg">Moment 1 of 6</div>
+     <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <svg viewBox="0 0 120 80" style="width:110px;margin:0 auto 6px;display:block" aria-hidden="true"><rect x="6" y="8" width="108" height="64" rx="8" fill="#eaf1ff" stroke="#1d4ed8" stroke-width="2"/><circle cx="30" cy="34" r="8" fill="#1d4ed8"/><rect x="48" y="26" width="52" height="6" rx="3" fill="#8aa0c8"/><rect x="48" y="38" width="38" height="6" rx="3" fill="#8aa0c8"/><rect x="18" y="54" width="84" height="6" rx="3" fill="#0d9488"/></svg>
+      <p class="q" id="mmQ"></p>
+      <div class="fb" id="mmFb">Which standard does this moment best show?</div>
+      <div class="row" style="margin-top:10px"><span class="small">Score: <strong id="mmScore">0</strong></span><span class="sp"></span><button class="btn" id="mmNext" disabled>Next moment</button></div>
+     </div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1"><h3>Choose the standard</h3><div class="std" id="mmOpts" style="margin-top:6px"></div></div>
+    </div>
+   </div>
+   <div id="mmDone" class="card" style="display:none;position:absolute;inset:14px 18px;z-index:5;text-align:center;overflow:hidden;align-content:center;padding-top:50px">
+    <div class="score" id="mmFinal">6/6</div><h2>Moments matched</h2><p id="mmMsg"></p><button class="btn" id="mmAgain">Try again</button>
+   </div>
+  </section>
+
+  <!-- PANE 4 -->
+  <section class="pane" id="p4" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="eyebrow">TPE 7 &bull; Literacy is an overarching goal</div>
+     <p class="lead" style="margin:0">In 2024 California passed SB 488. Flip each card to see the foundational reading skill and what it can look like in your lesson.</p>
+     <div class="cards4" style="flex:1;align-content:start">
+      <button class="flip" aria-label="Print concepts"><div class="in"><div class="f"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="16" height="32" rx="2" fill="#fff"/><rect x="26" y="8" width="16" height="32" rx="2" fill="#fde68a"/></svg>Print Concepts</div><div class="b">How books work: front to back, left to right, and what words and spaces are. Model tracking print during a read-aloud.</div></div></button>
+      <button class="flip" aria-label="Phonological awareness"><div class="in"><div class="f"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 20v8M14 14v20M22 8v32M30 14v20M38 20v8" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>Phonological Awareness</div><div class="b">Hearing and playing with sounds in spoken words, such as clapping syllables or blending sounds orally.</div></div></button>
+      <button class="flip" aria-label="Phonics and word recognition"><div class="in"><div class="f"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><text x="24" y="34" font-size="30" font-weight="800" fill="#fff" text-anchor="middle">Aa</text></svg>Phonics &amp; Word Recognition</div><div class="b">Connecting letters to sounds so students can decode words. Use decodable text and explicit practice.</div></div></button>
+      <button class="flip" aria-label="Fluency"><div class="in"><div class="f"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 30c8-18 14 14 22-4s12-6 18-10" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>Fluency</div><div class="b">Reading with accuracy, pace, and expression. Offer repeated reading and teacher modeling.</div></div></button>
+     </div>
+     <div class="card"><h3>Try it</h3>
+      <p>Which foundational skill would you plan for a student who can name letters but struggles to blend sounds when reading <em>cat</em>?</p>
+      <div id="litOpts"></div></div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1">
+      <h3>Tiered supports, by design</h3>
+      <p>Instruction should include supports for:</p>
+      <svg viewBox="0 0 360 150" style="width:100%;height:auto;margin:10px 0" role="img" aria-label="Three tiers of support for literacy">
+       <path d="M180 8 340 140H20z" fill="#eaf1ff" stroke="#1d4ed8" stroke-width="2"/>
+       <path d="M180 8 242 62H118z" fill="#1d4ed8"/><path d="M118 62h124l50 40H68z" fill="#0d9488"/>
+       <text x="180" y="50" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">Intensive</text>
+       <text x="180" y="88" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">Targeted</text>
+       <text x="180" y="127" fill="#14213d" font-size="11" font-weight="700" text-anchor="middle">Core instruction for all</text>
+      </svg>
+      <ul style="margin:8px 0 0;padding-left:20px">
+       <li>Pupils with reading difficulties</li><li>English learners</li><li>Pupils with exceptional needs</li>
+      </ul>
+     </div>
+     <div class="fb" id="litFb" style="display:none"></div>
+    </div>
+   </div>
+  </section>
+ </main>
+ <div class="ftr">EDUC 581 Student Teaching I &bull; Interactive learning aid &bull; Based on the Week 1 Deep Dive</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+/* tabs */
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t.dataset.p));});
+$('.tabs').addEventListener('keydown',e=>{const t=$$('.tab'),i=t.indexOf(document.activeElement);if(i<0)return;if(e.key==='ArrowRight'){t[(i+1)%t.length].focus();t[(i+1)%t.length].click()}if(e.key==='ArrowLeft'){t[(i+t.length-1)%t.length].focus();t[(i+t.length-1)%t.length].click()}});
+
+/* ---------- Pane 1: compass ---------- */
+const STD=[
+ {n:'Engaging and Supporting All Students in Learning',d:'You connect learning to students\u2019 backgrounds, languages, and interests, and support every learner in reaching high expectations.',x:'You invite a student to explain her strategy and link the problem to her family\u2019s market.',c:'#1d4ed8'},
+ {n:'Creating and Maintaining Effective Environments for Student Learning',d:'You build a safe, respectful classroom with clear routines and expectations that students understand and follow.',x:'You teach and rehearse the signal for quiet, then recognize students who follow it.',c:'#0d9488'},
+ {n:'Understanding and Organizing Subject Matter for Student Learning',d:'You know the content and the California standards and organize it so students can make sense of it.',x:'You study the math standards and sequence a fractions mini-unit from concrete to abstract.',c:'#b45309'},
+ {n:'Planning Instruction and Designing Learning Experiences for All Students',d:'You design lessons with clear goals, aligned activities, and supports that fit your students.',x:'You submit a lesson plan with goals and UDL supports 48 hours before your supervisor meeting.',c:'#7c3aed'},
+ {n:'Assessing Students for Learning',d:'You gather evidence of learning, give feedback, and use what you learn to adjust instruction.',x:'You read exit tickets to see who met the goal and regroup students for tomorrow.',c:'#be185d'},
+ {n:'Developing as a Professional Educator',d:'You reflect, welcome feedback, act professionally, and keep learning.',x:'You ask your Cooperating Teacher for feedback and try one suggestion in the next lesson.',c:'#475569'}
+];
+const ring=$('#ring'),NS='http://www.w3.org/2000/svg',seen=new Set();
+function pt(r,a){return[170+r*Math.cos(a),170+r*Math.sin(a)]}
+STD.forEach((s,i)=>{
+ const a0=-Math.PI/2+i*Math.PI/3+0.02,a1=a0+Math.PI/3-0.04,R=150,r=70;
+ const [x1,y1]=pt(R,a0),[x2,y2]=pt(R,a1),[x3,y3]=pt(r,a1),[x4,y4]=pt(r,a0);
+ const g=document.createElementNS(NS,'g');g.setAttribute('class','seg');g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label','Standard '+(i+1)+': '+s.n);
+ const p=document.createElementNS(NS,'path');p.setAttribute('d',`M${x1} ${y1}A${R} ${R} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${r} ${r} 0 0 0 ${x4} ${y4}Z`);p.setAttribute('fill',s.c);p.setAttribute('stroke','rgba(0,0,0,.08)');p.setAttribute('stroke-width','2');
+ const [tx,ty]=pt(110,(a0+a1)/2);const t=document.createElementNS(NS,'text');t.setAttribute('x',tx);t.setAttribute('y',ty+9);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#fff');t.setAttribute('font-size','28');t.setAttribute('font-weight','800');t.textContent=i+1;
+ g.append(p,t);ring.append(g);
+ const go=()=>{$$('.seg').forEach(e=>e.classList.remove('act'));g.classList.add('act');seen.add(i);
+  $('#sNum').textContent='Standard '+(i+1);$('#sName').textContent=s.n;$('#sDesc').textContent=s.d;const ex=$('#sEx');ex.style.display='block';ex.innerHTML='<strong>In student teaching:</strong> '+s.x;
+  $('#seenCt').textContent=seen.size+' of 6';$('#seenBar').style.width=(seen.size/6*100)+'%';
+  $('#seenMsg').textContent=seen.size===6?'Launch tip: choose one standard as a personal goal this week and share it with your Cooperating Teacher.':'Explore all six to unlock your launch tip.';
+  if(seen.size===6)$('#seenMsg').style.fontWeight='700';};
+ g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};
+});
+const c=document.createElementNS(NS,'circle');c.setAttribute('cx',170);c.setAttribute('cy',170);c.setAttribute('r',62);c.setAttribute('fill','#fff');c.setAttribute('stroke','#d5deeb');c.setAttribute('stroke-width','2');
+const ct=document.createElementNS(NS,'text');ct.setAttribute('x',170);ct.setAttribute('y',168);ct.setAttribute('text-anchor','middle');ct.setAttribute('font-size','26');ct.setAttribute('font-weight','800');ct.setAttribute('fill','#14213d');ct.textContent='CSTP';
+const ct2=document.createElementNS(NS,'text');ct2.setAttribute('x',170);ct2.setAttribute('y',188);ct2.setAttribute('text-anchor','middle');ct2.setAttribute('font-size','11');ct2.setAttribute('fill','#4b5a73');ct2.textContent='six standards';
+ring.append(c,ct,ct2);
+
+/* ---------- Pane 2 ---------- */
+const PH=[
+ {t:'Phase: Observe',h:'<ul style="margin:0;padding-left:20px"><li>Learn names, routines, and the daily schedule.</li><li>Take notes on how your Cooperating Teacher gives directions and checks for understanding.</li><li>Ask for the plans and materials early.</li></ul>'},
+ {t:'Phase: Co-teach',h:'<ul style="margin:0;padding-left:20px"><li>Lead a small group, a warm-up, or one segment of a lesson.</li><li>Share lesson plans early to receive feedback before you teach.</li><li>Debrief with your Cooperating Teacher after each segment.</li></ul>'},
+ {t:'Phase: Lead',h:'<ul style="margin:0;padding-left:20px"><li>Teach full lessons and record them in GoReact.</li><li>Send each plan to your Clinical Supervisor 48 hours ahead.</li><li>Apply feedback in the next lesson.</li></ul>'}];
+function phase(){const v=+$('#slide').value,i=v<26?0:v<61?1:2;
+ $('#tBar').setAttribute('width',Math.max(40,v/100*412));$('#tPct').textContent=v+'%';
+ $$('.stn').forEach((e,k)=>e.classList.toggle('on',k===i));$('#phT').textContent=PH[i].t;$('#phaseTxt').innerHTML=PH[i].h;
+ $('#ctFig').setAttribute('opacity',1-v/160);$('#stFig').setAttribute('transform','translate(0,'+(-v/30)+')');}
+$('#slide').oninput=phase;phase();
+function ck(){const n=$$('.chk input:checked').length;$('#ckBar').style.width=(n/6*100)+'%';$('#ckMsg').textContent=n+' of 6 complete'+(n===6?' \u2014 you are launch ready!':'');}
+$$('.chk input').forEach(i=>i.onchange=ck);
+
+/* ---------- Pane 3 ---------- */
+const MM=[
+ ['You greet students at the door, teach the attendance routine, and rehearse the signal for quiet.',1,'Routines and clear expectations that students understand build an effective environment.'],
+ ['You study the California math standards and sequence a fractions mini-unit from concrete to abstract.',2,'Understanding and organizing subject matter means knowing the content and how to sequence it.'],
+ ['You write a lesson plan with learning goals and UDL supports, then submit it 48 hours before your supervisor meeting.',3,'Designing learning experiences for all students is the heart of planning instruction.'],
+ ['You use exit tickets to see who met today\u2019s goal and regroup students for tomorrow.',4,'Gathering evidence and adjusting instruction is assessing students for learning.'],
+ ['You ask your Cooperating Teacher for feedback, then try one suggestion in the next lesson.',5,'Welcoming and acting on feedback is developing as a professional educator.'],
+ ['You invite a student to explain her strategy in her home language and connect the problem to her family\u2019s market.',0,'Building on students\u2019 backgrounds and languages is engaging and supporting all students.']];
+let mi=0,ms=0,ans=false;
+const short=['1 Engage & support','2 Environments','3 Subject matter','4 Plan instruction','5 Assess learning','6 Professional growth'];
+function mm(){ans=false;$('#mmProg').textContent='Moment '+(mi+1)+' of 6';$('#mmQ').textContent=MM[mi][0];$('#mmFb').className='fb';$('#mmFb').textContent='Which standard does this moment best show?';$('#mmNext').disabled=true;$('#mmNext').textContent=mi===5?'See results':'Next moment';
+ const o=$('#mmOpts');o.innerHTML='';short.forEach((s,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=s;b.onclick=()=>pick(i,b);o.append(b)});}
+function pick(i,b){if(ans)return;ans=true;const ok=i===MM[mi][1];if(ok)ms++;b.classList.add(ok?'ok':'no');if(!ok)$$('#mmOpts .opt')[MM[mi][1]].classList.add('ok');
+ $('#mmFb').className='fb '+(ok?'good':'bad');$('#mmFb').innerHTML='<strong>'+(ok?'Yes! ':'Not quite. ')+'</strong>'+MM[mi][2];$('#mmScore').textContent=ms;$('#mmNext').disabled=false;}
+$('#mmNext').onclick=()=>{if(mi<5){mi++;mm()}else{$('#mmDone').style.display='block';$('#mmFinal').textContent=ms+'/6';$('#mmMsg').textContent=ms>=5?'Excellent. You can see the standards in everyday teaching moves.':'Good start. Revisit the CSTP Compass and try again.'}};
+$('#mmAgain').onclick=()=>{mi=0;ms=0;$('#mmScore').textContent=0;$('#mmDone').style.display='none';mm()};mm();
+
+/* ---------- Pane 4 ---------- */
+$$('.flip').forEach(f=>f.onclick=()=>f.classList.toggle('on'));
+const LO=[['Print concepts',0],['Phonological awareness',0],['Phonics and word recognition',1],['Fluency',0]];
+LO[0][1]=0;LO[1][1]=0;
+const lit=$('#litOpts');[['Print concepts',false],['Phonological awareness',true],['Fluency',false]].forEach(([t,ok])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{$$('#litOpts .opt').forEach(x=>x.classList.remove('ok','no'));b.classList.add(ok?'ok':'no');const f=$('#litFb');f.style.display='block';f.className='fb '+(ok?'good':'bad');f.textContent=ok?'Right. Blending sounds orally is phonological awareness; pairing it with letters then supports phonics.':'Not the best fit. The student already knows letters; the need is hearing and blending sounds.'};lit.append(b)});
+</script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 581 Week 3 | Planning With Purpose and UDL</title>
+<style>
+:root{--a1:#6d28d9;--a2:#0e7490;--bg:#f7f5fb;--ink:#1f1637;--muted:#54486b;--line:#ddd5ee;--tint:#f3edff;--tabbg:#eee9f8;--focus:#f59e0b}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:1100px;margin:0 auto}
+.hdr{display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(120deg,var(--a1),var(--a2));color:#fff;flex:0 0 auto}
+.hdr svg.logo{width:46px;height:46px;flex:0 0 auto}
+.hdr .t{min-width:0}
+.hdr .wk{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.92}
+.hdr h1{margin:0;font-size:21px;line-height:1.15;font-weight:800}
+.hdr .sub{font-size:13px;opacity:.95}
+.tabs{display:flex;gap:4px;padding:8px 14px 0;background:var(--tabbg);border-bottom:2px solid var(--line);flex:0 0 auto;overflow:hidden}
+.tab{border:0;background:transparent;padding:9px 14px;border-radius:10px 10px 0 0;font-weight:700;font-size:14.5px;color:var(--muted);white-space:nowrap;flex:1 1 0;min-width:0;text-overflow:ellipsis;overflow:hidden}
+.tab[aria-selected=true]{background:#fff;color:var(--a1);box-shadow:0 -2px 0 var(--a1) inset,0 0 0 1px var(--line);margin-bottom:-2px;border-bottom:2px solid #fff}
+.tab:hover{color:var(--a1)}
+.stage{flex:1 1 auto;min-height:0;overflow:hidden;position:relative}
+.pane{display:none;height:100%;padding:14px 18px;overflow:hidden}
+.pane.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pane.on{animation:none}*{transition:none!important}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;height:100%}
+.col{min-height:0;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h2,.card h3{margin:0 0 6px;font-size:17px;line-height:1.25}
+.card p{margin:0 0 8px}
+.card p:last-child{margin-bottom:0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--a1)}
+.lead{font-size:15px;color:var(--muted);margin:0 0 8px}
+.btn{border:2px solid var(--a1);background:var(--a1);color:#fff;border-radius:10px;padding:8px 16px;font-weight:700}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:#fff;color:var(--a1)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:600;font-size:14.5px;margin-bottom:6px;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--a1);background:var(--tint)}
+.opt.sel{border-color:var(--a1);background:var(--tint)}
+.opt.ok{border-color:#15803d;background:#ecfdf3}
+.opt.no{border-color:#b91c1c;background:#fef2f2}
+.fb{border-left:5px solid var(--a1);background:var(--tint);border-radius:8px;padding:9px 12px;font-size:14.5px;min-height:20px}
+.fb.good{border-color:#15803d;background:#ecfdf3}
+.fb.bad{border-color:#b45309;background:#fffbeb}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2));width:0;transition:width .4s ease}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--tint);color:var(--a1);font-weight:700;font-size:12.5px;border:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:10px}
+.sp{flex:1}
+.small{font-size:13.5px;color:var(--muted)}
+.dots{display:flex;gap:6px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--a1)}
+.ftr{flex:0 0 auto;padding:5px 14px;font-size:11.5px;color:var(--muted);text-align:center;border-top:1px solid var(--line);background:#fff}
+.sr{position:absolute;left:-9999px}
+/* small screens: single inner scroll fallback, stacked layout */
+@media (max-width:760px){
+  .two{grid-template-columns:1fr;height:auto}
+  .pane{overflow-y:auto;overflow-x:hidden}
+  .hdr h1{font-size:17px}.hdr .sub{display:none}
+  .tab{font-size:12.5px;padding:8px 4px}
+}
+@media (max-height:640px){.pane{overflow-y:auto}}
+
+.stack{display:flex;flex-direction:column;gap:10px;height:100%}
+.sub2{flex:1;min-height:0;display:grid;grid-template-columns:1.25fr 1fr;gap:14px}
+.node{cursor:pointer}
+.node circle.c{transition:fill .2s,r .2s}
+.node:hover circle.c,.node:focus circle.c{filter:brightness(1.1)}
+.node.act circle.c{stroke:#f59e0b;stroke-width:5}
+.chip{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:7px 10px;font-size:13.5px;margin-bottom:6px;line-height:1.35}
+.chip:hover{border-color:var(--a1)}
+.chip.sel{border-color:var(--a1);background:var(--tint);box-shadow:0 0 0 2px var(--a1) inset}
+.chip.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.bk{border:2px dashed var(--line);border-radius:12px;padding:6px 10px;background:#fff;cursor:pointer;flex:1;min-height:0;overflow:hidden;text-align:left;display:block;width:100%}
+.bk:hover{border-color:var(--a1);background:var(--tint)}
+.bk .bt{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+.bk .bt i{width:14px;height:14px;border-radius:50%;display:inline-block;flex:0 0 14px}
+.bk ul{margin:3px 0 0;padding-left:18px;font-size:12.5px;color:var(--muted)}
+.bk.done{border-style:solid}
+.venn text{font-weight:800;pointer-events:none}
+.pstep{display:flex;gap:6px;margin-bottom:8px}
+.pstep span{flex:1;height:8px;border-radius:99px;background:var(--line)}
+.pstep span.on{background:var(--a1)}
+.sum{white-space:pre-wrap;font-size:14px;background:#faf8ff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.work{background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;flex:1}
+.work .pap{background:#fffdf2;border:1px solid #e9dfa8;border-radius:6px;padding:8px 10px;font-family:"Comic Sans MS","Segoe Print",cursive,sans-serif;font-size:14px;color:#2b2b52;line-height:1.35}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.three .opt{margin:0;text-align:center;padding:9px 6px}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="hdr">
+  <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="rgba(255,255,255,.18)"/><path d="M32 10a15 15 0 0 0-9 27c2 2 3 4 3 7h12c0-3 1-5 3-7a15 15 0 0 0-9-27z" fill="#fde68a"/><rect x="25" y="47" width="14" height="4" rx="2" fill="#fff"/><rect x="27" y="53" width="10" height="3" rx="1.5" fill="#fff"/><path d="M28 24l4 6 4-6" stroke="#6d28d9" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  <div class="t"><div class="wk">EDUC 581 &bull; Week 3</div><h1>Planning With Purpose and UDL</h1><div class="sub">Design an accessible, engaging math lesson for your first observation</div></div>
+ </header>
+ <div class="tabs" role="tablist" aria-label="Week 3 activities">
+  <button class="tab" role="tab" aria-selected="true" data-p="p1">1 &middot; Observation Cycle</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p2">2 &middot; Four Questions</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p3">3 &middot; UDL Studio</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p4">4 &middot; Exit Ticket Sort</button>
+ </div>
+ <main class="stage">
+
+  <!-- PANE 1: cycle -->
+  <section class="pane on" id="p1" role="tabpanel">
+   <div class="stack">
+    <div class="card" style="padding:8px 12px">
+     <svg id="cyc" viewBox="0 0 900 190" style="width:100%;height:auto;max-height:190px;display:block" role="group" aria-label="Four-step observation cycle. Select a step.">
+      <path d="M110 95H790" stroke="#ddd5ee" stroke-width="10" stroke-linecap="round"/>
+      <path d="M110 95H330" stroke="#6d28d9" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 16"/>
+      <g transform="translate(223 52)"><circle r="22" fill="#fff" stroke="#f59e0b" stroke-width="4"/><path d="M0-13v13l9 6" stroke="#14213d" stroke-width="3" fill="none" stroke-linecap="round"/><text y="-30" font-size="14" font-weight="800" fill="#b45309" text-anchor="middle">at least 48 hours</text></g>
+     </svg>
+    </div>
+    <div class="sub2">
+     <div class="card" style="display:flex;flex-direction:column">
+      <div class="eyebrow" id="cStep">Step 1</div><h2 id="cT"></h2><div id="cB"></div>
+      <div class="fb" id="cTip" style="margin-top:auto"></div>
+     </div>
+     <div class="card">
+      <h3>Quick check</h3>
+      <p>Your lesson will be filmed Thursday at 3:00 p.m. When is the <strong>latest</strong> you can submit your plan to your Clinical Supervisor?</p>
+      <div id="qc"></div><div class="fb" id="qcFb" style="display:none"></div>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- PANE 2: four questions -->
+  <section class="pane" id="p2" role="tabpanel">
+   <div class="two" style="grid-template-columns:1.1fr 1fr">
+    <div class="col">
+     <div class="row"><div class="eyebrow">Select a plan fragment, then choose its question</div><span class="sp"></span><span class="pill" id="sortCt">0 of 8</span></div>
+     <div id="chips" style="flex:1;min-height:0;overflow:hidden"></div>
+     <div class="fb" id="sortFb">Which of the four planning questions does each fragment answer?</div>
+    </div>
+    <div class="col" id="buckets" style="gap:8px"></div>
+   </div>
+  </section>
+
+  <!-- PANE 3: UDL -->
+  <section class="pane" id="p3" role="tabpanel">
+   <div class="two" style="grid-template-columns:.9fr 1.1fr">
+    <div class="col">
+     <div class="eyebrow">Lesson: Grade 3 &bull; Equal groups and multiplication</div>
+     <div class="card" style="flex:1;display:flex;align-items:center;justify-content:center;padding:6px">
+      <svg class="venn" viewBox="0 0 320 300" style="width:100%;max-height:100%" role="img" aria-label="Three overlapping circles for the UDL principles: engagement, representation, and action and expression">
+       <circle id="vE" cx="160" cy="100" r="82" fill="#0e7490" opacity=".18" stroke="#0e7490" stroke-width="3"/>
+       <circle id="vR" cx="110" cy="188" r="82" fill="#6d28d9" opacity=".18" stroke="#6d28d9" stroke-width="3"/>
+       <circle id="vA" cx="210" cy="188" r="82" fill="#c2410c" opacity=".18" stroke="#c2410c" stroke-width="3"/>
+       <text x="160" y="70" text-anchor="middle" font-size="15" fill="#0b5566">ENGAGEMENT</text><text x="160" y="88" text-anchor="middle" font-size="12" fill="#0b5566" font-weight="600">the why</text>
+       <text x="82" y="205" text-anchor="middle" font-size="14" fill="#4c1d95">REPRESENT-</text><text x="82" y="221" text-anchor="middle" font-size="14" fill="#4c1d95">ATION</text><text x="82" y="238" text-anchor="middle" font-size="12" fill="#4c1d95" font-weight="600">the what</text>
+       <text x="238" y="205" text-anchor="middle" font-size="14" fill="#9a3412">ACTION &amp;</text><text x="238" y="221" text-anchor="middle" font-size="14" fill="#9a3412">EXPRESSION</text><text x="238" y="238" text-anchor="middle" font-size="12" fill="#9a3412" font-weight="600">the how</text>
+       <circle cx="160" cy="160" r="26" fill="#fff" stroke="#ddd5ee" stroke-width="2"/><text x="160" y="165" text-anchor="middle" font-size="14" fill="#1f1637">UDL</text>
+      </svg>
+     </div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column" id="udlCard"></div>
+    </div>
+   </div>
+  </section>
+
+  <!-- PANE 4: exit ticket -->
+  <section class="pane" id="p4" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="row"><div class="eyebrow" id="etProg">Student work 1 of 4</div><span class="sp"></span><span class="small">Correct: <strong id="etScore">0</strong></span></div>
+     <div class="card" style="padding:10px 14px"><div class="small">Learning goal</div><strong>I can solve equal-groups problems and explain my thinking with a model.</strong></div>
+     <div class="work"><div class="small" style="margin-bottom:6px">Exit ticket: <em>There are 4 plates with 3 cookies on each plate. How many cookies in all?</em></div><div class="pap" id="etWork"></div>
+      <svg id="etPic" viewBox="0 0 300 70" style="width:100%;height:60px;margin-top:8px" aria-hidden="true"></svg></div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column">
+      <h3>Where is this student relative to the goal?</h3>
+      <svg viewBox="0 0 360 70" style="width:100%;height:auto;margin-bottom:6px" role="img" aria-label="Scale from not meeting to meeting to exceeding the goal"><path d="M10 50h340" stroke="#ddd5ee" stroke-width="8" stroke-linecap="round"/><circle cx="60" cy="50" r="10" fill="#b45309"/><circle cx="180" cy="50" r="10" fill="#0e7490"/><circle cx="300" cy="50" r="10" fill="#6d28d9"/><text x="60" y="26" font-size="12" font-weight="700" text-anchor="middle" fill="#b45309">Not meeting</text><text x="180" y="26" font-size="12" font-weight="700" text-anchor="middle" fill="#0e7490">Meeting</text><text x="300" y="26" font-size="12" font-weight="700" text-anchor="middle" fill="#6d28d9">Exceeding</text></svg>
+      <div class="three" id="etOpts"></div>
+      <div class="fb" id="etFb" style="margin-top:10px">Choose a level, then read the next teaching move.</div>
+      <div class="row" style="margin-top:auto;padding-top:8px"><span class="sp"></span><button class="btn" id="etNext" disabled>Next student</button></div>
+     </div>
+    </div>
+   </div>
+   <div id="etDone" class="card" style="display:none;position:absolute;inset:14px 18px;z-index:5;text-align:center;padding-top:60px">
+    <div style="font-size:42px;font-weight:800;color:var(--a1)" id="etFinal"></div><h2>Formative check complete</h2><p id="etMsg"></p><button class="btn" id="etAgain">Try again</button>
+   </div>
+  </section>
+ </main>
+ <div class="ftr">EDUC 581 Student Teaching I &bull; Interactive learning aid &bull; Based on the Week 3 Deep Dive</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t.dataset.p));});
+$('.tabs').addEventListener('keydown',e=>{const t=$$('.tab'),i=t.indexOf(document.activeElement);if(i<0)return;if(e.key==='ArrowRight'){t[(i+1)%t.length].focus();t[(i+1)%t.length].click()}if(e.key==='ArrowLeft'){t[(i+t.length-1)%t.length].focus();t[(i+t.length-1)%t.length].click()}});
+const NS='http://www.w3.org/2000/svg';
+function el(n,a,txt){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(txt)e.textContent=txt;return e}
+
+/* ---- Pane 1 ---- */
+const CY=[
+ {t:'Plan and submit',c:'#6d28d9',b:'<p>Draft your lesson plan so it answers the four planning questions.</p><ul><li>Name the California content standards and the ELD standards.</li><li>State learning goals and academic language goals.</li><li>Plan UDL supports and how you will check understanding.</li></ul>',tip:'Submit at least 48 hours before the scheduled meeting or filming.'},
+ {t:'Meet your Clinical Supervisor',c:'#0e7490',b:'<p>Review the plan together before you teach.</p><ul><li>Explain your learning goals and assessment plan.</li><li>Describe the UDL supports you chose and why.</li><li>Confirm the date, time, and recording setup.</li></ul>',tip:'Bring questions about timing, grouping, and how you will check understanding.'},
+ {t:'Teach, record, and annotate',c:'#c2410c',b:'<p>Record the lesson in its entirety.</p><ul><li>Upload the video to GoReact.</li><li>Add timestamped commentary.</li><li>Connect what happened to your plan and to student learning.</li></ul>',tip:'Test the camera position and audio before students arrive.'},
+ {t:'Receive feedback and apply it',c:'#15803d',b:'<p>Meet again to receive feedback.</p><ul><li>Choose one or two feedback points to focus on.</li><li>Write them into your next lesson plan.</li><li>Look for evidence of the change in your next recording.</li></ul>',tip:'Where am I going? How am I going? Where to next?'}];
+const cyc=$('#cyc');let cur=0;
+CY.forEach((s,i)=>{const x=110+i*226;const g=el('g',{class:'node',tabindex:0,role:'button','aria-label':'Step '+(i+1)+': '+s.t});
+ g.append(el('circle',{class:'c',cx:x,cy:95,r:38,fill:s.c}),el('text',{x:x,y:106,'text-anchor':'middle','font-size':'32','font-weight':'800',fill:'#fff'},i+1),el('text',{x:x,y:156,'text-anchor':'middle','font-size':'15','font-weight':'800',fill:'#1f1637'},s.t.length>22?s.t.split(',')[0]:s.t));
+ if(i===2)g.lastChild.textContent='Teach & record';if(i===1)g.lastChild.textContent='Meet your supervisor';if(i===3)g.lastChild.textContent='Feedback & apply';
+ const go=()=>{cur=i;$$('.node').forEach(n=>n.classList.remove('act'));g.classList.add('act');$('#cStep').textContent='Step '+(i+1)+' of 4';$('#cT').textContent=s.t;$('#cB').innerHTML=s.b;$('#cTip').innerHTML='<strong>Tip:</strong> '+s.tip};
+ g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};cyc.append(g);if(i===0)setTimeout(go,0)});
+[['Tuesday at 3:00 p.m.',1,'Right. 48 hours before Thursday at 3:00 is Tuesday at 3:00.'],['Wednesday at 3:00 p.m.',0,'That is only 24 hours ahead. Plans are due a minimum of 48 hours before.'],['Thursday morning',0,'That is too late. Your supervisor needs time to review before you meet.']].forEach(([t,ok,m])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{$$('#qc .opt').forEach(x=>x.classList.remove('ok','no'));b.classList.add(ok?'ok':'no');const f=$('#qcFb');f.style.display='block';f.className='fb '+(ok?'good':'bad');f.textContent=m};$('#qc').append(b)});
+
+/* ---- Pane 2 ---- */
+const Q=[['1','What will I teach?','#6d28d9'],['2','How will I know students learned it?','#0e7490'],['3','How will I structure learning activities?','#c2410c'],['4','How will I support learning in those activities?','#15803d']];
+const FR=[
+ ['Students will solve two-step word problems using multiplication and division within 100.',0],
+ ['Exit ticket: I will sort responses into not meeting, meeting, and exceeding the goal.',1],
+ ['Pairs build equal groups with counters, then share strategies in a whole-class talk.',2],
+ ['Sentence frames and a word bank help students explain their thinking.',3],
+ ['Academic language goal: students explain using \u201cbecause\u201d and \u201cso.\u201d',0],
+ ['Mini-whiteboards let me check understanding during the lesson.',1],
+ ['Launch with a 5-minute problem string, then rotate through three stations.',2],
+ ['Students choose to show their answer by drawing, building, or writing.',3]];
+let selF=null,placed=0;const bks=[];
+Q.forEach((q,i)=>{const b=document.createElement('button');b.className='bk';b.innerHTML='<div class="bt"><i style="background:'+q[2]+'"></i>Q'+q[0]+'. '+q[1]+'</div><ul></ul>';b.onclick=()=>drop(i);$('#buckets').append(b);bks.push(b)});
+const chips=[];FR.forEach((f,i)=>{const c=document.createElement('button');c.className='chip';c.textContent=f[0];c.onclick=()=>{if(c.dataset.done)return;chips.forEach(x=>x.classList.remove('sel'));c.classList.add('sel');selF=i;$('#sortFb').className='fb';$('#sortFb').textContent='Now choose the question this fragment answers.'};$('#chips').append(c);chips.push(c)});
+function drop(q){if(selF===null){$('#sortFb').textContent='Select a plan fragment first.';return}
+ const c=chips[selF];if(FR[selF][1]===q){c.dataset.done=1;c.style.display='none';const li=document.createElement('li');li.textContent=FR[selF][0].length>62?FR[selF][0].slice(0,60)+'\u2026':FR[selF][0];bks[q].querySelector('ul').append(li);bks[q].classList.add('done');bks[q].style.borderColor=Q[q][2];placed++;selF=null;$('#sortCt').textContent=placed+' of 8';
+  if(placed===8)$('#chips').innerHTML='<div style="text-align:center;padding-top:50px"><svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="66" fill="#f3edff" stroke="#6d28d9" stroke-width="6"/><path d="M44 78l22 22 42-46" stroke="#15803d" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><h2 style="margin:8px 0 0">Four questions answered</h2></div>';
+  $('#sortFb').className='fb good';$('#sortFb').textContent=placed===8?'All sorted! A strong plan answers all four questions, and UDL supports sit in question 4.':'Correct.';}
+ else{c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');$('#sortFb').className='fb bad';$('#sortFb').textContent=['Hint: this describes the learning goal or standard.','Hint: this is about gathering evidence of learning.','Hint: this is the sequence and grouping of activities.','Hint: this is a support that helps students access the activity.'][FR[selF][1]]+' Try another question.'}}
+
+/* ---- Pane 3 ---- */
+const U=[
+ {n:'Engagement',c:'#0e7490',id:'#vE',bar:'Several students disengage during the 15-minute whole-class launch.',o:[
+  ['Lengthen the teacher explanation with more examples.',0,'A longer lecture adds time without adding ways to engage.'],
+  ['Offer a choice of real-world context (class garden, sports teams, class store) and add think-pair-share.',1,'Choice and collaboration build interest and sustain effort.'],
+  ['Give everyone the same worksheet to complete silently.',0,'One fixed task removes choice and does not address the disengagement.']]},
+ {n:'Representation',c:'#6d28d9',id:'#vR',bar:'Equal groups are explained only with numerals and spoken language. English learners and visual learners are struggling.',o:[
+  ['Read the textbook definition twice, slowly.',0,'Repeating one format does not offer another way to perceive the idea.'],
+  ['Show equal groups with manipulatives, a drawn array, and a labeled model with a word bank.',1,'Multiple representations let more students perceive and understand the concept.'],
+  ['Skip ahead to memorizing multiplication facts.',0,'Memorizing before understanding hides the concept instead of representing it.']]},
+ {n:'Action & Expression',c:'#c2410c',id:'#vA',bar:'Students can show their learning only by writing a full paragraph.',o:[
+  ['Require a written paragraph from every student.',0,'A single way to respond creates a barrier for some learners.'],
+  ['Let students build, draw, or explain aloud, with a sentence frame available.',1,'Options for expression let students show what they know.'],
+  ['Grade only the final numerical answer.',0,'This hides student thinking and does not offer ways to express it.']]}];
+let us=0;const pick=[];
+function udl(){const c=$('#udlCard');c.innerHTML='';
+ if(us>=3){c.innerHTML='<div class="eyebrow">Your UDL plan</div><div class="sum" id="sumTxt" style="flex:1;overflow:hidden"></div><div class="row" style="margin-top:8px"><button class="btn" id="cp">Copy plan</button><button class="btn ghost" id="rs">Start over</button><span class="small" id="cpm"></span></div>';
+  $('#sumTxt').textContent='UDL plan: Grade 3 equal groups\n\nEngagement: '+pick[0]+'\n\nRepresentation: '+pick[1]+'\n\nAction & Expression: '+pick[2]+'\n\nRationale: These options reduce barriers so more students can engage, understand, and show what they know.';
+  $('#cp').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText($('#sumTxt').textContent).then(()=>$('#cpm').textContent='Copied!').catch(()=>$('#cpm').textContent='Select the text to copy.')};
+  $('#rs').onclick=()=>{us=0;pick.length=0;['#vE','#vR','#vA'].forEach(i=>$(i).setAttribute('opacity','.18'));udl()};return}
+ const u=U[us];c.innerHTML='<div class="pstep">'+U.map((x,i)=>'<span class="'+(i<=us?'on':'')+'"></span>').join('')+'</div><div class="eyebrow" style="color:'+u.c+'">Step '+(us+1)+' of 3 \u2022 '+u.n+'</div><div class="fb" style="margin:6px 0 8px"><strong>Barrier:</strong> '+u.bar+'</div><p class="small" style="margin:0 0 6px">Choose the strategy that best removes this barrier.</p><div id="uo"></div><div class="fb" id="uf" style="display:none"></div><div class="row" style="margin-top:auto;padding-top:8px"><span class="sp"></span><button class="btn" id="un" disabled>'+(us===2?'Build my plan':'Next')+'</button></div>';
+ let chosen=null;u.o.forEach(([t,ok,m])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(chosen!==null&&u.o[chosen][1])return;$$('#uo .opt').forEach(x=>x.classList.remove('no'));const f=$('#uf');f.style.display='block';f.className='fb '+(ok?'good':'bad');f.textContent=(ok?'Best fit. ':'Not quite. ')+m;b.classList.add(ok?'ok':'no');if(ok){chosen=u.o.indexOf(u.o.find(x=>x[0]===t));pick[us]=t;$(u.id).setAttribute('opacity','.55');$('#un').disabled=false}};$('#uo').append(b)});
+ $('#un').onclick=()=>{us++;udl()}}
+udl();
+
+/* ---- Pane 4 ---- */
+const ET=[
+ {w:'I drew 4 groups with 3 dots in each. 4 x 3 = 12. There are 4 groups and each group has 3, so 12 in all.',l:1,m:'Meeting: a correct model, equation, and explanation. Next move: ask how the model would change for 5 plates.',p:[[1,3],[2,3],[3,3],[4,3]]},
+ {w:'7',l:0,m:'Not meeting yet: no model or explanation. Next move: small group with counters and plates; ask the student to build the problem first.',p:[]},
+ {w:'4 x 3 = 12 and 3 x 4 = 12. I wrote my own problem: 5 bags with 6 apples each. 5 x 6 = 30. Groups can be swapped and it still works.',l:2,m:'Exceeding: creates a new problem and notices the commutative idea. Next move: extend with a missing-group problem such as ? x 6 = 30.',p:[[1,3],[2,3],[3,3],[4,3]]},
+ {w:'I drew groups. 12. I just guessed.',l:0,m:'Not meeting yet: the groups are unequal and the student cannot explain. Next move: model equal sharing with counters and a sentence frame.',p:[[1,2],[2,4],[3,3],[4,1]]}];
+let ei=0,es=0,ea=false;const LV=['Not meeting','Meeting','Exceeding'];
+function et(){ea=false;const d=ET[ei];$('#etProg').textContent='Student work '+(ei+1)+' of 4';$('#etWork').textContent=d.w;const p=$('#etPic');p.innerHTML='';
+ d.p.forEach(([g,n])=>{const x=g*62-30;p.append(el('ellipse',{cx:x,cy:42,rx:24,ry:11,fill:'#fff',stroke:'#b8a8dd','stroke-width':2}));for(let k=0;k<n;k++)p.append(el('circle',{cx:x-10+k*10,cy:40,r:3.5,fill:'#c2410c'}))});
+ $('#etFb').className='fb';$('#etFb').textContent='Choose a level, then read the next teaching move.';$('#etNext').disabled=true;$('#etNext').textContent=ei===3?'See results':'Next student';
+ const o=$('#etOpts');o.innerHTML='';LV.forEach((t,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(ea)return;ea=true;const ok=i===d.l;if(ok)es++;b.classList.add(ok?'ok':'no');if(!ok)$$('#etOpts .opt')[d.l].classList.add('ok');$('#etFb').className='fb '+(ok?'good':'bad');$('#etFb').textContent=(ok?'Yes. ':'Look again. ')+d.m;$('#etScore').textContent=es;$('#etNext').disabled=false};o.append(b)})}
+$('#etNext').onclick=()=>{if(ei<3){ei++;et()}else{$('#etDone').style.display='block';$('#etFinal').textContent=es+'/4';$('#etMsg').textContent=es>=3?'Nice eye for evidence. Use it to decide tomorrow\u2019s grouping.':'Review the learning goal, then try again.'}};
+$('#etAgain').onclick=()=>{ei=0;es=0;$('#etScore').textContent=0;$('#etDone').style.display='none';et()};et();
+</script>
+</body>
+</html>

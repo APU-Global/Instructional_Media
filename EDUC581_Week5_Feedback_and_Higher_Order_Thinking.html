@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDUC 581 Week 5 | Using Feedback and Higher-Order Thinking</title>
+<style>
+:root{--a1:#c2410c;--a2:#be185d;--bg:#fff8f3;--ink:#2a1a12;--muted:#6b4a3a;--line:#f0d9cc;--tint:#fff0e6;--tabbg:#fbeadf;--focus:#1d4ed8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:1100px;margin:0 auto}
+.hdr{display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(120deg,var(--a1),var(--a2));color:#fff;flex:0 0 auto}
+.hdr svg.logo{width:46px;height:46px;flex:0 0 auto}
+.hdr .t{min-width:0}
+.hdr .wk{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.92}
+.hdr h1{margin:0;font-size:21px;line-height:1.15;font-weight:800}
+.hdr .sub{font-size:13px;opacity:.95}
+.tabs{display:flex;gap:4px;padding:8px 14px 0;background:var(--tabbg);border-bottom:2px solid var(--line);flex:0 0 auto;overflow:hidden}
+.tab{border:0;background:transparent;padding:9px 14px;border-radius:10px 10px 0 0;font-weight:700;font-size:14.5px;color:var(--muted);white-space:nowrap;flex:1 1 0;min-width:0;text-overflow:ellipsis;overflow:hidden}
+.tab[aria-selected=true]{background:#fff;color:var(--a1);box-shadow:0 -2px 0 var(--a1) inset,0 0 0 1px var(--line);margin-bottom:-2px;border-bottom:2px solid #fff}
+.tab:hover{color:var(--a1)}
+.stage{flex:1 1 auto;min-height:0;overflow:hidden;position:relative}
+.pane{display:none;height:100%;padding:14px 18px;overflow:hidden}
+.pane.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pane.on{animation:none}*{transition:none!important}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;height:100%}
+.col{min-height:0;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h2,.card h3{margin:0 0 6px;font-size:17px;line-height:1.25}
+.card p{margin:0 0 8px}
+.card p:last-child{margin-bottom:0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--a1)}
+.lead{font-size:15px;color:var(--muted);margin:0 0 8px}
+.btn{border:2px solid var(--a1);background:var(--a1);color:#fff;border-radius:10px;padding:8px 16px;font-weight:700}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:#fff;color:var(--a1)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:600;font-size:14.5px;margin-bottom:6px;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--a1);background:var(--tint)}
+.opt.sel{border-color:var(--a1);background:var(--tint)}
+.opt.ok{border-color:#15803d;background:#ecfdf3}
+.opt.no{border-color:#b91c1c;background:#fef2f2}
+.fb{border-left:5px solid var(--a1);background:var(--tint);border-radius:8px;padding:9px 12px;font-size:14.5px;min-height:20px}
+.fb.good{border-color:#15803d;background:#ecfdf3}
+.fb.bad{border-color:#b45309;background:#fffbeb}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2));width:0;transition:width .4s ease}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--tint);color:var(--a1);font-weight:700;font-size:12.5px;border:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:10px}
+.sp{flex:1}
+.small{font-size:13.5px;color:var(--muted)}
+.dots{display:flex;gap:6px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--a1)}
+.ftr{flex:0 0 auto;padding:5px 14px;font-size:11.5px;color:var(--muted);text-align:center;border-top:1px solid var(--line);background:#fff}
+.sr{position:absolute;left:-9999px}
+/* small screens: single inner scroll fallback, stacked layout */
+@media (max-width:760px){
+  .two{grid-template-columns:1fr;height:auto}
+  .pane{overflow-y:auto;overflow-x:hidden}
+  .hdr h1{font-size:17px}.hdr .sub{display:none}
+  .tab{font-size:12.5px;padding:8px 4px}
+}
+@media (max-height:640px){.pane{overflow-y:auto}}
+
+.sg{transition:transform .25s,filter .25s;transform-box:fill-box;transform-origin:center}
+.sg.hi{transform:scale(1.07);filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.lvl{cursor:pointer;transition:filter .2s}
+.lvl:hover,.lvl:focus{filter:brightness(1.12)}
+.lvl.act path{stroke:#1d4ed8;stroke-width:4}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.three .opt{margin:0;text-align:center;padding:10px 6px}
+.stem{background:#fffdf5;border:1px dashed #d9b99c;border-radius:10px;padding:8px 12px;font-style:italic}
+.vb{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.vb span{background:var(--tint);border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:13px;font-weight:700;color:var(--a1)}
+.tgt{display:inline-block;background:var(--a2);color:#fff;font-weight:800;border-radius:8px;padding:2px 10px;font-size:13.5px}
+.cm{white-space:pre-wrap;background:#fffdf5;border:1px solid #e7d2bd;border-radius:10px;padding:10px 12px;font-size:14px;flex:1;overflow:hidden}
+.steps5{display:flex;gap:6px;margin-bottom:8px}
+.steps5 span{flex:1;height:8px;border-radius:99px;background:var(--line)}
+.steps5 span.on{background:var(--a1)}
+.mark{opacity:0;transition:opacity .4s}.mark.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="hdr">
+  <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="rgba(255,255,255,.18)"/><rect x="12" y="38" width="12" height="14" rx="2" fill="#fff"/><rect x="26" y="28" width="12" height="24" rx="2" fill="#fde68a"/><rect x="40" y="16" width="12" height="36" rx="2" fill="#fff"/><path d="M14 30l12-10 10 4 16-12" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="t"><div class="wk">EDUC 581 &bull; Week 5</div><h1>Using Feedback and Higher-Order Thinking</h1><div class="sub">Turn observation feedback into action and raise the thinking in your lessons</div></div>
+ </header>
+ <div class="tabs" role="tablist" aria-label="Week 5 activities">
+  <button class="tab" role="tab" aria-selected="true" data-p="p1">1 &middot; Feedback Signpost</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p2">2 &middot; Thinking Ladder</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p3">3 &middot; Level-Up Challenge</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p4">4 &middot; Commentary Builder</button>
+ </div>
+ <main class="stage">
+
+  <!-- PANE 1 -->
+  <section class="pane on" id="p1" role="tabpanel">
+   <div class="two" style="grid-template-columns:.9fr 1.1fr">
+    <div class="col">
+     <div class="eyebrow">Effective feedback answers three questions</div>
+     <div class="card" style="flex:1;display:flex;align-items:center;justify-content:center;padding:6px">
+      <svg viewBox="0 0 340 320" style="width:100%;max-height:100%" role="img" aria-label="Signpost with three signs: Where am I going, How am I going, Where to next">
+       <ellipse cx="170" cy="304" rx="110" ry="10" fill="#ecd5c4"/>
+       <rect x="160" y="14" width="20" height="292" rx="6" fill="#8b5a3c"/>
+       <g class="sg" id="sg0"><path d="M60 30h200l26 28-26 28H60z" fill="#c2410c"/><text x="160" y="52" text-anchor="middle" font-size="17" font-weight="800" fill="#fff">Where am I going?</text><text x="160" y="72" text-anchor="middle" font-size="12" fill="#ffe8d6">Feed up: goals and success criteria</text></g>
+       <g class="sg" id="sg1"><path d="M280 126H80L54 154l26 28h200z" fill="#be185d"/><text x="180" y="148" text-anchor="middle" font-size="17" font-weight="800" fill="#fff">How am I going?</text><text x="180" y="168" text-anchor="middle" font-size="12" fill="#ffe0ee">Feed back: progress right now</text></g>
+       <g class="sg" id="sg2"><path d="M60 222h200l26 28-26 28H60z" fill="#7c2d12"/><text x="160" y="244" text-anchor="middle" font-size="17" font-weight="800" fill="#fff">Where to next?</text><text x="160" y="264" text-anchor="middle" font-size="12" fill="#ffe8d6">Feed forward: next steps</text></g>
+      </svg>
+     </div>
+    </div>
+    <div class="col">
+     <div class="row"><div class="eyebrow" id="fProg">Feedback 1 of 6</div><span class="sp"></span><span class="small">Correct: <strong id="fScore">0</strong></span></div>
+     <div class="card" style="flex:1;display:flex;flex-direction:column">
+      <p class="small" style="margin:0">A supervisor tells a candidate:</p>
+      <p class="stem" id="fQ" style="font-size:16.5px;margin:6px 0 12px"></p>
+      <p style="font-weight:700;margin:0 0 6px">Which question does this feedback answer?</p>
+      <div class="three" id="fOpts"></div>
+      <div class="fb" id="fFb" style="margin-top:10px">Choose a signpost.</div>
+      <div class="row" style="margin-top:auto;padding-top:8px"><span class="small">Choose one or two points to focus on next lesson.</span><span class="sp"></span><button class="btn" id="fNext" disabled>Next</button></div>
+     </div>
+    </div>
+   </div>
+   <div id="fDone" class="card" style="display:none;position:absolute;inset:14px 18px;z-index:5;text-align:center;padding-top:60px">
+    <div style="font-size:42px;font-weight:800;color:var(--a1)" id="fFinal"></div><h2>Feedback sorted</h2><p id="fMsg"></p><button class="btn" id="fAgain">Try again</button>
+   </div>
+  </section>
+
+  <!-- PANE 2 -->
+  <section class="pane" id="p2" role="tabpanel">
+   <div class="two" style="grid-template-columns:1fr 1fr">
+    <div class="col">
+     <div class="eyebrow">Select a step on the ladder</div>
+     <div class="card" style="flex:1;display:flex;align-items:center;justify-content:center;padding:6px">
+      <svg id="lad" viewBox="0 0 360 330" style="width:100%;max-height:100%" role="group" aria-label="Thinking ladder from recall to evaluation"></svg>
+     </div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column">
+      <div class="eyebrow" id="lLv">Level</div><h2 id="lT" style="font-size:20px"></h2><p id="lD"></p>
+      <div class="vb" id="lV"></div>
+      <p class="small" style="margin:8px 0 2px">Sample question stem</p><div class="stem" id="lS"></div>
+      <p class="small" style="margin:12px 0 0">Your rubric asks for commentary on strategies that engage students in <strong>Application, Analysis, Synthesis, and Evaluation</strong>. Look for tasks that ask students to explain, compare, justify, and create rather than only recall.</p>
+      <div class="fb" id="lN" style="margin-top:auto"></div>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- PANE 3 -->
+  <section class="pane" id="p3" role="tabpanel">
+   <div class="two">
+    <div class="col">
+     <div class="row"><div class="eyebrow" id="uProg">Question 1 of 4</div><span class="sp"></span><span class="small">Correct: <strong id="uScore">0</strong></span></div>
+     <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <svg viewBox="0 0 200 70" style="width:200px;margin:0 auto 6px;display:block" aria-hidden="true"><rect x="10" y="40" width="40" height="20" rx="3" fill="#f0d9cc"/><rect x="60" y="28" width="40" height="32" rx="3" fill="#e8b48f"/><rect x="110" y="14" width="40" height="46" rx="3" fill="#d97f4a"/><rect x="160" y="2" width="30" height="58" rx="3" fill="#c2410c"/><path d="M20 30l55-8 60-12 40-8" stroke="#be185d" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M165 4l12-3-4 11" fill="#be185d"/></svg>
+      <div class="small">This question asks only for recall:</div>
+      <p class="stem" id="uQ" style="font-size:17px;margin:6px 0 10px"></p>
+      <div>Upgrade it to <span class="tgt" id="uT"></span></div>
+     </div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column"><h3>Choose the best upgrade</h3><div id="uO" style="margin-top:6px"></div><div class="fb" id="uF" style="margin-top:6px">Read each option and think about what students must do.</div>
+      <div class="row" style="margin-top:auto;padding-top:8px"><span class="sp"></span><button class="btn" id="uN" disabled>Next question</button></div></div>
+    </div>
+   </div>
+   <div id="uDone" class="card" style="display:none;position:absolute;inset:14px 18px;z-index:5;text-align:center;padding-top:60px">
+    <div style="font-size:42px;font-weight:800;color:var(--a1)" id="uFinal"></div><h2>Questions leveled up</h2><p id="uMsg"></p><button class="btn" id="uAgain">Try again</button>
+   </div>
+  </section>
+
+  <!-- PANE 4 -->
+  <section class="pane" id="p4" role="tabpanel">
+   <div class="two" style="grid-template-columns:.95fr 1.05fr">
+    <div class="col">
+     <div class="eyebrow">GoReact commentary on a recorded lesson</div>
+     <div class="card" style="padding:10px">
+      <svg viewBox="0 0 360 230" style="width:100%;height:auto;display:block" role="img" aria-label="Mock video player with timestamp markers">
+       <rect width="360" height="230" rx="10" fill="#2a1a12"/>
+       <rect x="14" y="14" width="332" height="150" rx="6" fill="#3d2a20"/>
+       <rect x="30" y="30" width="100" height="62" rx="4" fill="#0f5a4d" stroke="#b45309" stroke-width="3"/><path d="M40 48h60M40 62h40" stroke="#fff" stroke-width="3" opacity=".8"/>
+       <circle cx="170" cy="62" r="11" fill="#c2410c"/><path d="M152 106c0-14 8-22 18-22s18 8 18 22z" fill="#c2410c"/>
+       <g fill="#e8b48f"><circle cx="230" cy="120" r="9"/><path d="M214 148c0-10 6-17 16-17s16 7 16 17z"/><circle cx="276" cy="120" r="9"/><path d="M260 148c0-10 6-17 16-17s16 7 16 17z"/><circle cx="322" cy="120" r="9"/></g>
+       <circle cx="180" cy="90" r="22" fill="rgba(255,255,255,.2)" opacity="0"/>
+       <rect x="14" y="184" width="332" height="8" rx="4" fill="#6b4a3a"/><rect x="14" y="184" width="150" height="8" rx="4" fill="#be185d"/><circle cx="164" cy="188" r="8" fill="#fff"/>
+       <g id="mk"><g class="mark" id="m0"><path d="M70 176v24" stroke="#fde68a" stroke-width="3"/><circle cx="70" cy="176" r="6" fill="#fde68a"/></g><g class="mark" id="m1"><path d="M110 176v24" stroke="#fde68a" stroke-width="3"/><circle cx="110" cy="176" r="6" fill="#fde68a"/></g><g class="mark" id="m2"><path d="M150 176v24" stroke="#fde68a" stroke-width="3"/><circle cx="150" cy="176" r="6" fill="#fde68a"/></g><g class="mark" id="m3"><path d="M210 176v24" stroke="#fde68a" stroke-width="3"/><circle cx="210" cy="176" r="6" fill="#fde68a"/></g><g class="mark" id="m4"><path d="M270 176v24" stroke="#fde68a" stroke-width="3"/><circle cx="270" cy="176" r="6" fill="#fde68a"/></g></g>
+       <text x="14" y="222" fill="#ffe8d6" font-size="12" id="clk">12:40 / 38:00</text>
+      </svg>
+     </div>
+     <div class="fb">Strong commentary describes what happened, explains why, points to evidence, and always includes a timestamp.</div>
+    </div>
+    <div class="col">
+     <div class="card" style="flex:1;display:flex;flex-direction:column" id="cmCard"></div>
+    </div>
+   </div>
+  </section>
+ </main>
+ <div class="ftr">EDUC 581 Student Teaching I &bull; Interactive learning aid &bull; Based on the Week 5 Deep Dive</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t.dataset.p));});
+$('.tabs').addEventListener('keydown',e=>{const t=$$('.tab'),i=t.indexOf(document.activeElement);if(i<0)return;if(e.key==='ArrowRight'){t[(i+1)%t.length].focus();t[(i+1)%t.length].click()}if(e.key==='ArrowLeft'){t[(i+t.length-1)%t.length].focus();t[(i+t.length-1)%t.length].click()}});
+const NS='http://www.w3.org/2000/svg';
+function el(n,a,txt){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(txt)e.textContent=txt;return e}
+
+/* ---- Pane 1 ---- */
+const FB=[
+ ['Your learning goal was clear. Students could tell me what they were aiming for.',0,'This names the target students are working toward, so it answers where they are going.'],
+ ['Eight of ten pairs gave a correct answer during partner talk, so your pacing worked.',1,'This describes progress during the lesson, so it answers how they are going.'],
+ ['Next lesson, add a prompt that asks students to compare two strategies.',2,'This points to a next step, so it answers where to next.'],
+ ['Share the success criteria at the start and revisit them at the end.',0,'Success criteria clarify the goal, so this is about where students are going.'],
+ ['You noticed the group confusing unequal groups and re-modeled it right away.',1,'Noticing and responding to current understanding is feedback on how they are going.'],
+ ['Choose one question type to focus on in the next observation and track it on your plan.',2,'This sets an action for later, so it is about where to next.']];
+let fi=0,fs=0,fa=false;const FL=['Where am I going?','How am I going?','Where to next?'];
+function fb(){fa=false;$('#fProg').textContent='Feedback '+(fi+1)+' of 6';$('#fQ').textContent='\u201c'+FB[fi][0]+'\u201d';$$('.sg').forEach(s=>s.classList.remove('hi'));$('#fFb').className='fb';$('#fFb').textContent='Choose a signpost.';$('#fNext').disabled=true;$('#fNext').textContent=fi===5?'See results':'Next';
+ const o=$('#fOpts');o.innerHTML='';FL.forEach((t,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(fa)return;fa=true;const ok=i===FB[fi][1];if(ok)fs++;b.classList.add(ok?'ok':'no');if(!ok)$$('#fOpts .opt')[FB[fi][1]].classList.add('ok');$('#sg'+FB[fi][1]).classList.add('hi');$('#fFb').className='fb '+(ok?'good':'bad');$('#fFb').innerHTML='<strong>'+(ok?'Yes. ':'Not quite. ')+'</strong>'+FB[fi][2];$('#fScore').textContent=fs;$('#fNext').disabled=false};o.append(b)})}
+$('#fNext').onclick=()=>{if(fi<5){fi++;fb()}else{$('#fDone').style.display='block';$('#fFinal').textContent=fs+'/6';$('#fMsg').textContent=fs>=5?'You can tell goals, progress, and next steps apart. Pick one or two next steps to apply.':'Review the three questions and try again.'}};
+$('#fAgain').onclick=()=>{fi=0;fs=0;$('#fScore').textContent=0;$('#fDone').style.display='none';fb()};fb();
+
+/* ---- Pane 2 ---- */
+const LV=[
+ {n:'Evaluation',c:'#7c2d12',d:'Students judge, defend, or critique using criteria and evidence.',v:['justify','critique','defend','judge'],s:'A classmate says 4 \u00d7 6 and 6 \u00d7 4 cannot be the same. Justify whether you agree.',t:'Rubric language: strategies that engage students in evaluation.'},
+ {n:'Synthesis',c:'#be185d',d:'Students combine ideas to design, create, or propose something new.',v:['design','create','compose','propose'],s:'Create a word problem that can be solved with 4 \u00d7 6 and draw a model that shows it.',t:'Ask students to make something, not only answer something.'},
+ {n:'Analysis',c:'#c2410c',d:'Students break ideas apart, compare, and explain relationships.',v:['compare','contrast','categorize','explain why'],s:'Compare an array and equal groups. How are they alike and different?',t:'\u201cWhy\u201d and \u201chow do you know\u201d questions invite analysis.'},
+ {n:'Application',c:'#d97706',d:'Students use what they learned in a new situation.',v:['solve','use','demonstrate','show'],s:'Use equal groups to solve: 6 bags have 5 apples each. How many apples in all?',t:'Try a new context, not the one you modeled.'},
+ {n:'Recall & Understanding',c:'#a16207',d:'Students remember facts and restate ideas. This is the foundation, not the finish line.',v:['name','define','list','restate'],s:'What is 3 \u00d7 4?',t:'Recall is useful for building fluency. Pair it with higher-order tasks.'}];
+const lad=$('#lad');
+LV.forEach((l,i)=>{const w=70+i*58,y=10+i*62,x=180-w/2,g=el('g',{class:'lvl',tabindex:0,role:'button','aria-label':l.n});
+ const top=70+(i)*58, bot=70+(i+1)*58;const cx=180;
+ const p=el('path',{d:`M${cx-top/2+ (i===0?top/2-0:0)} ${y}`});
+ let d;if(i===0)d=`M180 ${y}L${180+bot/2} ${y+56}H${180-bot/2}Z`;else d=`M${180-top/2} ${y}H${180+top/2}L${180+bot/2} ${y+56}H${180-bot/2}Z`;
+ g.append(el('path',{d:d,fill:l.c,stroke:'#fff','stroke-width':3}),el('text',{x:180,y:y+(i===0?46:34),'text-anchor':'middle','font-size':i===4?13:i===0?13:15,'font-weight':'800',fill:'#fff'},l.n));
+ const go=()=>{$$('.lvl').forEach(x=>x.classList.remove('act'));g.classList.add('act');$('#lLv').textContent=i===4?'The foundation':'Higher-order thinking';$('#lT').textContent=l.n;$('#lD').textContent=l.d;$('#lV').innerHTML=l.v.map(v=>'<span>'+v+'</span>').join('');$('#lS').textContent=l.s;$('#lN').innerHTML='<strong>Tip:</strong> '+l.t};
+ g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};lad.append(g);if(i===2)setTimeout(go,0)});
+
+/* ---- Pane 3 ---- */
+const UP=[
+ ['What is 3 \u00d7 4?','Application',[['Define multiplication in your own words.',0,'That is still recall of a definition.'],['Solve: 3 boxes each hold 4 pencils. How many pencils are there in all?',1,'Students use the idea in a new situation, which is application.'],['Prove that 3 \u00d7 4 and 4 \u00d7 3 are equal for every pair of numbers.',0,'That asks for justification, a step beyond application.']]],
+ ['List the shapes that have four sides.','Analysis',[['Name three shapes with four sides.',0,'Still recall.'],['Draw a rectangle.',0,'This applies a definition but does not ask students to analyze.'],['Compare a square and a rhombus. What do they share, and how do they differ?',1,'Comparing and contrasting properties is analysis.']]],
+ ['What is the main character\u2019s name?','Evaluation',[['Retell the story in order.',0,'Retelling is understanding, not evaluation.'],['Was the character\u2019s choice the best one? Defend your answer with evidence from the story.',1,'Judging and defending with evidence is evaluation.'],['Draw the character.',0,'This is a creative response, but it does not require judging with criteria.']]],
+ ['What are the three states of matter?','Synthesis',[['Design an experiment that shows how heating changes water, and predict the results.',1,'Designing and predicting asks students to create something new.'],['Define evaporation.',0,'Recall of a definition.'],['List the states of matter in order.',0,'Still recall.']]]];
+let ui=0,us=0,ua=false;
+function up(){ua=false;const d=UP[ui];$('#uProg').textContent='Question '+(ui+1)+' of 4';$('#uQ').textContent=d[0];$('#uT').textContent=d[1];$('#uF').className='fb';$('#uF').textContent='Read each option and think about what students must do.';$('#uN').disabled=true;$('#uN').textContent=ui===3?'See results':'Next question';
+ const o=$('#uO');o.innerHTML='';d[2].forEach(([t,ok,m])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(ua)return;ua=true;if(ok)us++;b.classList.add(ok?'ok':'no');if(!ok)$$('#uO .opt')[d[2].findIndex(x=>x[1])].classList.add('ok');$('#uF').className='fb '+(ok?'good':'bad');$('#uF').innerHTML='<strong>'+(ok?'Yes. ':'Not quite. ')+'</strong>'+m;$('#uScore').textContent=us;$('#uN').disabled=false};o.append(b)})}
+$('#uN').onclick=()=>{if(ui<3){ui++;up()}else{$('#uDone').style.display='block';$('#uFinal').textContent=us+'/4';$('#uMsg').textContent=us>=3?'You can raise the thinking without losing the content.':'Revisit the Thinking Ladder and try again.'}};
+$('#uAgain').onclick=()=>{ui=0;us=0;$('#uScore').textContent=0;$('#uDone').style.display='none';up()};up();
+
+/* ---- Pane 4 ---- */
+const CM=[
+ {h:'Timestamp',q:'Start your commentary with a timestamp.',o:[['[12:40]',1,''],['Later in the lesson,',0,'A timestamp is required so the viewer can find the moment.']],clk:'12:40 / 38:00'},
+ {h:'What happened',q:'Describe what happened.',o:[['I asked students to compare two strategies for 6 \u00d7 4 and share with a partner before our whole-class discussion.',1,''],['I did a math activity with the class.',0,'Too vague. Describe the specific teaching move.']]},
+ {h:'Why you did it',q:'Explain why you made that decision.',o:[['I chose comparison because my plan called for analysis-level thinking, and my student profile showed they can recall facts but need practice explaining.',1,''],['I thought it would be fun.',0,'Connect the decision to your plan, your students, or the standards.']]},
+ {h:'Evidence of learning',q:'Point to evidence of student learning.',o:[['Three of four pairs used arrays to explain why 6 \u00d7 4 and 4 \u00d7 6 give the same product, and two students corrected a classmate\u2019s drawing.',1,''],['Students seemed to like it.',0,'Enjoyment is not evidence of learning. Cite what students said or did.']]},
+ {h:'Adjustment',q:'Describe how you adjusted instruction.',o:[['One pair skipped the comparison, so I brought counters to their table and asked the prompt again.',1,''],['Everything went as planned.',0,'Formative assessment is used to adjust. Show what you changed.']]}];
+const MK=[70,110,150,210,270];let ci=0;const cp=[];
+function cm(){const c=$('#cmCard');c.innerHTML='';
+ if(ci>=5){c.innerHTML='<div class="eyebrow">Your commentary</div><div class="cm" id="cmT"></div><div class="row" style="margin-top:8px"><button class="btn" id="cmC">Copy</button><button class="btn ghost" id="cmR">Start over</button><span class="small" id="cmM"></span></div>';
+  $('#cmT').textContent=cp.join(' ');$('#cmC').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText($('#cmT').textContent).then(()=>$('#cmM').textContent='Copied!').catch(()=>$('#cmM').textContent='Select the text to copy.')};$('#cmR').onclick=()=>{ci=0;cp.length=0;$$('.mark').forEach(m=>m.classList.remove('on'));cm()};return}
+ const s=CM[ci];c.innerHTML='<div class="steps5">'+CM.map((x,i)=>'<span class="'+(i<=ci?'on':'')+'"></span>').join('')+'</div><div class="eyebrow">Step '+(ci+1)+' of 5 \u2022 '+s.h+'</div><p style="font-weight:700;margin:4px 0 8px">'+s.q+'</p><div id="co"></div><div class="fb" id="cf" style="display:none"></div><div class="cm" style="margin-top:8px;min-height:60px;flex:none" id="cprev"></div><div class="row" style="margin-top:auto;padding-top:8px"><span class="sp"></span><button class="btn" id="cn" disabled>'+(ci===4?'Build commentary':'Next')+'</button></div>';
+ $('#cprev').textContent=cp.length?cp.join(' '):'Your commentary will build here.';
+ s.o.forEach(([t,ok,m])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(ok){$$('#co .opt').forEach(x=>x.classList.remove('no','ok'));b.classList.add('ok');$$('#co .opt').forEach(x=>x.disabled=true);cp[ci]=t;$('#cprev').textContent=cp.join(' ');$('#cf').style.display='none';$('#cn').disabled=false;$('#m'+ci).classList.add('on');if(s.clk)$('#clk').textContent=s.clk}else{b.classList.add('no');$('#cf').style.display='block';$('#cf').className='fb bad';$('#cf').textContent=m}};$('#co').append(b)});
+ $('#cn').onclick=()=>{ci++;cm()}}
+cm();
+</script>
+</body>
+</html>
