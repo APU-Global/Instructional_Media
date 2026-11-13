@@ -90,10 +90,10 @@ th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing
     <g fill="#2d6a8f"><circle cx="80" cy="208" r="6"/><circle cx="100" cy="196" r="6"/><circle cx="116" cy="210" r="6"/><circle cx="136" cy="176" r="6"/><circle cx="156" cy="168" r="6"/><circle cx="170" cy="184" r="6"/><circle cx="192" cy="140" r="6"/><circle cx="212" cy="150" r="6"/><circle cx="232" cy="112" r="6"/><circle cx="250" cy="124" r="6"/><circle cx="270" cy="84" r="6"/><circle cx="288" cy="94" r="6"/></g>
     <line x1="64" y1="214" x2="296" y2="80" stroke="#d34147" stroke-width="5" stroke-linecap="round"/>
     <g stroke="#d34147" stroke-width="1.5" stroke-dasharray="3 3"><line x1="136" y1="176" x2="136" y2="168"/><line x1="192" y1="140" x2="192" y2="132"/><line x1="232" y1="112" x2="232" y2="108"/></g>
-    <text x="68" y="52" font-size="15" font-weight="700" fill="#1c1c1c" font-family="Segoe UI,Arial">ŷ = b₀ + b₁x₁ + b₂x₂</text>
+    <text x="68" y="52" font-size="15" font-weight="700" fill="#1c1c1c" font-family="Segoe UI,Arial">ŷ = b₀ + b₁x₁ + … + b₄x₄</text>
     <g transform="translate(362,70)"><circle r="40" fill="#f2e4a8"/><circle cx="16" cy="-8" r="34" fill="#111"/></g>
     <g transform="translate(362,190)"><circle r="42" fill="#fff" stroke="#d34147" stroke-width="7"/><line x1="0" y1="0" x2="0" y2="-26" stroke="#111" stroke-width="5" stroke-linecap="round"/><line x1="0" y1="0" x2="20" y2="10" stroke="#111" stroke-width="5" stroke-linecap="round"/><circle r="4" fill="#111"/></g>
-    <text x="362" y="262" text-anchor="middle" font-size="13" fill="#ddd" font-family="Segoe UI,Arial">sleep · overtime</text>
+    <text x="362" y="262" text-anchor="middle" font-size="13" fill="#ddd" font-family="Segoe UI,Arial">up to four predictors</text>
   </svg>
 </header>
 
@@ -113,7 +113,7 @@ th{background:var(--sand);font-size:13px;text-transform:uppercase;letter-spacing
   <div class="grid2" style="align-items:start">
     <div>
       <div class="scroll"><table id="coefTable"></table></div>
-      <p style="font-size:13px;color:var(--mute);margin:6px 0 0">Green rows have p &lt; 0.05. The intercept is the predicted score when every included variable equals zero.</p>
+      <p style="font-size:13px;color:var(--mute);margin:6px 0 0">Green rows have p &lt; 0.05. The intercept is the line's starting point, the predicted score when every included variable equals zero. Zero falls outside the range of this data (for example, 0 hours of sleep), so treat the intercept as an anchor for the line, not a realistic prediction.</p>
     </div>
     <div class="gauge">
       <div id="donut" style="width:210px"></div>
@@ -164,7 +164,7 @@ function ols(rows,cols){var n=rows.length,X=rows.map(function(r){return [1].conc
  var iv=inv(XtX),b=iv.map(function(r){return r.reduce(function(s,v,j){return s+v*Xty[j]},0)});
  var my=y.reduce(function(a,c){return a+c},0)/n,sse=0,sst=0;for(var m=0;m<n;m++){var f=X[m].reduce(function(s,v,j){return s+v*b[j]},0);sse+=Math.pow(y[m]-f,2);sst+=Math.pow(y[m]-my,2)}
  var df=n-k,s2=sse/df,se=iv.map(function(r,i){return Math.sqrt(s2*r[i])}),t=b.map(function(v,i){return v/se[i]}),p=t.map(function(v){return pval(v,df)});
- return {b:b,se:se,t:t,p:p,r2:1-sse/sst,adj:1-(sse/df)/(sst/(n-1)),df:df,s:Math.sqrt(s2)}}
+ return {iv:iv,b:b,se:se,t:t,p:p,r2:1-sse/sst,adj:1-(sse/df)/(sst/(n-1)),df:df,s:Math.sqrt(s2)}}
 
 var NS="http://www.w3.org/2000/svg";
 function $(id){return document.getElementById(id)}
@@ -211,7 +211,7 @@ var on=[true,true,true,true];
  var wi=$("whatif");
  V.forEach(function(v,i){
   var d=document.createElement("div");d.style.margin="8px 0";
-  d.innerHTML='<label for="wi'+i+'">'+v.label+': <b id="wv'+i+'">'+v.def+'</b></label><input type="range" id="wi'+i+'" min="'+v.min+'" max="'+v.max+'" step="'+v.step+'" value="'+v.def+'">';
+  d.innerHTML='<label for="wi'+i+'">'+v.label+': <b id="wv'+i+'">'+v.def+'</b><span id="wl'+i+'" style="font-weight:400;color:var(--mute)"></span></label><input type="range" id="wi'+i+'" min="'+v.min+'" max="'+v.max+'" step="'+v.step+'" value="'+v.def+'">';
   d.querySelector("input").oninput=function(){$("wv"+i).textContent=this.value;predict()};wi.appendChild(d);
  });
 })();
@@ -220,10 +220,10 @@ function fmtP(p){return p<0.001?"< 0.001":p.toFixed(3)}
 function fmt(x,d){return (x<0?"− ":"")+Math.abs(x).toFixed(d==null?2:d)}
 function run(){
  cols=[];V.forEach(function(v,i){if(on[i])cols.push(i)});
- if(!cols.length){M=null;$("eq").textContent="Select at least one independent variable.";$("coefTable").innerHTML="";$("donut").innerHTML="";$("fitMsg").textContent="";$("avp").innerHTML="";$("readMsg").innerHTML="";$("pred").textContent="–";return}
+ if(!cols.length){M=null;$("eq").textContent="Select at least one independent variable.";$("coefTable").innerHTML="";$("donut").innerHTML="";$("fitMsg").textContent="";$("avp").innerHTML="";$("readMsg").innerHTML="";predict();$("pred").textContent="–";return}
  M=ols(DATA,cols);
- var eq="Productivity = "+M.b[0].toFixed(2);
- cols.forEach(function(c,j){var b=M.b[j+1];eq+=" "+(b<0?"−":"+")+" ("+Math.abs(b).toFixed(2)+" × "+V[c].short.split(" ")[0]+")"});
+ var eq="Productivity = "+M.b[0].toFixed(3);
+ cols.forEach(function(c,j){var b=M.b[j+1];eq+=" "+(b<0?"−":"+")+" ("+Math.abs(b).toFixed(3)+" × "+V[c].short.split(" ")[0]+")"});
  $("eq").textContent=eq;
  var h="<tr><th>Term</th><th>Coefficient</th><th>Std. error</th><th>t</th><th>p-value</th><th>p &lt; 0.05?</th></tr>";
  var names=["Intercept"].concat(cols.map(function(c){return V[c].short}));
@@ -235,7 +235,7 @@ function run(){
  donut();avp();
  var sigs=[],nots=[];cols.forEach(function(c,j){(M.p[j+1]<0.05?sigs:nots).push(c)});
  var msg="<b>Reading the output:</b> ";
- if(sigs.length){msg+=sigs.map(function(c){var j=cols.indexOf(c)+1,b=M.b[j];return V[c].short.split(" (")[0].replace(/ \(.*/,"")+" (p "+(M.p[j]<0.001?"< 0.001":"= "+M.p[j].toFixed(3))+"): holding the other included variables constant, each additional "+V[c].unit+" is associated with a "+(b>=0?"rise":"drop")+" of "+Math.abs(b).toFixed(2)+" productivity points."}).join(" ")}
+ if(sigs.length){msg+=sigs.map(function(c){var j=cols.indexOf(c)+1,b=M.b[j];return V[c].short.split(" (")[0].replace(/ \(.*/,"")+" (p "+(M.p[j]<0.001?"< 0.001":"= "+M.p[j].toFixed(3))+"): holding the other included variables constant, each additional "+V[c].unit+" is associated with a "+(b>=0?"rise":"drop")+" of "+Math.abs(b).toFixed(3)+" productivity points."}).join(" ")}
  else msg+="No included variable is statistically significant at the 0.05 level.";
  if(nots.length)msg+=" Not significant: "+nots.map(function(c){return V[c].short}).join(", ")+". That means the data do not show a reliable relationship after accounting for the other variables. It does not prove the effect is exactly zero.";
  $("readMsg").innerHTML=msg;
@@ -272,11 +272,11 @@ function avp(){
  $("avp").appendChild(lg);
 }
 function predict(){
- if(!M)return;
+ aV.forEach(function(v,i){$("wi"+i).disabled=!on[i];$("wi"+i).style.opacity=on[i]?1:.4;$("wl"+i).textContent=on[i]?"":" (not in model)"});if(!M)return;
  var p=M.b[0];cols.forEach(function(c,j){p+=M.b[j+1]*(+$("wi"+c).value)});
  $("pred").textContent=Math.max(0,Math.min(100,p)).toFixed(1);
- $("predNote").textContent="out of 100 · typical miss about ± "+M.s.toFixed(1)+" points";
- V.forEach(function(v,i){$("wi"+i).disabled=!on[i];$("wi"+i).style.opacity=on[i]?1:.4});
+ var xv=[1].concat(cols.map(function(c){return +$("wi"+c).value})),hq=0,i1,j1,lo1=0,hi1=10,k1,tc,hw;for(i1=0;i1<xv.length;i1++)for(j1=0;j1<xv.length;j1++)hq+=xv[i1]*M.iv[i1][j1]*xv[j1];for(k1=0;k1<40;k1++){tc=(lo1+hi1)/2;if(pval(tc,M.df)>0.05)lo1=tc;else hi1=tc}hw=tc*M.s*Math.sqrt(1+hq);$("predNote").textContent="out of 100 · 95% prediction range for one employee: "+Math.max(0,p-hw).toFixed(1)+" to "+Math.min(100,p+hw).toFixed(1)+" (about ± "+hw.toFixed(1)+"). The model's standard error ("+M.s.toFixed(1)+" points) is only the typical miss, so the range for an individual is wider.";
+ 
 }
 
 /* Section 4 */
