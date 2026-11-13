@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORGS490 | Week 4 | The Value of Artificial Intelligence</title>
+<meta name="description" content="ORGS 490 Week 4 interactive: AI uses in organizations, verifying AI answers, weighing ethics, and building a verification protocol.">
+<style>
+:root{--red:#d34147;--red-d:#b02a30;--ink:#1f2328;--mut:#5b636b;--line:#e3e5e8;--soft:#f6f4f2;--ok:#2e7d4f;--okbg:#e8f4ec;--warn:#9a5b00;--warnbg:#fff3df;--bad:#b02a30;--badbg:#fdecec;--acc:#2b4a6f;--accbg:#eaf0f7}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#fff}
+body{font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:15px;line-height:1.45}
+.app{height:100vh;display:flex;flex-direction:column;max-width:1000px;margin:0 auto;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:linear-gradient(100deg,#2a2d31,#3b2a2c 60%,var(--red-d));color:#fff;flex:0 0 auto}
+header svg{flex:0 0 44px;width:44px;height:44px}
+header .t small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+header .t b{font-size:18px;font-weight:600;line-height:1.2}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots button{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.55);background:transparent;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.dots button.on{background:#fff;color:var(--red-d);border-color:#fff}
+.dots button.done{background:rgba(255,255,255,.25)}
+main{flex:1 1 auto;min-height:0;position:relative}
+.screen{position:absolute;inset:0;padding:14px 18px;overflow-y:auto;overflow-x:hidden;display:none}
+.screen.on{display:block}
+h2{font-size:19px;color:var(--red-d);margin-bottom:4px}
+p.lead{color:var(--mut);margin-bottom:10px}
+.row{display:flex;gap:14px;align-items:flex-start}
+.col{flex:1 1 0;min-width:0}
+.card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:8px;cursor:pointer;font:inherit;color:inherit;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--red)}
+.opt:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #2b6cb0;outline-offset:2px}
+.opt.sel{border-color:var(--red);background:#fdf3f3}
+.opt.right{border-color:var(--ok);background:var(--okbg)}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.opt b{display:block}
+.fb{margin-top:8px;padding:9px 12px;border-radius:10px;background:var(--accbg);border-left:5px solid var(--acc);display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--okbg);border-color:var(--ok)}
+.fb.no{background:var(--warnbg);border-color:var(--warn)}
+footer{display:flex;align-items:center;gap:10px;padding:9px 16px;border-top:1px solid var(--line);background:var(--soft);flex:0 0 auto}
+footer .sp{flex:1}
+.btn{border:0;border-radius:8px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer;background:var(--red);color:#fff}
+.btn:hover{background:var(--red-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid #c5c9ce}
+.btn.ghost:hover{background:#eee}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.score{font-weight:600;color:var(--mut)}
+textarea,input[type=text]{width:100%;border:1px solid #b9bec4;border-radius:8px;padding:8px 10px;font:inherit}
+textarea{resize:none}
+label{font-weight:600;font-size:13px;display:block;margin-bottom:3px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:var(--accbg);color:var(--acc)}
+.sr{position:absolute;left:-9999px}
+.bar{height:12px;border-radius:99px;background:#e8e8e8;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);transition:width .3s}
+@media (max-width:640px){body{font-size:14px}.row{flex-direction:column}header .t b{font-size:15px}.screen{padding:10px 12px}.dots button{width:22px;height:22px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body><div class="app" role="application" aria-label="ORGS 490 Week 4 interactive: The Value of Artificial Intelligence">
+<header><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#fff" opacity=".15"/><rect x="12" y="12" width="20" height="20" rx="4" fill="none" stroke="#fff" stroke-width="3"/><circle cx="18" cy="20" r="2.5" fill="#fff"/><circle cx="26" cy="20" r="2.5" fill="#fff"/><path d="M17 27h10M22 12V6M10 22H5M39 22h-5" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg><div class="t"><small>ORGS 490 · Week 4</small><b>The Value of Artificial Intelligence</b></div><div class="dots" id="dots" role="navigation" aria-label="Steps"></div></header>
+<main><section class="screen" data-title="What AI does"><div class="row"><div class="col"><h2>AI is changing how organizations work</h2>
+<p class="lead">AI simulates human intelligence in many ways. Tap each use to see how it could help an organization—and what a leader should still ask.</p><svg viewBox="0 0 440 250" role="img" aria-label="Diagram: an AI hub at the center connected to four organizational uses: virtual assistants, chatbots, content creation, and decision support." style="width:100%;height:auto;max-height:230px;display:block">
+<rect width="440" height="250" rx="12" fill="#f6f4f2"/>
+<g stroke="#c9c3bd" stroke-width="3" stroke-dasharray="5 4"><line x1="220" y1="125" x2="85" y2="55"/><line x1="220" y1="125" x2="355" y2="55"/><line x1="220" y1="125" x2="85" y2="195"/><line x1="220" y1="125" x2="355" y2="195"/></g>
+<circle cx="220" cy="125" r="42" fill="#d34147"/><rect x="200" y="105" width="40" height="38" rx="8" fill="#fff"/><circle cx="212" cy="121" r="4" fill="#d34147"/><circle cx="228" cy="121" r="4" fill="#d34147"/><path d="M211 132h18M220 105v-9" stroke="#d34147" stroke-width="3" stroke-linecap="round"/><circle cx="220" cy="94" r="3" fill="#fff"/>
+<text x="220" y="182" font-family="Segoe UI,Arial" font-size="13" font-weight="700" text-anchor="middle" fill="#b02a30">AI</text>
+<g class="node" tabindex="0" role="button" data-i="0" aria-label="Virtual assistants"><circle cx="85" cy="55" r="34" fill="#2b4a6f"/><path d="M70 62v-14a15 15 0 0130 0v14M70 56h-4v-6h4zM100 56h4v-6h-4z" fill="none" stroke="#fff" stroke-width="3"/><text x="85" y="104" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="600">Virtual assistants</text></g>
+<g class="node" tabindex="0" role="button" data-i="1" aria-label="Chatbots"><circle cx="355" cy="55" r="34" fill="#2e7d4f"/><path d="M338 42h34v22h-20l-9 8v-8h-5z" fill="#fff"/><text x="355" y="104" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="600">Chatbots</text></g>
+<g class="node" tabindex="0" role="button" data-i="2" aria-label="Content creation"><circle cx="85" cy="195" r="34" fill="#9a5b00"/><path d="M72 208l4-12 18-18 8 8-18 18zM94 178l5-5 8 8-5 5" fill="#fff"/><text x="85" y="244" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="600">Content creation</text></g>
+<g class="node" tabindex="0" role="button" data-i="3" aria-label="Decision support"><circle cx="355" cy="195" r="34" fill="#6b3a7a"/><path d="M340 210v-12M352 210v-22M364 210v-17M376 210v-28" stroke="#fff" stroke-width="6" stroke-linecap="round"/><text x="355" y="244" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12" font-weight="600">Decision support</text></g>
+</svg><style>.node{cursor:pointer}.node:hover circle,.node:focus circle{stroke:#d34147;stroke-width:4}.node:focus{outline:none}</style></div>
+<div class="col"><div class="card" id="nodeInfo" aria-live="polite" style="min-height:150px"><span class="tag">Growth mindset</span><p style="margin-top:6px">AI is constantly adapting and evolving. Organizations and leaders can change and evolve with it—or possibly be left behind. Select a node to explore.</p></div>
+<div class="card" style="margin-top:10px;background:var(--soft)"><b>Explored: <span id="exp">0</span> of 4</b><div class="bar" style="margin-top:6px"><i id="expBar" style="width:0"></i></div>
+<p class="score" style="margin-top:6px">Think about your own case study: which of these could help the organization you chose?</p></div></div></div></section><section class="screen" data-title="Verify before you trust"><h2>AI answers can be right or wrong</h2>
+<p class="lead">You decide how to verify what an AI tool tells you. For each AI-generated statement below, pick the best next move.</p>
+<div id="vq"></div></section><section class="screen" data-title="Benefits vs. ethics"><div class="row"><div class="col">
+<h2>Weigh the benefits against the ethics</h2>
+<p class="lead">Rate a use of AI at work or in learning. The scale tips as you weigh benefit against ethical concern.</p>
+<label for="uc">Pick a use case</label>
+<select id="uc" style="width:100%;padding:8px;border-radius:8px;border:1px solid #b9bec4;font:inherit;margin-bottom:10px"></select>
+<label for="ben">Benefit to the organization: <span id="bv">3</span>/5</label><input type="range" id="ben" min="1" max="5" value="3" style="width:100%">
+<label for="eth" style="margin-top:8px">Ethical concern: <span id="ev">3</span>/5</label><input type="range" id="eth" min="1" max="5" value="3" style="width:100%">
+<div class="fb show" id="uf" style="margin-top:10px"></div></div>
+<div class="col"><svg viewBox="0 0 300 230" role="img" aria-label="Balance scale that tips toward benefit or ethical concern" style="width:100%;max-height:230px;display:block">
+<rect width="300" height="230" rx="12" fill="#f6f4f2"/><path d="M150 70v125M110 200h80" stroke="#444" stroke-width="6" stroke-linecap="round"/><circle cx="150" cy="66" r="8" fill="#d34147"/>
+<g id="beam" style="transition:transform .4s;transform-origin:150px 66px"><line x1="45" y1="66" x2="255" y2="66" stroke="#444" stroke-width="6" stroke-linecap="round"/>
+<g id="lp"><line x1="45" y1="66" x2="25" y2="116" stroke="#777"/><line x1="45" y1="66" x2="65" y2="116" stroke="#777"/><path d="M18 116h54a27 20 0 01-54 0z" fill="#2e7d4f"/><text x="45" y="112" text-anchor="middle" font-size="11" font-weight="700" fill="#2e7d4f" font-family="Segoe UI,Arial">Benefit</text></g>
+<g id="rp"><line x1="255" y1="66" x2="235" y2="116" stroke="#777"/><line x1="255" y1="66" x2="275" y2="116" stroke="#777"/><path d="M228 116h54a27 20 0 01-54 0z" fill="#b02a30"/><text x="255" y="112" text-anchor="middle" font-size="11" font-weight="700" fill="#b02a30" font-family="Segoe UI,Arial">Ethics</text></g></g></svg></div></div></section><section class="screen" data-title="Your AI protocol"><div class="row"><div class="col">
+<h2>Build your personal verification protocol</h2>
+<p class="lead">Select the checks you will use before relying on an AI answer in your case study (Part 3) or in Discussion 4.</p>
+<div id="proto"></div>
+<div class="card" style="background:var(--warnbg);margin-top:6px"><b>Before you begin:</b> review the university’s policy on AI use and the A.I. Tools &amp; Helps | Course Help page, and use AI ethically in this course.</div></div>
+<div class="col"><div class="card" style="background:var(--soft)"><b>Your protocol</b><p id="pp" style="margin-top:6px">Select at least one check.</p></div>
+<label for="pn" style="margin-top:10px">One problem in my case study AI could help with:</label><textarea id="pn" rows="3" placeholder="Describe a problem, then note how you’d check the AI’s answer."></textarea>
+<button class="btn" id="cpp" style="margin-top:8px">Copy for Discussion 4</button></div></div></section></main>
+<footer><button class="btn ghost" id="prev">← Back</button><span class="score" id="stepLabel"></span><span class="sp"></span><span class="score" id="scoreBox" aria-live="polite"></span><button class="btn" id="next">Next →</button></footer>
+</div>
+<script>
+(function(){
+ var screens=[].slice.call(document.querySelectorAll('.screen')),dots=document.getElementById('dots'),cur=0,seen={};
+ var prev=document.getElementById('prev'),next=document.getElementById('next');
+ screens.forEach(function(s,i){var b=document.createElement('button');b.textContent=i+1;b.setAttribute('aria-label','Go to step '+(i+1)+': '+s.getAttribute('data-title'));b.onclick=function(){go(i)};dots.appendChild(b)});
+ function go(i){cur=Math.max(0,Math.min(screens.length-1,i));seen[cur]=1;
+  screens.forEach(function(s,k){s.classList.toggle('on',k===cur)});
+  [].forEach.call(dots.children,function(b,k){b.className=k===cur?'on':(seen[k]?'done':'');b.setAttribute('aria-current',k===cur?'step':'false')});
+  prev.disabled=cur===0;next.textContent=cur===screens.length-1?'Start over':'Next \u2192';
+  document.getElementById('stepLabel').textContent='Step '+(cur+1)+' of '+screens.length+' \u00b7 '+screens[cur].getAttribute('data-title');
+  screens[cur].scrollTop=0;post();}
+ prev.onclick=function(){go(cur-1)};
+ next.onclick=function(){go(cur===screens.length-1?0:cur+1)};
+ function post(){try{parent.postMessage({type:'ORGS490-resize',height:document.querySelector('.app').offsetHeight},'*')}catch(e){}}
+ window.addEventListener('resize',post);
+ window.ORGS={go:go,screens:screens};go(0);
+})();
+function pager(id){var box=document.getElementById(id),kids=[].slice.call(box.children),i=0;
+ var bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:10px;margin-top:6px';
+ bar.innerHTML='<button class="btn ghost" type="button">\u2190 Prev</button><span class="score"></span><button class="btn ghost" type="button">Next question \u2192</button>';
+ box.parentNode.insertBefore(bar,box.nextSibling);var bp=bar.children[0],lb=bar.children[1],bn=bar.children[2];
+ function r(){kids.forEach(function(k,j){k.style.display=j===i?'block':'none'});lb.textContent='Question '+(i+1)+' of '+kids.length;bp.disabled=i===0;bn.disabled=i===kids.length-1}
+ bp.onclick=function(){i--;r()};bn.onclick=function(){i++;r()};r()}
+function copyText(txt,btn){var ok=function(){var o=btn.textContent;btn.textContent='Copied \u2713';setTimeout(function(){btn.textContent=o},1500)};
+ try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}
+ function fb(){var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');ok()}catch(e){btn.textContent='Select text & copy manually'}document.body.removeChild(t)}}
+
+
+var N=[["Virtual assistants", "Scheduling, reminders, and routine requests handled on demand\u2014freeing people for higher-value work.", "Ask: what data does it access, and who is accountable for its actions?"], ["Chatbots", "Answer common questions for employees or customers any time of day.", "Ask: how will you know when it gives a wrong answer, and how does a person step in?"], ["Content creation", "Drafts reports, summaries, and messages quickly.", "Ask: who checks accuracy and originality before anything is shared?"], ["Decision support", "Surfaces patterns in data to help leaders weigh options and solve problems.", "Ask: can the reasoning be explained? A prediction without an explanation is hard to trust."]],Q=[["An AI tool states a specific statistic about employee engagement in your case-study industry, with no source.", ["Use it\u2014it sounds authoritative", "Trace it to a credible source before using it", "Delete the whole topic from your project"], 1, "Unsourced numbers are a classic risk. Find the original source (library databases are a good start) or don\u2019t use the figure."], ["An AI summary of a leadership theory includes a quote and says it came from a well-known author.", ["Check the quote against the original text", "Keep it\u2014AI summaries are usually fine", "Paraphrase it and cite the AI as the author"], 0, "AI can invent or distort quotes. Verify against the original work, and cite what you actually consulted."], ["AI suggests a recommendation for your CEO that contradicts what your case study documents say.", ["Trust the AI\u2014it has more data", "Compare it with the case facts and decide, then explain your reasoning", "Ignore the case facts"], 1, "You are the consultant and are responsible for the recommendation. The case evidence is your ground truth; AI is a thinking partner."], ["AI gives a confident answer, and two other credible sources give different answers.", ["Go with the majority without looking deeper", "Go with the AI\u2014it\u2019s confident", "Investigate why they differ and note the uncertainty"], 2, "Confidence isn\u2019t accuracy. Investigating the difference\u2014and being transparent about uncertainty\u2014builds credibility."]],U=[["AI chatbot answers routine employee HR questions", 4, 2], ["AI drafts a performance review for a manager to send", 3, 4], ["AI screens job applicants using past hiring data", 4, 5], ["A student uses AI to brainstorm, then writes and cites their own work", 4, 2], ["A student submits AI-generated text as their own work", 2, 5]],C=["Trace claims to a credible, original source", "Cross-check with at least two independent sources", "Compare against the facts in my case study", "Ask AI to explain its reasoning, then test the logic", "Check for bias or missing perspectives", "Follow the university\u2019s AI policy and disclose use as required"],seen={},score=0,ans={};
+function upd(){document.getElementById('scoreBox').textContent=Object.keys(ans).length?('Verify score: '+score+'/4'):''}
+[].forEach.call(document.querySelectorAll('.node'),function(g){var f=function(){var i=+g.dataset.i,n=N[i];seen[i]=1;var c=Object.keys(seen).length;
+ document.getElementById('nodeInfo').innerHTML='<span class="tag">'+n[0]+'</span><p style="margin-top:6px"><b>How it helps:</b> '+n[1]+'</p><p style="margin-top:6px"><b>'+n[2]+'</b></p>';
+ document.getElementById('exp').textContent=c;document.getElementById('expBar').style.width=(c*25)+'%'};
+ g.onclick=f;g.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}}});
+var vq=document.getElementById('vq');
+Q.forEach(function(q,i){var d=document.createElement('div');d.className='card';d.style.marginBottom='8px';
+ d.innerHTML='<b>'+(i+1)+'. “'+q[0]+'”</b><div style="margin-top:6px"></div><div class="fb"></div>';
+ var box=d.children[1],fb=d.children[2],bs=[];
+ q[1].forEach(function(o,k){var b=document.createElement('button');b.className='opt';b.style.cssText='margin-bottom:5px;padding:6px 10px';b.textContent=o;
+  b.onclick=function(){if(ans[i]!==undefined)return;ans[i]=k;var ok=k===q[2];if(ok)score++;bs.forEach(function(x,j){if(j===q[2])x.classList.add('right');else if(j===k)x.classList.add('wrong')});
+   fb.className='fb show '+(ok?'ok':'no');fb.textContent=(ok?'Right move. ':'Not quite. ')+q[3];upd()};bs.push(b);box.appendChild(b)});vq.appendChild(d)});
+var uc=document.getElementById('uc'),ben=document.getElementById('ben'),eth=document.getElementById('eth');
+U.forEach(function(u,i){var o=document.createElement('option');o.value=i;o.textContent=u[0];uc.appendChild(o)});
+function scale(){var b=+ben.value,e=+eth.value;document.getElementById('bv').textContent=b;document.getElementById('ev').textContent=e;
+ var a=(e-b)*5;document.getElementById('beam').style.transform='rotate('+a+'deg)';
+ ['lp','rp'].forEach(function(id){document.getElementById(id).style.transform='rotate('+(-a)+'deg)';document.getElementById(id).style.transformOrigin=(id==='lp'?'45px':'255px')+' 66px';document.getElementById(id).style.transition='transform .4s'});
+ var f=document.getElementById('uf'),m=b>e?'Benefits outweigh concerns in your rating. Still ask: who is accountable if it goes wrong?':(e>b?'Ethical concerns outweigh the benefits. What safeguards, transparency, or human oversight would change this?':'It’s balanced. What additional information would tip your decision?');
+ f.textContent=m;}
+uc.onchange=function(){var u=U[uc.value];ben.value=u[1];eth.value=u[2];scale()};ben.oninput=scale;eth.oninput=scale;uc.onchange();
+var pr=document.getElementById('proto');
+C.forEach(function(t,i){var l=document.createElement('label');l.style.cssText='font-weight:400;display:flex;gap:8px;margin-bottom:8px;font-size:14px;cursor:pointer';l.innerHTML='<input type="checkbox" style="margin-top:3px"><span>'+t+'</span>';l.firstChild.onchange=ppx;pr.appendChild(l)});
+function ppx(){var s=[].map.call(pr.querySelectorAll('input:checked'),function(x){return x.nextSibling.textContent});
+ document.getElementById('pp').innerHTML=s.length?('Before I trust an AI answer, I will:<ol style="margin:6px 0 0 18px">'+s.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ol>'):'Select at least one check.'}
+document.getElementById('cpp').onclick=function(){var s=[].map.call(pr.querySelectorAll('input:checked'),function(x,i){return(i+1)+'. '+x.nextSibling.textContent});
+ copyText('My AI verification protocol:\n'+(s.join('\n')||'(none selected)')+'\n\nProblem AI could help with: '+document.getElementById('pn').value,this)};
+pager('vq');
+</script></body></html>
