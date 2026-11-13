@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSCI 301 · Week 7 · Evolution and Natural Selection</title>
+<style>:root{
+  --crimson:#A5313A; --crimson-d:#7E2229; --crimson-l:#F6E4E5;
+  --ink:#1E2B2F; --muted:#51636A; --paper:#F3F6F2; --card:#FFFFFF; --line:#D3DCD4;
+  --leaf:#3D7A52; --leaf-l:#E2EFE5; --sky:#2F7FA3; --sky-l:#DDEEF5;
+  --sun:#D99A1E; --sun-l:#FBF0D6; --lav:#6A5FA8; --lav-l:#E7E4F4;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.4}
+#app{height:100%;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:8px 14px 8px 16px;background:var(--card);border-bottom:1px solid var(--line);border-left:6px solid var(--crimson)}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.wk{font-size:12px;font-weight:700;color:#fff;background:var(--crimson);border-radius:999px;padding:2px 10px;white-space:nowrap}
+h1{font-family:var(--serif);font-size:20px;line-height:1.15;margin:0;font-weight:700}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{font:600 13px var(--sans);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+.tab:hover{background:var(--crimson-l)}
+.tab[aria-selected="true"]{background:var(--crimson);border-color:var(--crimson);color:#fff}
+:focus-visible{outline:3px solid #1B66D1;outline-offset:2px}
+.stage{flex:1;min-height:0;padding:10px 12px 12px}
+.panel{display:none;height:100%;gap:12px;grid-template-columns:minmax(0,1.35fr) minmax(270px,1fr)}
+.panel.on{display:grid}
+.art{position:relative;min-height:0;min-width:0;border-radius:14px;overflow:hidden;background-color:#fff;background-image:radial-gradient(#C9D6CC 1.2px,transparent 1.6px);background-size:22px 22px;border:1px solid var(--line)}
+.art>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.info{min-height:0;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.info h2{font-family:var(--serif);font-size:18px;margin:0;line-height:1.2}
+.info h3{font-size:13px;margin:0;color:var(--crimson-d);font-weight:700}
+.info p{margin:0}
+.info ul{margin:0;padding-left:18px}
+.info li{margin:2px 0}
+.small{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:1px 9px;background:var(--lav-l);color:#43397F;margin-right:4px}
+.tag.g{background:var(--leaf-l);color:#25573A}.tag.s{background:var(--sky-l);color:#1B5875}.tag.c{background:var(--crimson-l);color:var(--crimson-d)}.tag.y{background:var(--sun-l);color:#7A5410}
+.btn{font:600 13px var(--sans);border:1px solid var(--crimson);background:var(--crimson);color:#fff;border-radius:8px;padding:7px 12px;cursor:pointer}
+.btn:hover{background:var(--crimson-d)}
+.btn.ghost{background:#fff;color:var(--crimson-d)}
+.btn.ghost:hover{background:var(--crimson-l)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{font:600 13px var(--sans);border:0;background:#fff;color:var(--ink);padding:6px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.bar{height:8px;border-radius:99px;background:#E4EAE5;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--leaf);transition:width .35s}
+.hs{cursor:pointer}
+
+.hs:hover{filter:brightness(1.06)}
+.hs.sel{filter:drop-shadow(0 0 3px #A5313A) drop-shadow(0 0 5px #A5313A)}
+svg text{font-family:var(--sans)}
+.lbl{font-size:15px;font-weight:600;fill:#1E2B2F;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.lbl.s{font-size:13px}
+.ctl{position:absolute;left:10px;top:10px;z-index:2}
+.mcq{display:grid;gap:6px}
+.opt{font:500 14px var(--sans);text-align:left;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){background:var(--sun-l);border-color:var(--sun)}
+.opt.right{background:var(--leaf-l);border-color:var(--leaf)}
+.opt.wrong{background:var(--crimson-l);border-color:var(--crimson)}
+.opt:disabled{cursor:default}
+.fb{border-left:4px solid var(--leaf);background:var(--leaf-l);border-radius:6px;padding:6px 10px;font-size:14px}
+.fb.warn{border-color:var(--sun);background:var(--sun-l)}
+.fb.no{border-color:var(--crimson);background:var(--crimson-l)}
+input[type=range]{width:100%;accent-color:var(--crimson)}
+@media (max-width:860px){
+  html,body{font-size:14px}
+  .top{padding:6px 10px 6px 12px;gap:6px}
+  h1{font-size:17px}
+  .tab{padding:5px 9px;font-size:12.5px}
+  .stage{padding:8px}
+  .panel{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px}
+  .info{padding:10px 12px;gap:6px}
+  .info h2{font-size:16px}
+  .hide-m{display:none!important}
+  .lbl{font-size:18px}
+  .lbl.s{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+
+.steps{display:flex;gap:5px;flex-wrap:wrap}
+.step{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:#EDF1EE;color:var(--muted);border:1px solid var(--line)}
+.step.on{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px}
+.kv b{color:var(--crimson-d)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;border:1px solid rgba(0,0,0,.25)}
+#bird{transition:transform .55s ease-in-out}
+.bf{transition:fill .9s}
+.bird{transition:transform .9s ease-in-out}
+#river{transition:stroke-width .9s}
+.bone{cursor:pointer;transition:opacity .25s}
+.dots{display:flex;gap:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:#D3DCD4}
+.dots i.on{background:var(--crimson)}
+.pill{font:600 12.5px var(--sans);border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;cursor:pointer;color:var(--ink)}
+.pill[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+</style></head>
+<body><div id="app">
+<header class="top"><div class="brand"><span class="wk">Week 7</span><h1>Evolution &amp; Natural Selection</h1></div><nav class="tabs" role="tablist" aria-label="Sections"><button class="tab" role="tab" aria-selected="false">Natural selection lab</button><button class="tab" role="tab" aria-selected="false">Evidence</button><button class="tab" role="tab" aria-selected="false">Speciation</button><button class="tab" role="tab" aria-selected="false">Myth or fact</button></nav></header>
+<main class="stage">
+<section class="panel" role="tabpanel" aria-label="Natural selection lab">
+  <div class="art">
+    <svg id="selsvg" viewBox="0 0 640 500" role="img" aria-label="A field of beetles of varying colors with a bird hunting them, and a chart of average beetle color across generations">
+      <defs><linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8CC565"/><stop offset="1" stop-color="#6BAA4A"/></linearGradient><linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B98D5E"/><stop offset="1" stop-color="#9A7048"/></linearGradient><clipPath id="sceneclip"><rect x="20" y="20" width="600" height="280" rx="16"/></clipPath></defs>
+      <g clip-path="url(#sceneclip)"><g id="bgG"><rect x="20" y="20" width="600" height="280" fill="url(#gG)"/></g><g id="bgB" style="display:none"><rect x="20" y="20" width="600" height="280" fill="url(#gB)"/></g><g id="bgdeco"></g><g id="beetles"></g>
+        <g id="bird" style="transform:translate(760px,-80px)"><path d="M-46 0 Q-24 -30 0 -4 Q24 -30 46 0 Q24 -8 0 18 Q-24 -8 -46 0Z" fill="#3E2F22"/><circle cx="0" cy="-6" r="9" fill="#3E2F22"/><path d="M-6 -6 L-20 0 L-5 2Z" fill="#E3A72F"/><circle cx="3" cy="-8" r="2" fill="#fff"/></g>
+      </g>
+      <rect x="20" y="20" width="600" height="280" rx="16" fill="none" stroke="#fff" stroke-width="4"/>
+      <g id="chart"></g>
+    </svg>
+  </div>
+  <div class="info" id="selinfo" aria-live="polite"></div>
+</section>
+
+<section class="panel" role="tabpanel" aria-label="Evidence">
+  <div class="art">
+    <div class="ctl seg" id="evsel" role="group" aria-label="Type of evidence">
+      <button data-e="fossil" aria-pressed="true">Fossils</button><button data-e="anat" aria-pressed="false">Anatomy</button><button data-e="dna" aria-pressed="false">DNA</button>
+    </div>
+    <svg id="evsvg" viewBox="0 0 640 500" role="group" aria-label="Evidence for evolution diagram"></svg>
+  </div>
+  <div class="info" id="evinfo" aria-live="polite"></div>
+</section>
+
+<section class="panel" role="tabpanel" aria-label="Speciation">
+  <div class="art">
+    <svg id="spsvg" viewBox="0 0 640 500" role="img" aria-label="Animated story of how one bird population becomes two species">
+      <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE8F6"/><stop offset="1" stop-color="#EAF5EC"/></linearGradient></defs>
+      <rect x="-600" y="-600" width="1840" height="1100" fill="url(#sky)"/><rect x="-600" y="480" width="1840" height="900" fill="#78B656"/>
+      <circle cx="560" cy="70" r="30" fill="#F6C945"/>
+      <path d="M-600 250 H0 Q160 200 320 245 Q480 290 640 230 H1240 V520 H-600Z" fill="#8CC565"/>
+      <path d="M0 330 Q200 290 340 330 Q500 370 640 320 V500 H0Z" fill="#78B656"/>
+      <path id="river" d="M322 235 C292 300 352 360 316 505" fill="none" stroke="#5AA7CF" stroke-width="0" stroke-linecap="round"/>
+      <g id="spbirds"></g>
+      <g id="splabels"></g>
+      <g id="spx" style="opacity:0;transition:opacity .5s"><path d="M262 380 H378" stroke="#A5313A" stroke-width="4" stroke-dasharray="7 6"/><circle cx="320" cy="380" r="17" fill="#A5313A"/><path d="M312 372 l16 16 M328 372 l-16 16" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>
+    </svg>
+  </div>
+  <div class="info" id="spinfo" aria-live="polite"></div>
+</section>
+
+<section class="panel" role="tabpanel" aria-label="Myth or fact">
+  <div class="art">
+    <svg id="scalesvg" viewBox="0 0 640 500" role="img" aria-label="Balance scale: correct answers on the right, missed answers on the left">
+      <path d="M320 150 V430 M240 440 H400" stroke="#51636A" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="320" cy="150" r="14" fill="#51636A"/>
+      <g id="beam" style="transform-origin:320px 150px;transform:rotate(0deg);transition:transform .8s ease-in-out">
+        <path d="M110 150 H530" stroke="#1E2B2F" stroke-width="10" stroke-linecap="round"/>
+        <g id="panL" style="transform-origin:110px 150px;transition:transform .8s ease-in-out"><path d="M110 150 L60 290 M110 150 L160 290" stroke="#51636A" stroke-width="3"/><path d="M40 290 H180 Q170 330 110 330 Q50 330 40 290Z" fill="#F6E4E5" stroke="#A5313A" stroke-width="4"/><g id="tokL"></g><text x="110" y="362" text-anchor="middle" font-size="15" font-weight="700" fill="#7E2229">Missed</text></g>
+        <g id="panR" style="transform-origin:530px 150px;transition:transform .8s ease-in-out"><path d="M530 150 L480 290 M530 150 L580 290" stroke="#51636A" stroke-width="3"/><path d="M460 290 H600 Q590 330 530 330 Q470 330 460 290Z" fill="#E2EFE5" stroke="#3D7A52" stroke-width="4"/><g id="tokR"></g><text x="530" y="362" text-anchor="middle" font-size="15" font-weight="700" fill="#25573A">Correct</text></g>
+      </g>
+      <text x="320" y="480" text-anchor="middle" font-size="14" fill="#51636A">Weigh the evidence: each answer adds a token.</text>
+    </svg>
+  </div>
+  <div class="info" id="mfinfo" aria-live="polite"></div>
+</section>
+</main></div>
+<script>const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+/* Tabs: click + arrow keys */
+function initTabs(onChange){
+  const tabs=$$('.tab'), panels=$$('.panel');
+  function show(i,focus){
+    tabs.forEach((t,j)=>{t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});
+    panels.forEach((p,j)=>p.classList.toggle('on',j===i));
+    if(focus)tabs[i].focus();
+    if(onChange)onChange(i);
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>show(i));
+    t.addEventListener('keydown',e=>{
+      let n=null;
+      if(e.key==='ArrowRight')n=(i+1)%tabs.length;
+      if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;
+      if(n!==null){e.preventDefault();show(n,true)}
+    });
+  });
+  show(0);
+  return show;
+}
+/* Make SVG groups keyboard-operable */
+function activatable(root,handler){
+  $$('.hs',root).forEach(g=>{
+    g.setAttribute('tabindex','0');g.setAttribute('role','button');
+    g.addEventListener('click',()=>handler(g));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();handler(g)}});
+  });
+}
+function rnd(a,b){return a+Math.random()*(b-a)}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function lerp(a,b,t){return a+(b-a)*t}
+function mixHex(a,b,t){
+  const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  const A=p(a),B=p(b);
+  return '#'+A.map((v,i)=>Math.round(lerp(v,B[i],t)).toString(16).padStart(2,'0')).join('');
+}
+/* Simple multiple-choice quiz engine. cfg: {host, qs:[{q,opts:[],a:index,why}], onProgress(done,total,score), onDone} */
+function quiz(cfg){
+  const host=cfg.host;let i=0,score=0,done=false;
+  function render(){
+    if(i>=cfg.qs.length){
+      done=true;host.innerHTML=`<h2>${score} of ${cfg.qs.length} correct</h2><p>${esc(cfg.finish(score))}</p><div class="row"><button class="btn" id="qr">Try again</button></div>`;
+      $('#qr',host).onclick=()=>{i=0;score=0;done=false;cfg.onProgress(0,cfg.qs.length,0);render()};
+      cfg.onProgress(cfg.qs.length,cfg.qs.length,score);return;
+    }
+    const q=cfg.qs[i];
+    host.innerHTML=`<h3>Question ${i+1} of ${cfg.qs.length}</h3><p style="font-weight:600">${esc(q.q)}</p><div class="mcq">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div><div id="qf" aria-live="polite"></div>`;
+    $$('.opt',host).forEach(b=>b.onclick=()=>{
+      const k=+b.dataset.k,ok=k===q.a;
+      if(ok)score++;
+      $$('.opt',host).forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add('right')});
+      if(!ok)b.classList.add('wrong');
+      $('#qf',host).innerHTML=`<div class="fb ${ok?'':'no'}"><b>${ok?'Correct.':'Not quite.'}</b> ${esc(q.why)}</div><div class="row" style="margin-top:6px"><button class="btn" id="qn">${i+1<cfg.qs.length?'Next question':'See result'}</button></div>`;
+      cfg.onProgress(i+1,cfg.qs.length,score);
+      $('#qn',host).onclick=()=>{i++;render()};$('#qn',host).focus();
+    });
+  }
+  cfg.onProgress(0,cfg.qs.length,0);render();
+}
+
+initTabs();
+
+/* ===== Natural selection lab ===== */
+const GREEN='#4FA23A',BROWN='#8A5A2B',NB=24,BGV={green:.1,brown:.9};
+let env='green',gen=0,pop=[],hist=[],busy=false,auto=0,phase='idle',lastEaten=null;
+const sum3=()=>Math.random()+Math.random()+Math.random()-1.5;
+function place(arr){
+  const cols=8,rows=3,cw=560/cols,ch=240/rows;
+  const cells=[...Array(NB).keys()].sort(()=>Math.random()-.5);
+  arr.forEach((b,i)=>{const c=cells[i];b.x=40+(c%cols)*cw+cw/2+rnd(-12,12);b.y=36+Math.floor(c/cols)*ch+ch/2+rnd(-14,14);b.a=rnd(0,360)});
+}
+function resetSel(){
+  pop=[...Array(NB)].map(()=>({s:clamp(.5+sum3()*.55,0,1),eaten:false}));place(pop);
+  gen=0;hist=[{g:0,m:mean()}];busy=false;auto=0;phase='idle';lastEaten=null;
+  drawBeetles();drawChart();renderSel();
+}
+function mean(){return pop.reduce((a,b)=>a+b.s,0)/pop.length}
+function beetle(b){
+  const c=mixHex(GREEN,BROWN,b.s),d=mixHex(c,'#000000',.38);
+  return `<g transform="translate(${b.x.toFixed(1)} ${b.y.toFixed(1)}) rotate(${b.a.toFixed(0)})" opacity="${b.eaten?.25:1}"><path d="M-6 -9 L-10 -16 M0 -10 L0 -17 M7 -9 L11 -16 M-6 9 L-10 16 M0 10 L0 17 M7 9 L11 16" stroke="${d}" stroke-width="2" stroke-linecap="round" fill="none"/><ellipse rx="15" ry="10" fill="${c}" stroke="${d}" stroke-width="2"/><circle cx="14" r="5.5" fill="${c}" stroke="${d}" stroke-width="2"/><path d="M-13 0 H11" stroke="${d}" stroke-width="1.6"/>${b.eaten?'<path d="M-12 -12 L12 12 M12 -12 L-12 12" stroke="#A5313A" stroke-width="4" stroke-linecap="round"/>':''}</g>`;
+}
+function drawBeetles(){$('#beetles').innerHTML=pop.map(beetle).join('')}
+(function(){
+  let d='';for(let i=0;i<90;i++){const x=rnd(24,616),y=rnd(24,296),h=rnd(8,18);d+=`<path class="dg" d="M${x} ${y} q${rnd(-3,3)} ${-h/2} ${rnd(-5,5)} ${-h}" stroke="#4E8F38" stroke-width="2" fill="none" stroke-linecap="round"/>`}
+  for(let i=0;i<40;i++){d+=`<ellipse class="db" cx="${rnd(30,610)}" cy="${rnd(30,290)}" rx="${rnd(3,8)}" ry="${rnd(2,5)}" fill="#7C5A38" opacity=".55"/>`}
+  $('#bgdeco').innerHTML=d;
+})();
+function setEnvBg(){
+  $('#bgG').style.display=env==='green'?'':'none';$('#bgB').style.display=env==='brown'?'':'none';
+  $$('#bgdeco .dg').forEach(e=>e.style.display=env==='green'?'':'none');$$('#bgdeco .db').forEach(e=>e.style.display=env==='brown'?'':'none');
+}
+function drawChart(){
+  const X0=70,X1=610,Y0=458,Y1=340,mx=Math.max(20,gen),xs=g=>X0+(X1-X0)*g/mx,ys=s=>Y0-(Y0-Y1)*s;
+  let h=`<text x="70" y="326" font-size="14" font-weight="700" fill="#1E2B2F">Average beetle color in each generation</text><rect x="${X0}" y="${Y1}" width="${X1-X0}" height="${Y0-Y1}" fill="#fff" stroke="#D3DCD4"/>`;
+  h+=`<text x="62" y="${Y1+10}" text-anchor="end" font-size="12" fill="#6B4A25" font-weight="700">Brown</text><text x="62" y="${Y0}" text-anchor="end" font-size="12" fill="#2F6A2B" font-weight="700">Green</text><text x="${(X0+X1)/2}" y="494" text-anchor="middle" font-size="12" fill="#51636A">Generation</text>`;
+  const bg=ys(BGV[env]);h+=`<line x1="${X0}" y1="${bg}" x2="${X1}" y2="${bg}" stroke="${env==='green'?'#4E8F38':'#7C5A38'}" stroke-width="3" stroke-dasharray="7 6"/><text x="${X1-4}" y="${bg+(env==='green'?-6:14)}" text-anchor="end" font-size="12" fill="#51636A">background</text>`;
+  for(let g=0;g<=mx;g+=mx>20?5:5)h+=`<text x="${xs(g)}" y="${Y0+14}" text-anchor="middle" font-size="11" fill="#51636A">${g}</text>`;
+  h+=`<polyline fill="none" stroke="#A5313A" stroke-width="3" points="${hist.map(p=>xs(p.g)+','+ys(p.m)).join(' ')}"/>`+hist.map(p=>`<circle cx="${xs(p.g)}" cy="${ys(p.m)}" r="4" fill="${mixHex(GREEN,BROWN,p.m)}" stroke="#A5313A" stroke-width="2"/>`).join('');
+  $('#chart').innerHTML=h;
+}
+function nextGen(){
+  if(busy)return;busy=true;phase='selection';
+  const b=BGV[env];
+  pop.forEach(p=>p.eaten=Math.random()<.12+.7*Math.abs(p.s-b));
+  let surv=pop.filter(p=>!p.eaten);
+  if(surv.length<4)pop.filter(p=>p.eaten).sort((a,c)=>Math.abs(a.s-b)-Math.abs(c.s-b)).slice(0,4-surv.length).forEach(p=>p.eaten=false);
+  lastEaten=pop.filter(p=>p.eaten).length;
+  $('#bird').style.transform='translate(320px,150px)';
+  drawBeetles();renderSel();
+  setTimeout(()=>{$('#bird').style.transform='translate(760px,-80px)'},750);
+  setTimeout(()=>{
+    phase='inheritance';
+    surv=pop.filter(p=>!p.eaten);
+    pop=[...Array(NB)].map(()=>({s:clamp(pick(surv).s+sum3()*.14,0,1),eaten:false}));place(pop);
+    drawBeetles();renderSel();
+  },1250);
+  setTimeout(()=>{
+    gen++;hist.push({g:gen,m:mean()});phase='idle';busy=false;drawChart();renderSel();
+    if(auto>0){auto--;setTimeout(nextGen,300)}
+  },2000);
+}
+function renderSel(){
+  const m=mean(),lab=m<.35?'mostly green':(m>.65?'mostly brown':'a mix');
+  const on=k=>phase===k||(k==='var'&&phase==='idle')||(k==='time'&&phase==='idle'&&gen>0);
+  $('#selinfo').innerHTML=`<h2>Natural selection in action</h2>
+  <p>Hungry birds eat the beetles they see most easily. Choose a habitat, then step through generations.</p>
+  <div class="seg" role="group" aria-label="Habitat"><button data-v="green" aria-pressed="${env==='green'}">Green meadow</button><button data-v="brown" aria-pressed="${env==='brown'}">Brown, dry ground</button></div>
+  <div class="kv"><b>Generation</b><span>${gen}</span><b>Population</b><span><span class="sw" style="background:${mixHex(GREEN,BROWN,m)}"></span> ${lab}</span><b>Eaten last round</b><span>${lastEaten===null?'none yet':lastEaten+' of '+NB}</span></div>
+  <div class="steps" aria-label="Steps of natural selection"><span class="step ${on('var')?'on':''}">Variation</span><span class="step ${on('inheritance')?'on':''}">Inheritance</span><span class="step ${on('selection')?'on':''}">Selection</span><span class="step ${on('time')?'on':''}">Change over time</span></div>
+  <div class="row"><button class="btn" id="ng" ${busy?'disabled':''}>Next generation</button><button class="btn ghost" id="r10" ${busy?'disabled':''}>Run 10</button><button class="btn ghost" id="rs">Reset</button></div>
+  <p class="small">No single beetle changes color. The population changes because the best-camouflaged beetles leave more offspring.</p>`;
+  $$('#selinfo [data-v]').forEach(b=>b.onclick=()=>{env=b.dataset.v;setEnvBg();drawChart();renderSel()});
+  $('#ng').onclick=nextGen;$('#r10').onclick=()=>{auto=9;nextGen()};$('#rs').onclick=resetSel;
+}
+setEnvBg();resetSel();
+
+/* ===== Evidence ===== */
+let ev='fossil',evFos=null,evBone=null,evDna=0;
+const BONE={humerus:{n:'Humerus',c:'#A5313A',t:'The single upper-arm bone.'},forearm:{n:'Radius and ulna',c:'#2F7FA3',t:'The two forearm bones.'},carpals:{n:'Wrist bones',c:'#D99A1E',t:'A cluster of small wrist bones.'},fingers:{n:'Hand and finger bones',c:'#3D7A52',t:'Long bones that fan out from the wrist.'}};
+const LIMB=[{n:'Human',job:'grasping',cx:70,H:112,F:100,fing:[50,68,74,68,54],ang:[-34,-17,0,17,34],mem:null},
+ {n:'Cat',job:'walking',cx:205,H:82,F:82,fing:[38,48,48,38],ang:[-24,-8,8,24],mem:null},
+ {n:'Whale',job:'swimming',cx:345,H:52,F:48,fing:[70,92,92,78,56],ang:[-20,-10,0,10,20],mem:'whale'},
+ {n:'Bat',job:'flying',cx:520,H:92,F:130,fing:[130,168,160,128],ang:[-38,-14,10,34],mem:'bat'}];
+const FOS=[{n:'Mammal',t:'In the youngest layers, mammals appear. Fossils of different layers form a sequence showing life changing over time.'},{n:'Early four-limbed animal',t:'Four-limbed animals appear in deeper (older) layers than mammals. Some show a mix of fish-like and limbed features.'},{n:'Fish',t:'Fish fossils are found in layers older than those with land animals.'},{n:'Trilobite (marine invertebrate)',t:'Trilobites are found only in very old layers. The deepest layers hold the oldest and simplest forms in this sequence.'}];
+const DNAREF='ATGGCCTACGTTAGCCATGCAAGT',MAP={A:'G',T:'C',G:'A',C:'T'};
+const DSP=[{n:'Human',d:[]},{n:'Chimpanzee',d:[11]},{n:'Gorilla',d:[5,17]},{n:'Mouse',d:[2,7,10,14,19,22]},{n:'Chicken',d:[1,4,8,12,15,18,20,21,23]}];
+DSP.forEach(s=>{s.seq=[...DNAREF].map((c,i)=>s.d.includes(i)?MAP[c]:c).join('');s.pct=Math.round((24-s.d.length)/24*100)});
+function limb(L){
+  const c=L.cx,top=60,y1=top+L.H,y2=y1+L.F,y3=y2+12;let h='';
+  const tips=L.fing.map((len,i)=>{const a=L.ang[i]*Math.PI/180;const bx=c+(i-(L.fing.length-1)/2)*11;return{bx,x:bx+Math.sin(a)*len,y:y3+Math.cos(a)*len}});
+  if(L.mem==='bat'){h+=`<path d="M${c-6} ${y1} L${tips[0].x} ${tips[0].y} L${tips[1].x} ${tips[1].y} L${tips[2].x} ${tips[2].y} L${tips[3].x} ${tips[3].y} L${c+20} ${y2+40}Z" fill="#B7A1C9" opacity=".45" stroke="#8A74A3" stroke-width="2"/>`}
+  if(L.mem==='whale'){h+=`<path d="M${c-18} ${y2} Q${c-60} ${y3+70} ${c-12} ${y3+112} Q${c+10} ${y3+122} ${c+16} ${y3+100} Q${c+52} ${y3+50} ${c+18} ${y2}Z" fill="#A9C9DA" opacity=".5" stroke="#6C9CB3" stroke-width="2"/>`}
+  h+=`<g class="bone" data-b="humerus"><line x1="${c}" y1="${top}" x2="${c}" y2="${y1}" stroke="#A5313A" stroke-width="15" stroke-linecap="round"/></g>`;
+  h+=`<g class="bone" data-b="forearm"><line x1="${c-6}" y1="${y1+4}" x2="${c-7}" y2="${y2}" stroke="#2F7FA3" stroke-width="8" stroke-linecap="round"/><line x1="${c+6}" y1="${y1+4}" x2="${c+7}" y2="${y2}" stroke="#2F7FA3" stroke-width="8" stroke-linecap="round"/></g>`;
+  h+=`<g class="bone" data-b="carpals">${[-14,-7,0,7,14].map((dx,i)=>`<circle cx="${c+dx}" cy="${y2+8+(i%2)*5}" r="5.5" fill="#D99A1E" stroke="#fff" stroke-width="1.5"/>`).join('')}</g>`;
+  h+=`<g class="bone" data-b="fingers">${tips.map(t=>`<line x1="${t.bx}" y1="${y3}" x2="${t.x}" y2="${t.y}" stroke="#3D7A52" stroke-width="6" stroke-linecap="round"/><circle cx="${t.bx+(t.x-t.bx)*.5}" cy="${y3+(t.y-y3)*.5}" r="3.6" fill="#E2EFE5"/>`).join('')}</g>`;
+  h+=`<text x="${c}" y="486" text-anchor="middle" font-size="15" font-weight="700" fill="#1E2B2F">${L.n}</text><text x="${c}" y="${top-14}" text-anchor="middle" font-size="12" fill="#51636A">${L.job}</text>`;
+  return h;
+}
+function drawEv(){
+  const s=$('#evsvg');let h='';
+  if(ev==='fossil'){
+    const cols=['#DCCBA6','#C9AE82','#B28F64','#8E6E4D'];
+    h+=`<path d="M0 70 Q160 56 320 70 T640 66" fill="none" stroke="none"/>`;
+    FOS.forEach((f,i)=>{const y=70+i*100;h+=`<g class="hs" data-i="${i}" aria-label="${f.n} layer"><rect class="hl" x="60" y="${y}" width="560" height="100" fill="${cols[i]}" stroke="${evFos===i?'#A5313A':'#fff'}" stroke-width="${evFos===i?6:3}"/><path d="M60 ${y+34} q70 -10 140 0 t140 0 t140 0 t140 0" fill="none" stroke="#fff" stroke-width="2" opacity=".35"/></g>`});
+    const fc='#5A4837',fl='#EADFC8';
+    h+=`<g fill="${fc}" stroke="${fc}" pointer-events="none"><ellipse cx="345" cy="410" rx="58" ry="28" /><path d="M300 396 q45 -10 90 0 M296 410 h100 M300 424 q45 10 90 0" stroke="${fl}" stroke-width="3" fill="none"/><circle cx="292" cy="410" r="20"/></g>`;
+    h+=`<g pointer-events="none"><ellipse cx="345" cy="312" rx="62" ry="22" fill="${fc}"/><path d="M405 312 L452 286 L452 338Z" fill="${fc}"/><path d="M300 305 L300 322 M318 302 L318 324 M336 300 L336 326 M354 302 L354 324 M372 304 L372 322" stroke="${fl}" stroke-width="3"/><circle cx="296" cy="308" r="4" fill="${fl}"/></g>`;
+    h+=`<g pointer-events="none" fill="none" stroke="${fc}" stroke-width="8" stroke-linecap="round"><path d="M290 218 H400"/><path d="M400 218 q40 0 52 -20"/><path d="M310 218 l-12 22 M330 218 l12 22 M372 218 l-10 22 M390 218 l14 20" stroke-width="6"/></g><circle cx="282" cy="214" r="14" fill="${fc}" pointer-events="none"/>`;
+    h+=`<g pointer-events="none" fill="${fc}"><ellipse cx="345" cy="118" rx="42" ry="20"/><circle cx="298" cy="112" r="14"/><path d="M290 100 l-3 -14 l12 8Z M303 98 l3 -14 l7 12Z"/><path d="M385 118 q50 -4 56 -34" fill="none" stroke="${fc}" stroke-width="6" stroke-linecap="round"/><path d="M322 134 v18 M338 136 v18 M358 136 v18 M372 134 v18" stroke="${fc}" stroke-width="6" stroke-linecap="round"/></g>`;
+    h+=`<text x="34" y="62" font-size="13" font-weight="700" fill="#51636A">Younger</text><path d="M34 80 V450" stroke="#51636A" stroke-width="3" marker-end="url(#fa)"/><text x="34" y="478" font-size="13" font-weight="700" fill="#51636A">Older</text><defs><marker id="fa" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 0L5 10z" fill="#51636A"/></marker></defs>`;
+    h+=FOS.map((f,i)=>`<text x="610" y="${70+i*100+22}" text-anchor="end" font-size="14" font-weight="700" fill="#2B2118" style="paint-order:stroke;stroke:#fff;stroke-width:3px" pointer-events="none">${f.n}</text>`).join('');
+  }else if(ev==='anat'){
+    h+=LIMB.map(limb).join('');
+  }else{
+    h+=`<text x="20" y="46" font-size="14" fill="#51636A">Illustrative 24-letter DNA fragment. Red letters differ from the human sequence.</text>`;
+    DSP.forEach((sp,i)=>{
+      const y=70+i*78,sel=i===evDna;
+      h+=`<g class="hs" data-i="${i}" aria-label="${sp.n}: ${sp.pct} percent match"><rect class="hl" x="8" y="${y-14}" width="624" height="68" rx="12" fill="${sel?'#FBF0D6':'#fff'}" stroke="${sel?'#D99A1E':'#D3DCD4'}" stroke-width="${sel?4:2}"/><text x="20" y="${y+12}" font-size="15" font-weight="700" fill="#1E2B2F">${sp.n}</text><text x="20" y="${y+32}" font-size="14" fill="#7E2229" font-weight="700">${sp.pct}% match</text>`;
+      [...sp.seq].forEach((c,k)=>{const diff=sp.d.includes(k);h+=`<rect x="${140+k*20}" y="${y-2}" width="19" height="30" rx="4" fill="${diff?'#A5313A':'#E7EEE8'}"/><text x="${150+k*20}" y="${y+19}" text-anchor="middle" font-size="15" font-weight="700" class="mono" fill="${diff?'#fff':'#1E2B2F'}" style="font-family:ui-monospace,Menlo,Consolas,monospace">${c}</text>`});
+      h+=`</g>`;
+    });
+  }
+  s.innerHTML=h;
+  if(ev==='fossil'||ev==='dna')activatable(s,g=>{if(ev==='fossil')evFos=+g.dataset.i;else evDna=+g.dataset.i;drawEv();renderEv()});
+  if(ev==='anat'){$$('#evsvg .bone').forEach(g=>{g.addEventListener('click',()=>{evBone=evBone===g.dataset.b?null:g.dataset.b;applyBone();renderEv()})});applyBone()}
+}
+function applyBone(){$$('#evsvg .bone').forEach(g=>g.style.opacity=!evBone||g.dataset.b===evBone?1:.15)}
+function renderEv(){
+  const h=$('#evinfo');
+  if(ev==='fossil'){
+    const f=evFos===null?null:FOS[evFos];
+    h.innerHTML=`<div><span class="tag y">Fossil record</span></div><h2>${f?f.n:'Layers of rock tell a story'}</h2><p>${f?f.t:'Deeper rock layers are older. Select a layer to see what its fossils show.'}</p><p class="small">The fossil record shows changes in life over time. Evidence from anatomy, DNA and where species live adds independent support.</p>`;
+  }else if(ev==='anat'){
+    const b=evBone?BONE[evBone]:null;
+    h.innerHTML=`<div><span class="tag y">Homologous structures</span></div><h2>Same bones, different jobs</h2><p>A human arm, cat leg, whale flipper and bat wing look different and do different work, yet share the same bone pattern. That points to shared ancestry.</p>
+    <div class="row" role="group" aria-label="Highlight a bone type">${Object.keys(BONE).map(k=>`<button class="pill" data-b="${k}" aria-pressed="${evBone===k}" style="${evBone===k?'':'border-color:'+BONE[k].c}">${BONE[k].n}</button>`).join('')}</div>
+    <p class="small">${b?'<b>'+b.n+':</b> '+b.t+' Compare its size and shape across the four limbs.':'Select a bone type, or click a bone, to compare it across species.'}</p>`;
+    $$('#evinfo [data-b]').forEach(x=>x.onclick=()=>{evBone=evBone===x.dataset.b?null:x.dataset.b;applyBone();renderEv()});
+  }else{
+    const sp=DSP[evDna];
+    h.innerHTML=`<div><span class="tag y">DNA sequences</span></div><h2>${sp.n}: ${sp.pct}% match</h2><p>${evDna===0?'This is the reference sequence. Select another species to compare it.':`Out of 24 letters, ${sp.d.length} differ from the human sequence.`}</p><p>Species that share a more recent common ancestor tend to have more DNA in common.</p><p class="small">These sequences are simplified for teaching. Real genomes contain billions of letters.</p>`;
+  }
+}
+$$('#evsel button').forEach(b=>b.onclick=()=>{ev=b.dataset.e;$$('#evsel button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawEv();renderEv()});
+drawEv();renderEv();
+
+/* ===== Speciation ===== */
+const BLUE='#3F7FB5',ORANGE='#E0883A',SN=20;
+let spStep=0;
+const sb=[...Array(SN)].map((_,i)=>({
+  t0:clamp(.5+sum3()*.35,.2,.8),k0:rnd(10,14),
+  tL:clamp(.1+sum3()*.15,0,.28),kL:rnd(6,8.5),
+  tR:clamp(.9+sum3()*.15,.72,1),kR:rnd(16,19),
+  p0:[rnd(60,580),rnd(300,450)],
+  side:i<SN/2?0:1
+}));
+sb.forEach(b=>{b.pS=b.side===0?[rnd(50,270),rnd(300,450)]:[rnd(370,590),rnd(300,450)];b.flip=b.side===0?1:-1});
+function birdInner(c,k){return `<path d="M-12 3 L-27 -4 L-26 9Z" class="bf" style="fill:${c}"/><ellipse class="bf" rx="15" ry="10.5" style="fill:${c}"/><circle class="bf" cx="12" cy="-7" r="6.5" style="fill:${c}"/><path class="bk" d="M17 -8 L${17+k} -5 L17 -3Z" fill="#3A2A10"/><circle cx="14" cy="-9" r="1.8" fill="#fff"/><path d="M-2 4 Q4 12 12 6" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>`}
+function setupSp(){
+  $('#spbirds').innerHTML=sb.map((b,i)=>`<g class="bird" id="bd${i}" style="transform:translate(${b.p0[0]}px,${b.p0[1]}px)"><g class="fl">${birdInner(mixHex(BLUE,ORANGE,b.t0),b.k0)}</g></g>`).join('');
+}
+function applySp(){
+  sb.forEach((b,i)=>{
+    const g=$('#bd'+i);if(!g)return;
+    const p=spStep===0?b.p0:b.pS;const t=spStep>=2?(b.side===0?b.tL:b.tR):b.t0;const k=spStep>=2?(b.side===0?b.kL:b.kR):b.k0;
+    g.style.transform=`translate(${p[0]}px,${p[1]}px)`;
+    const fl=g.firstChild;fl.setAttribute('transform',`scale(${spStep===0?(i%2?1:-1):b.flip},1)`);
+    $$('.bf',g).forEach(e=>e.style.fill=mixHex(BLUE,ORANGE,t));
+    $('.bk',g).setAttribute('d',`M17 -8 L${17+k} -5 L17 -3Z`);
+  });
+  $('#river').setAttribute('stroke-width',spStep===1||spStep===2?'46':'0');
+  $('#spx').style.opacity=spStep===3?1:0;
+  $('#splabels').innerHTML=spStep>=1?`<text x="160" y="276" text-anchor="middle" font-size="17" font-weight="700" fill="#1E2B2F" style="paint-order:stroke;stroke:#fff;stroke-width:4px">Population A</text><text x="480" y="276" text-anchor="middle" font-size="17" font-weight="700" fill="#1E2B2F" style="paint-order:stroke;stroke:#fff;stroke-width:4px">Population B</text>`:`<text x="320" y="276" text-anchor="middle" font-size="17" font-weight="700" fill="#1E2B2F" style="paint-order:stroke;stroke:#fff;stroke-width:4px">One interbreeding population</text>`;
+}
+const SPSTEPS=[
+ {n:'One population',t:'Birds in one area interbreed freely, so genes flow throughout the whole population and its members look similar.'},
+ {n:'Geographic separation',t:'A river forms and splits the population. Geographic separation is a common starting point for speciation, and gene flow between the two groups stops.'},
+ {n:'Divergence',t:'The groups live in different environments. Mutation, genetic drift and natural selection push each population in a different direction, so differences accumulate.'},
+ {n:'Reproductive isolation',t:'Even when the barrier is gone, the two groups can no longer interbreed. They are now separate species.'}
+];
+function renderSp(){
+  const s=SPSTEPS[spStep];
+  $('#spinfo').innerHTML=`<div class="dots" aria-hidden="true">${SPSTEPS.map((_,i)=>`<i class="${i<=spStep?'on':''}"></i>`).join('')}</div><h2>Step ${spStep+1}: ${s.n}</h2><p>${s.t}</p><p class="small">Speciation is the formation of new species. Over time, differences accumulate until populations can no longer interbreed.</p><div class="row"><button class="btn ghost" id="spb" ${spStep===0?'disabled':''}>Back</button><button class="btn" id="spn" ${spStep===3?'disabled':''}>${spStep===2?'Remove the barrier':'Next step'}</button><button class="btn ghost" id="spr">Start over</button></div>`;
+  $('#spb').onclick=()=>{spStep--;applySp();renderSp()};$('#spn').onclick=()=>{spStep++;applySp();renderSp()};$('#spr').onclick=()=>{spStep=0;applySp();renderSp()};
+}
+setupSp();applySp();renderSp();
+
+/* ===== Myth or fact ===== */
+const MF=[
+ {q:'Individual organisms evolve during their lifetime.',a:1,why:'Individuals do not evolve. Populations evolve as the genetic makeup of the group changes over generations.'},
+ {q:'Natural selection acts on variation that already exists in a population.',a:0,why:'Selection can only favor traits that are present. It increases the frequency of beneficial traits.'},
+ {q:'Evolution has a goal: organisms try to become “better.”',a:1,why:'Natural selection has no foresight or goal. Traits are favored only if they help survival and reproduction in the current environment.'},
+ {q:'Fossils, anatomy, DNA and geography all point to common ancestry.',a:0,why:'Several independent lines of evidence converge on the same conclusion.'},
+ {q:'Natural selection is what creates brand-new genetic variation.',a:1,why:'Mutation introduces new variation. Selection changes how common the existing variants are.'},
+ {q:'Speciation can begin when populations are geographically separated.',a:0,why:'Separated populations can diverge until they can no longer interbreed.'},
+ {q:'Christians have taken different approaches to relating faith and science.',a:0,why:'That is why accurate science comes first. You will explore these perspectives in this week’s discussion.'}
+].map(x=>({q:x.q,opts:['Fact','Myth'],a:x.a,why:x.why}));
+quiz({host:$('#mfinfo'),qs:MF,
+ finish:s=>s>=6?'Excellent. You can separate evidence-based statements from common misconceptions.':'Review the Natural selection lab and Evidence tabs, then try again to rebalance the scale.',
+ onProgress:(d,t,s)=>{
+  const bad=d-s;
+  const ang=clamp((s-bad)*4.5,-16,16);$('#beam').style.transform=`rotate(${ang}deg)`;$('#panL').style.transform=`rotate(${-ang}deg)`;$('#panR').style.transform=`rotate(${-ang}deg)`;
+  const tok=(n,c,x0)=>Array.from({length:n},(_,i)=>`<circle cx="${x0+(i%4)*26}" cy="${278-Math.floor(i/4)*24}" r="11" fill="${c}" stroke="#fff" stroke-width="2"/>`).join('');
+  $('#tokR').innerHTML=tok(s,'#3D7A52',482);
+  $('#tokL').innerHTML=tok(bad,'#A5313A',62);
+ }});
+</script></body></html>

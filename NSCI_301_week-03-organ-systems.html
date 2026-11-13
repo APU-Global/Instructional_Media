@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSCI 301 · Week 3 · Body Systems Explorer</title>
+<style>:root{
+  --crimson:#A5313A; --crimson-d:#7E2229; --crimson-l:#F6E4E5;
+  --ink:#1E2B2F; --muted:#51636A; --paper:#F3F6F2; --card:#FFFFFF; --line:#D3DCD4;
+  --leaf:#3D7A52; --leaf-l:#E2EFE5; --sky:#2F7FA3; --sky-l:#DDEEF5;
+  --sun:#D99A1E; --sun-l:#FBF0D6; --lav:#6A5FA8; --lav-l:#E7E4F4;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.4}
+#app{height:100%;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:8px 14px 8px 16px;background:var(--card);border-bottom:1px solid var(--line);border-left:6px solid var(--crimson)}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.wk{font-size:12px;font-weight:700;color:#fff;background:var(--crimson);border-radius:999px;padding:2px 10px;white-space:nowrap}
+h1{font-family:var(--serif);font-size:20px;line-height:1.15;margin:0;font-weight:700}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{font:600 13px var(--sans);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+.tab:hover{background:var(--crimson-l)}
+.tab[aria-selected="true"]{background:var(--crimson);border-color:var(--crimson);color:#fff}
+:focus-visible{outline:3px solid #1B66D1;outline-offset:2px}
+.stage{flex:1;min-height:0;padding:10px 12px 12px}
+.panel{display:none;height:100%;gap:12px;grid-template-columns:minmax(0,1.35fr) minmax(270px,1fr)}
+.panel.on{display:grid}
+.art{position:relative;min-height:0;min-width:0;border-radius:14px;overflow:hidden;background-color:#fff;background-image:radial-gradient(#C9D6CC 1.2px,transparent 1.6px);background-size:22px 22px;border:1px solid var(--line)}
+.art>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.info{min-height:0;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.info h2{font-family:var(--serif);font-size:18px;margin:0;line-height:1.2}
+.info h3{font-size:13px;margin:0;color:var(--crimson-d);font-weight:700}
+.info p{margin:0}
+.info ul{margin:0;padding-left:18px}
+.info li{margin:2px 0}
+.small{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:1px 9px;background:var(--lav-l);color:#43397F;margin-right:4px}
+.tag.g{background:var(--leaf-l);color:#25573A}.tag.s{background:var(--sky-l);color:#1B5875}.tag.c{background:var(--crimson-l);color:var(--crimson-d)}.tag.y{background:var(--sun-l);color:#7A5410}
+.btn{font:600 13px var(--sans);border:1px solid var(--crimson);background:var(--crimson);color:#fff;border-radius:8px;padding:7px 12px;cursor:pointer}
+.btn:hover{background:var(--crimson-d)}
+.btn.ghost{background:#fff;color:var(--crimson-d)}
+.btn.ghost:hover{background:var(--crimson-l)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{font:600 13px var(--sans);border:0;background:#fff;color:var(--ink);padding:6px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.bar{height:8px;border-radius:99px;background:#E4EAE5;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--leaf);transition:width .35s}
+.hs{cursor:pointer}
+
+.hs:hover{filter:brightness(1.06)}
+.hs.sel{filter:drop-shadow(0 0 3px #A5313A) drop-shadow(0 0 5px #A5313A)}
+svg text{font-family:var(--sans)}
+.lbl{font-size:15px;font-weight:600;fill:#1E2B2F;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.lbl.s{font-size:13px}
+.ctl{position:absolute;left:10px;top:10px;z-index:2}
+.mcq{display:grid;gap:6px}
+.opt{font:500 14px var(--sans);text-align:left;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){background:var(--sun-l);border-color:var(--sun)}
+.opt.right{background:var(--leaf-l);border-color:var(--leaf)}
+.opt.wrong{background:var(--crimson-l);border-color:var(--crimson)}
+.opt:disabled{cursor:default}
+.fb{border-left:4px solid var(--leaf);background:var(--leaf-l);border-radius:6px;padding:6px 10px;font-size:14px}
+.fb.warn{border-color:var(--sun);background:var(--sun-l)}
+.fb.no{border-color:var(--crimson);background:var(--crimson-l)}
+input[type=range]{width:100%;accent-color:var(--crimson)}
+@media (max-width:860px){
+  html,body{font-size:14px}
+  .top{padding:6px 10px 6px 12px;gap:6px}
+  h1{font-size:17px}
+  .tab{padding:5px 9px;font-size:12.5px}
+  .stage{padding:8px}
+  .panel{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px}
+  .info{padding:10px 12px;gap:6px}
+  .info h2{font-size:16px}
+  .hide-m{display:none!important}
+  .lbl{font-size:18px}
+  .lbl.s{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+
+.chips{position:absolute;left:10px;top:10px;z-index:2;display:flex;flex-direction:column;gap:4px}
+.chip{display:flex;align-items:center;gap:7px;font:600 12.5px var(--sans);border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px;cursor:pointer;color:var(--ink);text-align:left}
+.chip i{width:11px;height:11px;border-radius:50%;flex:none}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.org{font:600 12.5px var(--sans);border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;cursor:pointer;color:var(--ink)}
+.org[aria-pressed="true"]{background:var(--crimson);border-color:var(--crimson);color:#fff}
+.sysl{transition:opacity .3s}
+.hi{filter:drop-shadow(0 0 3px #1E2B2F) drop-shadow(0 0 4px #fff)}
+.ring{cursor:pointer}
+.nd{cursor:pointer}
+.reason{min-height:3.9em}
+</style></head>
+<body><div id="app">
+<header class="top"><div class="brand"><span class="wk">Week 3</span><h1>Body Systems Explorer</h1></div><nav class="tabs" role="tablist" aria-label="Sections"><button class="tab" role="tab" aria-selected="false">Meet the systems</button><button class="tab" role="tab" aria-selected="false">Levels of organization</button><button class="tab" role="tab" aria-selected="false">Systems at work</button></nav></header>
+<main class="stage">
+<section class="panel" role="tabpanel" aria-label="Meet the systems">
+  <div class="art">
+    <div class="chips" id="syschips" role="group" aria-label="Organ systems"></div>
+    <svg id="bodysvg" viewBox="0 0 400 560" preserveAspectRatio="xMaxYMid meet" role="img" aria-label="Human body diagram showing the selected organ system">
+      <defs><linearGradient id="skin" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F6ECE2"/><stop offset="1" stop-color="#EBDDCF"/></linearGradient></defs>
+      <g id="outline" fill="url(#skin)" stroke="#B9A58F" stroke-width="3" stroke-linejoin="round">
+        <circle cx="200" cy="62" r="40"/><rect x="186" y="96" width="28" height="30" rx="8"/>
+        <path d="M132 130 C160 116 240 116 268 130 C284 152 282 240 264 300 C270 330 268 346 260 354 L140 354 C132 346 130 330 136 300 C118 240 116 152 132 130Z"/>
+        <path d="M134 134 C112 142 100 172 96 212 L84 318 C82 334 102 338 106 324 L122 218 C126 192 132 168 142 154Z"/>
+        <path d="M266 134 C288 142 300 172 304 212 L316 318 C318 334 298 338 294 324 L278 218 C274 192 268 168 258 154Z"/>
+        <path d="M144 350 L198 350 L192 520 Q191 542 168 542 Q150 542 152 520Z"/>
+        <path d="M202 350 L256 350 L248 520 Q250 542 232 542 Q209 542 208 520Z"/>
+      </g>
+      <g id="layers">
+        <g class="sysl" id="L-musculoskeletal" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <g data-o="muscles" fill="#C9604A" fill-opacity=".55" stroke="#8E3A2B" stroke-width="2"><ellipse cx="124" cy="196" rx="12" ry="30" transform="rotate(16 124 196)"/><ellipse cx="276" cy="196" rx="12" ry="30" transform="rotate(-16 276 196)"/><ellipse cx="172" cy="410" rx="20" ry="54"/><ellipse cx="228" cy="410" rx="20" ry="54"/></g>
+          <g data-o="bones" fill="#F1EBDD" stroke="#6F5F4C" stroke-width="3"><circle cx="200" cy="62" r="30"/><path d="M200 126 V332" stroke-width="9" fill="none"/><path d="M200 142 Q150 150 152 206 M200 142 Q250 150 248 206 M200 162 Q154 172 156 220 M200 162 Q246 172 244 220 M200 184 Q160 194 164 236 M200 184 Q240 194 236 236" fill="none" stroke-width="5"/><path d="M148 324 Q200 372 252 324 Q236 350 200 350 Q164 350 148 324Z"/><path d="M140 152 L110 244 M110 244 L98 320 M260 152 L290 244 M290 244 L302 320 M170 350 L172 440 L168 530 M230 350 L228 440 L232 530" fill="none" stroke-width="8"/></g>
+        </g>
+        <g class="sysl" id="L-digestive" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path data-o="esophagus" d="M200 124 V190" stroke="#C4733A" stroke-width="7"/>
+          <path data-o="liver" d="M136 192 Q170 182 202 198 Q198 228 160 230 Q136 226 136 192Z" fill="#A8532F" stroke="#7E3A1E" stroke-width="3"/>
+          <path data-o="stomach" d="M208 192 Q252 190 254 216 Q250 244 222 240 Q206 234 214 216Z" fill="#E59C6A" stroke="#B5622F" stroke-width="3"/>
+          <path data-o="small" d="M182 262 H218 Q226 262 226 270 Q226 278 218 278 H182 Q174 278 174 286 Q174 294 182 294 H218 Q226 294 226 302 Q226 310 218 310 H182" stroke="#E3A33F" stroke-width="9"/>
+          <path data-o="large" d="M156 250 V322 H244 V250 M156 250 H176 M224 250 H244" stroke="#8F4A2A" stroke-width="10"/>
+        </g>
+        <g class="sysl" id="L-circulatory" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <g data-o="vessels"><path d="M206 190 V122 M206 232 V346 L172 440 L168 530 M206 346 L240 440 L234 530 M196 168 L146 186 L116 262 L104 324 M216 168 L266 186 L296 262 L308 324" stroke="#C03A45" stroke-width="5"/><path d="M214 190 V122 M214 232 V346 L182 440 L178 530 M214 346 L250 440 L244 530 M200 176 L152 196 L124 266 L112 326 M222 176 L272 196 L304 266 L316 326" stroke="#3A64C0" stroke-width="4"/></g>
+          <path data-o="heart" d="M208 238 C176 216 174 186 196 184 C204 184 208 194 208 194 C208 194 212 184 222 184 C244 188 240 218 208 238Z" fill="#C03A45" stroke="#7F1F29" stroke-width="3"/>
+        </g>
+        <g class="sysl" id="L-respiratory" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path data-o="trachea" d="M200 124 V164 M200 164 L174 190 M200 164 L226 190" stroke="#2F7FA3" stroke-width="7"/>
+          <path data-o="lungs" d="M190 162 Q146 152 142 204 Q142 256 176 258 Q190 258 190 236Z M210 162 Q254 152 258 204 Q258 256 224 258 Q210 258 210 236Z" fill="#9CCDE3" stroke="#2F7FA3" stroke-width="3"/>
+        </g>
+        <g class="sysl" id="L-endocrine" stroke-linecap="round">
+          <circle data-o="pituitary" cx="200" cy="54" r="8" fill="#6A5FA8" stroke="#fff" stroke-width="3"/>
+          <path data-o="thyroid" d="M184 112 Q200 124 216 112 Q214 126 200 126 Q186 126 184 112Z" fill="#6A5FA8" stroke="#43397F" stroke-width="2"/>
+          <path data-o="pancreas" d="M176 246 Q200 238 228 250 Q214 258 176 254Z" fill="#9187CF" stroke="#43397F" stroke-width="2"/>
+          <g data-o="adrenals" fill="#6A5FA8" stroke="#fff" stroke-width="2"><path d="M168 244 l10 -4 l-2 12z"/><path d="M232 244 l-10 -4 l2 12z"/></g>
+          <path d="M200 62 V112" stroke="#6A5FA8" stroke-width="2" stroke-dasharray="3 4" fill="none"/>
+        </g>
+        <g class="sysl" id="L-nervous" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path data-o="brain" d="M164 62 Q162 30 200 30 Q238 30 236 62 Q236 88 200 90 Q164 88 164 62Z" fill="#F4D58B" stroke="#B7841A" stroke-width="3"/>
+          <path d="M178 52 q10 -10 22 0 t22 0 M178 70 q10 -10 22 0 t22 0" stroke="#B7841A" stroke-width="3" fill="none"/>
+          <path data-o="cord" d="M200 92 V332" stroke="#D9A21E" stroke-width="6"/>
+          <g data-o="nerves" stroke="#D9A21E" stroke-width="4"><path d="M200 146 L150 156 L112 246 L100 322 M200 146 L250 156 L288 246 L300 322 M200 332 L170 436 L166 528 M200 332 L230 436 L234 528 M200 190 L160 196 M200 190 L240 196 M200 260 L164 276 M200 260 L236 276"/></g>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <div class="info" id="sysinfo" aria-live="polite"></div>
+</section>
+
+<section class="panel" role="tabpanel" aria-label="Levels of organization">
+  <div class="art">
+    <div class="ctl seg" id="orgsel" role="group" aria-label="Example organism">
+      <button data-k="human" aria-pressed="true">Human example</button>
+      <button data-k="plant" aria-pressed="false">Plant example</button>
+    </div>
+    <svg id="lvlsvg" viewBox="0 0 600 560" role="group" aria-label="Concentric circles showing six levels of biological organization. Each ring is a button."></svg>
+  </div>
+  <div class="info" id="lvlinfo" aria-live="polite"></div>
+</section>
+
+<section class="panel" role="tabpanel" aria-label="Systems at work">
+  <div class="art">
+    <svg id="teamsvg" viewBox="0 0 600 520" role="group" aria-label="Six organ systems arranged in a ring. Select the ones that respond in the scenario."></svg>
+  </div>
+  <div class="info" id="teaminfo" aria-live="polite"></div>
+</section>
+</main></div>
+<script>const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+/* Tabs: click + arrow keys */
+function initTabs(onChange){
+  const tabs=$$('.tab'), panels=$$('.panel');
+  function show(i,focus){
+    tabs.forEach((t,j)=>{t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});
+    panels.forEach((p,j)=>p.classList.toggle('on',j===i));
+    if(focus)tabs[i].focus();
+    if(onChange)onChange(i);
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>show(i));
+    t.addEventListener('keydown',e=>{
+      let n=null;
+      if(e.key==='ArrowRight')n=(i+1)%tabs.length;
+      if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;
+      if(n!==null){e.preventDefault();show(n,true)}
+    });
+  });
+  show(0);
+  return show;
+}
+/* Make SVG groups keyboard-operable */
+function activatable(root,handler){
+  $$('.hs',root).forEach(g=>{
+    g.setAttribute('tabindex','0');g.setAttribute('role','button');
+    g.addEventListener('click',()=>handler(g));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();handler(g)}});
+  });
+}
+function rnd(a,b){return a+Math.random()*(b-a)}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function lerp(a,b,t){return a+(b-a)*t}
+function mixHex(a,b,t){
+  const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  const A=p(a),B=p(b);
+  return '#'+A.map((v,i)=>Math.round(lerp(v,B[i],t)).toString(16).padStart(2,'0')).join('');
+}
+/* Simple multiple-choice quiz engine. cfg: {host, qs:[{q,opts:[],a:index,why}], onProgress(done,total,score), onDone} */
+function quiz(cfg){
+  const host=cfg.host;let i=0,score=0,done=false;
+  function render(){
+    if(i>=cfg.qs.length){
+      done=true;host.innerHTML=`<h2>${score} of ${cfg.qs.length} correct</h2><p>${esc(cfg.finish(score))}</p><div class="row"><button class="btn" id="qr">Try again</button></div>`;
+      $('#qr',host).onclick=()=>{i=0;score=0;done=false;cfg.onProgress(0,cfg.qs.length,0);render()};
+      cfg.onProgress(cfg.qs.length,cfg.qs.length,score);return;
+    }
+    const q=cfg.qs[i];
+    host.innerHTML=`<h3>Question ${i+1} of ${cfg.qs.length}</h3><p style="font-weight:600">${esc(q.q)}</p><div class="mcq">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div><div id="qf" aria-live="polite"></div>`;
+    $$('.opt',host).forEach(b=>b.onclick=()=>{
+      const k=+b.dataset.k,ok=k===q.a;
+      if(ok)score++;
+      $$('.opt',host).forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add('right')});
+      if(!ok)b.classList.add('wrong');
+      $('#qf',host).innerHTML=`<div class="fb ${ok?'':'no'}"><b>${ok?'Correct.':'Not quite.'}</b> ${esc(q.why)}</div><div class="row" style="margin-top:6px"><button class="btn" id="qn">${i+1<cfg.qs.length?'Next question':'See result'}</button></div>`;
+      cfg.onProgress(i+1,cfg.qs.length,score);
+      $('#qn',host).onclick=()=>{i++;render()};$('#qn',host).focus();
+    });
+  }
+  cfg.onProgress(0,cfg.qs.length,0);render();
+}
+
+initTabs();
+
+/* ---------- Data ---------- */
+const SYS={
+ digestive:{n:'Digestive',c:'#C4733A',job:'Breaks food into molecules the body can absorb and use.',orgs:['esophagus','stomach','liver','small','large'],team:'Hands absorbed nutrients to the circulatory system.',fact:'Most nutrient absorption happens in the small intestine.'},
+ circulatory:{n:'Circulatory',c:'#C03A45',job:'The heart pumps blood through vessels to carry oxygen, nutrients, hormones and wastes.',orgs:['heart','vessels'],team:'Partners with the respiratory system to deliver oxygen.',fact:'Blood also carries hormones from endocrine glands to their targets.'},
+ respiratory:{n:'Respiratory',c:'#2F7FA3',job:'Brings oxygen in and removes carbon dioxide through gas exchange.',orgs:['trachea','lungs'],team:'Oxygen passes into the blood, which the circulatory system delivers.',fact:'Gas exchange happens in tiny air sacs in the lungs called alveoli.'},
+ endocrine:{n:'Endocrine',c:'#6A5FA8',job:'Glands release hormones into the blood to coordinate body activities.',orgs:['pituitary','thyroid','adrenals','pancreas'],team:'Works with the nervous system to maintain homeostasis.',fact:'Chemical signals travel in the blood, so effects are slower but longer lasting.'},
+ nervous:{n:'Nervous',c:'#D9A21E',job:'Neurons send rapid electrical and chemical signals around the body.',orgs:['brain','cord','nerves'],team:'Works with the endocrine system to maintain homeostasis.',fact:'Electrical signals travel much faster than hormones in the blood.'},
+ musculoskeletal:{n:'Musculoskeletal',c:'#4E7D5B',job:'Bones support and protect the body; muscles pull on bones to produce movement.',orgs:['bones','muscles'],team:'Nerves tell muscles when to contract.',fact:'Muscles work in pairs, and bones also store minerals and house blood-cell production.'}
+};
+const ORG={esophagus:['Esophagus','Moves swallowed food to the stomach.'],stomach:['Stomach','Churns food and begins chemical digestion.'],liver:['Liver','Makes bile, which helps digest fats.'],small:['Small intestine','Where most nutrients are absorbed.'],large:['Large intestine','Absorbs water and compacts waste.'],
+ heart:['Heart','The pump that moves blood through the body.'],vessels:['Blood vessels','Arteries (red) and veins (blue) form the delivery network.'],
+ trachea:['Trachea','The airway that carries air to the lungs.'],lungs:['Lungs','Where oxygen enters the blood and carbon dioxide leaves.'],
+ pituitary:['Pituitary gland','Releases hormones that signal other glands.'],thyroid:['Thyroid','Hormones from here help control metabolism.'],adrenals:['Adrenal glands','Release adrenaline in response to stress.'],pancreas:['Pancreas','Releases insulin, which helps cells use sugar.'],
+ brain:['Brain','The control center for thought, senses and movement.'],cord:['Spinal cord','Carries signals between the brain and the body.'],nerves:['Nerves','Bundles of neurons that reach every part of the body.'],
+ bones:['Skeleton','Supports the body and protects organs such as the brain and heart.'],muscles:['Skeletal muscles','Contract to produce movement and work in pairs.']};
+const KEYS=Object.keys(SYS);
+let cur='digestive',showAll=false,curOrg=null;
+
+/* ---------- Meet the systems ---------- */
+(function(){
+  $('#syschips').innerHTML=KEYS.map(k=>`<button class="chip" data-k="${k}" aria-pressed="false"><i style="background:${SYS[k].c}"></i>${SYS[k].n}</button>`).join('')+`<button class="chip" data-k="all" aria-pressed="false"><i style="background:conic-gradient(#C4733A,#C03A45,#2F7FA3,#6A5FA8,#D9A21E,#4E7D5B,#C4733A)"></i>Show all</button>`;
+  $$('#syschips .chip').forEach(b=>b.onclick=()=>{
+    if(b.dataset.k==='all'){showAll=true;cur=null}else{showAll=false;cur=b.dataset.k}
+    curOrg=null;renderSys();
+  });
+})();
+function renderSys(){
+  $$('#syschips .chip').forEach(b=>b.setAttribute('aria-pressed',showAll?b.dataset.k==='all':b.dataset.k===cur));
+  KEYS.forEach(k=>{$('#L-'+k).style.opacity=showAll?.8:(k===cur?1:0)});
+  $$('#layers [data-o]').forEach(e=>e.classList.toggle('hi',!!curOrg&&e.dataset.o===curOrg));
+  const host=$('#sysinfo');
+  if(showAll){
+    host.innerHTML=`<h2>Systems working together</h2><p>No organ system works alone. The body functions because every system cooperates.</p><ul><li>The nervous and endocrine systems coordinate activity with electrical and chemical signals.</li><li>The circulatory system links everything by carrying oxygen, nutrients and hormones.</li></ul><p class="small">Choose one system to see its organs and its partners.</p>`;
+    return;
+  }
+  const s=SYS[cur];
+  const o=curOrg?ORG[curOrg]:null;
+  host.innerHTML=`<div><span class="tag" style="background:${s.c};color:#fff">${s.n} system</span></div><h2>${s.job}</h2>
+  <div><h3>Key organs (select to highlight)</h3><div class="row" style="margin-top:4px">${s.orgs.map(k=>`<button class="org" data-o="${k}" aria-pressed="${k===curOrg}">${ORG[k][0]}</button>`).join('')}</div></div>
+  <p class="reason">${o?`<b>${o[0]}:</b> ${o[1]}`:`<span class="small">Pick an organ to learn what it does.</span>`}</p>
+  <h3>Teamwork</h3><p>${s.team} ${s.fact}</p>`;
+  $$('#sysinfo .org').forEach(b=>b.onclick=()=>{curOrg=curOrg===b.dataset.o?null:b.dataset.o;renderSys()});
+}
+renderSys();
+
+/* ---------- Levels ---------- */
+const LV=[
+ {k:'organism',n:'Organism',def:'A whole living individual, with all its organ systems working together.',up:null},
+ {k:'system',n:'Organ system',def:'Organs that cooperate to carry out a larger function for the body.'},
+ {k:'organ',n:'Organ',def:'Different tissues combined to perform a specific job.'},
+ {k:'tissue',n:'Tissue',def:'A group of similar cells that work together on one task.'},
+ {k:'cell',n:'Cell',def:'The basic unit of structure and function in living things.'},
+ {k:'organelle',n:'Organelle',def:'A specialized structure inside a cell that carries out a job for the cell.'}
+];
+const EX={human:{organism:'Human',system:'Circulatory system',organ:'Heart',tissue:'Cardiac muscle tissue',cell:'Cardiac muscle cell',organelle:'Mitochondrion'},
+          plant:{organism:'Plant',system:'Shoot system',organ:'Leaf',tissue:'Leaf mesophyll tissue',cell:'Leaf (palisade) cell',organelle:'Chloroplast'}};
+const PL={organelle:'organelles',cell:'cells',tissue:'tissues',organ:'organs',system:'organ systems',organism:'organisms'};
+const LCOL=['#E7E4F4','#DCE8F5','#DDEFE3','#F7EDD0','#F8DFD5','#F3C6C4'];
+let lk='human',lsel=3; /* index into LV */
+function drawLvl(){
+  const radii=[255,214,173,132,91,50];let h='';
+  LV.forEach((l,i)=>{h+=`<g class="hs ring" data-i="${i}" aria-label="${l.n}: ${EX[lk][l.k]}"><circle class="hl" cx="300" cy="290" r="${radii[i]}" fill="${LCOL[i]}" stroke="${i===lsel?'#A5313A':'#fff'}" stroke-width="${i===lsel?6:3}"/></g>`});
+  LV.forEach((l,i)=>{const r=radii[i];const y=i===5?284:290-r+22;h+=`<text x="300" y="${y}" text-anchor="middle" font-size="${i===5?15:16}" font-weight="${i===lsel?800:600}" fill="#1E2B2F" pointer-events="none">${l.n}</text><text x="300" y="${y+15}" text-anchor="middle" font-size="12" fill="#51636A" pointer-events="none">${EX[lk][l.k]}</text>`;});
+  $('#lvlsvg').innerHTML=h;
+  activatable($('#lvlsvg'),g=>{lsel=+g.dataset.i;renderLvl()});
+}
+function renderLvl(){
+  drawLvl();
+  const l=LV[lsel],below=LV[lsel+1],above=LV[lsel-1];
+  $('#lvlinfo').innerHTML=`<div><span class="tag s">Example: ${EX[lk][l.k]}</span></div><h2>${l.n}</h2><p>${l.def}</p>
+  <p><b>Built from:</b> ${below?PL[below.k]+', such as the '+EX[lk][below.k].toLowerCase():'molecules'}<br><b>Builds up to:</b> ${above?'the '+above.n.toLowerCase()+', such as the '+EX[lk][above.k].toLowerCase():'the whole living thing'}</p>
+  <p class="small">Each level has properties that depend on how its parts work together, and structure is closely related to function at every level.</p>
+  <label class="small" for="zoom">Zoom: drag from whole organism to organelle</label><input type="range" id="zoom" min="0" max="5" step="1" value="${lsel}">`;
+  $('#zoom').oninput=e=>{lsel=+e.target.value;renderLvl();$('#zoom').focus()};
+}
+$$('#orgsel button').forEach(b=>b.onclick=()=>{lk=b.dataset.k;$$('#orgsel button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderLvl()});
+renderLvl();
+
+/* ---------- Systems at work ---------- */
+const SC={
+ sprint:{lbl:'Sprint',t:'You sprint to catch a bus.',ok:{nervous:'Neurons send fast signals from your brain to your leg muscles.',musculoskeletal:'Muscles contract in pairs to move your bones and drive your legs.',respiratory:'You breathe faster, taking in oxygen and releasing carbon dioxide.',circulatory:'Your heart beats faster to deliver oxygen to working muscles.',endocrine:'Adrenal glands release adrenaline into the blood to prepare the body.'},no:{digestive:'Digestion is not needed in the moment, and blood flow shifts toward muscles.'}},
+ lunch:{lbl:'Lunch',t:'You eat lunch.',ok:{digestive:'Food is broken down and nutrients are absorbed, mostly in the small intestine.',circulatory:'Blood carries the absorbed nutrients to the rest of the body.',endocrine:'The pancreas releases insulin, a hormone that helps cells use sugar.',nervous:'Your senses and nerves guide chewing and swallowing.',musculoskeletal:'Jaw muscles chew the food, the first step of mechanical digestion.'},no:{respiratory:'Breathing continues, but it is not a main player in processing this meal.'}},
+ cold:{lbl:'Cold day',t:'You stand outside on a cold day.',ok:{nervous:'Sensors detect the cold and the brain coordinates the response.',musculoskeletal:'Shivering is rapid muscle contraction that generates heat.',circulatory:'Vessels near the skin narrow to keep heat in the body’s core.',endocrine:'Hormones such as thyroid hormone help adjust heat production.'},no:{respiratory:'Not a main player in keeping warm.',digestive:'Not a main player in the short-term response.'}}
+};
+let sc='sprint',picked=new Set(),checked=false,focusK=null;
+const POS={};KEYS.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/6;POS[k]=[300+190*Math.cos(a),250+175*Math.sin(a)]});
+function icon(k,c){
+ const m={
+  digestive:`<path d="M-14 -10 q14 -9 28 0 t-28 10 t28 10" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`,
+  circulatory:`<path d="M0 14 C-22 0 -18 -18 -6 -16 C-2 -16 0 -10 0 -10 C0 -10 2 -16 8 -16 C20 -14 22 0 0 14Z" fill="${c}"/>`,
+  respiratory:`<path d="M-3 -14 Q-20 -12 -18 6 Q-16 16 -6 14 Q-3 12 -3 6Z M3 -14 Q20 -12 18 6 Q16 16 6 14 Q3 12 3 6Z M0 -16 V-4" fill="${c}" stroke="${c}" stroke-width="2"/>`,
+  endocrine:`<circle cx="-9" cy="-6" r="5" fill="${c}"/><circle cx="9" cy="-6" r="5" fill="${c}"/><circle cx="0" cy="9" r="6" fill="${c}"/>`,
+  nervous:`<circle r="14" fill="none" stroke="${c}" stroke-width="4"/><path d="M-8 -2 q4 -6 8 0 t8 0 M-8 6 q4 -6 8 0 t8 0" fill="none" stroke="${c}" stroke-width="3"/>`,
+  musculoskeletal:`<path d="M-12 8 L12 -8" stroke="${c}" stroke-width="6" stroke-linecap="round"/><circle cx="-14" cy="8" r="4.5" fill="${c}"/><circle cx="-8" cy="13" r="4.5" fill="${c}"/><circle cx="14" cy="-8" r="4.5" fill="${c}"/><circle cx="8" cy="-13" r="4.5" fill="${c}"/>`};
+ return m[k];
+}
+function drawTeam(){
+  const S=SC[sc];let h='';
+  const okk=Object.keys(S.ok);
+  if(checked){
+    for(let i=0;i<okk.length;i++)for(let j=i+1;j<okk.length;j++){
+      if(picked.has(okk[i])&&picked.has(okk[j])){const a=POS[okk[i]],b=POS[okk[j]];h+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#3D7A52" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" opacity=".7"/>`}
+    }
+  }
+  h+=`<circle cx="300" cy="250" r="82" fill="#fff" stroke="#D3DCD4" stroke-width="2"/><foreignObject x="226" y="196" width="148" height="108"><div xmlns="http://www.w3.org/1999/xhtml" style="font:700 15px system-ui,sans-serif;text-align:center;color:#1E2B2F;display:flex;height:108px;align-items:center;justify-content:center">${esc(S.t)}</div></foreignObject>`;
+  KEYS.forEach(k=>{
+    const [x,y]=POS[k];const sel=picked.has(k),isOk=k in S.ok;
+    let fill=sel?SYS[k].c:'#fff',stroke=SYS[k].c,dash='',badge='';
+    if(checked){
+      if(sel&&isOk){stroke='#3D7A52';badge=`<circle cx="30" cy="-30" r="12" fill="#3D7A52"/><path d="M24 -30 l4 4 l8 -9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`}
+      else if(sel&&!isOk){stroke='#A5313A';badge=`<circle cx="30" cy="-30" r="12" fill="#A5313A"/><path d="M25 -35 l10 10 M35 -35 l-10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`}
+      else if(!sel&&isOk){stroke='#A5313A';dash='stroke-dasharray="6 5"';badge=`<circle cx="30" cy="-30" r="12" fill="#D99A1E"/><text x="30" y="-25" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">!</text>`}
+    }
+    const ic=icon(k,sel?'#fff':SYS[k].c);
+    h+=`<g class="hs nd" data-k="${k}" transform="translate(${x} ${y})" aria-label="${SYS[k].n} system${sel?' (selected)':''}"><circle class="hl" r="44" fill="${fill}" stroke="${stroke}" stroke-width="${focusK===k?7:5}" ${dash}/>${ic}<text y="64" text-anchor="middle" font-size="15" font-weight="700" fill="#1E2B2F" style="paint-order:stroke;stroke:#fff;stroke-width:4px">${SYS[k].n}</text>${badge}</g>`;
+  });
+  $('#teamsvg').innerHTML=h;
+  activatable($('#teamsvg'),g=>{
+    const k=g.dataset.k;
+    if(!checked){picked.has(k)?picked.delete(k):picked.add(k)}
+    focusK=k;drawTeam();renderTeam();
+  });
+}
+function renderTeam(){
+  const S=SC[sc];const okk=Object.keys(S.ok);
+  let res='';
+  if(checked){
+    const right=[...picked].filter(k=>k in S.ok).length,wrong=[...picked].filter(k=>!(k in S.ok)).length,miss=okk.filter(k=>!picked.has(k)).length;
+    res=`<div class="fb ${wrong||miss?'no':''}"><b>${right} of ${okk.length} correct${wrong?`, ${wrong} extra`:''}${miss?`, ${miss} missed`:''}.</b> ${wrong||miss?'Select any system to see why.':'They all cooperate to keep the body working.'}</div>`;
+  }
+  let why='';
+  if(checked&&focusK){why=`<p class="reason"><b>${SYS[focusK].n}:</b> ${esc(S.ok[focusK]||S.no[focusK]||'')}</p>`}
+  else if(checked){why=`<p class="reason small">Select a system to see why it is or is not involved.</p>`}
+  else{why=`<p class="reason small">Select every system that responds, then check your answer. ${picked.size} selected.</p>`}
+  $('#teaminfo').innerHTML=`<h2>Which systems respond?</h2><div class="seg" role="group" aria-label="Scenario">${Object.keys(SC).map(k=>`<button data-s="${k}" aria-pressed="${k===sc}">${SC[k].lbl}</button>`).join('')}</div><p><b>${esc(S.t)}</b> No organ system works alone, so think about which ones cooperate.</p>${res}${why}<div class="row"><button class="btn" id="chk" ${checked||!picked.size?'disabled':''}>Check answer</button><button class="btn ghost" id="rst">Start over</button></div>`;
+  $$('#teaminfo [data-s]').forEach(b=>b.onclick=()=>{sc=b.dataset.s;picked=new Set();checked=false;focusK=null;drawTeam();renderTeam()});
+  $('#chk').onclick=()=>{checked=true;focusK=null;drawTeam();renderTeam()};
+  $('#rst').onclick=()=>{picked=new Set();checked=false;focusK=null;drawTeam();renderTeam()};
+}
+drawTeam();renderTeam();
+</script></body></html>

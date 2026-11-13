@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSCI 301 · Week 1 · Cell Explorer</title>
+<style>:root{
+  --crimson:#A5313A; --crimson-d:#7E2229; --crimson-l:#F6E4E5;
+  --ink:#1E2B2F; --muted:#51636A; --paper:#F3F6F2; --card:#FFFFFF; --line:#D3DCD4;
+  --leaf:#3D7A52; --leaf-l:#E2EFE5; --sky:#2F7FA3; --sky-l:#DDEEF5;
+  --sun:#D99A1E; --sun-l:#FBF0D6; --lav:#6A5FA8; --lav-l:#E7E4F4;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.4}
+#app{height:100%;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:8px 14px 8px 16px;background:var(--card);border-bottom:1px solid var(--line);border-left:6px solid var(--crimson)}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.wk{font-size:12px;font-weight:700;color:#fff;background:var(--crimson);border-radius:999px;padding:2px 10px;white-space:nowrap}
+h1{font-family:var(--serif);font-size:20px;line-height:1.15;margin:0;font-weight:700}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{font:600 13px var(--sans);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+.tab:hover{background:var(--crimson-l)}
+.tab[aria-selected="true"]{background:var(--crimson);border-color:var(--crimson);color:#fff}
+:focus-visible{outline:3px solid #1B66D1;outline-offset:2px}
+.stage{flex:1;min-height:0;padding:10px 12px 12px}
+.panel{display:none;height:100%;gap:12px;grid-template-columns:minmax(0,1.35fr) minmax(270px,1fr)}
+.panel.on{display:grid}
+.art{position:relative;min-height:0;min-width:0;border-radius:14px;overflow:hidden;background-color:#fff;background-image:radial-gradient(#C9D6CC 1.2px,transparent 1.6px);background-size:22px 22px;border:1px solid var(--line)}
+.art>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.info{min-height:0;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.info h2{font-family:var(--serif);font-size:18px;margin:0;line-height:1.2}
+.info h3{font-size:13px;margin:0;color:var(--crimson-d);font-weight:700}
+.info p{margin:0}
+.info ul{margin:0;padding-left:18px}
+.info li{margin:2px 0}
+.small{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:1px 9px;background:var(--lav-l);color:#43397F;margin-right:4px}
+.tag.g{background:var(--leaf-l);color:#25573A}.tag.s{background:var(--sky-l);color:#1B5875}.tag.c{background:var(--crimson-l);color:var(--crimson-d)}.tag.y{background:var(--sun-l);color:#7A5410}
+.btn{font:600 13px var(--sans);border:1px solid var(--crimson);background:var(--crimson);color:#fff;border-radius:8px;padding:7px 12px;cursor:pointer}
+.btn:hover{background:var(--crimson-d)}
+.btn.ghost{background:#fff;color:var(--crimson-d)}
+.btn.ghost:hover{background:var(--crimson-l)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{font:600 13px var(--sans);border:0;background:#fff;color:var(--ink);padding:6px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.bar{height:8px;border-radius:99px;background:#E4EAE5;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--leaf);transition:width .35s}
+.hs{cursor:pointer}
+
+.hs:hover{filter:brightness(1.06)}
+.hs.sel{filter:drop-shadow(0 0 3px #A5313A) drop-shadow(0 0 5px #A5313A)}
+svg text{font-family:var(--sans)}
+.lbl{font-size:15px;font-weight:600;fill:#1E2B2F;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.lbl.s{font-size:13px}
+.ctl{position:absolute;left:10px;top:10px;z-index:2}
+.mcq{display:grid;gap:6px}
+.opt{font:500 14px var(--sans);text-align:left;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){background:var(--sun-l);border-color:var(--sun)}
+.opt.right{background:var(--leaf-l);border-color:var(--leaf)}
+.opt.wrong{background:var(--crimson-l);border-color:var(--crimson)}
+.opt:disabled{cursor:default}
+.fb{border-left:4px solid var(--leaf);background:var(--leaf-l);border-radius:6px;padding:6px 10px;font-size:14px}
+.fb.warn{border-color:var(--sun);background:var(--sun-l)}
+.fb.no{border-color:var(--crimson);background:var(--crimson-l)}
+input[type=range]{width:100%;accent-color:var(--crimson)}
+@media (max-width:860px){
+  html,body{font-size:14px}
+  .top{padding:6px 10px 6px 12px;gap:6px}
+  h1{font-size:17px}
+  .tab{padding:5px 9px;font-size:12.5px}
+  .stage{padding:8px}
+  .panel{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px}
+  .info{padding:10px 12px;gap:6px}
+  .info h2{font-size:16px}
+  .hide-m{display:none!important}
+  .lbl{font-size:18px}
+  .lbl.s{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+
+.badge{position:absolute;left:12px;bottom:10px;z-index:2;font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 11px;background:#fff;border:1px solid var(--line);color:var(--ink)}
+.theory li{margin:3px 0}
+.focus{position:absolute;right:12px;bottom:10px;z-index:2;font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 11px;background:#fff;border:1px solid var(--line)}
+</style></head>
+<body><div id="app">
+<header class="top"><div class="brand"><span class="wk">Week 1</span><h1>Cell Explorer</h1></div><nav class="tabs" role="tablist" aria-label="Sections"><button class="tab" role="tab" aria-selected="false">Explore the cell</button><button class="tab" role="tab" aria-selected="false">How animals reproduce</button><button class="tab" role="tab" aria-selected="false">Check your understanding</button></nav></header>
+<main class="stage">
+<section class="panel" role="tabpanel" aria-label="Explore the cell">
+  <div class="art">
+    <div class="ctl seg" id="celltype" role="group" aria-label="Cell type">
+      <button data-t="animal" aria-pressed="true">Animal cell</button>
+      <button data-t="plant" aria-pressed="false">Plant cell</button>
+      <button data-t="bact" aria-pressed="false">Bacterium</button>
+    </div>
+    <svg id="cellsvg" viewBox="0 0 600 460" role="group" aria-label="Interactive cell diagram. Each labelled structure is a button.">
+      <!-- ANIMAL -->
+      <g id="c-animal">
+        <path class="hs" data-id="cytoplasm" d="M300 74 C440 64 565 124 572 238 C579 352 480 440 320 432 C165 438 38 385 32 252 C26 134 150 84 300 74Z" fill="#FBE9E3" aria-label="Cytoplasm"/>
+        <g class="hs" data-id="nucleus" aria-label="Nucleus"><circle class="hl" cx="300" cy="248" r="70" fill="#DCD7F0" stroke="#6A5FA8" stroke-width="6"/><path d="M262 240 q15 -26 30 -6 t30 6 t-10 30 t-30 6" fill="none" stroke="#8B80C8" stroke-width="4" stroke-linecap="round"/><circle cx="322" cy="232" r="20" fill="#8E84C9"/><text class="lbl" x="300" y="296" text-anchor="middle">Nucleus</text></g>
+        <g class="hs" data-id="er" aria-label="Rough endoplasmic reticulum"><g class="hl" fill="none" stroke="#D88B2F" stroke-width="9" stroke-linecap="round"><path d="M388 192 C405 170 425 214 445 192 C465 170 485 214 505 192"/><path d="M388 224 C405 202 425 246 445 224 C465 202 485 246 505 224"/><path d="M388 256 C405 234 425 278 445 256 C465 234 485 278 505 256"/></g><g fill="#2B2B2B"><circle cx="405" cy="180" r="3.5"/><circle cx="445" cy="180" r="3.5"/><circle cx="485" cy="180" r="3.5"/><circle cx="425" cy="236" r="3.5"/><circle cx="465" cy="236" r="3.5"/><circle cx="405" cy="266" r="3.5"/><circle cx="445" cy="268" r="3.5"/></g><text class="lbl" x="448" y="304" text-anchor="middle">Rough ER</text></g>
+        <g class="hs" data-id="golgi" aria-label="Golgi apparatus"><g class="hl" fill="none" stroke="#E3A92E" stroke-width="12" stroke-linecap="round"><path d="M96 336 Q158 312 220 336"/><path d="M106 358 Q158 336 210 358"/><path d="M116 380 Q158 362 200 380"/></g><text class="lbl" x="150" y="314" text-anchor="middle">Golgi apparatus</text></g>
+        <g class="hs" data-id="mito" aria-label="Mitochondria"><g class="hl"><ellipse cx="470" cy="352" rx="40" ry="21" transform="rotate(-20 470 352)" fill="#F4B9A3" stroke="#C4573A" stroke-width="4"/><ellipse cx="124" cy="186" rx="40" ry="21" transform="rotate(28 124 186)" fill="#F4B9A3" stroke="#C4573A" stroke-width="4"/><ellipse cx="330" cy="392" rx="36" ry="19" transform="rotate(8 330 392)" fill="#F4B9A3" stroke="#C4573A" stroke-width="4"/></g><g fill="none" stroke="#C4573A" stroke-width="3" stroke-linecap="round"><path d="M446 358 q8 -14 14 0 t14 0 t14 -2" transform="rotate(-20 470 352)"/><path d="M100 192 q8 -14 14 0 t14 0 t14 -2" transform="rotate(28 124 186)"/><path d="M308 398 q8 -13 13 0 t13 0 t12 -2" transform="rotate(8 330 392)"/></g><text class="lbl" x="124" y="226" text-anchor="middle">Mitochondria</text></g>
+        <g class="hs" data-id="ribosome" aria-label="Ribosomes"><g fill="#2B2B2B" style="stroke:transparent;stroke-width:16"><circle cx="205" cy="128" r="5"/><circle cx="250" cy="112" r="5"/><circle cx="360" cy="116" r="5"/><circle cx="420" cy="128" r="5"/><circle cx="520" cy="150" r="5"/><circle cx="82" cy="262" r="5"/><circle cx="62" cy="304" r="5"/><circle cx="210" cy="276" r="5"/><circle cx="222" cy="308" r="5"/><circle cx="540" cy="290" r="5"/><circle cx="400" cy="312" r="5"/><circle cx="395" cy="372" r="5"/><circle cx="270" cy="332" r="5"/><circle cx="540" cy="226" r="5"/></g><text class="lbl" x="300" y="106" text-anchor="middle">Ribosomes</text></g>
+        <text class="lbl" x="120" y="262" text-anchor="middle" style="display:none">Cytoplasm</text>
+        <path class="hs" data-id="membrane" d="M300 74 C440 64 565 124 572 238 C579 352 480 440 320 432 C165 438 38 385 32 252 C26 134 150 84 300 74Z" fill="none" stroke="#B5555B" stroke-width="8" style="pointer-events:stroke" aria-label="Plasma membrane"/>
+        <text class="lbl" x="470" y="62" text-anchor="middle">Plasma membrane</text>
+        <text class="lbl" x="440" y="158" text-anchor="middle" style="fill:#7A3B2E">Cytoplasm</text>
+      </g>
+      <!-- PLANT -->
+      <g id="c-plant" style="display:none">
+        <rect class="hs" data-id="cytoplasm" x="46" y="80" width="508" height="338" rx="30" fill="#EDF5E2" aria-label="Cytoplasm"/>
+        <g class="hs" data-id="vacuole" aria-label="Central vacuole"><ellipse class="hl" cx="335" cy="252" rx="135" ry="100" fill="#CBE6F2" stroke="#4A8DB0" stroke-width="5"/><text class="lbl" x="335" y="258" text-anchor="middle">Central vacuole</text></g>
+        <g class="hs" data-id="nucleus" aria-label="Nucleus"><circle class="hl" cx="130" cy="256" r="46" fill="#DCD7F0" stroke="#6A5FA8" stroke-width="5"/><circle cx="140" cy="248" r="14" fill="#8E84C9"/><text class="lbl" x="130" y="326" text-anchor="middle">Nucleus</text></g>
+        <g class="hs" data-id="er" aria-label="Rough endoplasmic reticulum"><g class="hl" fill="none" stroke="#D88B2F" stroke-width="8" stroke-linecap="round"><path d="M80 186 C95 168 110 204 130 186 C150 168 165 204 185 186"/><path d="M80 164 C95 146 110 182 130 164 C150 146 165 182 185 164"/></g><text class="lbl" x="214" y="180" text-anchor="start">Rough ER</text></g>
+        <g class="hs" data-id="chloroplast" aria-label="Chloroplasts"><g class="hl" fill="#7CB958" stroke="#3D7A52" stroke-width="3"><ellipse cx="100" cy="118" rx="34" ry="18" transform="rotate(-15 100 118)"/><ellipse cx="300" cy="112" rx="34" ry="18" transform="rotate(5 300 112)"/><ellipse cx="500" cy="150" rx="34" ry="18" transform="rotate(25 500 150)"/><ellipse cx="505" cy="350" rx="34" ry="18" transform="rotate(-20 505 350)"/><ellipse cx="150" cy="372" rx="34" ry="18" transform="rotate(12 150 372)"/></g><g fill="#2F6A45"><rect x="84" y="112" width="9" height="9" rx="3"/><rect x="98" y="110" width="9" height="9" rx="3"/><rect x="112" y="108" width="9" height="9" rx="3"/><rect x="284" y="108" width="9" height="9" rx="3"/><rect x="298" y="108" width="9" height="9" rx="3"/><rect x="312" y="108" width="9" height="9" rx="3"/><rect x="486" y="146" width="9" height="9" rx="3"/><rect x="500" y="150" width="9" height="9" rx="3"/><rect x="494" y="342" width="9" height="9" rx="3"/><rect x="508" y="346" width="9" height="9" rx="3"/><rect x="136" y="368" width="9" height="9" rx="3"/><rect x="150" y="370" width="9" height="9" rx="3"/><rect x="164" y="372" width="9" height="9" rx="3"/></g><text class="lbl" x="300" y="146" text-anchor="middle" style="display:none">Chloroplasts</text><text class="lbl" x="215" y="96" text-anchor="middle">Chloroplasts</text></g>
+        <g class="hs" data-id="golgi" aria-label="Golgi apparatus"><g class="hl" fill="none" stroke="#E3A92E" stroke-width="11" stroke-linecap="round"><path d="M230 378 Q285 356 340 378"/><path d="M240 398 Q285 378 330 398"/></g><text class="lbl" x="285" y="428" text-anchor="middle" style="display:none">Golgi</text><text class="lbl" x="395" y="392" text-anchor="start">Golgi apparatus</text></g>
+        <g class="hs" data-id="mito" aria-label="Mitochondria"><g class="hl"><ellipse cx="514" cy="250" rx="30" ry="16" transform="rotate(70 514 250)" fill="#F4B9A3" stroke="#C4573A" stroke-width="4"/><ellipse cx="228" cy="338" rx="30" ry="16" transform="rotate(-25 228 338)" fill="#F4B9A3" stroke="#C4573A" stroke-width="4"/></g><text class="lbl" x="516" y="262" text-anchor="start" style="display:none">Mito</text></g>
+        <g class="hs" data-id="ribosome" aria-label="Ribosomes"><g fill="#2B2B2B" style="stroke:transparent;stroke-width:16"><circle cx="76" cy="300" r="5"/><circle cx="82" cy="236" r="5"/><circle cx="210" cy="238" r="5"/><circle cx="196" cy="276" r="5"/><circle cx="420" cy="140" r="5"/><circle cx="520" cy="236" r="5"/><circle cx="535" cy="296" r="5"/><circle cx="400" cy="378" r="5"/><circle cx="90" cy="330" r="5"/></g></g>
+        <rect class="hs" data-id="membrane" x="46" y="80" width="508" height="338" rx="30" fill="none" stroke="#B5555B" stroke-width="5" style="pointer-events:stroke" aria-label="Plasma membrane"/>
+        <rect class="hs" data-id="wall" x="30" y="64" width="540" height="370" rx="40" fill="none" stroke="#5E923F" stroke-width="14" style="pointer-events:stroke" aria-label="Cell wall"/>
+        <text class="lbl" x="300" y="54" text-anchor="middle">Cell wall</text>
+        <text class="lbl s" x="456" y="106" text-anchor="middle">Plasma membrane</text>
+        <text class="lbl s" x="490" y="298" text-anchor="middle">Mitochondria</text>
+      </g>
+      <!-- BACTERIUM -->
+      <g id="c-bact" style="display:none"><g transform="translate(-66 -47) scale(1.1)">
+        <rect x="70" y="150" width="400" height="220" rx="110" fill="#F6EBD6"/>
+        <rect class="hs" data-id="cytoplasm" x="98" y="178" width="344" height="164" rx="82" fill="#FBF3E6" aria-label="Cytoplasm"/>
+        <g class="hs" data-id="nucleoid" aria-label="Nucleoid"><ellipse class="hl" cx="262" cy="258" rx="92" ry="44" fill="#E7E4F4" stroke="#A59BD6" stroke-width="3" stroke-dasharray="7 5"/><path d="M200 262 C210 226 245 222 266 246 C288 270 320 230 332 256 C344 284 306 298 282 278 C258 258 216 296 206 268" fill="none" stroke="#6A5FA8" stroke-width="4.5" stroke-linecap="round"/><text class="lbl" x="268" y="330" text-anchor="middle" style="display:none">Nucleoid</text><text class="lbl s" x="292" y="318" text-anchor="middle">Nucleoid (DNA)</text></g>
+        <g class="hs" data-id="plasmid" aria-label="Plasmid"><circle class="hl" cx="398" cy="238" r="15" fill="none" stroke="#2F7FA3" stroke-width="5"/><text class="lbl s" x="394" y="214" text-anchor="middle">Plasmid</text></g>
+        <g class="hs" data-id="ribosome" aria-label="Ribosomes"><g fill="#2B2B2B" style="stroke:transparent;stroke-width:16"><circle cx="150" cy="236" r="5"/><circle cx="170" cy="290" r="5"/><circle cx="130" cy="262" r="5"/><circle cx="215" cy="206" r="5"/><circle cx="330" cy="204" r="5"/><circle cx="400" cy="290" r="5"/><circle cx="350" cy="308" r="5"/><circle cx="420" cy="258" r="5"/></g><text class="lbl" x="170" y="198" text-anchor="middle" style="display:none">Ribosomes</text></g>
+        <g class="hs" data-id="flagellum" aria-label="Flagellum"><path class="hl" d="M470 260 C500 216 524 304 552 260 S588 228 596 262" fill="none" stroke="#8C6B3E" stroke-width="6" stroke-linecap="round"/><text class="lbl" x="530" y="318" text-anchor="middle">Flagellum</text></g>
+        <rect class="hs" data-id="membrane" x="98" y="178" width="344" height="164" rx="82" fill="none" stroke="#B5555B" stroke-width="4" style="pointer-events:stroke" aria-label="Plasma membrane"/>
+        <rect class="hs" data-id="wall" x="88" y="168" width="364" height="184" rx="92" fill="none" stroke="#8C6B3E" stroke-width="9" style="pointer-events:stroke" aria-label="Cell wall"/>
+        <rect class="hs" data-id="capsule" x="70" y="150" width="400" height="220" rx="110" fill="none" stroke="#D9B574" stroke-width="7" stroke-dasharray="2 9" stroke-linecap="round" style="pointer-events:stroke" aria-label="Capsule"/>
+        <text class="lbl" x="270" y="140" text-anchor="middle">Capsule</text>
+        <text class="lbl" x="270" y="396" text-anchor="middle">Cell wall</text>
+        <text class="lbl s" x="146" y="212" text-anchor="middle">Ribosomes</text>
+        <text class="lbl s" x="148" y="330" text-anchor="middle">Plasma membrane</text>
+      </g></g>
+    </svg>
+    <div class="badge" id="ctbadge">Eukaryotic cell · has a nucleus</div>
+  </div>
+  <div class="info" id="cellinfo" aria-live="polite"></div>
+</section>
+
+<section class="panel" role="tabpanel" aria-label="How animals reproduce">
+  <div class="art">
+    <div class="ctl seg" id="repmode" role="group" aria-label="Reproduction type">
+      <button data-m="asexual" aria-pressed="true">Asexual</button>
+      <button data-m="sexual" aria-pressed="false">Sexual</button>
+    </div>
+    <svg id="repsvg" viewBox="0 0 600 460" role="img" aria-label="Diagram comparing offspring from asexual and sexual reproduction"></svg>
+  </div>
+  <div class="info" id="repinfo" aria-live="polite"></div>
+</section>
+
+<section class="panel" role="tabpanel" aria-label="Check your understanding">
+  <div class="art">
+    <svg id="focussvg" viewBox="0 0 600 460" role="img" aria-label="A microscope view that comes into focus as you answer correctly">
+      <defs>
+        <filter id="blurf" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur id="blurn" stdDeviation="9"/></filter>
+        <clipPath id="lens"><circle cx="300" cy="225" r="185"/></clipPath>
+      </defs>
+      <rect x="0" y="0" width="600" height="460" fill="#E9EFEA"/>
+      <circle cx="300" cy="225" r="200" fill="#26343A"/>
+      <circle cx="300" cy="225" r="185" fill="#F7F3E8"/>
+      <g clip-path="url(#lens)"><g id="fieldcells" filter="url(#blurf)"></g></g>
+      <circle cx="300" cy="225" r="192" fill="none" stroke="#A5313A" stroke-width="10"/>
+      <path d="M300 14 V34 M300 416 V436 M90 225 H110 M490 225 H510" stroke="#8795A0" stroke-width="3"/>
+    </svg>
+    <div class="focus" id="focuslbl">Focus 0%</div>
+  </div>
+  <div class="info" id="quizinfo" aria-live="polite"></div>
+</section>
+</main></div>
+<script>const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+/* Tabs: click + arrow keys */
+function initTabs(onChange){
+  const tabs=$$('.tab'), panels=$$('.panel');
+  function show(i,focus){
+    tabs.forEach((t,j)=>{t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});
+    panels.forEach((p,j)=>p.classList.toggle('on',j===i));
+    if(focus)tabs[i].focus();
+    if(onChange)onChange(i);
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>show(i));
+    t.addEventListener('keydown',e=>{
+      let n=null;
+      if(e.key==='ArrowRight')n=(i+1)%tabs.length;
+      if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;
+      if(n!==null){e.preventDefault();show(n,true)}
+    });
+  });
+  show(0);
+  return show;
+}
+/* Make SVG groups keyboard-operable */
+function activatable(root,handler){
+  $$('.hs',root).forEach(g=>{
+    g.setAttribute('tabindex','0');g.setAttribute('role','button');
+    g.addEventListener('click',()=>handler(g));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();handler(g)}});
+  });
+}
+function rnd(a,b){return a+Math.random()*(b-a)}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function lerp(a,b,t){return a+(b-a)*t}
+function mixHex(a,b,t){
+  const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  const A=p(a),B=p(b);
+  return '#'+A.map((v,i)=>Math.round(lerp(v,B[i],t)).toString(16).padStart(2,'0')).join('');
+}
+/* Simple multiple-choice quiz engine. cfg: {host, qs:[{q,opts:[],a:index,why}], onProgress(done,total,score), onDone} */
+function quiz(cfg){
+  const host=cfg.host;let i=0,score=0,done=false;
+  function render(){
+    if(i>=cfg.qs.length){
+      done=true;host.innerHTML=`<h2>${score} of ${cfg.qs.length} correct</h2><p>${esc(cfg.finish(score))}</p><div class="row"><button class="btn" id="qr">Try again</button></div>`;
+      $('#qr',host).onclick=()=>{i=0;score=0;done=false;cfg.onProgress(0,cfg.qs.length,0);render()};
+      cfg.onProgress(cfg.qs.length,cfg.qs.length,score);return;
+    }
+    const q=cfg.qs[i];
+    host.innerHTML=`<h3>Question ${i+1} of ${cfg.qs.length}</h3><p style="font-weight:600">${esc(q.q)}</p><div class="mcq">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div><div id="qf" aria-live="polite"></div>`;
+    $$('.opt',host).forEach(b=>b.onclick=()=>{
+      const k=+b.dataset.k,ok=k===q.a;
+      if(ok)score++;
+      $$('.opt',host).forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add('right')});
+      if(!ok)b.classList.add('wrong');
+      $('#qf',host).innerHTML=`<div class="fb ${ok?'':'no'}"><b>${ok?'Correct.':'Not quite.'}</b> ${esc(q.why)}</div><div class="row" style="margin-top:6px"><button class="btn" id="qn">${i+1<cfg.qs.length?'Next question':'See result'}</button></div>`;
+      cfg.onProgress(i+1,cfg.qs.length,score);
+      $('#qn',host).onclick=()=>{i++;render()};$('#qn',host).focus();
+    });
+  }
+  cfg.onProgress(0,cfg.qs.length,0);render();
+}
+
+initTabs();
+
+/* ---------- Explore ---------- */
+const TAG={a:'<span class="tag c">Animal cells</span>',p:'<span class="tag g">Plant cells</span>',all:'<span class="tag s">All cells</span>',e:'<span class="tag">Eukaryotes</span>',b:'<span class="tag y">Bacteria</span>'};
+const COMMON={
+ cytoplasm:{n:'Cytoplasm',w:TAG.all,job:'The gel-like fluid inside the cell. Organelles sit in it and many chemical reactions happen here.',link:'Every cell, big or small, has cytoplasm.'},
+ membrane:{n:'Plasma membrane',w:TAG.all,job:'A thin, flexible boundary that controls what enters and leaves the cell.',link:'It is selective: nutrients come in, wastes go out, and the cell stays intact.'},
+ ribosome:{n:'Ribosomes',w:TAG.all,job:'Tiny structures that build proteins by following instructions from the DNA.',link:'Both prokaryotic and eukaryotic cells have ribosomes and DNA.'}
+};
+const INFO={
+ animal:{...COMMON,
+  nucleus:{n:'Nucleus',w:TAG.e,job:'Stores the cell’s DNA (genetic information) and directs cell activity.',link:'It is the feature that defines a eukaryotic cell: DNA is enclosed by a membrane.'},
+  er:{n:'Endoplasmic reticulum (ER)',w:TAG.e,job:'A network of membranes that builds and transports proteins and lipids. Rough ER is studded with ribosomes.',link:'ER and Golgi work as a team: build first, then modify and ship.'},
+  golgi:{n:'Golgi apparatus',w:TAG.e,job:'Modifies, sorts and packages proteins and lipids, then ships them to where they are needed.',link:'Stacked, flattened sacs give it a lot of surface for processing.'},
+  mito:{n:'Mitochondria',w:TAG.e,job:'Release usable energy from food molecules so the cell can do its work.',link:'Cells that use a lot of energy, such as muscle cells, contain many mitochondria.'}},
+ plant:{...COMMON,
+  nucleus:{n:'Nucleus',w:TAG.e,job:'Stores the cell’s DNA and directs cell activity.',link:'Plant and animal cells are both eukaryotic, so both have a nucleus.'},
+  er:{n:'Endoplasmic reticulum (ER)',w:TAG.e,job:'Builds and transports proteins and lipids.',link:'Same job as in animal cells.'},
+  golgi:{n:'Golgi apparatus',w:TAG.e,job:'Modifies, sorts and ships proteins and lipids.',link:'Same job as in animal cells.'},
+  mito:{n:'Mitochondria',w:TAG.e,job:'Release usable energy. Yes, plants have mitochondria too, not just chloroplasts.',link:'Chloroplasts capture light energy; mitochondria release energy for the cell to use.'},
+  chloroplast:{n:'Chloroplasts',w:TAG.p,job:'Carry out photosynthesis, capturing light energy to make sugars.',link:'Animal cells do not have chloroplasts.'},
+  vacuole:{n:'Central vacuole',w:TAG.p,job:'Stores water and dissolved materials and helps keep the cell firm.',link:'A wilted plant has lost water from its vacuoles.'},
+  wall:{n:'Cell wall',w:TAG.p,job:'A rigid layer outside the plasma membrane that supports and protects the cell.',link:'Animal cells have no cell wall.'}},
+ bact:{...COMMON,
+  nucleoid:{n:'Nucleoid',w:TAG.b,job:'The region where the cell’s main DNA is found. It is not enclosed by a membrane.',link:'No membrane-bound nucleus is what makes a cell prokaryotic.'},
+  plasmid:{n:'Plasmid',w:TAG.b,job:'A small extra loop of DNA, separate from the main chromosome.',link:'Bacteria can pass plasmids to one another.'},
+  flagellum:{n:'Flagellum',w:TAG.b,job:'A whip-like tail that spins to move the cell.',link:'Not every bacterium has one.'},
+  wall:{n:'Cell wall',w:TAG.b,job:'A tough layer that gives the cell its shape and protects it.',link:'Bacterial walls are built differently from plant cell walls.'},
+  capsule:{n:'Capsule',w:TAG.b,job:'A sticky outer coat that protects the cell and helps it cling to surfaces.',link:'Found in many, but not all, bacteria.'}}
+};
+const COUNT={animal:Object.keys(INFO.animal).length,plant:Object.keys(INFO.plant).length,bact:Object.keys(INFO.bact).length};
+const seen={animal:new Set(),plant:new Set(),bact:new Set()};
+let ctype='animal',cid=null;
+const BADGE={animal:'Eukaryotic cell · has a nucleus',plant:'Eukaryotic cell · has a nucleus',bact:'Prokaryotic cell · no membrane-bound nucleus'};
+function renderCellInfo(){
+  const host=$('#cellinfo'),n=seen[ctype].size,tot=COUNT[ctype];
+  const prog=`<div class="small">Explored ${n} of ${tot} structures</div><div class="bar" aria-hidden="true"><i style="width:${n/tot*100}%"></i></div>`;
+  if(!cid){
+    host.innerHTML=`<h2>Cell theory</h2><ul class="theory"><li>All living things are made of one or more cells.</li><li>The cell is the basic unit of structure and function in living things.</li><li>All cells come from pre-existing cells.</li></ul><p class="small">Select any structure on the diagram, or use Tab and Enter, to see what it does. Switch cell types above the diagram to compare them.</p>${prog}`;
+    return;
+  }
+  const d=INFO[ctype][cid];
+  host.innerHTML=`<div>${d.w}</div><h2>${d.n}</h2><p>${d.job}</p><h3>Structure supports function</h3><p>${d.link}</p>${prog}<div class="row"><button class="btn ghost" id="backtheory">Show cell theory</button></div>`;
+  $('#backtheory').onclick=()=>{select(null)};
+}
+function select(id){
+  cid=id;
+  $$('#c-'+ctype+' .hs').forEach(g=>g.classList.toggle('sel',g.dataset.id===id));
+  if(id)seen[ctype].add(id);
+  renderCellInfo();
+}
+['animal','plant','bact'].forEach(t=>activatable($('#c-'+t),g=>select(g.dataset.id)));
+$$('#celltype button').forEach(b=>b.onclick=()=>{
+  ctype=b.dataset.t;cid=null;
+  $$('#celltype button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  ['animal','plant','bact'].forEach(t=>$('#c-'+t).style.display=t===ctype?'':'none');
+  $$('.hs').forEach(g=>g.classList.remove('sel'));
+  $('#ctbadge').textContent=BADGE[ctype];
+  renderCellInfo();
+});
+renderCellInfo();
+
+/* ---------- Reproduce ---------- */
+const PA={color:'#3FA796',pat:'spots',tail:'long',name:'Parent A'},PB={color:'#E3A72F',pat:'stripes',tail:'short',name:'Parent B'};
+function critter(cx,cy,s,t){
+  const dark=mixHex(t.color,'#000000',.3);
+  const tail=t.tail==='long'?`<path d="M${cx+34*s} ${cy+6*s} C${cx+70*s} ${cy-4*s} ${cx+66*s} ${cy-42*s} ${cx+88*s} ${cy-38*s}" fill="none" stroke="${dark}" stroke-width="${5*s}" stroke-linecap="round"/>`:`<circle cx="${cx+40*s}" cy="${cy+4*s}" r="${7*s}" fill="${dark}"/>`;
+  const pat=t.pat==='spots'?`<circle cx="${cx-14*s}" cy="${cy-8*s}" r="${5*s}" fill="${dark}"/><circle cx="${cx+8*s}" cy="${cy-14*s}" r="${4.5*s}" fill="${dark}"/><circle cx="${cx+14*s}" cy="${cy+6*s}" r="${5*s}" fill="${dark}"/>`:`<path d="M${cx-16*s} ${cy-18*s}V${cy+14*s}M${cx} ${cy-22*s}V${cy+18*s}M${cx+16*s} ${cy-18*s}V${cy+14*s}" stroke="${dark}" stroke-width="${6*s}" stroke-linecap="round"/>`;
+  return `<g>${tail}<ellipse cx="${cx-14*s}" cy="${cy+30*s}" rx="${9*s}" ry="${5*s}" fill="${dark}"/><ellipse cx="${cx+14*s}" cy="${cy+30*s}" rx="${9*s}" ry="${5*s}" fill="${dark}"/><ellipse cx="${cx}" cy="${cy}" rx="${38*s}" ry="${30*s}" fill="${t.color}" stroke="${dark}" stroke-width="${3*s}"/>${pat}<circle cx="${cx-14*s}" cy="${cy-4*s}" r="${0}" fill="#fff"/><circle cx="${cx-22*s}" cy="${cy-24*s}" r="${6*s}" fill="#fff" stroke="${dark}" stroke-width="${1.5*s}"/><circle cx="${cx-3*s}" cy="${cy-26*s}" r="${6*s}" fill="#fff" stroke="${dark}" stroke-width="${1.5*s}"/><circle cx="${cx-21*s}" cy="${cy-23*s}" r="${2.6*s}" fill="#1E2B2F"/><circle cx="${cx-2*s}" cy="${cy-25*s}" r="${2.6*s}" fill="#1E2B2F"/></g>`;
+}
+let rmode='asexual',fert='external',kids=[];
+function makeKids(){
+  kids=[];
+  for(let i=0;i<4;i++){
+    kids.push(rmode==='asexual'?{...PA}:{color:pick([PA,PB]).color,pat:pick([PA,PB]).pat,tail:pick([PA,PB]).tail});
+  }
+}
+function drawRep(){
+  const s=$('#repsvg');let h='';
+  const xs=[105,235,365,495];
+  if(rmode==='asexual'){
+    h+=`<text x="300" y="82" text-anchor="middle" font-size="16" font-weight="700" fill="#1E2B2F">One parent</text>`;
+    h+=critter(285,140,1.5,PA);
+    h+=`<path d="M300 205 V250" stroke="#51636A" stroke-width="4" marker-end="url(#ah)"/><text x="316" y="236" font-size="14" fill="#51636A">cell division copies the parent’s DNA</text>`;
+  }else{
+    h+=fert==='external'?`<rect x="20" y="196" width="560" height="74" rx="14" fill="#DDEEF5"/><g fill="#fff" opacity=".8"><circle cx="60" cy="214" r="5"/><circle cx="130" cy="250" r="4"/><circle cx="480" cy="220" r="5"/><circle cx="540" cy="252" r="4"/></g>`:`<ellipse cx="300" cy="226" rx="120" ry="42" fill="#F6E4E5" stroke="#B5555B" stroke-width="3" stroke-dasharray="6 5"/>`;
+    h+=`<text x="150" y="70" text-anchor="middle" font-size="16" font-weight="700" fill="#1E2B2F">Parent A</text><text x="450" y="70" text-anchor="middle" font-size="16" font-weight="700" fill="#1E2B2F">Parent B</text>`;
+    h+=critter(130,115,1.15,PA)+critter(430,115,1.15,PB);
+    h+=`<path d="M170 170 Q250 190 288 218" fill="none" stroke="#51636A" stroke-width="3" stroke-dasharray="5 4"/><path d="M430 170 Q350 190 312 218" fill="none" stroke="#51636A" stroke-width="3" stroke-dasharray="5 4"/>`;
+    h+=`<circle cx="300" cy="226" r="17" fill="${PA.color}" opacity=".9"/><circle cx="300" cy="226" r="8" fill="${PB.color}"/>`;
+    h+=`<text x="300" y="268" text-anchor="middle" font-size="13" fill="#51636A">egg + sperm combine (${fert} fertilization)</text>`;
+    h+=`<path d="M300 280 V300" stroke="#51636A" stroke-width="4" marker-end="url(#ah)"/>`;
+  }
+  const y=rmode==='asexual'?350:372;
+  kids.forEach((k,i)=>{h+=critter(xs[i]-8,y,.95,k)+`<text x="${xs[i]}" y="${y+58}" text-anchor="middle" font-size="13" fill="#51636A">Offspring ${i+1}</text>`});
+  s.innerHTML=`<defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#51636A"/></marker></defs>`+h;
+}
+function renderRep(){
+  const looks=new Set(kids.map(k=>k.color+k.pat+k.tail)).size;
+  const host=$('#repinfo');
+  const asex=rmode==='asexual';
+  host.innerHTML=`<h2>${asex?'Asexual reproduction':'Sexual reproduction'}</h2>
+  <p>${asex?'One parent produces offspring that are genetically identical to it.':'Two parents each contribute a gamete (egg or sperm). The offspring combine traits from both.'}</p>
+  ${asex?'':`<div class="row"><div class="seg" role="group" aria-label="Fertilization"><button data-f="external" aria-pressed="${fert==='external'}">External</button><button data-f="internal" aria-pressed="${fert==='internal'}">Internal</button></div></div><p class="small">${fert==='external'?'Eggs and sperm meet outside the body, usually in water. Examples: many fish and frogs.':'Eggs and sperm meet inside the body of one parent. Examples: mammals, birds and reptiles.'}</p>`}
+  <div class="fb" style="${looks>1?'':'background:var(--sun-l);border-color:var(--sun)'}"><b>${looks} different ${looks===1?'look':'looks'}</b> among the 4 offspring.<br>${asex?'Clones: no new variation.':'Mixing traits creates variation.'}</div>
+  <div class="row"><button class="btn" id="mk">Make new offspring</button></div>`;
+  $('#mk').onclick=()=>{makeKids();drawRep();renderRep()};
+  $$('#repinfo [data-f]').forEach(b=>b.onclick=()=>{fert=b.dataset.f;drawRep();renderRep()});
+}
+$$('#repmode button').forEach(b=>b.onclick=()=>{rmode=b.dataset.m;$$('#repmode button').forEach(x=>x.setAttribute('aria-pressed',x===b));makeKids();drawRep();renderRep()});
+makeKids();drawRep();renderRep();
+
+/* ---------- Check ---------- */
+(function(){
+  const g=$('#fieldcells');let h='';
+  const pts=[[170,120,52],[290,90,46],[420,110,50],[500,215,48],[440,330,54],[310,360,50],[180,335,52],[110,230,48],[300,225,58],[215,225,34],[395,225,32],[345,150,28],[255,300,30],[395,290,30]];
+  pts.forEach((p,i)=>{h+=`<circle cx="${p[0]}" cy="${p[1]}" r="${p[2]}" fill="${i%3===0?'#D6E8C6':'#F8DCD5'}" stroke="${i%3===0?'#5E923F':'#B5555B'}" stroke-width="4"/><circle cx="${p[0]+4}" cy="${p[1]-3}" r="${p[2]*.36}" fill="#8E84C9" stroke="#6A5FA8" stroke-width="3"/>`});
+  g.innerHTML=h;
+})();
+quiz({host:$('#quizinfo'),
+ qs:[
+  {q:'Which statement is part of the cell theory?',opts:['Only plants and animals are made of cells','All cells come from pre-existing cells','Cells form spontaneously from nonliving matter','Some living things contain no cells at all'],a:1,why:'Cells arise only from other cells. They do not appear from nonliving matter.'},
+  {q:'A cell has DNA but no membrane-bound nucleus. It is most likely…',opts:['A plant cell','An animal cell','A prokaryotic cell','A mitochondrion'],a:2,why:'Prokaryotic cells (bacteria and archaea) keep their DNA in a nucleoid region with no membrane around it.'},
+  {q:'Which organelle releases usable energy from food molecules?',opts:['Golgi apparatus','Mitochondrion','Ribosome','Cell wall'],a:1,why:'Mitochondria release the usable energy the cell needs for its work.'},
+  {q:'Which pair is found in plant cells but not in animal cells?',opts:['Nucleus and ribosomes','Mitochondria and ER','Chloroplasts and a cell wall','Cytoplasm and a plasma membrane'],a:2,why:'Chloroplasts (photosynthesis) and a rigid cell wall are the classic plant-only structures.'},
+  {q:'Which type of reproduction increases genetic variation?',opts:['Asexual reproduction','Sexual reproduction','Cell division of a clone','Budding'],a:1,why:'Sexual reproduction combines gametes from two parents, so offspring differ from each other and from their parents.'}
+ ],
+ finish:s=>s>=4?'Strong work. Your cells are in sharp focus. Head back to the Explore tab to review anything you want to revisit.':'Good start. Revisit the Explore and Reproduce tabs, then try again to bring everything into focus.',
+ onProgress:(d,t,s)=>{const pct=Math.round(s/t*100);$('#blurn').setAttribute('stdDeviation',(9*(1-s/t)).toFixed(2));$('#focuslbl').textContent='Focus '+pct+'%'}
+});
+</script></body></html>
