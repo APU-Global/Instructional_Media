@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ISYS380 Information Systems Management | Week 6 | Cybersecurity, Privacy, and Ethics: Match Risk to Control</title>
+<style>
+:root{--red:#d34147;--dred:#a8353a;--ink:#222;--mut:#5b5b5b;--card:#faf8f6;--line:#e4dfd9;--ok:#2e7d4f;--okbg:#e8f4ed;--bad:#a8353a;--badbg:#fbeaea;--char:#3b3b3b}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:#fff;color:var(--ink);font:15px/1.45 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+#app{padding:12px 14px 14px;max-width:1000px;margin:0 auto}
+.hd{display:flex;gap:14px;align-items:center;background:var(--dred);color:#fff;border-radius:10px;padding:10px 16px}
+.hd svg{flex:0 0 auto;width:54px;height:54px}
+.kicker{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+h1{margin:0;font-size:21px;line-height:1.2}
+.hd p{margin:2px 0 0;font-size:14px;opacity:.95}
+.tabs{display:flex;gap:6px;margin:10px 0 10px;border-bottom:2px solid var(--line)}
+.tab{border:0;background:none;padding:8px 14px;font:inherit;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected=true]{color:var(--dred);border-bottom-color:var(--red)}
+.tab:hover{color:var(--ink)}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+.grid{display:grid;grid-template-columns:1.05fr 1fr;gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.card h2{margin:0 0 6px;font-size:16px;color:var(--dred)}
+.card p{margin:4px 0}
+.mut{color:var(--mut);font-size:13px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0 0;padding:9px 12px;border:1.5px solid var(--line);background:#fff;border-radius:8px;font:inherit;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--red);background:#fff6f6}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;padding:8px 10px;border-radius:8px;font-size:14px;min-height:20px}
+.fb.ok{background:var(--okbg);border-left:4px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:4px solid var(--bad)}
+.fb.info{background:#fff;border-left:4px solid var(--line)}
+.btn{border:0;background:var(--red);color:#fff;padding:8px 16px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--dred)}
+.btn.sec{background:#fff;color:var(--dred);border:1.5px solid var(--red)}
+.btn[disabled]{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:12.5px;color:var(--mut)}
+.scr{font-weight:700;color:var(--dred)}
+.hidden{display:none!important}
+svg text{font-family:inherit}
+@media (max-width:720px){.grid{grid-template-columns:1fr}.hd svg{width:40px;height:40px}h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+<div id="app">
+<header class="hd"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="25" fill="#fff" opacity=".15"/><path d="M27 8l15 6v12c0 9-6 15-15 19C18 41 12 35 12 26V14z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M20 27l5 5 10-11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div class="kicker">ISYS 380 Information Systems Management · Week 6</div><h1>Cybersecurity, Privacy, and Ethics: Match Risk to Control</h1><p>Identify which goal of the CIA triad is threatened, choose a safeguard, and consider who is affected.</p></div></header>
+
+<div class="grid">
+ <div class="card">
+  <h2 id="sh">Incident 1 of 5</h2>
+  <svg id="tri" viewBox="0 0 300 150" style="width:100%;height:150px" role="img" aria-label="CIA triad: Confidentiality, Integrity, Availability"></svg>
+  <p id="inc" style="font-size:15.5px;margin-top:2px"></p>
+  <div class="fb info" id="fb" aria-live="polite">Step 1: Which part of the CIA triad is threatened?</div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="nx" disabled>Next incident</button><span class="pill">Score: <span class="scr" id="sc">0</span> / 10</span></div>
+ </div>
+ <div class="card">
+  <h2 id="step">Step 1: Pick the threatened goal</h2>
+  <div id="opts"></div>
+ </div>
+</div>
+
+</div>
+<script>
+function sendHeight(){try{var h=document.getElementById('app').offsetHeight+2;parent.postMessage({type:'iframe-resize',height:h,source:'ISYS380'},'*')}catch(e){}}
+window.addEventListener('load',sendHeight);window.addEventListener('resize',sendHeight);
+if(window.ResizeObserver){new ResizeObserver(sendHeight).observe(document.getElementById('app'))}
+function initTabs(){var tabs=[].slice.call(document.querySelectorAll('.tab'));
+ tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.setAttribute('aria-selected',x===t);document.getElementById(x.dataset.p).classList.toggle('hidden',x!==t)});sendHeight()});
+ t.addEventListener('keydown',function(e){var i=tabs.indexOf(t);if(e.key==='ArrowRight'){tabs[(i+1)%tabs.length].focus();tabs[(i+1)%tabs.length].click()}if(e.key==='ArrowLeft'){tabs[(i-1+tabs.length)%tabs.length].focus();tabs[(i-1+tabs.length)%tabs.length].click()}})})}
+initTabs();
+
+
+var G=[['conf','Confidentiality: only authorized people see it'],['integ','Integrity: information stays accurate and unaltered'],['avail','Availability: systems and data are usable when needed']];
+var CT=[['bk','Tested offline backups and a recovery plan'],['ac','Role-based access controls with access logging'],['ch','Change approval, validation, and audit trails'],['en','Full-disk encryption on devices'],['tr','Security awareness training plus multi-factor login']];
+var I=[
+ {t:'Ransomware locks all patient scheduling records for three days. The clinic cannot see who is coming in.',g:'avail',c:'bk',e:'Backups and a tested recovery plan restore access fast.',eth:'Patients who need urgent care are affected first. Stewardship means planning before the crisis.'},
+ {t:'A front-desk employee opens a neighbor\u2019s medical file out of curiosity.',g:'conf',c:'ac',e:'Limiting access by role and logging views deters and detects snooping.',eth:'Privacy honors the dignity of the patient, who never agreed to that exposure.'},
+ {t:'A clerk\u2019s unchecked edit changes a student\u2019s grade in the records system.',g:'integ',c:'ch',e:'Approval steps and audit trails keep records accurate and traceable.',eth:'Fairness: a wrong record can harm a student who has little voice in correcting it.'},
+ {t:'A staff laptop holding student financial data is left in a taxi. It was not encrypted.',g:'conf',c:'en',e:'Encryption keeps the data unreadable even when the device is lost.',eth:'Transparency: affected students deserve to be told, and safeguards should have been in place first.'},
+ {t:'An email that looks like it is from IT tricks staff into entering their passwords on a fake site.',g:'conf',c:'tr',e:'Trained staff spot phishing, and multi-factor login limits damage from stolen passwords.',eth:'Accountability: security is a shared responsibility, and leaders must equip people to carry it.'}
+];
+var i=0,score=0,stage=0,missed1=false,missed2=false,CUR=null;
+function tri(hl){var pts={conf:[150,22],integ:[50,120],avail:[250,120]},nm={conf:'Confidentiality',integ:'Integrity',avail:'Availability'};
+ var h='<polygon points="150,22 50,120 250,120" fill="#fff" stroke="#bbb" stroke-width="2.5"/>';
+ for(var k in pts){var on=hl===k;h+='<circle cx="'+pts[k][0]+'" cy="'+pts[k][1]+'" r="'+(on?22:18)+'" fill="'+(on?'#a8353a':'#d34147')+'" fill-opacity="'+(hl&&!on?.35:1)+'" style="transition:all .25s"/><text x="'+pts[k][0]+'" y="'+(pts[k][1]+6)+'" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">'+k[0].toUpperCase()+'</text><text x="'+pts[k][0]+'" y="'+(pts[k][1]+(k=='conf'?-26:36))+'" text-anchor="middle" font-size="12" font-weight="700" fill="#3b3b3b">'+nm[k]+'</text>'}
+ h+='<text x="150" y="85" text-anchor="middle" font-size="12" fill="#5b5b5b">Protect all three</text>';document.getElementById('tri').innerHTML=h}
+function render(){CUR=I[i];stage=0;missed1=missed2=false;tri(null);document.getElementById('sh').textContent='Incident '+(i+1)+' of 5';document.getElementById('inc').textContent=CUR.t;
+ var f=document.getElementById('fb');f.className='fb info';f.textContent='Step 1: Which part of the CIA triad is threatened?';document.getElementById('nx').disabled=true;document.getElementById('nx').textContent=i==4?'See results':'Next incident';
+ show(G,'Step 1: Pick the threatened goal')}
+function show(list,title){document.getElementById('step').textContent=title;var h='';list.forEach(function(x){h+='<button class="opt" data-k="'+x[0]+'">'+x[1]+'</button>'});var o=document.getElementById('opts');o.innerHTML=h;
+ [].forEach.call(o.querySelectorAll('.opt'),function(b){b.addEventListener('click',function(){pick(b)})});sendHeight()}
+function pick(b){var f=document.getElementById('fb'),o=document.getElementById('opts');
+ if(stage==0){if(b.dataset.k==CUR.g){if(!missed1)score++;b.classList.add('ok');tri(CUR.g);f.className='fb ok';f.textContent='Correct. Now choose the best control.';document.getElementById('sc').textContent=score;stage=1;setTimeout(function(){show(CT,'Step 2: Pick the best control')},900)}
+  else{missed1=true;b.classList.add('bad');b.disabled=true;f.className='fb bad';f.textContent='Not the main threat here. Reread what was lost, exposed, or altered.'}}
+ else{if(b.dataset.k==CUR.c){if(!missed2)score++;b.classList.add('ok');[].forEach.call(o.querySelectorAll('.opt'),function(x){x.disabled=true});f.className='fb ok';f.innerHTML='<b>Correct.</b> '+CUR.e+'<br><b>Ethical lens:</b> '+CUR.eth;document.getElementById('sc').textContent=score;document.getElementById('nx').disabled=false}
+  else{missed2=true;b.classList.add('bad');b.disabled=true;f.className='fb bad';f.textContent='That helps elsewhere, but it does not best address this incident.'}}
+ sendHeight()}
+document.getElementById('nx').addEventListener('click',function(){if(i<4){i++;render()}else{document.getElementById('step').textContent='Results';document.getElementById('opts').innerHTML='<p><b>You scored '+score+' of 10.</b></p><p class="mut">Security and privacy protect people, not only systems. Good controls come from identifying the risk, its effect, and a fitting safeguard, then monitoring it.</p><button class="btn sec" id="rst">Try again</button>';document.getElementById('nx').disabled=true;document.getElementById('rst').addEventListener('click',function(){i=0;score=0;document.getElementById('sc').textContent=0;render()});sendHeight()}});
+render();
+
+</script></body></html>
