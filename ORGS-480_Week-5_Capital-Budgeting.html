@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ORGS 480 | Week 5 | Capital Budgeting</title>
+<style>
+:root{--red:#d34147;--red-dk:#a8353a;--sand:#edebe8;--paper:#fffdfb;--ink:#26303b;--mute:#58636f;--teal:#2b7a82;--teal-lt:#dcefef;--gold:#d99a22;--gold-lt:#fbf0d6;--green:#2f7d52;--green-lt:#dff0e5;--red-lt:#f9e1e2;--line:#ddd8d2}
+*{box-sizing:border-box}
+html{height:100%;overflow:hidden}
+body{margin:0;height:100%;overflow-y:auto;overflow-x:hidden;background:var(--sand);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:12px 14px 14px}
+.hero{display:flex;gap:18px;align-items:center;background:#fff;border-radius:18px;padding:8px 20px 8px 14px;border-left:8px solid var(--red)}
+.hero svg{flex:0 0 auto;width:140px;height:76px}
+.hero .course{font-size:13px;font-weight:600;color:var(--red-dk);margin:0}
+.hero h1{font:700 23px/1.2 Georgia,"Times New Roman",serif;margin:2px 0 2px}
+.hero p.sub{margin:0;color:var(--mute);font-size:14px}
+nav.steps{display:flex;gap:8px;margin:10px 0 10px}
+nav.steps button{flex:1;font:inherit;font-weight:600;font-size:14px;padding:9px 8px;border:2px solid transparent;border-radius:12px;background:#f7f5f2;color:var(--mute);cursor:pointer;text-align:center;line-height:1.25}
+nav.steps button[aria-selected=true]{background:#fff;color:var(--red-dk);border-color:var(--red)}
+nav.steps button:hover{background:#fff}
+.panel{display:none;background:#fff;border-radius:18px;padding:16px 20px 18px}
+.panel.on{display:block}
+.panel h2{font:700 19px/1.25 Georgia,serif;margin:0 0 4px}
+.lead{margin:0 0 12px;color:var(--mute);max-width:75ch}
+.cols{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
+.cols.even{grid-template-columns:1fr 1fr}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.card h3{font-size:15px;margin:0 0 4px}
+.card p{margin:0}
+.btn{font:inherit;font-weight:600;font-size:14px;border:0;border-radius:10px;padding:8px 14px;background:var(--red);color:#fff;cursor:pointer}
+.btn:hover{background:var(--red-dk)}
+.btn.ghost{background:#fff;color:var(--red-dk);border:2px solid var(--red)}
+.btn.ghost:hover{background:var(--red-lt)}
+.btn:disabled{opacity:.45;cursor:default}
+.chip{font:inherit;font-size:14px;font-weight:600;border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip:hover{border-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.fb{margin-top:10px;padding:9px 12px;border-radius:10px;font-size:14px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--green-lt);border-left:5px solid var(--green)}
+.fb.no{background:var(--gold-lt);border-left:5px solid var(--gold)}
+.fb.info{background:var(--teal-lt);border-left:5px solid var(--teal)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nextbar{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+label.f{display:block;font-weight:600;font-size:14px;margin:6px 0 2px}
+select,input[type=number],textarea{font:inherit;padding:6px 8px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);max-width:100%}
+input[type=range]{width:100%;accent-color:var(--red)}
+.score{font-weight:700;color:var(--teal)}
+.small{font-size:13px;color:var(--mute)}
+svg text{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+a{color:var(--red-dk)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+@media(max-width:760px){.cols,.cols.even{grid-template-columns:1fr}.hero svg{display:none}nav.steps{flex-wrap:wrap}nav.steps button{flex:1 1 45%}}
+@media(prefers-reduced-motion:no-preference){.fb.show{animation:pop .25s ease-out}@keyframes pop{from{transform:translateY(4px);opacity:0}to{transform:none;opacity:1}}}
+
+.pickrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--paper);font-size:14px}
+.pickrow .row{gap:6px;flex-wrap:nowrap}
+.pickrow .btn{padding:4px 10px;font-size:13px;white-space:nowrap}
+.pickrow.ok{background:var(--green-lt);border-color:var(--green)}
+.pickrow.no{background:var(--gold-lt);border-color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.stat{border-radius:12px;padding:8px 10px;background:var(--paper);border:1px solid var(--line)}
+.stat small{display:block;color:var(--mute);font-size:12.5px}
+.stat b{font:700 21px Georgia,serif}
+.pos{color:var(--green)}.neg{color:var(--red-dk)}
+.sl{margin-bottom:6px}
+.sl .spread{font-size:13.5px;font-weight:600}
+.tg{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;border:2px solid var(--line);border-radius:12px;margin-bottom:6px;cursor:pointer;font-size:14px;background:#fff}
+.tg:has(input:checked){border-color:var(--red);background:var(--red-lt)}
+.tg input{accent-color:var(--red);margin-top:4px}
+.tg small{display:block;color:var(--mute);font-size:12.5px}
+.fit label{display:block;font-size:13.5px;margin-bottom:3px}
+.fit input{accent-color:var(--teal);margin-right:8px}
+@media(max-width:760px){.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <svg viewBox="0 0 140 76" role="img" aria-label="A crane building a factory beside a bar chart that rises over time">
+    <path d="M10 70h56" stroke="#26303b" stroke-width="3" stroke-linecap="round"/>
+    <rect x="14" y="48" width="38" height="22" fill="#dcefef" stroke="#2b7a82" stroke-width="2.5"/><path d="M14 48l12-10v10l12-10v10l14-10v10" fill="#dcefef" stroke="#2b7a82" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M60 70V10h-22M60 10l16 8M42 10v14" fill="none" stroke="#d34147" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="38" y="24" width="8" height="6" fill="#d99a22"/>
+    <rect x="86" y="52" width="10" height="18" rx="2" fill="#f3b8bb"/><rect x="100" y="42" width="10" height="28" rx="2" fill="#e68a8f"/><rect x="114" y="28" width="10" height="42" rx="2" fill="#d34147"/><rect x="128" y="14" width="10" height="56" rx="2" fill="#a8353a"/>
+  </svg>
+  <div>
+    <p class="course">ORGS 480 | Week 5</p>
+    <h1>Capital Budgeting</h1>
+    <p class="sub">Judge whether a long-term project is worth the risk, then plan for what you cannot predict.</p>
+  </div>
+</header>
+
+<nav class="steps" role="tablist" aria-label="Activity steps">
+  <button role="tab">1. Spot the capital project</button>
+  <button role="tab">2. Run the numbers</button>
+  <button role="tab">3. Stress-test and decide</button>
+</nav>
+
+<!-- STEP 1 -->
+<section class="panel" role="tabpanel">
+  <h2>What makes a capital project?</h2>
+  <p class="lead">Capital projects commit significant resources and time and are expected to pay off over the long term. Sort each decision.</p>
+  <div class="cols">
+    <div id="cp"></div>
+    <div>
+      <svg viewBox="0 0 330 200" style="width:100%;height:auto" role="img" aria-label="Timeline of a capital project: plan, build, operate, payoff, with spending first and returns later">
+        <rect width="330" height="200" rx="14" fill="#fbf7f2"/>
+        <path d="M20 100h292" stroke="#26303b" stroke-width="2.5"/><path d="M306 94l10 6-10 6z" fill="#26303b"/>
+        <g font-size="12" font-weight="700" text-anchor="middle" fill="#26303b"><text x="50" y="190">Plan</text><text x="120" y="190">Build</text><text x="205" y="190">Operate</text><text x="275" y="190">Payoff</text></g>
+        <rect x="32" y="100" width="36" height="22" fill="#e68a8f"/><rect x="102" y="100" width="36" height="72" fill="#d34147"/>
+        <rect x="170" y="70" width="36" height="30" fill="#7cbcc1"/><rect x="214" y="48" width="36" height="52" fill="#2b7a82"/><rect x="258" y="22" width="36" height="78" fill="#1e5d63"/>
+        <text x="120" y="92" font-size="11.5" text-anchor="middle" fill="#a8353a" font-weight="700">cash out</text>
+        <text x="258" y="16" font-size="11.5" text-anchor="middle" fill="#1e5d63" font-weight="700">cash in</text>
+        <text x="165" y="40" font-size="12" text-anchor="middle" fill="#58636f">Large cost now. Returns over many years.</text>
+      </svg>
+      <div class="fb" id="f1" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="nextbar"><button class="btn" data-go="1">Run the numbers</button></div>
+</section>
+
+<!-- STEP 2 -->
+<section class="panel" role="tabpanel">
+  <h2>Compare benefits and costs over time</h2>
+  <p class="lead">Practice project “Lantern,” a fictional plant modeled on the scale of a large capital build. Adjust the inputs and watch payback, net present value (NPV), and internal rate of return (IRR).</p>
+  <div class="cols">
+    <div>
+      <div class="stats">
+        <div class="stat"><small>Payback period</small><b id="s-pb">–</b></div>
+        <div class="stat"><small>NPV at the discount rate</small><b id="s-npv">–</b></div>
+        <div class="stat"><small>IRR</small><b id="s-irr">–</b></div>
+      </div>
+      <svg id="ch2" viewBox="0 0 520 220" style="width:100%;height:auto" role="img" aria-label="Bar chart of cumulative cash position by year"></svg>
+    </div>
+    <div class="card">
+      <div class="sl"><div class="spread"><label for="i-inv">Up-front investment</label><span>$<span id="o-inv">400</span>M</span></div><input type="range" id="i-inv" min="100" max="1000" step="25" value="400"></div>
+      <div class="sl"><div class="spread"><label for="i-in">Net cash inflow per year</label><span>$<span id="o-in">85</span>M</span></div><input type="range" id="i-in" min="20" max="250" step="5" value="85"></div>
+      <div class="sl"><div class="spread"><label for="i-yr">Years of operation</label><span><span id="o-yr">10</span> yrs</span></div><input type="range" id="i-yr" min="3" max="20" step="1" value="10"></div>
+      <div class="sl"><div class="spread"><label for="i-r">Discount rate</label><span><span id="o-r">8</span>%</span></div><input type="range" id="i-r" min="2" max="16" step="0.5" value="8"></div>
+      <div class="fb info show" id="f2" role="status" aria-live="polite"></div>
+      <p class="small" style="margin-top:6px">NPV above zero means discounted benefits exceed costs. IRR is the rate at which NPV would be zero.</p>
+    </div>
+  </div>
+  <div class="nextbar"><button class="btn" data-go="2">Stress-test it</button></div>
+</section>
+
+<!-- STEP 3 -->
+<section class="panel" role="tabpanel">
+  <h2>Identify the risk, then plan the contingency</h2>
+  <p class="lead">Turn on risks that could hit Lantern, set aside a contingency fund, and decide whether the potential return justifies the risk.</p>
+  <div class="cols">
+    <div>
+      <div class="stats">
+        <div class="stat"><small>Payback period</small><b id="t-pb">–</b></div>
+        <div class="stat"><small>NPV</small><b id="t-npv">–</b></div>
+        <div class="stat"><small>IRR</small><b id="t-irr">–</b></div>
+      </div>
+      <svg id="ch3" viewBox="0 0 520 220" style="width:100%;height:auto" role="img" aria-label="Bar chart of cumulative cash position under the selected risks"></svg>
+    </div>
+    <div>
+      <label class="tg"><input type="checkbox" id="k-ov"><span><b>Cost overrun of 30%</b><small>Construction costs more than the plan.</small></span></label>
+      <label class="tg"><input type="checkbox" id="k-dl"><span><b>2-year delay</b><small>Inflows start two years later than planned.</small></span></label>
+      <label class="tg"><input type="checkbox" id="k-pr"><span><b>Market price drop of 25%</b><small>Annual inflows shrink for the life of the project.</small></span></label>
+      <div class="sl"><div class="spread"><label for="i-ct">Contingency fund</label><span><span id="o-ct">0</span>% of investment</span></div><input type="range" id="i-ct" min="0" max="30" step="5" value="0"></div>
+      <div class="fit"><b style="font-size:14px">Strategic fit</b>
+        <label><input type="checkbox" class="fitc">Advances the mission</label>
+        <label><input type="checkbox" class="fitc">Weighs impact on employees, customers, and communities</label>
+        <label><input type="checkbox" class="fitc">Names a key risk and how to reduce it</label>
+      </div>
+      <div class="row" style="margin-top:6px"><button class="btn" id="dec">Review my decision</button></div>
+    </div>
+  </div>
+  <div class="fb" id="f3" role="status" aria-live="polite"></div>
+</section>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+function report(){try{parent.postMessage({type:'orgs480-height',height:$('.wrap').scrollHeight+4},'*')}catch(e){}}
+function showFb(el,kind,html){el.className='fb show '+kind;el.innerHTML=html;report()}
+function initSteps(){
+  const tabs=$$('nav.steps button'),panels=$$('.panel');
+  function go(i){tabs.forEach((t,j)=>{t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});panels.forEach((p,j)=>p.classList.toggle('on',j===i));document.body.scrollTop=0;report()}
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>go(i));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){go(Math.min(i+1,tabs.length-1));tabs[Math.min(i+1,tabs.length-1)].focus()}if(e.key==='ArrowLeft'){go(Math.max(i-1,0));tabs[Math.max(i-1,0)].focus()}})});
+  $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.go)));
+  go(0);
+}
+addEventListener('load',report);addEventListener('resize',report);
+if(window.ResizeObserver)new ResizeObserver(report).observe($('.wrap'));
+
+initSteps();
+
+/* ---- Step 1 ---- */
+const CP=[["Build a processing plant that will operate for 20 years","c","Large, long-lived, and expected to pay off over many years."],["Pay this month’s electricity bill for the office","o","A routine operating cost with no long-term payoff."],["Buy a new production line expected to last 15 years","c","A significant commitment of resources for long-term returns."],["Pay this quarter’s marketing invoices","o","Day-to-day spending, not a long-term asset."],["Open a new distribution center over two years","c","Multi-year commitment that carries calculated risk."]];
+let done1=0;
+$('#cp').innerHTML=CP.map((c,i)=>`<div class="pickrow" id="p${i}"><span>${c[0]}</span><span class="row"><button class="btn ghost" data-i="${i}" data-a="c">Capital project</button><button class="btn ghost" data-i="${i}" data-a="o">Everyday cost</button></span></div>`).join('');
+$('#cp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,row=$('#p'+i);if(row.dataset.d)return;
+  if(b.dataset.a!==CP[i][1]){row.className='pickrow no';return showFb($('#f1'),'no','Think about size, time horizon, and whether the payoff comes over many years.')}
+  row.className='pickrow ok';row.dataset.d=1;$$('button',row).forEach(x=>x.disabled=true);done1++;
+  showFb($('#f1'),'ok',CP[i][2]+(done1===CP.length?' Capital projects are long bets, so planning and risk assessment matter.':''))});
+
+/* ---- Model ---- */
+function model(p){
+  const C=p.inv*p.ct/100,ov=p.inv*p.ov/100,n=p.delay+p.years,cf=[-(p.inv+C+Math.max(ov-C,0))];
+  for(let t=1;t<=n;t++)cf[t]=(t>p.delay?p.inflow*(1-p.shock):0)+(t===1?Math.max(C-ov,0):0);
+  const npvAt=r=>cf.reduce((s,v,t)=>s+v/Math.pow(1+r,t),0);
+  let irr=null;if(npvAt(-.9)*npvAt(2)<0){let lo=-.9,hi=2;for(let k=0;k<80;k++){const m=(lo+hi)/2;npvAt(m)>0?lo=m:hi=m}irr=(lo+hi)/2*100}
+  const cum=[];cf.reduce((s,v,t)=>(cum[t]=s+v),0);
+  let pb=null;for(let t=1;t<cum.length;t++)if(cum[t]>=0){pb=t-1+(-cum[t-1])/(cum[t]-cum[t-1]);break}
+  return {cf,cum,npv:npvAt(p.rate/100),irr,pb};
+}
+function chart(svg,m){
+  const W=520,H=220,l=48,r=10,t=14,b=26,v=m.cum,mn=Math.min(0,...v),mx=Math.max(0,...v),pad=(mx-mn)*.08||1,lo=mn-pad,hi=mx+pad;
+  const Y=y=>t+(hi-y)/(hi-lo)*(H-t-b),bw=(W-l-r)/v.length,z=Y(0);let s='';
+  for(let g=0;g<=4;g++){const y=lo+(hi-lo)*g/4;s+=`<line x1="${l}" x2="${W-r}" y1="${Y(y)}" y2="${Y(y)}" stroke="#ece8e3"/><text x="${l-6}" y="${Y(y)+4}" font-size="10.5" text-anchor="end" fill="#58636f">${fmt(y)}</text>`}
+  v.forEach((y,i)=>{const x=l+i*bw+bw*.12,h=Math.abs(Y(y)-z);s+=`<rect x="${x}" y="${y>=0?Y(y):z}" width="${bw*.76}" height="${Math.max(h,1)}" fill="${y>=0?'#2b7a82':'#d34147'}" rx="2"/>`;if(v.length<=22&&(i%2===0||v.length<=12))s+=`<text x="${x+bw*.38}" y="${H-9}" font-size="10.5" text-anchor="middle" fill="#26303b">${i}</text>`});
+  s+=`<line x1="${l}" x2="${W-r}" y1="${z}" y2="${z}" stroke="#26303b" stroke-width="1.8"/><text x="${l}" y="${H-0}" font-size="10" fill="#58636f">Year</text><text x="${W-r}" y="${t-3}" font-size="10.5" text-anchor="end" fill="#58636f">Cumulative cash ($M)</text>`;
+  svg.innerHTML=s;
+}
+function stats(pre,m){
+  $('#'+pre+'-pb').textContent=m.pb==null?'Not within life':fmt(m.pb,1)+' yrs';
+  const n=$('#'+pre+'-npv');n.textContent=(m.npv<0?'−$':'$')+fmt(Math.abs(m.npv))+'M';n.className=m.npv>=0?'pos':'neg';
+  $('#'+pre+'-irr').textContent=m.irr==null?'None':fmt(m.irr,1)+'%';
+}
+
+/* ---- Step 2 ---- */
+const g=id=>+$('#'+id).value;
+function run2(){
+  [['inv','o-inv'],['in','o-in'],['yr','o-yr'],['r','o-r']].forEach(([a,b])=>$('#'+b).textContent=$('#i-'+a).value);
+  const m=model({inv:g('i-inv'),inflow:g('i-in'),years:g('i-yr'),rate:g('i-r'),delay:0,ov:0,shock:0,ct:0});
+  stats('s',m);chart($('#ch2'),m);
+  showFb($('#f2'),m.npv>=0?'ok':'no',m.npv>=0?`NPV is positive, so the discounted benefits exceed the cost at ${g('i-r')}%. Payback tells you how long capital is tied up; NPV tells you whether the project creates value.`:'NPV is negative at this discount rate. The project returns less than the cost of tying up this capital.');
+}
+$$('#i-inv,#i-in,#i-yr,#i-r').forEach(e=>e.addEventListener('input',run2));
+run2();
+
+/* ---- Step 3 ---- */
+function base(){return {inv:g('i-inv'),inflow:g('i-in'),years:g('i-yr'),rate:g('i-r')}}
+function run3(){
+  $('#o-ct').textContent=$('#i-ct').value;
+  const p=Object.assign(base(),{delay:$('#k-dl').checked?2:0,ov:$('#k-ov').checked?30:0,shock:$('#k-pr').checked?.25:0,ct:g('i-ct')});
+  const m=model(p);stats('t',m);chart($('#ch3'),m);return {p,m};
+}
+$$('#k-ov,#k-dl,#k-pr,#i-ct').forEach(e=>e.addEventListener('input',run3));
+$$('nav.steps button')[2].addEventListener('click',run3);
+$('#dec').addEventListener('click',()=>{
+  const {p,m}=run3(),fit=$$('.fitc').filter(c=>c.checked).length,risks=[p.ov,p.delay,p.shock].filter(Boolean).length;
+  let msg=`With ${risks} risk${risks===1?'':'s'} active and a ${p.ct}% contingency, NPV is ${(m.npv<0?'−$':'$')+fmt(Math.abs(m.npv))}M. `;
+  if(m.npv>=0&&fit===3)msg+='The return justifies the risk, and your strategic-fit reasoning is complete. Record the key risk, the mitigation, and who is affected in your justification.';
+  else if(m.npv>=0)msg+=`The numbers hold up, but only ${fit} of 3 fit checks are complete. Investment techniques give structure, but judgment still matters.`;
+  else msg+='The numbers no longer support the project. Try a larger contingency, a smaller scope, or a plan to reduce the risk before committing funds.';
+  showFb($('#f3'),m.npv>=0&&fit===3?'ok':'no',msg);
+});
+run3();
+</script>
+</body>
+</html>

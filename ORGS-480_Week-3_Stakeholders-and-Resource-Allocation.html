@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ORGS 480 | Week 3 | Stakeholders and Resource Allocation</title>
+<style>
+:root{--red:#d34147;--red-dk:#a8353a;--sand:#edebe8;--paper:#fffdfb;--ink:#26303b;--mute:#58636f;--teal:#2b7a82;--teal-lt:#dcefef;--gold:#d99a22;--gold-lt:#fbf0d6;--green:#2f7d52;--green-lt:#dff0e5;--red-lt:#f9e1e2;--line:#ddd8d2}
+*{box-sizing:border-box}
+html{height:100%;overflow:hidden}
+body{margin:0;height:100%;overflow-y:auto;overflow-x:hidden;background:var(--sand);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:12px 14px 14px}
+.hero{display:flex;gap:18px;align-items:center;background:#fff;border-radius:18px;padding:8px 20px 8px 14px;border-left:8px solid var(--red)}
+.hero svg{flex:0 0 auto;width:140px;height:76px}
+.hero .course{font-size:13px;font-weight:600;color:var(--red-dk);margin:0}
+.hero h1{font:700 23px/1.2 Georgia,"Times New Roman",serif;margin:2px 0 2px}
+.hero p.sub{margin:0;color:var(--mute);font-size:14px}
+nav.steps{display:flex;gap:8px;margin:10px 0 10px}
+nav.steps button{flex:1;font:inherit;font-weight:600;font-size:14px;padding:9px 8px;border:2px solid transparent;border-radius:12px;background:#f7f5f2;color:var(--mute);cursor:pointer;text-align:center;line-height:1.25}
+nav.steps button[aria-selected=true]{background:#fff;color:var(--red-dk);border-color:var(--red)}
+nav.steps button:hover{background:#fff}
+.panel{display:none;background:#fff;border-radius:18px;padding:16px 20px 18px}
+.panel.on{display:block}
+.panel h2{font:700 19px/1.25 Georgia,serif;margin:0 0 4px}
+.lead{margin:0 0 12px;color:var(--mute);max-width:75ch}
+.cols{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
+.cols.even{grid-template-columns:1fr 1fr}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.card h3{font-size:15px;margin:0 0 4px}
+.card p{margin:0}
+.btn{font:inherit;font-weight:600;font-size:14px;border:0;border-radius:10px;padding:8px 14px;background:var(--red);color:#fff;cursor:pointer}
+.btn:hover{background:var(--red-dk)}
+.btn.ghost{background:#fff;color:var(--red-dk);border:2px solid var(--red)}
+.btn.ghost:hover{background:var(--red-lt)}
+.btn:disabled{opacity:.45;cursor:default}
+.chip{font:inherit;font-size:14px;font-weight:600;border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip:hover{border-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.fb{margin-top:10px;padding:9px 12px;border-radius:10px;font-size:14px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--green-lt);border-left:5px solid var(--green)}
+.fb.no{background:var(--gold-lt);border-left:5px solid var(--gold)}
+.fb.info{background:var(--teal-lt);border-left:5px solid var(--teal)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nextbar{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+label.f{display:block;font-weight:600;font-size:14px;margin:6px 0 2px}
+select,input[type=number],textarea{font:inherit;padding:6px 8px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);max-width:100%}
+input[type=range]{width:100%;accent-color:var(--red)}
+.score{font-weight:700;color:var(--teal)}
+.small{font-size:13px;color:var(--mute)}
+svg text{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+a{color:var(--red-dk)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+@media(max-width:760px){.cols,.cols.even{grid-template-columns:1fr}.hero svg{display:none}nav.steps{flex-wrap:wrap}nav.steps button{flex:1 1 45%}}
+@media(prefers-reduced-motion:no-preference){.fb.show{animation:pop .25s ease-out}@keyframes pop{from{transform:translateY(4px);opacity:0}to{transform:none;opacity:1}}}
+
+.srow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--paper)}
+.srow b{font-size:14px;font-weight:600}
+.srow .btn{padding:4px 10px;font-size:13px}
+.srow.ok{background:var(--green-lt);border-color:var(--green)}
+.srow.no{background:var(--gold-lt);border-color:var(--gold)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:700;padding:4px 6px;border-bottom:2px solid var(--ink);white-space:nowrap}
+td{padding:3px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.grp td{background:var(--sand);font-weight:700;font-size:12.5px;padding:2px 6px}
+.bar{position:relative;width:130px;height:12px;background:#ece8e3;border-radius:6px}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--teal)}
+.bar u{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:var(--red);text-decoration:none}
+.bar.cap i{background:var(--gold)}
+.asm{font-size:12px;color:var(--mute);max-width:200px;line-height:1.3}
+td select{padding:3px 4px;font-size:13px}
+.res{font-size:12px;line-height:1.3;max-width:230px}
+tr.ok td.rc{color:var(--green)}tr.no td.rc{color:var(--red-dk)}
+.req{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:8px;background:var(--paper)}
+.req .spread b{font-size:14px}
+.meters{display:grid;gap:8px}
+.mt{display:grid;grid-template-columns:96px 1fr 42px;gap:8px;align-items:center;font-size:13.5px}
+.mt .track{height:14px;border-radius:7px;background:#ece8e3;position:relative;overflow:hidden}
+.mt .track i{position:absolute;left:0;top:0;bottom:0;background:var(--teal);transition:width .2s}
+.mt .track u{position:absolute;left:35%;top:0;bottom:0;width:2px;background:var(--red);text-decoration:none}
+.mt.low .track i{background:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <svg viewBox="0 0 140 76" role="img" aria-label="Toy blocks stacked beside a balanced scale">
+    <rect x="8" y="46" width="30" height="26" rx="3" fill="#d34147"/><rect x="40" y="46" width="30" height="26" rx="3" fill="#2b7a82"/><rect x="24" y="20" width="30" height="26" rx="3" fill="#d99a22"/>
+    <text x="23" y="65" font-size="15" font-weight="700" fill="#fff">A</text><text x="55" y="65" font-size="15" font-weight="700" fill="#fff">B</text><text x="39" y="39" font-size="15" font-weight="700" fill="#fff">C</text>
+    <path d="M104 14v52M88 70h32" stroke="#26303b" stroke-width="3.5" stroke-linecap="round"/><path d="M84 24h40" stroke="#26303b" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M84 24l-9 18h18zM124 24l-9 18h18z" fill="#f9e1e2" stroke="#a8353a" stroke-width="2.5" stroke-linejoin="round"/><circle cx="104" cy="14" r="4" fill="#d34147"/>
+  </svg>
+  <div>
+    <p class="course">ORGS 480 | Week 3</p>
+    <h1>Stakeholders and Resource Allocation</h1>
+    <p class="sub">Name who is affected, read a mid-year budget, and allocate limited funds to serve the mission.</p>
+  </div>
+</header>
+
+<nav class="steps" role="tablist" aria-label="Activity steps">
+  <button role="tab">1. Name the stakeholders</button>
+  <button role="tab">2. Read the mid-year budget</button>
+  <button role="tab">3. Allocate with mission</button>
+</nav>
+
+<!-- STEP 1 -->
+<section class="panel" role="tabpanel">
+  <h2>Who is affected when a budget decision is made?</h2>
+  <p class="lead">Decide whether each group is an internal or external stakeholder. Correct answers light up on the map.</p>
+  <div class="cols even">
+    <div id="srows"></div>
+    <div>
+      <svg id="map" viewBox="0 0 320 250" style="width:100%;height:auto" role="img" aria-label="Stakeholder map: internal stakeholders in the center ring, external stakeholders on the outer ring">
+        <ellipse cx="160" cy="125" rx="150" ry="118" fill="#dcefef" stroke="#2b7a82" stroke-width="2"/>
+        <ellipse cx="160" cy="125" rx="76" ry="62" fill="#f9e1e2" stroke="#a8353a" stroke-width="2"/>
+        <text x="160" y="84" font-size="13" font-weight="700" text-anchor="middle" fill="#a8353a">Organization</text>
+        <text x="160" y="98" font-size="11" text-anchor="middle" fill="#a8353a">(internal)</text>
+        <text x="160" y="24" font-size="12" font-weight="700" text-anchor="middle" fill="#1e5d63">External stakeholders</text>
+        <g id="dots"></g>
+      </svg>
+      <div class="fb" id="s1f" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="nextbar"><button class="btn" data-go="1">Read the budget</button></div>
+</section>
+
+<!-- STEP 2 -->
+<section class="panel" role="tabpanel">
+  <h2>Tyler Toys-style mid-year review (practice data, $ thousands)</h2>
+  <p class="lead">At six months, actuals should be near 50% of the adopted budget unless the budget assumptions say otherwise. Treat 45% to 55% as on track. Make a call on each line.</p>
+  <div class="tw"><table id="bt">
+    <thead><tr><th>Line item</th><th class="n">Adopted</th><th class="n">Actual</th><th class="n">% used</th><th>vs. 50% mark</th><th>Budget assumption</th><th>Your call</th><th>Why</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="bchk">Check my calls</button><span class="score" id="bsc"></span><span class="small">Practice figures only. Use your own template numbers for Part 1.</span></div>
+  <div class="fb" id="bf" role="status" aria-live="polite"></div>
+  <div class="nextbar"><button class="btn" data-go="2">Allocate funds</button></div>
+</section>
+
+<!-- STEP 3 -->
+<section class="panel" role="tabpanel">
+  <h2>Divide a $100,000 reallocation pool</h2>
+  <p class="lead">Sample mission: <i>Create safe, joyful play for every child and the community around them.</i> Test each choice against the mission, then see who benefits.</p>
+  <div class="cols even">
+    <div>
+      <div class="req"><div class="spread"><b>A. Employee training and safety culture</b><span><span id="va">30</span>k</span></div><input type="range" id="ra" min="0" max="100" step="5" value="30" aria-label="Amount for A in thousands"></div>
+      <div class="req"><div class="spread"><b>B. Free toy donations for local families</b><span><span id="vb">40</span>k</span></div><input type="range" id="rb" min="40" max="100" step="5" value="40" aria-label="Amount for B in thousands"><div class="small">Restricted grant: at least $40k must go here.</div></div>
+      <div class="req"><div class="spread"><b>C. Product safety testing upgrade</b><span><span id="vc">30</span>k</span></div><input type="range" id="rc" min="0" max="100" step="5" value="30" aria-label="Amount for C in thousands"></div>
+      <div class="spread"><b>Total: <span id="tot">100</span>k of 100k</b><span class="small" id="tmsg"></span></div>
+    </div>
+    <div>
+      <div class="meters" id="meters"></div>
+      <div class="small" style="margin:4px 0 6px">The red line marks the level where a group is likely to feel heard.</div>
+      <div class="mt" id="mmis"><span><b>Mission fit</b></span><div class="track"><i></i></div><span></span></div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="achk">Review my allocation</button></div>
+    </div>
+  </div>
+  <div class="fb" id="af" role="status" aria-live="polite"></div>
+</section>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+function report(){try{parent.postMessage({type:'orgs480-height',height:$('.wrap').scrollHeight+4},'*')}catch(e){}}
+function showFb(el,kind,html){el.className='fb show '+kind;el.innerHTML=html;report()}
+function initSteps(){
+  const tabs=$$('nav.steps button'),panels=$$('.panel');
+  function go(i){tabs.forEach((t,j)=>{t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});panels.forEach((p,j)=>p.classList.toggle('on',j===i));document.body.scrollTop=0;report()}
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>go(i));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){go(Math.min(i+1,tabs.length-1));tabs[Math.min(i+1,tabs.length-1)].focus()}if(e.key==='ArrowLeft'){go(Math.max(i-1,0));tabs[Math.max(i-1,0)].focus()}})});
+  $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.go)));
+  go(0);
+}
+addEventListener('load',report);addEventListener('resize',report);
+if(window.ResizeObserver)new ResizeObserver(report).observe($('.wrap'));
+
+initSteps();
+
+/* ---- Step 1 ---- */
+const SK=[["Employees","I"],["Managers","I"],["Executives","I"],["Customers","E"],["Investors","E"],["Suppliers","E"],["Local community","E"],["Grant funder","E"]];
+const pos={I:[[120,112],[200,100],[160,150],[0,0]],E:[]};
+const outer=[[56,66],[264,66],[62,130],[258,130],[74,200],[246,200]];
+let correct=0,ii=0,ei=0;
+$('#srows').innerHTML=SK.map((s,i)=>`<div class="srow" id="sr${i}"><b>${s[0]}</b><span class="row" style="gap:6px"><button class="btn ghost" data-i="${i}" data-a="I">Internal</button><button class="btn ghost" data-i="${i}" data-a="E">External</button></span></div>`).join('');
+$('#srows').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,row=$('#sr'+i);if(row.dataset.done)return;
+  const ok=b.dataset.a===SK[i][1];
+  if(!ok){row.className='srow no';showFb($('#s1f'),'no',`${SK[i][0]} are not ${b.dataset.a==='I'?'internal':'external'}. Internal stakeholders work inside the organization; external ones are affected by it from outside.`);return}
+  row.className='srow ok';row.dataset.done=1;$$('button',row).forEach(x=>x.disabled=true);correct++;
+  let p;if(SK[i][1]==='I'){p=[[124,126],[196,126],[160,158]][ii++]}else p=outer[ei++];
+  $('#dots').insertAdjacentHTML('beforeend',`<g><circle cx="${p[0]}" cy="${p[1]}" r="9" fill="${SK[i][1]==='I'?'#d34147':'#2b7a82'}"/><text x="${p[0]}" y="${p[1]+(SK[i][1]==='I'?22:23)}" font-size="10.5" text-anchor="middle" fill="#26303b">${SK[i][0]}</text></g>`);
+  if(correct===SK.length)showFb($('#s1f'),'ok','Every group is placed. Naming who is affected is the first step in weighing trade-offs. Decisions land better when each group believes its perspective was heard.');
+  else showFb($('#s1f'),'ok',`${SK[i][0]}: correct. ${SK.length-correct} to go.`);
+});
+
+/* ---- Step 2 ---- */
+const B=[
+ ['g','Revenue'],
+ ['Toy sales',2400,1272,'Sales spread evenly across the year','on','Within 5 points of the 50% mark.'],
+ ['Online sales',900,360,'Sales spread evenly across the year','inv','Only 40% of the adopted amount. Revenue is lagging and affects the rest of the budget.'],
+ ['Special revenue: community grant (restricted)',150,150,'Grant paid in full in Q1','exp','The assumption explains 100%. The funds are still restricted to their purpose.'],
+ ['g','Fixed (non-discretionary) expenses'],
+ ['Salaries',1100,560,'Paid evenly each month','on','About half spent, as planned.'],
+ ['Facility lease',360,180,'Paid evenly each month','on','Exactly at the 50% mark.'],
+ ['Insurance',90,90,'Annual premium paid in January','exp','Paid up front, so 100% is expected.'],
+ ['g','Variable (discretionary) expenses'],
+ ['Marketing',300,205,'Spread evenly across the year','inv','68% spent at mid-year. Overspending leaves too little for the second half.'],
+ ['Materials',800,470,'Purchased evenly as production runs','inv','59% spent. Find out whether prices, waste, or volume is driving it.'],
+ ['Travel and training',80,22,'Annual staff training held in the fall','exp','Low spending is expected because the main training event comes later.']
+];
+const lab={on:'On track',exp:'Explained by assumption',inv:'Investigate'};
+let html='';B.forEach((r,i)=>{if(r[0]==='g'){html+=`<tr class="grp"><td colspan="8">${r[1]}</td></tr>`;return}
+ const p=r[2]/r[1]*100,over=p>100?100:p;
+ html+=`<tr id="br${i}"><td>${r[0]}</td><td class="n">${fmt(r[1])}</td><td class="n">${fmt(r[2])}</td><td class="n"><b>${fmt(p,0)}%</b></td><td><div class="bar ${r[0].includes('grant')?'cap':''}" aria-hidden="true"><i style="width:${over}%"></i><u></u></div></td><td class="asm">${r[3]}</td><td><select data-i="${i}" aria-label="Your call for ${r[0]}"><option value="">Choose</option><option value="on">On track</option><option value="exp">Explained by assumption</option><option value="inv">Investigate</option></select></td><td class="res rc"></td></tr>`});
+$('#bt tbody').innerHTML=html;
+$('#bchk').addEventListener('click',()=>{
+  let n=0,t=0,miss=0;
+  B.forEach((r,i)=>{if(r[0]==='g')return;t++;const tr=$('#br'+i),v=$('select',tr).value,rc=$('.res',tr);
+    if(!v){miss++;return}
+    if(v===r[4]){n++;tr.className='ok';rc.textContent='✔ '+r[5]}else{tr.className='no';rc.textContent='✘ '+lab[r[4]]+'. '+r[5]}});
+  $('#bsc').textContent=`${n} of ${t} correct`;
+  if(miss)showFb($('#bf'),'info',`Make a call on all ${t} lines first (${miss} left).`);
+  else if(n===t)showFb($('#bf'),'ok','All correct. The pattern matters: always read the assumptions before judging a line. The lines to investigate (online sales, marketing, materials) are where misalignments are forming.');
+  else showFb($('#bf'),'no','Review the red lines. Ask first: is the 50% mark the right benchmark, or does a budget assumption change it?');
+});
+
+/* ---- Step 3 ---- */
+const W={A:[3,1,1,0],B:[1,1,0,3],C:[1,3,2,1]},G=['Employees','Customers','Investors','Community'],MF={A:.6,B:.9,C:1};
+const sl={A:$('#ra'),B:$('#rb'),C:$('#rc')};
+function calc(){
+  const a={A:+sl.A.value,B:+sl.B.value,C:+sl.C.value},tot=a.A+a.B+a.C;
+  $('#va').textContent=a.A;$('#vb').textContent=a.B;$('#vc').textContent=a.C;$('#tot').textContent=tot;
+  $('#tmsg').textContent=tot===100?'Fully allocated':tot<100?`${100-tot}k unallocated`:`${tot-100}k over the pool`;
+  const sc=G.map((g,i)=>Math.min(100,(a.A*W.A[i]+a.B*W.B[i]+a.C*W.C[i])/300*100));
+  $('#meters').innerHTML=G.map((g,i)=>`<div class="mt ${sc[i]<35?'low':''}"><span>${g}</span><div class="track"><i style="width:${sc[i]}%"></i><u></u></div><span>${fmt(sc[i])}%</span></div>`).join('');
+  const mf=tot?(a.A*MF.A+a.B*MF.B+a.C*MF.C)/tot*100:0;
+  $('#mmis').innerHTML=`<span><b>Mission fit</b></span><div class="track"><i style="width:${mf}%;background:#d34147"></i></div><span>${fmt(mf)}%</span>`;
+  return {a,tot,sc,mf};
+}
+$$('input[type=range]').forEach(r=>r.addEventListener('input',calc));
+calc();
+$('#achk').addEventListener('click',()=>{
+  const {a,tot,sc,mf}=calc();
+  if(tot!==100)return showFb($('#af'),'info',`The pool must total $100k. You are at $${tot}k, so adjust the sliders first.`);
+  const low=G.filter((g,i)=>sc[i]<35);
+  let m=`Mission fit is ${fmt(mf)}%. `;
+  m+=low.length?`<b>${low.join(' and ')}</b> may not feel heard under this plan. Be ready to explain why those needs were not funded now and how their input shaped the outcome.`:'Every group clears the line, so each can see its priorities reflected. Be ready to explain why this split fits the mission and why other worthwhile requests received less.';
+  if(a.B>=40)m+=' The restricted grant is honored, which is part of faithful stewardship of entrusted funds.';
+  showFb($('#af'),low.length?'no':'ok',m);
+});
+</script>
+</body>
+</html>

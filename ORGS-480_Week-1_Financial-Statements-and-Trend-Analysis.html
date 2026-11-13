@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ORGS 480 | Week 1 | Financial Statements and Trend Analysis</title>
+<style>
+:root{--red:#d34147;--red-dk:#a8353a;--sand:#edebe8;--paper:#fffdfb;--ink:#26303b;--mute:#58636f;--teal:#2b7a82;--teal-lt:#dcefef;--gold:#d99a22;--gold-lt:#fbf0d6;--green:#2f7d52;--green-lt:#dff0e5;--red-lt:#f9e1e2;--line:#ddd8d2}
+*{box-sizing:border-box}
+html{height:100%;overflow:hidden}
+body{margin:0;height:100%;overflow-y:auto;overflow-x:hidden;background:var(--sand);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:12px 14px 14px}
+.hero{display:flex;gap:18px;align-items:center;background:#fff;border-radius:18px;padding:8px 20px 8px 14px;border-left:8px solid var(--red)}
+.hero svg{flex:0 0 auto;width:140px;height:76px}
+.hero .course{font-size:13px;font-weight:600;color:var(--red-dk);margin:0}
+.hero h1{font:700 23px/1.2 Georgia,"Times New Roman",serif;margin:2px 0 2px}
+.hero p.sub{margin:0;color:var(--mute);font-size:14px}
+nav.steps{display:flex;gap:8px;margin:10px 0 10px}
+nav.steps button{flex:1;font:inherit;font-weight:600;font-size:14px;padding:9px 8px;border:2px solid transparent;border-radius:12px;background:#f7f5f2;color:var(--mute);cursor:pointer;text-align:center;line-height:1.25}
+nav.steps button[aria-selected=true]{background:#fff;color:var(--red-dk);border-color:var(--red)}
+nav.steps button:hover{background:#fff}
+.panel{display:none;background:#fff;border-radius:18px;padding:16px 20px 18px}
+.panel.on{display:block}
+.panel h2{font:700 19px/1.25 Georgia,serif;margin:0 0 4px}
+.lead{margin:0 0 12px;color:var(--mute);max-width:75ch}
+.cols{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
+.cols.even{grid-template-columns:1fr 1fr}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.card h3{font-size:15px;margin:0 0 4px}
+.card p{margin:0}
+.btn{font:inherit;font-weight:600;font-size:14px;border:0;border-radius:10px;padding:8px 14px;background:var(--red);color:#fff;cursor:pointer}
+.btn:hover{background:var(--red-dk)}
+.btn.ghost{background:#fff;color:var(--red-dk);border:2px solid var(--red)}
+.btn.ghost:hover{background:var(--red-lt)}
+.btn:disabled{opacity:.45;cursor:default}
+.chip{font:inherit;font-size:14px;font-weight:600;border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip:hover{border-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.fb{margin-top:10px;padding:9px 12px;border-radius:10px;font-size:14px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--green-lt);border-left:5px solid var(--green)}
+.fb.no{background:var(--gold-lt);border-left:5px solid var(--gold)}
+.fb.info{background:var(--teal-lt);border-left:5px solid var(--teal)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nextbar{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+label.f{display:block;font-weight:600;font-size:14px;margin:6px 0 2px}
+select,input[type=number],textarea{font:inherit;padding:6px 8px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);max-width:100%}
+input[type=range]{width:100%;accent-color:var(--red)}
+.score{font-weight:700;color:var(--teal)}
+.small{font-size:13px;color:var(--mute)}
+svg text{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+a{color:var(--red-dk)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+@media(max-width:760px){.cols,.cols.even{grid-template-columns:1fr}.hero svg{display:none}nav.steps{flex-wrap:wrap}nav.steps button{flex:1 1 45%}}
+@media(prefers-reduced-motion:no-preference){.fb.show{animation:pop .25s ease-out}@keyframes pop{from{transform:translateY(4px);opacity:0}to{transform:none;opacity:1}}}
+
+.stmt{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.stmt svg{flex:0 0 54px;width:54px;height:54px}
+.quizitem{font:700 20px Georgia,serif;text-align:center;padding:14px 10px;background:var(--gold-lt);border-radius:12px;margin:8px 0 10px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.opts .btn{padding:10px 6px;font-size:13.5px}
+.formula{font:600 15px/1.6 Georgia,serif;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:6px 8px;background:var(--paper)}
+.mini b{font-size:13px}
+.mini .chg{font-size:13px;font-weight:700}
+.up{color:var(--green)}.down{color:var(--red-dk)}
+.verd label{display:block;padding:7px 10px;margin-bottom:6px;border:2px solid var(--line);border-radius:10px;cursor:pointer;font-size:14px}
+.verd input{accent-color:var(--red);margin-right:8px}
+.verd label:has(input:checked){border-color:var(--ink);background:var(--paper)}
+@media(max-width:760px){.minis{grid-template-columns:1fr 1fr}.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <svg viewBox="0 0 140 76" role="img" aria-label="Three stacked paper statements next to a rising line chart">
+    <rect x="6" y="14" width="40" height="52" rx="5" fill="#f9e1e2" stroke="#d34147" stroke-width="2"/>
+    <rect x="16" y="8" width="40" height="52" rx="5" fill="#dcefef" stroke="#2b7a82" stroke-width="2"/>
+    <rect x="26" y="2" width="40" height="52" rx="5" fill="#fff" stroke="#26303b" stroke-width="2"/>
+    <path d="M33 16h26M33 24h26M33 32h18" stroke="#9aa3ac" stroke-width="3" stroke-linecap="round"/>
+    <path d="M33 44l8-6 7 4 9-10" fill="none" stroke="#d34147" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="78,60 92,48 104,52 120,28 134,14" fill="none" stroke="#2b7a82" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="134" cy="14" r="5" fill="#d34147"/><path d="M76 66h62" stroke="#26303b" stroke-width="2"/>
+  </svg>
+  <div>
+    <p class="course">ORGS 480 | Week 1</p>
+    <h1>Financial Statements and Trend Analysis</h1>
+    <p class="sub">Read the three statements, trace the trends, and judge whether an organization can sustain its mission.</p>
+  </div>
+</header>
+
+<nav class="steps" role="tablist" aria-label="Activity steps">
+  <button role="tab">1. Meet the statements</button>
+  <button role="tab">2. Trace the trend</button>
+  <button role="tab">3. Judge stability</button>
+  <button role="tab">4. Stewardship note</button>
+</nav>
+
+<!-- STEP 1 -->
+<section class="panel" role="tabpanel">
+  <h2>Each statement answers a different question</h2>
+  <p class="lead">Match each line item to the statement where you would find it.</p>
+  <div class="cols">
+    <div>
+      <div class="stmt card">
+        <svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="12" fill="#f9e1e2"/><path d="M27 12v28M14 40h26M14 20h26" stroke="#a8353a" stroke-width="3" stroke-linecap="round"/><path d="M14 20l-6 12h12zM40 20l-6 12h12z" fill="#fff" stroke="#a8353a" stroke-width="2.5" stroke-linejoin="round"/></svg>
+        <div><h3>Balance sheet</h3><p>What does the organization own and owe at one point in time? Assets, liabilities, equity.</p></div>
+      </div>
+      <div class="stmt card">
+        <svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="12" fill="#dcefef"/><rect x="11" y="28" width="7" height="14" fill="#2b7a82"/><rect x="23" y="20" width="7" height="22" fill="#2b7a82"/><rect x="35" y="11" width="7" height="31" fill="#2b7a82"/></svg>
+        <div><h3>Income statement</h3><p>Did it earn more than it spent over a period? Revenues, expenses, net income.</p></div>
+      </div>
+      <div class="stmt card" style="margin-bottom:0">
+        <svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="12" fill="#fbf0d6"/><path d="M10 20h26l-6-6M44 34H18l6 6" fill="none" stroke="#9a6a0c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><h3>Cash flow statement</h3><p>Where did cash come from and go? Operating, investing, financing, ending cash.</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="spread"><b>Line item <span id="qn">1</span> of 6</b><span class="score">Score: <span id="qs">0</span></span></div>
+      <div class="quizitem" id="qi"></div>
+      <div class="opts" id="qo">
+        <button class="btn ghost" data-a="BS">Balance sheet</button>
+        <button class="btn ghost" data-a="IS">Income statement</button>
+        <button class="btn ghost" data-a="CF">Cash flow statement</button>
+      </div>
+      <div class="fb" id="qf" role="status" aria-live="polite"></div>
+      <div class="nextbar"><button class="btn" id="qnext" disabled>Next line item</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="panel" role="tabpanel">
+  <h2>Trend (horizontal) analysis of Harbor Table Foods</h2>
+  <p class="lead">Practice data for a fictional company, in $ millions. Pick a line item, choose two years, then calculate the percent change.</p>
+  <div class="cols">
+    <div class="card">
+      <div class="chips" id="mchips" role="group" aria-label="Line item"></div>
+      <svg id="chart" viewBox="0 0 560 250" style="width:100%;height:auto;margin-top:6px" role="img" aria-label="Line chart of the selected line item across five years"></svg>
+    </div>
+    <div>
+      <div class="row">
+        <div><label class="f" for="by">Base year</label><select id="by"></select></div>
+        <div><label class="f" for="cy">Current year</label><select id="cy"></select></div>
+      </div>
+      <div class="formula" id="formula"></div>
+      <label class="f" for="mine">Your turn: enter the percent change (e.g. 12.5)</label>
+      <div class="row"><input type="number" id="mine" step="0.1" style="width:110px"><span>%</span><button class="btn" id="chk">Check</button></div>
+      <div class="fb" id="tf" role="status" aria-live="polite"></div>
+      <p class="small" style="margin-top:10px">Percent change = (current period − base period) ÷ base period. Three or more years show direction better than one year-over-year comparison.</p>
+    </div>
+  </div>
+  <div class="nextbar"><button class="btn" data-go="2">Judge stability</button></div>
+</section>
+
+<!-- STEP 3 -->
+<section class="panel" role="tabpanel">
+  <h2>Read the statements together</h2>
+  <p class="lead">Harbor Table Foods, 2020 to 2024. One number never tells the whole story.</p>
+  <div class="minis" id="minis"></div>
+  <div class="cols even">
+    <div class="verd" role="radiogroup" aria-label="Verdict">
+      <b>Revenue is up. Is Harbor Table financially stable?</b>
+      <div style="margin-top:8px">
+        <label><input type="radio" name="v" value="a">Stable. Revenue keeps growing.</label>
+        <label><input type="radio" name="v" value="b">Warning signs. Dig into costs and debt before deciding.</label>
+        <label><input type="radio" name="v" value="c">Failing. It will close within a year.</label>
+      </div>
+    </div>
+    <div>
+      <b>What would you ask next? (pick the useful questions)</b>
+      <div style="margin-top:8px" id="asks"></div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="vchk">Check my reasoning</button></div>
+  <div class="fb" id="vf" role="status" aria-live="polite"></div>
+</section>
+
+<!-- STEP 4 -->
+<section class="panel" role="tabpanel">
+  <h2>Financial management as stewardship</h2>
+  <div class="cols even">
+    <div>
+      <svg viewBox="0 0 300 150" style="width:100%;height:auto" role="img" aria-label="Open hands holding a small plant growing from coins">
+        <rect width="300" height="150" rx="16" fill="#f9e1e2"/>
+        <path d="M40 112c30 14 62 16 110 16s80-2 110-16" fill="none" stroke="#a8353a" stroke-width="5" stroke-linecap="round"/>
+        <path d="M60 104c20 10 50 14 90 14s70-4 90-14l-14-6c-24 8-50 10-76 10s-52-2-76-10z" fill="#fff" stroke="#a8353a" stroke-width="3" stroke-linejoin="round"/>
+        <ellipse cx="150" cy="92" rx="44" ry="8" fill="#d99a22"/><ellipse cx="150" cy="84" rx="44" ry="8" fill="#e8b445"/><ellipse cx="150" cy="76" rx="44" ry="8" fill="#d99a22"/>
+        <path d="M150 74V40" stroke="#2f7d52" stroke-width="5" stroke-linecap="round"/>
+        <path d="M150 52c-22 0-30-14-30-26 20 0 30 8 30 26zM150 44c20 0 28-12 28-22-18 0-28 8-28 22z" fill="#2f7d52"/>
+      </svg>
+      <div class="card" style="margin-top:10px">
+        <h3>Key question for the week</h3>
+        <p>What do an organization’s financial statements and multi-year trends tell you about its ability to sustain its mission, and what do they leave unanswered?</p>
+      </div>
+    </div>
+    <div>
+      <p class="lead">From a Christian worldview, managing money well is part of caring faithfully for the resources entrusted to us. Accurate, consistent reporting is an act of integrity. Use your analysis of Harbor Table to respond.</p>
+      <label class="f" for="note">Who is affected if these trends continue, and what would faithful stewardship ask of the leaders?</label>
+      <textarea id="note" rows="6" style="width:100%" placeholder="Name the people the numbers represent: employees, customers, lenders, the community."></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn" id="copy">Copy my note</button><span class="small" id="cmsg" role="status"></span></div>
+      <p class="small" style="margin-top:8px">Paste your note into Discussion 1 and add the data from the company you chose. Theology of Work Project: <a href="https://www.theologyofwork.org/" target="_blank" rel="noopener">What Does the Bible Say About Finance?</a></p>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+function report(){try{parent.postMessage({type:'orgs480-height',height:$('.wrap').scrollHeight+4},'*')}catch(e){}}
+function showFb(el,kind,html){el.className='fb show '+kind;el.innerHTML=html;report()}
+function initSteps(){
+  const tabs=$$('nav.steps button'),panels=$$('.panel');
+  function go(i){tabs.forEach((t,j)=>{t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1});panels.forEach((p,j)=>p.classList.toggle('on',j===i));document.body.scrollTop=0;report()}
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>go(i));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){go(Math.min(i+1,tabs.length-1));tabs[Math.min(i+1,tabs.length-1)].focus()}if(e.key==='ArrowLeft'){go(Math.max(i-1,0));tabs[Math.max(i-1,0)].focus()}})});
+  $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.go)));
+  go(0);
+}
+addEventListener('load',report);addEventListener('resize',report);
+if(window.ResizeObserver)new ResizeObserver(report).observe($('.wrap'));
+
+initSteps();
+
+/* ---- Step 1 quiz ---- */
+const items=[["Cash and cash equivalents","BS","It is a snapshot of an asset at a point in time."],["Net income","IS","Net income is revenues minus expenses over a period."],["Total liabilities","BS","What the organization owes sits on the balance sheet."],["Cash from operating activities","CF","Cash moving through operations is the first section of the cash flow statement."],["Sales revenue","IS","Revenue is the top line of the income statement."],["Cash paid for new equipment","CF","Buying equipment is an investing activity on the cash flow statement."]];
+let qi=0,qs=0,qdone=false;
+function loadQ(){qdone=false;$('#qn').textContent=qi+1;$('#qi').textContent=items[qi][0];$('#qf').className='fb';$$('#qo .btn').forEach(b=>b.disabled=false);$('#qnext').disabled=true;$('#qnext').textContent=qi===items.length-1?'Restart':'Next line item'}
+$$('#qo .btn').forEach(b=>b.addEventListener('click',()=>{if(qdone)return;qdone=true;const ok=b.dataset.a===items[qi][1];if(ok)qs++;$('#qs').textContent=qs;$$('#qo .btn').forEach(x=>x.disabled=true);showFb($('#qf'),ok?'ok':'no',(ok?'Correct. ':'Not quite. ')+items[qi][2]);$('#qnext').disabled=false}));
+$('#qnext').addEventListener('click',()=>{if(qi===items.length-1){qi=0;qs=0;$('#qs').textContent=0}else qi++;loadQ()});
+loadQ();
+
+/* ---- Step 2 trend ---- */
+const Y=[2020,2021,2022,2023,2024];
+const D={rev:[410,438,471,495,512],ni:[38,41,36,29,22],ocf:[52,55,49,40,31],liab:[180,195,230,268,305],eq:[210,232,244,252,255]};
+D.de=D.liab.map((l,i)=>l/D.eq[i]);
+const M=[{k:'rev',n:'Revenue',u:'$M',d:0},{k:'ni',n:'Net income',u:'$M',d:0},{k:'ocf',n:'Operating cash flow',u:'$M',d:0},{k:'liab',n:'Total liabilities',u:'$M',d:0},{k:'de',n:'Liabilities to equity',u:'x',d:2}];
+let cur='rev';
+$('#mchips').innerHTML=M.map(m=>`<button class="chip" data-k="${m.k}" aria-pressed="${m.k===cur}">${m.n}</button>`).join('');
+$$('#by,#cy').forEach(s=>s.innerHTML=Y.map(y=>`<option>${y}</option>`).join(''));
+$('#by').value=2020;$('#cy').value=2024;
+const spec=k=>M.find(m=>m.k===k);
+const pc=(a,b)=>(b-a)/a*100;
+function draw(){
+  const m=spec(cur),v=D[cur],W=560,H=250,l=56,r=18,t=18,b=32;
+  const mn=Math.min(...v),mx=Math.max(...v),pad=(mx-mn||1)*.25,lo=mn-pad,hi=mx+pad;
+  const X=i=>l+i*(W-l-r)/4,Yp=y=>t+(hi-y)/(hi-lo)*(H-t-b);
+  const bi=Y.indexOf(+$('#by').value),ci=Y.indexOf(+$('#cy').value);
+  let s='';
+  for(let g=0;g<=4;g++){const y=lo+(hi-lo)*g/4,py=Yp(y);s+=`<line x1="${l}" x2="${W-r}" y1="${py}" y2="${py}" stroke="#e6e1db"/><text x="${l-8}" y="${py+4}" font-size="11" text-anchor="end" fill="#58636f">${fmt(y,m.d)}</text>`}
+  s+=Y.map((y,i)=>`<text x="${X(i)}" y="${H-10}" font-size="12" text-anchor="middle" fill="#26303b">${y}</text>`).join('');
+  s+=`<polyline fill="none" stroke="#2b7a82" stroke-width="3.5" stroke-linejoin="round" points="${v.map((y,i)=>X(i)+','+Yp(y)).join(' ')}"/>`;
+  s+=`<line x1="${X(bi)}" y1="${Yp(v[bi])}" x2="${X(ci)}" y2="${Yp(v[ci])}" stroke="#d34147" stroke-width="2.5" stroke-dasharray="6 5"/>`;
+  v.forEach((y,i)=>{const hot=i===bi||i===ci;s+=`<circle cx="${X(i)}" cy="${Yp(y)}" r="${hot?7:4.5}" fill="${hot?'#d34147':'#fff'}" stroke="${hot?'#a8353a':'#2b7a82'}" stroke-width="2.5"/><text x="${X(i)}" y="${Yp(y)-12}" font-size="11.5" font-weight="${hot?700:400}" text-anchor="middle" fill="#26303b">${fmt(y,m.d)}</text>`});
+  $('#chart').innerHTML=s;
+  const base=v[bi],now=v[ci],ch=pc(base,now);
+  const dir=Math.abs(ch)<2?'horizontal (about flat)':ch>0?'upward':'downward';
+  $('#formula').innerHTML=bi===ci?'Choose two different years.':`(${fmt(now,m.d)} − ${fmt(base,m.d)}) ÷ ${fmt(base,m.d)} = <b>?</b><br><span class="small">Direction: ${dir}. Try it, then check.</span>`;
+  $('#mine').value='';$('#tf').className='fb';
+}
+$('#mchips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;cur=b.dataset.k;$$('#mchips .chip').forEach(c=>c.setAttribute('aria-pressed',c===b));draw()});
+$$('#by,#cy').forEach(s=>s.addEventListener('change',draw));
+$('#chk').addEventListener('click',()=>{
+  const m=spec(cur),v=D[cur],bi=Y.indexOf(+$('#by').value),ci=Y.indexOf(+$('#cy').value);
+  if(bi===ci)return showFb($('#tf'),'info','Pick two different years first.');
+  const ch=pc(v[bi],v[ci]),val=parseFloat($('#mine').value);
+  if(isNaN(val))return showFb($('#tf'),'info','Enter a number first.');
+  if(Math.abs(val-ch)<=.25)showFb($('#tf'),'ok',`Correct: ${fmt(ch,1)}%. ${ch>0?'The line item rose':'The line item fell'} from ${fmt(v[bi],m.d)} to ${fmt(v[ci],m.d)} between ${Y[bi]} and ${Y[ci]}.`);
+  else showFb($('#tf'),'no',`Close, but not yet. Subtract the base from the current value, then divide by the <i>base</i> value. Check your sign too: the answer here is ${ch>0?'positive':'negative'}.`);
+});
+draw();
+
+/* ---- Step 3 judge ---- */
+function spark(k,name){const v=D[k],w=120,h=44,mn=Math.min(...v),mx=Math.max(...v),d=spec(k).d;
+  const pts=v.map((y,i)=>(4+i*(w-8)/4)+','+(h-4-(y-mn)/((mx-mn)||1)*(h-10))).join(' ');
+  const ch=pc(v[0],v[4]),good=k==='liab'||k==='de'?ch<0:ch>0;
+  return `<div class="mini"><b>${name}</b><svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto" aria-hidden="true"><polyline fill="none" stroke="${good?'#2f7d52':'#a8353a'}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/></svg><div class="chg ${good?'up':'down'}">${ch>0?'+':''}${fmt(ch,1)}% since 2020</div></div>`}
+$('#minis').innerHTML=spark('rev','Revenue')+spark('ni','Net income')+spark('ocf','Operating cash flow')+spark('de','Liabilities to equity');
+const asks=[["What is driving the rise in costs?",1],["What are the terms and due dates of the new debt?",1],["Is the cash shortfall temporary or growing?",1],["What color is the company logo?",0]];
+$('#asks').innerHTML=asks.map((a,i)=>`<label style="display:block;margin-bottom:6px"><input type="checkbox" data-i="${i}" style="accent-color:#d34147;margin-right:8px">${a[0]}</label>`).join('');
+$('#vchk').addEventListener('click',()=>{
+  const v=($('input[name=v]:checked')||{}).value;
+  if(!v)return showFb($('#vf'),'info','Choose a verdict first.');
+  const picks=$$('#asks input').map(c=>c.checked);
+  const good=picks.filter((p,i)=>p&&asks[i][1]).length,bad=picks.filter((p,i)=>p&&!asks[i][1]).length;
+  let msg='';
+  if(v==='b')msg='<b>Good call.</b> Revenue is up about 25%, yet net income fell about 42%, operating cash flow fell about 40%, and liabilities to equity climbed from 0.86 to 1.20. Growing sales with shrinking profit and cash signals cost pressure and rising risk.';
+  else if(v==='a')msg='<b>Look again.</b> Revenue alone is a snapshot of one line. Net income and operating cash flow are both falling while debt rises relative to equity.';
+  else msg='<b>That goes too far.</b> The trends are worrying, but nothing here predicts closure. A trend becomes insight when you explain what is driving it.';
+  msg+=` You picked ${good} of 3 useful follow-up questions${bad?' and one that will not help the analysis':''}.`;
+  showFb($('#vf'),v==='b'&&good>=2&&!bad?'ok':'no',msg);
+});
+
+/* ---- Step 4 ---- */
+$('#copy').addEventListener('click',()=>{const t=$('#note').value;const done=ok=>$('#cmsg').textContent=ok?'Copied.':'Select the text and copy it manually.';
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>done(1),()=>done(0));else{$('#note').select();try{done(document.execCommand('copy'))}catch(e){done(0)}}});
+</script>
+</body>
+</html>
