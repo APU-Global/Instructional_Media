@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7 Interactive | From Problem to Prompt to Verified Output</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.
+.stepl{font-weight:700;margin:12px 0 2px;display:flex;gap:8px;align-items:center}
+.stepl i{font-style:normal;background:var(--red);color:#fff;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;font-size:.8rem}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.out{border:2px dashed #d9d4cf;border-radius:16px;padding:14px 16px;margin:10px 0;background:#fff}
+.out.on{border-style:solid;border-color:var(--teal);background:#f6fbfb}
+.out b.t{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);margin-bottom:4px}
+.chk{display:grid;gap:6px;margin:10px 0}.chk label{display:flex;gap:10px;align-items:flex-start;background:var(--warm);border-radius:12px;padding:8px 12px;font-weight:600}
+.parts{display:grid;gap:6px;margin:8px 0}.parts label{display:flex;gap:10px;align-items:flex-start;background:var(--warm);border-radius:12px;padding:8px 12px}.parts label b{display:block}.parts label small{color:var(--mut);display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}@media(max-width:860px){.two{grid-template-columns:1fr}}
+.pbox{border:2px solid #eee;border-radius:16px;padding:12px 14px;background:#fff}
+.pbox .lab{font-size:.75rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+.pbox.prompt{background:#231f20;color:#fff;border-color:#231f20}.pbox.prompt .lab{color:#f7dcdd}
+.pbox.resp{background:#f4f7fb;border-color:#d7e1ee}
+.meter{display:flex;gap:6px;margin:8px 0;align-items:center;font-weight:700}
+.meter i{width:34px;height:10px;border-radius:5px;background:#e8e3de;display:inline-block}.meter i.on{background:var(--teal)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tags span{font-size:.8rem;font-weight:700;border-radius:999px;padding:3px 10px;background:#eee;color:#8a8286}.tags span.on{background:var(--ok-l);color:#14502c}
+table.rt{border-collapse:collapse;width:100%;font-size:.88rem;margin:6px 0}table.rt th,table.rt td{border:1px solid #d7e1ee;padding:5px 8px;text-align:left;vertical-align:top}table.rt th{background:#e6eef7}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.brief{border:2px solid #d7e1ee;border-radius:16px;background:#f4f7fb;padding:10px 14px;margin-bottom:12px}.brief b{color:#35506e}
+.flags{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}@media(max-width:720px){.flags{grid-template-columns:1fr}}
+.flags div{background:var(--warm);border-radius:12px;padding:8px 12px;font-size:.9rem}.flags b{color:var(--red-d)}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of three steps: a magnifying glass over a target for the problem, a chat bubble with a cursor for the prompt, and a shield with a check mark for verification">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 50)"><circle cx="70" cy="62" r="52" fill="#fff"/><circle cx="70" cy="62" r="34" fill="#f7dcdd"/><circle cx="70" cy="62" r="16" fill="#a8353a"/><path d="M108 100l38 38" stroke="#f6c453" stroke-width="12" stroke-linecap="round"/><text x="70" y="168" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">1 · Define the problem</text></g>
+<path d="M300 112h60m-12-12l12 12-12 12" stroke="#f6c453" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(400 48)"><path d="M0 14a14 14 0 0114-14h124a14 14 0 0114 14v70a14 14 0 01-14 14H60l-30 26V98H14A14 14 0 010 84z" fill="#fff"/><g stroke="#d9d4cf" stroke-width="7" stroke-linecap="round"><path d="M20 28h110M20 46h90"/></g><rect x="20" y="62" width="9" height="22" fill="#a8353a"/><text x="76" y="168" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">2 · Prompt with care</text></g>
+<path d="M610 112h60m-12-12l12 12-12 12" stroke="#f6c453" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(710 40)"><path d="M70 0l62 22v52c0 36-26 58-62 74-36-16-62-38-62-74V22z" fill="#fff"/><path d="M42 74l20 20 40-46" stroke="#2d7a4b" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="70" y="176" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">3 · Verify everything</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 450 · Week 7 Interactive</div><h1>From Problem to Prompt to Verified Output</h1><p>A good AI-informed solution begins with a clearly defined problem, not with a tool. Define a problem, see how prompts change what an AI tool returns, and practice checking AI output for errors, invented information, and bias.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Define the problem first</h2>
+<p class="lead">A well-defined problem guides every later decision. Identify the population, the need, and the setting, and check whether AI is the right approach at all. (Illustrative choices for practice.)</p>
+<div class="stepl"><i>1</i> Who is affected?</div><div class="pick" id="pp" role="group" aria-label="Population"></div>
+<div class="stepl"><i>2</i> What is the need?</div><div class="pick" id="pn" role="group" aria-label="Need"></div>
+<div class="stepl"><i>3</i> Where does it occur?</div><div class="pick" id="ps" role="group" aria-label="Setting"></div>
+<div class="out" id="stm"><b class="t">Problem statement</b><span>Make your three choices to build it.</span></div>
+<div class="stepl"><i>?</i> Before you reach for a tool, ask:</div>
+<div class="chk" id="chk"></div>
+<div class="note teal live" id="rd" aria-live="polite"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Prompt with care</h2>
+<p class="lead">Clear, specific prompts produce more useful output. Provide context, state what you want, and name the format. Then refine based on what you receive. Add ingredients to the prompt and watch the sample response change. (The responses are written for this exercise, not generated live.)</p>
+<div class="parts" id="parts"></div>
+<div class="two"><div class="pbox prompt"><div class="lab">Your prompt</div><div id="pv"></div><div class="meter" id="mt"></div></div>
+<div class="pbox resp"><div class="lab">Sample response</div><div id="rs" aria-live="polite"></div></div></div>
+<div class="tags" id="tg" aria-live="polite"></div>
+<div class="note live" id="pins" aria-live="polite"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Verify everything</h2>
+<p class="lead">AI output must be checked. Look for errors, invented information, and bias, and verify claims with reliable sources. Below is a short AI-drafted brief. Decide which claims you would check before using them.</p>
+<div class="brief"><b>AI-drafted brief:</b> “Text-message reminders for missed appointments.” (Invented for this exercise.)</div>
+<div id="qs"></div><p class="live score" id="qres" aria-live="polite"></p>
+<div class="flags"><div><b>Invented or unverifiable sources.</b> Check that the author, study, and numbers exist.</div><div><b>Exact statistics with no citation.</b> Find the original source.</div><div><b>Absolute words.</b> “All,” “every,” “eliminate,” and “proves” are warning signs.</div><div><b>Hidden assumptions.</b> Who might lack access, and who is left out?</div></div>
+<div class="note teal"><strong>Responsible implementation.</strong> Solutions have to work in real settings: consider cost, training, and community acceptance, and keep humans responsible for final decisions. Let compassion, justice, and stewardship shape the design.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Start with the problem</b>Tools come second.</div><div><b>Prompt with care</b>Context improves output.</div><div><b>Verify everything</b>Check accuracy and bias.</div><div><b>Plan for real settings</b>People implement solutions.</div></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 450 Week 7 Deep Dive. All scenarios, prompts, and sample responses are invented for practice.</p>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+var POP=["older adults living alone","school-age children","rural adults"];
+var NEED=["missed follow-up appointments","low flu-vaccine uptake","limited access to health information"];
+var SET=["a community health clinic","a school district","a county health department"];
+var st={p:-1,n:-1,s:-1};
+var SOL={
+ 0:[["Text or call reminders","A reliable contact list and a short message template","Messages may not reach people without phones or with changed numbers"],["Help with transportation","Rides or vouchers and a way to book them","Costs and limited availability"],["Easy rescheduling by phone","Staff time and a clear phone process","Long hold times could discourage people"]],
+ 1:[["Reminder messages with clinic times","Contact data and consent to message","May not reach people without phones"],["Vaccination at community events","Staff, supplies, and venues","Weather, staffing, and reach"],["Plain-language information from trusted local voices","Partners and translated materials","Messages must be accurate and fit the culture"]],
+ 2:[["Printed and online plain-language guides","Writers, clinician review, and translation","Information can become outdated"],["A phone line staffed by a person","Staff and a call-back process","Staffing limits wait times"],["Training for trusted community members","Training time and ongoing support","Messages can vary between people"]]};
+function pick(host,items,key,sel){var h=$(host);h.innerHTML="";items.forEach(function(x,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=x;b.setAttribute("aria-pressed",st[key]===i);b.onclick=function(){st[key]=i;renderAll()};h.appendChild(b)})}
+var CK=["I can describe who is affected and what they need.","I have checked whether a simpler, non-AI fix could work.","I know what data a tool would need and whether it is fair to everyone."];
+var ck=[false,false,false];
+(function(){var c=$("chk");CK.forEach(function(t,i){var l=document.createElement("label");l.innerHTML='<input type="checkbox"> <span>'+t+'</span>';l.querySelector("input").onchange=function(){ck[i]=this.checked;ready()};c.appendChild(l)})})();
+function ready(){var n=ck.filter(Boolean).length,r=$("rd");
+ r.innerHTML=n===3?"<strong>Now you can consider whether AI helps.</strong> You have a defined problem, you have tried simpler options, and you know the data question. Whatever tool you choose, keep humans responsible for final decisions.":"<strong>"+n+" of 3 checks complete.</strong> Check whether AI is the right approach before choosing a tool: a well-defined problem and a non-AI alternative come first."}
+function renderAll(){pick("pp",POP,"p");pick("pn",NEED,"n");pick("ps",SET,"s");
+ var s=$("stm");if(st.p>=0&&st.n>=0&&st.s>=0){s.className="out on";s.innerHTML='<b class="t">Problem statement</b>Our problem: <strong>'+NEED[st.n]+'</strong> among <strong>'+POP[st.p]+'</strong>, seen in <strong>'+SET[st.s]+'</strong>.'}else{s.className="out";s.innerHTML='<b class="t">Problem statement</b><span>Make your three choices to build it.</span>'}
+ renderPrompt()}
+var PARTS=[["Context","Say who and where.",function(p,n,s){return"I work at "+s+", and the group I am focused on is "+p+"."}],
+ ["A specific task","Say what you want.",function(p,n,s){return"Suggest three low-cost ways to reduce "+n+"."}],
+ ["The format you want","Say how to present it.",function(p,n,s){return"Present the answer as a table with the option, what it would take, and one risk."}],
+ ["Constraints","Length, reading level, budget.",function(p,n,s){return"Keep it under 150 words, at an eighth-grade reading level, assuming a small budget."}],
+ ["Ask for limits","Invite it to flag uncertainty.",function(p,n,s){return"Tell me what you are unsure about and what I should verify."}]];
+var on=[false,false,false,false,false];
+(function(){var h=$("parts");PARTS.forEach(function(x,i){var l=document.createElement("label");l.innerHTML='<input type="checkbox"> <span><b>'+x[0]+'</b><small>'+x[1]+'</small></span>';l.querySelector("input").onchange=function(){on[i]=this.checked;renderPrompt()};h.appendChild(l)})})();
+function esc(t){return t.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function renderPrompt(){
+ var ip=st.p>=0?st.p:0,in_=st.n>=0?st.n:0,is=st.s>=0?st.s:0,p=POP[ip],n=NEED[in_],s=SET[is];
+ var parts=["Help me with "+n+"."];PARTS.forEach(function(x,i){if(on[i])parts.push(x[2](p,n,s))});
+ $("pv").innerHTML=parts.map(function(t){return"<div style='margin-bottom:4px'>"+esc(t)+"</div>"}).join("")+((st.p<0||st.n<0||st.s<0)?"<div style='opacity:.65;font-size:.85rem;margin-top:6px'>(Using the first choice in each group from Part 1. Make your own choices there.)</div>":"");
+ var c=on.filter(Boolean).length;$("mt").innerHTML=[0,1,2,3,4].map(function(i){return'<i class="'+(i<c?"on":"")+'"></i>'}).join("")+"<span style='margin-left:6px'>"+c+" of 5 ingredients</span>";
+ var sol=SOL[in_],hasCtx=on[0],hasTask=on[1],hasFmt=on[2],hasCon=on[3],hasLim=on[4];var out="";
+ if(!hasCtx&&!hasTask)out="<p>Here are some ideas: raise awareness, improve communication, use technology, and work with partners.</p>";
+ else{var intro="Here are some options"+(hasCtx?" for "+p+" in "+s:"")+(hasTask?"":" to consider")+":";
+  if(hasFmt)out="<p>"+intro+"</p><table class='rt'><tr><th>Option</th><th>What it would take</th><th>One risk</th></tr>"+sol.map(function(r){return"<tr><td>"+r[0]+"</td><td>"+r[1]+"</td><td>"+r[2]+"</td></tr>"}).join("")+"</table>";
+  else out="<p>"+intro+" "+sol.map(function(r){return r[0].toLowerCase()}).join("; ")+".</p>"}
+ if(hasLim)out+="<p><em>What I am unsure about:</em> I cannot confirm local costs or how well these work in your community. Verify with local data and with program staff before relying on any of this.</p>";
+ $("rs").innerHTML=out;
+ var tags=[["Fits your setting",hasCtx],["Answers a specific task",hasTask],["Easy to scan",hasFmt],["Plain language and small budget",hasCon],["Flags its own limits",hasLim]];
+ $("tg").innerHTML=tags.map(function(t){return"<span class='"+(t[1]?"on":"")+"'>"+(t[1]?"✓ ":"")+t[0]+"</span>"}).join("");
+ $("pins").innerHTML=c<=1?"<strong>With little to go on, the tool gives generic advice.</strong> It cannot know your setting, your group, or what you plan to do with the answer. Add ingredients above.":c<5?"<strong>Better, and still improvable.</strong> Each ingredient you add removes a guess the tool would otherwise make. Even a strong prompt needs refining after you read the response, and the response still has to be verified (Part 3).":"<strong>A clear, specific prompt.</strong> It gives context, a task, a format, constraints, and an invitation to flag limits. Even so, the output is only a draft: check it for errors, invented information, and bias, and keep people responsible for the final decision."}
+renderAll();ready();
+function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ labels.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Look for the warning signs listed below.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"“A 2019 study by Dr. Helena Marchetti proved that text reminders cut missed visits by 87% in every community.”",a:0,w:"A specific named study, a very precise figure, and the words “proved” and “every community” are all red flags. Confirm that the study exists and says this before using it."},
+{t:"“Missed appointments can delay care.”",a:1,w:"This is a reasonable general statement that is widely understood. It is still good practice to cite a source in your own report.",h:"This is a broad, modest claim. Is it a warning sign, or reasonable on its face?"},
+{t:"“All rural clinics already have fast broadband, so an app-based approach will reach everyone.”",a:0,w:"“All” and “everyone” hide an assumption about access. Some people and places lack devices or connections, so check who would be left out."},
+{t:"“This approach will eliminate health disparities.”",a:0,w:"“Eliminate” is an absolute claim. Solutions can help, but promising to remove disparities entirely is an overclaim."},
+{t:"“Reminders should be offered in the languages the community uses.”",a:1,w:"This is a reasonable design principle that supports culturally aware, accessible solutions. You would still check which languages your community uses.",h:"Is this an invented fact or a sensible design principle?"},
+{t:"“According to the CDC, 94.3% of adults prefer app reminders.”",a:0,w:"An exact statistic attributed to a named source is exactly what AI tools sometimes invent. Find the original CDC source and read what it actually measured."}],
+["Verify first","Reasonable general statement"],"qres");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

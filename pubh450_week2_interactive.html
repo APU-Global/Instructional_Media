@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 Interactive | Think in Systems: AI in a Health System</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.
+.two{display:grid;grid-template-columns:1.15fr 1fr;gap:18px;align-items:start}@media(max-width:860px){.two{grid-template-columns:1fr}}
+.map{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.node{cursor:pointer}.node:focus{outline:none}.node:focus-visible rect.box{stroke:#231f20;stroke-width:4}
+.node rect.box{transition:.2s}.node:hover rect.box{filter:brightness(1.06)}
+.tog{display:flex;gap:10px;align-items:center;margin:10px 0;font-weight:600}
+.card2{border:2px solid #eee;border-radius:16px;padding:14px 16px;background:#fff;min-height:250px}
+.card2 h3{margin:0 0 6px}.card2 ul{margin:4px 0 10px 18px;padding:0}.card2 li{margin-bottom:4px}
+.card2 .lab{font-size:.75rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.card2 .ben{color:#14502c}.card2 .rsk{color:#8a2b24}
+.ripleg{margin:0 0 6px 20px;padding:0;font-size:.9rem}.ripleg li{margin-bottom:4px}
+.prog{font-weight:700;margin:8px 0;color:var(--red-d)}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.case{display:grid;gap:8px;flex:1;min-width:240px}
+.case .in{font-weight:700}.case .tool,.case .ref{font-size:.92rem;border-radius:10px;padding:6px 10px}
+.case .tool{background:#eef3f8}.case .ref{background:var(--warm)}
+.case b{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;display:block;color:var(--mut)}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a central computer chip connected to four people icons representing patients, clinicians, administrators and policymakers, with ripples spreading outward">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(290 115)"><circle r="95" fill="none" stroke="#f7dcdd" stroke-width="2" opacity=".35"/><circle r="70" fill="none" stroke="#f7dcdd" stroke-width="2" opacity=".55"/>
+<g stroke="#f6c453" stroke-width="4" stroke-linecap="round"><path d="M-30 -22L-100 -70M30 -22L100 -70M-30 22L-100 70M30 22L100 70"/></g>
+<rect x="-34" y="-34" width="68" height="68" rx="12" fill="#fff"/><rect x="-18" y="-18" width="36" height="36" rx="6" fill="#a8353a"/><g stroke="#fff" stroke-width="3"><path d="M-8 -8h16M-8 0h16M-8 8h16"/></g>
+<g stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M-34 -14h-8M-34 0h-8M-34 14h-8M34 -14h8M34 0h8M34 14h8M-14 -34v-8M0 -34v-8M14 -34v-8M-14 34v8M0 34v8M14 34v8"/></g>
+<g fill="#f7dcdd"><circle cx="-110" cy="-80" r="13"/><path d="M-130 -52q20-26 40 0z"/><circle cx="110" cy="-80" r="13" fill="#fff"/><path d="M90 -52q20-26 40 0z" fill="#fff"/><circle cx="-110" cy="80" r="13" fill="#f6c453"/><path d="M-130 108q20-26 40 0z" fill="#f6c453"/><circle cx="110" cy="80" r="13" fill="#e9a8ab"/><path d="M90 108q20-26 40 0z" fill="#e9a8ab"/></g></g>
+<g transform="translate(560 54)" font-family="system-ui" fill="#fff"><text font-size="26" font-weight="800">One change,</text><text y="34" font-size="26" font-weight="800">many ripples.</text><text y="76" font-size="16" font-weight="600" opacity=".9">patients · clinicians · administrators · policymakers</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 450 · Week 2 Interactive</div><h1>Think in Systems: AI in a Health System</h1><p>AI does not operate alone: it changes the relationships among patients, providers, organizations, and communities. Explore a hospital’s new AI tool from every stakeholder’s point of view, then test an AI tool against sound guidance.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Map the stakeholders</h2>
+<p class="lead"><strong>Scenario:</strong> a hospital adds an AI triage tool to its emergency department. Select each stakeholder to see what it may gain and risk. Then turn on the ripple effects to see how one group’s experience can change another’s. (Illustrative scenario.)</p>
+<div class="two"><div>
+<svg class="map" id="map" viewBox="0 0 520 380" role="group" aria-label="Stakeholder map"></svg>
+<div class="tog"><label><input type="checkbox" id="rip"> Show ripple effects between stakeholders</label></div>
+<ol id="ripleg" class="ripleg" hidden aria-live="polite"></ol>
+</div><div>
+<div class="card2" id="det"><h3>Select a stakeholder</h3><p>Choose a box on the map to see its possible benefits and risks.</p></div>
+<div class="prog live" id="prog" aria-live="polite">Explored 0 of 4 stakeholders</div>
+</div></div>
+<div class="note teal live" id="after" aria-live="polite" hidden></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Whose concern is it?</h2>
+<p class="lead">Each stakeholder sees different benefits and risks. Match each concern to the stakeholder most likely to raise it.</p>
+<div id="qs"></div>
+<p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Test the tool</h2>
+<p class="lead">AI symptom checkers and similar tools can be tested against known cases: compare the tool’s output with sound clinical guidance and note where it helps and where it falls short. Judge each result. (Fictional cases for practice, not medical advice.)</p>
+<div id="qs2"></div>
+<p class="live score" id="qres2" aria-live="polite"></p>
+<div class="note"><strong>Keep humans in the loop.</strong> AI can inform decisions about care and resources, but human oversight remains essential: AI informs, people decide.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Think about the whole system</b>Look for ripple effects.</div><div><b>Consider every stakeholder</b>Roles shape priorities.</div><div><b>Keep humans in the loop</b>AI informs; people decide.</div><div><b>Test the tool</b>Evaluate output against evidence.</div></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 450 Week 2 Deep Dive. The scenario and cases are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var S=[
+{id:"pat",n:"Patients",x:110,y:70,c:"#1f6f78",ben:["Urgent cases may be spotted and seen sooner.","They may get clearer information about what to expect."],rsk:["A mis-sorted case could delay needed care.","Questions about how their data are used."],ask:"Do patients know AI is involved, and can they ask a person to review?"},
+{id:"cli",n:"Clinicians",x:410,y:70,c:"#d34147",ben:["Support when many patients arrive at once.","Help noticing patterns across records."],rsk:["Over-relying on the tool’s recommendation.","Their role and workflow may shift, with extra review when the tool and their judgment disagree."],ask:"Who checks the recommendation, and who decides when they differ?"},
+{id:"adm",n:"Administrators",x:110,y:310,c:"#e0a526",ben:["Possible shorter waits and better use of staff.","Data to plan resources."],rsk:["Cost, training, and upkeep.","Pressure to rely on the tool to save money."],ask:"What will it really cost, and how will staff be trained?"},
+{id:"pol",n:"Policymakers",x:410,y:310,c:"#5b6b8c",ben:["System-level data to guide resources.","A chance to set shared standards."],rsk:["Rules and accountability may lag behind the technology.","Well-funded hospitals may adopt tools that others cannot, widening gaps."],ask:"Who is accountable when the tool errs, and is access fair?"}];
+var RIP=[["cli","pat","Over-reliance could change the care patients receive"],["pol","cli","Rules on oversight change how clinicians use the tool"],["adm","pol","Cost and results reports shape policy decisions"],["pat","adm","Patient trust shapes whether the tool is adopted"]];
+var seen={},sel=null,P={};S.forEach(function(s){P[s.id]=s});
+function map(){
+ var m=$("map");m.innerHTML="";el("rect",{width:520,height:380,fill:"#fcfcfc"},m);
+ var defs=el("defs",{},m);var mk=el("marker",{id:"ah",viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);el("path",{d:"M0 0L10 5L0 10z",fill:"#a8353a"},mk);
+ // spokes
+ S.forEach(function(s){el("path",{d:"M260 190L"+s.x+" "+s.y,stroke:"#d9d4cf","stroke-width":3},m)});
+ // ripples
+ if($("rip").checked){RIP.forEach(function(r,i){var a=P[r[0]],b=P[r[1]];
+  var dx=b.x-a.x,dy=b.y-a.y,len=Math.sqrt(dx*dx+dy*dy),ux=dx/len,uy=dy/len;
+  var x1=a.x+ux*(Math.abs(ux)>.5?78:0)+(Math.abs(ux)>.5?0:0),y1=a.y+uy*(Math.abs(uy)>.5?34:0);
+  var x2=b.x-ux*(Math.abs(ux)>.5?78:0),y2=b.y-uy*(Math.abs(uy)>.5?34:0);
+  el("path",{d:"M"+x1+" "+y1+"L"+x2+" "+y2,stroke:"#a8353a","stroke-width":3.5,"stroke-dasharray":"8 6","marker-end":"url(#ah)"},m);
+  var mx=(x1+x2)/2,my=(y1+y2)/2;
+  el("circle",{cx:mx,cy:my,r:14,fill:"#a8353a",stroke:"#fff","stroke-width":3},m);
+  var nt=el("text",{x:mx,y:my+5,"text-anchor":"middle","font-size":"14","font-weight":"800",fill:"#fff"},m);nt.textContent=String(i+1)})}
+ var lg=$("ripleg");lg.hidden=!$("rip").checked;if(!lg.hidden&&!lg.innerHTML){lg.innerHTML=RIP.map(function(r){return"<li><b>"+P[r[0]].n+" → "+P[r[1]].n+":</b> "+r[2]+".</li>"}).join("")}
+ // center
+ var c=el("g",{},m);el("rect",{x:196,y:158,width:128,height:64,rx:14,fill:"#231f20"},c);
+ var ct=el("text",{x:260,y:186,"text-anchor":"middle","font-size":"13","font-weight":"800",fill:"#fff"},c);ct.textContent="AI triage tool";
+ var ct2=el("text",{x:260,y:204,"text-anchor":"middle","font-size":"11",fill:"#f7dcdd"},c);ct2.textContent="emergency department";
+ S.forEach(function(s){var g=el("g",{"class":"node",tabindex:0,role:"button","aria-pressed":sel===s.id,"aria-label":s.n+(seen[s.id]?" (explored)":"")},m);
+  el("rect",{"class":"box",x:s.x-76,y:s.y-30,width:152,height:60,rx:14,fill:s.c,stroke:sel===s.id?"#231f20":"#fff","stroke-width":sel===s.id?5:3},g);
+  var t=el("text",{x:s.x,y:s.y+5,"text-anchor":"middle","font-size":"15","font-weight":"800",fill:"#fff"},g);t.textContent=s.n;
+  if(seen[s.id]){el("circle",{cx:s.x+66,cy:s.y-22,r:10,fill:"#2d7a4b",stroke:"#fff","stroke-width":2},g);var ck=el("text",{x:s.x+66,y:s.y-17,"text-anchor":"middle","font-size":"13","font-weight":"800",fill:"#fff"},g);ck.textContent="✓"}
+  g.onclick=function(){pick(s.id,false)};g.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(s.id,true)}}})}
+function pick(id,keepFocus){sel=id;seen[id]=true;var s=P[id];
+ var li=function(a){return a.map(function(x){return"<li>"+x+"</li>"}).join("")};
+ $("det").style.borderColor=s.c;$("det").innerHTML='<h3 style="color:'+s.c+'">'+s.n+'</h3><div class="lab ben">Possible benefits</div><ul>'+li(s.ben)+'</ul><div class="lab rsk">Possible risks and unintended effects</div><ul>'+li(s.rsk)+'</ul><div class="lab">A question to ask</div><p style="margin:2px 0 0">'+s.ask+'</p>';
+ var n=Object.keys(seen).length;$("prog").textContent="Explored "+n+" of 4 stakeholders";
+ if(n===4){var a=$("after");a.hidden=false;a.innerHTML="<strong>You have seen all four perspectives.</strong> Notice that the same feature, saving time, is a benefit for administrators and patients but a risk for clinicians if it becomes pressure to follow the tool. Turn on the ripple effects to see how one group’s experience reaches the others. Systems thinking helps you anticipate unintended consequences."}
+ map();if(keepFocus){var nn=document.querySelectorAll("#map g.node");var ix=S.indexOf(s);if(nn[ix])nn[ix].focus()}}
+$("rip").onchange=map;map();
+function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";
+ d.innerHTML=(x.html?'<div class="case">'+x.html+'</div>':'<span style="flex:1;min-width:230px">'+x.t+'</span>')+'<span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ labels.forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Think about who bears this concern in the scenario.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"“Who is accountable if the tool makes a harmful error, and do we need new rules?”",a:3,w:"Setting rules, standards, and accountability across the system is a policymaker’s concern."},
+{t:"“Will I over-rely on the recommendation, and how does this change my role?”",a:1,w:"Clinicians weigh the tool’s output against their own judgment and see their workflow change."},
+{t:"“Do I know how my health information is used, and can a person review my case?”",a:0,w:"Patients are most directly affected by how their data are used and how decisions about their care are made."},
+{t:"“What will it cost, and how do we train staff on time?”",a:2,w:"Administrators balance budgets, staffing, and implementation."},
+{t:"“Will hospitals with fewer resources be left behind, widening gaps in care?”",a:3,w:"Fair access across communities is a system-level, policy concern."}],
+["Patients","Clinicians","Administrators","Policymakers"],"qres");
+var J=["Appropriate","Dangerous miss","Unnecessary alarm"];
+function cs(inp,tool,ref){return '<div class="in">'+inp+'</div><div class="tool"><b>Tool’s output</b>'+tool+'</div><div class="ref"><b>Sound guidance</b>'+ref+'</div>'}
+quiz("qs2",[
+{html:cs("Runny nose and a mild sore throat for two days.","“Likely a common cold. Rest and drink fluids.”","A common cold; self-care is reasonable, and seek care if symptoms worsen."),a:0,w:"The tool’s output matches sound guidance for a mild, common illness: appropriate.",h:"Compare the tool’s output with the sound guidance. Do they agree?"},
+{html:cs("Sudden chest pressure spreading to the left arm, with sweating.","“Possible indigestion. Try an antacid.”","These are emergency warning signs; seek emergency care immediately."),a:1,w:"The tool missed warning signs of a possible emergency. A miss like this is why humans must stay in the loop and tools must be tested.",h:"Does the tool’s advice match the urgency of the guidance?"},
+{html:cs("A mild headache after a long day at a screen.","“Go to the emergency room now.”","Rest and fluids; see a clinician if it is severe or persists."),a:2,w:"The tool over-triaged. Unnecessary alarm can overload emergency services and erode trust."},
+{html:cs("Fever, stiff neck, and confusion.","“Likely the flu. Stay home.”","These signs can indicate a serious infection and need urgent medical attention."),a:1,w:"Another dangerous miss: the guidance calls for urgent attention. Testing across many cases reveals where a tool falls short."}],
+J,"qres2");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
