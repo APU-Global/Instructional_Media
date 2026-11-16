@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NSCI 150 | Introduction to Astronomy: Course Introduction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#101b34; --ink2:#47536c; --paper:#f3f6fb; --line:#d3dcea; --night:#0a1126;
+  --accent:#0f7f6e;
+  --display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --body:'Atkinson Hyperlegible','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+/* One scroll container only: the page never scrolls, so there is no double scroll bar inside the Canvas iframe. */
+html,body{height:100%;margin:0;overflow:hidden;background:var(--paper);color:var(--ink);font:15px/1.45 var(--body)}
+button{font:inherit;color:inherit}
+[hidden]{display:none!important}
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:flex-end;gap:16px;padding:10px 16px 0;background:#fff;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;padding-bottom:9px;min-width:0}
+.brand svg{flex:none}
+.brand b{display:block;font:800 21px/1 var(--display);letter-spacing:-.01em}
+.brand span{display:block;font-size:12px;color:var(--ink2);margin-top:3px;white-space:nowrap}
+.tabs{display:flex;gap:2px;margin-left:auto}
+.tab{appearance:none;border:0;background:none;cursor:pointer;text-align:left;padding:7px 14px 8px;border-bottom:4px solid transparent;color:var(--ink2);border-radius:8px 8px 0 0}
+.tab small{display:block;font-size:11.5px}
+.tab strong{display:block;font:700 14px/1.2 var(--display)}
+.tab:hover{background:#f0f4fa}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--tc)}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:2px}
+.w4s:focus,.w4s:focus-visible,.w2mk:focus{outline:none}
+.w4s:focus-visible .halo{opacity:1!important;stroke:#7fb4ff}
+.w2mk:focus-visible circle{stroke:#7fb4ff;stroke-width:3}
+
+/* ---------- panel layout ---------- */
+.panel{display:grid;grid-template-columns:minmax(0,1fr) 345px;gap:14px;padding:14px;min-height:0;height:100%}
+.panel[hidden]{display:none}
+.stage{position:relative;display:flex;flex-direction:column;min-height:0;border-radius:20px;overflow:hidden;
+  background:radial-gradient(120% 90% at 30% 10%,#17224a 0%,#0a1126 60%,#060a18 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 1px 2px rgba(16,27,52,.12)}
+.stage svg.main{flex:1;min-height:0;width:100%;display:block}
+.stage svg text{font-family:var(--body)}
+.side{min-height:0;display:flex;flex-direction:column;gap:9px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;padding-right:2px}
+.side h2{font:800 22px/1.1 var(--display);letter-spacing:-.015em;margin:0}
+.lede{margin:0;color:var(--ink2);font-size:14px}
+.src{margin:auto 0 0;padding-top:8px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink2);line-height:1.35}
+.src b{color:var(--ink)}
+
+/* ---------- controls ---------- */
+.ctl{display:grid;gap:2px}
+.ctl label,.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:13px}
+.ctl output{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--accent);height:22px}
+.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--ink2);margin-top:-3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font-size:13px;cursor:pointer;line-height:1.3}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#e6ecf5;border-radius:10px;padding:3px;gap:3px}
+.seg button{border:0;background:none;border-radius:8px;padding:6px 8px;cursor:pointer;font-weight:700;font-size:13px;color:var(--ink2)}
+.seg button[aria-pressed=true]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(16,27,52,.18)}
+.btn{border:0;background:var(--accent);color:#fff;border-radius:10px;padding:7px 14px;font-weight:700;font-size:13.5px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:hover{filter:brightness(1.08)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 12px}
+.read{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;font-size:13.5px}
+.read dt{color:var(--ink2)}
+.read dd{margin:0;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.note{margin:0;font-size:13.5px}
+.try{margin:0;font-size:13.5px;padding:8px 12px;border-left:4px solid var(--accent);background:#fff;border-radius:0 10px 10px 0}
+.try b{color:var(--accent)}
+.state{display:inline-block;color:#fff;border-radius:999px;padding:2px 11px;font-weight:700;font-size:13px}
+
+/* week-2 gauge */
+.bigT{display:flex;align-items:baseline;gap:6px}
+.bigT span{font:800 40px/1 var(--display);font-variant-numeric:tabular-nums}
+.bigT small{font-size:15px;color:var(--ink2);white-space:nowrap}
+.gauge{position:relative;height:12px;border-radius:6px;background:linear-gradient(90deg,#9cc7ee 0%,#9cc7ee 19.35%,#4fcf93 19.35%,#4fcf93 35.48%,#f2a45b 35.48%,#e0502a 100%);margin:6px 0 2px}
+.gauge i{position:absolute;top:-5px;width:4px;height:22px;background:var(--ink);border-radius:2px;transform:translateX(-50%);transition:left .15s}
+.gauge-l{position:relative;height:14px;font-size:11px;color:var(--ink2)}
+.gauge-l span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+
+/* week-5 rail & timeline */
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;padding:0 12px 12px}
+.rail button{appearance:none;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#dbe4f7;border-radius:12px;padding:7px 4px 7px;cursor:pointer;font-size:12px;line-height:1.2;display:grid;justify-items:center;gap:5px}
+.rail button i{width:14px;height:14px;border-radius:50%;display:block}
+.rail button:hover{background:rgba(255,255,255,.12)}
+.rail button[aria-current=step]{background:#fff;color:var(--ink);border-color:#fff;font-weight:700}
+.tl{position:relative;height:30px;margin:4px 6px 0}
+.tl .bar{position:absolute;left:0;right:0;top:12px;height:6px;border-radius:3px;background:linear-gradient(90deg,#ff7aa8,#ffb35a,#fff1a8,#ffb35a,#d1452e)}
+.tl .mk{position:absolute;top:2px;transform:translateX(-50%);font-size:10.5px;color:var(--ink2);text-align:center;white-space:nowrap}
+.tl .mk::after{content:"";display:block;width:2px;height:12px;background:var(--ink2);margin:0 auto;opacity:.6}
+.tl .you{position:absolute;top:6px;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--ink);transform:translateX(-50%);transition:left .15s}
+.tl-l{display:flex;justify-content:space-between;font-size:11px;color:var(--ink2);margin:0 4px}
+
+/* motion: only after a click, never on load; all off for reduced-motion users */
+@media (prefers-reduced-motion:no-preference){
+  .pulse{animation:pulse 2.6s ease-in-out infinite}
+  .spin{animation:spin 2.4s linear infinite;transform-origin:320px 180px}
+  .boom{animation:boom 1.9s ease-out infinite;transform-origin:320px 180px}
+  .ring{animation:ring 2.6s ease-out infinite;transform-origin:320px 180px}
+  .ping{animation:ping 1.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+  .lyr{transition:opacity .35s}
+}
+@keyframes pulse{50%{opacity:.55}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes boom{0%{transform:scale(.82);opacity:1}100%{transform:scale(1.04);opacity:.85}}
+@keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+@keyframes ping{0%{transform:scale(.6);opacity:1}100%{transform:scale(2.6);opacity:0}}
+
+/* ---------- narrow screens: stack; the content area (not the page) scrolls ---------- */
+@media (max-width:820px){
+  .top{flex-wrap:wrap;gap:0}
+  .tabs{margin-left:0;width:100%;overflow-x:auto}
+  .tab{padding:6px 10px 7px;flex:1 0 auto}
+  .brand span{display:none}
+  .panel{grid-template-columns:1fr;grid-template-rows:minmax(260px,46%) minmax(0,1fr);gap:10px;padding:10px}
+}
+@media (max-height:620px) and (min-width:821px){ .side h2{font-size:19px} .lede{display:none} }
+
+.rail.num button i{width:22px;height:22px;display:grid;place-items:center;font:700 12px var(--body);color:#0a1126}
+.rail.num{grid-auto-columns:1fr}
+.node:focus,.hub:focus,.clo:focus{outline:none}
+.node:focus-visible .nring{opacity:1!important;stroke:#7fb4ff}
+.hub:focus-visible .fr,.clo:focus-visible .fr{stroke:#fff;stroke-width:3.5}
+.tools{margin:4px 0 0;padding-left:18px;font-size:13.5px}.tools li{margin:2px 0}
+.btn:disabled{cursor:default}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="#101b34"/><ellipse cx="17" cy="17" rx="13" ry="5" fill="none" stroke="#f2b84b" stroke-width="1.6" transform="rotate(-24 17 17)"/><circle cx="17" cy="17" r="5.5" fill="#f2b84b"/><circle cx="27" cy="11" r="2" fill="#7fb4ff"/></svg>
+    <div><b>NSCI 150</b><span>Introduction to Astronomy/Lab</span></div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="NSCI 150 course introduction sections">
+    <button class="tab" role="tab" id="t-path" data-id="path" aria-controls="p1" aria-selected="true" style="--tc:#2f5fd6"><small>Start here</small><strong>Course path</strong></button>
+    <button class="tab" role="tab" id="t-rhythm" data-id="rhythm" aria-controls="p2" aria-selected="false" style="--tc:#0f7f6e"><small>Every week</small><strong>Weekly rhythm</strong></button>
+    <button class="tab" role="tab" id="t-grades" data-id="grades" aria-controls="p3" aria-selected="false" style="--tc:#a85f00"><small>1,000 points</small><strong>Points and grades</strong></button>
+    <button class="tab" role="tab" id="t-outcomes" data-id="outcomes" aria-controls="p4" aria-selected="false" style="--tc:#b3306c"><small>Six outcomes</small><strong>Outcomes and skills</strong></button>
+  </nav>
+</header>
+<main>
+
+<!-- ============ 1. COURSE PATH ============ -->
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="t-path" style="--accent:#2f5fd6">
+  <div class="stage"><svg class="main" id="p1svg" viewBox="0 0 640 660" preserveAspectRatio="xMidYMid meet" role="group" aria-label="NSCI 150 course path: eight numbered stops, one per week, spiraling outward."></svg></div>
+  <div class="side">
+    <h2>Welcome to NSCI 150</h2>
+    <p class="lede">Eight weeks take you from the history of astronomy to planets around other stars. Click a stop on the path, or step through.</p>
+    <dl class="read card"><dt>Credits</dt><dd>4 (with lab)</dd><dt>Length</dt><dd>8 weeks</dd><dt>Textbook</dt><dd>Astronomy 2e, free from OpenStax</dd></dl>
+    <div class="card" id="p1card" aria-live="polite"></div>
+    <div style="display:flex;gap:8px"><button class="btn ghost" id="p1prev">Previous week</button><button class="btn" id="p1next">Next week</button></div>
+    <p class="src"><b>NSCI 150 Course Introduction</b> · From the Course Overview, Syllabus and weekly Deep Dives. Dates are in the syllabus calendar; all times are Pacific.</p>
+  </div>
+</section>
+
+<!-- ============ 2. WEEKLY RHYTHM ============ -->
+<section class="panel" id="p2" role="tabpanel" aria-labelledby="t-rhythm" hidden style="--accent:#0f7f6e">
+  <div class="stage"><svg class="main" id="p2svg" viewBox="0 0 640 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="NSCI 150 weekly rhythm: a Monday-to-Monday day strip with the discussion and lab deadlines marked."></svg><div class="rail num" id="p2rail" aria-label="Steps in a week"></div></div>
+  <div class="side">
+    <h2>The same rhythm every week</h2>
+    <p class="lede">Pick a kind of week, then click each step to see what to do and when.</p>
+    <div class="chips" role="group" aria-label="Kind of week" id="p2chips"></div>
+    <div class="card" id="p2card" aria-live="polite"></div>
+    <div><b style="font-size:13px">Your toolkit</b>
+      <ul class="tools">
+        <li><b>Astronomy 2e:</b> the free OpenStax textbook</li>
+        <li><b>Stellarium:</b> a web planetarium for labs and discussions</li>
+        <li><b>Spark:</b> your 24/7 course assistant. Follow the university’s AI policy.</li>
+        <li><b>Ask the Prof:</b> the forum for your questions</li>
+      </ul></div>
+    <p class="src"><b>NSCI 150 Course Introduction</b> · From the Course Overview and Syllabus. A course week runs Monday to the following Monday; the final week ends Friday. All times are Pacific.</p>
+  </div>
+</section>
+
+<!-- ============ 3. POINTS AND GRADES ============ -->
+<section class="panel" id="p3" role="tabpanel" aria-labelledby="t-grades" hidden style="--accent:#a85f00">
+  <div class="stage"><svg class="main" id="p3svg" viewBox="0 0 640 700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="NSCI 150 points: a ring split into Discussions 320, Labs 650 and Stellarium Practice 30 points, with a letter grade scale below."></svg></div>
+  <div class="side">
+    <h2>Try a what-if</h2>
+    <p class="lede">Slide each score and watch the ring fill and your estimated grade change.</p>
+    <div class="ctl"><label for="g1">Discussions <output id="g1v"></output></label><input type="range" id="g1" min="0" max="100" value="90"></div>
+    <div class="ctl"><label for="g2">Labs <output id="g2v"></output></label><input type="range" id="g2" min="0" max="100" value="90"></div>
+    <div class="ctl"><label for="g3">Stellarium Practice <output id="g3v"></output></label><input type="range" id="g3" min="0" max="100" value="100"></div>
+    <div class="chips" role="group" aria-label="Quick scenarios" id="p3chips"></div>
+    <div class="card" aria-live="polite"><dl class="read" id="p3dl"></dl></div>
+    <p class="note" id="p3msg" aria-live="polite"></p>
+    <p class="src"><b>NSCI 150 Course Introduction</b> · Points and grade scale from the syllabus. This is an estimate for practice only; the Canvas gradebook is the official record, so check it often.</p>
+  </div>
+</section>
+
+<!-- ============ 4. OUTCOMES AND SKILLS ============ -->
+<section class="panel" id="p4" role="tabpanel" aria-labelledby="t-outcomes" hidden style="--accent:#b3306c">
+  <div class="stage"><svg class="main" id="p4svg" viewBox="0 0 640 680" preserveAspectRatio="xMidYMid meet" role="group" aria-label="NSCI 150 map linking three kinds of assessment to six course learning outcomes."></svg></div>
+  <div class="side">
+    <h2>What you will be able to do</h2>
+    <p class="lede">Click an assessment or an outcome to see how they connect.</p>
+    <div class="card" id="p4card" aria-live="polite"></div>
+    <div><b style="font-size:13px">Skills you will build</b>
+      <ul class="tools">
+        <li>Use inductive and deductive reasoning on astronomy problems</li>
+        <li>Interpret data: brightness, orbits and spectra</li>
+        <li>Weigh the strengths and limits of models</li>
+        <li>Explain concepts in reflective essays and lab reports</li>
+        <li>Observe and compare objects in Stellarium</li>
+      </ul></div>
+    <p class="src"><b>NSCI 150 Course Introduction</b> · Outcomes and assessment methods from the syllabus; skills from the course home page.</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+
+/* =========================================================  shared helpers  ========================================================= */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function starfield(w,h,n,seed,maxr){const r=rng(seed);let s='';for(let i=0;i<n;i++){s+=`<circle cx="${(r()*w).toFixed(1)}" cy="${(r()*h).toFixed(1)}" r="${(0.3+r()*(maxr||1.2)).toFixed(2)}" fill="#fff" opacity="${(0.2+r()*0.6).toFixed(2)}"/>`}return s}
+function kelvinRGB(K){const t=clamp(K,1000,40000)/100;let r,g,b;
+  if(t<=66){r=255;g=99.4708025861*Math.log(t)-161.1195681661;b=t<=19?0:138.5177312231*Math.log(t-10)-305.0447927307}
+  else{r=329.698727446*Math.pow(t-60,-0.1332047592);g=288.1221695283*Math.pow(t-60,-0.0755148492);b=255}
+  return `rgb(${clamp(r,0,255)|0},${clamp(g,0,255)|0},${clamp(b,0,255)|0})`}
+const starCol=T=>kelvinRGB(T<9000?T*0.86:T);
+const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+const pow10=n=>'10'+String(n).split('').map(c=>SUP[c]).join('');
+function svgPoint(svg,e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ---------- tabs ---------- */
+(function(){
+  const tabs=$$('.tab'),panels=$$('.panel');
+  function show(i,focus){tabs.forEach((t,j)=>{t.setAttribute('aria-selected',String(j===i));t.tabIndex=j===i?0:-1;panels[j].hidden=j!==i});
+    if(focus)tabs[i].focus();try{history.replaceState(null,'','#'+tabs[i].dataset.id)}catch(e){}}
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(i));
+    t.addEventListener('keydown',e=>{if(e.key==='ArrowRight')show((i+1)%tabs.length,true);if(e.key==='ArrowLeft')show((i+tabs.length-1)%tabs.length,true)})});
+  const start=tabs.findIndex(t=>('#'+t.dataset.id)===location.hash);show(start<0?0:start);
+})();
+
+/* =================================================  1. COURSE PATH  ================================================= */
+(function(){
+  const svg=$('#p1svg');
+  const W=[
+   {t:'Introduction to Astronomy and the Solar System',c:'#6db3ff',sum:'How astronomers move from observation to explanation, why our models of the sky changed, and how Earth and Moon motions create seasons, phases and tides.',d:'A Cosmic Shift: Earth at the Center or the Sun?',labs:[]},
+   {t:'Inner Planets',c:'#ff9d5c',sum:'Mercury, Venus, Earth and Mars formed alike but ended up very different. Compare them and learn what makes a planet habitable.',d:'Designed for Life? Earth vs. the Inner Planets',labs:['Lab: Lunar Phases Simulation','Stellarium Practice (low stakes)']},
+   {t:'Outer Planets and Solar System Objects',c:'#e0be8a',sum:'Jupiter, Saturn, Uranus and Neptune, plus moons, rings, comets and asteroids, and how the solar system’s design affects Earth.',d:'Stellarium Activity: Our Solar System’s Life-Enabling Design',labs:['Lab: Solar System Models','Lab: Planetary Orbits']},
+   {t:'The Sun and Stars',c:'#ffd24d',sum:'How the Sun makes energy, how solar activity reaches Earth, and how the H-R diagram classifies stars by temperature and brightness.',d:'Comparing the Sun to Other Stars',labs:['Lab: Hertzsprung-Russell Diagram']},
+   {t:'Life Cycle of Stars',c:'#ff7aa8',sum:'Follow stars from nebulae to white dwarfs, neutron stars and black holes, and see how stellar deaths made the elements in us.',d:'Exploring Stellar Evolution Through Observation',labs:['Lab: Life of a Star Diagram']},
+   {t:'The Milky Way Galaxy and Other Galaxies',c:'#b69cff',sum:'The Milky Way’s structure, the types of galaxies, and how conditions across a galaxy may affect where life can arise.',d:'Galactic Habitability Conditions',labs:['Lab: Galaxies in Stellarium']},
+   {t:'Origin of the Universe and Cosmic Distances',c:'#6fe0d0',sum:'How the cosmic distance ladder measures the universe, and the evidence for the Big Bang, from redshift to the microwave background.',d:'Genesis and the Big Bang',labs:['Lab: The Cosmic Distance Ladder']},
+   {t:'Exoplanet Research',c:'#8fd0ff',sum:'How exoplanets are found, what makes a world habitable, and how to turn popular claims about life beyond Earth into testable questions.',d:'Mythbusting Habitability with AI',labs:[]}];
+  const CX=320,CY=338,rOf=t=>90+182*t,thOf=t=>-Math.PI/2+t*2.45*Math.PI;
+  const P=i=>{const t=i/7;return[CX+rOf(t)*Math.cos(thOf(t)),CY+rOf(t)*Math.sin(thOf(t))]};
+  function pathTo(te){let d='';const n=Math.max(2,Math.round(te*150));for(let k=0;k<=n;k++){const t=te*k/n;d+=(k?' L':'M')+(CX+rOf(t)*Math.cos(thOf(t))).toFixed(1)+','+(CY+rOf(t)*Math.sin(thOf(t))).toFixed(1)}return d}
+  const ICON=[
+   `<circle r="46" fill="none" stroke="#6b7fb8" stroke-dasharray="3 5"/><circle r="25" fill="url(#p1e)"/><path d="M-14,-6 q6,-12 14,-6 q6,6 -2,12 q-8,4 -12,-6z M6,8 q8,-6 13,0 q1,9 -8,10 q-6,-3 -5,-10z" fill="#3f9d55"/><circle cx="33" cy="-33" r="7" fill="#d4d8e2"/><circle cx="31" cy="-35" r="2" fill="#aab0c0"/>`,
+   `<circle r="32" fill="url(#p1m)"/><circle cx="-10" cy="-9" r="5" fill="#000" opacity=".18"/><circle cx="12" cy="6" r="7" fill="#000" opacity=".16"/><circle cx="-5" cy="18" r="4" fill="#000" opacity=".18"/><ellipse cx="0" cy="-30" rx="12" ry="4" fill="#fff" opacity=".8"/>`,
+   `<g clip-path="url(#p1jc)"><rect x="-40" y="-40" width="80" height="80" fill="#d9b88f"/><rect x="-40" y="-26" width="80" height="9" fill="#b9825a"/><rect x="-40" y="-8" width="80" height="12" fill="#e8d2ad"/><rect x="-40" y="8" width="80" height="9" fill="#a96f4a"/><rect x="-40" y="24" width="80" height="8" fill="#cfae85"/><ellipse cx="10" cy="12" rx="9" ry="5" fill="#b5482f"/><rect x="-40" y="-40" width="80" height="80" fill="url(#p1sh)"/></g><circle cx="46" cy="-28" r="4" fill="#d9d2c4"/>`,
+   `<circle r="62" fill="url(#p1sg)"/><circle r="33" fill="url(#p1s)"/><ellipse cx="-10" cy="-6" rx="5" ry="3.4" fill="#7a3b0a" opacity=".7"/><ellipse cx="12" cy="10" rx="3.6" ry="2.6" fill="#7a3b0a" opacity=".7"/>`,
+   `<ellipse rx="52" ry="34" fill="#e0558f" opacity=".55" filter="url(#p1b)"/><ellipse cx="14" cy="6" rx="34" ry="22" fill="#7a4bd8" opacity=".5" filter="url(#p1b)"/><path d="M0,-30 L5,-5 L30,0 L5,5 L0,30 L-5,5 L-30,0 L-5,-5Z" fill="#fff"/><circle r="14" fill="#fff" opacity=".4" filter="url(#p1b)"/>`,
+   (()=>{let a='';for(let arm=0;arm<2;arm++){let d='';for(let k=0;k<=30;k++){const r=6+k/30*50,th=arm*Math.PI+3.3*(r/56);d+=(k?' L':'M')+(r*Math.cos(th)).toFixed(1)+','+(r*Math.sin(th)).toFixed(1)}a+=`<path d="${d}" fill="none" stroke="#c7b4ff" stroke-width="6" stroke-linecap="round" opacity=".8" filter="url(#p1b2)"/>`}
+     return `<g transform="rotate(-24) scale(1 .62)">${a}<circle r="12" fill="#fff3cf" filter="url(#p1b2)"/><circle r="6" fill="#fff"/></g>`})(),
+   (()=>{let dots='',r=rng(4);for(let i=0;i<14;i++){const a=r()*6.28,d=14+r()*38;dots+=`<ellipse cx="${(d*Math.cos(a)).toFixed(1)}" cy="${(d*Math.sin(a)).toFixed(1)}" rx="3.2" ry="1.8" fill="#bff5ee" transform="rotate(${(a*57).toFixed(0)} ${(d*Math.cos(a)).toFixed(1)} ${(d*Math.sin(a)).toFixed(1)})"/>`}
+     let tk='';for(let i=0;i<12;i++){const a=i*Math.PI/6;tk+=`<line x1="${(52*Math.cos(a)).toFixed(1)}" y1="${(52*Math.sin(a)).toFixed(1)}" x2="${(62*Math.cos(a)).toFixed(1)}" y2="${(62*Math.sin(a)).toFixed(1)}" stroke="#6fe0d0" stroke-width="2.5" stroke-linecap="round"/>`}
+     return `<circle r="48" fill="#0f2a44" opacity=".6"/><circle r="30" fill="none" stroke="#6fe0d0" opacity=".35"/><circle r="48" fill="none" stroke="#6fe0d0" opacity=".5"/>${dots}${tk}<circle r="2.5" fill="#fff"/>`})(),
+   `<circle r="27" fill="url(#p1s)"/><ellipse rx="54" ry="15" fill="none" stroke="#8fd0ff" stroke-dasharray="3 5" opacity=".8"/><circle cx="22" cy="3" r="7" fill="#070b19" stroke="#8fd0ff" stroke-width="1.2"/>`];
+  const defs=`<defs>
+    <radialGradient id="p1e" cx=".35" cy=".35" r=".85"><stop offset="0" stop-color="#58b0f5"/><stop offset="1" stop-color="#0e3a86"/></radialGradient>
+    <radialGradient id="p1m" cx=".35" cy=".35" r=".85"><stop offset="0" stop-color="#f2b07a"/><stop offset="1" stop-color="#9a3f1d"/></radialGradient>
+    <radialGradient id="p1sh" cx=".3" cy=".3" r=".9"><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
+    <radialGradient id="p1s" cx=".4" cy=".4" r=".7"><stop offset="0" stop-color="#fff6c0"/><stop offset=".6" stop-color="#ffc83d"/><stop offset="1" stop-color="#f08a1f"/></radialGradient>
+    <radialGradient id="p1sg"><stop offset="0" stop-color="#ffb43a" stop-opacity=".6"/><stop offset="1" stop-color="#ffb43a" stop-opacity="0"/></radialGradient>
+    <clipPath id="p1jc"><circle r="36"/></clipPath>
+    <filter id="p1b" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="p1b2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <filter id="p1glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="5"/></filter></defs>`;
+  let sel=0;
+  svg.innerHTML=defs+`<g>${starfield(640,660,150,31,1.2)}</g>
+   <circle cx="${CX}" cy="${CY}" r="76" fill="#0a1126" opacity=".6"/>
+   <path d="${pathTo(1)}" fill="none" stroke="#5a6ea8" stroke-width="2" stroke-dasharray="2 7" stroke-linecap="round" opacity=".8"/>
+   <path id="p1prog" fill="none" stroke="#ffd24d" stroke-width="3.5" stroke-linecap="round" filter="url(#p1glow)" opacity=".9"/>
+   <path id="p1prog2" fill="none" stroke="#ffd24d" stroke-width="2.5" stroke-linecap="round"/>
+   <g id="p1icon" transform="translate(${CX} ${CY})"></g>
+   <g id="p1cap"></g>
+   <g id="p1nodes">${W.map((w,i)=>{const[x,y]=P(i);return `<g class="node" data-i="${i}" tabindex="0" role="button" aria-label="Week ${i+1}: ${w.t}" style="cursor:pointer"><circle class="nring" cx="${x}" cy="${y}" r="27" fill="none" stroke="#fff" stroke-width="2.5" opacity="0"/><circle cx="${x}" cy="${y}" r="19" fill="${w.c}" stroke="#0a1126" stroke-width="2"/><text x="${x}" y="${y+5}" font-size="15" font-weight="700" text-anchor="middle" fill="#0a1126" pointer-events="none">${i+1}</text></g>`}).join('')}</g>`;
+  function render(){
+    const w=W[sel];
+    $('#p1icon').innerHTML=ICON[sel];
+    $('#p1cap').innerHTML=`<text x="28" y="52" fill="#fff" font-size="26" font-weight="800" font-family="var(--display)">Week ${sel+1}</text><text x="28" y="76" fill="#c3cfe9" font-size="14">${w.t.length>30?w.t.slice(0,w.t.lastIndexOf(' ',30)):w.t}</text>${w.t.length>30?`<text x="28" y="95" fill="#c3cfe9" font-size="14">${w.t.slice(w.t.lastIndexOf(' ',30)+1)}</text>`:''}`;
+    const te=sel/7;$('#p1prog').setAttribute('d',pathTo(Math.max(te,0.001)));$('#p1prog2').setAttribute('d',pathTo(Math.max(te,0.001)));
+    $$('.node .nring').forEach((r,i)=>r.setAttribute('opacity',i===sel?1:0));
+    const due=sel===7?'Initial post by Wednesday; discussion closes Friday 11:59 PM Pacific.':'Initial post by Thursday; replies through Saturday 11:59 PM Pacific.';
+    $('#p1card').innerHTML=`<h3 style="margin:0 0 4px;font:800 17px/1.15 var(--display)">Week ${sel+1}: ${w.t}</h3><p class="note">${w.sum}</p>
+      <p class="note" style="margin-top:6px"><b>Discussion:</b> ${w.d}</p>
+      <p class="note" style="margin-top:4px"><b>${w.labs.length?'Lab work':'Labs'}:</b> ${w.labs.length?w.labs.join('; ')+'. Labs are due Monday 8:00 AM Pacific.':'No lab this week.'}</p>
+      <p class="note" style="margin-top:4px;color:var(--ink2)">${due}</p>`;
+    $('#p1prev').disabled=sel===0;$('#p1next').disabled=sel===7;
+    $('#p1prev').style.opacity=sel===0?.45:1;$('#p1next').style.opacity=sel===7?.45:1;
+  }
+  const go=i=>{sel=clamp(i,0,7);render()};
+  svg.addEventListener('click',e=>{const n=e.target.closest('.node');if(n)go(+n.dataset.i)});
+  svg.addEventListener('keydown',e=>{const n=e.target.closest&&e.target.closest('.node');
+    if(n&&(e.key==='Enter'||e.key===' ')){e.preventDefault();go(+n.dataset.i)}
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'){go(sel+1);const t=$$('.node')[sel];if(t)t.focus()}
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){go(sel-1);const t=$$('.node')[sel];if(t)t.focus()}});
+  $('#p1prev').onclick=()=>go(sel-1);$('#p1next').onclick=()=>go(sel+1);
+  render();
+})();
+
+/* =================================================  2. WEEKLY RHYTHM  ================================================= */
+(function(){
+  const svg=$('#p2svg'),rail=$('#p2rail');
+  const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon'];
+  const KINDS={
+    w1:{n:'Week 1',days:7,post:3,end:5,lab:false,pn:'Thursday',en:'Saturday',note:'Week 1 has a discussion but no lab, so you have time to settle in.'},
+    w27:{n:'Weeks 2 to 7',days:8,post:3,end:5,lab:true,pn:'Thursday',en:'Saturday',note:'Labs are due the Monday after the discussion closes.'},
+    w8:{n:'Week 8',days:5,post:2,end:4,lab:false,pn:'Wednesday',en:'Friday',note:'The final week ends on Friday, so deadlines come a day earlier and there is no lab.'}};
+  let kind='w27',step=0;
+  const stepsOf=k=>{const K=KINDS[k];return[
+    {id:'dive',t:'Deep Dive',x:'Start here. The Deep Dive previews the week’s big ideas, key terms and takeaways.',w:'Start of the week'},
+    {id:'res',t:'Resources',x:'Read the Astronomy 2e sections and watch the videos and articles that prepare you for the discussion and lab.',w:'After the Deep Dive'},
+    {id:'post',t:'Discussion post',x:'Share your initial response to the week’s question.',w:'By '+K.pn},
+    {id:'reply',t:'Replies',x:'Respond to classmates and keep the conversation going until the discussion closes.',w:'Through '+K.en+', 11:59 PM Pacific'}].concat(K.lab?[{id:'lab',t:'Lab',x:'Use simulations and Stellarium to explore the topic, then submit your lab. Week 2 also has the low-stakes Stellarium Practice.',w:'Monday, 8:00 AM Pacific'}]:[])};
+  const ICON={
+    dive:`<path d="M-36,-24 Q-18,-34 0,-22 Q18,-34 36,-24 V26 Q18,16 0,28 Q-18,16 -36,26Z" fill="#2f5fd6" stroke="#9fc0ff" stroke-width="2"/><path d="M0,-22 V28" stroke="#9fc0ff" stroke-width="2"/><path d="M-27,-12 Q-17,-17 -8,-10 M-27,-2 Q-17,-7 -8,0 M-27,8 Q-17,3 -8,10 M27,-12 Q17,-17 8,-10 M27,-2 Q17,-7 8,0 M27,8 Q17,3 8,10" fill="none" stroke="#cfe0ff" stroke-width="2" stroke-linecap="round"/>`,
+    res:`<rect x="-30" y="-18" width="62" height="42" rx="7" fill="#17224a" stroke="#4a5d9a"/><rect x="-36" y="-26" width="62" height="42" rx="7" fill="#1d2a55" stroke="#7fb4ff" stroke-width="2"/><path d="M-12,-14 L10,-5 L-12,4Z" fill="#ffd24d"/>`,
+    post:`<path d="M-34,-26 H34 Q40,-26 40,-20 V12 Q40,18 34,18 H-6 L-22,32 V18 H-34 Q-40,18 -40,12 V-20 Q-40,-26 -34,-26Z" fill="#35c2b5" stroke="#bff5ee" stroke-width="2"/><path d="M-26,-14 H26 M-26,-4 H26 M-26,6 H8" stroke="#06352f" stroke-width="3" stroke-linecap="round"/>`,
+    reply:`<path d="M-38,-28 H18 Q24,-28 24,-22 V4 Q24,10 18,10 H-12 L-26,22 V10 H-38 Q-44,10 -44,4 V-22 Q-44,-28 -38,-28Z" fill="#35c2b5" stroke="#bff5ee" stroke-width="2"/><path d="M-4,-2 H30 Q36,-2 36,4 V26 Q36,32 30,32 H22 V42 L10,32 H-4 Q-10,32 -10,26 V4 Q-10,-2 -4,-2Z" fill="#ffb35a" stroke="#ffe3bf" stroke-width="2" transform="translate(6 -4)"/>`,
+    lab:`<path d="M-9,-34 H9 V-10 L30,26 Q35,36 25,36 H-25 Q-35,36 -30,26 L-9,-10Z" fill="none" stroke="#7ee6d8" stroke-width="3.5" stroke-linejoin="round"/><path d="M-20,10 H20 L30,26 Q35,36 25,36 H-25 Q-35,36 -30,26Z" fill="#35c2b5" opacity=".85"/><circle cx="-6" cy="22" r="3" fill="#fff" opacity=".8"/><circle cx="8" cy="16" r="2.4" fill="#fff" opacity=".8"/><path d="M-13,-34 H13" stroke="#7ee6d8" stroke-width="3.5" stroke-linecap="round"/>`};
+  const defs=`<defs><filter id="p2g" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6"/></filter></defs>`;
+  function draw(){
+    const K=KINDS[kind],S=stepsOf(kind),cur=S[Math.min(step,S.length-1)],n=K.days;
+    const X=i=>70+i*(500/(n-1));
+    let h=defs+`<g>${starfield(640,600,120,41,1.2)}</g>`;
+    h+=`<circle cx="320" cy="180" r="92" fill="#2f5fd6" opacity=".16" filter="url(#p2g)"/><g transform="translate(320 180) scale(2.1)">${ICON[cur.id]}</g>`;
+    h+=`<text x="320" y="326" fill="#fff" font-size="28" font-weight="800" text-anchor="middle" font-family="var(--display)">${cur.t}</text><text x="320" y="352" fill="#ffd24d" font-size="16" font-weight="700" text-anchor="middle">${cur.w}</text>`;
+    const y=450,sd=K.post,ed=K.end;
+    h+=`<line x1="${X(0)}" x2="${X(n-1)}" y1="${y}" y2="${y}" stroke="#34457c" stroke-width="2"/>`;
+    if(cur.id==='reply')h+=`<rect x="${X(sd)}" y="${y-9}" width="${X(ed)-X(sd)}" height="18" rx="9" fill="#35c2b5" opacity=".9"/>`;
+    for(let i=0;i<n;i++){
+      const on=(cur.id==='dive'||cur.id==='res')?i===0:cur.id==='post'?i===sd:cur.id==='reply'?(i>=sd&&i<=ed):cur.id==='lab'?i===n-1:false;
+      const mark=i===sd?'post':i===ed?'end':(K.lab&&i===n-1)?'lab':'';
+      h+=`<circle cx="${X(i)}" cy="${y}" r="${on?21:17}" fill="${on?'#ffd24d':'#0f1a3d'}" stroke="${on?'#fff':'#4a5d9a'}" stroke-width="2"/><text x="${X(i)}" y="${y+5}" font-size="13" font-weight="700" text-anchor="middle" fill="${on?'#1a1200':'#dbe4f7'}">${DAYS[i]}</text>`;
+      if(mark==='post')h+=`<text x="${X(i)}" y="${y+50}" font-size="13" text-anchor="middle" fill="#bff5ee" font-weight="700">Post due</text>`;
+      if(mark==='end')h+=`<text x="${X(i)}" y="${y+50}" font-size="13" text-anchor="middle" fill="#bff5ee" font-weight="700">Replies end</text><text x="${X(i)}" y="${y+66}" font-size="12" text-anchor="middle" fill="#9fb0d0">11:59 PM</text>`;
+      if(mark==='lab')h+=`<text x="${X(i)}" y="${y+50}" font-size="13" text-anchor="middle" fill="#ffd9a8" font-weight="700">Lab due</text><text x="${X(i)}" y="${y+66}" font-size="12" text-anchor="middle" fill="#9fb0d0">8:00 AM</text>`;
+    }
+    h+=`<text x="${X(0)}" y="${y-34}" font-size="13" text-anchor="middle" fill="#dbe4f7" font-weight="700">Week begins</text><text x="320" y="578" font-size="12" text-anchor="middle" fill="#9fb0d0">All times Pacific</text>`;
+    svg.innerHTML=h;
+    rail.innerHTML=S.map((s,i)=>`<button data-i="${i}" ${i===step?'aria-current="step"':''}><i style="background:${i===step?'#ffd24d':'#9fc0ff'}">${i+1}</i>${s.t}</button>`).join('');
+    $('#p2card').innerHTML=`<h3 style="margin:0 0 3px;font:800 17px/1.15 var(--display)">${step+1}. ${cur.t}</h3><p class="note">${cur.x}</p><p class="note" style="margin-top:5px"><b>When:</b> ${cur.w}</p><p class="note" style="margin-top:5px;color:var(--ink2)">${K.note}</p>`;
+    $$('#p2chips .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.k===kind)));
+  }
+  const chips=$('#p2chips');Object.entries(KINDS).forEach(([k,v])=>{const b=document.createElement('button');b.className='chip';b.dataset.k=k;b.textContent=v.n;b.setAttribute('aria-pressed','false');chips.appendChild(b)});
+  chips.addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){kind=b.dataset.k;step=Math.min(step,stepsOf(kind).length-1);draw()}});
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b){step=+b.dataset.i;draw()}});
+  draw();
+})();
+
+/* =================================================  3. POINTS AND GRADES  ================================================= */
+(function(){
+  const svg=$('#p3svg');
+  const CAT=[{k:'g1',n:'Discussions',p:320,c:'#6ea8ff',d:'8 weekly discussions'},{k:'g2',n:'Labs',p:650,c:'#ffb35a',d:'7 labs'},{k:'g3',n:'Stellarium Practice',p:30,c:'#7ee6d8',d:'low stakes'}];
+  const SCALE=[['F',0],['D-',60],['D',63],['D+',67],['C-',70],['C',73],['C+',77],['B-',80],['B',83],['B+',87],['A-',90],['A',93]];
+  const CX=320,CY=290,R0=96,R1=196,GAP=1.2;
+  const pt=(r,a)=>[CX+r*Math.cos(a),CY+r*Math.sin(a)];
+  function sector(r0,r1,a0,a1){const[x0,y0]=pt(r1,a0),[x1,y1]=pt(r1,a1),[x2,y2]=pt(r0,a1),[x3,y3]=pt(r0,a0),big=(a1-a0)>Math.PI?1:0;return `M${x0},${y0} A${r1},${r1} 0 ${big} 1 ${x1},${y1} L${x2},${y2} A${r0},${r0} 0 ${big} 0 ${x3},${y3}Z`}
+  let a=-Math.PI/2;const SL=CAT.map(c=>{const span=c.p/1000*2*Math.PI;const o={...c,a0:a+GAP*Math.PI/180,a1:a+span-GAP*Math.PI/180,am:a+span/2};a+=span;return o});
+  let h=`<g>${starfield(640,700,120,51,1.2)}</g><circle cx="${CX}" cy="${CY}" r="${R0-6}" fill="#0a1126" stroke="#26335f"/>`;
+  SL.forEach(s=>{h+=`<path d="${sector(R0,R1,s.a0,s.a1)}" fill="${s.c}" opacity=".16" stroke="${s.c}" stroke-opacity=".5"/><path id="e_${s.k}" fill="${s.c}"/>`;
+    const[lx,ly]=pt(R1+16,s.am),right=Math.cos(s.am)>=0.05,left=Math.cos(s.am)<-0.05;
+    h+=`<text x="${lx}" y="${ly-2}" fill="#fff" font-size="15" font-weight="700" text-anchor="${right?'start':left?'end':'middle'}" paint-order="stroke" stroke="#0a1126" stroke-width="3">${s.n}</text><text x="${lx}" y="${ly+15}" fill="#b9c6e6" font-size="12.5" text-anchor="${right?'start':left?'end':'middle'}">${s.p} points</text>`});
+  h+=`<text id="p3L" x="${CX}" y="${CY+14}" fill="#fff" font-size="54" font-weight="800" text-anchor="middle" font-family="var(--display)"></text><text id="p3P" x="${CX}" y="${CY+40}" fill="#ffd24d" font-size="16" font-weight="700" text-anchor="middle"></text><text x="${CX}" y="${CY-30}" fill="#9fb0d0" font-size="12.5" text-anchor="middle">Estimated grade</text>`;
+  h+=`<text x="320" y="548" fill="#dbe4f7" font-size="13.5" font-weight="700" text-anchor="middle">Letter grade scale (lowest percentage for each grade)</text>`;
+  SCALE.forEach(([l,v],i)=>{const x=32+i*48;h+=`<rect id="sc${i}" x="${x}" y="562" width="45" height="44" rx="8" fill="#0f1a3d" stroke="#34457c"/><text x="${x+22.5}" y="590" font-size="16" font-weight="700" text-anchor="middle" fill="#dbe4f7" id="sct${i}">${l}</text><text x="${x+22.5}" y="628" font-size="12" text-anchor="middle" fill="#9fb0d0">${i===0?'under 60':v+'%'}</text>`});
+  svg.innerHTML=h;
+  const letter=p=>{let r='F',i=0;SCALE.forEach(([l,v],k)=>{if(p>=v){r=l;i=k}});return[r,i]};
+  function update(){
+    let tot=0;
+    SL.forEach(s=>{const pct=+$('#'+s.k).value/100,earned=s.p*pct;tot+=earned;
+      const rr=R0+(R1-R0)*pct;$('#e_'+s.k).setAttribute('d',pct<=0.001?'':sector(R0,Math.max(rr,R0+0.5),s.a0,s.a1));
+      $('#'+s.k+'v').textContent=Math.round(pct*100)+'% = '+Math.round(earned*10)/10+' of '+s.p+' pts'});
+    const pc=tot/10,[L,li]=letter(pc);
+    $('#p3L').textContent=L;$('#p3P').textContent=pc.toFixed(1)+'%';
+    SCALE.forEach((_,i)=>{const on=i===li;$('#sc'+i).setAttribute('fill',on?'#ffd24d':'#0f1a3d');$('#sc'+i).setAttribute('stroke',on?'#fff':'#34457c');$('#sct'+i).setAttribute('fill',on?'#1a1200':'#dbe4f7')});
+    $('#p3dl').innerHTML=`<dt>Points earned</dt><dd>${(Math.round(tot*10)/10)} of 1,000</dd><dt>Percentage</dt><dd>${pc.toFixed(1)}%</dd><dt>Estimated grade</dt><dd>${L}</dd>`;
+    const nx=SCALE[li+1];$('#p3msg').textContent=nx?`${Math.max(0,Math.ceil((nx[1]*10-tot)*10)/10)} more points would reach ${nx[0]}. Labs carry the most weight: ${Math.round(650/10)}% of the course.`:'That is the top of the scale. Labs carry the most weight: 65% of the course.';
+    $$('#p3chips .chip').forEach(c=>c.setAttribute('aria-pressed',String(['g1','g2','g3'].every(k=>+$('#'+k).value===+c.dataset.v))));
+  }
+  const chips=$('#p3chips');[['All 100%',100],['All 90%',90],['All 80%',80]].forEach(([t,v])=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.dataset.v=v;b.setAttribute('aria-pressed','false');chips.appendChild(b)});
+  chips.addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){['g1','g2','g3'].forEach(k=>$('#'+k).value=b.dataset.v);update()}});
+  ['g1','g2','g3'].forEach(k=>$('#'+k).addEventListener('input',update));
+  update();
+})();
+
+/* =================================================  4. OUTCOMES AND SKILLS  ================================================= */
+(function(){
+  const svg=$('#p4svg');
+  const HUB=[{k:'D',n:'Discussions',c:'#6ea8ff',t:'Weekly peer discussions in Weeks 1 to 8: geocentric vs. heliocentric models, conditions for life, the Sun, habitability and biblical concepts.'},
+             {k:'L',n:'Labs',c:'#ffb35a',t:'Seven labs in Weeks 2 to 7: lunar phases, solar system models, planetary orbits, the H-R diagram, life of a star, galaxies in Stellarium and the cosmic distance ladder.'},
+             {k:'S',n:'Stellarium Practice',c:'#7ee6d8',t:'A low-stakes activity in Week 2 that builds confidence with Stellarium, the web planetarium used throughout the course.'}];
+  const CLO=[{s:'Analyze the universe',t:'Analyze the properties of the universe with emphasis on the solar system, stars, galaxies and exoplanets.',h:'DLS'},
+             {s:'Apply physical laws',t:'Apply physical laws that govern the properties and structure of the solar system and the universe.',h:'DL'},
+             {s:'Evaluate models',t:'Evaluate historical and contemporary models of the solar system, stellar systems and the universe.',h:'DL'},
+             {s:'Christian worldview',t:'Reflect on astronomical concepts through the lens of a Christian worldview.',h:'DL'},
+             {s:'Questions and hypotheses',t:'Develop scientific questions and hypotheses about astronomical phenomena.',h:'DL'},
+             {s:'Analyze data',t:'Analyze astronomical data using evidence-based reasoning.',h:'DLS'}];
+  const HX=22,HW=196,HH=64,HY=[205,308,411],CXp=330,CW=282,CH=62,CYs=i=>96+i*96;
+  let sel=null;
+  let h=`<g>${starfield(640,680,120,61,1.2)}</g>`;
+  CLO.forEach((c,i)=>{for(let k=0;k<3;k++)if(c.h.includes(HUB[k].k)){const x0=HX+HW,y0=HY[k]+HH/2,x1=CXp,y1=CYs(i)+CH/2;h+=`<path class="lk" data-h="${k}" data-c="${i}" d="M${x0},${y0} C${x0+70},${y0} ${x1-70},${y1} ${x1},${y1}" fill="none" stroke="${HUB[k].c}" stroke-width="3" stroke-linecap="round" opacity=".55"/>`}});
+  HUB.forEach((u,k)=>{h+=`<g class="hub" data-k="${k}" tabindex="0" role="button" aria-label="${u.n}" style="cursor:pointer"><rect class="fr" x="${HX}" y="${HY[k]}" width="${HW}" height="${HH}" rx="14" fill="#0f1a3d" stroke="${u.c}" stroke-width="2.5"/><circle cx="${HX+26}" cy="${HY[k]+HH/2}" r="9" fill="${u.c}"/><text x="${HX+44}" y="${HY[k]+HH/2+5}" fill="#fff" font-size="15" font-weight="700" pointer-events="none">${u.n}</text></g>`});
+  CLO.forEach((c,i)=>{h+=`<g class="clo" data-i="${i}" tabindex="0" role="button" aria-label="Outcome ${i+1}: ${c.s}" style="cursor:pointer"><rect class="fr" x="${CXp}" y="${CYs(i)}" width="${CW}" height="${CH}" rx="14" fill="#0f1a3d" stroke="#6b7fb8" stroke-width="2"/><text x="${CXp+18}" y="${CYs(i)+25}" fill="#ffb4d2" font-size="13" font-weight="700" pointer-events="none">Outcome ${i+1}</text><text x="${CXp+18}" y="${CYs(i)+47}" fill="#fff" font-size="16" font-weight="700" pointer-events="none">${c.s}</text></g>`});
+  h+=`<text x="${HX}" y="70" fill="#9fb0d0" font-size="13" font-weight="700">How you are assessed</text><text x="${CXp}" y="70" fill="#9fb0d0" font-size="13" font-weight="700">What you will do</text>`;
+  svg.innerHTML=h;
+  function render(){
+    const hubOn=k=>!sel||(sel.t==='h'?sel.i===k:CLO[sel.i].h.includes(HUB[k].k));
+    const cloOn=i=>!sel||(sel.t==='c'?sel.i===i:CLO[i].h.includes(HUB[sel.i].k));
+    $$('.hub').forEach(g=>{const k=+g.dataset.k,on=hubOn(k);g.style.opacity=on?1:.3;g.querySelector('.fr').setAttribute('fill',(sel&&sel.t==='h'&&sel.i===k)?'#1c2c63':'#0f1a3d')});
+    $$('.clo').forEach(g=>{const i=+g.dataset.i,on=cloOn(i);g.style.opacity=on?1:.3;g.querySelector('.fr').setAttribute('stroke',(sel&&sel.t==='c'&&sel.i===i)?'#ffb4d2':'#6b7fb8');g.querySelector('.fr').setAttribute('fill',(sel&&sel.t==='c'&&sel.i===i)?'#3a1530':'#0f1a3d')});
+    $$('.lk').forEach(l=>{const k=+l.dataset.h,i=+l.dataset.c;const on=!sel||(sel.t==='h'?sel.i===k:sel.i===i);l.setAttribute('opacity',on?(sel?.95:.55):.08);l.setAttribute('stroke-width',sel&&on?4:3)});
+    let html;
+    if(!sel)html=`<h3 style="margin:0 0 3px;font:800 17px/1.15 var(--display)">Six outcomes, three ways to show them</h3><p class="note">Each line links an assessment to an outcome it measures. Every outcome is assessed in discussions and labs; the Stellarium Practice supports Outcomes 1 and 6.</p>`;
+    else if(sel.t==='h'){const u=HUB[sel.i];const ids=CLO.map((c,i)=>c.h.includes(u.k)?i+1:0).filter(Boolean);html=`<h3 style="margin:0 0 3px;font:800 17px/1.15 var(--display)">${u.n}</h3><p class="note">${u.t}</p><p class="note" style="margin-top:6px"><b>Assesses:</b> ${ids.length===6?'all six outcomes':'Outcomes '+ids.join(' and ')}.</p>`}
+    else{const c=CLO[sel.i];const names=HUB.filter(u=>c.h.includes(u.k)).map(u=>u.n);html=`<h3 style="margin:0 0 3px;font:800 17px/1.15 var(--display)">Outcome ${sel.i+1}</h3><p class="note">Students will ${c.t.charAt(0).toLowerCase()+c.t.slice(1)}</p><p class="note" style="margin-top:6px"><b>Assessed through:</b> ${names.join(', ')}.</p>`}
+    $('#p4card').innerHTML=html;
+  }
+  function pick(t,i){sel=(sel&&sel.t===t&&sel.i===i)?null:{t,i};render()}
+  svg.addEventListener('click',e=>{const a=e.target.closest('.hub'),b=e.target.closest('.clo');if(a)pick('h',+a.dataset.k);else if(b)pick('c',+b.dataset.i);else{sel=null;render()}});
+  svg.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const a=e.target.closest&&e.target.closest('.hub'),b=e.target.closest&&e.target.closest('.clo');if(a||b){e.preventDefault();if(a)pick('h',+a.dataset.k);else pick('c',+b.dataset.i)}});
+  render();
+})();
+
+</script>
+</body>
+</html>
