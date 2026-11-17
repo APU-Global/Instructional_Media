@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 Interactive | Follow the Healthcare Dollar</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+.sl{grid-template-columns:120px 1fr 76px}@media(max-width:560px){.sl{grid-template-columns:1fr 76px}}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of money flowing from people to an insurance plan and on to providers, with a small amount left for the patient">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g font-family="system-ui" font-weight="800" font-size="15" fill="#fff" text-anchor="middle">
+<circle cx="130" cy="95" r="44" fill="#fff"/><circle cx="130" cy="84" r="12" fill="#a8353a"/><path d="M106 118q0-24 24-24t24 24z" fill="#a8353a"/><text x="130" y="170">PEOPLE</text>
+<rect x="290" y="55" width="130" height="80" rx="14" fill="#f6c453"/><path d="M330 95h50M355 70v50" stroke="#7d2429" stroke-width="10" stroke-linecap="round"/><text x="355" y="170">PLAN OR PROGRAM</text>
+<rect x="540" y="55" width="130" height="80" rx="14" fill="#d9eeef"/><path d="M570 120V80h12v14h18V80h12v40z" fill="#1f6f78"/><text x="605" y="170">PROVIDERS</text></g>
+<g stroke="#f7dcdd" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="2 12"><path d="M184 95h92M434 95h92"/><path d="M605 186q-20 28-240 28T130 186" stroke="#f6c453"/></g>
+<g font-family="system-ui" fill="#fff" font-weight="800" font-size="20"><text x="720" y="90">Follow the money.</text><text x="720" y="120" font-size="16" font-weight="600">Who pays, who gets paid,</text><text x="720" y="142" font-size="16" font-weight="600">and what is left for you?</text></g>
+</svg>
+<div class="txt"><div class="kick">HSCI 110 · Week 2 Interactive</div><h1>Follow the Healthcare Dollar</h1><p>Financing shapes who gets care. Split a bill between a plan and a patient, then compare how different payment models change what providers are encouraged to do.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Who pays what?</h2>
+<p class="lead">Choose a service and a plan design. With <strong>cost sharing</strong>, the patient pays a <strong>deductible</strong> first, then a share called <strong>coinsurance</strong>, up to an <strong>out-of-pocket maximum</strong>. The rest goes to the plan. (Illustrative numbers only, not advice about any real plan.)</p>
+<div class="pick" id="svc" role="group" aria-label="Service"></div>
+<div class="pick" id="pln" role="group" aria-label="Plan design"></div>
+<div class="grid2">
+<div><div class="sl"><label for="bill"><b>Bill</b></label><input type="range" id="bill" min="100" max="25000" step="100" value="3000"><span id="billv" style="min-width:70px"></span></div>
+<div class="sl"><label for="ded"><b>Deductible</b></label><input type="range" id="ded" min="0" max="6000" step="250" value="500"><span id="dedv" style="min-width:70px"></span></div></div>
+<div><div class="sl"><label for="coi"><b>Coinsurance</b></label><input type="range" id="coi" min="0" max="50" step="5" value="10"><span id="coiv" style="min-width:70px"></span></div>
+<div class="sl"><label for="oop"><b>Out-of-pocket max</b></label><input type="range" id="oop" min="1000" max="10000" step="500" value="3000"><span id="oopv" style="min-width:70px"></span></div></div>
+</div>
+<svg class="fig" id="bar" viewBox="0 0 640 120" role="img" aria-label="Bar showing how much of the bill the plan pays and how much the patient pays"></svg>
+<div class="note teal live" id="out" aria-live="polite"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · How providers get paid</h2>
+<p class="lead">Reimbursement models move money in different ways, and different arrangements create different incentives. Select a model.</p>
+<div class="pick" id="mdl" role="group" aria-label="Payment model"></div>
+<div class="grid2"><div class="note" id="m1"></div><div class="note gold" id="m2"></div></div>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Programs and coverage</h2>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Financing shapes access</b>Payment structures affect who gets care.</div><div><b>Programs work differently</b>Public and private arrangements differ.</div><div><b>Patients may still pay</b>Remaining costs can be a barrier.</div><div><b>Follow the money</b>Trace who contributes and who pays.</div></div>
+</section>
+</div>
+<p class="foot">Based on the HSCI 110 Week 2 Deep Dive: Healthcare Financing, Insurance, and Payment. All figures are invented for illustration.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+function $v(i){return +$(i).value}function $$(n){return "$"+n.toLocaleString("en-US")}
+var SV=[["Routine visit",200],["Emergency visit",3000],["Hospital stay",20000]],PL=[["Lower deductible plan",500,10,3000],["High-deductible plan",3000,20,7000]];
+SV.forEach(function(s){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=s[0]+" ("+$$(s[1])+")";b.onclick=function(){$("bill").value=s[1];draw()};$("svc").appendChild(b)});
+PL.forEach(function(s){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=s[0];b.onclick=function(){$("ded").value=s[1];$("coi").value=s[2];$("oop").value=s[3];draw()};$("pln").appendChild(b)});
+function draw(){var B=$v("bill"),D=$v("ded"),C=$v("coi")/100,M=$v("oop");
+$("billv").textContent=$$(B);$("dedv").textContent=$$(D);$("coiv").textContent=Math.round(C*100)+"%";$("oopv").textContent=$$(M);
+var p=Math.min(B,D)+C*Math.max(0,B-D);p=Math.min(p,M,B);p=Math.round(p);var pl=B-p;
+var s=$("bar");while(s.firstChild)s.removeChild(s.firstChild);var W=600,x0=20,w1=W*pl/B,w2=W-w1;
+el("rect",{x:x0,y:20,width:Math.max(w1,0),height:50,fill:"#1f6f78"},s);el("rect",{x:x0+w1,y:20,width:Math.max(w2,0),height:50,fill:"#d34147"},s);
+el("rect",{x:x0,y:20,width:W,height:50,fill:"none",stroke:"#231f20","stroke-width":2,rx:4},s);
+var a=el("text",{x:x0,y:94,"font-size":15,"font-weight":"800",fill:"#1f6f78"},s);a.textContent="Plan pays "+$$(pl);
+var c=el("text",{x:x0+W,y:94,"text-anchor":"end","font-size":15,"font-weight":"800",fill:"#a8353a"},s);c.textContent="Patient pays "+$$(p);
+var pct=Math.round(100*p/B),r=$("out");
+r.innerHTML="Of a <strong>"+$$(B)+"</strong> bill, the patient is responsible for <strong>"+$$(p)+"</strong> ("+pct+"%). "+(p>=M&&B>M?"The out-of-pocket maximum caps what the patient pays. ":"")+(p>1000?"For many households an amount like this can be a barrier, so people may delay or skip care. Remaining costs matter for access.":"This amount is likely manageable for many households, though not for everyone.")}
+["bill","ded","coi","oop"].forEach(function(i){$(i).addEventListener("input",draw)});draw();
+var M=[
+{n:"Fee-for-service",a:"The provider is paid for each service delivered.",b:"Can encourage more services, and may under-reward prevention and coordination."},
+{n:"Capitation",a:"The provider gets a fixed amount per enrolled person, whatever services are used.",b:"Encourages efficiency and prevention, but may tempt providers to limit services."},
+{n:"Value-based",a:"Payment is linked to results such as quality and outcomes.",b:"Rewards better outcomes, but measuring quality is hard and reforms can have unintended effects."}];
+M.forEach(function(m,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=m.n;b.setAttribute("aria-pressed","false");
+b.onclick=function(){[].forEach.call($("mdl").children,function(x,j){x.setAttribute("aria-pressed",j===i)});$("m1").innerHTML="<strong>How it pays</strong><br>"+m.a;$("m2").innerHTML="<strong>Incentive to watch</strong><br>"+m.b};$("mdl").appendChild(b)});
+$("m1").textContent="Select a model.";$("m2").textContent="";
+quiz("q1",[
+{t:"A provider is paid a set amount per enrolled member each month, regardless of visits. Which model is this?",o:["Capitation","Fee-for-service","Value-based contracting"],a:0,w:"Capitation pays a fixed amount per person."},
+{t:"Which model most directly links payment to results?",o:["Value-based contracting","Fee-for-service","None of them"],a:0,w:"Value-based contracting ties payment to outcomes and quality."},
+{t:"What incentive can fee-for-service create?",o:["More services delivered, since each one is paid","Fewer services, since the amount is fixed","No incentive at all"],a:0,w:"Paying per service can encourage volume."}],"r1");
+quiz("q2",[
+{t:"A family has insurance with a high deductible and skips a needed visit because of the cost. Which idea does this show?",o:["Financial responsibility left with the patient can be a barrier","Insurance removes all costs","Deductibles only affect providers"],a:0,w:"Payment structures can encourage or discourage people from seeking care."},
+{t:"Which describes the healthcare dollar view?",o:["It shows who contributes, who pays whom, and what remains for the patient","It lists only the hospitals in a region","It ranks insurers by size"],a:0,w:"Focus on the financial relationships, not only on who is involved."},
+{t:"Which groups play major roles in financing care?",o:["Government programs and managed care organizations, alongside private insurance","Only individual patients","Only hospitals"],a:0,w:"Public programs, managed care, and private coverage all move money."},
+{t:"Many people get coverage through…",o:["An employer or an individual purchase","Only a government program","No arrangement; most pay nothing"],a:0,w:"Employer-sponsored and individually purchased plans differ in cost sharing and covered services."}],"r2");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

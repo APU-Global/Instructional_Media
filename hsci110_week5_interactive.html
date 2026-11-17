@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 5 Interactive | Evaluate the Tool: Healthcare Technology</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a screen with a heartbeat line, a shield, and a magnifying glass">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 34)"><rect width="230" height="140" rx="14" fill="#fff"/><rect x="12" y="12" width="206" height="116" rx="8" fill="#f7dcdd"/><path d="M22 76h44l14-34 22 66 18-48 12 16h72" stroke="#d34147" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="85" y="146" width="60" height="12" rx="5" fill="#fff"/></g>
+<g transform="translate(380 40)"><path d="M70 0l70 24v50q0 50-70 76Q0 124 0 74V24z" fill="#f6c453"/><path d="M44 74l20 20 40-44" stroke="#7d2429" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(590 44)"><circle cx="50" cy="50" r="40" fill="none" stroke="#fff" stroke-width="10"/><path d="M80 82l40 40" stroke="#fff" stroke-width="12" stroke-linecap="round"/><circle cx="50" cy="50" r="22" fill="#d9eeef"/></g>
+<g font-family="system-ui" fill="#fff" font-weight="800" font-size="20"><text x="560" y="206">New does not always mean better.</text></g>
+</svg>
+<div class="txt"><div class="kick">HSCI 110 · Week 5 Interactive</div><h1>Evaluate the Tool: Healthcare Technology</h1><p>Technology can improve care, but it does not automatically do so. Weigh a tool's benefits and risks, match safeguards to the concerns, and practice verifying AI-generated information.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Weigh the benefits and the risks</h2>
+<p class="lead">Choose a technology. Review its possible benefits and its concerns, then match each concern with the safeguard that best addresses it.</p>
+<div class="pick" id="tl" role="group" aria-label="Technology"></div>
+<div class="grid2"><div class="note teal" id="ben">Select a technology.</div><div class="note gold" id="rsk"></div></div>
+<div id="sg"></div><p class="live score" id="rs" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Verify the AI output</h2>
+<p class="lead">AI-supported tools can assist with information and decisions, but their output is a starting point to verify with credible sources, and human oversight is an important safeguard. An AI assistant gave this (fictional) summary about a clinic's telehealth program. Decide how to treat each statement.</p>
+<div class="say" style="font-family:system-ui;font-size:.98rem">&ldquo;The Riverside clinic offers telehealth visits for all patients. It has 220 beds. Telehealth lets patients receive care remotely. The program is covered by every Medicaid plan in the state. Patients should expect a short wait.&rdquo;</div>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Health information and digital health</h2>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Evaluate, do not assume</b>New does not always mean better.</div><div><b>Connected systems help</b>Interoperability supports coordination.</div><div><b>Verify AI output</b>Check significant claims with credible sources.</div><div><b>Protect people</b>Consider privacy, bias, and access.</div></div>
+</section>
+</div>
+<p class="foot">Based on the HSCI 110 Week 5 Deep Dive: Technology and the Changing Healthcare System. The AI summary and clinic are fictional.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+var TL=[
+{n:"Telehealth",b:["Reaches patients who live far away","Can improve access and coordination","Saves travel time"],r:["Some people lack broadband or devices","Privacy during video visits","Not every exam can be done remotely"],
+ q:[{t:"Some patients have no broadband at home. Which safeguard best addresses unequal access?",o:["Offer phone visits and private rooms with devices at community sites","Require video for every visit","Stop offering telehealth"],a:0,w:"Offering alternatives keeps the benefit while reducing who is left behind."},
+    {t:"A patient joins a video visit in a crowded space. Which safeguard best protects privacy?",o:["Check privacy at the start and use secure platforms","Skip the check to save time","Record every visit without telling the patient"],a:0,w:"Privacy and security need active protection."},
+    {t:"A condition needs a hands-on exam. What should the clinic do?",o:["Schedule an in-person visit when remote care is not enough","Diagnose by video anyway","Cancel care"],a:0,w:"Weigh benefits against limitations before relying on a tool."}]},
+{n:"Remote monitoring",b:["Tracks readings between visits","Can catch changes earlier","Supports patients at home"],r:["Inaccurate or missing readings","Data security","Patients without devices or comfort with technology"],
+ q:[{t:"A home device sometimes gives odd readings. Which safeguard helps with accuracy?",o:["Teach correct use and have clinicians review trends, not one reading","Act on every single number automatically","Ignore the device"],a:0,w:"Human oversight and good training help catch errors."},
+    {t:"Readings are sent over the internet. Which safeguard addresses security?",o:["Use secure, protected transmission and limit who can see the data","Email readings to a shared inbox","Post readings in a group chat"],a:0,w:"Health information is protected by law and good practice."},
+    {t:"Some patients cannot afford or use the device. What addresses equity?",o:["Provide devices and training, and offer other ways to follow up","Enroll only those who already have devices","Assume everyone can use it"],a:0,w:"Consider who may be disadvantaged before adopting a tool."}]},
+{n:"AI note summarizer",b:["Saves clinicians documentation time","Can organize large amounts of information","May reduce missed details"],r:["Output may be wrong or invented","Patient information privacy","Bias from the data it learned from"],
+ q:[{t:"The tool sometimes states something that is not in the record. Which safeguard best addresses accuracy?",o:["A clinician reviews and corrects every summary before it is saved","Trust it because it sounds confident","Never read the output"],a:0,w:"AI output is a starting point to verify, and human oversight is an important safeguard."},
+    {t:"Notes contain sensitive patient information. Which safeguard addresses privacy?",o:["Use an approved, secure tool under the organization's privacy rules","Paste notes into any free website","Store them on a personal device"],a:0,w:"Privacy and security rules guide how information is protected."},
+    {t:"The tool works worse for some patient groups. What should the organization do?",o:["Test it across groups, monitor results, and correct problems","Ignore the difference","Assume it is neutral"],a:0,w:"Bias is a concern to look for, not an exception."}]}];
+var cu=-1;
+TL.forEach(function(t,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=t.n;b.setAttribute("aria-pressed","false");
+b.onclick=function(){cu=i;[].forEach.call($("tl").children,function(x,j){x.setAttribute("aria-pressed",j===i)});
+$("ben").innerHTML="<strong>Possible benefits</strong><ul style='margin:6px 0 0 18px;padding:0'>"+t.b.map(function(x){return"<li>"+x+"</li>"}).join("")+"</ul>";
+$("rsk").innerHTML="<strong>Concerns to weigh</strong><ul style='margin:6px 0 0 18px;padding:0'>"+t.r.map(function(x){return"<li>"+x+"</li>"}).join("")+"</ul>";
+$("sg").innerHTML="";$("rs").textContent="";quiz("sg",t.q,"rs")};$("tl").appendChild(b)});
+var V=["Verify with a credible source first","Reasonable to use as written"];
+quiz("q1",[
+{t:"“The Riverside clinic offers telehealth visits for all patients.”",o:V,a:0,w:"Verify. It is a specific claim about services and eligibility. Check the clinic's own information."},
+{t:"“It has 220 beds.”",o:V,a:0,w:"Verify. AI tools can invent specific numbers, so check a credible source."},
+{t:"“Telehealth lets patients receive care remotely.”",o:V,a:1,w:"Reasonable. This is a general, well-established definition. It is still wise to rely on credible course sources."},
+{t:"“The program is covered by every Medicaid plan in the state.”",o:V,a:0,w:"Verify. Coverage claims have financial consequences and vary by plan, so check the state program or plan."},
+{t:"“Patients should expect a short wait.”",o:V,a:0,w:"Verify. It sounds helpful but is unsupported. Confirm with the clinic before telling a patient."}],"r1");
+quiz("q2",[
+{t:"What does an electronic health record do?",o:["Records and shares health information","Replaces all clinicians","Only stores billing codes"],a:0,w:"Electronic health records record and share health information."},
+{t:"Interoperability means…",o:["Different systems can exchange and use information","Every hospital uses one brand of computer","Patients cannot see their data"],a:0,w:"Interoperability and health information exchange connect organizations and support coordination."},
+{t:"Why does health information legislation matter?",o:["It guides how health information is protected","It decides which tools are fashionable","It makes data public"],a:0,w:"Privacy and security rules guide how information is protected."},
+{t:"A digital tool improves access for most people but leaves some behind. What should leaders do?",o:["Evaluate who benefits and who may be disadvantaged, and add support","Adopt it anyway and ignore the rest","Reject all technology"],a:0,w:"Weigh benefits against limitations before adopting a technology."}],"r2");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

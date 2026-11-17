@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Interactive | Guide a Patient Along the Continuum of Care</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a path through five care settings: emergency, hospital, rehabilitation, home, and primary care">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<path d="M90 120C200 40 260 200 370 120S540 40 650 120" stroke="#f7dcdd" stroke-width="6" fill="none" stroke-dasharray="2 12" stroke-linecap="round"/>
+<g font-family="system-ui" font-weight="800" font-size="14" fill="#fff" text-anchor="middle">
+<circle cx="90" cy="120" r="30" fill="#fff"/><path d="M90 104v32M74 120h32" stroke="#d34147" stroke-width="9" stroke-linecap="round"/><text x="90" y="176">ER</text>
+<circle cx="230" cy="112" r="30" fill="#f6c453"/><path d="M214 128V100h8v8h16v-8h8v28z" fill="#7d2429"/><text x="230" y="176">HOSPITAL</text>
+<circle cx="370" cy="120" r="30" fill="#d9eeef"/><path d="M356 128l14-26 14 26z" fill="#1f6f78"/><text x="370" y="176">REHAB</text>
+<circle cx="510" cy="112" r="30" fill="#fff"/><path d="M492 118l18-18 18 18v12h-36z" fill="#a8353a"/><text x="510" y="176">HOME</text>
+<circle cx="650" cy="120" r="30" fill="#f7dcdd"/><path d="M638 120h24M650 108v24" stroke="#7d2429" stroke-width="7" stroke-linecap="round"/><text x="650" y="176">PRIMARY CARE</text></g>
+<g font-family="system-ui" fill="#fff" font-weight="800" font-size="19"><text x="730" y="104">Every handoff</text><text x="730" y="130">is a chance to</text><text x="730" y="156">coordinate well.</text></g>
+</svg>
+<div class="txt"><div class="kick">HSCI 110 · Week 3 Interactive</div><h1>Guide a Patient Along the Continuum of Care</h1><p>A patient's journey crosses many settings, and each transition can keep or lose information. Make the coordination choices and watch what the next team knows.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Manage the transitions</h2>
+<p class="lead"><strong>Scenario (fictional):</strong> Mr. Alvarez, 78, breaks his hip in a fall. He moves from the emergency department to the hospital, to rehabilitation, home, and back to his primary care clinic. At each handoff, choose the action that best supports coordination. The meter shows how much of his story each next team still has. This is a care-coordination exercise, not medical advice.</p>
+<svg class="fig" id="path" viewBox="0 0 640 130" role="img" aria-label="Progress along the five care settings and how much information carried forward"></svg>
+<div id="tr"></div>
+<div class="note teal live" id="res" aria-live="polite">Start with the first handoff.</div>
+<button type="button" class="btn" id="rst">Start over</button>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Settings of care</h2>
+<p class="lead">Care is delivered in inpatient, outpatient, post-acute, long-term, palliative, and hospice settings. Each serves different needs.</p>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Roles, coordination, and navigation</h2>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Care spans settings</b>Know the continuum of care.</div><div><b>Many people are involved</b>Roles and responsibilities shift.</div><div><b>Transitions carry risk</b>Look for gaps in coordination.</div><div><b>Navigation helps patients</b>Offer practical, clear support.</div></div>
+<div class="note"><strong>Remember:</strong> A practical plan helps a patient understand next steps. It is different from medical or financial advice.</div>
+</section>
+</div>
+<p class="foot">Based on the HSCI 110 Week 3 Deep Dive: Healthcare Delivery and the Continuum of Care. The scenario is fictional.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+var N=["Emergency","Hospital","Rehab","Home","Primary care"];
+var T=[
+{t:"Emergency department to hospital ward",o:[["Send a complete handoff: injury, medications, allergies, and the patient's home situation",100,"The inpatient team starts with the full picture."],["Send only the diagnosis",-45,"Medications and home situation are missing, so questions will be repeated or details missed."],["Tell the patient to explain it to the ward staff",-70,"Relying on the patient alone risks lost or wrong information."]]},
+{t:"Hospital to rehabilitation",o:[["Send a discharge summary, therapy goals, and a named contact for questions",100,"Rehab knows the plan and who to call."],["Send the summary a few days later",-40,"The first days of rehab happen without key information."],["Assume rehab will read the shared record carefully",-55,"Assuming is not coordination. Important details can be overlooked."]]},
+{t:"Rehabilitation to home",o:[["Review the plan with the patient and his daughter in plain language, and arrange home-health follow-up",100,"Clear next steps and support reduce confusion."],["Hand over a long document of medical terms",-45,"The patient may not understand what to do."],["Discharge with no follow-up arranged",-70,"A gap in follow-up is a common transition risk."]]},
+{t:"Home back to primary care",o:[["Send the full course of care to the clinic and book a follow-up visit before he leaves rehab",100,"Primary care can continue the plan without starting over."],["Tell him to call when he feels ready",-40,"Follow-up may never happen."],["Let the clinic request records if it wants them",-55,"Responsibility is left unclear and the record may never arrive."]]}];
+var info,pk;
+function build(){info=100;pk=[null,null,null,null];var h=$("tr");h.innerHTML="";
+T.forEach(function(x,i){var d=document.createElement("div");d.className="lever";d.innerHTML='<h3></h3><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector("h3").textContent=(i+1)+". "+x.t;
+x.o.forEach(function(o,oi){var b=document.createElement("button");b.type="button";b.textContent=o[0];
+b.onclick=function(){if(pk[i]!==null)return;if(i>0&&pk[i-1]===null){d.querySelector(".fb").innerHTML='<span class="badbox">Complete the earlier handoff first.</span>';return}
+pk[i]=oi;[].forEach.call(d.querySelectorAll(".opts button"),function(z){z.disabled=true});
+if(o[1]===100){b.className="right"}else{b.className="wrong";b.style.textDecoration="none"}
+info=o[1]===100?info:Math.max(5,info+o[1]);
+d.querySelector(".fb").innerHTML='<span class="'+(o[1]===100?"good":"badbox")+'">'+o[2]+"</span>";draw()};
+d.querySelector(".opts").appendChild(b)});h.appendChild(d)});draw()}
+function draw(){var s=$("path");while(s.firstChild)s.removeChild(s.firstChild);
+var done=pk.filter(function(v){return v!==null}).length;
+for(var i=0;i<5;i++){var x=60+i*130;if(i<4)el("line",{x1:x+22,y1:40,x2:x+108,y2:40,stroke:pk[i]===null?"#d9d4cf":(T[i].o[pk[i]][1]===100?"#2d7a4b":"#b3261e"),"stroke-width":6,"stroke-linecap":"round"},s);
+var reached=i<=done;el("circle",{cx:x,cy:40,r:22,fill:reached?"#d34147":"#edebe8",stroke:reached?"#a8353a":"#c9c3bf","stroke-width":3},s);
+var t=el("text",{x:x,y:86,"text-anchor":"middle","font-size":13,"font-weight":"700",fill:"#231f20"},s);t.textContent=N[i]}
+el("rect",{x:20,y:100,width:600,height:14,rx:7,fill:"#edebe8"},s);
+var col=info>=80?"#2d7a4b":(info>=50?"#e0a526":"#b3261e");el("rect",{x:20,y:100,width:6*info,height:14,rx:7,fill:col},s);
+var l=el("text",{x:20,y:128,"font-size":13,fill:"#5b5557"},s);l.textContent="Information the next team has: "+info+"%";
+var r=$("res");
+if(done<4){r.textContent="Handoffs completed: "+done+" of 4."}
+else if(info>=95)r.innerHTML="<strong>A coordinated journey.</strong> Each team received what it needed, so Mr. Alvarez never had to repeat his story and nothing was lost. Notice the common thread: clear roles, a complete handoff, plain language, and a named follow-up.";
+else r.innerHTML="<strong>Gaps appeared.</strong> The next team had only "+info+"% of the picture. Each transition is a chance to coordinate well or lose information. Try again and look for the action that names who does what next.";}
+$("rst").onclick=build;build();
+quiz("q1",[
+{t:"A patient needs therapy to rebuild strength after surgery before going home. Which setting is this?",o:["Post-acute care","Palliative care","Outpatient primary care"],a:0,w:"Post-acute settings support recovery after a hospital stay."},
+{t:"A patient with a serious illness receives care focused on comfort and quality of life, alongside other treatment. Which setting fits?",o:["Palliative care","Emergency care","Preventive screening"],a:0,w:"Palliative care focuses on comfort and quality of life."},
+{t:"A patient is admitted overnight for monitoring and treatment. This is…",o:["Inpatient care","Outpatient care","Long-term care"],a:0,w:"Inpatient care means the patient stays in a facility."},
+{t:"A person who cannot live independently receives ongoing daily support for an extended period. This is…",o:["Long-term care","Emergency care","A routine outpatient visit"],a:0,w:"Long-term care provides ongoing support."}],"r1");
+quiz("q2",[
+{t:"Why can transitions between settings be risky?",o:["Communication, access, or follow-up can be lost","Patients always recover faster","Roles never change"],a:0,w:"Transitions can create gaps in communication, access, or follow-up, and identifying risks helps teams plan improvements."},
+{t:"What supports continuity as a patient moves between organizations?",o:["Clear roles and responsibilities","Each team starting from scratch","Leaving coordination to chance"],a:0,w:"Responsibility shifts as the patient moves, so clear roles support continuity."},
+{t:"A health professional helps a patient understand next steps and which appointments to book. What is this?",o:["Patient navigation","Medical diagnosis","Financial advice"],a:0,w:"Navigation helps patients through a complex system. A practical plan is different from medical or financial advice."},
+{t:"Which action is practical navigation support?",o:["Writing next steps in plain language, with who to call","Telling the patient which medicine to take instead of the doctor","Advising the patient how to invest to pay the bill"],a:0,w:"Navigation stays practical and clear, and it does not replace medical or financial advice.",f:["","That is medical advice, outside a navigator's role.","That is financial advice, not navigation."]}],"r2");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

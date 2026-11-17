@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive | Insured but Not Reaching Care: Open the Gates</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of an insurance card followed by closed gates between a person and a clinic">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(60 50)"><rect width="130" height="84" rx="12" fill="#fff"/><rect x="14" y="16" width="40" height="30" rx="5" fill="#f6c453"/><path d="M14 62h80M14 72h56" stroke="#a8353a" stroke-width="5" stroke-linecap="round"/><path d="M96 20l8 8 14-16" stroke="#2d7a4b" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<path d="M200 92h520" stroke="#f7dcdd" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round"/>
+<g fill="#f7dcdd"><rect x="270" y="50" width="12" height="84" rx="4"/><rect x="370" y="50" width="12" height="84" rx="4"/><rect x="470" y="50" width="12" height="84" rx="4"/><rect x="570" y="50" width="12" height="84" rx="4"/></g>
+<g stroke="#fff" stroke-width="4"><path d="M270 70h-30M270 100h-30M370 70h-30M370 100h-30M470 70h-30M470 100h-30M570 70h-30M570 100h-30" opacity="0"/></g>
+<g transform="translate(720 50)"><rect width="110" height="84" rx="10" fill="#d9eeef"/><path d="M40 84V50h30v34M55 20v28M41 34h28" stroke="#1f6f78" stroke-width="7" fill="none" stroke-linecap="round"/></g>
+<g font-family="system-ui" font-weight="800" fill="#fff"><text x="60" y="190" font-size="20">Coverage is not access.</text><text x="60" y="214" font-size="15" font-weight="600">Cost, distance, time, language, and clinic practices can still block the way.</text></g>
+</svg>
+<div class="txt"><div class="kick">HSCI 110 · Week 4 Interactive</div><h1>Insured but Not Reaching Care: Open the Gates</h1><p>Having insurance does not always mean affordable, timely, high-quality care. Meet three patients, find the barriers in their way, and choose what organizations and professionals can do.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Open the gates</h2>
+<p class="lead">Each patient below has insurance. Choose a patient, select a closed gate, and pick the response that best removes that barrier. Open every gate to reach care. (Fictional patients.)</p>
+<div class="pick" id="pp" role="group" aria-label="Patient"></div>
+<svg class="fig" id="gt" viewBox="0 0 640 170" role="group" aria-label="Gates between the patient and care"></svg>
+<div id="gq"></div>
+<div class="note teal live" id="res" aria-live="polite">Choose a patient to begin.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Barriers, quality, and determinants</h2>
+<p class="lead">Access depends on more than coverage. Quality describes how well care meets patient needs, and the conditions where people live, work, and learn influence health.</p>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Equity and responsibility</h2>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Coverage is not access</b>Barriers can remain even with insurance.</div><div><b>Quality varies</b>Look at how care meets patient needs.</div><div><b>Conditions shape health</b>Social determinants affect outcomes.</div><div><b>Equity requires action</b>Consider who is overlooked.</div></div>
+<div class="note"><strong>Reflect:</strong> How might a commitment to justice and care for one's neighbor shape which barriers an organization chooses to remove first?</div>
+</section>
+</div>
+<p class="foot">Based on the HSCI 110 Week 4 Deep Dive: Access, Quality, Cost, and Health Equity. Patients and scenarios are fictional.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+var G=["Cost","Distance","Time","Language and culture","Clinic practices"];
+var P=[
+{n:"Dana",s:"Dana has insurance, but the nearest specialist is 90 miles away, her plan has a high deductible, and the clinic is open only during her work hours.",g:[
+ [0,"Cost","High deductible",[["Offer financial counseling and a payment plan",1,"Helps her plan for what she will owe."],["Remind her she has insurance",0,"She knows. The deductible is the barrier."],["Ask for payment in full before the visit",0,"That makes the barrier higher."]]],
+ [1,"Distance","90 miles to the specialist",[["Offer telehealth follow-ups and coordinate a closer clinic for tests",1,"Brings care closer to where she lives."],["Suggest she move closer",0,"Not a realistic or respectful response."],["Mail her a brochure",0,"Information does not shorten the trip."]]],
+ [2,"Time","Clinic hours match her work hours",[["Add early morning or evening appointments",1,"Hours that fit patients' lives improve access."],["Tell her to take unpaid time off",0,"That passes the cost to her."],["Keep the hours and send reminders",0,"Reminders do not fix the conflict."]]]]},
+{n:"Marcus",s:"Marcus is an hourly worker with a high-deductible plan. He gets bills he cannot make sense of, and he cannot leave work for weekday visits.",g:[
+ [0,"Cost","Deductible and surprise bills",[["Give price estimates and screen for financial assistance",1,"Clear expectations and help reduce avoidance."],["Send the bill and wait",0,"Unclear bills often lead to delayed care."],["Tell him to compare plans next year",0,"Does not help with the care he needs now."]]],
+ [2,"Time","Weekday-only appointments",[["Offer evening and weekend appointments",1,"Fits an hourly worker's schedule."],["Offer only walk-in lines on weekdays",0,"Still conflicts with his work."],["Mark him as a no-show",0,"Penalizes the barrier instead of removing it."]]],
+ [4,"Clinic practices","Confusing billing and referrals",[["Give him one navigator as a point of contact",1,"A single person who can explain next steps removes confusion."],["Give him three different phone numbers",0,"More confusion."],["Send a longer form",0,"Complexity is the problem."]]]]},
+{n:"Rosa",s:"Rosa is new to the area and speaks mainly Spanish. The clinic's forms and portal are in English, and there is no bus route to the clinic.",g:[
+ [3,"Language and culture","Care and forms in English only",[["Provide a qualified interpreter and translated materials",1,"Supports understanding and respects her background."],["Ask her child to interpret",0,"Puts a child in an inappropriate role and risks errors."],["Give her the English forms",0,"She cannot use them."]]],
+ [4,"Clinic practices","Portal-only scheduling",[["Offer phone scheduling with Spanish-speaking staff",1,"A practical alternative to an English-only portal."],["Tell her to ask a neighbor to book",0,"Shifts the burden onto her."],["Keep portal-only scheduling",0,"The barrier remains."]]],
+ [1,"Distance","No bus route",[["Coordinate transportation help or a community partner",1,"Partnerships can extend the reach of care."],["Say transportation is not the clinic's concern",0,"Barriers to access are an organizational concern too."],["Reschedule her for the next month",0,"Delays care and fixes nothing."]]]]}];
+var cur=-1,open=[];
+P.forEach(function(p,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=p.n;b.setAttribute("aria-pressed","false");
+b.onclick=function(){cur=i;open=[false,false,false];[].forEach.call($("pp").children,function(x,j){x.setAttribute("aria-pressed",j===i)});$("gq").innerHTML='<p class="lead" style="margin-top:8px">'+p.s+"</p>";q();draw()};$("pp").appendChild(b)});
+function q(){var h=document.createElement("div");$("gq").appendChild(h);
+P[cur].g.forEach(function(g,gi){var d=document.createElement("div");d.className="lever";d.innerHTML='<h3></h3><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector("h3").textContent="Gate: "+g[1]+" ("+g[2]+")";var done=false;
+g[3].forEach(function(o){var b=document.createElement("button");b.type="button";b.textContent=o[0];
+b.onclick=function(){if(done)return;if(o[1]){done=true;open[gi]=true;[].forEach.call(d.querySelectorAll(".opts button"),function(z){z.disabled=true});b.className="right";d.querySelector(".fb").innerHTML='<span class="good">✔ Gate open. '+o[2]+"</span>";draw()}
+else{b.disabled=true;b.className="wrong";d.querySelector(".fb").innerHTML='<span class="badbox">'+o[2]+" Try another response.</span>"}};
+d.querySelector(".opts").appendChild(b)});h.appendChild(d)})}
+function draw(){var s=$("gt");while(s.firstChild)s.removeChild(s.firstChild);
+el("rect",{x:20,y:60,width:80,height:60,rx:10,fill:"#fff",stroke:"#2d7a4b","stroke-width":3},s);var c=el("text",{x:60,y:96,"text-anchor":"middle","font-size":13,"font-weight":"800",fill:"#14502c"},s);c.textContent="Insured";
+var all=cur>=0&&open.every(function(v){return v});
+el("rect",{x:540,y:50,width:80,height:80,rx:10,fill:all?"#dcf1e3":"#edebe8",stroke:all?"#2d7a4b":"#c9c3bf","stroke-width":3},s);var t=el("text",{x:580,y:96,"text-anchor":"middle","font-size":13,"font-weight":"800",fill:"#231f20"},s);t.textContent=all?"Care":"Care?";
+el("line",{x1:100,y1:90,x2:540,y2:90,stroke:"#d9d4cf","stroke-width":4,"stroke-dasharray":"3 8"},s);
+if(cur<0)return;
+P[cur].g.forEach(function(g,i){var x=190+i*135,o=open[i];
+el("rect",{x:x-9,y:40,width:18,height:100,rx:6,fill:o?"#2d7a4b":"#b3261e",opacity:o?0.35:1,transform:o?"rotate(-35 "+x+" 140)":""},s);
+var l=el("text",{x:x,y:30,"text-anchor":"middle","font-size":13,"font-weight":"700",fill:"#231f20"},s);l.textContent=g[1].replace(" and culture","");
+var m=el("text",{x:x,y:162,"text-anchor":"middle","font-size":12,fill:o?"#14502c":"#7a1812","font-weight":"700"},s);m.textContent=o?"open":"closed"});
+var n=open.filter(function(v){return v}).length;
+$("res").innerHTML=all?"<strong>"+P[cur].n+" can reach care.</strong> Every barrier was different, and none was solved by the insurance card. Organizations and professionals share responsibility for removing them.":"Gates open: "+n+" of 3. Select answers below to open the rest."}
+draw();
+quiz("q1",[
+{t:"A patient has coverage but cannot afford the deductible. Which idea does this show?",o:["Affordability affects whether people seek care","Coverage guarantees timely care","Cost does not affect behavior"],a:0,w:"Affordability affects whether people seek care, even with insurance."},
+{t:"Which is an example of a social determinant of health?",o:["Reliable transportation","A particular medication","A single lab test"],a:0,w:"Conditions where people live, work, and learn, such as transportation, income, language, and disability, influence access and health."},
+{t:"What does quality of care describe?",o:["How well care meets patient needs","How many buildings a system owns","How much a plan costs"],a:0,w:"Quality can differ across settings and populations, and organizations and professionals share responsibility for it."},
+{t:"Two neighborhoods have the same insurance rates but very different health outcomes. Which factor might explain it?",o:["Differences in conditions such as income, transportation, and language","The color of the clinic walls","Nothing can explain it"],a:0,w:"Social determinants help explain disparities."}],"r1");
+quiz("q2",[
+{t:"Health disparities raise which kind of question?",o:["Ethical questions about fairness","Only technical questions about equipment","None"],a:0,w:"Disparities raise ethical questions about fairness and about the responsibilities of organizations and communities."},
+{t:"Who shares responsibility for improving equity?",o:["Healthcare organizations, professionals, and communities","Only patients","No one"],a:0,w:"Responsibility is shared, so equity requires action."},
+{t:"An organization asks “Who is overlooked by how we deliver care?” What is it practicing?",o:["Equity-minded evaluation","Cost cutting","Marketing"],a:0,w:"Equity requires asking who is overlooked and acting on the answer."}],"r2");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
