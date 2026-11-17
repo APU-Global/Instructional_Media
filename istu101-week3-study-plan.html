@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ISTU 101 | Week 3: What Kind of Student Are You?</title>
+<style>:root{--ink:#1f2a30;--bg:#f5f6f2;--card:#fff;--line:#d8ddd2;--muted:#56626a;--green:#8dc63f;--green-d:#4a7608;--green-t:#ebf5d9;--red:#a8343c;--red-t:#f8e4e5;--char:#263238;--amber:#b86e00;--amber-t:#fbefd9;--shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05)}
+@media (prefers-color-scheme:dark){:root{--ink:#e9eef0;--bg:#141a1d;--card:#1e272c;--line:#34424a;--muted:#a3b0b7;--green-d:#a9d95f;--green-t:#26341a;--red:#ee8a92;--red-t:#3a2124;--amber:#f0b25a;--amber-t:#3a2d17;--shadow:none}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.hdr{background:var(--char);color:#fff;border-bottom:4px solid var(--green);padding:10px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.hdr h1{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:.2px;flex:1 1 260px}
+.hdr h1 small{display:block;font-weight:500;font-size:.8rem;color:#c9d3d8}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps button{border:1px solid #5b6b73;background:transparent;color:#e6ecef;border-radius:99px;padding:4px 12px;font:inherit;font-size:.82rem;cursor:pointer}
+.steps button[aria-current=step]{background:var(--green);border-color:var(--green);color:#1b2a05;font-weight:700}
+.steps button.done:not([aria-current]){border-color:var(--green);color:#d6efb0}
+.steps button:focus-visible,.btn:focus-visible,.chip:focus-visible,.opt:focus-visible,.cell:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,svg [role=button]:focus-visible{outline:3px solid #2f7de1;outline-offset:2px}
+main{flex:1;min-height:0;overflow-y:auto;padding:16px;scrollbar-gutter:stable}
+.wrap{max-width:980px;margin:0 auto}
+h2{margin:0 0 4px;font-size:1.3rem}
+.lead{margin:0 0 14px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+@media (max-width:720px){.grid{grid-template-columns:1fr}}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--green-d)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#1b2a05}
+.btn.primary:hover{filter:brightness(.95)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 14px;font:inherit;cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--green-d);background:var(--green-t);font-weight:700}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 14px;font:inherit;cursor:pointer;margin:0 0 8px}
+.opt:hover:not([disabled]){border-color:var(--green-d)}
+.opt.right{border-color:var(--green-d);background:var(--green-t)}
+.opt.wrong{border-color:var(--red);background:var(--red-t)}
+.fb{border-left:5px solid var(--muted);background:var(--bg);border-radius:8px;padding:10px 14px;margin-top:8px}
+.fb.ok{border-color:var(--green-d);background:var(--green-t)}
+.fb.no{border-color:var(--red);background:var(--red-t)}
+.fb.tip{border-color:var(--amber);background:var(--amber-t)}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--green);transition:width .3s}
+label{font-weight:600;display:block;margin:10px 0 4px}
+input[type=text],input[type=number],textarea,select{width:100%;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font:inherit;background:var(--card);color:var(--ink)}
+.kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--green-d);font-weight:800}
+.muted{color:var(--muted)}
+svg text{font-family:inherit}
+.sr{position:absolute;left:-9999px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.traits{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.tcard{border-left:5px solid var(--green);padding:8px 12px;background:var(--bg);border-radius:8px;margin-bottom:8px}
+.tcard b{display:block}
+.pl{width:100%;border-collapse:separate;border-spacing:4px;table-layout:fixed}
+.pl th{font-size:.75rem;color:var(--muted);font-weight:700;padding:0}
+.pl th.rl{text-align:right;padding-right:4px;width:62px}
+.cell{width:100%;height:42px;border:2px dashed var(--line);border-radius:8px;background:transparent;cursor:pointer;font-size:1.1rem;color:var(--ink);padding:0}
+.cell[data-t=work]{background:#cfd8dc;border:2px solid #90a4ae}
+.cell[data-t=family]{background:#f4c7cb;border:2px solid #d98089}
+.cell[data-t=rest]{background:#d6e8f7;border:2px solid #86b3d9}
+.cell[data-t=study]{background:#c9e693;border:2px solid #6c9a1a}
+@media (prefers-color-scheme:dark){.cell[data-t]{color:#1b2227}}
+.pal{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.pal .chip{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:4px;display:inline-block}
+.tally{display:grid;gap:6px;margin-top:10px}.tally div{display:grid;grid-template-columns:70px 1fr 26px;gap:8px;align-items:center;font-size:.9rem}
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}@media(max-width:620px){.sgrid{grid-template-columns:1fr}}
+.strat{border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:10px 12px;text-align:left;font:inherit;cursor:pointer}
+.strat[aria-pressed=true]{border-color:var(--green-d);background:var(--green-t)}
+.strat b{display:block}.strat span{font-size:.88rem;color:var(--muted)}
+.strat[disabled]{opacity:.5;cursor:not-allowed}
+.planbox{border:3px solid var(--green);border-radius:14px;padding:14px;background:var(--card)}
+</style></head>
+<body><div class="app">
+<header class="hdr"><h1>ISTU 101 | Week 3: What Kind of Student Are You?<small>Interactive: Build Your Learning Habits Plan</small></h1><nav class="steps" id="steps" aria-label="Activity steps"></nav></header>
+<main id="main" tabindex="-1"><div class="wrap" id="stage"></div></main>
+</div>
+<script>
+const STEPS=["1 Your student profile", "2 Plan your week", "3 Choose strategies"];
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let step=0;const doneSteps=new Set();
+function renderSteps(){const n=$('#steps');n.innerHTML=STEPS.map((s,i)=>`<button data-i="${i}" class="${doneSteps.has(i)?'done':''}" ${i===step?'aria-current="step"':''}>${esc(s)}</button>`).join('');
+ $$('button',n).forEach(b=>b.onclick=()=>go(+b.dataset.i));}
+function go(i){step=i;renderSteps();$('#stage').innerHTML='';VIEWS[i]($('#stage'));$('#main').scrollTop=0;}
+function navBar(back,next,nextLabel='Continue',nextOff=false){return `<div class="nav"><button class="btn" id="bk" ${back?'':'style="visibility:hidden"'}>Back</button><button class="btn primary" id="nx" ${nextOff?'disabled':''}>${nextLabel}</button></div>`}
+function wireNav(root,onNext){const b=$('#bk',root),n=$('#nx',root);if(b)b.onclick=()=>go(step-1);if(n)n.onclick=()=>{doneSteps.add(step);onNext?onNext():go(step+1)};}
+function copyText(t,btn){const ok=()=>{const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1600)};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
+ function fb(){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){btn.textContent='Select and copy manually'}a.remove()}}
+window.addEventListener('load',()=>go(0));
+
+const TR={
+ Procrastination:['Knows the pull of “later,” so you can plan for it.','Start with a ten-minute first step and set a mini-deadline before the real one.'],
+ Ambition:['Drive that keeps you aiming high.','Schedule rest as firmly as study so big goals do not burn you out.'],
+ Realism:['Honest about what fits in a week.','Make sure “realistic” does not become “limited.” Add one stretch goal.'],
+ Pessimism:['Spots problems before they happen.','Pair each worry with one small next action so it becomes a plan.'],
+ Optimism:['Resilient and encouraging, to yourself and others.','Add buffer time to your schedule because tasks often take longer than hoped.'],
+ Determination:['Keeps going when work gets hard.','Set a point at which you ask for help instead of grinding alone.'],
+ 'Artistic inclination':['Thinks visually and creatively.','Use sketch notes or mind maps, and set a limit so creative extras do not crowd deadlines.']};
+const ST={
+ 'Use a calendar':'Put every due date and every study block in one calendar you check daily.',
+ 'Set priorities':'Each day, pick the one to three tasks that matter most and do those first.',
+ 'Create a schedule':'Block out specific times for study around work, family and rest.',
+ 'Cut distractions':'Silence notifications and keep your phone out of reach during study blocks.',
+ 'Learn to say no':'Protect study time by politely declining things that can wait.',
+ 'Find your ideal space':'Test where you focus best, then make it your go-to study spot.',
+ 'Take effective notes':'Write key ideas in your own words and add questions to follow up on.',
+ 'Use active learning':'Quiz yourself, explain it aloud, or teach it to someone instead of rereading.',
+ 'Break it down':'Split big assignments into small, dated steps.',
+ 'Ask for help':'Reach out to your coach, professor, study room or Spark early.'};
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],PARTS=['Morning','Afternoon','Evening'];
+const TYPES={work:['Work','#90a4ae'],family:['Family','#d98089'],rest:['Rest','#86b3d9'],study:['Study','#6c9a1a'],clear:['Erase','#ffffff']};
+const grid=Array(21).fill(''),traits=new Set(),strats=new Set();let brush='study',commit='';
+const VIEWS=[v1,v2,v3];
+function v1(r){r.innerHTML=`<div class="kicker">Step 1</div><h2>Name the student you are</h2><p class="lead">Choose the qualities that sound like you. Naming them helps you play to your strengths and plan around your challenges.</p>
+<div class="grid"><div class="card"><div class="traits" id="tr">${Object.keys(TR).map(t=>`<button class="chip" aria-pressed="${traits.has(t)}">${t}</button>`).join('')}</div>
+<svg viewBox="0 0 300 90" style="width:100%;height:auto" role="img" aria-label="Illustration of a student at a desk with a lamp and books"><rect x="0" y="62" width="300" height="6" rx="3" fill="#263238"/><rect x="30" y="38" width="60" height="24" rx="3" fill="#8dc63f"/><rect x="36" y="22" width="52" height="16" rx="3" fill="#a8343c"/><circle cx="170" cy="30" r="14" fill="#f2c9a0"/><path d="M150 62c0-18 8-26 20-26s20 8 20 26z" fill="#263238"/><path d="M240 62V30l22-12" stroke="#263238" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M254 14l24 8-8 14z" fill="#8dc63f"/><circle cx="268" cy="44" r="3" fill="#f6d84a"/></svg></div>
+<div class="card" id="out" aria-live="polite"></div></div>${navBar(false,true,'Plan my week')}`;
+ const paint=()=>{const s=[...traits];$('#out').innerHTML=s.length?`<strong>Your profile</strong><p class="muted" style="margin-top:2px">I am a student who is ${s.map(x=>x.toLowerCase()).join(', ').replace(/, ([^,]*)$/,' and $1')}.</p>`+s.map(t=>`<div class="tcard"><b>${t}</b>Play to it: ${TR[t][0]}<br>Plan around it: ${TR[t][1]}</div>`).join(''):'<p class="muted">Select one or more qualities to see how to play to them and plan around them.</p>'};
+ paint();$$('#tr .chip').forEach(c=>c.onclick=()=>{const t=c.textContent;traits.has(t)?traits.delete(t):traits.add(t);c.setAttribute('aria-pressed',traits.has(t));paint()});wireNav(r)}
+function v2(r){r.innerHTML=`<div class="kicker">Step 2</div><h2>Plan around real life</h2><p class="lead">Time management starts with priorities, a calendar and a schedule. Pick a block type, then select time slots to build your week. Include work, family and rest, not just study.</p>
+<div class="grid" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)"><div class="card"><div class="pal" id="pal">${Object.keys(TYPES).map(k=>`<button class="chip" data-k="${k}" aria-pressed="${k===brush}"><span class="sw" style="background:${TYPES[k][1]};border:1px solid #0003"></span>${TYPES[k][0]}</button>`).join('')}</div>
+<table class="pl" role="grid" aria-label="Weekly planner"><thead><tr><th></th>${DAYS.map(d=>`<th scope="col">${d}</th>`).join('')}</tr></thead><tbody>${PARTS.map((p,ri)=>`<tr><th class="rl" scope="row">${p}</th>${DAYS.map((d,ci)=>`<td><button class="cell" data-i="${ri*7+ci}" aria-label="${d} ${p}"></button></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+<div class="card"><strong>Your week at a glance</strong><div class="tally" id="ty"></div><div class="fb tip" id="hint" style="margin-top:12px" aria-live="polite"></div></div></div>${navBar(true,true,'Choose strategies')}`;
+ const icon={work:'💼',family:'🏠',rest:'🌙',study:'📖'};
+ const paint=()=>{$$('.cell').forEach(c=>{const t=grid[+c.dataset.i];t?c.dataset.t=t:c.removeAttribute('data-t');c.textContent=t?icon[t]:''});
+  $('#ty').innerHTML=['study','work','family','rest'].map(k=>{const n=grid.filter(x=>x===k).length;return `<div><span>${TYPES[k][0]}</span><span class="bar"><i style="width:${n/21*100}%;background:${TYPES[k][1]}"></i></span><b>${n}</b></div>`}).join('');
+  const s=grid.filter(x=>x==='study').length,rs=grid.filter(x=>x==='rest').length;
+  $('#hint').innerHTML=s===0?'Add a few study blocks. Small, specific, recurring times beat vague promises.':rs===0?'Nice study plan. Now add some rest. Taking care of yourself is part of the plan.':'Looks balanced. Put these study blocks on your calendar so they are protected.'};
+ $$('#pal .chip').forEach(c=>c.onclick=()=>{brush=c.dataset.k;$$('#pal .chip').forEach(x=>x.setAttribute('aria-pressed',x===c))});
+ $$('.cell').forEach(c=>c.onclick=()=>{const i=+c.dataset.i;grid[i]=brush==='clear'||grid[i]===brush?'':brush;paint()});paint();wireNav(r)}
+function v3(r){r.innerHTML=`<div class="kicker">Step 3</div><h2>Choose two strategies</h2><p class="lead">Small, specific habits beat vague promises to “do better.” Choose two to start with.</p>
+<div class="card"><div class="sgrid" id="sg"></div><div class="muted" id="sc" style="margin-top:8px"></div></div><div id="plan"></div>${navBar(true,false,'Start over')}`;
+ const paint=()=>{$('#sg').innerHTML=Object.keys(ST).map(k=>`<button class="strat" aria-pressed="${strats.has(k)}" ${!strats.has(k)&&strats.size>=2?'disabled':''} data-k="${k}"><b>${k}</b><span>${ST[k]}</span></button>`).join('');
+  $('#sc').textContent=`${strats.size} of 2 chosen`;$$('.strat').forEach(b=>b.onclick=()=>{const k=b.dataset.k;strats.has(k)?strats.delete(k):strats.add(k);paint()});plan()};
+ function plan(){const p=$('#plan');if(strats.size<2){p.innerHTML='';return}
+  const s=[...strats],study=grid.filter(x=>x==='study').length;
+  p.innerHTML=`<div class="planbox" style="margin-top:14px"><div class="kicker">My Learning Habits Plan</div><p><strong>Who I am:</strong> ${traits.size?[...traits].join(', ').toLowerCase():'(choose qualities in step 1)'}.</p><p><strong>My two strategies:</strong> ${s.join(' and ')}.</p><p><strong>Study blocks planned:</strong> ${study} per week.</p>
+  <label for="cm">Make it specific: I will…</label><input type="text" id="cm" value="${esc(commit)}" placeholder="e.g. use my calendar to block study time on Tuesday and Thursday evenings"><div style="margin-top:10px"><button class="btn primary" id="cp">Copy my plan</button></div></div>`;
+  $('#cm').oninput=e=>commit=e.target.value;
+  $('#cp').onclick=e=>copyText(`My Learning Habits Plan\nWho I am: ${[...traits].join(', ')||'n/a'}\nStrategies: ${s.join(' and ')}\nStudy blocks per week: ${study}\nI will: ${commit||'(add your specific commitment)'}`,e.target)}
+ paint();wireNav(r,()=>{grid.fill('');traits.clear();strats.clear();commit='';doneSteps.clear();go(0)})}
+
+</script></body></html>

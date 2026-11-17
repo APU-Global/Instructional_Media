@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ISTU 101 | Week 2: Your Support Network</title>
+<style>:root{--ink:#1f2a30;--bg:#f5f6f2;--card:#fff;--line:#d8ddd2;--muted:#56626a;--green:#8dc63f;--green-d:#4a7608;--green-t:#ebf5d9;--red:#a8343c;--red-t:#f8e4e5;--char:#263238;--amber:#b86e00;--amber-t:#fbefd9;--shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05)}
+@media (prefers-color-scheme:dark){:root{--ink:#e9eef0;--bg:#141a1d;--card:#1e272c;--line:#34424a;--muted:#a3b0b7;--green-d:#a9d95f;--green-t:#26341a;--red:#ee8a92;--red-t:#3a2124;--amber:#f0b25a;--amber-t:#3a2d17;--shadow:none}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.hdr{background:var(--char);color:#fff;border-bottom:4px solid var(--green);padding:10px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.hdr h1{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:.2px;flex:1 1 260px}
+.hdr h1 small{display:block;font-weight:500;font-size:.8rem;color:#c9d3d8}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps button{border:1px solid #5b6b73;background:transparent;color:#e6ecef;border-radius:99px;padding:4px 12px;font:inherit;font-size:.82rem;cursor:pointer}
+.steps button[aria-current=step]{background:var(--green);border-color:var(--green);color:#1b2a05;font-weight:700}
+.steps button.done:not([aria-current]){border-color:var(--green);color:#d6efb0}
+.steps button:focus-visible,.btn:focus-visible,.chip:focus-visible,.opt:focus-visible,.cell:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,svg [role=button]:focus-visible{outline:3px solid #2f7de1;outline-offset:2px}
+main{flex:1;min-height:0;overflow-y:auto;padding:16px;scrollbar-gutter:stable}
+.wrap{max-width:980px;margin:0 auto}
+h2{margin:0 0 4px;font-size:1.3rem}
+.lead{margin:0 0 14px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+@media (max-width:720px){.grid{grid-template-columns:1fr}}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--green-d)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#1b2a05}
+.btn.primary:hover{filter:brightness(.95)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 14px;font:inherit;cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--green-d);background:var(--green-t);font-weight:700}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 14px;font:inherit;cursor:pointer;margin:0 0 8px}
+.opt:hover:not([disabled]){border-color:var(--green-d)}
+.opt.right{border-color:var(--green-d);background:var(--green-t)}
+.opt.wrong{border-color:var(--red);background:var(--red-t)}
+.fb{border-left:5px solid var(--muted);background:var(--bg);border-radius:8px;padding:10px 14px;margin-top:8px}
+.fb.ok{border-color:var(--green-d);background:var(--green-t)}
+.fb.no{border-color:var(--red);background:var(--red-t)}
+.fb.tip{border-color:var(--amber);background:var(--amber-t)}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--green);transition:width .3s}
+label{font-weight:600;display:block;margin:10px 0 4px}
+input[type=text],input[type=number],textarea,select{width:100%;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font:inherit;background:var(--card);color:var(--ink)}
+.kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--green-d);font-weight:800}
+.muted{color:var(--muted)}
+svg text{font-family:inherit}
+.sr{position:absolute;left:-9999px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.node{cursor:pointer}.node circle.bg{fill:var(--card);stroke:var(--line);stroke-width:3;transition:.2s}
+.node:hover circle.bg,.node.on circle.bg{stroke:var(--green-d)}.node.seen circle.bg{fill:var(--green-t)}
+.node text.lbl{fill:var(--ink);font-size:13px;font-weight:700;text-anchor:middle}
+.spoke{stroke:var(--line);stroke-width:3;stroke-dasharray:6 6}
+.who{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.who .ic{width:46px;height:46px;flex:none}
+ul.tight{margin:6px 0 0;padding-left:20px}
+.scn{font-size:1.15rem;font-weight:700;margin:6px 0 12px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}@media(max-width:560px){.opts{grid-template-columns:1fr}}
+.score{font-size:2.4rem;font-weight:800;color:var(--green-d);line-height:1}
+</style></head>
+<body><div class="app">
+<header class="hdr"><h1>ISTU 101 | Week 2: Your Support Network<small>Interactive: Who Do I Contact?</small></h1><nav class="steps" id="steps" aria-label="Activity steps"></nav></header>
+<main id="main" tabindex="-1"><div class="wrap" id="stage"></div></main>
+</div>
+<script>
+const STEPS=["1 Meet your network", "2 Who would you contact?", "3 Reach out"];
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let step=0;const doneSteps=new Set();
+function renderSteps(){const n=$('#steps');n.innerHTML=STEPS.map((s,i)=>`<button data-i="${i}" class="${doneSteps.has(i)?'done':''}" ${i===step?'aria-current="step"':''}>${esc(s)}</button>`).join('');
+ $$('button',n).forEach(b=>b.onclick=()=>go(+b.dataset.i));}
+function go(i){step=i;renderSteps();$('#stage').innerHTML='';VIEWS[i]($('#stage'));$('#main').scrollTop=0;}
+function navBar(back,next,nextLabel='Continue',nextOff=false){return `<div class="nav"><button class="btn" id="bk" ${back?'':'style="visibility:hidden"'}>Back</button><button class="btn primary" id="nx" ${nextOff?'disabled':''}>${nextLabel}</button></div>`}
+function wireNav(root,onNext){const b=$('#bk',root),n=$('#nx',root);if(b)b.onclick=()=>go(step-1);if(n)n.onclick=()=>{doneSteps.add(step);onNext?onNext():go(step+1)};}
+function copyText(t,btn){const ok=()=>{const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1600)};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
+ function fb(){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){btn.textContent='Select and copy manually'}a.remove()}}
+window.addEventListener('load',()=>go(0));
+
+const PPL={
+ coach:{n:'Success Coach',c:'#8dc63f',icon:'🧭',role:'Guides you through your degree program and offers resources and encouragement along the way.',for:['Choosing and planning your courses','Feeling behind, stuck or overwhelmed','Your five required check-in meetings'],how:'You meet five times during this course, and you can contact your coach any time you have questions.'},
+ prof:{n:'Professor',c:'#a8343c',icon:'🎓',role:'Your professor teaches this course and answers questions about the content and your work.',for:['Assignment instructions and expectations','Feedback and grades','Course content you do not understand'],how:'Use messaging, the Ask the Prof forum, or email.'},
+ acct:{n:'Student Account Specialist',c:'#263238',icon:'💳',role:'Answers questions about paying for your education.',for:['Tuition and payment options','Funding your education to graduation','Billing questions'],how:'Contact your Student Account Specialist directly. Knowing who to ask saves time and stress.'},
+ peer:{n:'Classmates',c:'#e0a526',icon:'🤝',role:'A source of ideas and encouragement while you learn.',for:['Fresh perspectives on your ideas','Hearing how others handle the same worries','Encouragement and community'],how:'Join the discussion forums and the Student Feed.'}};
+const POS={coach:[260,50],prof:[455,170],acct:[260,278],peer:[65,170]};
+const SC=[
+ ['I am not sure which courses I should take next session.','coach','Your Success Coach guides you through your degree program and can help you plan.'],
+ ['I do not understand the instructions for this week’s discussion post.','prof','Your professor can clarify instructions. The Ask the Prof forum is a good place, since classmates may share the question.'],
+ ['I want to know my payment options for tuition.','acct','Money questions go to your Student Account Specialist.'],
+ ['I feel nervous about starting and want to hear how others are coping.','peer','Classmates in the discussion forums and Student Feed are going through it too. Your coach is also a good listener.'],
+ ['I am falling behind and thinking about giving up.','coach','Reach out early. Your coach can help you build a plan before small problems become big ones.'],
+ ['I have a question about the feedback on my assignment.','prof','Feedback comes from your professor, so message them directly.']];
+const seen=new Set(),ans={};let sel='coach';
+const VIEWS=[v1,v2,v3];
+function hub(){const lines=Object.keys(POS).map(k=>`<line class="spoke" x1="260" y1="170" x2="${POS[k][0]}" y2="${POS[k][1]}"/>`).join('');
+ const nodes=Object.keys(POS).map(k=>{const[x,y]=POS[k],p=PPL[k];return `<g class="node ${seen.has(k)?'seen':''} ${k===sel?'on':''}" data-k="${k}" role="button" tabindex="0" aria-label="${p.n}" transform="translate(${x} ${y})"><circle class="bg" r="42"/><text y="9" text-anchor="middle" font-size="30">${p.icon}</text><text class="lbl" y="64">${p.n.length>16?p.n.replace('Student Account ','Account '):p.n}</text></g>`}).join('');
+ return `<svg viewBox="0 0 520 362" role="group" aria-label="Your support network diagram" style="width:100%;height:auto;display:block">${lines}<circle cx="260" cy="170" r="48" fill="#8dc63f"/><text x="260" y="177" text-anchor="middle" font-size="19" font-weight="800" fill="#1b2a05">You</text>${nodes}</svg>`}
+function detail(){const p=PPL[sel];return `<div class="who"><div class="ic"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="23" fill="${p.c}"/><text x="23" y="31" text-anchor="middle" font-size="24">${p.icon}</text></svg></div><div><div class="kicker">Meet</div><h2 style="margin:0">${p.n}</h2></div></div><p>${p.role}</p><strong>Go to them for</strong><ul class="tight">${p.for.map(f=>`<li>${f}</li>`).join('')}</ul><div class="fb tip" style="margin-top:12px"><strong>How to reach them:</strong> ${p.how}</div>`}
+function v1(r){r.innerHTML=`<div class="kicker">Step 1</div><h2>Meet your support network</h2><p class="lead">No one succeeds alone. Select each person in the network to see what they do and how to reach them.</p>
+<div class="grid"><div class="card" id="hub"></div><div class="card" id="det"></div></div>
+<div class="muted" style="margin-top:10px" id="cnt"></div>${navBar(false,true,'Test yourself',seen.size<4)}`;
+ function paint(){$('#hub').innerHTML=hub();$('#det').innerHTML=detail();$('#cnt').textContent=`${seen.size} of 4 explored`;$('#nx').disabled=seen.size<4;
+  $$('.node').forEach(n=>{const f=()=>{sel=n.dataset.k;seen.add(sel);paint()};n.onclick=f;n.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}}})}
+ seen.add(sel);paint();wireNav(r)}
+function v2(r){let i=0;const total=SC.length;
+ function q(){const done=Object.keys(ans).length;
+  if(i>=total){r.innerHTML=`<div class="card"><h2>All scenarios complete</h2><p>You matched <strong>${Object.keys(ans).filter(k=>ans[k]===SC[k][1]).length} of ${total}</strong> needs to the right person.</p></div>${navBar(true,true,'Reach out')}`;wireNav(r);return}
+  const s=SC[i];r.innerHTML=`<div class="kicker">Step 2 · Scenario ${i+1} of ${total}</div><h2>Who would you contact?</h2><div class="bar" style="margin:8px 0 14px"><i style="width:${done/total*100}%"></i></div>
+  <div class="card"><div class="scn">“${s[0]}”</div><div class="opts">${Object.keys(PPL).map(k=>`<button class="opt" data-k="${k}">${PPL[k].icon} ${PPL[k].n}</button>`).join('')}</div><div id="fb" aria-live="polite"></div></div>`;
+  $$('.opt').forEach(b=>b.onclick=()=>{const k=b.dataset.k,ok=k===s[1];ans[i]=k;$$('.opt').forEach(o=>{o.disabled=true;if(o.dataset.k===s[1])o.classList.add('right')});if(!ok)b.classList.add('wrong');
+   $('#fb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><strong>${ok?'Right person!':'Not quite.'}</strong> ${s[2]}</div><div class="nav"><span></span><button class="btn primary" id="nq">${i+1<total?'Next scenario':'See results'}</button></div>`;$('#nq').onclick=()=>{i++;q()}});}
+ q()}
+function v3(r){const hit=Object.keys(ans).filter(k=>ans[k]===SC[k][1]).length;let pick='coach';
+ r.innerHTML=`<div class="kicker">Step 3</div><h2>Reach out early and often</h2><p class="lead">Making contact now makes it easier to ask for help later. Choose who you will contact first this week, and copy a message starter.</p>
+ <div class="grid"><div class="card"><div class="score">${hit}/${SC.length}</div><div class="muted">scenarios matched</div><div style="margin:14px 0 6px;font-weight:700">Who will you contact first?</div><div id="pk" style="display:flex;flex-wrap:wrap;gap:8px">${Object.keys(PPL).map(k=>`<button class="chip" data-k="${k}" aria-pressed="${k===pick}">${PPL[k].icon} ${PPL[k].n}</button>`).join('')}</div></div>
+ <div class="card"><strong>Message starter</strong><label for="msg" class="sr">Message</label><textarea id="msg" rows="7"></textarea><div style="margin-top:10px"><button class="btn primary" id="cp">Copy message</button></div></div></div>
+ <div class="fb tip" style="margin-top:14px"><strong>Remember:</strong> you are required to meet with your Success Coach five times during this course, and you can contact your coach any time you have a question.</div>${navBar(true,false,'Start over')}`;
+ const M={coach:'Hello! I am a new student in ISTU 101 and wanted to introduce myself. Right now I am feeling [excited / unsure / busy] about starting. Could we talk about [my course plan / how to balance school and life]? The best times to reach me are [times]. Thank you!',
+ prof:'Hello Professor, I am working on [assignment or discussion] and have a question about [topic]. I understand [what you do understand], but I am unsure about [specific part]. Could you clarify? Thank you!',
+ acct:'Hello, I am a new student and would like to understand my payment options. Could you help me with [tuition / funding plan / billing question]? Thank you!',
+ peer:'Hi everyone! I am [name], a new student in ISTU 101. One thing I am learning about myself so far is [insight]. How are you handling [challenge]? I would love to hear your tips!'};
+ const paint=()=>{$('#msg').value=M[pick];$$('#pk .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===pick))};paint();
+ $$('#pk .chip').forEach(c=>c.onclick=()=>{pick=c.dataset.k;paint()});$('#cp').onclick=e=>copyText($('#msg').value,e.target);
+ wireNav(r,()=>{seen.clear();for(const k in ans)delete ans[k];doneSteps.clear();go(0)})}
+
+</script></body></html>
