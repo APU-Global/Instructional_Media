@@ -68,7 +68,7 @@ input[type=range]{width:100%;accent-color:var(--crimson)}
  show(tabs[0]);
 })();
 function esc(s){return s}
-function sorter(id,cfg){
+function sorter(id,cfg){if(cfg.items.length===8)cfg.items=[2,4,7,1,6,3,0,5].map(function(k){return cfg.items[k]});
  var el=document.getElementById(id),i=0,score=0;
  el.style.setProperty('--n',cfg.cols||cfg.cats.length);
  function dots(){return '<div class="prog" aria-hidden="true">'+cfg.items.map(function(_,k){return '<i class="'+(k<i?'done':k===i?'cur':'')+'"></i>'}).join('')+'</div>'}
@@ -94,7 +94,7 @@ function sorter(id,cfg){
 (function(){
  var $=function(i){return document.getElementById(i)};
  sorter('s6',{prompt:'Which molecule class?',cols:4,cats:[{k:'l',l:'Lipid',s:'Energy storage, membranes',col:'#b7791f'},{k:'a',l:'Amino acid',s:'Protein building block',col:'#1f6f78'},{k:'p',l:'Protein',s:'Folded chains',col:'#a73439'},{k:'e',l:'Enzyme',s:'Biological catalyst',col:'#2f5fa7'}],items:[
- {t:'Phospholipids arrange into cell membranes.',c:'l',w:'Lipids store energy and form membranes.'},
+ {t:'Forms the main structural framework of cell membranes.',c:'l',w:'Lipids store energy and form membranes.'},
  {t:'A molecule with an amine group, a carboxyl group and a side chain.',c:'a',w:'This is the basic structure of an amino acid.'},
  {t:'Folded chains such as muscle fibers and antibodies.',c:'p',w:'Proteins are amino acid chains whose structure relates to their function.'},
  {t:'Lowers activation energy so digestion happens fast enough.',c:'e',w:'Enzymes are catalysts that speed up reactions.'},
@@ -105,7 +105,7 @@ function sorter(id,cfg){
  var A=[['Gly','#a73439'],['Ala','#1f6f78'],['Ser','#b7791f'],['Val','#2f5fa7'],['Cys','#6b4c9a']],ch=[];
  function dr(){var s='';ch.forEach(function(a,i){var x=30+i*44,y=55+(i%2?14:-14);if(i)s+='<line x1="'+(x-44)+'" y1="'+(55+(i%2?-14:14))+'" x2="'+x+'" y2="'+y+'" stroke="#1f1f1f" stroke-width="4"/>';});ch.forEach(function(a,i){var x=30+i*44,y=55+(i%2?14:-14);s+='<circle cx="'+x+'" cy="'+y+'" r="18" fill="'+A[a][1]+'"/><text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">'+A[a][0]+'</text>'});
   $('ch').innerHTML=s;var n=ch.length,nm=n<2?'Amino acid':n===2?'Dipeptide':n===3?'Tripeptide':n<10?'Oligopeptide':'Polypeptide';
-  $('cd').innerHTML=n?'<h3>'+nm+'</h3><p><b>Amino acids:</b> '+n+'</p><p><b>Peptide bonds:</b> '+Math.max(n-1,0)+'</p><p><b>Water molecules released:</b> '+Math.max(n-1,0)+'</p><p class="note">Each peptide bond forms when two amino acids join and release one water molecule.</p>':'<p>Pick an amino acid to start your chain.</p>'}
+  var S=['CH\u2082','CH(CH\u2083)','CH(CH\u2082OH)','CH(CH(CH\u2083)\u2082)','CH(CH\u2082SH)'],fm='H\u2082N\u2013'+(n?S[ch[0]]:'');for(var q=1;q<n;q++)fm+='\u2013<b style="color:#a73439">CO\u2013NH</b>\u2013'+S[ch[q]];fm+='\u2013COOH';$('cd').innerHTML=n?'<h3>'+nm+'</h3><p><b>Structure</b> (peptide bonds in red):</p><p style="font-family:Consolas,monospace;overflow-wrap:anywhere">'+fm+'</p><p class="note">Each peptide bond forms when two amino acids join and release one water molecule.</p><p><b>Your turn:</b> fill in the counts for this chain.</p><p><label>Amino acids <input type="number" id="qa" min="0" max="8" style="width:56px"></label> <label>Peptide bonds <input type="number" id="qb" min="0" max="8" style="width:56px"></label> <label>Water molecules released <input type="number" id="qw" min="0" max="8" style="width:56px"></label></p><p><button type="button" class="tile" id="qk" style="padding:6px 12px">Check</button></p><p id="qf" aria-live="polite"></p>':'<p>Pick an amino acid to start your chain.</p>';if(n)$('qk').onclick=function(){var g=function(k){var v=$(k).value;return v===''?NaN:+v};$('qf').innerHTML=(g('qa')===n&&g('qb')===n-1&&g('qw')===n-1)?'<span class="ok">Correct.</span> '+n+' amino acids are joined by '+(n-1)+' peptide bonds, and each bond released one water molecule.':'<span class="no">Not quite.</span> Count the amino acids first. Each join between neighbors makes one peptide bond and releases one water molecule.'};}
  A.forEach(function(a,i){var b=document.createElement('button');b.className='tile';b.style.cssText='border-color:'+a[1]+';padding:6px 12px';b.innerHTML='<b>+ '+a[0]+'</b>';b.onclick=function(){if(ch.length<8){ch.push(i);dr()}};$('aa').appendChild(b)});
  $('rs').onclick=function(){ch=[];dr()};dr();
  var on=false;function en(){var h=on?60:20,p='M20 150 C60 150 80 '+h+' 140 '+h+' S220 140 340 120',s='<path d="M30 160 L30 10 M30 160 H350" stroke="#55555a" stroke-width="2" fill="none"/><text x="8" y="90" font-size="10" transform="rotate(-90 12 90)" text-anchor="middle">Energy</text><text x="190" y="182" font-size="10" text-anchor="middle">Reaction progress</text>';
