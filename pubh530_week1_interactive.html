@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 1 Interactive | Trace the Pathway: From Hazard to Health Effect</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.map{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0}@media(max-width:820px){.cols{grid-template-columns:1fr}}
+.col{background:var(--warm);border-radius:14px;padding:10px 12px}.col h4{margin:0 0 6px;font-size:.95rem}.col h4 small{display:block;font-weight:500;color:var(--mut)}
+.act{display:block;width:100%;text-align:left;font:inherit;font-size:.9rem;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 10px;margin-bottom:6px;cursor:pointer}
+.act:hover:not(:disabled){border-color:var(--red)}
+.act.right{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.act.wrong{background:var(--bad-l);border-color:var(--bad);color:#7a1812;text-decoration:line-through}
+.act:disabled{cursor:default}
+.hint{font-size:.85rem;margin:-2px 0 6px;color:#7a1812}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 14px}@media(max-width:720px){.three{grid-template-columns:1fr}}
+.three div{background:var(--warm);border-radius:14px;padding:10px 12px;font-size:.88rem}.three b{display:block;color:var(--red-d)}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of an exposure pathway: a dripping old pipe as the source, an arrow carrying a droplet as the route, and a child as the receptor">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 44)"><rect x="0" y="40" width="140" height="30" rx="8" fill="#f7dcdd"/><rect x="100" y="40" width="30" height="70" rx="8" fill="#f7dcdd"/><rect x="92" y="30" width="46" height="14" rx="4" fill="#fff"/><path d="M115 118c-9 14-9 22 0 22s9-8 0-22z" fill="#f6c453"/><text x="65" y="168" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">SOURCE</text></g>
+<g transform="translate(320 90)"><path d="M0 24h210m-14-14l14 14-14 14" stroke="#f6c453" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 12"/><path d="M104-6c-12 16-12 26 0 26s12-10 0-26z" fill="#fff"/><text x="105" y="84" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">ROUTE</text></g>
+<g transform="translate(600 44)"><circle cx="60" cy="40" r="26" fill="#fff"/><path d="M14 124q0-56 46-56t46 56z" fill="#fff"/><text x="60" y="168" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">RECEPTOR</text></g>
+<g transform="translate(760 70)" font-family="system-ui" fill="#fff" font-weight="800" font-size="20"><text>Break any link,</text><text y="30">stop the exposure.</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 530 · Week 1 Interactive</div><h1>Trace the Pathway: From Hazard to Health Effect</h1><p>A hazard harms health only if people are exposed to it. Trace an exposure pathway, interrupt it, weigh field, population, and laboratory evidence, and sort the types of environmental hazards.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Break the chain</h2>
+<p class="lead">An <strong>exposure pathway</strong> links a <strong>source</strong>, a <strong>route of exposure</strong>, and a <strong>receiving population</strong>. Choose a scenario, then pick an action at each link. If an action interrupts a link, the pathway is broken there. (Illustrative scenarios.)</p>
+<div class="pick" id="sc" role="group" aria-label="Scenario"></div>
+<svg class="map" id="mp" viewBox="0 0 640 170" role="img" aria-label="Exposure pathway diagram"></svg>
+<div class="cols" id="cols"></div>
+<div class="note teal live" id="ins" aria-live="polite">Choose a scenario to begin.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Weigh the evidence</h2>
+<p class="lead">To link an environment to an illness, public health professionals weigh evidence from three directions. Sort each finding about lead, a well-known chemical hazard found in water, paint, and soil.</p>
+<div class="three"><div><b>Field / environmental</b>Measurements of the environment itself: soil, water, air</div><div><b>Epidemiological</b>Patterns of health in populations of people</div><div><b>Laboratory</b>Controlled experiments, in animals or cells</div></div>
+<div id="qs"></div><p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Hazards, evidence, and fairness</h2>
+<p class="lead">Hazards are commonly grouped as biological, chemical, and physical. Sort these, then answer three questions.</p>
+<div id="qh"></div><p class="live score" id="qresh" aria-live="polite"></p>
+<div class="note teal"><strong>Who bears the burden?</strong> Some groups face higher exposure or greater sensitivity, and children are especially vulnerable to lead. Environmental justice asks who bears the burden of hazards, so consider equity as well as exposure.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Know the hazard types</b>Biological, chemical, physical.</div><div><b>Trace the pathway</b>Source, route, receptor.</div><div><b>Combine kinds of evidence</b>Triangulate before concluding.</div><div><b>Protect the vulnerable</b>Consider equity and exposure.</div></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 530 Week 1 Deep Dive. Scenarios and findings are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var SC=[
+{n:"Lead in drinking water",type:"Chemical hazard",src:"Old lead plumbing",rte:"Drinking tap water",rec:"Children in older homes",
+ L:[{t:"Act on the source",o:[["Replace lead service lines and plumbing",1],["Adjust water treatment to reduce pipe corrosion",1],["Hand out coloring books about water",0,"That raises interest, but it does nothing to the lead in the pipes."]]},
+    {t:"Interrupt the route",o:[["Use certified filters on taps used for drinking",1],["Flush standing water from the tap before use",1],["Remind people to wash their hands before dinner",0,"Hand washing does not remove lead from the water people drink."]]},
+    {t:"Protect the receptors",o:[["Provide safe alternative water for infant formula",1],["Screen children for lead exposure and connect families to care",1],["Post a poster about the town’s history",0,"It informs, but it does not protect the children who are exposed."]]}]},
+{n:"Highway noise near homes",type:"Physical hazard",src:"Heavy highway traffic",rte:"Noise reaching homes",rec:"Residents near the road",
+ L:[{t:"Act on the source",o:[["Lower speed limits and use quieter pavement",1],["Re-route heavy trucks away from homes",1],["Paint the nearby homes a lighter color",0,"Paint color has no effect on how much noise traffic makes."]]},
+    {t:"Interrupt the route",o:[["Build sound barriers or earth berms",1],["Install sound-insulating windows",1],["Install brighter streetlights",0,"Light does not block sound traveling to the homes."]]},
+    {t:"Protect the receptors",o:[["Keep schools and homes away from the loudest corridors (planning and zoning)",1],["Offer ear protection to people who must work close to the road",1],["Hand out maps of local parks",0,"A map does not reduce anyone’s noise exposure."]]}]},
+{n:"Mold in damp housing",type:"Biological hazard",src:"Water leaks and moisture",rte:"Breathing in mold spores",rec:"Residents, especially those with asthma",
+ L:[{t:"Act on the source",o:[["Repair leaks and fix moisture problems",1],["Remove and replace water-damaged materials",1],["Spray air freshener",0,"Fragrance covers odors but does not remove the moisture or the mold."]]},
+    {t:"Interrupt the route",o:[["Improve ventilation and control humidity",1],["Use air filtration during cleanup",1],["Keep doors closed to hold in the smell",0,"Closing doors does not stop spores from being breathed in."]]},
+    {t:"Protect the receptors",o:[["Move people with asthma to a dry unit during repairs",1],["Give residents medical follow-up and asthma action plans",1],["Remind residents to buy new curtains",0,"New curtains do not change anyone’s exposure to spores."]]}]}];
+var cur=-1,ch=[];
+function mapSvg(){
+ var m=$("mp");m.innerHTML="";el("rect",{width:640,height:170,fill:"#fcfcfc"},m);
+ var defs=el("defs",{},m);var mk=el("marker",{id:"ar",viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"8",markerHeight:"8",orient:"auto"},defs);el("path",{d:"M0 0L10 5L0 10z",fill:"#8a8286"},mk);
+ if(cur<0){var t=el("text",{x:320,y:90,"text-anchor":"middle","font-size":"15",fill:"#8a8286","font-weight":"700"},m);t.textContent="Choose a scenario above to see its pathway";return}
+ var S=SC[cur],nodes=[[90,"Source",S.src,"#e0a526"],[320,"Route of exposure",S.rte,"#d34147"],[550,"Receptor",S.rec,"#1f6f78"]];
+ // links
+ [[0,1],[1,2]].forEach(function(p,i){var x1=nodes[p[0]][0]+78,x2=nodes[p[1]][0]-78,broken=(ch[p[0]]===1&&p[0]<2)||(ch[p[1]]===1&&false);
+  var isBroken=ch[i]===1||ch[i+1]===1&&false;
+  el("path",{d:"M"+x1+" 85H"+x2,stroke:"#8a8286","stroke-width":4,"stroke-dasharray":"3 9","stroke-linecap":"round","marker-end":"url(#ar)"},m)});
+ // break marks: a chosen effective action at link k breaks the pathway at node k
+ nodes.forEach(function(n,k){var g=el("g",{},m);el("rect",{x:n[0]-78,y:40,width:156,height:90,rx:14,fill:n[3],stroke:ch[k]===1?"#2d7a4b":"#fff","stroke-width":ch[k]===1?6:3},g);
+  var a=el("text",{x:n[0],y:62,"text-anchor":"middle","font-size":"11","font-weight":"800",fill:"#fff",opacity:.9},g);a.textContent=n[1].toUpperCase();
+  var words=n[2].split(" "),lines=[],cur2="";words.forEach(function(w){if((cur2+" "+w).trim().length>18){lines.push(cur2.trim());cur2=w}else cur2=(cur2+" "+w)});lines.push(cur2.trim());
+  lines.slice(0,3).forEach(function(l,i){var tx=el("text",{x:n[0],y:84+i*17,"text-anchor":"middle","font-size":"14","font-weight":"800",fill:"#fff"},g);tx.textContent=l});
+  if(ch[k]===1){el("circle",{cx:n[0]+66,cy:44,r:15,fill:"#2d7a4b",stroke:"#fff","stroke-width":3},g);var c=el("text",{x:n[0]+66,y:50,"text-anchor":"middle","font-size":"16","font-weight":"800",fill:"#fff"},g);c.textContent="✓"}});
+ var cap=el("text",{x:320,y:156,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#5b5557"},m);cap.textContent=S.type;
+ var broken=ch.filter(function(v){return v===1}).length;
+ if(broken>0){[0,1].forEach(function(i){var mx=(nodes[i][0]+nodes[i+1][0])/2;el("circle",{cx:mx,cy:85,r:17,fill:"#a8353a",stroke:"#fff","stroke-width":3},m);var x=el("text",{x:mx,y:92,"text-anchor":"middle","font-size":"20","font-weight":"800",fill:"#fff"},m);x.textContent="✕"})}}
+function render(){
+ var sc=$("sc");sc.innerHTML="";SC.forEach(function(s,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=s.n;b.setAttribute("aria-pressed",cur===i);b.onclick=function(){cur=i;ch=[-1,-1,-1];render()};sc.appendChild(b)});
+ var cols=$("cols");cols.innerHTML="";
+ if(cur>=0){var S=SC[cur];S.L.forEach(function(L,k){var d=document.createElement("div");d.className="col";d.innerHTML="<h4>"+L.t+"<small>"+["Stop it at its origin","Cut the connection between source and people","Reduce harm to the people exposed"][k]+"</small></h4>";
+  L.o.forEach(function(o){var b=document.createElement("button");b.type="button";b.className="act";b.textContent=o[0];
+   if(ch[k]===1&&o[1]){b.disabled=true}
+   b.onclick=function(){if(o[1]){ch[k]=1;b.classList.add("right");[].forEach.call(d.querySelectorAll(".act"),function(z){z.disabled=true});mapSvg();msg()}else{b.classList.add("wrong");b.disabled=true;var h=document.createElement("div");h.className="hint";h.textContent="✗ "+o[2];b.after(h)}};d.appendChild(b)});cols.appendChild(d)})}
+ mapSvg();msg()}
+function msg(){var m=$("ins");if(cur<0){m.innerHTML="Choose a scenario to begin.";return}
+ var n=ch.filter(function(v){return v===1}).length;
+ if(n===0)m.innerHTML="<strong>The pathway is intact, so people are being exposed.</strong> A hazard harms health only if people are exposed to it. Pick an action at each link that would actually interrupt it. Dose and duration also matter: the longer and heavier the exposure, the larger the effect can be.";
+ else if(n<3)m.innerHTML="<strong>The pathway is broken at "+n+" point"+(n>1?"s":"")+".</strong> Interrupting any link reduces exposure. Try the remaining link"+(n===2?"":"s")+" too: protection is stronger when actions work at more than one point.";
+ else m.innerHTML="<strong>You acted on the source, the route, and the receptors.</strong> Controlling the source is often the most reliable, but actions on the route or the people can protect them sooner while longer fixes are underway. Whatever you choose, ask who is most exposed and most vulnerable."}
+render();
+function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ (x.l||labels).forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Ask what kind of evidence this is: the environment, people, or a controlled experiment.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"Soil samples near an old smelter contain high levels of lead.",a:0,w:"Measurements of the environment itself are field (environmental) evidence."},
+{t:"Children living near the smelter have higher blood lead levels than children elsewhere in the county.",a:1,w:"Patterns of health in a population are epidemiological evidence."},
+{t:"Animal experiments show that lead exposure can damage the developing nervous system.",a:2,w:"Controlled experiments are laboratory evidence."},
+{t:"Water samples from taps in older homes show lead above the action level.",a:0,w:"Water samples measure the environment: field evidence."},
+{t:"A study compares learning difficulties in children with high and low lead exposure.",a:1,w:"Comparing groups of people is epidemiological evidence."},
+{t:"Cells exposed to lead in a laboratory dish show changed function.",a:2,w:"Cell experiments are laboratory evidence."},
+{t:"Field samples, population data, and laboratory studies all point to the same hazard. What is the best way to describe this?",a:0,l:["Consistent findings from several sources strengthen the conclusion","It proves the environment is the only possible cause","Three studies are no better than one"],w:"Consistent findings across sources strengthen a conclusion. Even so, association alone does not prove cause, so evidence is weighed, not counted.",h:"Think about how different kinds of evidence support each other."}],
+["Field / environmental","Epidemiological","Laboratory"],"qres");
+quiz("qh",[
+{t:"Mold spores in a damp apartment",a:0,w:"Living organisms and their products are biological hazards."},
+{t:"Lead in old paint",a:1,w:"Substances such as lead are chemical hazards."},
+{t:"Excessive noise near a highway",a:2,w:"Noise and radiation are physical hazards."},
+{t:"Pesticide residue on produce",a:1,w:"Pesticides are chemical hazards."},
+{t:"Disease-causing bacteria in drinking water",a:0,w:"Bacteria are biological hazards."},
+{t:"Ionizing radiation from a medical source",a:2,w:"Radiation is a physical hazard."},
+{t:"What do public health agencies state about lead exposure?",a:0,l:["No safe level of lead exposure has been identified","Small amounts are always harmless to children","Only adults need to worry about lead"],w:"Children are especially vulnerable to lead, and agencies state that no safe level of exposure has been identified.",h:"Think about what agencies say about children and lead."},
+{t:"Environmental justice asks…",a:1,l:["Which hazards are cheapest to remove","Who bears the burden of hazards","How many agencies are involved"],w:"Environmental justice asks who bears the burden of environmental hazards.",h:"Which question is about fairness?"},
+{t:"A hazard harms health only if…",a:2,l:["It is visible to the naked eye","It is man-made","People are exposed to it"],w:"Without exposure there is no harm: exposure links the hazard to health.",h:"What connects a hazard to a person?"}],
+["Biological","Chemical","Physical"],"qresh");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

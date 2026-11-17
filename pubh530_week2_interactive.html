@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 Interactive | Water, Source to Tap</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.map{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.stage{cursor:pointer}.stage:focus{outline:none}.stage:focus-visible rect.box{stroke:#231f20;stroke-width:5}
+.stage rect.box{transition:.2s}.stage:hover rect.box{filter:brightness(1.05)}
+.evs{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}.evs .btn{font-size:.88rem;padding:7px 12px}
+.det{border:2px solid #eee;border-radius:16px;padding:14px 16px;background:#fff;margin-top:12px;min-height:150px}
+.det h3{margin:0 0 6px}.det .lab{font-size:.75rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);margin-top:8px}
+.det p{margin:2px 0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.tags span{font-size:.8rem;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--warm)}
+.tags span.ac{background:#f9ddda;color:#8a2b24}.tags span.lt{background:#fbeab8;color:#7a5a0a}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 14px}@media(max-width:720px){.two{grid-template-columns:1fr}}
+.two div{background:var(--warm);border-radius:14px;padding:10px 12px;font-size:.9rem}.two b{display:block;color:var(--red-d)}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a river flowing to a water treatment plant, then through underground pipes to a house with a faucet">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(60 40)"><path d="M0 120q40-30 80 0t80 0t80 0" stroke="#f7dcdd" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M0 146q40-30 80 0t80 0t80 0" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".7"/></g>
+<g transform="translate(330 70)"><rect x="0" y="40" width="130" height="70" rx="8" fill="#fff"/><rect x="14" y="14" width="26" height="30" fill="#f7dcdd"/><rect x="52" y="24" width="26" height="20" fill="#f7dcdd"/><g fill="#a8353a"><rect x="14" y="64" width="26" height="30" rx="4"/><rect x="52" y="64" width="26" height="30" rx="4"/><rect x="90" y="64" width="26" height="30" rx="4"/></g></g>
+<path d="M470 150h110m0 0v-12m0 12v12" stroke="#f6c453" stroke-width="10" stroke-linecap="round"/><path d="M590 150h100" stroke="#f6c453" stroke-width="10" stroke-linecap="round" stroke-dasharray="1 14"/>
+<g transform="translate(700 70)"><path d="M0 60L70 4l70 56v54H0z" fill="#fff"/><rect x="52" y="74" width="36" height="40" fill="#f7dcdd"/><path d="M116 70v-30h22" stroke="#7d2429" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M130 82c-6 8-6 14 0 14s6-6 0-14z" fill="#d34147"/></g>
+<g transform="translate(60 202)" font-family="system-ui" fill="#fff" font-weight="800" font-size="15"><text>Source</text><text x="315">Treatment</text><text x="515">Distribution</text><text x="660">Tap</text></g>
+<g transform="translate(870 80)" font-family="system-ui" fill="#fff" font-weight="800" font-size="18"><text>Treat</text><text y="26">and test.</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 530 · Week 2 Interactive</div><h1>Water, Source to Tap</h1><p>Safe drinking water is one of the foundations of a healthy community, and keeping it safe takes treatment, testing, and many agencies working together. Follow water from its source to the tap, see what can go wrong, and sort contaminants by the harm they cause.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Follow the water</h2>
+<p class="lead">Select any stage to see what happens there, what can go wrong, and what protects people. Or pick an event below to see where it strikes. (Illustrative scenarios.)</p>
+<svg class="map" id="mp" viewBox="0 0 700 190" role="group" aria-label="Water pathway from source to tap"></svg>
+<div class="evs" id="ev" role="group" aria-label="Events"></div>
+<div class="det live" id="det" aria-live="polite"><h3>Select a stage</h3><p>Choose a box on the map to see what happens there.</p></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Quick illness or lasting harm?</h2>
+<p class="lead">Water can carry microbes, chemicals, and metals. Microbial contamination causes acute illness; chemical contaminants, such as lead, may cause long-term harm. Sort each contaminant.</p>
+<div class="two"><div><b>Acute illness</b>Sickness that appears soon after exposure</div><div><b>Long-term harm</b>Effects that build up or appear over years</div></div>
+<div id="qs"></div><p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Standards, agencies, and disasters</h2>
+<div id="qs2"></div><p class="live score" id="qres2" aria-live="polite"></p>
+<div class="note teal"><strong>Many agencies, one goal.</strong> Water is a useful public health topic because in many communities several public agencies must work together to keep it free of pollution and other contaminants. Understanding how they cooperate is essential for public health professionals.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Treat and test</b>Water safety needs both.</div><div><b>Contaminants differ</b>Acute versus long-term harm.</div><div><b>Standards protect</b>Regulation and monitoring matter.</div><div><b>Plan for disasters</b>Prepare and communicate.</div></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 530 Week 2 Deep Dive. Scenarios are invented for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var ST=[
+{id:"src",n:"Source",c:"#1f6f78",what:"Communities draw water from surface water, such as rivers and lakes, and from groundwater, such as wells and aquifers.",bad:"Microbes, chemicals, and metals can reach the water from waste, runoff, or natural sources.",safe:"Protecting the source from pollution and testing the water that enters the system."},
+{id:"trt",n:"Treatment",c:"#5b6b8c",what:"Treatment commonly includes filtration, to remove particles, and disinfection, to kill disease-causing microbes.",bad:"Equipment failures or a disaster can reduce how well the water is treated.",safe:"Monitoring and testing at the plant, and emergency plans that keep service going."},
+{id:"dist",n:"Distribution",c:"#e0a526",what:"Treated water travels through a network of pipes to homes, schools, and businesses.",bad:"The distribution system can introduce contamination after treatment, for example through breaks or aging pipes.",safe:"Monitoring and testing in the network, and maintenance of pipes."},
+{id:"tap",n:"Tap",c:"#d34147",what:"Water reaches the taps of homes, schools, and businesses.",bad:"Plumbing inside buildings, such as old lead pipes, can add contaminants at the last step.",safe:"Testing at the tap, standards for public water systems under the Safe Drinking Water Act, and keeping residents informed."}];
+var EV=[
+{n:"A flood washes pollution into the river",st:["src","trt"],where:"Source (and it strains Treatment)",what:"Microbes and chemicals.",kind:["ac","lt"],kt:["Microbes: acute illness","Chemicals: possible long-term harm"],resp:"The local health department often helps respond. Residents need clear, timely information about what is happening and what to do."},
+{n:"A main breaks and lets contaminants into the pipes",st:["dist"],where:"Distribution, after treatment",what:"Microbes are the usual concern, since the water was safe when it left the plant.",kind:["ac"],kt:["Microbes: acute illness"],resp:"Testing the network and telling residents promptly, for example whether to use tap water until it is shown to be safe. This is why testing continues after treatment."},
+{n:"Old lead plumbing leaches lead in a home",st:["tap"],where:"Tap (plumbing inside buildings)",what:"A metal, lead, from pipes and fittings.",kind:["lt"],kt:["Metals such as lead: long-term harm"],resp:"Testing at the tap, replacing lead plumbing, and giving affected households safe alternatives. Children are especially vulnerable to lead."},
+{n:"A storm cuts power at the treatment plant",st:["trt"],where:"Treatment",what:"Reduced disinfection could let disease-causing microbes through.",kind:["ac"],kt:["Microbes: acute illness"],resp:"Emergency plans that protect continuity of service, backup measures at the plant, and communication with residents throughout the crisis."}];
+var sel=null,ev=-1;
+function map(){
+ var m=$("mp");m.innerHTML="";el("rect",{width:700,height:190,fill:"#fcfcfc"},m);
+ var X=[90,270,450,630],hot=ev>=0?EV[ev].st:[];
+ for(var i=0;i<3;i++)el("path",{d:"M"+(X[i]+62)+" 82H"+(X[i+1]-62),stroke:"#8fa3b8","stroke-width":8,"stroke-linecap":"round"},m);
+ ST.forEach(function(s,i){var g=el("g",{"class":"stage",tabindex:0,role:"button","aria-pressed":sel===s.id,"aria-label":s.n+(hot.indexOf(s.id)>=0?" (affected by the event)":"")},m);var isHot=hot.indexOf(s.id)>=0;
+  el("rect",{"class":"box",x:X[i]-62,y:34,width:124,height:96,rx:16,fill:s.c,stroke:isHot?"#a8353a":(sel===s.id?"#231f20":"#fff"),"stroke-width":isHot||sel===s.id?6:3},g);
+  var ic=el("g",{transform:"translate("+(X[i]-20)+" 46)",fill:"#fff"},g);
+  if(i===0){el("path",{d:"M0 22q10-10 20 0t20 0",stroke:"#fff","stroke-width":5,fill:"none","stroke-linecap":"round"},ic);el("path",{d:"M0 32q10-10 20 0t20 0",stroke:"#fff","stroke-width":5,fill:"none","stroke-linecap":"round",opacity:.7},ic)}
+  else if(i===1){el("path",{d:"M2 6h36L26 24v12H14V24z"},ic)}
+  else if(i===2){el("rect",{x:0,y:16,width:40,height:10,rx:4},ic);el("rect",{x:28,y:16,width:10,height:26,rx:4},ic);el("rect",{x:0,y:30,width:10,height:12,rx:4},ic)}
+  else{el("path",{d:"M4 14h24v8H12v10H4z"},ic);el("path",{d:"M30 28c-5 7-5 12 0 12s5-5 0-12z"},ic)}
+  var t=el("text",{x:X[i],y:112,"text-anchor":"middle","font-size":"14","font-weight":"800",fill:"#fff"},g);t.textContent=s.n;
+  if(isHot){el("circle",{cx:X[i]+52,cy:38,r:16,fill:"#a8353a",stroke:"#fff","stroke-width":3},g);var w=el("text",{x:X[i]+52,y:44,"text-anchor":"middle","font-size":"18","font-weight":"800",fill:"#fff"},g);w.textContent="!"}
+  g.onclick=function(){go(s.id,false)};g.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();go(s.id,true)}}});
+ var cap=el("text",{x:350,y:170,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#5b5557"},m);cap.textContent="Water flows from left to right. Contamination can enter at any stage.";}
+function go(id,kf){sel=id;ev=-1;render();if(kf){var n=document.querySelectorAll("#mp g.stage");var ix=ST.map(function(s){return s.id}).indexOf(id);if(n[ix])n[ix].focus()}}
+function render(){
+ var evs=$("ev");evs.innerHTML="";EV.forEach(function(e,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=e.n;b.setAttribute("aria-pressed",ev===i);b.onclick=function(){ev=i;sel=null;render()};evs.appendChild(b)});
+ map();var d=$("det");
+ if(ev>=0){var e=EV[ev];d.style.borderColor="#a8353a";d.innerHTML='<h3 style="color:#a8353a">'+e.n+'</h3><div class="lab">Where it strikes</div><p>'+e.where+'</p><div class="lab">What may be in the water</div><p>'+e.what+'</p><div class="tags">'+e.kt.map(function(t,i){return'<span class="'+e.kind[i]+'">'+t+'</span>'}).join("")+'</div><div class="lab">Who responds and what residents need</div><p>'+e.resp+'</p>'}
+ else if(sel){var s=ST.filter(function(x){return x.id===sel})[0];d.style.borderColor=s.c;d.innerHTML='<h3 style="color:'+s.c+'">'+s.n+'</h3><div class="lab">What happens here</div><p>'+s.what+'</p><div class="lab">What can go wrong</div><p>'+s.bad+'</p><div class="lab">What protects people</div><p>'+s.safe+'</p>'}
+ else{d.style.borderColor="#eee";d.innerHTML="<h3>Select a stage</h3><p>Choose a box on the map to see what happens there, or pick an event above.</p>"}}
+render();
+function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ (x.l||labels).forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Microbes tend to make people sick quickly; chemicals and metals can cause harm over time.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"Disease-causing bacteria from sewage",a:0,w:"Microbial contamination causes acute illness."},
+{t:"A virus that enters the water supply",a:0,w:"Viruses are microbes, so they cause acute illness."},
+{t:"Lead leaching from old pipes",a:1,w:"Chemical contaminants such as lead may cause long-term harm."},
+{t:"Industrial chemicals that seep into groundwater",a:1,w:"Chemical contaminants may cause long-term harm."},
+{t:"A parasite from untreated surface water",a:0,w:"Parasites are microbes, so they cause acute illness."}],
+["Acute illness","Long-term harm"],"qres");
+quiz("qs2",[
+{t:"Water safety needs which two things?",a:2,l:["Rain and storage","Pipes and pumps only","Treatment and testing"],w:"Treat and test: treatment removes hazards, and testing confirms the water is safe.",h:"Think about what protects water both before and after it is treated."},
+{t:"Which U.S. law sets standards for public water systems?",a:0,l:["The Safe Drinking Water Act","The Clean Air Act","The Occupational Safety and Health Act"],w:"The Safe Drinking Water Act sets standards for public water systems.",h:"One of these laws is about drinking water."},
+{t:"Why does testing continue after water leaves the treatment plant?",a:1,l:["Treated water never changes","The distribution system can introduce contamination after treatment","Testing is only for the plant’s records"],w:"Contamination can enter the pipes after treatment, so water is also monitored in the network.",h:"What can happen to treated water on its way to your tap?"},
+{t:"During a water emergency, what is critical?",a:2,l:["Waiting until every detail is known before telling anyone","Letting each household find out on its own","Clear communication with residents, backed by emergency planning"],w:"Communication with residents is critical during a crisis, and emergency planning protects continuity of service.",h:"Think about what people need most when their water may be unsafe."}],
+["x"],"qres2");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

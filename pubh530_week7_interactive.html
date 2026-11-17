@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7 Interactive | Prevent Injuries, Engage Stakeholders</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.hm{display:grid;grid-template-columns:96px repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}
+.hm .h{font-weight:800;font-size:.82rem;text-align:center;padding:8px 4px;border-radius:10px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center}
+.hm .h.r{background:#231f20;font-size:.78rem;padding:6px 2px;overflow-wrap:anywhere}@media(max-width:520px){.hm{grid-template-columns:78px repeat(3,minmax(0,1fr))}.hm .h.r{font-size:.7rem}}
+.hm .h small{display:block;font-weight:500;opacity:.85}
+.cell{font:inherit;font-size:.78rem;min-height:84px;border:2px dashed #d9d4cf;border-radius:12px;background:#fff;padding:6px;cursor:pointer;text-align:center;color:#9a9395;display:flex;align-items:center;justify-content:center}
+.cell:hover:not(:disabled){border-color:var(--red)}
+.cell.on{border-style:solid;border-color:var(--ok);background:#f6fbf8;color:#14502c;font-weight:700;cursor:default}
+.cell.bad{border-color:var(--bad);background:var(--bad-l)}
+.pal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}@media(max-width:760px){.pal{grid-template-columns:1fr 1fr}}@media(max-width:480px){.pal{grid-template-columns:1fr}}
+.tile{font:inherit;font-size:.85rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer}
+.tile:hover:not(:disabled){border-color:var(--red)}.tile.sel{border-color:#231f20;background:var(--gold-l);font-weight:700}.tile:disabled{opacity:.3;cursor:default}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.grid4>div{border-radius:14px;padding:10px 12px;min-height:96px}
+.grid4 .t{font-weight:800;font-size:.9rem}.grid4 small{display:block;color:var(--mut);margin-bottom:6px}
+.g0{background:#f9ddda}.g1{background:#fbeab8}.g2{background:#d9ecee}.g3{background:#ece9e5}
+.pl{display:flex;flex-wrap:wrap;gap:5px}.pl span{background:#fff;border-radius:999px;padding:3px 10px;font-size:.82rem;font-weight:700}
+.axis{display:flex;justify-content:space-between;font-size:.8rem;font-weight:700;color:var(--mut);margin:0 2px}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.86rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a three-by-three grid with some cells highlighted, beside a ring of people icons connected around a road safety sign">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(90 40)"><g fill="#fff"><rect x="0" y="0" width="52" height="52" rx="8"/><rect x="60" y="0" width="52" height="52" rx="8" opacity=".6"/><rect x="120" y="0" width="52" height="52" rx="8" opacity=".6"/><rect x="0" y="60" width="52" height="52" rx="8" opacity=".6"/><rect x="60" y="60" width="52" height="52" rx="8"/><rect x="120" y="60" width="52" height="52" rx="8" opacity=".6"/><rect x="0" y="120" width="52" height="52" rx="8" opacity=".6"/><rect x="60" y="120" width="52" height="52" rx="8" opacity=".6"/><rect x="120" y="120" width="52" height="52" rx="8"/></g>
+<g fill="#a8353a"><circle cx="26" cy="26" r="9"/><circle cx="86" cy="86" r="9"/><circle cx="146" cy="146" r="9"/></g><text x="86" y="196" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="15" fill="#fff">Haddon matrix</text></g>
+<g transform="translate(470 115)"><circle r="78" fill="none" stroke="#f7dcdd" stroke-width="2" stroke-dasharray="3 8" opacity=".8"/>
+<g stroke="#f6c453" stroke-width="3" stroke-linecap="round" opacity=".9"><path d="M0 -46L50 -14M50 -14L30 42M30 42L-30 42M-30 42L-50 -14M-50 -14L0 -46"/></g>
+<path d="M0 -26l22 36h-44z" fill="#f6c453"/><rect x="-2" y="10" width="4" height="26" fill="#fff"/>
+<g fill="#fff"><circle cx="0" cy="-78" r="11"/><circle cx="74" cy="-24" r="11" fill="#f7dcdd"/><circle cx="46" cy="64" r="11"/><circle cx="-46" cy="64" r="11" fill="#f7dcdd"/><circle cx="-74" cy="-24" r="11"/></g></g>
+<g transform="translate(610 70)" font-family="system-ui" fill="#fff" font-weight="800"><text font-size="26">Injuries are</text><text y="34" font-size="26">preventable.</text><text y="78" font-size="16" font-weight="600" opacity=".9">Use a framework. Map stakeholders. Present clearly.</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 530 · Week 7 Interactive</div><h1>Prevent Injuries, Engage Stakeholders</h1><p>Many unintentional injuries are preventable, and strong recommendations are built with the people who will carry them out. Fill in a Haddon matrix to find points for action, map the stakeholders in a community plan, and practice presenting with clarity.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Find the points for action</h2>
+<p class="lead">The <strong>Haddon matrix</strong> considers the person, the agent, and the environment before, during, and after an event, and helps you identify points for action. <strong>Scenario:</strong> traffic crashes, a common cause of unintentional injury. Select a measure, then select the cell where it belongs.</p>
+<div class="hm" id="hm" role="group" aria-label="Haddon matrix"></div>
+<div class="pal" id="pal" role="group" aria-label="Prevention measures"></div>
+<div class="note live" id="hmsg" aria-live="polite">Select a measure to begin.</div>
+<div class="row" style="margin-top:8px"><button class="btn" id="hr" type="button">Start over</button></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Map the stakeholders</h2>
+<p class="lead">Stakeholders include those affected by an issue and those able to influence it. Map their interest and influence, and engage them early and honestly. <strong>Scenario:</strong> a town plans safety changes along a busy road where several crashes have occurred. Choose the best place for each stakeholder; they will appear on the map.</p>
+<div class="grid4" id="g4"></div>
+<div class="axis" aria-hidden="true"><span>← Lower interest</span><span>Higher interest →</span></div>
+<div id="qs" style="margin-top:10px"></div><p class="live score" id="qres" aria-live="polite"></p>
+<div class="note teal">Placements depend on the situation, and they change. A council member’s interest may rise sharply when residents speak up, which is one more reason to engage early.</div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Present with clarity</h2>
+<p class="lead">Clear presentations build understanding and trust.</p>
+<div id="qs2"></div><p class="live score" id="qres2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Injuries are preventable</b>Design for safety.</div><div><b>Use a framework</b>Haddon matrix organizes action.</div><div><b>Map stakeholders</b>Know interests and influence.</div><div><b>Present with clarity</b>Match the audience.</div></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 530 Week 7 Deep Dive. The scenarios are invented for practice.</p>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+var ROWS=["Person","Agent","Environment"],ROWSUB=["who is at risk","what delivers harm","surroundings"],COLS=["Before the crash","During the crash","After the crash"];
+var M=[["Driver education and sober driving",0,0],["Seat belts and child restraints",0,1],["First aid and trauma care",0,2],["Well-maintained brakes and tires",1,0],["Airbags and crash-resistant vehicle design",1,1],["Fire-resistant fuel systems",1,2],["Safe road design, lighting, and speed limits",2,0],["Guardrails and crash cushions beside the road",2,1],["Fast emergency response and clear crash reporting",2,2]];
+var PORD=[6,2,8,0,4,7,1,5,3],sel=-1,placed={},bad="",msg="Select a measure to begin.";
+function haddon(){
+ var hm=$("hm");hm.innerHTML="";var c0=document.createElement("div");c0.className="h r";c0.textContent="";hm.appendChild(c0);
+ COLS.forEach(function(c){var d=document.createElement("div");d.className="h";d.textContent=c;hm.appendChild(d)});
+ for(var r=0;r<3;r++){var rh=document.createElement("div");rh.className="h r";rh.innerHTML="<span>"+ROWS[r]+"<small>"+ROWSUB[r]+"</small></span>";hm.appendChild(rh);
+  for(var c=0;c<3;c++){(function(r,c){var b=document.createElement("button");b.type="button";var key=r+"-"+c,p=placed[key];b.className="cell"+(p!==undefined?" on":"")+(bad===key?" bad":"");
+   b.textContent=p!==undefined?M[p][0]:"+";b.setAttribute("aria-label",ROWS[r]+", "+COLS[c]+(p!==undefined?": "+M[p][0]:": empty"));b.disabled=p!==undefined;
+   b.onclick=function(){if(sel<0){msg="Select a measure first, then choose its cell.";haddon();return}
+    var m=M[sel];if(m[1]===r&&m[2]===c){placed[key]=sel;msg="<strong>Yes.</strong> “"+m[0]+"” acts on the "+ROWS[r].toLowerCase()+" "+COLS[c].toLowerCase()+".";sel=-1;bad=""}
+    else{bad=key;msg='<span class="badbox" style="display:block">Not that cell. Ask who or what the measure protects (the person, the agent, or the environment), and whether it works before, during, or after the crash.</span>'}
+    haddon()};hm.appendChild(b)})(r,c)}}
+ var pal=$("pal");pal.innerHTML="";PORD.forEach(function(k){var b=document.createElement("button");b.type="button";var done=Object.keys(placed).some(function(x){return placed[x]===k});b.className="tile"+(sel===k?" sel":"");b.disabled=done;b.textContent=M[k][0];b.setAttribute("aria-pressed",sel===k);b.onclick=function(){sel=k;bad="";msg="Now choose the cell where “"+M[k][0]+"” belongs.";haddon()};pal.appendChild(b)});
+ var n=Object.keys(placed).length,m=$("hmsg");
+ if(n===9){m.className="note teal live";m.innerHTML="<strong>The matrix is complete: nine points for action.</strong> Measures before the crash try to prevent it, those during it reduce injury, and those after it improve survival and recovery. Strong injury prevention uses several cells at once, across the person, the agent, and the environment, rather than relying on one fix."}
+ else{m.className="note live";m.innerHTML=msg+(n?" <em>("+n+" of 9 placed.)</em>":"")}}
+$("hr").onclick=function(){placed={};sel=-1;bad="";msg="Select a measure to begin.";haddon()};haddon();
+// stakeholder grid
+var QN=[["Engage closely","High influence, high interest"],["Keep satisfied","High influence, lower interest"],["Keep informed and involved","Lower influence, high interest"],["Monitor","Lower influence, lower interest"]],GP=[[],[],[],[]];
+function g4(){var g=$("g4");g.innerHTML="";QN.forEach(function(q,i){var d=document.createElement("div");d.className="g"+i;d.innerHTML='<div class="t">'+q[0]+'</div><small>'+q[1]+'</small><div class="pl">'+GP[i].map(function(x){return"<span>"+x+"</span>"}).join("")+"</div>";g.appendChild(d)})}
+g4();
+function quiz(host,list,labels,fin,onRight){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ (x.l||labels).forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(onRight)onRight(x);if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Ask how much influence this group has and how much it is affected.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"Residents who live along the road",s:"Residents",a:2,w:"They are directly affected, so their interest is high, but they have less formal power over decisions. Keep them informed and involved."},
+{t:"The city traffic engineering department",s:"Traffic engineers",a:0,w:"They can change the road and care about the outcome: high influence and high interest, so engage them closely."},
+{t:"City council members who vote on the budget",s:"City council",a:1,w:"They have real influence, but their attention is spread across many issues. Keep them satisfied and informed so they are ready when a decision comes."},
+{t:"Drivers who pass through only occasionally",s:"Occasional drivers",a:3,w:"They are less affected and have little say, so monitor and keep general information available."},
+{t:"A mayor who campaigned on road safety",s:"Mayor",a:0,w:"The mayor can influence decisions and cares about this issue: high influence, high interest. Engage closely."}],
+["Engage closely","Keep satisfied","Keep informed and involved","Monitor"],"qres",function(x){GP[x.a].push(x.s);g4()});
+quiz("qs2",[
+{t:"You are presenting injury-prevention recommendations to residents. What should you do about technical language?",a:0,l:["Tailor the language and examples to the audience","Use technical terms so you sound credible","Skip explanations and show only charts"],w:"Clear presentations tailor language and examples to the audience, which builds understanding and trust.",h:"Who needs to understand and trust the message?"},
+{t:"Some of your data are uncertain. What is the best approach?",a:1,l:["Leave uncertainty out so the message is simple","Be open about uncertainty","Wait until everything is certain before saying anything"],w:"Being open about uncertainty builds trust.",h:"What builds trust when answers are incomplete?"},
+{t:"When should you bring stakeholders into the work?",a:2,l:["After the plan is finished","Only when they complain","Early and honestly"],w:"Engage stakeholders early and honestly.",h:"When can stakeholders still shape the plan?"},
+{t:"Strong recommendations are built with…",a:0,l:["The people who will carry them out","Only the expert team","Whoever is easiest to reach"],w:"Strong recommendations are built with the people who will carry them out.",h:"Who has to make the recommendation work?"}],
+["x"],"qres2");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

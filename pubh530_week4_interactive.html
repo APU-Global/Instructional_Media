@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 Interactive | Risk Assessment: From Hazard to Decision</title>
+<style>
+
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}@media(max-width:720px){.slots{grid-template-columns:1fr 1fr}}
+.slot{border:2px dashed #d9d4cf;border-radius:14px;padding:10px 12px;min-height:96px;background:#fff;font-size:.9rem}
+.slot .n{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#e8e3de;font-weight:800;margin-bottom:6px}
+.slot.on{border-style:solid;border-color:var(--ok);background:#f6fbf8}.slot.on .n{background:var(--ok);color:#fff}
+.slot b{display:block}.slot small{color:var(--mut)}
+.deck{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}@media(max-width:720px){.deck{grid-template-columns:1fr}}
+.card3{font:inherit;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:10px 12px;cursor:pointer}
+.card3:hover:not(:disabled){border-color:var(--red)}.card3 b{display:block}.card3 small{color:var(--mut)}
+.card3:disabled{opacity:.35;cursor:default}
+.ctl{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin:10px 0}@media(max-width:720px){.ctl{grid-template-columns:1fr}}
+.ctl>div{background:var(--warm);border-radius:14px;padding:10px 14px}.ctl label{font-weight:700;display:flex;justify-content:space-between;gap:8px}.ctl small{color:var(--mut)}
+.chart{width:100%;height:auto;display:block;background:#fcfcfc;border:1px solid #eee;border-radius:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;text-align:center}@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+.stats div{background:var(--warm);border-radius:14px;padding:8px 4px}.stats b{display:block;font:700 1.25rem Georgia,serif}.stats small{color:var(--mut);font-size:.8rem}
+.stats div.bad{background:var(--bad-l)}.stats div.good{background:var(--ok-l)}
+.q{border:2px solid #eee;border-radius:14px;padding:12px 14px;margin-bottom:10px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}.q.done{border-color:var(--ok);background:#f6fbf8}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{font:inherit;font-weight:600;font-size:.88rem;border:2px solid #d9d4cf;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through}
+.fb{flex-basis:100%}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:720px){.chips{grid-template-columns:1fr 1fr}}
+.chips div{background:var(--warm);border-radius:14px;padding:12px;text-align:center;font-size:.9rem}.chips b{display:block;color:var(--red-d);margin-bottom:2px}
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of four steps in a row: a magnifying glass over a flask for hazard, a rising curve for dose-response, a group of people for exposure, and a balance for risk characterization">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(70 40)"><circle cx="46" cy="46" r="40" fill="#fff"/><path d="M34 22h24l-6 14v18l12 22H28l12-22V36z" fill="#a8353a"/><path d="M80 80l28 28" stroke="#f6c453" stroke-width="9" stroke-linecap="round"/><text x="54" y="146" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="14" fill="#fff">1 Hazard</text></g>
+<path d="M230 100h40m-10-10l10 10-10 10" stroke="#f6c453" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(290 40)"><rect width="100" height="92" rx="10" fill="#fff"/><path d="M12 76C34 74 40 30 58 28s26 26 32 -4" stroke="#a8353a" stroke-width="6" fill="none" stroke-linecap="round" transform="translate(0 4)"/><path d="M12 80h76" stroke="#d9d4cf" stroke-width="3"/><text x="50" y="146" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="14" fill="#fff">2 Dose-response</text></g>
+<path d="M440 100h40m-10-10l10 10-10 10" stroke="#f6c453" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(510 40)"><g fill="#fff"><circle cx="20" cy="30" r="14"/><path d="M0 78q0-30 20-30t20 30z"/><circle cx="62" cy="22" r="16"/><path d="M38 78q0-34 24-34t24 34z"/><circle cx="104" cy="30" r="14"/><path d="M84 78q0-30 20-30t20 30z"/></g><text x="62" y="146" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="14" fill="#fff">3 Exposure</text></g>
+<path d="M670 100h40m-10-10l10 10-10 10" stroke="#f6c453" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(730 40)"><path d="M60 8v78M30 86h60" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M8 28H112" stroke="#f6c453" stroke-width="6" stroke-linecap="round"/><path d="M8 28l-14 40h28zM112 28l-14 40h28z" fill="#f7dcdd"/><text x="60" y="146" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="14" fill="#fff">4 Risk characterization</text></g>
+</svg>
+<div class="txt"><div class="kick">PUBH 530 · Week 4 Interactive</div><h1>Risk Assessment: From Hazard to Decision</h1><p>Risk assessment gives public health a structured way to move from a hazard to a decision. Put the four steps in order, explore how dose and exposure combine to create risk, and see why people’s perception of risk matters as much as the calculation.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Put the steps in order</h2>
+<p class="lead">Risk assessment commonly has four steps. Select the steps in the order they are carried out. Each one relies on data and stated assumptions.</p>
+<div class="slots" id="slots" aria-label="Your sequence"></div>
+<div class="deck" id="deck"></div>
+<div class="note live" id="sm" aria-live="polite">Start with the first step.</div>
+<div class="row" style="margin-top:8px"><button class="btn" id="rs" type="button">Start over</button></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Dose and exposure</h2>
+<p class="lead">The dose often determines the harm, and who is exposed, and how much, depends on the person. Here a hypothetical chemical (“Chemical X”) is in a town’s drinking water. A <strong>reference dose</strong> is a daily dose per kilogram of body weight below which harm is not expected. Move the slider and compare an adult and a child drinking the same water. (Hypothetical numbers for learning.)</p>
+<div class="ctl"><div><label for="cc">Chemical X in the water <span id="ccv">0.10 mg/L</span></label><small>Concentration measured in the drinking water</small><input type="range" id="cc" min="0" max="30" step="1" value="10"></div>
+<div style="display:flex;align-items:center"><label style="font-weight:600;display:flex;gap:10px;align-items:center"><input type="checkbox" id="fl"> Add a home filter that removes 80% of Chemical X</label></div></div>
+<svg class="chart" id="ch" viewBox="0 0 700 220" role="img" aria-label="Daily dose for an adult and a child compared with the reference dose"></svg>
+<div class="stats" aria-live="polite"><div id="s1"><b id="a1">–</b><small>Adult dose (mg/kg/day)</small></div><div id="s2"><b id="a2">–</b><small>Adult ratio to reference dose</small></div><div id="s3"><b id="a3">–</b><small>Child dose (mg/kg/day)</small></div><div id="s4"><b id="a4">–</b><small>Child ratio to reference dose</small></div></div>
+<div class="note teal live" id="ins" aria-live="polite"></div>
+<p class="lead" style="font-size:.85rem">Simplified screening model: dose = concentration × water drunk per day ÷ body weight. Assumed intakes: adult 70 kg drinking 2 L/day; child 15 kg drinking 1 L/day. Reference dose for the hypothetical Chemical X: 0.005 mg/kg/day. A ratio of 1 or more is a signal to look closer, not a measure of illness. Real assessments state their assumptions and uncertainty.</p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Perceived risk and calculated risk</h2>
+<p class="lead">People judge risk using values, experience, and trust, so perceived risk may differ from calculated risk. Decide what is shaping each response, then choose how to communicate.</p>
+<div id="qs"></div><p class="live score" id="qres" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="chips"><div><b>Air and food both matter</b>Standards and inspection protect people.</div><div><b>Risk assessment has steps</b>Follow them in order.</div><div><b>Assumptions matter</b>State them clearly.</div><div><b>Perception shapes response</b>Communicate with respect.</div></div>
+</section>
+</div>
+<p class="foot">Source: PUBH 530 Week 4 Deep Dive. The chemical, numbers, and scenarios are hypothetical, for practice.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var STEPS=[["Hazard identification","Can this substance cause harm at all?","Start with the basic question: can this hazard cause harm at all?"],
+ ["Dose-response assessment","How much exposure causes how much harm?","Next comes the question of how much exposure causes how much harm."],
+ ["Exposure assessment","Who is exposed, how much, how often, and by what route?","Now find out who is actually exposed, and how much."],
+ ["Risk characterization","Put it together: how likely is harm, how certain are we, and what assumptions were made?","Last, bring the findings together and state the uncertainty."]];
+var ORDER=[3,2,0,1],placed=[],wrongMsg="";
+function steps(){
+ var sl=$("slots");sl.innerHTML="";for(var i=0;i<4;i++){var d=document.createElement("div");var s=placed[i];d.className="slot"+(s!==undefined?" on":"");
+  d.innerHTML='<div class="n">'+(i+1)+'</div>'+(s!==undefined?"<b>"+STEPS[s][0]+"</b><small>"+STEPS[s][1]+"</small>":'<small style="color:#9a9395">Step '+(i+1)+'</small>');sl.appendChild(d)}
+ var dk=$("deck");dk.innerHTML="";ORDER.forEach(function(k){var b=document.createElement("button");b.type="button";b.className="card3";b.disabled=placed.indexOf(k)>=0;b.innerHTML="<b>"+STEPS[k][0]+"</b><small>"+STEPS[k][1]+"</small>";
+  b.onclick=function(){var nxt=placed.length;if(k===nxt){placed.push(k);wrongMsg=""}else wrongMsg="Not yet. "+STEPS[nxt][2];steps()};dk.appendChild(b)});
+ var m=$("sm");
+ if(placed.length===4){m.className="note teal live";m.innerHTML="<strong>That is the sequence:</strong> identify the hazard, learn how dose relates to harm, find out who is exposed and how much, then characterize the risk. Each step relies on data and stated assumptions, and the final characterization should say how certain we are."}
+ else if(wrongMsg){m.className="note live";m.innerHTML='<span class="badbox" style="display:block">'+wrongMsg+"</span>"}
+ else{m.className="note live";m.innerHTML=placed.length===0?"Start with the first step.":"<strong>"+placed.length+" of 4 in place.</strong> Choose the next step."}}
+$("rs").onclick=function(){placed=[];wrongMsg="";steps()};steps();
+var RFD=0.005;
+function dose(C,L,BW){return C*L/BW}
+function risk(){
+ var c=+$("cc").value/100,f=$("fl").checked,eff=f?c*0.2:c;$("ccv").textContent=c.toFixed(2)+" mg/L"+(f?" → "+eff.toFixed(3)+" after filter":"");
+ var a=dose(eff,2,70),k=dose(eff,1,15),ha=a/RFD,hk=k/RFD;
+ var ch=$("ch");ch.innerHTML="";el("rect",{width:700,height:220,fill:"#fcfcfc"},ch);
+ var x0=130,x1=670,MX=0.02;function X(v){return x0+Math.min(v,MX)/MX*(x1-x0)}
+ el("rect",{x:X(RFD),y:20,width:x1-X(RFD),height:130,fill:"#f9ddda",opacity:.7},ch);
+ el("rect",{x:x0,y:20,width:X(RFD)-x0,height:130,fill:"#e4f1e8",opacity:.8},ch);
+ [0,0.005,0.01,0.015,0.02].forEach(function(v){el("path",{d:"M"+X(v)+" 150V156",stroke:"#8a8286"},ch);var t=el("text",{x:X(v),y:172,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},ch);t.textContent=v.toFixed(3)});
+ var xl=el("text",{x:405,y:196,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#231f20"},ch);xl.textContent="Daily dose (mg per kg of body weight per day)";
+ [["Adult",a,38],["Child",k,92]].forEach(function(r){var lab=el("text",{x:x0-10,y:r[2]+22,"text-anchor":"end","font-size":"14","font-weight":"800",fill:"#231f20"},ch);lab.textContent=r[0];
+  var over=r[1]>=RFD;el("rect",{x:x0,y:r[2],width:Math.max(2,X(r[1])-x0),height:38,rx:6,fill:over?"#d34147":"#1f6f78"},ch);
+  var lx=Math.max(X(r[1]),X(RFD))+10,vt=el("text",{x:lx,y:r[2]+24,"font-size":"13","font-weight":"800",fill:(lx>x1-70)?"#fff":"#231f20"},ch);if(lx>x1-70){vt.setAttribute("x",X(r[1])-8);vt.setAttribute("text-anchor","end")}vt.textContent=r[1].toFixed(4)});
+ el("path",{d:"M"+X(RFD)+" 14V150",stroke:"#231f20","stroke-width":3,"stroke-dasharray":"7 5"},ch);
+ var rt=el("text",{x:X(RFD)+6,y:12,"font-size":"12","font-weight":"800",fill:"#231f20"},ch);rt.textContent="reference dose 0.005";
+ $("a1").textContent=a.toFixed(4);$("a2").textContent=ha.toFixed(2);$("a3").textContent=k.toFixed(4);$("a4").textContent=hk.toFixed(2);
+ $("s2").className=ha>=1?"bad":"good";$("s4").className=hk>=1?"bad":"good";
+ var m=$("ins");
+ if(c===0)m.innerHTML="<strong>With none of Chemical X in the water, there is no dose.</strong> No exposure means no risk from this pathway. Raise the concentration to see how the dose changes for each person.";
+ else if(hk>=1&&ha<1)m.innerHTML="<strong>The same water, different doses.</strong> The child’s dose per kilogram is "+(k/a).toFixed(1)+" times the adult’s, because children drink more water for their body weight. The child is above the reference dose (ratio "+hk.toFixed(2)+") while the adult is below it ("+ha.toFixed(2)+"). A single ‘safe for adults’ number can miss the most vulnerable people. Try the filter to see exposure fall.";
+ else if(hk>=1)m.innerHTML="<strong>Both are above the reference dose</strong> (adult "+ha.toFixed(2)+", child "+hk.toFixed(2)+"). This is a signal to look more closely and to reduce exposure. The child’s dose is "+(k/a).toFixed(1)+" times the adult’s for the same water. Try the filter.";
+ else m.innerHTML="<strong>Both are below the reference dose</strong> (adult "+ha.toFixed(2)+", child "+hk.toFixed(2)+"), so harm is not expected in this simplified model. Notice the child is still closer to the line: "+(k/a).toFixed(1)+" times the adult’s dose for the same water. Raise the concentration to find where each person crosses it."}
+$("cc").oninput=risk;$("fl").onchange=risk;risk();
+function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
+ var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
+ (x.l||labels).forEach(function(c,k){var b=document.createElement("button");b.textContent=c;b.onclick=function(){
+  if(k===x.a){b.className="right";d.classList.add("done");o.querySelectorAll("button").forEach(function(z){z.disabled=true});f.innerHTML='<span class="good">✓ '+x.w+'</span>';if(!w)sc++;dn++;if(fin&&dn===list.length)$(fin).textContent="First-try correct: "+sc+" of "+list.length+"."}
+  else{b.className="wrong";b.disabled=true;w=true;f.innerHTML='<span class="badbox">'+(x.h||"Not quite. Think about what is shaping the response in this scenario.")+'</span>'}};o.appendChild(b)});h.appendChild(d)})}
+quiz("qs",[
+{t:"A community was harmed by a past spill, so residents distrust a report of “low risk.” What is shaping their judgment?",a:0,w:"Past experience strongly shapes how people judge risk."},
+{t:"Residents doubt the findings because they do not trust the agency that tested their water.",a:1,w:"Trust in the people and institutions delivering the message shapes how risk is judged."},
+{t:"A family that has farmed its land for generations weighs any threat to its well very heavily.",a:2,w:"Values, here a deep connection to land and home, shape how risk is judged."},
+{t:"A report concludes that risk is low, but it assumed each adult drinks 2 liters of water a day. What should the report do?",a:0,l:["State the assumption clearly","Leave it out to keep the report simple","Present it as an established fact"],w:"Each step relies on data and stated assumptions. Stating them lets others judge and challenge the result.",h:"What lets readers judge whether the conclusion holds?"},
+{t:"Residents’ perceived risk is higher than the calculated risk. How should a presenter respond?",a:0,l:["Take both into account and communicate with respect","Tell residents their concerns are wrong","Show only the numbers"],w:"Perceived risk may differ from calculated risk, and effective communication takes both into account.",h:"Which response respects both the evidence and the people?"}],
+["Past experience","Trust","Values"],"qres");
+</script><script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
