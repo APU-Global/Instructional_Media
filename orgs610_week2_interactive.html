@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 Interactive | Is It Fair? Balancing Inputs and Rewards</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a balance scale with two coin stacks and two employees, one on each side">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(120 30)">
+<rect x="195" y="40" width="10" height="130" rx="4" fill="#f7dcdd"/><rect x="150" y="166" width="100" height="14" rx="6" fill="#f7dcdd"/>
+<g transform="rotate(-8 200 44)"><rect x="40" y="40" width="320" height="8" rx="4" fill="#fff"/>
+<path d="M60 48L30 112h60z M340 48l-30 64h60z" fill="none" stroke="#fff" stroke-width="2"/>
+<path d="M18 112h84q-6 22-42 22t-42-22z" fill="#fff"/><path d="M298 112h84q-6 22-42 22t-42-22z" fill="#fff"/>
+<g fill="#f6c453"><ellipse cx="60" cy="104" rx="18" ry="6"/><ellipse cx="60" cy="96" rx="18" ry="6"/><ellipse cx="60" cy="88" rx="18" ry="6"/><ellipse cx="340" cy="104" rx="18" ry="6"/><ellipse cx="340" cy="96" rx="18" ry="6"/></g></g>
+<circle cx="-30" cy="150" r="16" fill="#fff"/><path d="M-56 206q0-40 26-40t26 40z" fill="#fff"/>
+<circle cx="430" cy="150" r="16" fill="#fff"/><path d="M404 206q0-40 26-40t26 40z" fill="#fff"/>
+</g>
+<g transform="translate(640 80)" font-family="system-ui" fill="#fff" font-weight="800" font-size="22"><text>Fairness is a ratio,</text><text y="32">not a headcount of rewards.</text></g>
+</svg>
+<div class="txt"><div class="kick">ORGS 610 · Week 2 Interactive</div><h1>Is It Fair? Balancing Inputs and Rewards</h1><p>Employees compare what they put in and what they get out with those of others. Tip the scale, see how the equity model predicts a response, and practice the leader's moves.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · The equity scale</h2>
+<p class="lead">In the equity model, people compare their <strong>outcomes ÷ inputs</strong> with someone else's. <strong>Inputs</strong> are effort, skill, experience, and time. <strong>Outcomes</strong> are pay, recognition, growth, and flexibility. Choose a situation or set the sliders yourself. These are perceptions, which is exactly what drives motivation. (Illustrative.)</p>
+<div class="pick" id="pre" role="group" aria-label="Situations"></div>
+<svg class="fig" id="sc" viewBox="0 0 640 250" role="img" aria-label="Balance scale comparing your ratio of outcomes to inputs with a coworker's ratio"></svg>
+<div class="grid2">
+<div><h3>You</h3>
+<div class="sl"><label for="yi"><b>Inputs</b></label><input type="range" id="yi" min="1" max="10" value="6"><span id="yiv">6</span></div>
+<div class="sl"><label for="yo"><b>Outcomes</b></label><input type="range" id="yo" min="1" max="10" value="6"><span id="yov">6</span></div></div>
+<div><h3>Your coworker</h3>
+<div class="sl"><label for="ci"><b>Inputs</b></label><input type="range" id="ci" min="1" max="10" value="6"><span id="civ">6</span></div>
+<div class="sl"><label for="co"><b>Outcomes</b></label><input type="range" id="co" min="1" max="10" value="6"><span id="cov">6</span></div></div>
+</div>
+<div class="note teal live" id="out" aria-live="polite"></div>
+<div class="note gold live" id="lead"></div>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Read the situation</h2>
+<p class="lead">Apply the equity model and this week's leadership perspective. Pick an answer; you can try again if you miss.</p>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Goals that focus effort</h2>
+<p class="lead">Clear, challenging goals focus attention and effort, and they work best when they are shared and revisited with feedback.</p>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Shape conditions</b>Influence the environment, not personality.</div><div><b>Fairness motivates</b>Perceived equity affects effort.</div><div><b>Goals focus effort</b>Make them clear and shared.</div><div><b>Ask, do not assume</b>Motivators differ across people.</div></div>
+<div class="note"><strong>Reflect:</strong> A servant leader holds power for the benefit of others. When you notice a gap between two people's rewards, what would you ask before acting?</div>
+</section>
+</div>
+<p class="foot">Based on the ORGS 610 Week 2 Deep Dive: Motivation and Equity in a Diverse Workforce. Scenarios are illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+var P=[["Equal and fair",6,6,6,6],["Same work, less reward",7,4,7,7],["Same work, more reward",7,8,7,5],["Different inputs, fair rewards",4,4,8,8]];
+var yi=$("yi"),yo=$("yo"),ci=$("ci"),co=$("co");
+P.forEach(function(p){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=p[0];
+b.onclick=function(){yi.value=p[1];yo.value=p[2];ci.value=p[3];co.value=p[4];draw()};$("pre").appendChild(b)});
+function pan(x,y,label,ratio,col,n){var g=el("g",{},$("sc"));
+el("line",{x1:x,y1:y,x2:x-46,y2:y+62,stroke:"#8a8285","stroke-width":2},g);el("line",{x1:x,y1:y,x2:x+46,y2:y+62,stroke:"#8a8285","stroke-width":2},g);
+el("path",{d:"M"+(x-62)+" "+(y+62)+"h124q-8 26-62 26t-62-26z",fill:col},g);
+for(var i=0;i<n;i++){el("ellipse",{cx:x,cy:y+56-i*7,rx:22,ry:6,fill:"#e0a526",stroke:"#a8761a","stroke-width":1},g)}
+var t=el("text",{x:x,y:y+118,"text-anchor":"middle","font-weight":"800","font-size":16,fill:"#231f20"},g);t.textContent=label;
+var u=el("text",{x:x,y:y+138,"text-anchor":"middle","font-size":14,fill:"#5b5557"},g);u.textContent="ratio "+ratio.toFixed(2)}
+function draw(){var a=+yi.value,b=+yo.value,c=+ci.value,d=+co.value;
+$("yiv").textContent=a;$("yov").textContent=b;$("civ").textContent=c;$("cov").textContent=d;
+var ry=b/a,rc=d/c,q=ry/rc,ang=-Math.max(-16,Math.min(16,Math.log(q)*14));
+var s=$("sc");while(s.firstChild)s.removeChild(s.firstChild);
+var px=320,py=50,L=190,r=ang*Math.PI/180,lx=px-L*Math.cos(r),ly=py-L*Math.sin(r),rx=px+L*Math.cos(r),ry2=py+L*Math.sin(r);
+el("rect",{x:px-6,y:py,width:12,height:150,rx:4,fill:"#d9d4cf"},s);el("rect",{x:px-60,y:196,width:120,height:12,rx:5,fill:"#d9d4cf"},s);
+el("line",{x1:lx,y1:ly,x2:rx,y2:ry2,stroke:"#231f20","stroke-width":7,"stroke-linecap":"round"},s);el("circle",{cx:px,cy:py,r:9,fill:"#d34147"},s);
+var col=Math.abs(Math.log(q))<0.1?"#dcf1e3":(q<1?"#fbe3e1":"#fbefcf");
+pan(lx,ly,"You",ry,col,Math.round(b/2)+0);pan(rx,ry2,"Coworker",rc,"#d9eeef",Math.round(d/2)+0);
+var o=$("out"),l=$("lead");
+if(Math.abs(Math.log(q))<0.1){o.innerHTML="<strong>Balanced.</strong> Your outcome-to-input ratio matches your coworker's, so the model predicts you will feel fairly treated. Notice that equity does not mean equal rewards: different inputs can justify different outcomes.";
+l.innerHTML="<strong>Leader's move:</strong> Keep the link between contribution and reward visible, and revisit it regularly."}
+else if(q<1){o.innerHTML="<strong>You are under-rewarded.</strong> Your ratio is lower than your coworker's. The model predicts tension and responses such as reducing effort, asking for more rewards, changing how you see your coworker's inputs, or disengaging.";
+l.innerHTML="<strong>Leader's move:</strong> Ask what the employee sees as inputs and outcomes, explain how rewards are decided, and fix real gaps."}
+else{o.innerHTML="<strong>You are over-rewarded.</strong> Your ratio is higher than your coworker's. Some people feel discomfort and try to give more; others explain the gap away. The coworker, meanwhile, may feel under-rewarded.";
+l.innerHTML="<strong>Leader's move:</strong> Check whether the coworker's inputs are fully seen, and keep reward criteria open to everyone."}}
+[yi,yo,ci,co].forEach(function(e){e.addEventListener("input",draw)});draw();
+quiz("q1",[
+{t:"Maria and Dev do the same job with the same hours and results. Maria learns that Dev earns more. What does the equity model predict?",o:["She may feel under-rewarded and reduce effort or ask for a change","She will feel more motivated because the company is generous","Nothing changes, because pay is private"],a:0,w:"Perceived inequity lowers engagement and can lead to reduced effort or requests for change.",f:["","Her comparison with Dev points the other way.","Once she knows, the comparison is already made."]},
+{t:"A new hire with two years of experience accepts a smaller raise than a 15-year veteran. Why might she see this as fair?",o:["She compares her inputs and outcomes with the veteran's and sees similar ratios","Equity means everyone gets the same raise","She does not compare herself with anyone"],a:0,w:"Equity is about ratios of outcomes to inputs, so different inputs can justify different outcomes.",f:["","That describes equality, not equity.","Employees compare themselves with others constantly."]},
+{t:"Which leader action best addresses a perceived inequity?",o:["Explain how rewards are decided and invite questions","Tell employees not to discuss pay","Give everyone identical rewards no matter what they contribute"],a:0,w:"Transparent criteria and open dialogue support perceived fairness.",f:["","Secrecy usually deepens suspicion.","Identical rewards ignore differences in inputs, which can feel unfair too."]},
+{t:"One team member values a flexible schedule more than a bonus. What is the best way to learn what motivates her?",o:["Ask her, and ask others too","Assume everyone wants money most","Give the whole team the same reward"],a:0,w:"Motivators differ across people, so inclusive leaders ask rather than assume.",f:["","Assumptions miss what people actually value.","One reward for all will fit some people and miss others."]},
+{t:"A leader wants to raise job satisfaction in a diverse workforce. According to this week's perspective, the best lever is to…",o:["Shape working conditions and rewards","Change employees' personalities","Change what employees believe"],a:0,w:"Leaders influence satisfaction by shaping conditions and rewards, not by trying to change who people are.",f:["","Personality is not the lever leaders should pull.","Beliefs are not the target either."]}],"r1");
+quiz("q2",[
+{t:"Which goal best follows this week's guidance?",o:["Do better this year.","Cut order errors from 8% to 4% by June, and review progress together each month.","Reach zero errors immediately, or else."],a:1,w:"It is clear, challenging, and shared, and it builds in feedback.",f:["Too vague to focus anyone's effort.","","Not realistic, and it is imposed rather than shared."]},
+{t:"How should goals be handled?",o:["Set once and filed away","Shared and revisited with feedback","Kept private by the manager"],a:1,w:"Goals work best when employees understand them, receive feedback, and revisit them together.",f:["Goals lose their power if nobody revisits them.","","Employees cannot work toward a goal they do not know."]},
+{t:"Why do goals work better when employees get feedback?",o:["They can see progress and adjust their effort","It replaces the need for goals","It makes goals easier to ignore"],a:0,w:"Feedback tells people how they are doing and what to change.",f:["","Feedback supports goals; it does not replace them.","It does the opposite."]},
+{t:"Performance management links which three things?",o:["Expectations, feedback, and rewards","Titles, budgets, and schedules","Rules, penalties, and reports"],a:0,w:"Performance management ties clear expectations to feedback and rewards.",f:["","","" ]}],"r2");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

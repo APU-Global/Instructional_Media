@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 8 Interactive | Coach, Don't Just Tell: Feedback That Helps People Grow</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of two people in conversation with speech bubbles and an upward arrow">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(110 20)">
+<circle cx="60" cy="110" r="26" fill="#fff"/><path d="M14 196q0-54 46-54t46 54z" fill="#fff"/>
+<circle cx="340" cy="110" r="26" fill="#f6c453"/><path d="M294 196q0-54 46-54t46 54z" fill="#f6c453"/>
+<rect x="30" y="20" width="150" height="56" rx="18" fill="#f7dcdd"/><path d="M70 76l-12 22 32-22z" fill="#f7dcdd"/>
+<rect x="220" y="40" width="150" height="56" rx="18" fill="#fff"/><path d="M330 96l12 20-32-20z" fill="#fff"/>
+<g stroke="#a8353a" stroke-width="5" stroke-linecap="round"><path d="M52 40h106M52 58h70"/><path d="M242 60h106M242 78h70" stroke="#1f6f78"/></g>
+<path d="M160 160q40-50 80-10" stroke="#f6c453" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="2 12"/>
+<path d="M232 142l12 10-16 4z" fill="#f6c453"/></g>
+<g transform="translate(600 80)" font-family="system-ui" fill="#fff" font-weight="800" font-size="22"><text>Leading directs.</text><text y="32">Coaching develops.</text></g>
+</svg>
+<div class="txt"><div class="kick">ORGS 610 · Week 8 Interactive</div><h1>Coach, Don't Just Tell: Feedback That Helps People Grow</h1><p>Build a feedback message piece by piece and see whether it is specific, respectful, and developmental. Then decide when to lead, when to coach, and how appraisal and humility fit in.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Build the feedback</h2>
+<p class="lead"><strong>Scenario:</strong> Your team member Jordan ran 15 minutes over in a client presentation and skipped the budget slide. Effective feedback is specific, timely, and focused on behavior. Choose one option for each part of your message. (Illustrative.)</p>
+<div id="fb"></div>
+<div class="say live" id="say" aria-live="polite">Make your choices to build the message.</div>
+<div class="chk" id="chk" aria-label="Feedback checklist"><span id="c0">Timely and respectful</span><span id="c1">Specific behavior</span><span id="c2">Clear impact</span><span id="c3">Builds capability</span></div>
+<div class="note teal live" id="rs" aria-live="polite"></div>
+<button type="button" class="btn" id="rst">Start over</button>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Lead or coach?</h2>
+<p class="lead">Leading directs. Coaching develops the person's own capability. Decide which approach fits the situation.</p>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Appraisal, defensiveness, and humility</h2>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Coach to develop</b>Build the other person's capability.</div><div><b>Feedback should be specific</b>Focus on behavior.</div><div><b>Follow up</b>Make appraisal part of growth.</div><div><b>Lead with humility</b>Listen and serve.</div></div>
+<div class="note"><strong>Reflect:</strong> Recall the last feedback you gave or received. Which of the four checklist items was missing?</div>
+</section>
+</div>
+<p class="foot">Based on the ORGS 610 Week 8 Deep Dive: Coaching Toward a Win-Win Goal. Scenario is illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+var F=[
+{t:"When",o:[["Right after the presentation, in private",1,"Timely and respectful."],["At the annual review, eight months from now",0,"Too late to help. The moment has passed."],["At the next team meeting, in front of everyone",0,"Public correction can bring embarrassment and defensiveness."]],s:"Right after the presentation, in private, ",k:0},
+{t:"Behavior",o:[["“You ran 15 minutes over and skipped the budget slide.”",1,"Specific and observable."],["“You are always disorganized.”",0,"Judges the person, not the behavior."],["“That presentation was bad.”",0,"Too vague to act on."]],k:1},
+{t:"Impact",o:[["“The client did not see the cost numbers they needed to approve the project.”",1,"Shows why it matters."],["“You embarrassed me.”",0,"Makes it about you, not the work."],["“It could hurt your career someday.”",0,"Vague and threatening."]],k:2},
+{t:"Next step",o:[["“What would help you plan the timing? Let’s rehearse together on Thursday.”",1,"Develops the person's own capability."],["“Try harder next time.”",0,"Gives no way forward."],["“I will take over client presentations.”",0,"Removes the chance to grow."]],k:3}];
+var pk=[null,null,null,null];
+function build(){var f=$("fb");f.innerHTML="";pk=[null,null,null,null];
+F.forEach(function(p,pi){var d=document.createElement("div");d.className="lever";d.innerHTML='<h3></h3><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector("h3").textContent=(pi+1)+". "+p.t;
+p.o.forEach(function(o,oi){var b=document.createElement("button");b.type="button";b.textContent=o[0];
+b.onclick=function(){pk[pi]=oi;[].forEach.call(d.querySelectorAll(".opts button"),function(x){x.className="";x.style.background="";x.style.borderColor=""});
+if(o[1]){b.className="right"}else{b.style.background="#fbefcf";b.style.borderColor="#e0a526"}
+d.querySelector(".fb").innerHTML='<span class="'+(o[1]?"good":"badbox")+'">'+(o[1]?"✔ ":"")+o[2]+"</span>";draw()};
+d.querySelector(".opts").appendChild(b)});f.appendChild(d)});draw()}
+function draw(){var n=0,g=0,parts=[];
+for(var i=0;i<4;i++){var c=$("c"+i);c.className="";if(pk[i]!==null){n++;var o=F[i].o[pk[i]];if(o[1]){g++;c.className="on"}else c.className="off";parts.push(o[0].replace(/[“”]/g,""))}}
+var w=pk[0]!==null?F[0].o[pk[0]][0]:"";
+if(pk[0]!==null&&n>1)parts[0]=parts[0]+":";
+$("say").textContent=n?parts.join(" "):"Make your choices to build the message.";
+var r=$("rs");
+if(n<4)r.textContent="Choices made: "+n+" of 4.";
+else if(g===4)r.innerHTML="<strong>Strong feedback.</strong> It is timely, specific, tied to impact, and it develops Jordan's capability. Notice the coaching question at the end: it invites Jordan to own the solution.";
+else r.innerHTML="<strong>"+g+" of 4 parts are strong.</strong> Look at the checklist: the red items are where the message is vague, personal, late, or takes over. Change those choices and watch the message improve.";}
+$("rst").onclick=build;build();
+var LC=["Lead (direct)","Coach (develop)"];
+quiz("q1",[
+{t:"An employee is about to operate machinery without a required guard.",o:LC,a:0,w:"Lead. A safety risk calls for clear, immediate direction."},
+{t:"A manager wants to grow into a director role but is unsure of her strengths.",o:LC,a:1,w:"Coach. Questions and reflection build her own capability and vision."},
+{t:"A new hire must learn a required compliance procedure by Friday.",o:LC,a:0,w:"Lead. Required, time-bound, with one right way: direct teaching fits."},
+{t:"A capable team member keeps missing goals and admits he is afraid to speak up in meetings.",o:LC,a:1,w:"Coach. Coaching helps name and work through internal obstacles to achievement."},
+{t:"A professional asks for help defining and pursuing a personal vision.",o:LC,a:1,w:"Coach. Defining a personal vision is the person's own work, and the coach helps them find gaps and barriers."}],"r1");
+quiz("q2",[
+{t:"How should appraisal connect to the rest of performance management?",o:["It links feedback to results and development, with regular follow-up","It is a once-a-year surprise","It is only about pay"],a:0,w:"Appraisal connects feedback to results and development, and regular follow-up supports improvement.",f:["","Surprises damage trust. Feedback should be regular.","Pay is only part of it."]},
+{t:"An employee responds to feedback with defensiveness. What helps most?",o:["Stay calm, acknowledge the emotion, and return to the specific behavior","Raise your voice to regain control","Drop the feedback entirely"],a:0,w:"People may respond with emotion. Prepare for difficult conversations with respect.",f:["","","Avoiding it denies the person a chance to improve."]},
+{t:"What makes an appraisal process build trust?",o:["It is fair and transparent","It is secret","It is the same for everyone regardless of role"],a:0,w:"Fair, transparent processes build trust.",f:["","Secrecy erodes trust.","" ]},
+{t:"Coaching across generations requires…",o:["Listening","Assuming you already know best","Avoiding the conversation"],a:0,w:"Listening makes coaching work across generations.",f:["","","" ]},
+{t:"Leading with humility means…",o:["Being willing to learn from others","Never making decisions","Hiding your mistakes"],a:0,w:"Humility lets leaders learn from others.",f:["","Humility is not indecision.","" ]}],"r2");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

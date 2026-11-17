@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 Interactive | Values, Design, and Culture: Close the Say‑Do Gap</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a triangle linking values, design, and culture">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(130 20)" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">
+<path d="M200 30L60 150h280z" fill="none" stroke="#f7dcdd" stroke-width="4" stroke-linejoin="round" stroke-dasharray="3 10" stroke-linecap="round"/>
+<circle cx="200" cy="30" r="26" fill="#fff"/><circle cx="60" cy="150" r="26" fill="#f6c453"/><circle cx="340" cy="150" r="26" fill="#d9eeef"/>
+<text x="236" y="36">VALUES</text><text x="60" y="204" text-anchor="middle">DESIGN</text><text x="340" y="204" text-anchor="middle">CULTURE</text>
+<path d="M190 30l7 8 14-16" stroke="#d34147" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<g fill="#a8353a"><rect x="48" y="142" width="10" height="16" rx="2"/><rect x="62" y="136" width="10" height="22" rx="2"/></g>
+<g fill="#1f6f78"><circle cx="331" cy="144" r="3.5"/><circle cx="349" cy="144" r="3.5"/></g><path d="M330 154q10 9 20 0" stroke="#1f6f78" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+<g transform="translate(600 80)" font-family="system-ui" fill="#fff" font-weight="800" font-size="22"><text>Change one corner</text><text y="32">and the others move.</text></g>
+</svg>
+<div class="txt"><div class="kick">ORGS 610 · Week 3 Interactive</div><h1>Values, Design, and Culture: Close the Say‑Do Gap</h1><p>Values, structure, and culture are linked. Pick a stated value, then choose how structure, rewards, and leaders act. See whether employees experience the value or just read it on a poster.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Build the culture</h2>
+<p class="lead">Choose a <strong>stated value</strong>. Then make one choice in each of three areas. Culture is reinforced by policies and practices, so every choice sends a signal. (Illustrative options.)</p>
+<div class="pick" id="vals" role="group" aria-label="Stated value"></div>
+<svg class="fig" id="map" viewBox="0 0 640 230" role="img" aria-label="Diagram linking three choices to the culture employees experience"></svg>
+<div id="lv"></div>
+<div class="note teal live" id="res" aria-live="polite">Choose a value to begin.</div>
+<button type="button" class="btn" id="rst">Reset choices</button>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · Spot the say-do gap</h2>
+<p class="lead">Values must be reflected in actions, not only in statements. Decide what employees will conclude.</p>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Design, fit, and leadership</h2>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Values, design, culture connect</b>Treat them as a system.</div><div><b>Culture is reinforced</b>Policies and practices send signals.</div><div><b>Fit matters</b>Align people and values.</div><div><b>Live the values</b>Actions must match statements.</div></div>
+<div class="note"><strong>Reflect:</strong> Principles such as justice and integrity can inform an organization's values. Where would your own organization's practices say something different from its statements?</div>
+</section>
+</div>
+<p class="foot">Based on the ORGS 610 Week 3 Deep Dive: Organizational Values, Design, and Culture. Options are illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+var V=[
+{n:"Integrity",L:[
+ {t:"Structure",o:[["Concerns go to an independent ethics office, not only to the boss",1,"People can raise problems safely."],["Concerns go only to the manager involved",-1,"People learn that speaking up is risky."],["An ethics hotline exists but is rarely staffed",0,"The structure is there on paper but sends a mixed signal."]]},
+ {t:"Rewards and policies",o:[["Bonuses for hitting numbers by any means",-1,"Results matter more than how they are reached."],["Reviews also assess how results were achieved",1,"Honest methods count."],["Employees complete ethics training once a year",0,"Visible, but nothing else changes."]]},
+ {t:"Leader behavior",o:[["The leader admits a mistake openly and fixes it",1,"Honesty is modeled from the top."],["The leader overlooks a top performer's rule-breaking",-1,"Rules apply to some people but not others."],["The leader talks about integrity but rarely mentions it when deciding",0,"Words without action."]]}]},
+{n:"Collaboration",L:[
+ {t:"Structure",o:[["Cross-functional teams share goals",1,"The design makes working together the easy path."],["Departments have separate goals and little contact",-1,"Silos reward guarding territory."],["Teams share a calendar but not goals",0,"Some contact, no shared purpose."]]},
+ {t:"Rewards and policies",o:[["Team recognition and shared targets",1,"Success is collective."],["Employees are ranked against each other for one top bonus",-1,"Helping a colleague costs you."],["Newsletters praise teamwork, but pay depends on individual results",0,"Praise and pay point in different directions."]]},
+ {t:"Leader behavior",o:[["The leader seeks other departments' input before deciding",1,"Collaboration is modeled."],["The leader decides alone and announces",-1,"People learn their input does not matter."],["The leader invites input but rarely changes plans",0,"Input feels like a formality."]]}]},
+{n:"Innovation",L:[
+ {t:"Structure",o:[["Small teams have authority to test ideas",1,"Trying things is built into the design."],["Every idea needs five levels of approval",-1,"Slow approval signals that new ideas are unwelcome."],["An innovation lab sits apart from daily work",0,"Ideas exist, but few reach the work."]]},
+ {t:"Rewards and policies",o:[["Lessons from failed experiments are recognized",1,"Smart risks are safe."],["Mistakes are marked down in reviews",-1,"People stop experimenting."],["Only ideas that succeed are rewarded",0,"Risk is possible but unrewarded."]]},
+ {t:"Leader behavior",o:[["The leader sets aside time to try ideas and shares lessons",1,"Innovation is modeled."],["The leader says, “We have always done it this way”",-1,"Change is discouraged."],["The leader praises new ideas but approves little funding",0,"Support is only verbal."]]}]}];
+var cur=-1,pk=[null,null,null];
+V.forEach(function(v,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=v.n;b.setAttribute("aria-pressed","false");
+b.onclick=function(){cur=i;pk=[null,null,null];[].forEach.call($("vals").children,function(x,j){x.setAttribute("aria-pressed",j===i)});lev();draw()};$("vals").appendChild(b)});
+$("rst").onclick=function(){pk=[null,null,null];lev();draw()};
+function lev(){var h=$("lv");h.innerHTML="";if(cur<0)return;
+V[cur].L.forEach(function(L,li){var d=document.createElement("div");d.className="lever";d.innerHTML='<h3></h3><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector("h3").textContent=L.t;
+L.o.forEach(function(o,oi){var b=document.createElement("button");b.type="button";b.textContent=o[0];
+b.onclick=function(){pk[li]=oi;[].forEach.call(d.querySelectorAll(".opts button"),function(x){x.className=""});b.className=o[1]>0?"right":(o[1]<0?"wrong":"");
+b.style.textDecoration="none";if(o[1]===0){b.style.background="#fbefcf";b.style.borderColor="#e0a526"}else{b.style.background="";b.style.borderColor=""}
+d.querySelector(".fb").innerHTML='<span class="'+(o[1]>0?"good":(o[1]<0?"badbox":"note gold")+"")+'" style="display:block;margin-top:8px">'+(o[1]>0?"Reinforces: ":o[1]<0?"Undermines: ":"Mixed signal: ")+o[2]+"</span>";draw()};
+d.querySelector(".opts").appendChild(b)});h.appendChild(d)})}
+function draw(){var s=$("map");while(s.firstChild)s.removeChild(s.firstChild);
+var pos=[[110,50],[110,170],[110,110]];var names=["Structure","Rewards","Leaders"];var tot=0,n=0;
+var cx=470,cy=110;
+var L=[[90,40],[90,115],[90,190]];
+for(var i=0;i<3;i++){var sc=null;if(cur>=0&&pk[i]!==null){sc=V[cur].L[i].o[pk[i]][1];tot+=sc;n++}
+var col=sc===null?"#d9d4cf":(sc>0?"#2d7a4b":(sc<0?"#b3261e":"#e0a526"));
+el("line",{x1:L[i][0]+50,y1:L[i][1],x2:cx-70,y2:cy,stroke:col,"stroke-width":5,"stroke-linecap":"round","stroke-dasharray":sc===null?"4 8":"0"},s);
+el("rect",{x:L[i][0]-80,y:L[i][1]-26,width:130,height:52,rx:14,fill:"#fff",stroke:col,"stroke-width":4},s);
+var t=el("text",{x:L[i][0]-15,y:L[i][1]+6,"text-anchor":"middle","font-weight":"800","font-size":16,fill:"#231f20"},s);t.textContent=names[i]}
+var fill=n<3?"#edebe8":(tot>=2?"#dcf1e3":(tot>=0?"#fbefcf":"#fbe3e1")),stroke=n<3?"#c9c3bf":(tot>=2?"#2d7a4b":(tot>=0?"#e0a526":"#b3261e"));
+el("circle",{cx:cx,cy:cy,r:78,fill:fill,stroke:stroke,"stroke-width":5},s);
+var t1=el("text",{x:cx,y:cy-8,"text-anchor":"middle","font-weight":"800","font-size":20,fill:"#231f20"},s);t1.textContent="Culture";
+var m=n<3?"Make 3 choices":(tot>=2?"Value is lived":(tot>=0?"Mixed message":"Say-do gap"));
+var t2=el("text",{x:cx,y:cy+20,"text-anchor":"middle","font-size":15,"font-weight":"700",fill:"#231f20"},s);t2.textContent=m;
+var r=$("res");
+if(cur<0){r.textContent="Choose a value to begin."}
+else if(n<3){r.innerHTML="Stated value: <strong>"+V[cur].n+"</strong>. Choices made: "+n+" of 3."}
+else if(tot>=2)r.innerHTML="<strong>Aligned.</strong> Structure, rewards, and leaders all point the same way, so employees will experience "+V[cur].n.toLowerCase()+" as real. Because culture is reinforced by practice, this alignment has to be kept up.";
+else if(tot>=0)r.innerHTML="<strong>Mixed message.</strong> Some signals support "+V[cur].n.toLowerCase()+" while others do not. Employees tend to believe the practices over the poster. Which choice could you change?";
+else r.innerHTML="<strong>Say-do gap.</strong> Your practices contradict the stated value of "+V[cur].n.toLowerCase()+". People will trust what they see, so the statement loses credibility. Try changing one choice and watch the circle.";}
+draw();
+quiz("q1",[
+{t:"A company states, “We value work-life balance.” Which practice most contradicts that statement?",o:["Managers send messages at 11 p.m. and expect immediate replies","The company offers a wellness newsletter","Employees may use their vacation days"],a:0,w:"What leaders expect in practice outweighs what a statement says.",f:["","A newsletter is neutral at worst.","Allowing vacation supports the statement."]},
+{t:"A firm says it values transparency, but major decisions are announced with no explanation. What will employees most likely conclude?",o:["The real culture is closed, whatever the statement says","The statement is more important than the practice","Nothing, since employees do not notice"],a:0,w:"Practices reinforce culture, and people notice mismatches.",f:["","People believe actions over words.","People notice gaps between words and actions."]},
+{t:"Which action best brings a stated value of respect to life?",o:["A leader ends a meeting to address a colleague who was spoken over","Adding “respect” to the website","Holding a poster contest"],a:0,w:"Leaders bring values to life through daily decisions.",f:["","","Visible, but not a decision or action."]},
+{t:"Policies and practices matter for culture because they…",o:["Reinforce, or undermine, the values people see","Replace the need for leaders","Are read by few employees"],a:0,w:"Culture is shaped by leaders and reinforced by policies and practices.",f:["","","" ]}],"r1");
+quiz("q2",[
+{t:"Organization design describes…",o:["How work, authority, and communication are arranged","Only the office layout","Only the logo and branding"],a:0,w:"Design arranges work, authority, and communication, and it follows from strategy and environment.",f:["","","" ]},
+{t:"Design should follow from…",o:["Business strategy and environmental factors","Whatever is easiest to draw on a chart","The previous leader's preferences"],a:0,w:"Structure follows from strategy and environment, and it shapes how people collaborate.",f:["","","" ]},
+{t:"An employee's personal values clash with the organization's. What is the likely effect?",o:["Lower satisfaction and possibly lower retention","Higher satisfaction","No effect on anyone"],a:0,w:"Misalignment between personal and organizational values can affect satisfaction and retention.",f:["","","" ]},
+{t:"You change the reward system. What should you expect?",o:["Effects on culture and structure too, since they are linked","No effect beyond pay","Culture will stay exactly the same"],a:0,w:"Values, structure, and culture are linked; changing one affects the others.",f:["","","" ]}],"r2");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>

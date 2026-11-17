@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 6 Interactive | Technical Fix or Adaptive Challenge? Leading Teams</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--red-l:#f7dcdd;--ink:#231f20;--mut:#5b5557;--warm:#edebe8;--cream:#faf7f2;--card:#fff;--teal:#1f6f78;--teal-l:#d9eeef;--gold:#e0a526;--gold-l:#fbefcf;--ok:#2d7a4b;--ok-l:#dcf1e3;--bad:#b3261e;--bad-l:#fbe3e1;--r:20px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{overflow-x:hidden}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4.5vw,2.7rem)} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0 0 .9em}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.hero{border-radius:var(--r);overflow:hidden;background:var(--red-d);color:#fff;position:relative}
+.hero svg{display:block;width:100%;height:auto}
+.hero .txt{padding:22px 28px 26px;background:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,.18) 100%)}
+.hero .kick{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700;margin-bottom:6px}
+.hero p{max-width:60ch;margin:.4em 0 0;opacity:.95}
+.shell{background:var(--warm);padding:18px;border-radius:var(--r);margin-top:18px}
+.card{background:var(--card);border-radius:var(--r);padding:26px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.bar{width:100px;height:6px;background:var(--red);border-radius:5px;margin:0 0 12px}
+.lead{color:var(--mut)}
+.btn{font:inherit;font-weight:600;border:2px solid var(--red);background:#fff;color:var(--red-d);border-radius:999px;padding:8px 18px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--red-l)} .btn.pri{background:var(--red);color:#fff} .btn.pri:hover{background:var(--red-d)}
+.btn[aria-pressed=true]{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.note{border-left:6px solid var(--red);background:#fcfcfc;border:1px solid #eee;border-left:6px solid var(--red);border-radius:15px;padding:14px 18px;margin:12px 0}
+.note.teal{border-left-color:var(--teal)} .note.gold{border-left-color:var(--gold)}
+.good,.badbox{display:block;margin-top:8px}
+.good{background:var(--ok-l);color:#14502c;border-radius:12px;padding:10px 14px} .badbox{background:var(--bad-l);color:#7a1812;border-radius:12px;padding:10px 14px}
+.live{min-height:1.6em}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-d);background:var(--red-l);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.score{font-weight:700;color:var(--red-d)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.foot{font-size:.85rem;color:var(--mut);padding:14px 6px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.q{padding:14px 0;border-top:1px solid #eee}.q:first-child{border-top:0}
+.qt{font-weight:600;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.opts button{font:inherit;font-size:.95rem;text-align:left;border:2px solid #d9d4cf;background:#fff;border-radius:14px;padding:8px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--red)}
+.opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.opts button.wrong{background:var(--bad-l);border-color:var(--bad);text-decoration:line-through;color:#7a1812}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.pick .btn{font-size:.9rem;padding:7px 14px}
+.fig{width:100%;height:auto;display:block;margin:10px 0}
+.sl{display:grid;grid-template-columns:150px 1fr 34px;gap:10px;align-items:center;margin:6px 0}
+.sl b{text-align:right}.sl span{font-weight:700;color:var(--red-d)}
+@media(max-width:560px){.sl{grid-template-columns:1fr 34px}.sl label{grid-column:1/-1}.sl b{text-align:left}}
+.lever{margin:14px 0}.lever h3{margin-bottom:6px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.take div{background:var(--cream);border-radius:15px;padding:14px 16px}.take b{display:block;color:var(--red-d)}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chk span{border:2px solid #d9d4cf;border-radius:999px;padding:4px 12px;font-size:.88rem;font-weight:600;color:var(--mut);background:#fff}
+.chk span.on{background:var(--ok-l);border-color:var(--ok);color:#14502c}
+.chk span.off{background:var(--bad-l);border-color:var(--bad);color:#7a1812}
+.say{background:var(--cream);border-radius:15px;padding:14px 18px;font-size:1.05rem;font-family:Georgia,serif;margin:10px 0;min-height:3.2em}
+.stage{cursor:pointer}.stage:focus-visible{outline:3px solid var(--gold)}
+
+</style></head><body>
+<div class="wrap">
+<header class="hero">
+<svg viewBox="0 0 980 230" role="img" aria-label="Illustration of a wrench for technical problems and a compass for adaptive challenges, with a team climbing stages">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2429"/><stop offset="1" stop-color="#d34147"/></linearGradient></defs>
+<rect width="980" height="230" fill="url(#g)"/>
+<g transform="translate(70 30)">
+<g transform="rotate(40 80 90)"><rect x="70" y="40" width="20" height="130" rx="8" fill="#f7dcdd"/><path d="M58 56v-34q0-14 14-14h16q14 0 14 14v34l-12 -8v-18h-20v18z" fill="#f7dcdd"/></g>
+<text x="80" y="196" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">TECHNICAL</text>
+<g transform="translate(230 0)"><circle cx="80" cy="90" r="64" fill="none" stroke="#fff" stroke-width="6"/><path d="M80 34l16 56-16 18-16-18z" fill="#f6c453"/><path d="M80 146l-16-56 16-18 16 18z" fill="#fff"/><circle cx="80" cy="90" r="6" fill="#d34147"/>
+<text x="80" y="196" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="16" fill="#fff">ADAPTIVE</text></g>
+</g>
+<g transform="translate(470 14)" fill="#f7dcdd"><rect x="0" y="130" width="90" height="26" rx="6"/><rect x="100" y="100" width="90" height="56" rx="6"/><rect x="200" y="66" width="90" height="90" rx="6" fill="#fff"/><rect x="300" y="30" width="90" height="126" rx="6" fill="#f6c453"/></g>
+<g transform="translate(470 14)" font-family="system-ui" font-weight="800" font-size="14" fill="#7d2429" text-anchor="middle"><text x="45" y="148">Forming</text><text x="145" y="148">Storming</text><text x="245" y="148">Norming</text><text x="345" y="148">Performing</text></g>
+<text x="470" y="214" font-family="system-ui" font-weight="800" font-size="20" fill="#fff">Name the problem before you pick the tool.</text>
+</svg>
+<div class="txt"><div class="kick">ORGS 610 · Week 6 Interactive</div><h1>Technical Fix or Adaptive Challenge? Leading Teams</h1><p>Some problems need an expert answer. Others need people to change beliefs and habits. Sort challenges, trace a team's development, and match leadership approaches to the situation.</p></div>
+</header>
+<div class="shell">
+
+<section class="card"><div class="bar"></div>
+<h2>Part 1 · Diagnose the challenge</h2>
+<p class="lead">A <strong>technical problem</strong> has a known solution that an expert can apply. An <strong>adaptive challenge</strong> requires changes in beliefs, habits, and relationships, so the people facing it must do the learning. Sort each challenge. (Illustrative scenarios.)</p>
+<div id="q1"></div><p class="live score" id="r1" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 2 · How teams develop</h2>
+<p class="lead">Teams move through stages of development. Select a stage on the chart to see what it looks like and what a leader can do. Clear roles, shared goals, and trust support performance, while dysfunction often comes from unclear expectations or unresolved conflict.</p>
+<svg class="fig" id="st" viewBox="0 0 640 210" role="group" aria-label="Four stages of team development, selectable"></svg>
+<div class="note teal live" id="sd" aria-live="polite">Select a stage.</div>
+<h3 style="margin-top:18px">Which stage is it?</h3>
+<div id="q2"></div><p class="live score" id="r2" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Part 3 · Match the approach to the situation</h2>
+<p class="lead">No single style fits every context. Leaders adapt to people and circumstances.</p>
+<div id="q3"></div><p class="live score" id="r3" aria-live="polite"></p>
+</section>
+
+<section class="card"><div class="bar"></div>
+<h2>Takeaways</h2>
+<div class="take"><div><b>Style depends on context</b>Adapt your approach.</div><div><b>Lead to serve</b>Focus on followers' growth.</div><div><b>Teams develop</b>Clarify roles and goals.</div><div><b>Adaptive problems need learning</b>Technical fixes are not enough.</div></div>
+<div class="note"><strong>Reflect:</strong> Think of a challenge your team keeps "fixing". Is it technical, or is something deeper asking people to change?</div>
+</section>
+</div>
+<p class="foot">Based on the ORGS 610 Week 6 Deep Dive: Leadership Styles and Team Effectiveness. Scenarios are illustrative.</p>
+</div>
+<script>
+var NS="http://www.w3.org/2000/svg";function $(i){return document.getElementById(i)}
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function quiz(host,list,res){var h=$(host),sc=0,dn=0,n=list.length;
+list.forEach(function(x,qi){var d=document.createElement("div");d.className="q";
+d.innerHTML='<p class="qt"></p><div class="opts" role="group"></div><div class="fb live" aria-live="polite"></div>';
+d.querySelector(".qt").innerHTML=(qi+1)+". "+x.t;var box=d.querySelector(".opts"),fb=d.querySelector(".fb"),ok=false,tries=0,bs=[];
+x.o.forEach(function(lab,i){var b=document.createElement("button");b.type="button";b.textContent=lab;bs.push(b);
+b.onclick=function(){if(ok)return;tries++;
+if(i===x.a){ok=true;b.className="right";bs.forEach(function(z){z.disabled=true});if(tries===1)sc++;dn++;
+fb.innerHTML='<span class="good">✔ '+x.w+'</span>';
+if(dn===n)$(res).textContent="You answered "+sc+" of "+n+" correctly on the first try."}
+else{b.className="wrong";b.disabled=true;fb.innerHTML='<span class="badbox">'+(x.f&&x.f[i]?x.f[i]:"Not quite.")+' Try another answer.</span>'}};
+box.appendChild(b)});h.appendChild(d)})}
+
+</script>
+<script>
+var O=["Technical fix","Adaptive challenge"];
+quiz("q1",[
+{t:"The team's project software crashes, and IT already has the patch.",o:O,a:0,w:"Technical. The solution is known and an expert can apply it."},
+{t:"Two departments distrust each other and will not share data, even though a shared system is installed.",o:O,a:1,w:"Adaptive. The system works; the beliefs and relationships must change. A leader would convene both sides to surface concerns and build trust."},
+{t:"Payroll errors are traced to a known formula bug.",o:O,a:0,w:"Technical. Fix the formula."},
+{t:"Staff must shift from working alone to working in cross-functional teams.",o:O,a:1,w:"Adaptive. New habits and new ways of relating are needed, not just a new chart."},
+{t:"A new regulation requires an updated form.",o:O,a:0,w:"Technical. Update the form and train people on it."},
+{t:"Team members keep waiting for the manager to decide, but the organization now needs them to take initiative.",o:O,a:1,w:"Adaptive. People must give up a familiar dependence and take on responsibility. The leader mobilizes them rather than deciding for them."},
+{t:"A new employee needs training on the expense system.",o:O,a:0,w:"Technical. Known procedure, clear training."},
+{t:"After a reorganization, long-time staff resist new roles because the roles threaten their sense of expertise.",o:O,a:1,w:"Adaptive. Resistance here is about identity and loss, which technical fixes do not address."}],"r1");
+var S=[
+{n:"Forming",d:"Members are polite and unsure. Roles and goals are unclear and people look to the leader.",l:"Clarify the purpose, roles, and goals. Help people get acquainted."},
+{n:"Storming",d:"Differences surface. Disagreements about roles, goals, and methods create tension and conflict.",l:"Name the conflict, keep it productive, and revisit expectations. Unresolved conflict here breeds dysfunction."},
+{n:"Norming",d:"The team agrees on how to work together. Norms form and trust grows.",l:"Reinforce good norms, share responsibility, and keep communication two-way."},
+{n:"Performing",d:"Roles are clear, trust is high, and the team focuses on results and solves problems on its own.",l:"Step back, support, and keep developing members. Watch for change that sends the team back a stage."}];
+var sv=$("st"),xs=[70,235,400,565],hs=[40,80,120,160];
+el("path",{d:"M30 190H610",stroke:"#d9d4cf","stroke-width":3},sv);
+S.forEach(function(s,i){var g=el("g",{class:"stage",tabindex:0,role:"button","aria-label":s.n},sv);
+var r=el("rect",{x:xs[i]-55,y:190-hs[i]-10,width:110,height:hs[i]+10,rx:10,fill:"#f7dcdd",stroke:"#d34147","stroke-width":2},g);
+var t=el("text",{x:xs[i],y:190-hs[i]/2+4,"text-anchor":"middle","font-weight":"800","font-size":16,fill:"#7d2429"},g);t.textContent=s.n;
+var n=el("text",{x:xs[i],y:206,"text-anchor":"middle","font-size":13,fill:"#5b5557"},g);n.textContent="Stage "+(i+1);
+function sel(){[].forEach.call(sv.querySelectorAll("rect"),function(x){x.setAttribute("fill","#f7dcdd")});r.setAttribute("fill","#d34147");t.setAttribute("fill","#fff");
+[].forEach.call(sv.querySelectorAll("text"),function(x,k){if(k!==i*2)if(k%2===0)x.setAttribute("fill","#7d2429")});
+$("sd").innerHTML="<strong>"+s.n+".</strong> "+s.d+"<br><strong>Leader's move:</strong> "+s.l}
+g.addEventListener("click",sel);g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();sel()}})});
+var SN=["Forming","Storming","Norming","Performing"];
+quiz("q2",[
+{t:"A new project team meets. Everyone is courteous, but no one is sure who does what.",o:SN,a:0,w:"Forming: polite, unsure, and dependent on the leader for direction."},
+{t:"Two members argue over the approach, and tension is rising about who decides.",o:SN,a:1,w:"Storming: differences surface. How the conflict is handled decides what comes next."},
+{t:"The team has agreed on meeting rules and members now trust each other's commitments.",o:SN,a:2,w:"Norming: working agreements and growing trust."},
+{t:"The team hits goals, solves problems without the manager, and members support each other.",o:SN,a:3,w:"Performing: clear roles, shared goals, and trust support results."}],"r2");
+quiz("q3",[
+{t:"A brand-new team has no experience with the task. Which approach fits best?",o:["Directive: clear roles and steps","Hands-off delegation","Wait for the team to organize itself"],a:0,w:"People who are new to a task need clear direction. Leaders adapt to people and circumstances.",f:["","Too little structure for a team that lacks experience.","The team may drift without guidance."]},
+{t:"An experienced, motivated team knows the work. Which approach fits best?",o:["Delegate and support","Check every step","Give detailed scripts"],a:0,w:"Skilled, motivated people do best with trust and support. Micromanaging wastes their capability.",f:["","","" ]},
+{t:"Which approaches emphasize vision, relationships, and developing followers?",o:["Newer perspectives on leadership","Only classic trait theories","Only rule enforcement"],a:0,w:"Newer approaches emphasize vision, relationships, and follower development, and ethical and servant approaches focus on the good of others.",f:["","Classic approaches examine traits, behaviors, and situation.","" ]},
+{t:"A servant approach to leadership focuses most on…",o:["The good and growth of others","The leader's status","Avoiding all conflict"],a:0,w:"Servant leaders see leading as service to others.",f:["","","" ]},
+{t:"After a setback, which quality helps a team recover?",o:["Resilience","Blame","Speed alone"],a:0,w:"Resilience helps teams recover from setbacks.",f:["Blame deepens dysfunction.","","" ]}],"r3");
+</script>
+<script>
+/* Embed helper: avoids a second (inner) scrollbar inside the Canvas iframe */
+(function(){
+ function h(){var d=document.documentElement,b=document.body;
+  return Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,d.offsetHeight));}
+ function send(){try{parent.postMessage({type:"embed-height",height:h()},"*")}catch(e){}}
+ window.addEventListener("load",send);window.addEventListener("resize",send);
+ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body)}
+ else{setInterval(send,800)}
+})();
+</script>
+</body></html>
