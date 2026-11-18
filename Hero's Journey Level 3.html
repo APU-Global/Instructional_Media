@@ -1,0 +1,668 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hero's Journey Level 3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Pixelify+Sans:wght@500;700&family=Silkscreen:wght@400;700&display=swap">
+<style>
+/* Layout: one centred column on a starry night field. A scene header on the title and finish screens, a HUD (stage path, party, XP) on every quest screen, and a single quest panel below it. Same pixel-arcade kit as the Level 1 title screen. A deliberately single-theme dark page. */
+:root {
+  --bg: #0f1136;
+  --panel: #1c1f62;
+  --panel-2: #262a7a;
+  --line: #5560d9;
+  --yellow: #ffd23f;
+  --yellow-d: #d49b17;
+  --pink: #ff5c93;
+  --teal: #3ddbc0;
+  --ink: #f4f5ff;
+  --ink-dark: #1a1347;
+  --muted: #b9bdf0;
+  --good: #4be08a;
+  --bad: #ff8a8a;
+  --f-px: "Silkscreen", "Courier New", monospace;
+  --f-disp: "Pixelify Sans", "Courier New", monospace;
+  --f-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.55;
+  padding-block: 24px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+#stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+#stars i { position: absolute; left: 0; top: 0; width: 2px; height: 2px; background: transparent; }
+#stars .s2 { animation: twinkle 4.5s ease-in-out infinite alternate; }
+@keyframes twinkle { from { opacity: .25; } to { opacity: 1; } }
+main { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; display: grid; gap: 22px; }
+:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+h1, h2, h3, p { margin: 0; }
+
+/* Scene */
+.scene { border: 4px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 8px 0 #090a25; line-height: 0; background: #1b1d5e; }
+.scene svg { width: 100%; height: auto; display: block; }
+
+/* Title block */
+.titleblock { text-align: center; display: grid; gap: 12px; justify-items: center; padding-top: 6px; }
+.kick { font-family: var(--f-px); font-weight: 700; color: var(--teal); letter-spacing: .14em; font-size: .85rem; }
+.logo { font-family: var(--f-px); font-weight: 700; color: var(--ink); line-height: 1.05; font-size: clamp(2.1rem, 9vw, 4.6rem); letter-spacing: .02em; text-shadow: 3px 3px 0 var(--pink), 6px 6px 0 #090a25; text-wrap: balance; }
+.logo.sm { font-size: clamp(1.8rem, 7.4vw, 3.4rem); }
+.sub { font-family: var(--f-disp); font-weight: 700; color: var(--yellow); text-transform: uppercase; letter-spacing: .08em; font-size: clamp(1.1rem, 4.2vw, 2rem); text-wrap: balance; }
+.tagline { max-width: 34ch; font-size: 1.12rem; text-wrap: balance; }
+.badge { font-family: var(--f-px); font-size: .8rem; letter-spacing: .06em; color: var(--ink-dark); background: var(--teal); padding: 8px 14px; border-radius: 10px; }
+.badge b { font-weight: 700; }
+
+/* Buttons */
+.btn { font-family: var(--f-disp); font-weight: 700; font-size: 1.25rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dark); background: var(--yellow); border: 0; border-radius: 14px; padding: 14px 30px; box-shadow: 0 6px 0 var(--yellow-d); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 12px; transition: transform .08s, box-shadow .08s; }
+.btn:hover { filter: brightness(1.06); }
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--yellow-d); }
+.btn[disabled] { background: #3b3e86; color: #c9ccf5; box-shadow: 0 6px 0 #2a2c68; cursor: not-allowed; filter: none; transform: none; }
+.btn.big { font-size: 1.5rem; padding: 18px 40px; }
+.btn.ghost { background: transparent; color: var(--ink); border: 3px solid var(--line); box-shadow: none; padding: 11px 24px; }
+.btn.ghost:active { transform: translateY(2px); }
+.tri { width: 0; height: 0; border-left: 11px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; display: inline-block; }
+
+/* Panels */
+.panel { background: var(--panel); border: 3px solid var(--line); border-radius: 20px; padding: clamp(18px, 4vw, 30px); box-shadow: 0 8px 0 #090a25; display: grid; gap: 16px; min-width: 0; }
+.kicker { font-family: var(--f-px); font-size: .72rem; color: var(--teal); letter-spacing: .12em; text-transform: uppercase; }
+.panel h2 { font-family: var(--f-disp); font-weight: 700; color: var(--yellow); font-size: clamp(1.5rem, 5vw, 2.1rem); line-height: 1.15; text-wrap: balance; }
+.panel h2:focus { outline: none; }
+.prompt { font-size: 1.12rem; max-width: 64ch; }
+.prompt b { color: var(--yellow); font-weight: 800; }
+.howto h2 { font-family: var(--f-px); font-size: 1rem; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.steps li { display: flex; align-items: center; gap: 14px; }
+.steps .n { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--yellow); color: var(--ink-dark); font-family: var(--f-disp); font-weight: 700; display: grid; place-items: center; }
+.fine { color: var(--muted); font-size: .95rem; }
+
+/* HUD */
+.hud { background: var(--panel); border: 3px solid var(--line); border-radius: 18px; padding: 14px 18px 16px; display: grid; gap: 12px; box-shadow: 0 6px 0 #090a25; }
+.hud-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.lvl { font-family: var(--f-px); color: var(--teal); font-size: .8rem; letter-spacing: .14em; font-weight: 700; }
+.stagename { font-family: var(--f-disp); font-weight: 700; color: var(--yellow); font-size: 1.15rem; letter-spacing: .04em; }
+.xp { font-family: var(--f-px); font-size: .85rem; letter-spacing: .08em; background: #12144a; border-radius: 10px; padding: 6px 12px; }
+.xp b { color: var(--yellow); display: inline-block; }
+.xp b.bump { animation: bump .45s ease; }
+@keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.5); } 100% { transform: scale(1); } }
+.track { list-style: none; display: flex; margin: 0; padding: 0; }
+.track li { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; font-family: var(--f-px); font-size: .62rem; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+.track li::before { content: ""; position: absolute; top: 15px; left: -50%; width: 100%; border-top: 4px dotted #3a3f9c; }
+.track li:first-child::before { display: none; }
+.track .n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #12144a; border: 3px solid var(--line); font-family: var(--f-disp); font-weight: 700; font-size: 1rem; color: var(--ink); position: relative; z-index: 1; }
+.track li.done::before, .track li.now::before { border-top-color: var(--teal); }
+.track li.done .n { background: var(--teal); border-color: var(--teal); color: var(--ink-dark); }
+.track li.now .n { background: var(--yellow); border-color: var(--yellow); color: var(--ink-dark); }
+.track li.now { color: var(--yellow); }
+.party { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.party .lab { font-family: var(--f-px); font-size: .68rem; letter-spacing: .1em; color: var(--muted); margin-right: 4px; text-transform: uppercase; }
+.slot { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; border: 3px dashed #3a3f9c; background: #12144a; }
+.slot.on, .slot.hero { border-style: solid; border-color: var(--line); background: #262a7a; }
+@media (max-width: 560px) { .track .lbl { display: none; } .track li::before { top: 15px; } }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+.card { font: inherit; color: inherit; text-align: left; background: var(--panel-2); border: 3px solid var(--line); border-radius: 16px; padding: 14px 16px; display: flex; gap: 14px; align-items: center; cursor: pointer; position: relative; box-shadow: 0 5px 0 #14164f; transition: transform .08s, border-color .1s, background .1s; min-width: 0; }
+button.card:hover { border-color: #8f98ff; }
+button.card:active { transform: translateY(3px); box-shadow: 0 2px 0 #14164f; }
+.card[aria-pressed="true"] { border-color: var(--yellow); background: #343a95; box-shadow: 0 5px 0 var(--yellow-d); }
+.card[aria-pressed="true"]::after { content: ""; position: absolute; top: -11px; right: -9px; width: 28px; height: 28px; border-radius: 9px; background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='%231a1347' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 17px no-repeat; }
+.card.static { cursor: default; }
+.ico { flex: none; width: 54px; height: 54px; border-radius: 12px; background: #14175a; display: grid; place-items: center; }
+.ct { display: block; font-family: var(--f-disp); font-weight: 700; font-size: 1.15rem; line-height: 1.2; }
+.cd { display: block; color: var(--muted); font-size: .95rem; line-height: 1.4; margin-top: 3px; }
+.count { color: var(--muted); font-size: .95rem; min-height: 1.4em; }
+
+/* Quiz options */
+.opts { display: grid; gap: 12px; }
+.opt { font: inherit; color: var(--ink); text-align: left; display: flex; gap: 14px; align-items: center; background: var(--panel-2); border: 3px solid var(--line); border-radius: 14px; padding: 12px 14px; cursor: pointer; min-width: 0; }
+.opt:hover:not([disabled]) { border-color: #8f98ff; }
+.opt .ltr { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--yellow); color: var(--ink-dark); font-family: var(--f-disp); font-weight: 700; display: grid; place-items: center; }
+.opt .oico { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: #14175a; }
+.opt .ot { min-width: 0; }
+.opt.picked { border-color: var(--yellow); background: #343a95; }
+.opt.right { border-color: var(--good); background: #14483f; }
+.opt.wrong { border-color: var(--bad); background: #3d2160; opacity: .75; cursor: not-allowed; }
+.opt[disabled] { color: var(--ink); }
+
+/* Feedback */
+.fb { display: none; padding: 14px 16px; border-radius: 14px; border: 3px solid; }
+.fb.show { display: block; }
+.fb b { font-family: var(--f-disp); font-size: 1.1rem; letter-spacing: .03em; margin-right: 4px; }
+.fb.good { border-color: var(--good); background: #123f45; }
+.fb.bad { border-color: var(--bad); background: #3d2160; }
+.fb.note { border-color: var(--teal); background: #153466; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-end; margin-top: 4px; }
+@media (max-width: 520px) { .actions .btn { width: 100%; } }
+
+/* Scroll (verse) */
+.scroll { background: #f5e6bd; color: #3a2813; border: 3px solid #c9a65c; border-radius: 12px; padding: 18px 22px; }
+.scroll .ref { font-family: var(--f-px); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: #7a5a22; margin-bottom: 8px; font-weight: 700; }
+.scroll blockquote { margin: 0; font-size: 1.12rem; font-style: italic; line-height: 1.6; }
+.story p + p { margin-top: 12px; }
+.story { display: grid; gap: 14px; max-width: 64ch; }
+
+/* Text step */
+.field { display: grid; gap: 8px; }
+.field label { font-family: var(--f-px); font-size: .72rem; letter-spacing: .1em; color: var(--teal); text-transform: uppercase; }
+textarea, input[type="text"] { font: inherit; color: var(--ink); background: #12144a; border: 3px solid var(--line); border-radius: 14px; padding: 12px 14px; width: 100%; resize: vertical; min-height: 96px; }
+textarea:focus-visible, input[type="text"]:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+
+/* End */
+.sheet dl { margin: 0; display: grid; gap: 14px; }
+.sheet dt { font-family: var(--f-px); font-size: .72rem; letter-spacing: .1em; color: var(--teal); text-transform: uppercase; margin-bottom: 4px; }
+.sheet dd { margin: 0; display: grid; gap: 4px; }
+.sheet .row { background: #14175a; border-radius: 12px; padding: 12px 14px; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.sheetTxt { min-height: 180px; }
+.note-box { border-color: var(--yellow); }
+.note-box .kicker { color: var(--yellow); }
+.note-box p { font-size: 1.15rem; max-width: 60ch; }
+.note-box b { color: var(--yellow); }
+.next h2 { font-size: 1.4rem; }
+.next p { max-width: 64ch; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div id="stars" aria-hidden="true"><i class="s1"></i><i class="s2"></i></div>
+<main id="app"></main>
+
+<script>
+(function () {
+  'use strict';
+
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  var $app = document.getElementById('app');
+
+  /* Star field */
+  (function () {
+    var r = 7;
+    var rnd = function () { r = (r * 9301 + 49297) % 233280; return r / 233280; };
+    var a = [], b = [];
+    for (var i = 0; i < 120; i++) {
+      var x = Math.floor(rnd() * 100), y = Math.floor(rnd() * 100);
+      var c = rnd() < 0.12 ? '#ffd23f' : '#c8ccff';
+      var sp = rnd() < 0.3 ? 1 : 0;
+      (i % 3 ? a : b).push(x + 'vw ' + y + 'vh 0 ' + sp + 'px ' + c);
+    }
+    document.querySelector('#stars .s1').style.boxShadow = a.join(',');
+    document.querySelector('#stars .s2').style.boxShadow = b.join(',');
+  })();
+
+  /* Icons (48x48) */
+  var ICONS = {
+    hero: '<circle cx="24" cy="15" r="9" fill="#e8a67c"/><path d="M15 14a9 9 0 0 1 18 0c-3-4-6-5-9-5s-6 1-9 5z" fill="#3a2418"/><rect x="11" y="26" width="26" height="19" rx="7" fill="#3e7bfa"/><path d="M24 29l2 4 4 .5-3 3 .8 4.2-3.8-2-3.8 2 .8-4.2-3-3 4-.5z" fill="#ffd23f"/>',
+    coach: '<circle cx="24" cy="24" r="17" fill="#262a7a" stroke="#ffd23f" stroke-width="3"/><path d="M24 11L29 24 24 37 19 24z" fill="#ff5c93"/><path d="M24 11L29 24H19z" fill="#f4f5ff"/><circle cx="24" cy="24" r="2.5" fill="#1a1347"/>',
+    instructor: '<path d="M6 12h15c2 0 3 1 3 3v22c0-2-1-3-3-3H6z" fill="#6f86ff"/><path d="M42 12H27c-2 0-3 1-3 3v22c0-2 1-3 3-3h15z" fill="#3ddbc0"/><path d="M10 17h9M10 22h9M29 17h9M29 22h9" stroke="#1a1347" stroke-width="2" stroke-linecap="round"/>',
+    dean: '<path d="M24 5l15 5v12c0 10-7 17-15 21C16 39 9 32 9 22V10z" fill="#6f86ff" stroke="#f4f5ff" stroke-width="2.5" stroke-linejoin="round"/><path d="M16 24l6 6 11-12" stroke="#ffd23f" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+    peers: '<circle cx="16" cy="17" r="6" fill="#ffd23f"/><circle cx="32" cy="17" r="6" fill="#ff5c93"/><path d="M5 41c0-8 5-12 11-12s11 4 11 12z" fill="#ffd23f"/><path d="M21 41c0-8 5-12 11-12s11 4 11 12z" fill="#ff5c93" opacity=".92"/>',
+    library: '<rect x="6" y="30" width="36" height="9" rx="2" fill="#6f86ff"/><rect x="9" y="20" width="32" height="9" rx="2" fill="#ff5c93"/><rect x="7" y="10" width="34" height="9" rx="2" fill="#3ddbc0"/><path d="M12 34.5h8M14 24.5h8M12 14.5h8" stroke="#1a1347" stroke-width="2" stroke-linecap="round"/>',
+    career: '<rect x="22" y="6" width="4" height="38" fill="#cdbf9a"/><path d="M26 10h14l4 5-4 5H26z" fill="#ffd23f"/><path d="M22 24H8l-4 5 4 5h14z" fill="#3ddbc0"/>',
+    home: '<path d="M24 6L4 24h40z" fill="#ff5c93"/><rect x="9" y="24" width="30" height="17" fill="#6f86ff"/><rect x="20" y="29" width="8" height="12" rx="4" fill="#ffd23f"/>',
+    faith: '<path d="M19 10c0-5 10-5 10 0" fill="none" stroke="#f4f5ff" stroke-width="2.5"/><rect x="16" y="10" width="16" height="4" rx="1" fill="#6f86ff"/><rect x="14" y="14" width="20" height="22" rx="4" fill="#ffd23f"/><path d="M24 18c4 4 4 8 0 12-4-4-4-8 0-12z" fill="#ff5c93"/><rect x="16" y="36" width="16" height="4" rx="1" fill="#6f86ff"/>',
+    heart: '<path d="M24 41C8 29 6 20 11 14c4-4 10-3 13 2 3-5 9-6 13-2 5 6 3 15-13 27z" fill="#ff5c93"/>',
+    magnifier: '<circle cx="20" cy="20" r="12" fill="#262a7a" stroke="#ffd23f" stroke-width="4"/><path d="M29 29l12 12" stroke="#ffd23f" stroke-width="5" stroke-linecap="round"/><path d="M14 18a7 7 0 0 1 6-5" stroke="#f4f5ff" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
+    sun: '<circle cx="24" cy="24" r="9" fill="#ffd23f"/><g stroke="#ffd23f" stroke-width="3" stroke-linecap="round"><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.5 10.5l4 4M33.5 33.5l4 4M10.5 37.5l4-4M33.5 14.5l4-4"/></g>',
+    star: '<polygon points="24,4 30,18 45,19 34,29 37,44 24,36 11,44 14,29 3,19 18,18" fill="#ffd23f"/>',
+    plug: '<rect x="14" y="20" width="20" height="14" rx="3" fill="#6f86ff"/><path d="M19 20V8M29 20V8" stroke="#f4f5ff" stroke-width="4" stroke-linecap="round"/><path d="M24 34c0 6-8 4-8 10" stroke="#ff5c93" stroke-width="4" fill="none" stroke-linecap="round"/>',
+    pack: '<rect x="12" y="14" width="24" height="28" rx="8" fill="#ff5c93"/><path d="M18 14c0-8 12-8 12 0" fill="none" stroke="#f4f5ff" stroke-width="3"/><rect x="17" y="26" width="14" height="10" rx="3" fill="#1a1347" opacity=".35"/><path d="M12 24H8M36 24h4" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/>',
+    bubble: '<path d="M8 8h32a3 3 0 0 1 3 3v19a3 3 0 0 1-3 3H22l-9 8v-8H8a3 3 0 0 1-3-3V11a3 3 0 0 1 3-3z" fill="#6f86ff"/><path d="M19 17c0-7 10-7 10 0 0 4-5 4-5 7" stroke="#f4f5ff" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="24" cy="29" r="2" fill="#f4f5ff"/>',
+    battery: '<rect x="6" y="14" width="32" height="20" rx="4" fill="#12144a" stroke="#f4f5ff" stroke-width="3"/><rect x="38" y="20" width="4" height="8" rx="1" fill="#f4f5ff"/><rect x="10" y="18" width="7" height="12" rx="1.5" fill="#ff5c93"/>',
+    group: '<circle cx="24" cy="15" r="6" fill="#ffd23f"/><circle cx="12" cy="20" r="5" fill="#3ddbc0"/><circle cx="36" cy="20" r="5" fill="#ff5c93"/><path d="M14 41c0-8 4-12 10-12s10 4 10 12z" fill="#ffd23f"/><path d="M3 39c0-6 3-9 9-9 2 0 4 1 5 2-3 2-4 5-4 7z" fill="#3ddbc0"/><path d="M45 39c0-6-3-9-9-9-2 0-4 1-5 2 3 2 4 5 4 7z" fill="#ff5c93"/>',
+    houses: '<path d="M3 24L13 14l10 10z" fill="#ff5c93"/><rect x="5" y="24" width="16" height="15" fill="#6f86ff"/><path d="M25 28L36 17l11 11z" fill="#ffd23f"/><rect x="27" y="28" width="18" height="11" fill="#3ddbc0"/><rect x="11" y="30" width="5" height="9" fill="#1a1347" opacity=".5"/>'
+  };
+  var ico = function (n, s) {
+    return '<svg viewBox="0 0 48 48" width="' + s + '" height="' + s + '" aria-hidden="true" focusable="false">' + ICONS[n] + '</svg>';
+  };
+
+  /* Content */
+  var STAGES = [
+    { name: 'Name Your Storm', short: 'Storm' },
+    { name: 'Find Your Allies', short: 'Allies' },
+    { name: 'Know When to Call', short: 'Calls' },
+    { name: 'Faith, Life & Learning', short: 'Faith' },
+    { name: 'Plan Your First Move', short: 'Move' }
+  ];
+
+  var CH = [
+    { id: 'tank', name: 'The Empty Tank', icon: 'battery', desc: 'You are running on fumes and the to-do list keeps growing.', allies: ['friends', 'faith'] },
+    { id: 'load', name: 'The Heavy Pack', icon: 'pack', desc: 'Work, family, and class all land in the same week and you are falling behind.', allies: ['family', 'work'] },
+    { id: 'home', name: 'The Home Front', icon: 'home', desc: 'The people closest to you do not quite get why you are doing this, or you feel guilty about the time it takes.', allies: ['family', 'trailblazer'] },
+    { id: 'voice', name: 'The Quiet Voice', icon: 'bubble', desc: 'A small voice keeps asking whether you really belong in college.', allies: ['trailblazer', 'faith'] }
+  ];
+
+  var AL = {
+    family: { name: 'Family at Home', role: 'Your home camp', who: 'Partner, kids, parents, siblings, or anyone who shares your home.', ex: 'Example: Mom, my husband Marcus, the kids', icon: 'home', good: ['Protecting time and space for me to study', 'Encouragement on the hard days', 'Sharing the load at home'] },
+    friends: { name: 'Close Friends', role: 'People who know the real you', who: 'The friend who picks up when you call.', ex: 'Example: Jess from my old team', icon: 'peers', good: ['A listening ear after a rough day', 'Honest, caring perspective', 'A text that says keep going'] },
+    work: { name: 'Coworkers & Boss', role: 'Your work crew', who: 'A supervisor or coworker who wants you to succeed.', ex: 'Example: my supervisor Dana', icon: 'career', good: ['Flexibility with my schedule when I plan ahead', 'Swapping a shift or covering a gap', 'Noticing and cheering my growth'] },
+    mentor: { name: 'Mentor', role: 'Someone who guides you and believes in you', who: 'A former teacher, coach, supervisor, or older friend.', ex: 'Example: Coach Williams', icon: 'coach', good: ['Wise, honest advice about big decisions', 'Perspective when I cannot see the way forward', 'Someone who sees potential in me'] },
+    trailblazer: { name: 'Trailblazer', role: 'Someone who has walked a similar road', who: 'Someone who finished a degree or went back to school as an adult.', ex: 'Example: my cousin who finished nursing school at 35', icon: 'star', good: ['Hearing what the road is really like', 'Practical tips that worked for them', 'Proof that it can be done'] },
+    community: { name: 'Community Groups', role: 'Clubs, teams, and volunteer circles', who: 'A team, club, volunteer crew, or group you belong to.', ex: 'Example: my Saturday softball league', icon: 'group', good: ['A place to recharge and be myself', 'Friends who share my interests or values', 'Using my gifts to serve others'] },
+    faith: { name: 'Faith Community', role: 'Prayer and perspective', who: 'A pastor, small group, prayer partner, or congregation.', ex: 'Example: Pastor Lee, my small group', icon: 'faith', good: ['Prayer and encouragement when the road is long', 'Perspective on calling and purpose', 'People who remind me why I started'] },
+    neighbors: { name: 'Neighbors', role: 'Help that lives close by', who: 'The people on your street or in your building.', ex: 'Example: Ms. Rivera next door', icon: 'houses', good: ['A quick favor when I am in a bind', 'Swapping rides or childcare', 'A friendly face nearby'] }
+  };
+  var AL_ORDER = ['family', 'friends', 'work', 'mentor', 'trailblazer', 'community', 'faith', 'neighbors'];
+
+  var STORY = [
+    { id: 'calling', name: 'A Calling', icon: 'coach', desc: 'I sense a purpose I want to grow into.' },
+    { id: 'family', name: 'A Family', icon: 'home', desc: 'People I love are counting on me.' },
+    { id: 'second', name: 'A Second Chance', icon: 'sun', desc: 'I am returning after time away.' },
+    { id: 'strength', name: 'A Strength', icon: 'star', desc: 'I have a gift I want to put to work.' }
+  ];
+  var GIFTS = [
+    { id: 'enc', name: 'Encouragement', icon: 'heart', desc: 'I can lift people up when they are tired.' },
+    { id: 'exp', name: 'Life Experience', icon: 'instructor', desc: 'I have been through things that can help someone else.' },
+    { id: 'rel', name: 'Reliability', icon: 'dean', desc: 'When I say I will show up, I do.' },
+    { id: 'cur', name: 'Curiosity', icon: 'magnifier', desc: 'I ask good questions and like to learn with others.' }
+  ];
+
+  var find = function (arr, id) { for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return arr[i]; return null; };
+  var joinNames = function (a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; };
+  var shuffle = function (a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+
+  var state, flow, cur;
+
+  function buildFlow() {
+    var storm = function () { return find(CH, state.challenge); };
+    return [
+      /* Stage 1 */
+      { stage: 0, type: 'pick', id: 'challenge', title: 'Pick Your Storm', prompt: 'Every road has weather. Which storm sounds most like one you could meet in college?', cards: CH, min: 1, max: 1, cta: 'Lock it in' },
+      { stage: 0, type: 'quiz', reflect: true, title: 'Your First Instinct',
+        prompt: function () { return 'You chose <b>' + esc(storm().name) + '</b>. When something like this happens, what do you usually do first?'; },
+        options: [
+          { t: 'Push through on my own.', fb: 'Determination is a real strength. The question is whether it is still working. Even strong heroes get further with a map and a companion.' },
+          { t: 'Wait and hope it sorts itself out.', fb: 'Many people do this, especially when they are tired. Small problems tend to grow quietly, so naming them early helps.' },
+          { t: 'Ask someone I trust.', fb: 'That is the alliance mindset. You are already practicing what this level is about.' },
+          { t: 'Step away until I feel ready.', fb: 'Rest is part of the journey, so a pause can be wise. Just set a time to come back and ask for help.' }
+        ] },
+
+
+      /* Stage 2 */
+      { stage: 1, type: 'pick', id: 'allies', title: 'Choose Your Allies', min: 3, max: 3, cta: 'Gather my party',
+        prompt: 'Heroes do not find allies in one place. Some of yours live outside of school: at home, at work, at church, down the street. Choose <b>three</b> allies from your own life to join your party.',
+        cards: AL_ORDER.map(function (k) { return { id: k, name: AL[k].name, icon: AL[k].icon, desc: AL[k].role }; }) },
+      { stage: 1, type: 'expand', make: function () {
+        return state.allies.map(function (id) { return { stage: 1, type: 'name', ally: id, title: 'Who Is It?' }; });
+      } },
+
+      /* Stage 3 */
+      { stage: 2, type: 'quiz', title: 'Who Do You Call?', shuffle: true,
+        prompt: 'You have an exam on Saturday and you are on the work schedule. You want to give someone a heads-up early so you can swap a shift. Who is the best first call?',
+        options: [
+          { t: 'Coworkers & Boss', icon: 'career', correct: true, fb: 'Plan ahead and ask early. Most managers can flex when they have notice, and a coworker may be glad to swap.' },
+          { t: 'Neighbors', icon: 'houses', hint: 'Neighbors can help with things at home, but your work schedule is a conversation for your boss and coworkers.' },
+          { t: 'Mentor', icon: 'coach', hint: 'A mentor can give advice, but the schedule itself is up to your boss and coworkers.' },
+          { t: 'Community Groups', icon: 'group', hint: 'Your group can encourage you, but they cannot change your work schedule.' }
+        ] },
+      { stage: 2, type: 'quiz', title: 'Who Do You Call?', shuffle: true,
+        prompt: 'Your family lives far away, and you need two hours of childcare once a week so you can finish your papers. Who is the best first call?',
+        options: [
+          { t: 'Neighbors', icon: 'houses', correct: true, fb: 'Help that lives close by is often the quickest. Offering a swap, like watching their kids another day, makes it easy to say yes.' },
+          { t: 'Trailblazer', icon: 'star', hint: 'A trailblazer can share tips, but they are probably not nearby for pick-ups.' },
+          { t: 'Mentor', icon: 'coach', hint: 'A mentor gives guidance, not usually childcare.' },
+          { t: 'Coworkers & Boss', icon: 'career', hint: 'Coworkers may sympathize, but a neighbor can help on short notice at home.' }
+        ] },
+
+
+      /* Stage 4 */
+      { stage: 3, type: 'story', title: 'The Scroll of Two' },
+      { stage: 3, type: 'pick', id: 'story', title: 'Your Story', min: 1, max: 1, cta: 'Lock it in', cards: STORY,
+        prompt: 'Every hero carries a chapter of their story into a new place. Which chapter are you carrying into college?' },
+      { stage: 3, type: 'quiz', title: 'Lifting Each Other Up', shuffle: true,
+        prompt: 'The scroll says that if one falls, the other can help them up. Which college moment shows that best?',
+        options: [
+          { t: 'Asking a classmate to explain an idea, then helping them with something you know well', correct: true, fb: 'Both people are lifted. Learning together means receiving help and giving it.' },
+          { t: 'Hiding a struggle so nobody sees you fall', hint: 'The verse pities the one who falls with no one to help. Struggles shared are lighter.' },
+          { t: 'Helping everyone else but never accepting help yourself', hint: 'Giving is good, but the verse describes people lifting each other. Receiving help is part of the design.' },
+          { t: 'Waiting to ask until you are completely behind', hint: 'Help works best while there is still ground to cover. Ask while you can still get up quickly.' }
+        ] },
+      { stage: 3, type: 'quiz', title: 'Asking Without Shame', shuffle: true,
+        prompt: 'In Level 1 you met James 1:5: “If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault, and it will be given to you.” What does this suggest about asking for help?',
+        options: [
+          { t: 'Asking for wisdom is welcomed, not shamed', correct: true, fb: 'God gives “without finding fault.” That same spirit can shape how we ask people: without shame, and without apology for needing help.' },
+          { t: 'Asking for help is a sign of weakness', hint: 'The verse says the opposite. Lacking wisdom is normal, and the invitation is to ask.' },
+          { t: 'Ask only after you have tried every other option', hint: 'The verse does not put a waiting period on asking. Asking is the first move, not the last.' },
+          { t: 'Wisdom only comes to people who never need help', hint: 'The verse begins with “if any of you lacks wisdom.” Lacking is expected, and help is promised.' }
+        ] },
+      { stage: 3, type: 'pick', id: 'gift', title: 'Your Offering', min: 1, max: 1, cta: 'Lock it in', cards: GIFTS,
+        prompt: 'An alliance runs both ways. Using your gifts to serve others is part of faithful stewardship. What is the main thing you can offer your alliance?' },
+
+      /* Stage 5 */
+      { stage: 4, type: 'expand', make: function () {
+        return [{ stage: 4, type: 'pick', id: 'move', title: 'Your First Move', min: 1, max: 1, cta: 'Lock it in',
+          prompt: 'Knowing your allies is one thing. Reaching out is another. Who will you reach out to first this week?',
+          cards: state.allies.map(function (id) {
+            var a = AL[id], n = state.names[id];
+            var d = n ? 'Your ' + a.name + '. A short message is enough: “I could use your support.”' : 'Take one step toward finding your ' + a.name + '.';
+            return { id: id, name: n ? 'Reach out to ' + n : 'Start finding my ' + a.name, icon: a.icon, desc: d };
+          }) }];
+      } },
+      { stage: 4, type: 'quiz', reflect: true, title: 'Set the Time',
+        prompt: 'Heroes who name a time are far more likely to act. When will you make this move?',
+        options: [
+          { t: 'Today', short: 'today', fb: 'Strong move. Done is better than perfect.' },
+          { t: 'In the next two days', short: 'within two days', fb: 'Close enough to keep the momentum. Put it on your calendar so it sticks.' },
+          { t: 'Before the discussion is due', short: 'before the discussion is due', fb: 'Good, and give yourself room. Some people take a day or two to reply.' },
+          { t: 'I need a reminder first', short: 'after I set a reminder', fb: 'Set one right now: a calendar alert or a note where you will see it.' }
+        ],
+        save: function (o) { state.when = o.short; } }
+    ];
+  }
+
+  function reset() {
+    state = { xp: 0, i: -1, challenge: null, allies: [], asks: {}, names: {}, story: null, help: '', gift: null, line: '', move: null, when: '' };
+    flow = buildFlow();
+    cur = null;
+  }
+
+  /* Scene */
+  function allyFig(x, y, color, kind, lit) {
+    var body = lit ? color : '#2a2a6c', head = lit ? '#e8a67c' : '#2a2a6c', hair = lit ? '#2f1d14' : '#2a2a6c';
+    var acc = '';
+    if (kind === 'lantern') {
+      acc = '<path d="M14 -2q4-7 8 0" fill="none" stroke="' + (lit ? '#8a6a3a' : body) + '" stroke-width="2"/><rect x="13" y="-2" width="10" height="13" rx="3" fill="' + (lit ? '#ffd23f' : body) + '"/>' + (lit ? '<circle cx="18" cy="4" r="15" fill="#ffd23f" opacity=".18"/>' : '');
+    } else if (kind === 'book') {
+      acc = '<rect x="-25" y="0" width="13" height="15" rx="2" fill="' + (lit ? '#ffd23f' : body) + '"/>' + (lit ? '<path d="M-18.5 1v13" stroke="#1a1347" stroke-width="1.5"/>' : '');
+    } else {
+      acc = '<line x1="16" y1="-38" x2="16" y2="22" stroke="' + (lit ? '#8a6a3a' : body) + '" stroke-width="3"/><circle cx="16" cy="-40" r="5.5" fill="' + (lit ? '#3ddbc0' : body) + '"/>';
+    }
+    return '<g transform="translate(' + x + ' ' + y + ')"><ellipse cx="0" cy="22" rx="14" ry="4" fill="#000" opacity=".22"/>' +
+      '<rect x="-10" y="-14" width="20" height="34" rx="8" fill="' + body + '"/>' +
+      '<circle cx="0" cy="-22" r="10" fill="' + head + '"/>' +
+      '<path d="M-10 -23a10 10 0 0 1 20 0c-3-4-7-5-10-5s-7 1-10 5z" fill="' + hair + '"/>' +
+      (lit ? '<circle cx="-3.5" cy="-21" r="1.3" fill="#2b1810"/><circle cx="3.5" cy="-21" r="1.3" fill="#2b1810"/>' : '') +
+      acc + '</g>';
+  }
+
+  function scene(uid, mode) {
+    var lit = mode === 'lit';
+    var r = 42;
+    var rnd = function () { r = (r * 9301 + 49297) % 233280; return r / 233280; };
+    var st = '';
+    for (var i = 0; i < 55; i++) {
+      st += '<circle cx="' + (rnd() * 950).toFixed(0) + '" cy="' + (rnd() * 175).toFixed(0) + '" r="' + (0.7 + rnd() * 1.4).toFixed(1) + '" fill="' + (rnd() < 0.15 ? '#ffd23f' : '#ffffff') + '" opacity="' + (0.45 + rnd() * 0.55).toFixed(2) + '"/>';
+    }
+    var label = lit ? 'A hero with three allies walks a lit road toward a castle at sunset.' : 'A hero stands at the start of a winding road. Three shadowy figures wait ahead, and a castle glows in the distance.';
+    return '<svg viewBox="0 0 950 340" role="img" aria-label="' + label + '">' +
+      '<defs><linearGradient id="sky' + uid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1d5e"/><stop offset=".55" stop-color="#40298a"/><stop offset=".82" stop-color="#b85a86"/><stop offset="1" stop-color="#e98a7e"/></linearGradient></defs>' +
+      '<rect width="950" height="340" fill="url(#sky' + uid + ')"/>' + st +
+      '<circle cx="610" cy="245" r="104" fill="#ffd23f" opacity=".14"/><circle cx="610" cy="245" r="66" fill="#f7c64f"/>' +
+      '<path d="M0 270L95 180 195 240 300 150 405 238 470 200 540 190 610 262 690 215 790 170 880 215 950 190V340H0z" fill="#3b2f78"/>' +
+      '<path d="M0 292Q200 256 420 286T950 270V340H0z" fill="#2b2968"/>' +
+      '<path d="M0 316Q250 286 500 306T950 292V340H0z" fill="#211f58"/>' +
+      '<path d="M120 340C200 302 260 292 340 297S520 303 600 295 760 288 830 291" fill="none" stroke="#6b5a7e" stroke-width="12" stroke-linecap="round"/>' +
+      '<path d="M120 340C200 302 260 292 340 297S520 303 600 295 760 288 830 291" fill="none" stroke="#f3e3b0" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 10"/>' +
+      '<ellipse cx="759" cy="292" rx="74" ry="26" fill="#ffd23f" opacity=".13"/>' +
+      '<rect x="700" y="160" width="28" height="130" fill="#34357f"/><rect x="790" y="160" width="28" height="130" fill="#34357f"/><rect x="728" y="190" width="62" height="100" fill="#2c2d74"/>' +
+      '<path d="M732 190v-8h7v8M745 190v-8h7v8M756 190v-8h7v8M768 190v-8h7v8M780 190v-8h7v8" fill="none" stroke="#2c2d74" stroke-width="7"/>' +
+      '<path d="M696 162L714 122 732 162z" fill="#ff5c93"/><path d="M786 162L804 122 822 162z" fill="#ff5c93"/>' +
+      '<line x1="759" y1="150" x2="759" y2="190" stroke="#cfd2ff" stroke-width="2"/><path d="M760 152l22 7-22 7z" fill="#ffd23f"/>' +
+      '<rect x="705" y="196" width="8" height="14" rx="1" fill="#ffd23f"/><rect x="805" y="196" width="8" height="14" rx="1" fill="#ffd23f"/>' +
+      '<path d="M748 290v-26a11 11 0 0 1 22 0v26z" fill="#ffd23f"/>' +
+      allyFig(335, 266, '#ff5c93', 'lantern', lit) + allyFig(405, 270, '#3ddbc0', 'book', lit) + allyFig(472, 268, '#ff9f43', 'staff', lit) +
+      '<g transform="translate(135 262)"><ellipse cx="0" cy="33" rx="19" ry="5" fill="#000" opacity=".25"/>' +
+      '<path d="M-16 -4L-21 30H21L16 -4z" fill="#25327e"/>' +
+      '<rect x="-9" y="18" width="7" height="14" fill="#5a3a22"/><rect x="2" y="18" width="7" height="14" fill="#5a3a22"/>' +
+      '<rect x="-14" y="-8" width="28" height="30" rx="6" fill="#3e7bfa"/><rect x="-14" y="11" width="28" height="4" fill="#2a56c4"/><rect x="-2.5" y="10" width="5" height="6" fill="#ffd23f"/>' +
+      '<polygon points="0,-4 1.8,0 6,0.4 2.8,3.2 3.8,7.4 0,5.2 -3.8,7.4 -2.8,3.2 -6,0.4 -1.8,0" fill="#ffd23f"/>' +
+      '<line x1="22" y1="-30" x2="22" y2="18" stroke="#8a6a3a" stroke-width="3"/>' +
+      '<polygon points="22,-48 24.5,-42 31,-41.5 26,-37 27.5,-30.5 22,-34 16.5,-30.5 18,-37 13,-41.5 19.5,-42" fill="#ffd23f"/>' +
+      '<circle cx="-17" cy="12" r="4.5" fill="#e8a67c"/><circle cx="19" cy="12" r="4.5" fill="#e8a67c"/>' +
+      '<circle cx="0" cy="-22" r="13" fill="#e8a67c"/><path d="M-13 -24a13 13 0 0 1 26 0c-4-5-10-7-13-7s-9 2-13 7z" fill="#3a2418"/>' +
+      '<circle cx="-5" cy="-21" r="1.7" fill="#2b1810"/><circle cx="5" cy="-21" r="1.7" fill="#2b1810"/><path d="M-4-15q4 4 8 0" fill="none" stroke="#2b1810" stroke-width="1.6" stroke-linecap="round"/></g>' +
+      '</svg>';
+  }
+
+  /* Screens */
+  function hud(si) {
+    var track = STAGES.map(function (s, k) {
+      return '<li class="' + (k < si ? 'done' : k === si ? 'now' : '') + '"' + (k === si ? ' aria-current="step"' : '') + '><span class="n">' + (k + 1) + '</span><span class="lbl">' + s.short + '</span></li>';
+    }).join('');
+    var slots = '<span class="slot hero" title="You">' + ico('hero', 36) + '</span>';
+    for (var k = 0; k < 3; k++) {
+      var id = state.allies[k];
+      slots += id ? '<span class="slot on" title="' + esc(AL[id].name) + '">' + ico(AL[id].icon, 34) + '</span>' : '<span class="slot"></span>';
+    }
+    return '<div class="hud"><div class="hud-top"><span class="lvl">LEVEL 3</span><span class="stagename">' + esc(STAGES[si].name) + '</span><span class="xp">XP <b id="xp">' + state.xp + '</b></span></div>' +
+      '<ol class="track" aria-label="Stage ' + (si + 1) + ' of 5">' + track + '</ol>' +
+      '<div class="party" role="group" aria-label="Your party"><span class="lab">Party</span>' + slots + '</div></div>';
+  }
+
+  function showTitle() {
+    $app.innerHTML =
+      '<div class="scene">' + scene('t', 'ghost') + '</div>' +
+      '<header class="titleblock"><p class="kick">ISTU 101</p><h1 class="logo">HERO\'S JOURNEY</h1><p class="sub">Level 3: Gather the Alliance</p>' +
+      '<p class="tagline">No hero walks the road alone. This level helps you discover who is already standing beside you.</p>' +
+      '<button type="button" class="btn big" data-act="start"><i class="tri"></i>Press Start</button></header>' +
+      '<section class="panel howto" aria-labelledby="ht"><h2 id="ht">How to play</h2><ol class="steps">' +
+      '<li><span class="n">1</span><span>Tap or click a card to make your choice.</span></li>' +
+      '<li><span class="n">2</span><span>Answer a few short questions about your choice.</span></li>' +
+      '<li><span class="n">3</span><span>Press the yellow button to keep going.</span></li></ol>' +
+      '<p class="fine">Plan on about 10 minutes. You can try again on any question, and your Alliance Sheet at the end will help with this week\'s discussion.</p></section>';
+    window.scrollTo(0, 0);
+  }
+
+  function go(i) {
+    state.i = i;
+    while (flow[i] && flow[i].type === 'expand') {
+      var add = flow[i].make();
+      flow.splice.apply(flow, [i, 1].concat(add));
+    }
+    if (i >= flow.length) { showEnd(); return; }
+    renderStep();
+  }
+
+  function renderStep() {
+    var s = flow[state.i];
+    cur = { sel: [], tries: 0, answered: false, opts: null };
+    var p = typeof s.prompt === 'function' ? s.prompt() : (s.prompt || '');
+    var body = '';
+    var cta = 'Continue';
+    var enabled = false;
+
+    if (s.type === 'pick') {
+      cta = s.cta;
+      body = '<div class="cards" role="group" aria-label="Choices">' + s.cards.map(function (c) {
+        return '<button type="button" class="card" data-id="' + c.id + '" aria-pressed="false"><span class="ico">' + ico(c.icon, 40) + '</span><span><span class="ct">' + esc(c.name) + '</span><span class="cd">' + esc(c.desc) + '</span></span></button>';
+      }).join('') + '</div><p class="count" id="count">' + (s.max > 1 ? '0 of ' + s.max + ' chosen' : 'Tap a card to choose.') + '</p>';
+    } else if (s.type === 'quiz') {
+      cur.opts = s.shuffle ? shuffle(s.options.slice()) : s.options;
+      body = '<div class="opts" role="group" aria-label="Answers">' + cur.opts.map(function (o, k) {
+        return '<button type="button" class="opt" data-k="' + k + '"' + (s.reflect ? ' aria-pressed="false"' : '') + '><span class="ltr">' + 'ABCDE'.charAt(k) + '</span>' + (o.icon ? '<span class="oico">' + ico(o.icon, 30) + '</span>' : '') + '<span class="ot">' + esc(o.t) + '</span></button>';
+      }).join('') + '</div>';
+    } else if (s.type === 'brief') {
+      var storm = find(CH, state.challenge);
+      var rec = storm.allies;
+      var missing = rec.filter(function (r) { return state.allies.indexOf(r) < 0; });
+      var recNames = joinNames(rec.map(function (r) { return AL[r].name; }));
+      var note = missing.length === 0
+        ? 'Strong party. ' + recNames + ' are both a good first call for <b>' + esc(storm.name) + '</b>.'
+        : 'For <b>' + esc(storm.name) + '</b>, ' + recNames + ' are often a good first call. ' + (missing.length === 2 ? 'Neither' : joinNames(missing.map(function (r) { return AL[r].name; }))) + (missing.length === 2 ? ' is in your party this time' : ' did not make your party this time') + ', but you can reach out to anyone whenever you need.';
+      p = 'Three kinds of allies have answered the call. Next, you will figure out who they really are in your life.';
+      body = '<div class="cards">' + state.allies.map(function (id) {
+        var a = AL[id];
+        return '<div class="card static"><span class="ico">' + ico(a.icon, 40) + '</span><span><span class="ct">' + esc(a.name) + '</span><span class="cd">' + esc(a.role) + '</span></span></div>';
+      }).join('') + '</div><div class="fb show note"><b>Note.</b> ' + note + '</div>';
+      enabled = true;
+    } else if (s.type === 'story') {
+      p = '';
+      body = '<div class="story"><div class="scroll"><p class="ref">Ecclesiastes 4:9-10 (NIV)</p><blockquote>“Two are better than one, because they have a good return for their labor: If either of them falls down, one can help the other up. But pity anyone who falls and has no one to help them up.”</blockquote></div>' +
+        '<p>Your faith, your life, and your learning are not separate stories. They are woven together, and the people around you help write it.</p>' +
+        '<p>Asking for help is not a detour from your journey. It is a way of stewarding what you have been given: the people, the time, and the gifts already in your life. And your own gifts can lift someone else in return.</p>' +
+        '<p>Keep this week\'s reading, <i>Connecting Our Story to God\'s Story</i>, in mind. Your own story will show up in the next few moves.</p></div>';
+      enabled = true;
+    } else if (s.type === 'name') {
+      var al = AL[s.ally];
+      p = 'Think of a real person or group. Who is your <b>' + esc(al.name) + '</b>? A first name or nickname is plenty.<br><span class="fine">' + esc(al.who) + '</span>';
+      body = '<div class="field"><label for="txt">My ' + esc(al.name) + '</label><input type="text" id="txt" maxlength="40" autocomplete="off" placeholder="' + esc(al.ex) + '"></div>';
+      enabled = true;
+    }
+
+    $app.innerHTML = hud(s.stage) +
+      '<section class="panel" aria-labelledby="ph"><p class="kicker">Stage ' + (s.stage + 1) + ' of 5 · ' + esc(STAGES[s.stage].name) + '</p>' +
+      '<h2 id="ph" data-focus tabindex="-1">' + esc(s.title) + '</h2>' +
+      (p ? '<p class="prompt">' + p + '</p>' : '') + body +
+      '<div class="fb" id="fb" role="status" aria-live="polite"></div>' +
+      '<div class="actions">' + (s.type === 'name' ? '<button type="button" class="btn ghost" data-act="none">I do not have this one yet</button>' : '') + '<button type="button" class="btn" id="next" data-act="next"' + (enabled ? '' : ' disabled') + '>' + esc(cta) + '<i class="tri"></i></button></div></section>';
+
+    var h = $app.querySelector('[data-focus]');
+    if (h) h.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+
+  function addXp(n) {
+    state.xp += n;
+    var x = document.getElementById('xp');
+    if (x) { x.textContent = state.xp; x.classList.remove('bump'); void x.offsetWidth; x.classList.add('bump'); }
+  }
+
+  function fb(kind, label, msg) {
+    var f = document.getElementById('fb');
+    f.className = 'fb show ' + kind;
+    f.innerHTML = '<b>' + label + '</b> ' + msg;
+  }
+
+  function onCard(b) {
+    var s = flow[state.i];
+    var id = b.dataset.id;
+    var i = cur.sel.indexOf(id);
+    var count = document.getElementById('count');
+    if (i > -1) cur.sel.splice(i, 1);
+    else if (s.max === 1) cur.sel = [id];
+    else if (cur.sel.length < s.max) cur.sel.push(id);
+    else { count.textContent = 'Your party is full. Tap a chosen card to swap it out.'; return; }
+    $app.querySelectorAll('.card').forEach(function (c) { c.setAttribute('aria-pressed', cur.sel.indexOf(c.dataset.id) > -1 ? 'true' : 'false'); });
+    document.getElementById('next').disabled = cur.sel.length < s.min;
+    count.textContent = s.max > 1 ? cur.sel.length + ' of ' + s.max + ' chosen' : 'Tap a card to choose.';
+  }
+
+  function onOpt(b) {
+    var s = flow[state.i];
+    var o = cur.opts[+b.dataset.k];
+    var all = Array.prototype.slice.call($app.querySelectorAll('.opt'));
+    var next = document.getElementById('next');
+    if (s.reflect) {
+      if (!cur.answered) { cur.answered = true; addXp(10); }
+      all.forEach(function (x) { var on = x === b; x.classList.toggle('picked', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      if (s.save) s.save(o);
+      fb('note', 'Noted.', o.fb);
+      next.disabled = false;
+    } else if (o.correct) {
+      addXp(cur.tries === 0 ? 20 : 10);
+      all.forEach(function (x) { x.disabled = true; });
+      b.classList.add('right');
+      fb('good', 'Yes.', o.fb);
+      next.disabled = false;
+    } else {
+      cur.tries++;
+      b.classList.add('wrong');
+      b.disabled = true;
+      fb('bad', 'Not quite.', o.hint);
+    }
+  }
+
+  function onNext() {
+    var s = flow[state.i];
+    if (s.type === 'pick') {
+      state[s.id] = s.max === 1 ? cur.sel[0] : cur.sel.slice();
+      addXp(10);
+    } else if (s.type === 'name') {
+      var v = document.getElementById('txt').value.trim();
+      state.names[s.ally] = v;
+      if (v) addXp(10);
+    }
+    go(state.i + 1);
+  }
+
+  /* Finish */
+  function sheetRows() {
+    var rows = [];
+    rows.push({ k: 'My storm', v: [find(CH, state.challenge).name] });
+    rows.push({ k: 'My allies outside of school', v: state.allies.map(function (id) {
+      return (state.names[id] || 'Someone to find') + ' (' + AL[id].name + ')';
+    }) });
+    rows.push({ k: 'The chapter I carry', v: [find(STORY, state.story).name] });
+    rows.push({ k: 'What I offer my alliance', v: [find(GIFTS, state.gift).name] });
+    var mn = state.names[state.move];
+    rows.push({ k: 'My first move', v: [(mn ? 'Reach out to ' + mn : 'Start finding my ' + AL[state.move].name) + ' (' + state.when + ')'] });
+    return rows;
+  }
+
+  function sheetText() {
+    var out = ["MY ALLIANCE SHEET | Hero's Journey Level 3", ''];
+    sheetRows().forEach(function (r) {
+      out.push(r.k + ':');
+      r.v.forEach(function (l) { out.push('  - ' + l); });
+    });
+    return out.join('\n');
+  }
+
+  function showEnd() {
+    state.i = flow.length;
+    var rows = sheetRows().map(function (r) {
+      return '<div class="row"><dt>' + esc(r.k) + '</dt><dd>' + r.v.map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('') + '</dd></div>';
+    }).join('');
+    $app.innerHTML =
+      '<div class="scene">' + scene('e', 'lit') + '</div>' +
+      '<header class="titleblock"><p class="kick">ISTU 101</p><h1 class="logo sm" data-focus tabindex="-1">QUEST COMPLETE</h1><p class="sub">Level 3: Gather the Alliance</p>' +
+      '<p class="tagline">Your party is ready, and the road ahead looks different with them on it.</p>' +
+      '<p class="badge">Badge unlocked: <b>Alliance Builder</b> · ' + state.xp + ' XP</p></header>' +
+      '<section class="panel sheet" aria-labelledby="sh"><p class="kicker">Save this for your discussion</p><h2 id="sh">Your Alliance Sheet</h2><dl>' + rows + '</dl>' +
+      '<div class="btnrow"><button type="button" class="btn" data-act="copy">Copy my sheet</button><button type="button" class="btn ghost" data-act="again">Play again</button><span id="copymsg" class="fine" role="status"></span></div>' +
+      '<textarea id="sheetTxt" class="sheetTxt" readonly hidden aria-label="Alliance Sheet text"></textarea></section>' +
+      '<section class="panel next" aria-labelledby="nx"><p class="kicker">What comes next</p><h2 id="nx">Activate your alliance</h2>' +
+      '<p>You just mapped your alliance outside of school. This week\'s discussion, <b>Why I Am Not Alone</b>, has you look at the people and resources inside your university too. Reach out to one ally or resource, then use your Alliance Sheet to share who you connected with, how the experience went, and who else you plan to connect with during your journey.</p></section>' +
+      '<section class="panel note-box" aria-labelledby="mn"><p class="kicker" id="mn">Mission note</p>' +
+      '<p>Keep what you learned here. You will use it in the assignment titled <b>“Level Up Project.”</b></p></section>';
+    var h = $app.querySelector('[data-focus]');
+    if (h) h.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+
+  function copySheet() {
+    var txt = sheetText();
+    var msg = document.getElementById('copymsg');
+    var ta = document.getElementById('sheetTxt');
+    var fallback = function () {
+      ta.value = txt; ta.hidden = false; ta.focus(); ta.select();
+      msg.textContent = 'Copy blocked here. Your sheet is selected below, so press Ctrl+C or Cmd+C.';
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () { msg.textContent = 'Copied. Paste it into your notes or discussion draft.'; }, fallback);
+      } else { fallback(); }
+    } catch (e) { fallback(); }
+  }
+
+  $app.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t || t.disabled) return;
+    var a = t.dataset.act;
+    if (a === 'start') go(0);
+    else if (a === 'next') onNext();
+    else if (a === 'again') { reset(); showTitle(); }
+    else if (a === 'none') { state.names[flow[state.i].ally] = ''; go(state.i + 1); }
+    else if (a === 'copy') copySheet();
+    else if (t.classList.contains('card') && !t.classList.contains('static')) onCard(t);
+    else if (t.classList.contains('opt')) onOpt(t);
+  });
+
+  reset();
+  showTitle();
+})();
+</script>
+
+</body></html>
