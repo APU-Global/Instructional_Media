@@ -1,0 +1,414 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hero's Journey Level 4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Pixelify+Sans:wght@500;700&display=swap">
+<style>
+/* Layout: persistent pixel-art scene on top, the hero walks the road as quests are cleared; game panel below. Single committed night-sky look. */
+:root{
+  --bg:#0d1030; --panel:#1f2562; --panel2:#2a3178; --line:#5560d6; --ink:#f4f5ff; --muted:#c4c9f7;
+  --gold:#ffd24a; --gold-d:#d9a42a; --pink:#ff5d8f; --teal:#3ee0c1; --shade:#080a22;
+  --exec:#a36bff; --infl:#ff9d3d; --rel:#4aa8ff; --strat:#3ee08f;
+  --display:'Pixelify Sans','Courier New',monospace; --body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--bg); color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.55;
+  padding-block:20px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  background-image:
+    radial-gradient(1.5px 1.5px at 30px 40px,#fff9,transparent),
+    radial-gradient(1.5px 1.5px at 130px 110px,#ffd24a99,transparent),
+    radial-gradient(1px 1px at 200px 20px,#fff8,transparent),
+    radial-gradient(1.5px 1.5px at 80px 190px,#fff7,transparent),
+    radial-gradient(1px 1px at 230px 170px,#ffd24a88,transparent);
+  background-size:260px 230px;
+}
+.wrap{max-width:960px;margin:0 auto;min-width:0}
+h1,h2,h3,.px{font-family:var(--display);font-weight:700;margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+.banner{border:4px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 8px 0 var(--shade);background:#1b1d5e}
+.banner svg{display:block;width:100%;height:auto}
+#hero{transition:transform 1.4s cubic-bezier(.5,0,.3,1)}
+#hero .bob{animation:bob 1.1s steps(2,end) infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+.mk polygon{fill:#8b93f0;transition:fill .4s}
+.mk.done polygon{fill:var(--gold)}
+@media (prefers-reduced-motion:reduce){#hero{transition:none}#hero .bob{animation:none}*{scroll-behavior:auto!important}}
+
+.center{text-align:center}
+.eyebrow{color:var(--teal);font-family:var(--display);font-weight:700;letter-spacing:.14em;font-size:.95rem;margin-top:28px}
+.title{font-size:clamp(2.3rem,9vw,4.4rem);line-height:1.05;letter-spacing:.06em;color:#fff;text-transform:uppercase;
+  text-shadow:3px 3px 0 var(--pink),6px 6px 0 var(--shade);margin:10px 0 18px;text-wrap:balance}
+.level{color:var(--gold);font-size:clamp(1.2rem,4.4vw,1.9rem);letter-spacing:.1em;text-transform:uppercase;text-wrap:balance}
+.lede{max-width:34em;margin:14px auto 26px;color:var(--ink)}
+
+.btn{display:inline-flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:1.35rem;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--gold);color:#1a1346;border:0;border-radius:14px;padding:14px 30px;box-shadow:0 6px 0 var(--gold-d);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:hover:not([aria-disabled="true"]){transform:translateY(-2px);box-shadow:0 8px 0 var(--gold-d)}
+.btn:active:not([aria-disabled="true"]){transform:translateY(4px);box-shadow:0 2px 0 var(--gold-d)}
+.btn[aria-disabled="true"]{background:#59609f;color:#d3d6f6;box-shadow:0 6px 0 #3a4080;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--gold);border:3px solid var(--gold);box-shadow:0 5px 0 var(--shade);font-size:1.05rem;padding:11px 22px}
+
+.panel{background:var(--panel);border:4px solid var(--line);border-radius:22px;padding:22px 24px;margin-top:28px;box-shadow:0 8px 0 var(--shade)}
+.panel h3{color:var(--gold);font-size:1.15rem;letter-spacing:.06em;margin-bottom:14px}
+.how{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.how li{display:flex;align-items:center;gap:14px}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#1a1346;font-family:var(--display);font-weight:700;display:grid;place-items:center}
+
+.hud{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:26px}
+.hud .q{color:var(--teal);font-size:.95rem;letter-spacing:.14em;text-transform:uppercase}
+.hud .xp{color:var(--gold);font-size:1rem;letter-spacing:.1em}
+.segs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.segs i{height:10px;border-radius:3px;background:#303786}
+.segs i.on{background:var(--gold)}
+.segs i.now{background:var(--teal)}
+.stage-title{font-size:clamp(1.5rem,5.4vw,2.3rem);letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:3px 3px 0 var(--pink);margin-top:22px;text-wrap:balance}
+.scene{max-width:46em;margin:12px 0 0}
+.verse{margin:18px 0 0;padding:14px 18px;border:3px dashed #7b84e6;border-radius:14px;color:var(--muted);font-style:italic}
+.verse b{display:block;font-style:normal;font-family:var(--display);color:var(--gold);letter-spacing:.06em;margin-top:6px;font-weight:700}
+.label{font-family:var(--display);font-weight:700;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin:26px 0 12px;font-size:1.05rem}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:18px}
+.card{display:flex;gap:14px;align-items:flex-start;text-align:left;background:var(--panel);border:3px solid var(--line);border-radius:16px;padding:16px;
+  box-shadow:0 6px 0 var(--shade);cursor:pointer;min-width:0;transition:transform .1s,border-color .1s,background .1s}
+.card:hover{transform:translateY(-3px);background:var(--panel2)}
+.card[aria-pressed="true"]{border-color:var(--gold);background:var(--panel2);box-shadow:0 6px 0 var(--gold-d)}
+.badge{flex:none;width:34px;height:34px;border-radius:10px;background:var(--gold);color:#1a1346;font-family:var(--display);font-weight:700;display:grid;place-items:center}
+.card h4{margin:0 0 4px;font-family:var(--display);font-size:1.12rem;letter-spacing:.04em;color:#fff}
+.card p{margin:0;color:var(--muted);font-size:.97rem}
+.card .body{min-width:0}
+
+.result{margin-top:26px;background:#162052;border:3px solid var(--teal);border-radius:16px;padding:16px 20px}
+.result h3{color:var(--teal);font-size:1rem;letter-spacing:.14em;margin-bottom:6px}
+.result p{margin:0 0 8px}
+.result p:last-child{margin:0}
+
+fieldset{border:0;margin:24px 0 0;padding:0;min-width:0}
+legend{padding:0;font-weight:800;margin-bottom:12px}
+.opts{display:flex;flex-wrap:wrap;gap:10px}
+.opt{background:var(--panel);border:3px solid var(--line);border-radius:12px;padding:10px 16px;cursor:pointer;box-shadow:0 4px 0 var(--shade);text-align:left;transition:transform .1s}
+.opt:hover{background:var(--panel2);transform:translateY(-2px)}
+.opt[aria-pressed="true"]{border-color:var(--gold);background:var(--panel2);box-shadow:0 4px 0 var(--gold-d);color:#fff}
+.opt[aria-pressed="true"]::before{content:"\2713\00a0";color:var(--gold);font-weight:800}
+.dgroup{margin-bottom:14px}
+.dgroup .dn{font-family:var(--display);font-weight:700;letter-spacing:.08em;font-size:.95rem;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.dgroup .dn::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--c)}
+.chip{padding:7px 12px;font-size:.95rem;border-radius:10px}
+.chip[aria-pressed="true"]{border-color:var(--c)}
+.count{color:var(--muted);font-size:.95rem;margin-top:4px}
+.nav{display:flex;justify-content:center;margin-top:34px}
+.hint{color:var(--muted);text-align:center;margin-top:12px;font-size:.95rem;min-height:1.5em}
+
+.complete{font-size:clamp(1.8rem,7vw,3.2rem);color:var(--gold);letter-spacing:.08em;text-transform:uppercase;text-shadow:3px 3px 0 var(--pink),6px 6px 0 var(--shade);margin:26px 0 8px;animation:pop .6s steps(6,end) both}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.complete{animation:none}}
+.sheet{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;margin:0}
+.sheet div{background:#181e57;border:3px solid #3b43a4;border-radius:14px;padding:12px 14px;min-width:0}
+.sheet dt{font-family:var(--display);font-weight:700;color:var(--teal);letter-spacing:.1em;font-size:.82rem;text-transform:uppercase;margin-bottom:2px}
+.sheet dd{margin:0;overflow-wrap:anywhere}
+.skills{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.skills li{display:flex;gap:10px;align-items:flex-start}
+.skills li::before{content:"\2605";color:var(--gold)}
+.note{margin-top:28px;background:var(--gold);color:#1a1346;border-radius:18px;padding:18px 22px;box-shadow:0 6px 0 var(--gold-d);font-weight:800}
+.note .px{display:block;letter-spacing:.1em;font-size:.9rem;margin-bottom:4px;text-transform:uppercase}
+.actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:26px}
+textarea.copybox{width:100%;margin-top:14px;min-height:150px;background:#0f1445;color:var(--ink);border:3px solid var(--line);border-radius:12px;padding:12px;font:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+
+<div class="wrap">
+  <div class="banner" id="banner" aria-hidden="true"></div>
+  <main id="screen"></main>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- data ---------- */
+function fbOf(c){return [c.fb];}
+
+var STEPS=[
+ {quest:1,round:"",name:"Open Your Pack",
+  scene:"Every hero’s pack is already full before the journey begins. Scripture teaches that good gifts are received, and that they come from beyond ourselves. Before you decide what to do with what you carry, take a moment to look at how your pack got filled.",
+  verse:{t:"Every good and perfect gift is from above, coming down from the Father of the heavenly lights, who does not change like shifting shadows.",r:"James 1:17 (NIV)"},
+  cardsLabel:"Choose what filled your pack the most",
+  cards:[
+   {id:"hard",title:"Hard seasons",text:"Challenges I have come through and what they taught me.",fb:"Hard seasons often leave something behind, like patience, wisdom, or a heart for others who are struggling. Nothing you have lived through is wasted when you put it to use."},
+   {id:"people",title:"People who believed in me",text:"Family, teachers, mentors, or a church family who invested in me.",fb:"None of us gets here alone. Gifts are often handed down by the people who believed in us, and gratitude is a good way to carry them."},
+   {id:"life",title:"Work and life experience",text:"Jobs, caregiving, and responsibilities that built real skills.",fb:"Everyday responsibility is real training. What you do at work and at home belongs in your pack, even if no one has ever called it a gift."},
+   {id:"faith",title:"Faith and values",text:"Convictions that guide how I live and make decisions.",fb:"Your faith and values shape how you use everything else in your pack. They help you decide what to do with what you have been given."}
+  ],
+  feedback:fbOf,
+  questions:[
+    {id:"college",q:"How do you see your college journey right now?",type:"single",options:["A chance to grow","A way to provide for my family","A calling to serve","A big step into something new"]},
+    {id:"thanks",q:"Who or what are you most thankful for in how you got here?",type:"single",options:["God’s provision","My family","A mentor or teacher","My own determination"]}
+  ]},
+ {quest:2,round:"",name:"Three Servants",
+  scene:"In the Parable of the Talents, a master leaves on a journey and trusts three servants with bags of money, each according to their ability. Two put theirs to work and it grows. One buries his out of fear. When the master returns, he praises faithfulness, and he does not compare the size of the results. Which servant do you relate to right now?",
+  verse:{t:"Well done, good and faithful servant!",r:"Matthew 25:21 (NIV)"},
+  cardsLabel:"Choose your servant",
+  cards:[
+   {id:"bold",title:"The bold investor",text:"I jump in and put what I have to work right away.",fb:"Boldness is a gift to a team. Keep it joined to humility and care, because the master measured faithfulness and did not measure speed."},
+   {id:"steady",title:"The steady investor",text:"I start small and stay faithful day by day.",fb:"Small, steady steps count. A little invested each day grows over time, and you do not have to compare your pace to anyone else’s."},
+   {id:"buried",title:"The one who buried it",text:"I hold back because I am afraid of getting it wrong.",fb:"Fear is a normal reason to hold back, and the story names it too. Naming your fear is the first step, and your allies can help you take the next one."},
+   {id:"unsure",title:"The one still deciding",text:"I am not sure what I have to offer yet, and I am looking for my first step.",fb:"That is an honest place to start. You do not have to know everything before you take the first step. Faithfulness begins with what is in your hands today."}
+  ],
+  feedback:fbOf,
+  questions:[
+    {id:"hold",q:"What most often holds you back from investing what you have been given?",type:"single",options:["Fear of failing","Not enough time","Comparing myself to others","Not sure what I have to offer"]},
+    {id:"help",q:"What would help you take the next step?",type:"single",options:["Encouragement from someone I trust","A clear, simple plan","A small first win","Time to pray and reflect"]}
+  ]},
+ {quest:3,round:"",name:"Better Together",
+  scene:"Even in a story with a mighty hero, no one carries every tool. Scripture describes people as parts of one body, each one needed and none of them complete alone. When a task asks for something you do not have, wise stewards ask for help. Who will you call first?",
+  verse:{t:"The eye cannot say to the hand, ‘I don’t need you!’",r:"1 Corinthians 12:21 (NIV)"},
+  cardsLabel:"Choose an ally",
+  cards:[
+   {id:"coach",title:"Success Coach",text:"Helps with planning, motivation, and finding university resources.",fb:"Your Success Coach is a built-in ally. Coaches can help you plan your week, work through problems, and connect you to the right office."},
+   {id:"instr",title:"Your Instructor",text:"Clarifies expectations, gives feedback, and answers course questions.",fb:"Instructors want you to ask. A clear, specific question shows you are engaged and helps them point you to the right support."},
+   {id:"peer",title:"A Classmate",text:"Shares experience, study habits, and encouragement from the same road.",fb:"A classmate is walking the same road. Sharing what works can help you both, and giving help builds your own confidence."},
+   {id:"home",title:"Family, Friends, and Faith Community",text:"Offer prayer, patience, and perspective when school gets heavy.",fb:"The people closest to you carry you when school gets heavy. Tell them what you are working toward so they can cheer you on and make room for it."}
+  ],
+  feedback:fbOf,
+  questions:[
+    {id:"ask",q:"What would you ask this ally for?",type:"single",options:["Help planning my time","Feedback on my work","Encouragement and prayer","A fresh perspective on a problem"]},
+    {id:"offer",q:"What could you offer them in return?",type:"single",options:["Encouragement","Something I have learned from work or life","My time and attention","Prayer and support"]}
+  ]},
+ {quest:4,round:"",name:"Invest Your Talents",
+  scene:"A faithful servant does not keep gifts locked away. They are given to be used wisely, for your own growth and for the good of others. Think about the people your journey could help.",
+  verse:{t:"Each of you should use whatever gift you have received to serve others, as faithful stewards of God’s grace in its various forms.",r:"1 Peter 4:10 (NIV)"},
+  cardsLabel:"Choose where to invest",
+  cards:[
+   {id:"class",title:"Serve my classmates",text:"Encourage, explain, or organize with peers in my courses.",fb:"Investing in classmates grows your own learning too. Teaching an idea to someone else is one of the best ways to master it."},
+   {id:"fam",title:"Serve my family",text:"Show the people at home what is possible and make room for them in my plan.",fb:"Your education can be a gift to your family. Showing them the way, and including them, can make the whole journey lighter."},
+   {id:"work",title:"Serve at work",text:"Bring what I am learning to my team, customers, or mission.",fb:"Work is a place to practice what you learn. Small, faithful acts of service there build the skills and reputation that carry you into your next role."},
+   {id:"comm",title:"Serve my community or church",text:"Offer what I have to people and causes beyond my own goals.",fb:"Using your gifts beyond your own goals connects your education to a bigger purpose. Even an hour a week can make a real difference."}
+  ],
+  feedback:fbOf,
+  questions:[
+    {id:"offer",q:"What will you offer?",type:"single",options:["My time and attention","What I have learned through experience","Encouragement and prayer","My skills and know-how"]},
+    {id:"step",q:"What is one small way you will invest this week?",type:"single",options:["Encourage a classmate in our course","Share something I am learning with someone at home","Offer help at work","Pray for someone and reach out to them"]},
+    {id:"why",q:"What is the main reason you want to invest what you have been given?",type:"single",options:["To grow into who I am meant to be","To help someone else succeed","To honor God with what I have been given","All of these"]}
+  ]}
+];
+
+var SKILLS=[
+ "See what you carry as something received with gratitude",
+ "Use what you have been given wisely instead of burying it",
+ "Lean on the people and resources around you",
+ "Serve others with what you carry"
+];
+
+/* ---------- state ---------- */
+var S;
+function fresh(){return {screen:"start",pick:{},ans:{},xp:0,done:0};}
+S=fresh();
+
+/* ---------- helpers ---------- */
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function starPts(cx,cy,r){var p=[];for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*0.45:r;p.push((cx+rr*Math.cos(a)).toFixed(1)+","+(cy+rr*Math.sin(a)).toFixed(1));}return p.join(" ");}
+function reduced(){return window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;}
+
+/* ---------- banner scene ---------- */
+var seed=11;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+function buildBanner(){
+  var stars="";
+  for(var i=0;i<80;i++){var x=(rnd()*950).toFixed(0),y=(rnd()*190).toFixed(0),r=(rnd()*1.5+0.6).toFixed(1);stars+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#fff" opacity="'+(0.45+rnd()*0.5).toFixed(2)+'"/>';}
+  var hero=
+   '<g id="hero"><g class="bob"><g transform="scale(.8)">'+
+   '<ellipse cx="0" cy="3" rx="22" ry="5" fill="#000" opacity=".3"/>'+
+   '<rect x="23" y="-96" width="4" height="96" fill="#7a4a2b"/><polygon points="'+starPts(25,-104,11)+'" fill="#ffd24a"/>'+
+   '<path d="M-17,-54 L17,-54 L23,-12 L-23,-12 Z" id="cape" fill="#2f6fd6"/>'+
+   '<rect x="-9" y="-22" width="8" height="22" fill="#5b3a28"/><rect x="2" y="-22" width="8" height="22" fill="#5b3a28"/>'+
+   '<rect x="-14" y="-58" width="28" height="38" rx="5" fill="#3b82f6"/>'+
+   '<polygon points="'+starPts(0,-42,6)+'" fill="#ffd24a"/><rect x="-14" y="-28" width="28" height="4" fill="#ffd24a"/>'+
+   '<circle cx="-19" cy="-36" r="5" fill="#e0a368"/><circle cx="19" cy="-40" r="5" fill="#e0a368"/>'+
+   '<circle cx="0" cy="-72" r="15" fill="#e0a368"/>'+
+   '<path d="M-15,-74 C-14,-92 14,-92 15,-74 C9,-82 -8,-82 -15,-74 Z" fill="#2b1a14"/>'+
+   '<circle cx="-5" cy="-71" r="1.8" fill="#2b1a14"/><circle cx="5" cy="-71" r="1.8" fill="#2b1a14"/>'+
+   '<path d="M-5,-65 Q0,-61 5,-65" stroke="#7a3b22" stroke-width="2" fill="none" stroke-linecap="round"/>'+
+   '</g></g></g>';
+  var castle=
+   '<g transform="translate(782,118)">'+
+   '<rect x="0" y="34" width="30" height="108" fill="#35307f"/><polygon points="-5,36 15,0 35,36" fill="#ff6b9a"/>'+
+   '<rect x="92" y="34" width="30" height="108" fill="#35307f"/><polygon points="87,36 107,0 127,36" fill="#ff6b9a"/>'+
+   '<rect x="30" y="66" width="62" height="76" fill="#2b2770"/>'+
+   '<rect x="30" y="58" width="10" height="10" fill="#2b2770"/><rect x="50" y="58" width="10" height="10" fill="#2b2770"/><rect x="72" y="58" width="10" height="10" fill="#2b2770"/>'+
+   '<rect x="46" y="96" width="24" height="46" rx="12" fill="#ffd24a"/>'+
+   '<rect x="9" y="62" width="9" height="14" fill="#ffd24a"/><rect x="101" y="62" width="9" height="14" fill="#ffd24a"/>'+
+   '<rect x="60" y="-6" width="3" height="44" fill="#c9c6f0"/><polygon points="63,-6 86,2 63,10" fill="#ffd24a"/>'+
+   '</g>';
+  var svg=
+   '<svg viewBox="0 0 950 340" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">'+
+   '<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1c5c"/><stop offset=".55" stop-color="#6b3f9e"/><stop offset=".85" stop-color="#c4658a"/></linearGradient></defs>'+
+   '<rect width="950" height="340" fill="url(#sky)"/>'+stars+
+   '<circle cx="735" cy="235" r="108" fill="#ffd24a" opacity=".16"/><circle cx="735" cy="250" r="62" fill="#f7c948"/>'+
+   '<polygon points="0,255 120,170 215,228 335,120 470,238 520,215 645,190 765,258 890,168 950,212 950,340 0,340" fill="#3a2a6c"/>'+
+   castle+
+   '<path d="M0,262 C150,240 300,268 450,274 S760,262 950,254 L950,340 L0,340Z" fill="#29246a"/>'+
+   '<path d="M0,304 C200,274 400,312 600,304 S850,284 950,294 L950,340 L0,340Z" fill="#1c1952"/>'+
+   '<path id="road" d="M12,338 C110,306 200,291 330,300 S520,304 640,293 S790,285 868,291" fill="none" stroke="#4b4687" stroke-width="11" stroke-linecap="round"/>'+
+   '<path d="M12,338 C110,306 200,291 330,300 S520,304 640,293 S790,285 868,291" fill="none" stroke="#e9d9a8" stroke-width="5" stroke-linecap="round" stroke-dasharray="0.1 10"/>'+
+   '<g id="marks"></g>'+hero+
+   '</svg>';
+  document.getElementById("banner").innerHTML=svg;
+}
+var QEND=[1,2,3,4];
+function pOf(done){return 0.05+0.83*(done/4);}
+function placeScene(){
+  var road=document.getElementById("road"),hero=document.getElementById("hero");if(!road||!hero)return;
+  var len=road.getTotalLength();
+  var marks=document.getElementById("marks");
+  if(!marks.children.length){
+    var h="";QEND.forEach(function(d){var pt=road.getPointAtLength(len*pOf(d));h+='<g class="mk" data-d="'+d+'" transform="translate('+pt.x.toFixed(1)+','+(pt.y-16).toFixed(1)+')"><rect x="-1.5" y="-4" width="3" height="20" fill="#c9c6f0"/><polygon points="'+starPts(0,-8,9)+'"/></g>';});
+    marks.innerHTML=h;
+  }
+  Array.prototype.forEach.call(marks.children,function(m){m.classList.toggle("done",S.done>=Number(m.getAttribute("data-d")));});
+  var p=S.screen==="end"?0.96:(S.screen==="start"?0.03:pOf(S.done));
+  var pt=road.getPointAtLength(len*p);
+  hero.style.transform="translate("+pt.x.toFixed(1)+"px,"+(pt.y+4).toFixed(1)+"px)";
+}
+
+/* ---------- rendering ---------- */
+function stepComplete(i){
+  var st=STEPS[i];if(S.pick[i]==null)return false;
+  var a=S.ans[i]||{};
+  for(var k=0;k<st.questions.length;k++){var q=st.questions[k];
+    if(a[q.id]==null)return false;}
+  return true;
+}
+function hud(i){
+  var st=STEPS[i],segs="";
+  for(var k=0;k<STEPS.length;k++){segs+='<i class="'+(k<S.done?"on":(k===i?"now":""))+'"></i>';}
+  return '<div class="hud"><span class="px q">Quest '+st.quest+' of 4'+(st.round?' &middot; '+esc(st.round):'')+'</span><span class="px xp">XP '+S.xp+'</span></div><div class="segs" aria-hidden="true">'+segs+'</div>';
+}
+function renderStart(){
+  return '<div class="center"><div class="px eyebrow">ISTU 101</div><h1 class="title">Hero’s Journey</h1>'+
+  '<h2 class="px level">Level 4: Discover Your Tools</h2>'+
+  '<p class="lede">You have accepted the call, prepared for the journey, and gathered your allies. Now open your pack and see the gifts you have been carrying all along, and what it means to use them wisely for yourself and for others.</p>'+
+  '<button class="btn" data-act="start" data-k="start"><span aria-hidden="true">&#9654;</span> Press Start</button></div>'+
+  '<section class="panel"><h3>How to play</h3><ol class="how">'+
+  '<li><span class="num">1</span><span>Tap or click a card to make your choice.</span></li>'+
+  '<li><span class="num">2</span><span>Answer a few short questions about your choice.</span></li>'+
+  '<li><span class="num">3</span><span>Press the yellow button to keep going.</span></li>'+
+  '<li><span class="num">4</span><span>There are no wrong answers. This level takes about 10 minutes.</span></li></ol></section>';
+}
+function renderStep(i){
+  var st=STEPS[i],a=S.ans[i]||{},h=hud(i);
+  h+='<h2 class="stage-title">'+esc(st.name)+'</h2><p class="scene">'+esc(st.scene)+'</p>';
+  if(st.verse)h+='<blockquote class="verse">“'+esc(st.verse.t)+'”<b>'+esc(st.verse.r)+'</b></blockquote>';
+  h+='<div class="label">'+esc(st.cardsLabel)+'</div><div class="grid">';
+  st.cards.forEach(function(c,n){
+    var on=S.pick[i]===c.id;
+    var bs=c.color?' style="background:'+c.color+';color:#140f35"':'';
+    h+='<button class="card" data-act="card" data-k="card-'+c.id+'" data-id="'+c.id+'" aria-pressed="'+on+'"><span class="badge"'+bs+'>'+"ABCD".charAt(n)+'</span><span class="body"><h4>'+esc(c.title)+'</h4><p>'+esc(c.text)+'</p></span></button>';
+  });
+  h+='</div>';
+  if(S.pick[i]!=null){
+    var card=st.cards.filter(function(c){return c.id===S.pick[i];})[0],lines;
+    lines=st.feedback(card);
+    h+='<section class="result" id="result" aria-live="polite"><h3>RESULT</h3>'+lines.map(function(l){return '<p>'+esc(l)+'</p>';}).join("")+'</section>';
+    st.questions.forEach(function(q){
+      h+='<fieldset><legend>'+esc(q.q)+'</legend>';
+      h+='<div class="opts">';
+      q.options.forEach(function(o,n){h+='<button class="opt" data-act="opt" data-k="o-'+q.id+'-'+n+'" data-q="'+q.id+'" data-v="'+esc(o)+'" aria-pressed="'+(a[q.id]===o)+'">'+esc(o)+'</button>';});
+      h+='</div></fieldset>';
+    });
+  }
+  var ok=stepComplete(i),last=i===STEPS.length-1;
+  h+='<div class="nav"><button class="btn" data-act="next" data-k="next" aria-disabled="'+(!ok)+'">'+(last?'Finish Level':'Keep Going')+' <span aria-hidden="true">&#9654;</span></button></div>';
+  h+='<div class="hint" id="hint">'+(ok?'':(S.pick[i]==null?'Pick a card to continue.':'Answer the questions above to continue.'))+'</div>';
+  return h;
+}
+function dd(i,key){return (S.ans[i]&&S.ans[i][key])||"Not chosen";}
+function pickTitle(i){var st=STEPS[i];var c=st.cards.filter(function(x){return x.id===S.pick[i];})[0];return c?c.title:"Not chosen";}
+function summaryRows(){
+  return [
+   ["What filled my pack",pickTitle(0)],
+   ["How I see college",dd(0,"college")],
+   ["Most thankful for",dd(0,"thanks")],
+   ["Servant I relate to",pickTitle(1)],
+   ["What holds me back",dd(1,"hold")],
+   ["What would help",dd(1,"help")],
+   ["First ally I will call",pickTitle(2)],
+   ["What I will ask for",dd(2,"ask")],
+   ["What I can offer back",dd(2,"offer")],
+   ["Where I will invest",pickTitle(3)],
+   ["What I will offer",dd(3,"offer")],
+   ["My step this week",dd(3,"step")],
+   ["Why I will invest it",dd(3,"why")]
+  ];
+}
+function renderEnd(){
+  var rows=summaryRows(),h='<div class="center"><div class="px eyebrow">ISTU 101 &middot; Level 4</div><h2 class="complete">Level Complete!</h2>'+
+  '<p class="lede">You opened your pack, walked through the parable, called on your allies, and chose where to invest what you have been given. XP earned: '+S.xp+'.</p></div>';
+  h+='<section class="panel"><h3>Your hero’s pack</h3><dl class="sheet">'+rows.map(function(r){return '<div><dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd></div>';}).join("")+'</dl></section>';
+  h+='<section class="panel"><h3>Skills unlocked</h3><ul class="skills">'+SKILLS.map(function(s){return '<li>'+esc(s)+'</li>';}).join("")+'</ul></section>';
+  h+='<div class="note"><span class="px">Next Mission</span>Keep these reflections close. You will use what you learned here and put it into the assignment titled “Level Up Project.”</div>';
+  h+='<div class="actions"><button class="btn ghost" data-act="copy" data-k="copy">Copy my answers</button><button class="btn ghost" data-act="restart" data-k="restart">Play again</button></div>';
+  h+='<div class="hint" id="hint" role="status"></div><div id="copyarea"></div>';
+  return h;
+}
+function render(focusKey){
+  var el=document.getElementById("screen"),html;
+  if(S.screen==="start")html=renderStart();
+  else if(S.screen==="end")html=renderEnd();
+  else html=renderStep(S.screen);
+  el.innerHTML=html;
+  placeScene();
+  if(focusKey){var f=el.querySelector('[data-k="'+focusKey.replace(/"/g,'\\"')+'"]');if(f)f.focus({preventScroll:true});}
+}
+function toTop(){window.scrollTo({top:0,behavior:reduced()?"auto":"smooth"});}
+
+/* ---------- actions ---------- */
+function toastHint(t){var h=document.getElementById("hint");if(h)h.textContent=t;}
+function copyText(){
+  var rows=summaryRows();
+  return "My Hero's Journey reflections (ISTU 101, Level 4)\n\n"+rows.map(function(r){return r[0]+": "+r[1];}).join("\n");
+}
+function fallbackCopy(txt){
+  var area=document.getElementById("copyarea");
+  area.innerHTML='<textarea class="copybox" id="cb" readonly aria-label="Your reflections text"></textarea>';
+  var ta=document.getElementById("cb");ta.value=txt;ta.focus();ta.select();
+  toastHint("Select the text below and copy it with Ctrl+C or Cmd+C.");
+}
+document.getElementById("screen").addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");if(!b)return;
+  var act=b.getAttribute("data-act"),i=S.screen,key=b.getAttribute("data-k");
+  if(act==="start"){S.screen=0;render();toTop();return;}
+  if(act==="restart"){S=fresh();render();toTop();return;}
+  if(act==="copy"){
+    var txt=copyText();
+    try{navigator.clipboard.writeText(txt).then(function(){toastHint("Copied. Paste it into your notes.");},function(){fallbackCopy(txt);});}
+    catch(err){fallbackCopy(txt);}
+    return;
+  }
+  if(typeof i!=="number")return;
+  if(act==="card"){
+    var id=b.getAttribute("data-id"),first=S.pick[i]==null;
+    S.pick[i]=id;
+    render(key);
+    if(first){var r=document.getElementById("result");if(r)r.scrollIntoView({behavior:reduced()?"auto":"smooth",block:"nearest"});}
+    return;
+  }
+  if(act==="opt"){
+    S.ans[i]=S.ans[i]||{};S.ans[i][b.getAttribute("data-q")]=b.getAttribute("data-v");render(key);return;
+  }
+  if(act==="next"){
+    if(!stepComplete(i)){toastHint(S.pick[i]==null?"Pick a card to continue.":"Answer the questions above to continue.");return;}
+    S.xp=Math.max(S.xp,(i+1)*150);S.done=Math.max(S.done,i+1);
+    S.screen=(i+1>=STEPS.length)?"end":i+1;
+    render();toTop();return;
+  }
+});
+
+buildBanner();render();
+})();
+</script>
+
+</body></html>
