@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 8 Interactive: Ecology Lab</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--muted:#585858;--panel:#f6f4f1;--line:#e2ded8;--good:#2e7d4f;--bad:#b3261e;--blue:#2f6fb0;--orange:#c0561a}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--red);color:#fff}
+header .wk{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#fff;color:var(--red-d);padding:3px 9px;border-radius:99px}
+header h1{font-size:18px;margin:0}
+nav{display:flex;gap:4px;padding:8px 16px 0;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-size:14px;font-weight:600;border:0;background:none;color:var(--muted);padding:8px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+button:focus-visible,input:focus-visible,.sp:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+main{flex:1;min-height:0;position:relative}
+section{position:absolute;inset:0;display:none;padding:12px 16px;gap:14px}
+section.on{display:flex}
+.stage{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;position:relative}
+.stage svg{flex:1;min-height:0;width:100%;border-radius:12px;border:1.5px solid var(--line)}
+.side{width:300px;flex:none;background:var(--panel);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.side h2{margin:0;font-size:19px}.side p{margin:0;font-size:14px;line-height:1.45}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.btn{font:inherit;font-size:14px;font-weight:600;background:var(--red);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn.alt{background:#fff;color:var(--red-d);border:1.5px solid var(--red)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.lab{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.toggle{display:inline-flex;border:1.5px solid var(--red);border-radius:99px;overflow:hidden;align-self:flex-start}
+.toggle button{font:inherit;font-size:13px;font-weight:600;border:0;background:#fff;color:var(--red-d);padding:5px 14px;cursor:pointer}
+.toggle button[aria-pressed=true]{background:var(--red);color:#fff}
+.sp{cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.res{background:#fff;border-radius:8px;padding:8px 10px;font-size:13.5px;line-height:1.5}
+.tip{position:absolute;pointer-events:none;background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:6px 9px;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.15);display:none;white-space:nowrap}
+@media (max-width:760px){
+ section{flex-direction:column;padding:8px 10px;gap:8px}
+ .side{width:auto;padding:10px;gap:6px;flex:none;max-height:46%}
+ .side h2{font-size:16px}.side p,.res{font-size:12.5px}header h1{font-size:15px}nav button{padding:6px 9px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <header><span class="wk">Week 8</span><h1>Ecology Lab: Food Webs, Energy and Populations</h1></header>
+ <nav role="tablist">
+  <button role="tab" aria-selected="true" data-tab="web">1 · Food Web</button>
+  <button role="tab" aria-selected="false" data-tab="energy">2 · Energy Pyramid</button>
+  <button role="tab" aria-selected="false" data-tab="pop">3 · Population Growth</button>
+ </nav>
+ <main>
+  <section id="web" class="on">
+   <div class="stage"><svg id="webSvg" viewBox="0 0 720 450" style="background:#f1f7ec" role="img" aria-label="Meadow food web. Select a species to remove it and see the effects."></svg></div>
+   <aside class="side">
+    <div class="tag">Experiment</div>
+    <p><b>Click a species to remove it</b> from the meadow, and see who is affected. Click again to bring it back.</p>
+    <div class="legend"><span><i style="background:#6b6b6b"></i>Removed</span><span><i style="background:#b3261e"></i>Starves</span><span><i style="background:#e08a1e"></i>Loses food</span><span><i style="background:#2e7d4f"></i>May increase</span></div>
+    <div class="res" id="webRes"></div>
+    <button class="btn alt" id="webReset">Reset meadow</button>
+   </aside>
+  </section>
+  <section id="energy">
+   <div class="stage"><svg id="enSvg" viewBox="0 0 720 450" style="background:#fff" role="img" aria-label="Energy pyramid with bar chart"></svg></div>
+   <aside class="side">
+    <div class="toggle" role="group"><button id="mE" aria-pressed="true">Energy</button><button id="mP" aria-pressed="false">Pollutant (DDT-type)</button></div>
+    <div id="effBox"><div class="lab"><span>Energy passed up each level</span><span id="effV">10%</span></div>
+     <input type="range" id="eff" min="5" max="20" value="10" aria-label="Percent of energy passed to the next level"></div>
+    <p id="enTxt"></p>
+   </aside>
+  </section>
+  <section id="pop">
+   <div class="stage"><svg id="popSvg" viewBox="0 0 720 450" style="background:#fff" role="img" aria-label="Line chart comparing exponential and logistic population growth"></svg><div class="tip" id="tip"></div></div>
+   <aside class="side">
+    <div><div class="lab"><span>Growth rate (r)</span><span id="rV">0.5</span></div><input type="range" id="r" min="0.1" max="1" step="0.05" value="0.5" aria-label="Growth rate"></div>
+    <div><div class="lab"><span>Carrying capacity (K)</span><span id="kV">500</span></div><input type="range" id="k" min="200" max="1000" step="50" value="500" aria-label="Carrying capacity"></div>
+    <div><div class="lab"><span>Starting population</span><span id="nV">10</span></div><input type="range" id="n0" min="5" max="100" step="5" value="10" aria-label="Starting population"></div>
+    <p id="popTxt"></p>
+    <div class="res"><b>Limiting factors</b> lower growth as a population nears K: food, water, space, predators, disease. Try lowering K, as if habitat were lost.</div>
+   </aside>
+  </section>
+ </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+/* ======== FOOD WEB ======== */
+const SP={
+ grass:{n:'Grass',x:120,y:362,lv:'Producer',diet:[],c:'#5fa84a',e:'🌾'},
+ flower:{n:'Wildflowers',x:340,y:362,lv:'Producer',diet:[],c:'#5fa84a',e:'🌼'},
+ berry:{n:'Berry shrub',x:560,y:362,lv:'Producer',diet:[],c:'#5fa84a',e:'🫐'},
+ hopper:{n:'Grasshopper',x:100,y:262,lv:'Primary consumer',diet:['grass','flower'],c:'#d9b13b',e:'🦗'},
+ rabbit:{n:'Rabbit',x:330,y:262,lv:'Primary consumer',diet:['grass','flower','berry'],c:'#d9b13b',e:'🐇'},
+ mouse:{n:'Field mouse',x:570,y:262,lv:'Primary consumer',diet:['grass','berry'],c:'#d9b13b',e:'🐁'},
+ frog:{n:'Frog',x:100,y:152,lv:'Secondary consumer',diet:['hopper'],c:'#e08a3c',e:'🐸'},
+ snake:{n:'Snake',x:310,y:152,lv:'Secondary consumer',diet:['frog','mouse'],c:'#e08a3c',e:'🐍'},
+ fox:{n:'Fox',x:570,y:152,lv:'Secondary consumer',diet:['rabbit','mouse'],c:'#e08a3c',e:'🦊'},
+ hawk:{n:'Hawk',x:340,y:48,lv:'Tertiary consumer',diet:['snake','frog','mouse'],c:'#c9533b',e:'🦅'}};
+let removed=new Set(),pick=null;
+function status(){
+ const st={};const dead=new Set(removed);const starved=new Set();
+ let ch=true;
+ while(ch){ch=false;
+  for(const k in SP){if(dead.has(k)||!SP[k].diet.length)continue;
+   if(SP[k].diet.every(d=>dead.has(d))){dead.add(k);starved.add(k);ch=true}}}
+ for(const k in SP){
+  if(removed.has(k))st[k]='removed';
+  else if(starved.has(k))st[k]='starve';
+  else if(SP[k].diet.some(d=>dead.has(d)))st[k]='loses';
+  else st[k]=null}
+ for(const k in SP){ if(st[k]===null){
+   const preds=Object.keys(SP).filter(p=>SP[p].diet.includes(k));
+   if(preds.some(p=>dead.has(p)))st[k]='boom'}}
+ return st;
+}
+const COLS={removed:'#6b6b6b',starve:'#b3261e',loses:'#e08a1e',boom:'#2e7d4f'};
+function drawWeb(){
+ const st=status();let h='';
+  h+=`<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9z" fill="#555"/></marker></defs>`;
+ for(const k in SP)SP[k].diet.forEach(d=>{
+  const a=SP[d],b=SP[k];const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy);
+  const x1=a.x+dx/L*34,y1=a.y+dy/L*34,x2=b.x-dx/L*40,y2=b.y-dy/L*40;
+  const off=st[d]==='removed'||st[k]==='removed';
+  h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#555" stroke-width="2" ${off?'stroke-dasharray="4 5" opacity=".3"':'opacity=".75"'} marker-end="url(#ah)"/>`});
+ for(const k in SP){const s=SP[k],t=st[k],col=t?COLS[t]:'#fff';
+  h+=`<g class="sp" data-k="${k}" tabindex="0" role="button" aria-label="${s.n}, ${s.lv}${t?', '+t:''}" opacity="${t==='removed'?.55:1}">
+  <circle cx="${s.x}" cy="${s.y}" r="${34}" fill="${s.c}" fill-opacity=".25" stroke="${t?col:s.c}" stroke-width="${t?6:3}"/>
+  <text x="${s.x}" y="${s.y+9}" text-anchor="middle" font-size="26">${s.e}</text>
+  <text x="${s.x}" y="${s.y+52}" text-anchor="middle" font-size="13" font-weight="700" fill="#222" stroke="#f1f7ec" stroke-width="4" paint-order="stroke">${s.n}</text>
+  ${t==='removed'?`<path d="M${s.x-22} ${s.y-22}L${s.x+22} ${s.y+22}M${s.x+22} ${s.y-22}L${s.x-22} ${s.y+22}" stroke="#444" stroke-width="5" stroke-linecap="round"/>`:''}
+  ${t==='starve'?`<text x="${s.x+26}" y="${s.y-22}" font-size="18" font-weight="700" fill="#b3261e">!</text>`:''}
+  ${t==='boom'?`<text x="${s.x+22}" y="${s.y-20}" font-size="18" font-weight="700" fill="#2e7d4f">▲</text>`:''}
+  ${t==='loses'?`<text x="${s.x+22}" y="${s.y-20}" font-size="18" font-weight="700" fill="#e08a1e">▼</text>`:''}</g>`}
+ h+=`<g><rect x="610" y="20" width="100" height="70" rx="10" fill="#e9e2d4" stroke="#a59a82"/><text x="660" y="44" text-anchor="middle" font-size="12.5" font-weight="700">Decomposers</text><text x="660" y="62" text-anchor="middle" font-size="11.5">fungi &amp; bacteria</text><text x="660" y="78" text-anchor="middle" font-size="11.5">recycle all dead</text></g>`;
+ h+=`<text x="360" y="444" text-anchor="middle" font-size="12" fill="#585858">Arrows point in the direction energy flows: from the organism eaten to the one that eats it.</text>`;
+ $('webSvg').innerHTML=h;
+ /* results */
+ const lst=(t)=>Object.keys(st).filter(k=>st[k]===t).map(k=>SP[k].n);
+ let r='';
+ if(!removed.size)r='<b>Meadow is balanced.</b> Pick a species. Try removing the <i>Field mouse</i> or the <i>Grass</i>.';
+ else{
+  const R=lst('removed'),S=lst('starve'),L=lst('loses'),B=lst('boom');
+  r=`<b>Removed:</b> ${R.join(', ')}`;
+  if(S.length)r+=`<br><span style="color:#b3261e"><b>Starve (no food left):</b></span> ${S.join(', ')}`;
+  if(L.length)r+=`<br><span style="color:#b36a00"><b>Lose a food source:</b></span> ${L.join(', ')}`;
+  if(B.length)r+=`<br><span style="color:#2e7d4f"><b>May increase (fewer predators):</b></span> ${B.join(', ')}`;
+  if(!S.length&&!L.length&&!B.length)r+='<br>No other species is affected. Species with many food sources and predators make webs more stable.';
+ }
+ if(pick&&!removed.has(pick)){const s=SP[pick];r+=`<hr style="border:0;border-top:1px solid #ddd"><b>${s.n}</b> · ${s.lv}<br>Eats: ${s.diet.length?s.diet.map(d=>SP[d].n).join(', '):'makes its own food by photosynthesis'}`}
+ $('webRes').innerHTML=r;
+}
+function toggleSp(k){pick=k;if(removed.has(k))removed.delete(k);else removed.add(k);drawWeb()}
+$('webSvg').addEventListener('click',e=>{const g=e.target.closest('.sp');if(g)toggleSp(g.dataset.k)});
+$('webSvg').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const g=e.target.closest('.sp');if(g){e.preventDefault();toggleSp(g.dataset.k)}}});
+$('webReset').onclick=()=>{removed.clear();pick=null;drawWeb()};
+/* ======== ENERGY ======== */
+let mode='E';
+const LV=[{n:'Producers',ex:'grass, plants',c:'#5fa84a'},{n:'Primary consumers',ex:'rabbit, grasshopper',c:'#d9b13b'},{n:'Secondary consumers',ex:'snake, fox',c:'#e08a3c'},{n:'Tertiary consumers',ex:'hawk',c:'#c9533b'}];
+const fmt=v=>v>=100?Math.round(v).toLocaleString():(+v.toPrecision(2)).toString();
+function drawEnergy(){
+ const eff=$('eff').value/100;$('effV').textContent=Math.round(eff*100)+'%';
+ const vals=mode==='E'?LV.map((_,i)=>10000*Math.pow(eff,i)):[0.04,0.5,2,25];
+ const unit=mode==='E'?' kcal':' ppm';
+ let h='';
+ /* pyramid (fixed shape, levels labeled) */
+ const top=40,lh=78,gap=4,cx=190,base=330,topw=70;
+ LV.forEach((l,i)=>{const lvl=3-i;
+  const y=top+i*(lh+gap),w0=topw+i*((base-topw)/4),w1=topw+(i+1)*((base-topw)/4);
+  /* i=0 is top -> tertiary */
+ });
+ for(let i=0;i<4;i++){const lv=3-i,y=top+i*(lh+gap),wTop=60+i*80,wBot=60+(i+1)*80;
+  h+=`<path d="M${cx-wTop/2} ${y}L${cx+wTop/2} ${y}L${cx+wBot/2} ${y+lh}L${cx-wBot/2} ${y+lh}Z" fill="${LV[lv].c}" stroke="#fff" stroke-width="3"/>`;
+  h+=`<text x="${cx}" y="${y+lh/2-2}" text-anchor="middle" font-size="13" font-weight="700" fill="#1b1b1b">${LV[lv].n.replace(' consumers','')}</text><text x="${cx}" y="${y+lh/2+16}" text-anchor="middle" font-size="12" fill="#1b1b1b">${fmt(vals[lv])}${unit}</text>`}
+ h+=`<text x="${cx}" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#585858">${mode==='E'?'ENERGY AVAILABLE':'POLLUTANT CONCENTRATION'}</text>`;
+ /* bar chart to scale */
+ const bx=430,bw=190,mx=Math.max(...vals);
+ h+=`<text x="${bx}" y="20" font-size="13" font-weight="700" fill="#585858">DRAWN TO SCALE</text>`;
+ for(let i=0;i<4;i++){const lv=3-i,y=top+i*(lh+gap)+22,len=Math.max(3,vals[lv]/mx*bw);
+  h+=`<text x="${bx}" y="${y-2}" font-size="12.5" fill="#222">${LV[lv].n}</text><rect x="${bx}" y="${y+6}" width="${len}" height="22" rx="0" fill="${LV[lv].c}"/><path d="M${bx} ${y+6}v22" stroke="#555" stroke-width="2"/><text x="${bx+len+6}" y="${y+22}" font-size="12.5" font-weight="700" fill="#222">${fmt(vals[lv])}${unit}</text>`}
+ h+=`<text x="${bx}" y="${top+4*(lh+gap)+30}" font-size="12" fill="#585858">${mode==='E'?'Bar lengths compare each level to the producers.':'Bar lengths compare each level to the highest value.'}</text>`;
+ $('enSvg').innerHTML=h;
+ $('effBox').style.display=mode==='E'?'block':'none';
+ $('enTxt').innerHTML=mode==='E'
+  ?`Start with <b>10,000 kcal</b> captured by producers. Each step up passes on only about <b>${Math.round(eff*100)}%</b>. The rest is used for life processes or lost as heat. Top consumers get <b>${fmt(vals[3])} kcal</b>, which is why food chains are short and top predators are rare.`
+  :`<b>Biomagnification:</b> some pollutants are not broken down or excreted, so they build up in body tissue. Each consumer eats many organisms from the level below, concentrating the pollutant. Top predators carry about <b>${Math.round(25/0.04)}×</b> more than producers in this example.`;
+}
+$('eff').oninput=drawEnergy;
+$('mE').onclick=()=>{mode='E';$('mE').setAttribute('aria-pressed',true);$('mP').setAttribute('aria-pressed',false);drawEnergy()};
+$('mP').onclick=()=>{mode='P';$('mP').setAttribute('aria-pressed',true);$('mE').setAttribute('aria-pressed',false);drawEnergy()};
+/* ======== POPULATION ======== */
+const T=30;
+function drawPop(){
+ const r=+$('r').value,K=+$('k').value,N0=+$('n0').value;
+ $('rV').textContent=r.toFixed(2);$('kV').textContent=K;$('nV').textContent=N0;
+ const L=60,Rr=690,Tp=30,Bt=390,ymax=Math.ceil(K*1.3/100)*100;
+ const X=t=>L+t/T*(Rr-L),Y=n=>Bt-n/ymax*(Bt-Tp);
+ const exp=t=>N0*Math.exp(r*t),log=t=>K/(1+((K-N0)/N0)*Math.exp(-r*t));
+ let h=`<defs><clipPath id="cp"><rect x="${L}" y="${Tp}" width="${Rr-L}" height="${Bt-Tp}"/></clipPath></defs>`;
+ /* grid + axes */
+ const yt=5;for(let i=0;i<=yt;i++){const v=ymax*i/yt,y=Y(v);h+=`<line x1="${L}" x2="${Rr}" y1="${y}" y2="${y}" stroke="#e6e2dc" stroke-width="1"/><text x="${L-8}" y="${y+4}" text-anchor="end" font-size="12" fill="#585858">${Math.round(v)}</text>`}
+ for(let t=0;t<=T;t+=5)h+=`<text x="${X(t)}" y="${Bt+20}" text-anchor="middle" font-size="12" fill="#585858">${t}</text>`;
+ h+=`<line x1="${L}" x2="${Rr}" y1="${Bt}" y2="${Bt}" stroke="#888" stroke-width="1.5"/>`;
+ h+=`<text x="${(L+Rr)/2}" y="${Bt+42}" text-anchor="middle" font-size="13" font-weight="600" fill="#222">Time (generations)</text><text transform="translate(16 ${(Tp+Bt)/2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="#222">Population size (N)</text>`;
+ /* K line */
+ h+=`<line x1="${L}" x2="${Rr}" y1="${Y(K)}" y2="${Y(K)}" stroke="#777" stroke-width="1.5" stroke-dasharray="6 5"/><text x="${L+6}" y="${Y(K)-6}" font-size="12.5" font-weight="700" fill="#444">Carrying capacity K = ${K}</text>`;
+ const path=f=>{let d='';for(let i=0;i<=150;i++){const t=i/150*T;d+=(i?'L':'M')+X(t).toFixed(1)+' '+Y(f(t)).toFixed(1)}return d};
+ h+=`<g clip-path="url(#cp)"><path d="${path(exp)}" fill="none" stroke="var(--orange)" stroke-width="2.5" stroke-dasharray="7 4"/><path d="${path(log)}" fill="none" stroke="var(--blue)" stroke-width="3"/></g>`;
+ /* direct labels */
+ h+=`<text x="${X(T)-4}" y="${Y(log(T))+(K<ymax*.85?20:20)}" text-anchor="end" font-size="13" font-weight="700" fill="#222">Logistic (limited resources)</text><rect x="${X(T)-228}" y="${Y(log(T))+10}" width="0" height="0"/>`;
+ let tx=T;while(tx>0&&exp(tx)>ymax)tx-=.1;
+ h+=`<text x="${X(tx)-8}" y="${Tp+16}" text-anchor="end" font-size="13" font-weight="700" fill="#222">Exponential (unlimited)</text>`;
+ h+=`<g id="cross" style="display:none"><line id="cl" y1="${Tp}" y2="${Bt}" stroke="#444" stroke-width="1"/><circle id="c1" r="5" fill="var(--blue)" stroke="#fff" stroke-width="2"/><circle id="c2" r="5" fill="var(--orange)" stroke="#fff" stroke-width="2"/></g><rect id="hit" x="${L}" y="${Tp}" width="${Rr-L}" height="${Bt-Tp}" fill="transparent"/>`;
+ $('popSvg').innerHTML=h;
+ const tHalf=Math.log((K-N0)/N0)/r;
+ $('popTxt').innerHTML=`Early on, both populations grow almost the same. The logistic curve is steepest near <b>K/2 = ${K/2}</b> (around generation ${tHalf.toFixed(0)}), then levels off at <b>K</b>. The exponential curve keeps climbing because it assumes unlimited resources.`;
+ const hit=$('hit'),svg=$('popSvg');
+ hit.onmousemove=hit.ontouchmove=ev=>{
+  const p=(ev.touches?ev.touches[0]:ev),pt=svg.createSVGPoint();pt.x=p.clientX;pt.y=p.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse());
+  const t=Math.max(0,Math.min(T,(q.x-L)/(Rr-L)*T));
+  $('cross').style.display='';$('cl').setAttribute('x1',X(t));$('cl').setAttribute('x2',X(t));
+  $('c1').setAttribute('cx',X(t));$('c1').setAttribute('cy',Y(log(t)));
+  const ey=Y(Math.min(exp(t),ymax*1.2));$('c2').setAttribute('cx',X(t));$('c2').setAttribute('cy',ey);
+  const tip=$('tip'),box=svg.getBoundingClientRect(),par=svg.parentElement.getBoundingClientRect();
+  tip.style.display='block';tip.innerHTML=`<b>Generation ${t.toFixed(1)}</b><br><span style="color:var(--blue)">●</span> Logistic: ${Math.round(log(t))}<br><span style="color:var(--orange)">●</span> Exponential: ${Math.round(exp(t))}`;
+  const px=p.clientX-par.left+14;tip.style.left=Math.min(px,par.width-tip.offsetWidth-6)+'px';tip.style.top=(p.clientY-par.top-20)+'px';
+ };
+ hit.onmouseleave=()=>{$('cross').style.display='none';$('tip').style.display='none'};
+}
+['r','k','n0'].forEach(i=>$(i).oninput=drawPop);
+/* tabs */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.tab));
+});
+drawWeb();drawEnergy();drawPop();
+</script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 3 Interactive: Osmosis Lab</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--muted:#585858;--panel:#f6f4f1;--line:#e2ded8;--good:#2e7d4f;--bad:#b3261e;--water:#3b8fd6}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--red);color:#fff}
+header .wk{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#fff;color:var(--red-d);padding:3px 9px;border-radius:99px}
+header h1{font-size:18px;margin:0}
+nav{display:flex;gap:4px;padding:8px 16px 0;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-size:14px;font-weight:600;border:0;background:none;color:var(--muted);padding:8px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+button:focus-visible,input:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+main{flex:1;min-height:0;position:relative}
+section{position:absolute;inset:0;display:none;padding:12px 16px;gap:14px}
+section.on{display:flex}
+.stage{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+canvas{flex:1;min-height:0;width:100%;border-radius:12px;background:#eaf4fc;border:1.5px solid var(--line)}
+.side{width:300px;flex:none;background:var(--panel);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.side p{margin:0;font-size:14px;line-height:1.45}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.toggle{display:inline-flex;border:1.5px solid var(--red);border-radius:99px;overflow:hidden;align-self:flex-start}
+.toggle button{font:inherit;font-size:13px;font-weight:600;border:0;background:#fff;color:var(--red-d);padding:5px 14px;cursor:pointer}
+.toggle button[aria-pressed=true]{background:var(--red);color:#fff}
+.btn{font:inherit;font-size:14px;font-weight:600;background:var(--red);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn.alt{background:#fff;color:var(--red-d);border:1.5px solid var(--red)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.read{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px}
+.read b{text-align:right}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-weight:700;font-size:13px;color:#fff}
+.hypo{background:#2b73b8}.iso{background:#2e7d4f}.hyper{background:#b8612b}
+.big{font-size:17px;font-weight:700;margin:0}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:14px;background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--red)}
+.opt.right{background:#e3f4ea;border-color:var(--good)}.opt.wrong{background:#fbe5e3;border-color:var(--bad)}
+.fb{font-size:14px;font-weight:600;min-height:40px}
+.bar{height:10px;background:#fff;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--red);width:0;transition:width .3s}
+table{border-collapse:collapse;font-size:13px;width:100%;background:#fff;border-radius:8px;overflow:hidden}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}th{background:#efe9e3}
+@media (max-width:760px){
+ section{flex-direction:column;padding:8px 10px;gap:8px}
+ .side{width:auto;padding:10px;gap:6px;flex:none;max-height:50%}
+ .side p{font-size:12.5px}header h1{font-size:15px}nav button{padding:6px 9px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <header><span class="wk">Week 3</span><h1>Osmosis Lab: Moving Across the Cell Membrane</h1></header>
+ <nav role="tablist">
+  <button role="tab" aria-selected="true" data-tab="lab">1 · Osmosis Lab</button>
+  <button role="tab" aria-selected="false" data-tab="predict">2 · Predict the Outcome</button>
+ </nav>
+ <main>
+  <section id="lab" class="on">
+   <div class="stage"><canvas id="cv" aria-label="Animated model of water crossing a cell membrane. Use the slider to change the solution outside the cell."></canvas></div>
+   <aside class="side">
+    <div class="toggle" role="group" aria-label="Cell type"><button data-cell="animal" aria-pressed="true">Animal cell</button><button data-cell="plant" aria-pressed="false">Plant cell</button></div>
+    <div>
+     <div class="tag">Solute outside the cell</div>
+     <input type="range" id="slider" min="0" max="30" value="9" aria-label="Solute concentration outside the cell">
+     <div class="scale"><span>0% (pure water)</span><span>3%</span></div>
+    </div>
+    <div class="read">
+     <span>Inside cell:</span><b>0.9% solute</b>
+     <span>Outside:</span><b id="outV">0.9%</b>
+     <span>Solution is:</span><b><span id="tonic" class="badge iso">Isotonic</span></b>
+     <span>Net water:</span><b id="flow">no net flow</b>
+     <span>Cell state:</span><b id="state">normal</b>
+    </div>
+    <p id="explain"></p>
+    <div style="display:flex;gap:6px"><button class="btn alt" id="rst">Reset cell</button></div>
+    <table><tr><th>Outside is…</th><th>Animal</th><th>Plant</th></tr>
+     <tr><td>Hypotonic</td><td>swells, may burst</td><td>turgid (ideal)</td></tr>
+     <tr><td>Isotonic</td><td>normal</td><td>flaccid</td></tr>
+     <tr><td>Hypertonic</td><td>shrinks</td><td>plasmolysis</td></tr></table>
+   </aside>
+  </section>
+  <section id="predict">
+   <div class="stage" style="justify-content:center;align-items:center">
+    <svg id="scene" viewBox="0 0 500 300" style="width:100%;max-height:100%;flex:1;min-height:0" role="img" aria-label="Scenario illustration"></svg>
+   </div>
+   <aside class="side">
+    <div class="tag" id="qn">Question 1 of 5</div><div class="bar"><i id="qp"></i></div>
+    <p class="big" id="qt"></p>
+    <div id="opts"></div>
+    <div class="fb" id="qfb" aria-live="polite"></div>
+    <button class="btn" id="qnext" style="display:none">Next ▶</button>
+   </aside>
+  </section>
+ </main>
+</div>
+<script>
+/* ---------- Simulation ---------- */
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let W=600,H=400,dpr=1;
+const slider=document.getElementById('slider');
+let cell='animal',vol=1,extC=.9;
+const INSIDE=.9;
+let water=[],solI=[],solO=[],t=0;
+function resize(){
+ const r=cv.getBoundingClientRect();dpr=window.devicePixelRatio||1;
+ cv.width=Math.max(10,r.width*dpr);cv.height=Math.max(10,r.height*dpr);W=r.width;H=r.height;
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize',()=>{resize();seed()});
+function seed(){
+ water=[];solI=[];solO=[];
+ for(let i=0;i<70;i++)water.push({x:Math.random()*W,y:Math.random()*H,vx:0,vy:0});
+ for(let i=0;i<22;i++)solI.push({a:Math.random()*6.28,r:Math.random(),vx:rnd(),vy:rnd()});
+ for(let i=0;i<60;i++)solO.push({x:Math.random()*W,y:Math.random()*H,vx:rnd(),vy:rnd(),on:Math.random()});
+}
+function rnd(){return (Math.random()-.5)*.8}
+function geom(){
+ const cx=W/2,cy=H/2,base=Math.min(W,H)*.27;
+ let r=base*Math.cbrt(vol);
+ if(cell==='plant'){const wallR=base*1.08;return{cx,cy,r:Math.min(r,wallR),wallR,base}}
+ return{cx,cy,r,wallR:0,base};
+}
+function netFlux(){ /* positive = water into cell */
+ return (INSIDE/vol - extC)*.9;
+}
+function step(){
+ const g=geom(),flux=netFlux();
+ /* cell volume change */
+ let lim=cell==='animal'?[.45,1.9]:[.62,1.12];
+ const prev=vol;vol+=flux*.0016;
+ if(cell==='animal'&&vol>=1.9)vol=1.9;
+ vol=Math.max(lim[0],Math.min(lim[1],vol));
+ /* water particles: random walk with bias through membrane toward the net direction */
+ water.forEach(p=>{
+  const dx=p.x-g.cx,dy=p.y-g.cy,d=Math.hypot(dx,dy)||1;
+  p.vx+= (Math.random()-.5)*.5;p.vy+=(Math.random()-.5)*.5;
+  p.vx*=.92;p.vy*=.92;
+  const inside=d<g.r;
+  /* bias: net flow direction */
+  const bias=flux*.9;
+  const nearMem=Math.abs(d-g.r)<g.r*.5;
+  if(nearMem){p.vx-=dx/d*bias*.12;p.vy-=dy/d*bias*.12}
+  p.x+=p.vx;p.y+=p.vy;
+  /* keep out of solute-free wrap */
+  if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+ });
+ solO.forEach(p=>{p.x+=p.vx;p.y+=p.vy;
+  if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+  const d=Math.hypot(p.x-g.cx,p.y-g.cy);if(d<g.r+8){const a=Math.atan2(p.y-g.cy,p.x-g.cx);p.x=g.cx+Math.cos(a)*(g.r+10);p.y=g.cy+Math.sin(a)*(g.r+10)}});
+ solI.forEach(p=>{p.a+=p.vx*.01;p.r+=p.vy*.01;p.r=Math.max(.05,Math.min(.8,p.r))});
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ const g=geom();
+ /* outside solution tint by concentration */
+ ctx.fillStyle=`rgba(${200-extC*30|0},${230-extC*50|0},${252-extC*55|0},1)`;ctx.fillRect(0,0,W,H);
+ /* water */
+ ctx.fillStyle='rgba(59,143,214,.55)';
+ water.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,3,0,6.28);ctx.fill()});
+ /* outside solute: number depends on extC */
+ const nOut=Math.round(extC/3*solO.length);
+ ctx.fillStyle='#b8612b';
+ solO.forEach((p,i)=>{if(i<nOut){ctx.beginPath();ctx.arc(p.x,p.y,4.2,0,6.28);ctx.fill()}});
+ /* plant wall */
+ if(cell==='plant'){
+  ctx.beginPath();ctx.arc(g.cx,g.cy,g.wallR+7,0,6.28);ctx.lineWidth=12;ctx.strokeStyle='#9aa86a';ctx.stroke();
+  ctx.beginPath();ctx.arc(g.cx,g.cy,g.wallR+7,0,6.28);ctx.lineWidth=2;ctx.strokeStyle='#6f7d3f';ctx.setLineDash([4,5]);ctx.stroke();ctx.setLineDash([]);
+ }
+ /* cell body */
+ ctx.beginPath();ctx.arc(g.cx,g.cy,g.r,0,6.28);
+ ctx.fillStyle=cell==='plant'?'#d6efc9':'#fbe4df';ctx.fill();
+ ctx.lineWidth=5;ctx.strokeStyle='#d34147';ctx.stroke();
+ if(cell==='plant'){ /* vacuole */
+  ctx.beginPath();ctx.arc(g.cx,g.cy,g.r*.62,0,6.28);ctx.fillStyle='rgba(120,190,230,.45)';ctx.fill();
+ }
+ /* inside water + solute */
+ ctx.save();ctx.beginPath();ctx.arc(g.cx,g.cy,g.r-3,0,6.28);ctx.clip();
+ ctx.fillStyle='rgba(59,143,214,.55)';
+ water.forEach(p=>{if(Math.hypot(p.x-g.cx,p.y-g.cy)<g.r){ctx.beginPath();ctx.arc(p.x,p.y,3,0,6.28);ctx.fill()}});
+ ctx.restore();
+ /* nucleus + solute inside (diluted when swollen) */
+ ctx.beginPath();ctx.arc(g.cx+g.r*.12,g.cy-g.r*.1,g.r*.22,0,6.28);ctx.fillStyle='#8f9fd8';ctx.fill();
+ const nIn=Math.max(6,Math.round(solI.length/Math.max(.6,vol)));
+ ctx.fillStyle='#b8612b';
+ solI.forEach((p,i)=>{if(i<nIn){const x=g.cx+Math.cos(p.a)*p.r*g.r*.9,y=g.cy+Math.sin(p.a)*p.r*g.r*.9;ctx.beginPath();ctx.arc(x,y,4.2,0,6.28);ctx.fill()}});
+ /* arrow for net flow */
+ const f=netFlux();
+ if(Math.abs(f)>.05){
+  const dir=f>0?1:-1,L=Math.min(46,16+Math.abs(f)*26);
+  [[1,0],[-1,0],[0,1],[0,-1]].forEach(([ux,uy])=>{
+   const bx=g.cx+ux*(g.r+(cell==='plant'?30:18)),by=g.cy+uy*(g.r+(cell==='plant'?30:18));
+   const x1=bx-ux*dir*L/2*-1,y1=by-uy*dir*L/2*-1; /* start outside if into cell */
+   const sx=dir>0?bx+ux*L/2:bx-ux*L/2,sy=dir>0?by+uy*L/2:by-uy*L/2;
+   const ex=dir>0?bx-ux*L/2:bx+ux*L/2,ey=dir>0?by-uy*L/2:by+uy*L/2;
+   arrow(sx,sy,ex,ey,'#1d5fa8');
+  });
+ }
+ /* burst warning */
+ if(cell==='animal'&&vol>1.75){ctx.fillStyle='#b3261e';ctx.font='700 15px system-ui';ctx.textAlign='center';ctx.fillText('Cell is about to burst (lyse)!',g.cx,g.cy+g.r+34)}
+ /* legend */
+ ctx.textAlign='left';ctx.font='12.5px system-ui';ctx.fillStyle='#222';
+ ctx.fillStyle='rgba(59,143,214,.9)';ctx.beginPath();ctx.arc(18,H-62,4,0,6.28);ctx.fill();ctx.fillStyle='#222';ctx.fillText('Water',28,H-58);
+ ctx.fillStyle='#b8612b';ctx.beginPath();ctx.arc(18,H-40,4.5,0,6.28);ctx.fill();ctx.fillStyle='#222';ctx.fillText('Solute (cannot cross the membrane)',28,H-36);
+ ctx.fillStyle='#222';ctx.fillText('Arrows show net water movement',18,H-16);
+}
+function arrow(x1,y1,x2,y2,c){
+ ctx.strokeStyle=c;ctx.fillStyle=c;ctx.lineWidth=3.5;ctx.lineCap='round';
+ ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+ const a=Math.atan2(y2-y1,x2-x1);
+ ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-9*Math.cos(a-.5),y2-9*Math.sin(a-.5));ctx.lineTo(x2-9*Math.cos(a+.5),y2-9*Math.sin(a+.5));ctx.closePath();ctx.fill();
+}
+function readout(){
+ const e=extC,tn=document.getElementById('tonic'),f=netFlux();
+ document.getElementById('outV').textContent=e.toFixed(1)+'%';
+ let cls,txt;
+ if(Math.abs(e-INSIDE)<.15){cls='iso';txt='Isotonic'}else if(e<INSIDE){cls='hypo';txt='Hypotonic'}else{cls='hyper';txt='Hypertonic'}
+ tn.className='badge '+cls;tn.textContent=txt;
+ const fl=document.getElementById('flow');
+ fl.textContent=Math.abs(f)<.05?'no net flow':f>0?'into the cell':'out of the cell';
+ let st;
+ if(cell==='animal')st=vol>1.7?'bursting':vol>1.12?'swollen':vol<.8?'shriveled':vol<.95?'shrinking':'normal';
+ else st=vol>1.09?'turgid':vol<.9?'plasmolyzed':vol<1.02?'flaccid':'firm';
+ document.getElementById('state').textContent=st;
+ const ex={hypo:`The outside has <b>less solute</b> and more free water, so water moves <b>into</b> the cell by osmosis. ${cell==='animal'?'Animal cells have no cell wall and can burst.':'The cell wall resists, so pressure builds and the cell becomes turgid, which keeps plants upright.'}`,
+  iso:`Solute concentrations match, so water moves in and out equally. ${cell==='animal'?'The cell keeps its normal shape.':'A plant cell goes limp (flaccid) because there is no pressure pushing on the wall.'}`,
+  hyper:`The outside has <b>more solute</b>, so water moves <b>out</b> of the cell. ${cell==='animal'?'The cell shrinks (crenation).':'The membrane pulls away from the cell wall, called plasmolysis, and the plant wilts.'}`};
+ document.getElementById('explain').innerHTML=ex[cls];
+}
+function loop(){step();draw();readout();requestAnimationFrame(loop)}
+slider.addEventListener('input',()=>{extC=slider.value/10});
+document.getElementById('rst').onclick=()=>{vol=1;slider.value=9;extC=.9};
+document.querySelectorAll('[data-cell]').forEach(b=>b.onclick=()=>{
+ cell=b.dataset.cell;vol=1;document.querySelectorAll('[data-cell]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+/* ---------- Predict ---------- */
+const QS=[
+ {s:'animal',ext:.1,q:'A red blood cell (0.9% solute) is placed in distilled water. What happens?',o:['It shrinks','It swells and may burst','Nothing changes'],a:1,e:'Distilled water is hypotonic, so water moves into the cell. With no cell wall, the cell can lyse.'},
+ {s:'animal',ext:2.5,q:'The same cell is placed in a 2.5% salt solution. Which way does water move?',o:['Into the cell','Out of the cell','Equally in both directions'],a:1,e:'The solution is hypertonic, so water leaves the cell and the cell shrivels.'},
+ {s:'plant',ext:.1,q:'A wilted celery cell is placed in plain water. What happens to it?',o:['It becomes turgid and firm','It undergoes plasmolysis','It bursts like an animal cell'],a:0,e:'Water enters by osmosis, the central vacuole fills, and the cell wall keeps the cell from bursting. Turgor makes plants crisp.'},
+ {s:'plant',ext:2.5,q:'Salt is spread heavily on a lawn. Why do the plants wilt?',o:['Water moves out of root cells','Water moves into root cells','The cell wall dissolves'],a:0,e:'Salty soil is hypertonic to root cells, so they lose water and the plant wilts. This is plasmolysis.'},
+ {s:'animal',ext:.9,q:'A cell sits in a solution with the same solute concentration as its cytoplasm. This solution is…',o:['Hypotonic','Isotonic','Hypertonic'],a:1,e:'Iso means equal. Water moves in and out at the same rate, so there is no net change. IV fluids are made isotonic for this reason.'}];
+let qi=0,qs=0,done=false;
+function drawScene(s,ext){
+ const col=ext<.5?'#bcdcf5':ext<1.3?'#cfe3f0':'#dcc7a8';
+ const plant=s==='plant';
+ const lbl=ext<.5?'Hypotonic':ext<1.3?'Isotonic':'Hypertonic';
+ const note=ext<.5?'low solute outside':ext<1.3?'0.9% solute outside':'high solute outside';
+ let h=`<rect x="90" y="40" width="320" height="230" rx="18" fill="${col}" stroke="#7a8b99" stroke-width="3"/>
+ <text x="250" y="68" text-anchor="middle" font-size="17" font-weight="700" fill="#222">${ext.toFixed(1)}% solution</text><text x="250" y="88" text-anchor="middle" font-size="13" fill="#444">${note}</text>`;
+ if(plant)h+=`<circle cx="250" cy="180" r="62" fill="none" stroke="#9aa86a" stroke-width="12"/><circle cx="250" cy="180" r="55" fill="#d6efc9" stroke="#d34147" stroke-width="4"/><circle cx="250" cy="180" r="32" fill="#a9d2ef" opacity=".8"/>`;
+ else h+=`<circle cx="250" cy="180" r="52" fill="#fbe4df" stroke="#d34147" stroke-width="5"/><circle cx="262" cy="172" r="14" fill="#8f9fd8"/>`;
+ h+=`<text x="250" y="262" text-anchor="middle" font-size="13" fill="#222">${plant?'Plant cell':'Animal cell (inside 0.9%)'}</text>`;
+ document.getElementById('scene').innerHTML=h;
+}
+function showQ(){
+ const q=QS[qi];drawScene(q.s,q.ext);
+ document.getElementById('qn').textContent=`Question ${qi+1} of ${QS.length}`;
+ document.getElementById('qp').style.width=(qi/QS.length*100)+'%';
+ document.getElementById('qt').textContent=q.q;
+ document.getElementById('opts').innerHTML=q.o.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('');
+ document.getElementById('qfb').textContent='';document.getElementById('qnext').style.display='none';
+}
+document.getElementById('opts').addEventListener('click',e=>{
+ const b=e.target.closest('.opt');if(!b||b.disabled)return;
+ const q=QS[qi],i=+b.dataset.i,ok=i===q.a;if(ok)qs++;
+ document.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===q.a)x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+ const fb=document.getElementById('qfb');fb.style.color=ok?'#2e7d4f':'#b3261e';fb.innerHTML=(ok?'Correct. ':'Not quite. ')+q.e;
+ const n=document.getElementById('qnext');n.style.display='inline-block';n.textContent=qi===QS.length-1?'See score':'Next ▶';
+});
+document.getElementById('qnext').onclick=()=>{
+ if(qi<QS.length-1){qi++;showQ();return}
+ if(!done){done=true;document.getElementById('qp').style.width='100%';
+  document.getElementById('qn').textContent='Finished';document.getElementById('qt').textContent=`You scored ${qs} out of ${QS.length}.`;
+  document.getElementById('opts').innerHTML='';document.getElementById('qfb').style.color='#222';
+  document.getElementById('qfb').textContent=qs>=4?'Excellent. Try the Osmosis Lab again with the plant cell.':'Go back to the lab and compare animal and plant cells.';
+  document.getElementById('qnext').textContent='Try again';return}
+ qi=0;qs=0;done=false;showQ();
+};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.tab));
+ if(b.dataset.tab==='lab'){resize();seed()}
+});
+resize();seed();showQ();loop();
+</script>
+</body>
+</html>

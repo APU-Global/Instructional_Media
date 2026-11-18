@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 4 Interactive: Mitosis and the Cell Cycle</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--muted:#585858;--panel:#f6f4f1;--line:#e2ded8;--good:#2e7d4f;--bad:#b3261e;--blue:#2f6fb0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--red);color:#fff}
+header .wk{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#fff;color:var(--red-d);padding:3px 9px;border-radius:99px}
+header h1{font-size:18px;margin:0}
+nav{display:flex;gap:4px;padding:8px 16px 0;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-size:14px;font-weight:600;border:0;background:none;color:var(--muted);padding:8px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+button:focus-visible,input:focus-visible,.ck:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+main{flex:1;min-height:0;position:relative}
+section{position:absolute;inset:0;display:none;padding:12px 16px;gap:14px}
+section.on{display:flex}
+.stage{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.stage svg{flex:1;min-height:0;width:100%;background:#f3f0fa;border-radius:12px;border:1.5px solid var(--line)}
+.side{width:300px;flex:none;background:var(--panel);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.side h2{margin:0;font-size:20px}.side p{margin:0;font-size:14px;line-height:1.45}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.btn{font:inherit;font-size:14px;font-weight:600;background:var(--red);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn.alt{background:#fff;color:var(--red-d);border:1.5px solid var(--red)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;align-items:center}
+input[type=range]{width:100%;accent-color:var(--red)}
+.steps{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:-4px}
+.steps span{cursor:pointer;text-align:center;flex:1}.steps .cur{color:var(--red-d);font-weight:700}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:14px;background:#fff;border-radius:8px;padding:8px 10px}
+.facts b{text-align:right}
+.look{background:#fff;border-left:4px solid var(--red);padding:8px 10px;border-radius:6px;font-size:14px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt{font:inherit;font-size:14px;background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:7px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--red)}
+.opt.right{background:#e3f4ea;border-color:var(--good)}.opt.wrong{background:#fbe5e3;border-color:var(--bad)}
+.fb{font-size:14px;font-weight:600;min-height:38px}
+.ck{cursor:pointer}
+.toggle{display:inline-flex;border:1.5px solid var(--red);border-radius:99px;overflow:hidden;align-self:flex-start}
+.toggle button{font:inherit;font-size:13px;font-weight:600;border:0;background:#fff;color:var(--red-d);padding:5px 14px;cursor:pointer}
+.toggle button[aria-pressed=true]{background:var(--red);color:#fff}
+@media (max-width:760px){
+ section{flex-direction:column;padding:8px 10px;gap:8px}
+ .side{width:auto;padding:10px;gap:6px;flex:none;max-height:50%}
+ .side h2{font-size:16px}.side p,.look,.facts{font-size:12.5px}header h1{font-size:15px}nav button{padding:6px 9px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <header><span class="wk">Week 4</span><h1>Mitosis and the Cell Cycle</h1></header>
+ <nav role="tablist">
+  <button role="tab" aria-selected="true" data-tab="step">1 · Step Through Mitosis</button>
+  <button role="tab" aria-selected="false" data-tab="id">2 · Identify the Stage</button>
+  <button role="tab" aria-selected="false" data-tab="cycle">3 · Checkpoints &amp; Cancer</button>
+ </nav>
+ <main>
+  <section id="step" class="on">
+   <div class="stage"><svg id="cellS" viewBox="0 0 520 300" role="img" aria-label="Animated cell showing chromosomes during mitosis"></svg></div>
+   <aside class="side">
+    <div><div class="tag">Drag to scrub, or use the buttons</div>
+     <input type="range" id="scrub" min="0" max="500" value="0" aria-label="Stage of mitosis">
+     <div class="steps" id="steps"></div></div>
+    <div class="row"><button class="btn alt" id="prev">◀ Back</button><button class="btn" id="nxt">Next ▶</button><button class="btn alt" id="play">Play</button></div>
+    <h2 id="sname"></h2>
+    <p id="sdesc"></p>
+    <div class="facts"><span>Chromosomes:</span><b id="fch"></b><span>Chromatids:</span><b id="fct"></b></div>
+    <div class="look" id="slook"></div>
+   </aside>
+  </section>
+  <section id="id">
+   <div class="stage"><svg id="cellI" viewBox="0 0 520 300" role="img" aria-label="Cell in an unknown stage of mitosis"></svg></div>
+   <aside class="side">
+    <div class="tag" id="iscore">Correct: 0 of 0</div>
+    <p style="font-weight:700;font-size:16px">Which stage of the cell cycle is this cell in?</p>
+    <div class="opts" id="iopts"></div>
+    <div class="fb" id="ifb" aria-live="polite"></div>
+    <button class="btn" id="inext" style="display:none">Next cell ▶</button>
+    <p style="font-size:13px;color:var(--muted)">Clues: Are chromosomes visible? Where are they? Is the nucleus present? Is the cell pinching in two?</p>
+   </aside>
+  </section>
+  <section id="cycle">
+   <div class="stage"><svg id="wheel" viewBox="0 0 520 300" role="img" aria-label="Cell cycle wheel with three checkpoints"></svg></div>
+   <aside class="side">
+    <div class="tag">Tumor suppressor gene p53</div>
+    <div class="toggle" role="group"><button id="p53ok" aria-pressed="true">Working p53</button><button id="p53bad" aria-pressed="false">Mutated p53</button></div>
+    <p id="ckinfo"><b>Click a checkpoint</b> on the wheel to see what it checks.</p>
+    <button class="btn" id="dmg">Send a cell with damaged DNA through G1 ▶</button>
+    <p id="dmgout" aria-live="polite"></p>
+    <div id="cells" style="display:flex;flex-wrap:wrap;gap:3px"></div>
+   </aside>
+  </section>
+ </main>
+</div>
+<script>
+const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg';
+/* ---------- Stage data ---------- */
+const NAMES=['Interphase','Prophase','Metaphase','Anaphase','Telophase','Cytokinesis'];
+const SHORT=['Inter','Pro','Meta','Ana','Telo','Cyto'];
+const INFO=[
+ {d:'The cell grows (G1), copies its DNA (S) and prepares to divide (G2). The chromosomes are long, thin chromatin threads inside an intact nucleus.',ch:'4',ct:'0 → 8 (after S phase)',lk:'A clear nucleus with a nucleolus. No visible chromosomes.'},
+ {d:'Chromatin condenses into visible chromosomes. Each is two identical sister chromatids joined at a centromere. The nuclear envelope breaks down and the spindle begins to form.',ch:'4',ct:'8',lk:'X-shaped chromosomes appear scattered. The nuclear outline fades.'},
+ {d:'Spindle fibers attach to the chromosomes and line them up along the center of the cell, the metaphase plate.',ch:'4',ct:'8',lk:'All chromosomes lined up in one row across the middle.'},
+ {d:'The sister chromatids separate and are pulled to opposite poles. Each separated chromatid now counts as its own chromosome.',ch:'8 (4 per pole)',ct:'8',lk:'V-shaped chromatids moving apart. The cell begins to elongate.'},
+ {d:'Chromosomes reach the poles and begin to uncoil. Nuclear envelopes re-form around each set, producing two nuclei.',ch:'4 per nucleus',ct:'4 per nucleus',lk:'Two new nuclei forming at opposite ends of an elongated cell.'},
+ {d:'Cytokinesis divides the cytoplasm. In animal cells a cleavage furrow pinches the cell in two. The result is two genetically identical daughter cells.',ch:'4 per daughter',ct:'0 (single chromatin)',lk:'Cell membrane pinching between two nuclei.'}];
+/* Params per stage */
+const C=(x,y,r,sx,sy)=>[x,y,r,sx,sy];
+const rep=(c,s)=>s; // placeholder
+const ys=[-84,-28,28,84];
+function chroms(f){const a=[];for(let c=0;c<4;c++)for(let s=0;s<2;s++)a.push(f(c,s));return a}
+const S=[
+ {cr:chroms((c,s)=>C([-28,25,-22,30][c]+s*2,[-25,-30,28,25][c],[30,-40,-20,60][c]+(s?3:-3),.3,1.15)),rx:170,ry:115,pinch:0,env:1,dn:0,spin:0,pole:20,nuc:70},
+ {cr:chroms((c,s)=>C([-48,40,-40,46][c],[-34,-42,38,34][c],[40,-35,10,70][c]+(s?15:-15),.95,1)),rx:170,ry:115,pinch:0,env:.35,dn:0,spin:.35,pole:95,nuc:72},
+ {cr:chroms((c,s)=>C(0,ys[c],(s?16:-16),1,.82)),rx:170,ry:115,pinch:0,env:0,dn:0,spin:.75,pole:150,nuc:72},
+ {cr:chroms((c,s)=>C(s?95:-95,ys[c]*.85,90,.85,.85)),rx:190,ry:108,pinch:.1,env:0,dn:0,spin:.75,pole:165,nuc:72},
+ {cr:chroms((c,s)=>C(s?140:-140,ys[c]*.62,90,.6,.7)),rx:210,ry:98,pinch:.5,env:0,dn:1,spin:.25,pole:180,nuc:72},
+ {cr:chroms((c,s)=>C(s?148:-148,ys[c]*.5,90,.4,.6)),rx:222,ry:92,pinch:.93,env:0,dn:1,spin:0,pole:190,nuc:72}];
+const COL=['#d34147','#d34147','#2f6fb0','#2f6fb0'];
+const lerp=(a,b,t)=>a+(b-a)*t;
+function mix(p){
+ p=Math.max(0,Math.min(5,p));const i=Math.min(4,Math.floor(p)),t=p-i,A=S[i],B=S[i+1],e=t*t*(3-2*t);
+ const o={};['rx','ry','pinch','env','dn','spin','pole','nuc'].forEach(k=>o[k]=lerp(A[k],B[k],e));
+ o.cr=A.cr.map((a,j)=>a.map((v,k)=>lerp(v,B.cr[j][k],e)));return o;
+}
+function render(svg,p){
+ const m=mix(p),cx=260,cy=150;let h='';
+ /* cell outline */
+ const pts=[];
+ for(let k=0;k<=96;k++){const th=k/96*6.2832,x=m.rx*Math.cos(th),f=1-m.pinch*.96*Math.exp(-Math.pow(x/(m.rx*.3),2)),y=m.ry*Math.sin(th)*f;pts.push((k?'L':'M')+(cx+x).toFixed(1)+' '+(cy+y).toFixed(1))}
+ h+=`<path d="${pts.join('')}Z" fill="#fdeeea" stroke="#d34147" stroke-width="4"/>`;
+ /* nuclei */
+ if(m.env>.01)h+=`<circle cx="${cx}" cy="${cy}" r="${m.nuc}" fill="#cfd8f3" fill-opacity="${m.env*.8}" stroke="#5a6fb8" stroke-width="3" stroke-opacity="${m.env}"/>`+(m.env>.5?`<circle cx="${cx+8}" cy="${cy-5}" r="16" fill="#8f9fd8" opacity="${m.env}"/>`:'');
+ if(m.dn>.01)[-1,1].forEach(sg=>h+=`<ellipse cx="${cx+sg*(m.pole*.75)}" cy="${cy}" rx="${46*m.dn}" ry="${m.ry*.55*m.dn}" fill="#cfd8f3" fill-opacity="${m.dn*.7}" stroke="#5a6fb8" stroke-width="3" stroke-opacity="${m.dn}"/>`);
+ /* spindle */
+ if(m.spin>.02)m.cr.forEach((c,j)=>{const pole=(j%2?1:-1)*m.pole;h+=`<line x1="${cx+pole}" y1="${cy}" x2="${cx+c[0]}" y2="${cy+c[1]}" stroke="#555" stroke-opacity="${m.spin*.7}" stroke-width="1.3"/>`});
+ [-1,1].forEach(sg=>h+=`<g transform="translate(${cx+sg*m.pole} ${cy})"><circle r="6" fill="#444"/><circle r="2.5" fill="#fff"/></g>`);
+ /* chromatids */
+ m.cr.forEach((c,j)=>{const col=COL[j>>1];
+  h+=`<g transform="translate(${(cx+c[0]).toFixed(1)} ${(cy+c[1]).toFixed(1)}) rotate(${c[2].toFixed(1)}) scale(${c[3].toFixed(2)} ${c[4].toFixed(2)})"><rect x="-4" y="-21" width="8" height="42" rx="4" fill="${col}"/><circle r="3.6" fill="#fff" opacity=".85"/></g>`});
+ svg.innerHTML=h;
+}
+/* ---------- Step tab ---------- */
+let pos=0,anim=null;
+const S1=$('cellS'),scrub=$('scrub');
+$('steps').innerHTML=SHORT.map((s,i)=>`<span data-i="${i}">${s}</span>`).join('');
+function info(){
+ const i=Math.round(pos);$('sname').textContent=NAMES[i];$('sdesc').textContent=INFO[i].d;$('fch').textContent=INFO[i].ch;$('fct').textContent=INFO[i].ct;
+ $('slook').innerHTML='<b>What to look for:</b> '+INFO[i].lk;
+ document.querySelectorAll('#steps span').forEach((s,k)=>s.classList.toggle('cur',k===i));
+ scrub.value=pos*100;
+}
+function setPos(p){pos=p;render(S1,pos);info()}
+function animTo(target,ms=900,cb){
+ cancelAnimationFrame(anim);const from=pos,t0=performance.now();
+ (function f(t){const k=Math.min(1,(t-t0)/ms);setPos(lerp(from,target,k));if(k<1)anim=requestAnimationFrame(f);else if(cb)cb()})(t0);
+}
+let playing=false;
+function stopPlay(){playing=false;$('play').textContent='Play'}
+$('nxt').onclick=()=>{stopPlay();animTo(Math.min(5,Math.floor(pos+.01)+1))};
+$('prev').onclick=()=>{stopPlay();animTo(Math.max(0,Math.ceil(pos-.01)-1))};
+scrub.oninput=()=>{stopPlay();cancelAnimationFrame(anim);setPos(scrub.value/100)};
+$('steps').onclick=e=>{const s=e.target.closest('span');if(s){stopPlay();animTo(+s.dataset.i)}};
+$('play').onclick=()=>{
+ if(playing){stopPlay();cancelAnimationFrame(anim);return}
+ playing=true;$('play').textContent='Pause';if(pos>=5)setPos(0);
+ (function go(){if(!playing)return;if(Math.round(pos)>=5&&pos>=4.99){stopPlay();return}animTo(Math.floor(pos+.01)+1,1500,()=>setTimeout(go,900))})();
+};
+/* ---------- Identify tab ---------- */
+let cur=-1,ok=0,tot=0,answered=false;
+$('iopts').innerHTML=NAMES.map((n,i)=>`<button class="opt" data-i="${i}">${n}</button>`).join('');
+function nextCell(){
+ let n;do{n=Math.floor(Math.random()*6)}while(n===cur);cur=n;answered=false;
+ render($('cellI'),cur);$('ifb').textContent='';$('inext').style.display='none';
+ document.querySelectorAll('#iopts .opt').forEach(b=>{b.disabled=false;b.className='opt'});
+}
+$('iopts').onclick=e=>{const b=e.target.closest('.opt');if(!b||answered)return;answered=true;tot++;
+ const i=+b.dataset.i,good=i===cur;if(good)ok++;
+ document.querySelectorAll('#iopts .opt').forEach(x=>{x.disabled=true;if(+x.dataset.i===cur)x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+ $('ifb').style.color=good?'#2e7d4f':'#b3261e';$('ifb').textContent=(good?'Correct! ':`That is ${NAMES[cur]}. `)+INFO[cur].lk;
+ $('iscore').textContent=`Correct: ${ok} of ${tot}`;$('inext').style.display='inline-block'};
+$('inext').onclick=nextCell;
+/* ---------- Cycle tab ---------- */
+const CK={g1:{n:'G1 checkpoint',t:'Checks cell size, nutrients, growth signals and DNA damage before the cell commits to copying DNA. p53 acts here: it pauses the cycle for repair or triggers cell death.',a:-80},
+ g2:{n:'G2 checkpoint',t:'Checks that DNA was copied completely and without damage before mitosis begins.',a:100},
+ m:{n:'Spindle (M) checkpoint',t:'During mitosis, checks that every chromosome is attached to the spindle before anaphase separates the chromatids.',a:165}};
+let p53=true,selCk=null;
+function polar(r,deg){const a=(deg-90)*Math.PI/180;return[260+r*Math.cos(a),150+r*Math.sin(a)]}
+function arc(r,a0,a1,w,col,label){const[x0,y0]=polar(r,a0),[x1,y1]=polar(r,a1);const lg=a1-a0>180?1:0;
+ return `<path d="M${x0} ${y0}A${r} ${r} 0 ${lg} 1 ${x1} ${y1}" fill="none" stroke="${col}" stroke-width="${w}"/>`}
+function wheel(){
+ let h='';
+ const segs=[['G1',0,150,'#6fa8dc','Growth'],['S',150,215,'#e0a03c','DNA copied'],['G2',215,290,'#7fbf86','Prepare'],['M',290,360,'#d34147','Mitosis']];
+ segs.forEach(s=>{h+=arc(95,s[1]+1.5,s[2]-1.5,38,s[3]);const m=(s[1]+s[2])/2,[x,y]=polar(95,m);
+  h+=`<text x="${x}" y="${y-2}" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">${s[0]}</text><text x="${x}" y="${y+13}" text-anchor="middle" font-size="10.5" fill="#fff">${s[4]}</text>`});
+ h+=`<text x="260" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#222">Cell cycle</text><text x="260" y="164" text-anchor="middle" font-size="11.5" fill="#585858">Interphase = G1 + S + G2</text>`;
+ const pos={g1:{deg:150,lab:'G1 checkpoint'},g2:{deg:290,lab:'G2 checkpoint'},m:{deg:360,lab:'Spindle checkpoint'}};
+ Object.keys(CK).forEach(k=>{const d=pos[k].deg%360,[x,y]=polar(95,d),[lx,ly]=polar(150,d);
+  const sel=selCk===k;
+  h+=`<g class="ck" data-k="${k}" tabindex="0" role="button" aria-label="${CK[k].n}"><line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="#222" stroke-width="2"/><circle cx="${lx}" cy="${ly}" r="${sel?15:12}" fill="${sel?'#d34147':'#222'}" stroke="#fff" stroke-width="3"/><text x="${lx}" y="${ly+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">✓</text>
+  <text x="${lx+(lx>260?20:-20)}" y="${ly+(ly>150?20:-14)}" text-anchor="${lx>260?'start':'end'}" font-size="12.5" font-weight="700" fill="#222">${pos[k].lab}</text></g>`});
+ $('wheel').innerHTML=h;
+}
+$('wheel').addEventListener('click',e=>{const g=e.target.closest('.ck');if(g){selCk=g.dataset.k;$('ckinfo').innerHTML=`<b>${CK[selCk].n}</b><br>${CK[selCk].t}`;wheel()}});
+$('wheel').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const g=e.target.closest('.ck');if(g){e.preventDefault();selCk=g.dataset.k;$('ckinfo').innerHTML=`<b>${CK[selCk].n}</b><br>${CK[selCk].t}`;wheel()}}});
+function p53set(v){p53=v;$('p53ok').setAttribute('aria-pressed',v);$('p53bad').setAttribute('aria-pressed',!v);$('dmgout').textContent='';$('cells').innerHTML='';clearInterval(tm)}
+$('p53ok').onclick=()=>p53set(true);$('p53bad').onclick=()=>p53set(false);
+let tm;
+$('dmg').onclick=()=>{
+ clearInterval(tm);$('cells').innerHTML='';
+ if(p53){$('dmgout').innerHTML='<b>The G1 checkpoint detects the damage.</b> Working p53 halts the cycle so DNA can be repaired. If repair fails, the cell undergoes apoptosis (programmed cell death). The damaged DNA is not passed on.';
+  $('cells').innerHTML='<span style="font-size:13px;color:#2e7d4f;font-weight:700">1 damaged cell → stopped ✓</span>';return}
+ $('dmgout').innerHTML='<b>The checkpoint fails.</b> With mutated p53 the damaged cell passes G1 and divides, and so do its daughters. Each division copies the mutation. Uncontrolled division is the hallmark of cancer.';
+ let n=1;const draw=()=>{$('cells').innerHTML=Array.from({length:Math.min(n,96)},()=>'<svg width="13" height="13"><circle cx="6.5" cy="6.5" r="5.5" fill="#b3261e"/></svg>').join('')+(n>96?'<b style="font-size:12px">…'+n+' cells</b>':'')};
+ draw();tm=setInterval(()=>{n*=2;draw();if(n>=512)clearInterval(tm)},700);
+};
+/* ---------- tabs ---------- */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.tab));
+ if(b.dataset.tab==='id'&&cur<0)nextCell();
+});
+setPos(0);wheel();
+</script>
+</body>
+</html>
