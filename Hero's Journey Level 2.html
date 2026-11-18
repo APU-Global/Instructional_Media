@@ -1,0 +1,622 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hero's Journey Level 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centered column, a framed banner on the start screen, then a bordered quest panel per level step. Dark arcade look by design. */
+:root{
+  --bg:#13143d; --bg-deep:#0a0b2a; --panel:#1d1f63; --panel-2:#2a2d80; --panel-3:#363a9a;
+  --line:#4f5bd5; --text:#ffffff; --muted:#c7caf8;
+  --gold:#ffd24a; --gold-deep:#d19a1c; --pink:#ff5d8f; --teal:#3ee0c0; --ok:#56e39f; --bad:#ff7a8a; --ink:#1a1650;
+  --pixel:"Press Start 2P",ui-monospace,Menlo,Consolas,monospace;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg-deep)}
+body{
+  margin:0;color:var(--text);font:400 17px/1.55 var(--body);background-color:#12133f;
+  background-image:
+    radial-gradient(circle at 30px 40px,#fff 0 1.5px,transparent 2px),
+    radial-gradient(circle at 120px 150px,#cfd3ff 0 1px,transparent 1.6px),
+    radial-gradient(circle at 200px 70px,var(--gold) 0 1.4px,transparent 2px),
+    radial-gradient(circle at 70px 210px,#fff 0 1px,transparent 1.6px),
+    linear-gradient(180deg,#0a0b2a 0%,#15175a 100%);
+  background-size:230px 250px,170px 190px,270px 230px,140px 260px,auto;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg-deep)}
+.wrap{max-width:1000px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+h1,h2,h3,p{margin:0}
+
+.banner{border:4px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 8px 0 var(--bg-deep);background:#1d1f5e;line-height:0}
+.banner svg{display:block;width:100%;height:auto}
+.hero-text{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding-block:32px 8px}
+.eyebrow{font:400 12px/1.5 var(--pixel);color:var(--teal);letter-spacing:.12em}
+.title{font:400 clamp(26px,7vw,54px)/1.3 var(--pixel);color:#fff;text-shadow:3px 3px 0 var(--pink),6px 6px 0 var(--bg-deep);text-wrap:balance}
+.level{font:400 clamp(12px,2.8vw,20px)/1.7 var(--pixel);color:var(--gold);text-wrap:balance}
+.lead{max-width:34ch;font-size:18px;color:#fff}
+
+.btn{display:inline-flex;align-items:center;gap:12px;font:400 clamp(13px,3.2vw,17px)/1.2 var(--pixel);background:var(--gold);color:var(--ink);border:0;border-radius:14px;padding:18px 28px;cursor:pointer;box-shadow:0 7px 0 var(--gold-deep);transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(5px);box-shadow:0 2px 0 var(--gold-deep)}
+.btn:disabled{background:#59609f;color:#d6d8f5;box-shadow:0 7px 0 #3a4078;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--gold);border:3px solid var(--gold);box-shadow:none;padding:12px 18px}
+
+.panel{background:var(--panel);border:4px solid var(--line);border-radius:26px;padding:26px;box-shadow:0 8px 0 var(--bg-deep)}
+.howto{margin-top:34px}
+.howto h2{font:400 14px/1.4 var(--pixel);color:var(--gold);margin-bottom:16px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.steps li{display:flex;align-items:center;gap:14px}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font:400 13px/1 var(--pixel)}
+.note{margin-top:16px;color:var(--muted);font-size:15px}
+
+.hud{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.hud .tag{font:400 12px/1 var(--pixel);color:var(--gold)}
+.pips{display:flex;gap:8px}
+.pip{width:26px;height:12px;border-radius:4px;background:#0f1146;border:2px solid var(--line)}
+.pip.done{background:var(--teal);border-color:var(--teal)}
+.pip.now{background:var(--gold);border-color:var(--gold)}
+.xp{font:400 12px/1 var(--pixel);color:var(--teal)}
+
+.qhead{display:grid;gap:12px;margin-bottom:22px}
+.qtitle{font:400 clamp(16px,4.2vw,26px)/1.45 var(--pixel);color:#fff;text-wrap:balance}
+.story{max-width:68ch}
+.verse{font-size:15px;color:var(--muted);font-style:italic;max-width:68ch}
+.how{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 14px}
+.how p{color:var(--gold);font-weight:800}
+.count{font:400 12px/1 var(--pixel);color:var(--teal)}
+
+.cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{display:flex;align-items:center;gap:14px;width:100%;min-height:84px;text-align:left;padding:14px 16px;border-radius:18px;border:3px solid var(--line);background:var(--panel-2);cursor:pointer;box-shadow:0 5px 0 #14165a;transition:transform .08s,box-shadow .08s}
+.card:hover{background:#31359a}
+.card:active{transform:translateY(3px);box-shadow:0 2px 0 #14165a}
+.card[aria-pressed="true"]{border-color:var(--gold);background:var(--panel-3)}
+.card:disabled{cursor:default;opacity:.7}
+.card .tx{min-width:0;flex:1}
+.ico{flex:none;width:46px;height:46px;border-radius:12px;background:#151857;display:grid;place-items:center;color:var(--gold)}
+.ico.t{color:var(--teal)} .ico.p{color:var(--pink)}
+.ct{font-weight:800;font-size:17px;line-height:1.3}
+.cs{font-size:14px;color:var(--muted);line-height:1.4}
+.badge{flex:none;font:400 9px/1 var(--pixel);color:var(--ink);background:var(--gold);padding:6px 7px;border-radius:6px}
+
+.status{margin-top:16px;padding:12px 16px;border-radius:14px;background:#151857;border:2px solid var(--line);font-weight:700}
+.status.good{border-color:var(--ok)} .status.warn{border-color:var(--gold)} .status.bad{border-color:var(--bad)}
+.status ul{margin:6px 0 0;padding-left:20px;font-weight:600}
+
+.meter{background:#101247;border:3px solid var(--line);border-radius:18px;padding:14px 16px 12px;margin-bottom:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5}
+.mrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.mnum{font:400 13px/1 var(--pixel);color:var(--teal)}
+.mnum.over{color:var(--pink)}
+.bar{position:relative;display:flex;height:22px;border-radius:8px;background:#0a0c36;border:2px solid #0a0c36;margin-block:10px 6px}
+.bar span{height:100%;transition:width .2s}
+.b-kept{background:var(--gold)} .b-free{background:var(--teal)}
+.mark{position:absolute;top:-6px;bottom:-6px;width:3px;background:#fff;border-radius:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--muted)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.sw.gold{background:var(--gold)} .sw.teal{background:var(--teal)} .sw.mk{background:#fff;width:3px}
+.mstat{margin-top:8px;font-weight:700;font-size:15px}
+
+.rows{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 18px;align-items:center;padding:12px 14px;border:3px solid var(--line);border-radius:18px;background:var(--panel-2)}
+.row.is-down{background:#2a2766}
+.rl{display:flex;align-items:center;gap:14px;min-width:0}
+.seg{display:flex}
+.seg button{font:700 14px/1.2 var(--body);padding:10px 14px;border:2px solid var(--line);background:#151857;color:#fff;cursor:pointer}
+.seg button+button{border-left-width:0}
+.seg button:first-child{border-radius:12px 0 0 12px}
+.seg button:last-child{border-radius:0 12px 12px 0}
+.seg button.keep[aria-pressed="true"]{background:var(--teal);color:var(--ink);border-color:var(--teal)}
+.seg button.scale[aria-pressed="true"]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.seg button.down[aria-pressed="true"]{background:var(--pink);color:var(--ink);border-color:var(--pink)}
+.rnote{grid-column:1/-1;font-size:14px;color:var(--gold);font-weight:700}
+
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px}
+.stat{display:grid;grid-template-columns:minmax(88px,120px) minmax(0,1fr) 46px;gap:10px;align-items:center;font-weight:700;font-size:15px}
+.blocks{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.blk{height:16px;background:#0a0c36;border-radius:2px}
+.blk.lo{background:var(--pink)} .blk.mid{background:var(--gold)} .blk.hi{background:var(--teal)}
+.sv{font:400 11px/1 var(--pixel);text-align:right}
+
+.scene{margin-top:18px;padding:16px 18px;border-radius:16px;background:#151857;border:3px dashed var(--pink)}
+.scene .eyebrow{color:var(--pink);display:block;margin-bottom:8px}
+
+.qbox{margin-top:26px;padding-top:22px;border-top:3px dashed #4a55c8;display:grid;gap:26px}
+.qlabel{font:400 11px/1.4 var(--pixel);color:var(--teal);margin-bottom:10px}
+.qtext{font-weight:800;font-size:19px;line-height:1.4;margin-bottom:14px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;padding:13px 16px;border:3px solid var(--line);border-radius:14px;background:var(--panel-2);font:600 16px/1.45 var(--body);cursor:pointer;box-shadow:0 4px 0 #14165a}
+.opt:hover:not(:disabled){background:#31359a}
+.opt.right{border-color:var(--ok);background:#1d5a58}
+.opt.bad{border-color:var(--bad);background:#552550}
+.opt:disabled{cursor:default;box-shadow:none}
+.fb{margin-top:12px;padding:12px 16px;border-radius:12px;background:#151857;border:2px solid var(--line)}
+.fb.good{border-color:var(--ok)} .fb.try{border-color:var(--bad)}
+
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:20px}
+.field{display:grid;gap:6px;font-weight:800;font-size:15px}
+select{font:600 16px/1.3 var(--body);color:#fff;background:#151857;border:3px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;min-width:0}
+.sentence{margin-top:16px}
+
+.actions{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:30px;flex-wrap:wrap}
+.hint{color:var(--muted);font-size:15px;flex:1;min-width:200px}
+
+.done-head{display:grid;gap:14px;justify-items:center;text-align:center;padding-block:28px 6px}
+.logs{display:grid;gap:14px;margin:18px 0 0}
+.logs div{padding:14px 16px;border-radius:14px;background:#151857;border:2px solid var(--line)}
+.logs dt{font:400 11px/1.5 var(--pixel);color:var(--teal);margin-bottom:6px}
+.logs dd{margin:0}
+.logtext{width:100%;min-height:200px;margin-top:14px;padding:12px;border-radius:12px;border:3px solid var(--line);background:#0e1047;color:#fff;font:400 15px/1.5 var(--body);resize:vertical}
+.bigq{margin-top:22px;padding:16px 18px;border-radius:16px;background:#151857;border:3px solid var(--teal)}
+.bigq .eyebrow{display:block;margin-bottom:8px}
+.levelup{margin-top:22px;padding:20px;border-radius:20px;background:#2c2670;border:4px solid var(--gold)}
+.levelup .eyebrow{color:var(--gold);display:block;margin-bottom:10px}
+.levelup p+p{margin-top:8px;color:var(--muted)}
+.levelup strong{color:var(--gold)}
+
+@media (max-width:820px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:1fr}.fields{grid-template-columns:1fr}}
+@media (max-width:560px){.cards{grid-template-columns:1fr}.row{grid-template-columns:minmax(0,1fr)}.seg{width:100%}.seg button{flex:1;padding-inline:6px}.panel{padding:18px;border-radius:22px}.btn{padding:16px 20px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" id="app"></div>
+<div class="sr" id="live" aria-live="polite"></div>
+
+<script>
+const FLEX = 34, NEED = 15, PACK = 6, RESTPICKS = 4;
+
+const ICONS = {
+  moon:["...###..","..##....",".###....",".###....",".###....","..##..#.","...###..","........"],
+  apple:["....#...","...##...",".##.##..","########","########","########",".######.","..#..#.."],
+  house:["...##...","..####..",".######.","########",".######.",".##..##.",".##..##.",".##..##."],
+  cross:["...##...","...##...","########","########","...##...","...##...","...##...","...##..."],
+  heart:[".##..##.","########","########","########",".######.","..####..","...##...","........"],
+  case:["..####..","..#..#..","########","##....##","########","########","########","........"],
+  phone:[".######.",".#....#.",".#....#.",".#....#.",".#....#.",".######.",".######.","..####.."],
+  chat:[".######.","########","########","########",".######.","..##....","..#.....","........"],
+  sparkle:["...##...","...##...",".######.","########","########",".######.","...##...","...##..."],
+  tv:["#.....#.",".#...#..","########","#......#","#......#","#......#","########","..#..#.."],
+  game:["........",".######.","########","##.##.##","#.###.##","##.##.##","########",".##..##."],
+  clock:["..####..",".#....#.","#..#...#","#..#...#","#..###.#","#......#",".#....#.","..####.."],
+  group:["..##.##.","..##.##.","........",".#######","########","########","########","........"],
+  sun:["...##...","#.####.#",".######.","########","########",".######.","#.####.#","...##..."],
+  bolt:["....##..","...##...","..##....",".######.","...##...","..##....",".##.....","##......"],
+  laptop:[".######.",".#....#.",".#....#.",".######.","########","#......#","########","........"],
+  star:["...##...","...##...","########",".######.","..####..",".##..##.","##....##","........"],
+  list:["##.#####","........","##.#####","........","##.#####","........","##.####.","........"]
+};
+function icon(name, size, cls){
+  const rows = ICONS[name] || ICONS.star; let r = "";
+  rows.forEach((row,y)=>{ for(let x=0;x<8;x++){ if(row[x]==="#") r += `<rect x="${x}" y="${y}" width="1" height="1"/>`; } });
+  return `<span class="ico ${cls||""}" aria-hidden="true"><svg viewBox="0 0 8 8" width="${size||28}" height="${size||28}" fill="currentColor" shape-rendering="crispEdges">${r}</svg></span>`;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ---------- Game data ---------- */
+const PROV = [
+  {id:"sleep", t:"Sleep", s:"Rest your body at night", i:"moon", e:1},
+  {id:"scroll", t:"Late-night scrolling", s:"Just one more video", i:"phone", why:"It takes sleep from you. It does not fuel the journey."},
+  {id:"meals", t:"Meals", s:"Real food, on time", i:"apple", e:1},
+  {id:"family", t:"Family and loved ones", s:"The people who need you", i:"house", e:1},
+  {id:"yes", t:"Saying yes to everything", s:"Every request, every time", i:"chat", why:"It fills your calendar without filling your tank."},
+  {id:"faith", t:"Faith practices", s:"Prayer, worship, reflection", i:"cross", e:1},
+  {id:"health", t:"Health and movement", s:"Care for the body you live in", i:"heart", e:1},
+  {id:"clean", t:"A spotless house", s:"Every surface, every day", i:"sparkle", why:"It can wait a day. Your sleep and your people cannot."},
+  {id:"work", t:"Work", s:"Income that keeps the lights on", i:"case", e:1}
+];
+const LOAD = [
+  {id:"tv", t:"Streaming nights", h:8, i:"tv"},
+  {id:"phone", t:"Social media scrolling", h:7, i:"phone"},
+  {id:"game", t:"Gaming sessions", h:4, i:"game"},
+  {id:"side", t:"Extra side job", h:5, i:"case"},
+  {id:"ot", t:"Overtime shifts", h:6, i:"clock"},
+  {id:"vol", t:"Volunteer committee", h:3, i:"group"},
+  {id:"small", t:"Small group or Bible study", h:2, i:"cross"}
+];
+const REST = [
+  {id:"sleep", t:"Lights out by 10 p.m.", type:"physical", d:{physical:5}, i:"moon"},
+  {id:"doom", t:"Scrolling in bed", type:"drain", d:{physical:-2}, i:"phone", why:"It feels like rest but costs you sleep."},
+  {id:"plan", t:"Plan next week on Sunday", type:"mental", d:{mental:5}, i:"list"},
+  {id:"nap", t:"A 20-minute nap", type:"physical", d:{physical:3}, i:"clock"},
+  {id:"walk", t:"Phone-free walk or quiet prayer", type:"quiet", d:{quiet:5}, i:"sun"},
+  {id:"allnight", t:"All-nighter with energy drinks", type:"drain", d:{physical:-3,mental:-2}, i:"bolt", why:"It borrows energy you do not have."},
+  {id:"dinner", t:"Dinner with people you love", type:"social", d:{social:5}, i:"house"},
+  {id:"coffee", t:"Silent morning coffee", type:"quiet", d:{quiet:3}, i:"apple"},
+  {id:"grind", t:"Push through with no breaks", type:"drain", d:{mental:-3}, i:"laptop", why:"Skipping breaks drains your focus."}
+];
+const RSUB = {physical:"Physical rest", mental:"Mental rest", quiet:"Quiet rest", social:"Social rest", drain:"Looks like rest"};
+const RNAMES = {physical:"Physical", mental:"Mental", quiet:"Quiet", social:"Social"};
+const STORMS = [
+  {id:"family", t:"A family emergency", s:"Someone you love needs you tonight", i:"heart",
+   scene:"It is Wednesday night. Your child has a fever, you are exhausted, and a discussion post is due Friday.",
+   q:{id:"s-family", text:"What does your hero do first?", opts:[
+     {t:"Stay up all night to finish everything, then care for your child on no sleep.", fb:"That empties your tank on both fronts. Sleep is one of your provisions."},
+     {t:"Care for your child first. Then use your buffer hours, and tell your instructor early about a possible delay.", ok:1, fb:"Family comes first, and your plan has room for it. Telling your instructor early is a strength, not an excuse."},
+     {t:"Quietly drop the class this week and hope no one notices.", fb:"One hard week is not the end of the journey. Make a Plan B and reach out."}]}},
+  {id:"work", t:"An extra shift", s:"Your manager needs 8 more hours", i:"case",
+   scene:"Your manager asks you to cover 8 extra hours this week. Those are the hours you set aside to study.",
+   q:{id:"s-work", text:"What does your hero do first?", opts:[
+     {t:"Decide what to trade. Move study blocks into your buffer hours, and tell your instructor now if a due date is at risk.", ok:1, fb:"A plan is meant to bend. Choosing the trade on purpose beats having it chosen for you."},
+     {t:"Say yes, then skip sleep and rest to make up the study time.", fb:"Cutting provisions to cover the gap usually costs more than it saves."},
+     {t:"Say yes to everything and figure it out later.", fb:"Later tends to arrive at midnight. Decide now, while you still have options."}]}},
+  {id:"tech", t:"A tech meltdown", s:"Your laptop will not turn on", i:"laptop",
+   scene:"It is the night before an assignment is due, and your laptop will not turn on.",
+   q:{id:"s-tech", text:"What does your hero do first?", opts:[
+     {t:"Wait and hope it fixes itself, and tell no one.", fb:"Waiting costs hours you may not have, and silence closes doors."},
+     {t:"Skip the assignment because it is not your fault.", fb:"It is not your fault, but the deadline still matters. Look for another route."},
+     {t:"Find a backup right away, like a library or campus computer, a borrowed device, or tech support. Let your instructor know if the deadline is at risk.", ok:1, fb:"Resourceful heroes look for another route and ask for help early. Support is part of your alliance."}]}}
+];
+const STEPS = [
+  {id:"bed", t:"Set a bedtime", s:"Protect your sleep", i:"moon", p:"go to bed at a set time"},
+  {id:"block", t:"Block study time", s:"Put it on my calendar", i:"clock", p:"block study time on my calendar"},
+  {id:"no", t:"Say no to one thing", s:"Or say not now", i:"chat", p:"say no (or not now) to one commitment"},
+  {id:"rest", t:"Schedule my rest", s:"Book one power-up", i:"sun", p:"schedule one rest power-up"},
+  {id:"tell", t:"Tell my people", s:"Share my study hours", i:"house", p:"tell my family or boss when I will be studying"},
+  {id:"plan", t:"Plan my week", s:"A weekly planning time", i:"list", p:"plan my week ahead"}
+];
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const TIMES = ["in the morning","in the afternoon","in the evening","right before bed"];
+const BACKUPS = ["use my buffer hours","move it to the next open day","ask my instructor or Success Coach for help"];
+
+const META = {
+  q1:{n:1, title:"PACK YOUR PROVISIONS", next:"q2",
+      story:"Food, water, rest, and shelter are not the exciting part of the adventure, but without them the adventure does not last. Your pack has room for six provisions. Start with what keeps you going, then see how college fits around it.",
+      verse:["The LORD is my shepherd, I lack nothing.","Psalm 23:1"]},
+  q2:{n:2, title:"LIGHTEN YOUR LOAD", next:"q3",
+      story:"A hero can only carry so much. Your week has 168 hours, and your essentials take 134 of them, so 34 hours are flexible. Your commitments already want 35, and college needs 15. Decide what to keep, scale back, or set down.",
+      verse:["Teach us to number our days, that we may gain a heart of wisdom.","Psalm 90:12"]},
+  q3:{n:3, title:"DISCOVER YOUR REST", next:"q4",
+      story:"Rest is not wasted time. It is a power-up that helps you last for the long haul. Your four energy meters are running low, and you have time for four rest power-ups this week. Choose carefully, because some choices only look like rest.",
+      verse:["Come with me by yourselves to a quiet place and get some rest.","Mark 6:31"]},
+  q4:{n:4, title:"WEATHER THE STORM", next:"q5",
+      story:"Even a good plan meets surprises. A hero does not need a perfect plan, only one that can bend. Pick a storm to face.",
+      verse:["In their hearts humans plan their course, but the LORD establishes their steps.","Proverbs 16:9"]},
+  q5:{n:5, title:"TAKE YOUR FIRST STEP", next:"done",
+      story:"Every journey starts with one practical step. Choose the change that would protect your time, your essentials, and your rest this week. Then lock it in with a day, a time, and a backup.",
+      verse:["Commit to the LORD whatever you do, and he will establish your plans.","Proverbs 16:3"]}
+};
+
+/* ---------- State ---------- */
+const S = {screen:"start", xp:0, packed:[], load:{}, rest:[], storm:null, qs:{}, step:null, day:"", time:"", backup:"", locked:false, awarded:{}};
+LOAD.forEach(l => { S.load[l.id] = "keep"; });
+
+function qs(k){ return S.qs[k] || (S.qs[k] = {idx:0, done:{}, wrong:{}, last:{}}); }
+function award(id, n){ if(!S.awarded[id]){ S.awarded[id] = 1; S.xp += n; } }
+function say(t){ const l = document.getElementById("live"); if(l){ l.textContent = ""; setTimeout(() => { l.textContent = t; }, 30); } }
+function hoursFor(l){ const v = S.load[l.id]; return v === "down" ? 0 : v === "scale" ? Math.ceil(l.h/2) : l.h; }
+function keptHours(){ return LOAD.reduce((a,l) => a + hoursFor(l), 0); }
+function restStats(){
+  const v = {physical:3, mental:3, quiet:3, social:3};
+  REST.filter(r => S.rest.includes(r.id)).forEach(r => { for(const t in r.d) v[t] += r.d[t]; });
+  for(const t in v) v[t] = Math.max(0, Math.min(10, v[t]));
+  return v;
+}
+function questionsFor(k){
+  if(k === "q1") return [
+    {id:"q1a", text:"Why does a hero pack provisions before the exciting parts of the adventure?", opts:[
+      {t:"Because the exciting parts do not really matter.", fb:"They matter. Provisions are what let you reach them."},
+      {t:"Because without them the adventure does not last.", ok:1, fb:"Right. Sleep, meals, family, faith, health, and work are what keep you going."},
+      {t:"Because packing is the only thing a hero needs to do.", fb:"Packing is the start, not the whole journey."}]},
+    {id:"q1b", text:"Where do your college commitments fit?", opts:[
+      {t:"Around your essentials, not instead of them.", ok:1, fb:"Yes. You plan college around what sustains you, so you can keep going."},
+      {t:"In place of sleep and meals when time gets tight.", fb:"That trade works for a night or two, then it breaks the plan."},
+      {t:"Wherever there is a gap, with no plan at all.", fb:"Gaps disappear quickly. A plan protects the time on purpose."}]}
+  ];
+  if(k === "q2") return [
+    {id:"q2a", text:"How should a hero think about the things they set down?", opts:[
+      {t:"As failure. A real hero would do it all.", fb:"No hero carries everything. Limits are part of being human."},
+      {t:"As stewardship: choosing what matters most right now.", ok:1, fb:"Yes. Setting something down is not giving up. It is deciding what matters most for this season."},
+      {t:"As permanent. You can never pick it back up.", fb:"Seasons change. Many things you scale back now can return later."}]},
+    {id:"q2b", reflective:1, text:"Which describes your choices best?", opts:[
+      {t:"It felt like letting someone down.", fb:"That feeling is real. Notice who you pictured, because it may belong in your discussion post."},
+      {t:"I did not realize how many hours some of these take.", fb:"Hours add up quietly. Seeing them is the first step to stewarding them."},
+      {t:"It was easier than I expected.", fb:"Good. Sometimes the load is lighter to set down than to carry."},
+      {t:"I am still not sure what I would really set down.", fb:"That is honest. You will get another chance to decide in your discussion post."}]}
+  ];
+  if(k === "q3") return [
+    {id:"q3a", reflective:1, text:"Which kind of rest do you need most right now?", opts:[
+      {t:"Physical rest: more sleep.", fb:"Sleep is a provision, not a reward. Even one earlier night helps."},
+      {t:"Mental rest: feeling caught up and organized.", fb:"A short weekly plan clears a lot of mental clutter."},
+      {t:"Quiet rest: time alone, away from screens.", fb:"Quiet time can be prayer, a walk, or simply silence."},
+      {t:"Social rest: time with people who refill me.", fb:"Time with people you love is fuel. Put it in the plan."}]},
+    {id:"q3b", text:"What happens to your energy, focus, and attitude when rest is missing?", opts:[
+      {t:"Nothing. Rest is for people who cannot keep up.", fb:"Even the strongest travelers run down without rest."},
+      {t:"All three dip. Rest is part of the plan, not a reward for finishing it.", ok:1, fb:"Yes. When rest is missing, energy, focus, and attitude all slip."},
+      {t:"Only your energy changes. Focus stays the same.", fb:"Focus and attitude usually slip right along with energy."}]}
+  ];
+  if(k === "q4"){
+    const s = STORMS.find(x => x.id === S.storm); if(!s) return [];
+    return [s.q,
+      {id:"q4b", text:"Which habit makes the next surprise easier to handle?", opts:[
+        {t:"Fill every hour so nothing is wasted.", fb:"A packed plan has no room to bend, so one surprise breaks it."},
+        {t:"Keep a few buffer hours open each week.", ok:1, fb:"Buffer is margin. It turns a crisis into a bump."},
+        {t:"Plan nothing, so nothing can be disrupted.", fb:"With no plan you cannot tell what to move. A flexible plan beats no plan."}]}];
+  }
+  return [];
+}
+function qDone(k){ const l = questionsFor(k); return l.length > 0 && qs(k).idx >= l.length; }
+
+/* ---------- Banner ---------- */
+function banner(){
+  let stars = "", seed = 7; const rnd = () => { seed = (seed*9301 + 49297) % 233280; return seed/233280; };
+  for(let i=0;i<46;i++){
+    const x = rnd()*960, y = rnd()*190, r = rnd() < .2 ? 2.2 : 1.3, g = rnd() < .15;
+    stars += `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r}" fill="${g?"#ffd24a":"#fff"}" opacity="${(.5+rnd()*.5).toFixed(2)}"/>`;
+  }
+  return `<div class="banner"><svg viewBox="0 0 960 340" role="img" aria-label="A hero with a star staff and a backpack stands beside a campfire and tent. A glowing road winds toward a castle at sunset.">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1e5a"/><stop offset=".55" stop-color="#6a3f9f"/><stop offset=".88" stop-color="#cc6d8e"/></linearGradient></defs>
+<rect width="960" height="340" fill="url(#sky)"/>${stars}
+<circle cx="655" cy="238" r="108" fill="#f7c548" opacity=".16"/><circle cx="655" cy="238" r="68" fill="#f7c548"/>
+<polygon points="0,262 120,150 235,236 335,122 475,252 565,196 700,272 815,186 960,252 960,340 0,340" fill="#3a2d78"/>
+<polygon points="0,290 150,215 290,285 450,240 600,292 760,236 960,290 960,340 0,340" fill="#2e2870"/>
+<path d="M0 296 Q200 258 400 290 T800 286 T960 276 L960 340 L0 340Z" fill="#231f5e"/>
+<g transform="translate(792 150)">
+<circle cx="64" cy="120" r="60" fill="#f7c548" opacity=".12"/>
+<rect x="0" y="30" width="34" height="112" fill="#2d2b78"/><rect x="82" y="30" width="34" height="112" fill="#2d2b78"/><rect x="34" y="62" width="48" height="80" fill="#262469"/>
+<polygon points="-6,32 17,-10 40,32" fill="#ff5d8f"/><polygon points="76,32 99,-10 122,32" fill="#ff5d8f"/>
+<rect x="38" y="52" width="8" height="10" fill="#262469"/><rect x="52" y="52" width="8" height="10" fill="#262469"/><rect x="66" y="52" width="8" height="10" fill="#262469"/>
+<rect x="56" y="14" width="2" height="38" fill="#cfd3ff"/><polygon points="58,14 76,20 58,26" fill="#ffd24a"/>
+<rect x="8" y="62" width="8" height="12" fill="#ffd24a"/><rect x="100" y="62" width="8" height="12" fill="#ffd24a"/>
+<path d="M48 142 v-24 a10 10 0 0 1 20 0 v24z" fill="#ffd24a"/></g>
+<path d="M330 345 C380 302 430 292 500 292 S650 284 760 292 S820 296 852 296" fill="none" stroke="#6b5aa8" stroke-width="9" stroke-linecap="round" opacity=".8"/>
+<path d="M330 345 C380 302 430 292 500 292 S650 284 760 292 S820 296 852 296" fill="none" stroke="#f6e1a6" stroke-width="5" stroke-dasharray="0.1 11" stroke-linecap="round"/>
+<circle cx="176" cy="292" r="44" fill="#ffb347" opacity=".16"/>
+<path d="M176 302 q-13 -15 -2 -30 q4 10 10 4 q9 13 -8 26z" fill="#ff8a3d"/><path d="M177 302 q-6 -8 0 -16 q3 6 6 3 q3 7 -6 13z" fill="#ffd24a"/>
+<rect x="160" y="300" width="34" height="5" rx="2" fill="#5b3a24"/>
+<polygon points="226,304 262,252 298,304" fill="#4b6bd6"/><polygon points="250,304 262,278 274,304" fill="#ffd24a" opacity=".9"/>
+<g transform="translate(96 213)">
+<rect x="-31" y="36" width="17" height="30" rx="4" fill="#c8873a"/>
+<path d="M-14 34 L14 34 L20 78 L-20 78Z" fill="#2b4c9b"/>
+<rect x="-14" y="34" width="28" height="36" rx="8" fill="#3b82f6"/>
+<polygon transform="translate(0 50)" points="0,-8 2.5,-2.5 8,-2.5 3.5,1.5 5,7 0,4 -5,7 -3.5,1.5 -8,-2.5 -2.5,-2.5" fill="#ffd24a"/>
+<rect x="-10" y="68" width="8" height="21" fill="#5b3a24"/><rect x="2" y="68" width="8" height="21" fill="#5b3a24"/>
+<circle cx="0" cy="14" r="16" fill="#f0b48a"/>
+<path d="M-17 12 a17 17 0 0 1 34 0 q-8 -8 -17 -6 q-9 -2 -17 6z" fill="#2b1d20"/>
+<circle cx="-6" cy="16" r="1.8" fill="#2b1d20"/><circle cx="6" cy="16" r="1.8" fill="#2b1d20"/>
+<path d="M-5 22 q5 4 10 0" stroke="#2b1d20" stroke-width="2" fill="none" stroke-linecap="round"/>
+<rect x="26" y="-4" width="3" height="94" fill="#d9b36b"/>
+<polygon transform="translate(27.5 -12)" points="0,-10 3,-3 10,-3 4,2 6,9 0,5 -6,9 -4,2 -10,-3 -3,-3" fill="#ffd24a"/>
+<circle cx="-16" cy="52" r="6" fill="#f0b48a"/><circle cx="27" cy="46" r="6" fill="#f0b48a"/></g>
+</svg></div>`;
+}
+
+/* ---------- Shared pieces ---------- */
+function frame(k, body, ok, hint){
+  const m = META[k];
+  const pips = [1,2,3,4,5].map(i => `<span class="pip ${i<m.n?"done":i===m.n?"now":""}"></span>`).join("");
+  const last = m.next === "done";
+  return `<div class="hud"><span class="tag">LEVEL 2</span><div class="pips" role="img" aria-label="Quest ${m.n} of 5">${pips}</div><span class="xp">XP ${S.xp}</span></div>
+<section class="panel" aria-labelledby="qt">
+<header class="qhead"><p class="eyebrow">QUEST ${m.n} OF 5</p><h1 class="qtitle" id="qt">${m.title}</h1>
+<p class="story">${m.story}</p><p class="verse">&ldquo;${esc(m.verse[0])}&rdquo; &mdash; ${esc(m.verse[1])} (NIV)</p></header>
+${body}
+<div class="actions"><p class="hint">${ok ? "Nice work. You are ready to move on." : esc(hint)}</p>
+<button class="btn" data-act="next" data-to="${m.next}" data-k="next" ${ok?"":"disabled"}>${last?"FINISH LEVEL":"NEXT QUEST"} <span aria-hidden="true">&#9654;</span></button></div>
+</section>`;
+}
+function qhtml(k){
+  const list = questionsFor(k), st = qs(k); if(!list.length) return "";
+  let out = `<div class="qbox">`;
+  list.forEach((q,i) => {
+    if(i > st.idx) return;
+    const done = st.done[q.id] !== undefined, last = st.last[q.id];
+    out += `<div><p class="qlabel">QUICK CHECK ${i+1} OF ${list.length}</p><p class="qtext" id="${q.id}-t">${esc(q.text)}</p><div class="opts" role="group" aria-labelledby="${q.id}-t">`;
+    q.opts.forEach((o,j) => {
+      const wrong = (st.wrong[q.id]||[]).includes(j), right = done && st.done[q.id] === j;
+      out += `<button class="opt ${right?"right":wrong?"bad":""}" data-act="ans" data-q="${q.id}" data-j="${j}" data-k="${q.id}-${j}" ${done?"disabled":""}>${esc(o.t)}</button>`;
+    });
+    out += `</div>`;
+    if(done) out += `<div class="fb good"><strong>${q.reflective?"Noted.":"Nice!"}</strong> ${esc(q.opts[st.done[q.id]].fb)}</div>`;
+    else if(last !== undefined) out += `<div class="fb try"><strong>Not quite.</strong> ${esc(q.opts[last].fb)} Try another answer.</div>`;
+    out += `</div>`;
+  });
+  return out + `</div>`;
+}
+
+/* ---------- Views ---------- */
+const views = {};
+views.start = () => `${banner()}
+<header class="hero-text"><p class="eyebrow">ISTU 101</p><h1 class="title">HERO'S JOURNEY</h1>
+<p class="level">LEVEL 2: PREPARE FOR THE JOURNEY</p>
+<p class="lead">You accepted the call. Now step across the threshold and pack for the road ahead.</p>
+<button class="btn" data-act="start" data-k="start"><span aria-hidden="true">&#9654;</span> PRESS START</button></header>
+<section class="panel howto" aria-labelledby="htp"><h2 id="htp">How to play</h2>
+<ol class="steps"><li><span class="num">1</span><span>Tap or click a card to make your choice.</span></li>
+<li><span class="num">2</span><span>Answer a few short questions about your choice.</span></li>
+<li><span class="num">3</span><span>Press the yellow button to keep going.</span></li></ol>
+<p class="note">Five quests, about 15 minutes. Your choices stay on this page and are not saved or sent anywhere. At the end you will get a quest log to use in this week's discussion activity.</p></section>`;
+
+views.q1 = () => {
+  const n = S.packed.length;
+  const bad = S.packed.map(id => PROV.find(p => p.id === id)).filter(p => !p.e);
+  const perfect = n === PACK && !bad.length;
+  let status;
+  if(perfect){ award("pack", 20); status = `<div class="status good">Pack complete. These six keep a hero going, so you protect them first.</div>`; }
+  else if(n === PACK){ status = `<div class="status warn">Your pack is full, but not everything in it is a provision. Unpack and swap:<ul>${bad.map(p => `<li><strong>${esc(p.t)}.</strong> ${esc(p.why)}</li>`).join("")}</ul></div>`; }
+  else status = `<div class="status">Packed ${n} of ${PACK}. ${PACK-n} slot${PACK-n===1?"":"s"} left.</div>`;
+  const cards = PROV.map(p => {
+    const on = S.packed.includes(p.id);
+    return `<li><button class="card" data-act="pack" data-id="${p.id}" data-k="pack-${p.id}" aria-pressed="${on}">${icon(p.i,28)}<span class="tx"><span class="ct">${esc(p.t)}</span><br><span class="cs">${esc(p.s)}</span></span>${on?`<span class="badge">PACKED</span>`:""}</button></li>`;
+  }).join("");
+  const body = `<div class="how"><p>Tap a card to pack it. Tap again to unpack it.</p><span class="count">${n} / ${PACK}</span></div><ul class="cards">${cards}</ul>${status}${perfect ? qhtml("q1") : ""}`;
+  return frame("q1", body, perfect && qDone("q1"), perfect ? "Answer the quick checks to keep going." : "Pack the six provisions that keep a hero going.");
+};
+
+views.q2 = () => {
+  const kept = keptHours(), free = FLEX - kept, over = free < 0;
+  const keptPct = Math.min(kept, FLEX)/FLEX*100, markPct = (FLEX-NEED)/FLEX*100;
+  let ms;
+  if(over) ms = `You are over-packed by ${-free} hour${-free===1?"":"s"} before college even starts.`;
+  else if(free < NEED) ms = `${NEED-free} more hour${NEED-free===1?"":"s"} to clear for college.`;
+  else { award("room", 20); ms = `Room made! College fits, with ${free-NEED} hour${free-NEED===1?"":"s"} to spare.` + (free >= 28 ? " Keep something that gives you life, too." : ""); }
+  const meter = `<div class="meter"><div class="mrow"><span class="eyebrow">YOUR FLEX HOURS</span><span class="mnum ${over?"over":""}">${over?`OVER BY ${-free}H`:`${free}H OPEN`}</span></div>
+<div class="bar" role="img" aria-label="${kept} of ${FLEX} flexible hours are committed. ${Math.max(0,free)} are open."><span class="b-kept" style="width:${keptPct}%"></span><span class="b-free" style="width:${100-keptPct}%"></span><i class="mark" style="left:${markPct}%"></i></div>
+<div class="legend"><span><i class="sw gold"></i>Commitments kept: ${kept}h</span><span><i class="sw teal"></i>Open: ${Math.max(0,free)}h</span><span><i class="sw mk"></i>&nbsp;College needs ${NEED}h open</span></div>
+<p class="mstat">${ms}</p></div>`;
+  const rows = LOAD.map(l => {
+    const v = S.load[l.id];
+    const sub = v === "keep" ? `${l.h} hours a week` : v === "scale" ? `Now ${Math.ceil(l.h/2)} hours (saves ${l.h-Math.ceil(l.h/2)})` : `Set down (saves ${l.h})`;
+    const btn = (val,label) => `<button class="${val}" data-act="load" data-id="${l.id}" data-v="${val}" data-k="load-${l.id}-${val}" aria-pressed="${v===val}">${label}</button>`;
+    return `<li class="row ${v==="down"?"is-down":""}"><div class="rl">${icon(l.i,28)}<div style="min-width:0"><div class="ct">${esc(l.t)}</div><div class="cs">${sub}</div></div></div>
+<div class="seg" role="group" aria-label="Choice for ${esc(l.t)}">${btn("keep","Keep")}${btn("scale","Scale back")}${btn("down","Set down")}</div>
+${l.id==="small"&&v==="down"?`<p class="rnote">This one feeds your faith and your community. Scaling back might be wiser than setting it down.</p>`:""}</li>`;
+  }).join("");
+  const ok = free >= NEED;
+  const body = `${meter}<ul class="rows">${rows}</ul>${ok ? qhtml("q2") : ""}`;
+  return frame("q2", body, ok && qDone("q2"), ok ? "Answer the quick checks to keep going." : "Clear at least 15 open hours for college.");
+};
+
+views.q3 = () => {
+  const v = restStats(), n = S.rest.length, full = n === RESTPICKS;
+  const stat = Object.keys(RNAMES).map(t => {
+    const c = v[t] <= 3 ? "lo" : v[t] <= 5 ? "mid" : "hi";
+    return `<div class="stat"><span>${RNAMES[t]}</span><span class="blocks" role="img" aria-label="${RNAMES[t]} rest ${v[t]} of 10">${Array.from({length:10},(_,i) => `<i class="blk ${i<v[t]?c:""}"></i>`).join("")}</span><span class="sv">${v[t]}/10</span></div>`;
+  }).join("");
+  const charged = Object.keys(v).filter(t => v[t] >= 6), low = Object.keys(v).filter(t => v[t] < 6);
+  const thieves = REST.filter(r => S.rest.includes(r.id) && r.type === "drain");
+  let status;
+  if(!full) status = `<div class="status">Pick ${RESTPICKS-n} more power-up${RESTPICKS-n===1?"":"s"}. You have used ${n} of ${RESTPICKS}.</div>`;
+  else {
+    award("recharge", charged.length*5);
+    if(charged.length === 4) status = `<div class="status good">Fully recharged! One of each kind of rest, and no energy thieves.</div>`;
+    else status = `<div class="status warn">${charged.length} of 4 meters recharged. Still low: ${low.map(t => RNAMES[t].toLowerCase()).join(", ")}.${thieves.length ? ` Energy thieves in your picks: ${thieves.map(r => r.t.toLowerCase()).join(", ")}. ${thieves[0].why}` : ""} Tap a card to swap it out, or keep going.</div>`;
+  }
+  const cards = REST.map(r => {
+    const on = S.rest.includes(r.id);
+    return `<li><button class="card" data-act="rest" data-id="${r.id}" data-k="rest-${r.id}" aria-pressed="${on}">${icon(r.i,28,r.type==="drain"?"p":"t")}<span class="tx"><span class="ct">${esc(r.t)}</span><br><span class="cs">${RSUB[r.type]}</span></span>${on?`<span class="badge">PICKED</span>`:""}</button></li>`;
+  }).join("");
+  const body = `<div class="meter" style="position:static"><div class="mrow"><span class="eyebrow">YOUR ENERGY METERS</span><span class="mnum">${n} / ${RESTPICKS} PICKED</span></div><div class="stats">${stat}</div></div>
+<div class="how"><p>Tap a card to pick it. Tap again to put it back.</p></div><ul class="cards">${cards}</ul>${status}${full ? qhtml("q3") : ""}`;
+  return frame("q3", body, full && qDone("q3"), full ? "Answer the quick checks to keep going." : "Pick four rest power-ups to continue.");
+};
+
+views.q4 = () => {
+  const cards = STORMS.map(s => `<li><button class="card" data-act="storm" data-id="${s.id}" data-k="storm-${s.id}" aria-pressed="${S.storm===s.id}">${icon(s.i,28,"p")}<span class="tx"><span class="ct">${esc(s.t)}</span><br><span class="cs">${esc(s.s)}</span></span></button></li>`).join("");
+  const st = STORMS.find(x => x.id === S.storm);
+  const body = `<div class="how"><p>Tap a storm to face it.</p></div><ul class="cards">${cards}</ul>${st ? `<div class="scene"><span class="eyebrow">THE STORM HITS</span><p>${esc(st.scene)}</p></div>${qhtml("q4")}` : ""}`;
+  return frame("q4", body, !!st && qDone("q4"), st ? "Answer the quick checks to keep going." : "Choose a storm to face.");
+};
+
+views.q5 = () => {
+  const cards = STEPS.map(s => `<li><button class="card" data-act="step" data-id="${s.id}" data-k="step-${s.id}" aria-pressed="${S.step===s.id}">${icon(s.i,28)}<span class="tx"><span class="ct">${esc(s.t)}</span><br><span class="cs">${esc(s.s)}</span></span>${S.step===s.id?`<span class="badge">CHOSEN</span>`:""}</button></li>`).join("");
+  const sel = (key, label, opts, val) => `<div class="field"><label for="f-${key}">${label}</label><select id="f-${key}" data-sel="${key}"><option value="">Choose...</option>${opts.map(o => `<option value="${esc(o)}" ${val===o?"selected":""}>${esc(o)}</option>`).join("")}</select></div>`;
+  const st = STEPS.find(x => x.id === S.step);
+  let more = "";
+  if(st){
+    const ready = S.day && S.time && S.backup;
+    more = `<div class="fields">${sel("day","On which day?",DAYS,S.day)}${sel("time","At what time?",TIMES,S.time)}${sel("backup","If something disrupts it, I will...",BACKUPS,S.backup)}</div>
+<p class="sentence">${ready ? `This week, I will <strong>${esc(st.p)}</strong> on <strong>${esc(S.day)}</strong> <strong>${esc(S.time)}</strong>. If something disrupts my plan, I will <strong>${esc(S.backup)}</strong>.` : "Fill in all three choices to see your plan."}</p>
+<div class="actions" style="margin-top:16px"><span></span><button class="btn ghost" data-act="lock" data-k="lock" ${ready?"":"disabled"}>${S.locked?"PLAN LOCKED":"LOCK IT IN"}</button></div>
+${S.locked ? `<div class="status good">Plan locked. A plan with a backup is a plan that bends.</div>` : ""}`;
+  }
+  const body = `<div class="how"><p>Tap the one step you will take this week.</p></div><ul class="cards">${cards}</ul>${more}`;
+  return frame("q5", body, S.locked, st ? "Fill in your day, time, and backup, then lock it in." : "Choose one practical step.");
+};
+
+function stepSentence(){
+  const st = STEPS.find(x => x.id === S.step);
+  return `This week, I will ${st.p} on ${S.day} ${S.time}. If something disrupts my plan, I will ${S.backup}.`;
+}
+function logItems(){
+  const names = (arr, test) => arr.filter(test).map(x => x.t);
+  const join = a => a.length ? a.join(", ") : "nothing";
+  const free = FLEX - keptHours();
+  const rest = REST.filter(r => S.rest.includes(r.id)).map(r => r.t);
+  const v = restStats(), storm = STORMS.find(x => x.id === S.storm);
+  return [
+    ["My Provisions", "I packed " + S.packed.map(id => PROV.find(p => p.id === id).t.toLowerCase()).join(", ") + ". I plan college around these, not in place of them."],
+    ["My Load", `Set down: ${join(names(LOAD, l => S.load[l.id]==="down"))}. Scaled back: ${join(names(LOAD, l => S.load[l.id]==="scale"))}. Kept: ${join(names(LOAD, l => S.load[l.id]==="keep"))}. That leaves ${free} open hours a week for college.`],
+    ["My Rest", `My rest power-ups: ${rest.join(", ")}. My meters ended at physical ${v.physical}, mental ${v.mental}, quiet ${v.quiet}, and social ${v.social} out of 10.`],
+    ["My Storm Plan", `If ${storm.t.toLowerCase()} hits, I will use my buffer hours, adjust my plan on purpose, and ask for help early.`],
+    ["My First Step", stepSentence()]
+  ];
+}
+views.done = () => {
+  const items = logItems();
+  const dl = items.map(([a,b]) => `<div><dt>${a.toUpperCase()}</dt><dd>${esc(b)}</dd></div>`).join("");
+  const text = items.map(([a,b]) => `${a}: ${b}`).join("\n\n");
+  return `${banner()}
+<header class="done-head"><p class="eyebrow">LEVEL 2 COMPLETE</p><h1 class="title" style="font-size:clamp(22px,6vw,42px)">YOU CROSSED THE THRESHOLD</h1>
+<p class="level">+${S.xp} XP EARNED</p>
+<p class="verse" style="text-align:center">&ldquo;There is a time for everything, and a season for every activity under the heavens.&rdquo; &mdash; Ecclesiastes 3:1 (NIV)</p></header>
+<section class="panel" aria-labelledby="logt"><h2 id="logt" class="qtitle" style="font-size:16px">YOUR QUEST LOG</h2>
+<p class="story" style="margin-top:10px">Here is what you decided. Use it when you respond to this week's discussion activity.</p>
+<dl class="logs">${dl}</dl>
+<textarea class="logtext" id="logtext" readonly aria-label="Your quest log as plain text">${esc(text)}</textarea>
+<div class="actions" style="margin-top:14px"><span class="hint" id="copyhint"></span><button class="btn ghost" data-act="copy" data-k="copy">COPY MY QUEST LOG</button></div>
+<div class="bigq"><span class="eyebrow">THE BIGGER QUEST</span><p>What would change if you saw time as something to steward rather than something you are losing?</p></div>
+<div class="levelup"><span class="eyebrow">NEXT: LEVEL UP</span>
+<p>What you learned here does not end with this game. <strong>You will use it in the assignment titled &ldquo;Level Up Project.&rdquo;</strong></p>
+<p>Keep your quest log handy. Next, complete this week's discussion activity and share what you discovered.</p></div>
+<div class="actions"><button class="btn ghost" data-act="restart" data-k="restart">PLAY AGAIN</button><span></span></div></section>`;
+};
+
+/* ---------- Engine ---------- */
+const app = document.getElementById("app");
+function update(){
+  const a = document.activeElement, key = a && a.dataset ? a.dataset.k : null, y = window.scrollY;
+  app.innerHTML = views[S.screen]();
+  window.scrollTo(0, y);
+  if(key){ const n = app.querySelector(`[data-k="${key}"]`); if(n && !n.disabled) n.focus({preventScroll:true}); }
+}
+function go(s){
+  S.screen = s; app.innerHTML = views[s]();
+  window.scrollTo(0, 0);
+  const h = app.querySelector("h1"); if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); }
+}
+function toggle(list, id, max){
+  const i = list.indexOf(id);
+  if(i >= 0){ list.splice(i,1); return true; }
+  if(list.length >= max){ say("Full. Tap a picked card to put it back first."); return false; }
+  list.push(id); return true;
+}
+function act(a, d){
+  if(a === "start") return go("q1");
+  if(a === "next") return go(d.to);
+  if(a === "restart"){
+    S.xp = 0; S.packed = []; S.rest = []; S.storm = null; S.qs = {}; S.step = null; S.day = ""; S.time = ""; S.backup = ""; S.locked = false; S.awarded = {};
+    LOAD.forEach(l => { S.load[l.id] = "keep"; });
+    return go("start");
+  }
+  if(a === "pack"){ toggle(S.packed, d.id, PACK); return update(); }
+  if(a === "rest"){ toggle(S.rest, d.id, RESTPICKS); return update(); }
+  if(a === "load"){ S.load[d.id] = d.v; return update(); }
+  if(a === "storm"){ S.storm = d.id; S.qs.q4 = null; delete S.qs.q4; return update(); }
+  if(a === "step"){ S.step = d.id; S.locked = false; return update(); }
+  if(a === "lock"){ S.locked = true; award("lock", 20); say("Plan locked."); return update(); }
+  if(a === "ans"){
+    const k = S.screen, list = questionsFor(k), q = list.find(x => x.id === d.q), j = +d.j, st = qs(k), o = q.opts[j];
+    st.last[q.id] = j;
+    if(o.ok || q.reflective){
+      st.done[q.id] = j; award("a-" + q.id, (st.wrong[q.id]||[]).length ? 5 : 10);
+      st.idx = Math.max(st.idx, list.indexOf(q) + 1); say(o.fb);
+    } else { (st.wrong[q.id] = st.wrong[q.id] || []).push(j); say("Not quite. " + o.fb); }
+    return update();
+  }
+  if(a === "copy"){
+    const ta = document.getElementById("logtext"), hint = document.getElementById("copyhint");
+    const fallback = () => { ta.focus(); ta.select(); if(hint) hint.textContent = "Press Ctrl+C (or Cmd+C) to copy."; };
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(ta.value).then(() => { if(hint) hint.textContent = "Copied. Paste it into your notes."; say("Copied."); }, fallback);
+      } else fallback();
+    } catch(e){ fallback(); }
+  }
+}
+app.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if(!b || b.disabled) return;
+  act(b.dataset.act, b.dataset);
+});
+app.addEventListener("change", e => {
+  const s = e.target.closest("[data-sel]"); if(!s) return;
+  S[s.dataset.sel] = s.value; S.locked = false; update();
+});
+app.innerHTML = views.start();
+</script>
+
+</body></html>
