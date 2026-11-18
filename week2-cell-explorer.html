@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 2 Interactive: Cell Explorer</title>
+<style>
+:root{--red:#d34147;--red-d:#a8353a;--ink:#222;--muted:#585858;--panel:#f6f4f1;--line:#e2ded8;--good:#2e7d4f;--bad:#b3261e}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.app{height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--red);color:#fff}
+header .wk{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#fff;color:var(--red-d);padding:3px 9px;border-radius:99px}
+header h1{font-size:18px;margin:0;font-weight:700}
+nav{display:flex;gap:4px;padding:8px 16px 0;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-size:14px;font-weight:600;border:0;background:none;color:var(--muted);padding:8px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected=true]{color:var(--red-d);border-bottom-color:var(--red)}
+nav button:focus-visible,.chip:focus-visible,.btn:focus-visible{outline:3px solid #1a5fb4;outline-offset:2px}
+main{flex:1;min-height:0;position:relative}
+section{position:absolute;inset:0;display:none;padding:12px 16px;gap:14px}
+section.on{display:flex}
+.stage{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.stage svg{flex:1;min-height:0;width:100%}
+.side{width:300px;flex:none;background:var(--panel);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.side h2{margin:0;font-size:19px}
+.side p{margin:0;font-size:14px;line-height:1.45}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.analogy{background:#fff;border-left:4px solid var(--red);padding:8px 10px;border-radius:6px;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:4px 10px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--red);color:#fff;border-color:var(--red)}
+.toggle{display:inline-flex;border:1.5px solid var(--red);border-radius:99px;overflow:hidden;align-self:flex-start}
+.toggle button{font:inherit;font-size:13px;font-weight:600;border:0;background:#fff;color:var(--red-d);padding:5px 14px;cursor:pointer}
+.toggle button[aria-pressed=true]{background:var(--red);color:#fff}
+.btn{font:inherit;font-size:14px;font-weight:600;background:var(--red);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn.alt{background:#fff;color:var(--red-d);border:1.5px solid var(--red)}
+.part{cursor:pointer}
+.part:hover .hl,.part.sel .hl{filter:drop-shadow(0 0 5px rgba(211,65,71,.9))}
+.part.sel .hl{stroke:#d34147;stroke-width:3.5}
+.part.flash-good .hl{filter:drop-shadow(0 0 8px #2e7d4f)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.q{font-size:16px;font-weight:600;margin:0}
+.fb{min-height:44px;font-size:14px;font-weight:600}
+.fb.good{color:var(--good)}.fb.bad{color:var(--bad)}
+.score{font-size:13px;color:var(--muted)}
+.bar{height:10px;background:#fff;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--red);width:0;transition:width .3s}
+.stg{cursor:pointer}
+@media (max-width:760px){
+ section{flex-direction:column;padding:8px 10px;gap:8px}
+ .side{width:auto;padding:10px;gap:6px;flex:none;max-height:46%}
+ .side h2{font-size:16px}.side p,.analogy{font-size:12.5px}
+ header h1{font-size:15px}nav button{padding:6px 9px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <header><span class="wk">Week 2</span><h1>Cell Explorer: Structure and Function</h1></header>
+ <nav role="tablist" aria-label="Activities">
+  <button role="tab" aria-selected="true" data-tab="explore">1 · Explore the Cell</button>
+  <button role="tab" aria-selected="false" data-tab="test">2 · Test Yourself</button>
+  <button role="tab" aria-selected="false" data-tab="energy">3 · Energy Path</button>
+ </nav>
+ <main>
+  <section id="explore" class="on">
+   <div class="stage"><svg id="cellA" viewBox="0 0 600 440" role="img" aria-label="Diagram of a cell. Select a part to learn about it."></svg></div>
+   <aside class="side">
+    <div class="toggle" role="group" aria-label="Cell type"><button data-ct="euk" aria-pressed="true">Eukaryotic</button><button data-ct="pro" aria-pressed="false">Prokaryotic</button></div>
+    <div class="tag">Select a part</div>
+    <div class="chips" id="chips"></div>
+    <div id="info"></div>
+   </aside>
+  </section>
+  <section id="test">
+   <div class="stage"><svg id="cellB" viewBox="0 0 600 440" role="img" aria-label="Unlabeled cell diagram for the quiz"></svg></div>
+   <aside class="side">
+    <div class="toggle" role="group" aria-label="Cell type"><button data-ct="euk" aria-pressed="true">Eukaryotic</button><button data-ct="pro" aria-pressed="false">Prokaryotic</button></div>
+    <div class="tag" id="round">Round 1 of 6</div>
+    <div class="bar"><i id="prog"></i></div>
+    <p class="q" id="question"></p>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="score" id="score"></div>
+    <button class="btn alt" id="again" style="display:none">Play again</button>
+    <p class="hint">Click the part of the cell in the diagram that matches the job.</p>
+   </aside>
+  </section>
+  <section id="energy" style="flex-direction:column">
+   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div class="toggle" role="group" aria-label="Oxygen"><button id="o2on" aria-pressed="true">Oxygen present</button><button id="o2off" aria-pressed="false">No oxygen</button></div>
+    <span class="hint">Click each stage (or press Next) to follow one glucose molecule.</span>
+    <button class="btn" id="next" style="margin-left:auto">Next stage ▶</button><button class="btn alt" id="reset">Reset</button>
+   </div>
+   <svg id="energySvg" viewBox="0 0 900 330" style="flex:1;min-height:0;width:100%" role="img" aria-label="Three stages of cellular respiration and ATP yield"></svg>
+   <div class="side" style="width:auto;flex:none;padding:10px 14px"><p id="eInfo"></p></div>
+  </section>
+ </main>
+</div>
+<script>
+const NS='http://www.w3.org/2000/svg';
+/* ---------- Cell graphics ---------- */
+const dots=(pts,r=3.2,c='#7a4a12')=>pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="${c}"/>`).join('');
+const EUK=`
+<ellipse cx="300" cy="220" rx="270" ry="195" fill="#fdeeea"/>
+<g class="part" data-id="cyto"><g class="hl" stroke="#8fa6b8" stroke-width="2.2" fill="none" stroke-linecap="round">
+ <path d="M230 190 L95 120M230 190 L70 230M300 140 L330 45M330 200 L520 150M230 260 L250 395M330 250 L470 300M200 140 L190 60M370 210 L545 230"/></g>
+ <g stroke="transparent" stroke-width="14" fill="none"><path d="M230 190 L95 120M230 190 L70 230M300 140 L330 45M330 200 L520 150M230 260 L250 395M330 250 L470 300M200 140 L190 60M370 210 L545 230"/></g></g>
+<g class="part" data-id="rer"><g class="hl" fill="none" stroke="#e8a24a" stroke-width="11" stroke-linecap="round">
+ <path d="M318 128 q38 30 0 62"/><path d="M332 118 q52 42 0 92"/><path d="M346 110 q66 54 0 118"/><path d="M360 104 q80 66 0 140"/></g>
+ ${dots([[352,130],[372,150],[384,178],[388,206],[372,236],[351,142],[366,170]],2.6)}</g>
+<g class="part" data-id="nuc"><circle class="hl" cx="230" cy="195" r="72" fill="#cfd8f3" stroke="#5a6fb8" stroke-width="3" stroke-dasharray="1 0"/>
+ <circle cx="238" cy="188" r="22" fill="#8f9fd8"/><path d="M185 225q20 14 40 4M200 160q18-12 36-4" stroke="#7283c9" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+<g class="part" data-id="ser"><g class="hl" fill="none" stroke="#e7c44f" stroke-width="12" stroke-linecap="round">
+ <path d="M95 335q25-28 50-6t50-10"/><path d="M110 365q28-24 56-4t56-6"/><path d="M95 335q-10 20 15 30"/></g></g>
+<g class="part" data-id="golgi"><g class="hl" fill="none" stroke="#9b5fb0" stroke-width="10" stroke-linecap="round">
+ <path d="M390 275q40-16 85 0"/><path d="M388 295q42-16 90 0"/><path d="M390 315q42-16 86 0"/><path d="M394 335q38-14 78 0"/></g>
+ <circle cx="490" cy="288" r="7" fill="#c9a0d8"/><circle cx="382" cy="352" r="6" fill="#c9a0d8"/></g>
+<g class="part" data-id="mito" transform="translate(115 165) rotate(-30)"><ellipse class="hl" rx="52" ry="25" fill="#f4a58e" stroke="#c4482c" stroke-width="3"/><path d="M-38 0q6-14 12 0t12 0 12 0 12 0 12 0" fill="none" stroke="#c4482c" stroke-width="2.5" transform="translate(0 6)"/><path d="M-34-8q6 12 12 0t12 0 12 0 12 0 12 0" fill="none" stroke="#c4482c" stroke-width="2.5"/></g>
+<g class="part" data-id="mito" transform="translate(470 175) rotate(25)"><ellipse class="hl" rx="52" ry="25" fill="#f4a58e" stroke="#c4482c" stroke-width="3"/><path d="M-38 0q6-14 12 0t12 0 12 0 12 0 12 0" fill="none" stroke="#c4482c" stroke-width="2.5" transform="translate(0 6)"/><path d="M-34-8q6 12 12 0t12 0 12 0 12 0 12 0" fill="none" stroke="#c4482c" stroke-width="2.5"/></g>
+<g class="part" data-id="ribo"><g class="hl">${dots([[290,330],[310,350],[270,360],[330,320],[210,95],[250,80],[400,100],[430,230],[160,260],[300,95],[340,380],[510,250]],4.5,'#5b3a8a')}</g>
+ ${[[290,330],[310,350],[270,360],[330,320],[210,95],[250,80],[400,100],[430,230],[160,260],[300,95],[340,380],[510,250]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="transparent"/>`).join('')}</g>
+<g class="part" data-id="mem"><ellipse cx="300" cy="220" rx="270" ry="195" fill="none" stroke="transparent" stroke-width="22"/><ellipse class="hl" cx="300" cy="220" rx="270" ry="195" fill="none" stroke="#d34147" stroke-width="6"/></g>`;
+const PRO=`
+<g class="part" data-id="wall"><rect class="hl" x="55" y="115" width="490" height="215" rx="108" fill="#f0e3c8" stroke="#a9833a" stroke-width="7"/></g>
+<g class="part" data-id="mem"><rect class="hl" x="72" y="132" width="456" height="181" rx="90" fill="#fdeeea" stroke="#d34147" stroke-width="5"/></g>
+<g class="part" data-id="nucleoid"><path class="hl" d="M215 222q14-52 40-34t30 34-32 40 40 10 42-30-24-44" fill="none" stroke="#5a6fb8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="290" cy="222" rx="95" ry="52" fill="#cfd8f3" opacity=".35"/></g>
+<g class="part" data-id="plasmid"><circle class="hl" cx="410" cy="250" r="20" fill="none" stroke="#2e7d4f" stroke-width="6"/></g>
+<g class="part" data-id="ribo"><g class="hl">${dots([[150,190],[165,250],[130,225],[200,280],[360,170],[330,285],[450,190],[470,240],[250,160],[185,170]],5.5,'#5b3a8a')}</g>
+ ${[[150,190],[165,250],[130,225],[200,280],[360,170],[330,285],[450,190],[470,240],[250,160],[185,170]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="transparent"/>`).join('')}</g>
+<g class="part" data-id="flag"><path class="hl" d="M545 222q25-30 45 0t-5 30" fill="none" stroke="#6b6b6b" stroke-width="6" stroke-linecap="round"/><path d="M545 222h-12" stroke="#6b6b6b" stroke-width="6"/></g>
+<g class="part" data-id="pili"><g class="hl" stroke="#6b6b6b" stroke-width="3" stroke-linecap="round"><path d="M200 118v-28M250 116v-34M300 115v-30M350 116v-32M400 118v-26M230 328v26M310 330v28M390 326v24"/></g><g stroke="transparent" stroke-width="12"><path d="M200 118v-28M250 116v-34M300 115v-30M350 116v-32M400 118v-26M230 328v26M310 330v28M390 326v24"/></g></g>`;
+const INFO={
+ euk:{svg:EUK,parts:{
+  nuc:{n:'Nucleus',job:'Stores DNA and controls the cell’s activities',an:'City hall: it holds the master plans and gives the orders.',q:'Stores the cell’s DNA'},
+  rer:{n:'Rough ER',job:'Ribosomes on its surface make proteins that are folded and sent onward',an:'A factory floor where products are assembled.',q:'Is studded with ribosomes and helps make proteins'},
+  ser:{n:'Smooth ER',job:'Makes lipids and detoxifies substances; has no ribosomes',an:'A specialty workshop for oils and cleanup.',q:'Makes lipids and has no ribosomes'},
+  golgi:{n:'Golgi apparatus',job:'Modifies, sorts and ships molecules in vesicles',an:'The post office: it packages, labels and delivers.',q:'Modifies, packages and ships molecules'},
+  mito:{n:'Mitochondrion',job:'Releases usable energy (ATP) from glucose through cellular respiration',an:'The power plant of the city.',q:'Releases energy from glucose as ATP'},
+  ribo:{n:'Ribosomes',job:'Build proteins by reading instructions from RNA',an:'Small assembly robots building one product at a time.',q:'Builds proteins (many are free in the cytoplasm)'},
+  cyto:{n:'Cytoskeleton',job:'Gives the cell shape and moves materials and organelles',an:'The roads and steel frame of the city.',q:'Gives the cell shape and moves materials'},
+  mem:{n:'Plasma membrane',job:'Surrounds the cell and controls what enters and leaves',an:'The city limits with security checkpoints.',q:'Controls what enters and leaves the cell'}}},
+ pro:{svg:PRO,parts:{
+  wall:{n:'Cell wall',job:'Rigid outer layer that protects the cell and keeps its shape',an:'A fortress wall.',q:'Is a rigid layer that protects and shapes the cell'},
+  mem:{n:'Plasma membrane',job:'Controls what enters and leaves; many reactions occur on it',an:'A gate with security checkpoints.',q:'Controls what enters and leaves the cell'},
+  nucleoid:{n:'Nucleoid',job:'Region holding the main DNA. There is no membrane around it',an:'Plans kept in an open office instead of a locked city hall.',q:'Holds the main DNA with no membrane around it'},
+  plasmid:{n:'Plasmid',job:'Small ring of extra DNA, often carrying traits such as antibiotic resistance',an:'A spare USB drive of useful tools.',q:'Is a small extra ring of DNA'},
+  ribo:{n:'Ribosomes',job:'Build proteins. Prokaryotic ribosomes are smaller than eukaryotic ones',an:'Small assembly robots.',q:'Builds proteins'},
+  flag:{n:'Flagellum',job:'Whip-like tail that spins to move the cell',an:'An outboard motor.',q:'Spins to move the cell'},
+  pili:{n:'Pili',job:'Short hair-like projections that attach the cell to surfaces',an:'Grappling hooks and handles.',q:'Hair-like projections that help the cell attach'}}}};
+let ct='euk';
+function mount(svg){svg.innerHTML=INFO[ct].svg}
+const A=document.getElementById('cellA'),B=document.getElementById('cellB');
+/* ---------- Explore ---------- */
+let sel=null;
+function renderExplore(){
+ mount(A);sel=null;
+ const P=INFO[ct].parts;
+ document.getElementById('chips').innerHTML=Object.keys(P).map(k=>`<button class="chip" data-id="${k}" aria-pressed="false">${P[k].n}</button>`).join('');
+ document.getElementById('info').innerHTML=`<p class="hint">Click any part of the cell, or a name above, to see what it does. ${ct==='pro'?'Notice: no nucleus and no membrane-bound organelles.':'Notice the membrane-bound organelles.'}</p>`;
+}
+function select(id){
+ const p=INFO[ct].parts[id];sel=id;
+ A.querySelectorAll('.part').forEach(e=>e.classList.toggle('sel',e.dataset.id===id));
+ document.querySelectorAll('#chips .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.id===id));
+ document.getElementById('info').innerHTML=`<h2>${p.n}</h2><div class="tag">Job</div><p>${p.job}.</p><div class="analogy"><b>City analogy:</b> ${p.an}</div>`;
+}
+A.addEventListener('click',e=>{const g=e.target.closest('.part');if(g)select(g.dataset.id)});
+document.getElementById('chips').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c)select(c.dataset.id)});
+/* ---------- Quiz ---------- */
+let order,round,score,locked;
+function newGame(){
+ mount(B);const keys=Object.keys(INFO[ct].parts);
+ order=keys.sort(()=>Math.random()-.5).slice(0,6);round=0;score=0;locked=false;
+ document.getElementById('again').style.display='none';ask();
+}
+function ask(){
+ const P=INFO[ct].parts;
+ document.getElementById('round').textContent=`Round ${round+1} of ${order.length}`;
+ document.getElementById('prog').style.width=(round/order.length*100)+'%';
+ document.getElementById('question').textContent='Which part '+P[order[round]].q.replace(/^(\w)/,c=>c.toLowerCase())+'?';
+ document.getElementById('fb').textContent='';document.getElementById('fb').className='fb';
+ document.getElementById('score').textContent=`Score: ${score}`;locked=false;
+}
+B.addEventListener('click',e=>{
+ const g=e.target.closest('.part');if(!g||locked||round>=order.length)return;
+ const P=INFO[ct].parts,fb=document.getElementById('fb'),want=order[round];locked=true;
+ if(g.dataset.id===want){score++;fb.className='fb good';fb.textContent='Correct! That is the '+P[want].n.toLowerCase()+'.';
+  B.querySelectorAll(`.part[data-id="${want}"]`).forEach(x=>x.classList.add('flash-good'));}
+ else{fb.className='fb bad';fb.textContent=`Not quite. You chose the ${P[g.dataset.id].n.toLowerCase()}. The answer is the ${P[want].n.toLowerCase()}.`;
+  B.querySelectorAll(`.part[data-id="${want}"]`).forEach(x=>x.classList.add('sel'));}
+ document.getElementById('score').textContent=`Score: ${score}`;
+ setTimeout(()=>{B.querySelectorAll('.part').forEach(x=>x.classList.remove('sel','flash-good'));round++;
+  if(round<order.length)ask();
+  else{document.getElementById('prog').style.width='100%';document.getElementById('round').textContent='Finished';
+   document.getElementById('question').textContent=`You scored ${score} out of ${order.length}.`;
+   fb.className='fb';fb.textContent=score>=5?'Great work. You know your organelles.':'Review the Explore tab, then try again.';
+   document.getElementById('again').style.display='inline-block';}},1500);
+});
+document.getElementById('again').onclick=newGame;
+/* ---------- Cell type toggles ---------- */
+document.querySelectorAll('.toggle [data-ct]').forEach(b=>b.onclick=()=>{
+ ct=b.dataset.ct;document.querySelectorAll('.toggle [data-ct]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.ct===ct));
+ renderExplore();newGame();});
+/* ---------- Energy path ---------- */
+let o2=true,stage=0;
+const ST=[
+ {t:'Glycolysis',loc:'Cytoplasm',atp:2,tot:'2',d:'Glucose is split in the cytoplasm. Net gain: 2 ATP. This step does not need oxygen.'},
+ {t:'Citric acid cycle',loc:'Mitochondrial matrix',atp:2,tot:'4',d:'Fragments of glucose are broken down completely to CO₂. A small amount of ATP is made, and electron carriers are loaded.'},
+ {t:'Electron transport chain',loc:'Inner mitochondrial membrane',atp:26,tot:'30–32',d:'Electron carriers drop their electrons here, and oxygen accepts them to make water. This stage makes most of the ATP.'}];
+function drawEnergy(){
+ const s=document.getElementById('energySvg');let h='';
+ h+=`<rect x="0" y="0" width="900" height="330" fill="#fff"/>`;
+ h+=`<text x="20" y="38" font-size="15" font-weight="700" fill="#585858">GLUCOSE</text><circle cx="42" cy="110" r="26" fill="#f4c542" stroke="#9a7a0e" stroke-width="3"/><path d="M28 100h28M28 112h28M32 124h20" stroke="#9a7a0e" stroke-width="3" stroke-linecap="round"/>`;
+ const xs=[150,400,650];
+ ST.forEach((x,i)=>{
+  const active=stage>i,dead=!o2&&i>0,cur=stage===i+1;
+  const fill=dead?'#ececec':active?'#fdeeea':'#fff',stroke=dead?'#bbb':cur?'#d34147':'#c9b8b4';
+  h+=`<g class="stg" data-i="${i}" tabindex="0" role="button" aria-label="${x.t}"><rect x="${xs[i]}" y="60" width="220" height="110" rx="14" fill="${fill}" stroke="${stroke}" stroke-width="${cur?5:2.5}"/>
+  <text x="${xs[i]+110}" y="92" text-anchor="middle" font-size="16" font-weight="700" fill="${dead?'#777':'#222'}">${i+1}. ${x.t}</text>
+  <text x="${xs[i]+110}" y="116" text-anchor="middle" font-size="12.5" fill="#585858">${x.loc}</text>
+  <text x="${xs[i]+110}" y="150" text-anchor="middle" font-size="15" font-weight="700" fill="${dead?'#777':'#a8353a'}">${dead?'needs oxygen':(i===2?'about +26–28':'+'+x.atp)+' ATP'}</text></g>`;
+  if(i<2)h+=`<path d="M${xs[i]+224} 115h22" stroke="#888" stroke-width="3" marker-end="url(#ar)"/>`;
+ });
+ h+=`<path d="M70 115h76" stroke="#888" stroke-width="3" marker-end="url(#ar)"/><defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#888"/></marker></defs>`;
+ /* ATP tally */
+ const total=!o2?(stage>0?2:0):stage===0?0:stage===1?2:stage===2?4:31;
+ h+=`<text x="20" y="225" font-size="14" font-weight="700" fill="#585858">ATP MADE SO FAR${!o2&&stage>0?' (fermentation continues, no extra ATP)':''}</text>`;
+ const max=32,w=860;
+ h+=`<rect x="20" y="238" width="${w}" height="26" rx="6" fill="#f0ece8"/><rect x="20" y="238" width="${Math.max(0,total/max*w)}" height="26" rx="6" fill="#d34147" style="transition:width .5s"/>`;
+ h+=`<text x="${Math.min(30+total/max*w,860)}" y="256" font-size="14" font-weight="700" fill="${total/max>.12?'#fff':'#222'}" text-anchor="${total/max>.12?'end':'start'}" ${total/max>.12?`dx="-8" x="${20+total/max*w}"`:''}>${total?(stage===3&&o2?'~30–32 ATP':total+' ATP'):'0'}</text>`;
+ h+=`<text x="20" y="295" font-size="13" fill="#585858">Scale: one full glucose molecule can yield about 30–32 ATP with oxygen, but only 2 ATP without it.</text>`;
+ s.innerHTML=h;
+ const cur=stage?(o2||stage===1?ST[stage-1]:null):null;
+ document.getElementById('eInfo').innerHTML=!stage?'<b>Start here:</b> glucose (from food) holds chemical energy. Cells transfer that energy to ATP in three stages.':
+  (!o2?'<b>Without oxygen</b> only glycolysis can run, making 2 ATP. Cells then use fermentation to keep glycolysis going. Muscle cells make lactic acid; yeast make alcohol and CO₂.':`<b>${cur.t}</b> (${cur.loc}). ${cur.d}`);
+}
+function go(n){stage=Math.max(0,Math.min(o2?3:1,n));drawEnergy()}
+document.getElementById('next').onclick=()=>go(stage>=(o2?3:1)?0:stage+1);
+document.getElementById('reset').onclick=()=>go(0);
+document.getElementById('energySvg').addEventListener('click',e=>{const g=e.target.closest('.stg');if(g)go(+g.dataset.i+1)});
+document.getElementById('energySvg').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const g=e.target.closest('.stg');if(g){e.preventDefault();go(+g.dataset.i+1)}}});
+function setO2(v){o2=v;document.getElementById('o2on').setAttribute('aria-pressed',v);document.getElementById('o2off').setAttribute('aria-pressed',!v);go(0)}
+document.getElementById('o2on').onclick=()=>setO2(true);document.getElementById('o2off').onclick=()=>setO2(false);
+/* ---------- Tabs ---------- */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.tab));
+ if(b.dataset.tab==='test')newGame();
+});
+renderExplore();drawEnergy();
+</script>
+</body>
+</html>
