@@ -1,0 +1,494 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hero's Journey Level 6</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: one centered column. Illustrated scene on top, progress track, then one screen at a time.
+   Look: single dark arcade world (starry navy, gold buttons, pink shadow title) matching Level 1. */
+:root{
+  --bg:#0e1033; --panel:#1b2060; --panel2:#252b7a; --edge:#5560d6;
+  --gold:#ffd24a; --gold-deep:#d9a21f; --pink:#ff5c8a; --mint:#4fe0c0;
+  --ink:#171a45; --text:#f4f5ff; --muted:#b9bff2; --warn:#ffb86b;
+  --display:'Silkscreen','Courier New',monospace;
+  --body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--bg); color:var(--text);
+  background-image:
+    radial-gradient(1.5px 1.5px at 24px 36px,#ffffffcc,transparent),
+    radial-gradient(1px 1px at 120px 90px,#ffffff99,transparent),
+    radial-gradient(1.5px 1.5px at 180px 170px,#ffd24acc,transparent),
+    radial-gradient(1px 1px at 70px 200px,#ffffff77,transparent);
+  background-size:230px 230px;
+  font:17px/1.55 var(--body);
+  padding-block:20px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:860px;margin:0 auto;display:grid;gap:22px}
+h1,h2,h3,h4,p{margin:0}
+p{max-width:65ch}
+.scene{border:4px solid var(--edge);border-radius:22px;overflow:hidden;box-shadow:0 8px 0 #080922;line-height:0;background:#1c1b55}
+.scene svg{width:100%;height:auto;display:block}
+#storm{transform-box:fill-box;transform-origin:50% 60%;transform:scale(var(--s,1));transition:transform .9s ease,opacity .9s ease}
+#dim{transition:opacity .9s ease}
+#sun,#glow{transition:opacity 1.2s ease}
+.scene.clear #storm{opacity:0;transform:scale(.15) translateY(-40px)}
+.scene.clear #dim{opacity:0}
+.scene.clear #sun{opacity:1}
+.scene.clear #glow{opacity:.35}
+
+.track{display:grid;gap:8px}
+.segs{display:flex;gap:6px}
+.seg{flex:1;height:10px;border-radius:3px;background:#2a2f86}
+.seg.done{background:var(--mint)}
+.seg.cur{background:var(--gold)}
+.plabels{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;font:400 9px/1.3 var(--display);letter-spacing:.03em;text-transform:uppercase;color:var(--muted);text-align:center}
+.plabels .cur{color:var(--gold)}
+
+main{display:grid;gap:22px;min-width:0}
+.center{text-align:center;justify-items:center;display:grid;gap:14px}
+.eyebrow{font:700 13px var(--display);letter-spacing:.14em;color:var(--mint)}
+h1{font:700 clamp(2rem,9vw,4.3rem)/1.05 var(--display);letter-spacing:.04em;text-transform:uppercase;color:#fff;text-shadow:3px 3px 0 var(--pink),6px 6px 0 #0a0b26}
+.lvl{font:700 clamp(1.1rem,4.5vw,1.9rem) var(--display);letter-spacing:.08em;color:var(--gold);text-transform:uppercase}
+h2.stage{font:700 clamp(1.15rem,4vw,1.6rem)/1.25 var(--display);letter-spacing:.05em;color:var(--gold);text-transform:uppercase}
+h2.stage:focus{outline:none}
+h3{font:700 .95rem var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+h4{font:700 .8rem var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--mint)}
+.lead{color:var(--text)}
+.muted{color:var(--muted)}
+
+.panel{background:var(--panel);border:3px solid var(--edge);border-radius:18px;padding:20px;display:grid;gap:14px;min-width:0}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.steps li{display:flex;gap:14px;align-items:center}
+.steps b{flex:none;width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font:700 14px var(--display)}
+.verse{border-left:5px solid var(--gold);padding-left:14px;font-style:italic}
+.verse small{display:block;font-style:normal;color:var(--muted);margin-top:4px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.card{font:inherit;color:var(--text);text-align:left;background:var(--panel2);border:3px solid var(--edge);border-radius:14px;padding:14px 16px;cursor:pointer;display:grid;gap:4px;align-content:start;transition:transform .12s ease,border-color .12s ease;min-width:0}
+.card strong{font-weight:800}
+.card span{color:var(--muted);font-size:.93rem}
+.card:hover:not(:disabled){transform:translateY(-2px)}
+.card.on{border-color:var(--gold);background:#2f3590;box-shadow:0 0 0 3px #ffd24a33}
+.card.good{border-color:var(--mint);background:#1c4a72}
+.card.best{border-color:var(--mint)}
+.card.miss{border-color:var(--warn);opacity:.75}
+.card:disabled{cursor:default}
+.card .tool{font:700 11px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--mint)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font:inherit;font-weight:700;color:var(--text);background:var(--panel2);border:3px solid var(--edge);border-radius:999px;padding:7px 16px;cursor:pointer}
+.chip.on{border-color:var(--gold);background:#2f3590}
+.block{display:grid;gap:12px}
+input[type=text],textarea{font:inherit;color:var(--text);background:#12154a;border:3px solid var(--edge);border-radius:12px;padding:12px 14px;width:100%}
+input[type=text]::placeholder,textarea::placeholder{color:#8a91d6}
+label{font-weight:700}
+
+.btn{font:700 1.15rem var(--display);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--ink);border:0;border-radius:12px;padding:14px 28px;cursor:pointer;box-shadow:0 6px 0 var(--gold-deep);transition:transform .08s ease,box-shadow .08s ease}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 var(--gold-deep)}
+.btn:disabled{background:#4a4f9a;color:#c4c9f5;box-shadow:0 6px 0 #343a82;cursor:not-allowed}
+.btn.small{font-size:.85rem;padding:10px 16px;box-shadow:0 4px 0 var(--gold-deep)}
+.btn.ghost{background:transparent;color:var(--text);border:3px solid var(--edge);box-shadow:none}
+.actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.hint{color:var(--muted);font-size:.93rem}
+:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+
+.bubble{background:#12154a;border:3px solid var(--pink);border-radius:14px;padding:14px 18px;font-weight:700}
+.story{background:#12154a;border:3px dashed var(--edge);border-radius:14px;padding:16px 18px;display:grid;gap:8px}
+.grade{font:700 2rem var(--display);color:var(--pink)}
+.outcome{background:#12154a;border:3px solid var(--edge);border-radius:14px;padding:18px;display:grid;gap:12px;margin-top:4px}
+.outcome.good{border-color:var(--mint)}
+.tag{justify-self:start;font:700 11px var(--display);letter-spacing:.1em;text-transform:uppercase;background:var(--pink);color:#fff;border-radius:6px;padding:4px 10px}
+.outcome.good .tag{background:var(--mint);color:var(--ink)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px}
+.notice{background:#2a2f86;border-radius:12px;padding:14px 16px;display:grid;gap:6px}
+.fb{border-radius:12px;padding:12px 14px;margin-top:10px;background:#12154a;border:3px solid var(--warn)}
+.fb.good{border-color:var(--mint)}
+.fb strong.pt{font:700 .85rem var(--display);letter-spacing:.06em;text-transform:uppercase}
+.round{display:grid;gap:14px}
+.bosshead{display:grid;gap:8px}
+.bossname{font:700 1rem var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--pink);overflow-wrap:anywhere}
+.hp{height:18px;border:3px solid var(--edge);border-radius:10px;background:#12154a;overflow:hidden}
+.hp i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),#ff8f5c);transition:width .6s ease}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px}
+.legend div{background:var(--panel2);border-radius:10px;padding:8px 12px;font-size:.9rem}
+.legend b{display:block;font:700 11px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--mint)}
+.log{display:grid;gap:10px}
+.log p b{color:var(--gold)}
+.finalnote{background:var(--gold);color:var(--ink);border-radius:16px;padding:20px;box-shadow:0 6px 0 var(--gold-deep);display:grid;gap:6px}
+.finalnote h3{color:var(--ink)}
+.finalnote p{font-weight:800;font-size:1.1rem}
+.badge{font:700 1.4rem var(--display);color:var(--mint);letter-spacing:.06em;text-transform:uppercase}
+ul.tight{margin:0;padding-left:20px;display:grid;gap:4px}
+textarea{min-height:96px;resize:vertical}
+.issue{background:#12154a;border-left:5px solid var(--warn);border-radius:10px;padding:10px 14px;display:grid;gap:4px}
+.issue h4{color:var(--warn)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap" id="top">
+  <div class="scene" id="scene">
+    <svg viewBox="0 0 900 300" role="img" aria-label="A young hero with a star wand stands on a winding path below a storm cloud with glowing eyes.">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1c1b55"/><stop offset=".6" stop-color="#5a3a8c"/><stop offset="1" stop-color="#c8678a"/>
+        </linearGradient>
+        <polygon id="star" points="0,-8 2.4,-2.6 8,-2.4 3.6,1.4 5,7 0,4 -5,7 -3.6,1.4 -8,-2.4 -2.4,-2.6"/>
+      </defs>
+      <rect width="900" height="300" fill="url(#sky)"/>
+      <g id="stars" fill="#fff"></g>
+      <circle id="glow" cx="600" cy="165" r="95" fill="#f6c453" opacity=".12"/>
+      <circle id="sun" cx="600" cy="165" r="58" fill="#f6c453" opacity=".3"/>
+      <polygon points="0,300 0,205 90,150 210,212 340,140 470,226 600,165 720,228 900,160 900,300" fill="#352c6e"/>
+      <polygon points="0,300 0,172 110,100 232,190 362,70 500,200 622,120 760,212 900,112 900,300" fill="#3b2f73" opacity=".9"/>
+      <path d="M0 300 L0 262 C200 226 400 272 900 216 L900 300Z" fill="#1d1850"/>
+      <path d="M100 300 C200 252 300 272 430 238 S600 218 700 172 S800 142 850 120" fill="none" stroke="#1a1648" stroke-width="10" stroke-linecap="round"/>
+      <path d="M100 300 C200 252 300 272 430 238 S600 218 700 172 S800 142 850 120" fill="none" stroke="#f6dd9a" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 9"/>
+      <g transform="translate(160 262) scale(1.15)">
+        <ellipse cx="0" cy="3" rx="24" ry="5" fill="#000" opacity=".3"/>
+        <path d="M-16 -52 L-24 -4 L24 -4 L16 -52Z" fill="#2b4fd0"/>
+        <rect x="-11" y="-24" width="9" height="24" fill="#5b3a22"/><rect x="2" y="-24" width="9" height="24" fill="#5b3a22"/>
+        <rect x="-15" y="-54" width="30" height="32" rx="6" fill="#3d7bff"/>
+        <rect x="-15" y="-28" width="30" height="4" fill="#ffd24a"/>
+        <use href="#star" transform="translate(0 -40) scale(.9)" fill="#ffd24a"/>
+        <rect x="-22" y="-50" width="8" height="22" rx="4" fill="#3d7bff"/><rect x="14" y="-50" width="8" height="22" rx="4" fill="#3d7bff"/>
+        <circle cx="-18" cy="-27" r="5" fill="#e9a77d"/><circle cx="18" cy="-27" r="5" fill="#e9a77d"/>
+        <circle cx="0" cy="-68" r="14" fill="#e9a77d"/>
+        <path d="M-15 -70 C-15 -90 15 -90 15 -70 C8 -78 -6 -78 -15 -70Z" fill="#2a1a14"/>
+        <circle cx="-5" cy="-67" r="1.7" fill="#2a1a14"/><circle cx="5" cy="-67" r="1.7" fill="#2a1a14"/>
+        <path d="M-5 -61 Q0 -57 5 -61" fill="none" stroke="#2a1a14" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="26" y1="-28" x2="26" y2="-96" stroke="#8a6a3a" stroke-width="3" stroke-linecap="round"/>
+        <use href="#star" transform="translate(26 -102) scale(1.3)" fill="#ffd24a"/>
+      </g>
+      <rect id="dim" width="900" height="300" fill="#0a0830" opacity=".4"/>
+      <g id="storm">
+        <ellipse cx="650" cy="80" rx="72" ry="34" fill="#2a2252"/>
+        <ellipse cx="722" cy="58" rx="82" ry="40" fill="#2a2252"/>
+        <ellipse cx="790" cy="84" rx="68" ry="32" fill="#2a2252"/>
+        <ellipse cx="722" cy="100" rx="96" ry="30" fill="#332a63"/>
+        <ellipse cx="696" cy="80" rx="10" ry="13" fill="#ffd24a"/><ellipse cx="746" cy="80" rx="10" ry="13" fill="#ffd24a"/>
+        <circle cx="698" cy="83" r="4" fill="#171a45"/><circle cx="744" cy="83" r="4" fill="#171a45"/>
+        <path d="M680 62 L708 70 M762 62 L734 70" stroke="#ffd24a" stroke-width="4" stroke-linecap="round"/>
+        <path d="M702 108 l9 6 l9 -6 l9 6 l9 -6 l9 6" fill="none" stroke="#ffd24a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="768,118 748,156 763,156 751,192 790,144 772,144 782,118" fill="#ffe27a"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="track" id="track" hidden>
+    <div class="segs" id="segs"></div>
+    <div class="plabels" id="plabels"></div>
+  </div>
+
+  <main id="screen" aria-live="off"></main>
+</div>
+
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var shuffle=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a};
+
+/* stars */
+(function(){var g=$('#stars'),seed=7,out='';function r(){seed=(seed*9301+49297)%233280;return seed/233280}
+for(var i=0;i<46;i++){out+='<circle cx="'+(r()*900).toFixed(0)+'" cy="'+(r()*140).toFixed(0)+'" r="'+(0.8+r()*1.4).toFixed(1)+'" opacity="'+(0.4+r()*0.6).toFixed(2)+'"/>'}
+g.innerHTML=out})();
+
+/* ---------- content ---------- */
+var ORDEALS=[
+ {t:"A hard class",short:"The Hard Class",d:"A subject or assignment that feels bigger than I am."},
+ {t:"A disappointing grade",short:"The Disappointing Grade",d:"A score that did not match the effort I put in."},
+ {t:"A practical hurdle",short:"The Practical Hurdle",d:"Money, technology, my graduation timeline, or a schedule that will not fit."},
+ {t:"A life emergency",short:"The Life Emergency",d:"Family, health, or work pulling me away from school."},
+ {t:"The quiet voice",short:"The Quiet Voice",d:"A thought asking whether I belong here."}
+];
+var FEARS=["Failing","Letting my family down","Looking foolish","Wasting time or money","Not being good enough","Not finishing"];
+var SIZES=["A small hill","A steep climb","A mountain"];
+var PATHS=[
+ {t:"“I'm just not smart enough.”",d:"Take the grade as a verdict.",tag:"Fixed-mindset path",good:false,
+  next:"The hero stops raising a hand in class and spends less time on the next paper. The next grade is lower, and it feels like proof.",
+  change:"Effort drops, and the story hardens into “I'm not a college person.”",
+  same:"The hero is still the person who chose to start. The grade never said anything about ability. It described one paper."},
+ {t:"Hide it and hope nobody notices.",d:"Skip the feedback. Tell no one.",tag:"Hiding path",good:false,
+  next:"The hero never reads the comments or mentions the grade. The same thesis problem shows up in the next paper.",
+  change:"Stress grows, and the same mistake repeats.",
+  same:"The hero still has an instructor, a Success Coach, and classmates ready to help. That support just goes unused."},
+ {t:"It's the instructor's fault.",d:"Argue the grade and move on.",tag:"Blame path",good:false,
+  next:"The hero vents to friends and ignores the comments. Nothing about the next draft improves.",
+  change:"Anger takes the place of learning.",
+  same:"The hero's strengths and goals are untouched. They are just not being used."},
+ {t:"Read the feedback, ask for help, and revise.",d:"Treat the grade as information.",tag:"Growth path",good:true,
+  next:"The hero rereads the comments, asks the instructor how to strengthen a thesis, and revises. The next paper earns a 78%.",
+  change:"Fear turns into a plan, and the grade becomes feedback.",
+  same:"Same hero, same strengths, same reasons for being here. The grade never touched who they are."}
+];
+var THOUGHTS=[
+ {issue:"You scored 58% on your first statistics quiz, and the next quiz is in a week.",sample:"I haven’t learned this yet. I can go to a tutoring session and redo the practice problems before the next quiz.",fixed:"“I'm just not a math person.”",opts:[
+   {t:"I haven't learned this yet. Which strategy can I try next?",best:true,fb:"That is a growth mindset. “Not yet” keeps the door open and points to an action."},
+   {t:"Math doesn't matter for me anyway.",best:false,fb:"This dodges the fear instead of rewriting the thought. Look for a version that still keeps you moving toward the goal."},
+   {t:"I'll be great at it if I just believe in myself.",best:false,fb:"Belief helps, but it is not a plan. A strong rewrite names something you can do."}]},
+ {issue:"Your instructor returns your first paper covered in comments, with a lower grade than you hoped.",sample:"This grade shows where I am on one paper. I can read each comment and ask one question about my thesis.",fixed:"“That grade proves I don't belong here.”",opts:[
+   {t:"This grade shows where I am on one assignment. What can I learn from the feedback?",best:true,fb:"Right. A grade describes one piece of work at one moment. It does not decide whether you belong."},
+   {t:"Grades don't matter at all.",best:false,fb:"Grades do give useful information. The goal is to separate the grade from your worth, not to ignore it."},
+   {t:"I'll keep my grade to myself so nobody knows.",best:false,fb:"Hiding leaves you alone with the fear. A stronger rewrite uses the feedback."}]},
+ {issue:"You are confused about an assignment, but you are afraid to email your instructor.",sample:"Asking for help is how I use the support that is available to me. I can send one specific question today.",fixed:"“If I ask for help, people will see that I'm failing.”",opts:[
+   {t:"Asking for help is how strong students use their allies.",best:true,fb:"Yes. Every hero in a good story has allies, and asking early is a skill, not a weakness."},
+   {t:"I should be able to do this on my own.",best:false,fb:"That is the same fixed thought wearing a different outfit. Try a version that makes room for support."},
+   {t:"Nobody could help me anyway.",best:false,fb:"This closes the door before trying it. Look for a rewrite that opens it."}]}
+];
+var TOOLS={mind:{n:"Growth Mindset",l:"Not yet, not never"},work:{n:"Faithful Work",l:"Study as calling"},limits:{n:"Honest Limits",l:"Human, not failing"},time:{n:"Wise Time",l:"Time as stewardship"}};
+var LESSONS=[
+ {k:"Study is work done faithfully",d:"Your coursework is part of your calling right now. It is work you can bring your whole heart to, even on days you feel afraid.",v:"“Whatever you do, work at it with all your heart, as working for the Lord, not for human masters.”",c:"Colossians 3:23 (NIV)"},
+ {k:"Limits are part of being human",d:"You cannot do everything, and you were not made to. Rest and asking for help are part of working wisely, not signs of failure.",v:"“In vain you rise early and stay up late, toiling for food to eat—for he grants sleep to those he loves.”",c:"Psalm 127:2 (NIV)"},
+ {k:"Time is a gift to steward",d:"You cannot add hours to your day, but you can decide how to use the ones you have. A plan turns worry into steps.",v:"“Teach us to number our days, that we may gain a heart of wisdom.”",c:"Psalm 90:12 (NIV, 1978/2011)"}
+];
+var HABITS=[
+ {area:"Study as faithful work",q:"Which habit would help you begin your study time with purpose instead of dread?",opts:[
+  {t:"Begin each session with a one-line prayer or intention about why this work matters.",r:"Purpose turns a task you dread into work you offer. Fear has less room when you know why you are here."},
+  {t:"Set one small, specific goal for each session and finish it.",r:"Small finished goals are faithful work you can see. They quiet the feeling that you are never doing enough."},
+  {t:"Study with a classmate or group once a week.",r:"Shared work lightens the load and shows you that others feel the same fear."}]},
+ {area:"Honest limits",q:"Which habit would help you work within your limits without shame?",opts:[
+  {t:"Name my limits at the start of each week and decide what to set down.",r:"Knowing what you cannot carry lets you carry the rest well."},
+  {t:"Protect sleep and one real rest period every week.",r:"Rest is not wasted time. It is part of working wisely and for the long haul."},
+  {t:"Ask for help at the first sign of struggle, not the last.",r:"Asking early is stewardship. Fear grows when problems stay hidden."}]},
+ {area:"Wise time",q:"Which habit would help you steward your time instead of chasing it?",opts:[
+  {t:"Plan the week on the same day each week, essentials first.",r:"A plan turns a vague worry into a list you can act on."},
+  {t:"Block study sessions on my calendar and treat them like appointments.",r:"Protected time makes it easier to begin, and beginning is where fear loses ground."},
+  {t:"End each week with a short review of what went well and what to adjust.",r:"A weekly review replaces self-judgment with learning."}]}
+];
+var ROUNDS=[
+ {say:"Everyone else seems to handle college easily, and you are barely keeping up. The Ordeal whispers: “Strong students don't struggle.”",opts:[
+  {tool:"limits",s:2,t:"Remember that limits are part of being human. Name what you can carry and ask for help with the rest.",fb:"Limits are not failures. Admitting them honestly is part of wise work, and asking for help is stewardship."},
+  {tool:"mind",s:1,t:"Remind yourself that struggling means you are learning.",fb:"True, and a good mindset move. Pair it with honesty about your limits so you can plan realistically."},
+  {tool:"time",s:1,t:"Add more hours to your study schedule.",fb:"More hours can help, but you cannot add hours to the day. Start by naming your limits."},
+  {tool:"work",s:1,t:"Tell yourself to work harder and give it your whole heart.",fb:"Heart matters, but effort without honest limits leads to burnout. Rest and help are part of faithful work."}]},
+ {say:"Three assignments are due and you also work full time. The Ordeal whispers: “You will never get it all done.”",opts:[
+  {tool:"time",s:2,t:"Plan the week: list what is due, put essentials first, and decide what to set down or postpone.",fb:"Time is a resource to steward, not an enemy. A plan turns vague dread into steps. “Teach us to number our days” (Psalm 90:12)."},
+  {tool:"limits",s:1,t:"Accept that you cannot do everything and give up on one assignment.",fb:"Honest limits matter. Decide with a plan, though. Setting something down on purpose is different from giving up in panic."},
+  {tool:"mind",s:1,t:"Tell yourself you can do hard things if you believe.",fb:"Belief helps, but it needs a plan to stand on."},
+  {tool:"work",s:1,t:"Offer the work to God and start with whatever comes first.",fb:"A good habit. Add a plan so the whole week is covered, not only the first task."}]},
+ {say:"You are tired and the reading feels pointless. The Ordeal whispers: “This is a waste of your time.”",opts:[
+  {tool:"work",s:2,t:"Reconnect the work to your calling: this study is part of preparing to serve, and you can do it with all your heart.",fb:"Seeing study as part of your vocation gives it weight. “Whatever you do, work at it with all your heart” (Colossians 3:23). Meaning makes hard work lighter."},
+  {tool:"time",s:1,t:"Cut the reading to the minimum needed to pass.",fb:"That is efficient, but you may lose the purpose that keeps you going. Start by remembering why this matters."},
+  {tool:"mind",s:1,t:"Remind yourself that skills grow with practice.",fb:"A strong mindset move. Add the why, and the work becomes more meaningful."},
+  {tool:"limits",s:1,t:"Take a real break and come back rested.",fb:"Rest helps, and you need it. When you return, reconnect with the purpose behind the work."}]},
+ {say:"A confident voice says: “That grade proves you can't do this.” It sounds sure. But is it true?",opts:[
+  {tool:"mind",s:2,t:"Rewrite it: this grade shows where I am on one assignment, and I can grow from the feedback.",fb:"That is a growth mindset. A grade measures one assignment at one moment. It does not measure your worth or your calling."},
+  {tool:"work",s:1,t:"Offer your next assignment as faithful work and do your best.",fb:"A good step. First separate the grade from your identity so you work from peace instead of fear."},
+  {tool:"limits",s:1,t:"Accept that you are only human and that this is as good as you can do.",fb:"Honesty about limits is good, but this thought claims you cannot grow. Test that claim."},
+  {tool:"time",s:1,t:"Schedule a revision session this week.",fb:"A good action. Rewrite the thought first so you revise from clarity instead of fear."}]}
+];
+var REFLECTS=["I feel calmer","I know my next step","I feel more hopeful","I feel less alone","I can bring this worry to God and keep going","It still feels hard, and that is okay"];
+var STAGES=[["s1","Name it"],["s2","Hero vs. grade"],["s3","Rewrite"],["s4","Steward"],["s5","Boss"],["win","Victory"]];
+var HPMAX=8;
+
+/* ---------- state ---------- */
+var S;
+function fresh(){S={screen:"title",habits:[null,null,null],mode:["pick","pick","pick"],wr:["","",""],how:[null,null,null],pickedOpt:[null,null,null],miss:[[],[],[]],fbmsg:["","",""],refl3:[[],[],[]],refl:"",ordeal:null,fears:[],size:null,name:"",tried:[],solved:[false,false,false],
+  t3order:THOUGHTS.map(function(){return shuffle([0,1,2])}),oldT:"",newT:"",round:0,hp:HPMAX,answered:false,picks:[],best:0,
+  rorder:ROUNDS.map(function(){return shuffle([0,1,2,3])})}}
+fresh();
+function ordealName(){return (S.name||"").trim()||ORDEALS[S.ordeal].short}
+
+/* ---------- scene ---------- */
+function scene(){
+  var f=S.hp/HPMAX, sc=document.getElementById('scene');
+  if(S.screen==='win'){sc.classList.add('clear')}else{sc.classList.remove('clear')}
+  sc.style.setProperty('--s',(0.4+0.6*f).toFixed(2));
+  var d=$('#dim'); if(d)d.setAttribute('opacity',(0.42*f).toFixed(2));
+}
+
+/* ---------- progress ---------- */
+function progress(){
+  var idx=STAGES.map(function(s){return s[0]}).indexOf(S.screen);
+  $('#track').hidden=(S.screen==='title');
+  $('#segs').innerHTML=STAGES.map(function(s,i){return '<div class="seg'+(i<idx?' done':(i===idx?' cur':''))+'"></div>'}).join('');
+  $('#plabels').innerHTML=STAGES.map(function(s,i){return '<div class="'+(i===idx?'cur':'')+'">'+s[1]+'</div>'}).join('');
+}
+
+/* ---------- screens ---------- */
+function title(){return '<div class="center"><div class="eyebrow">ISTU 101</div><h1>Hero’s Journey</h1><div class="lvl">Level 6: Face the Ordeal</div>'+
+ '<p class="lead">Every hero meets fear. In this level you will name yours, rewrite the thoughts it whispers, and learn how faithful stewardship of your work, your limits, and your time can help you face it.</p>'+
+ '<button class="btn" data-act="start" id="startbtn">▶ Press Start</button></div>'+
+ '<section class="panel"><h3>How to play</h3><ul class="steps">'+
+ '<li><b>1</b><span>Tap or click a card to make your choice.</span></li>'+
+ '<li><b>2</b><span>Answer a few short questions about your choice.</span></li>'+
+ '<li><b>3</b><span>Press the yellow button to keep going.</span></li></ul>'+
+ '<p class="muted">About 10 minutes. Nothing here is graded, and your answers stay on this page. At the end you will get a quest log of your choices.</p></section>'+
+ '<section class="panel"><h3>Carry this with you</h3><p class="verse">“Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.”<small>Joshua 1:9 (NIV, 1978/2011)</small></p></section>'}
+
+function s1(){
+ return '<h2 class="stage" tabindex="-1">Quest 1: Name the ordeal</h2>'+
+ '<p class="lead">Fear shrinks when it has a name. Pick the ordeal closest to yours. It can be one you have faced or one you expect to face in college.</p>'+
+ '<section class="block"><h3>What kind of ordeal is it?</h3><div class="cards" id="g-ordeal">'+
+ ORDEALS.map(function(o,i){return '<button class="card'+(S.ordeal===i?' on':'')+'" data-act="ordeal" data-i="'+i+'" aria-pressed="'+(S.ordeal===i)+'"><strong>'+o.t+'</strong><span>'+o.d+'</span></button>'}).join('')+'</div></section>'+
+ '<section class="block"><h3>What scares you most about it? (pick up to two)</h3><div class="chips" id="g-fear">'+
+ FEARS.map(function(f,i){var on=S.fears.indexOf(i)>-1;return '<button class="chip'+(on?' on':'')+'" data-act="fear" data-i="'+i+'" aria-pressed="'+on+'">'+f+'</button>'}).join('')+'</div></section>'+
+ '<section class="block"><h3>How big does it feel right now?</h3><div class="chips" id="g-size">'+
+ SIZES.map(function(f,i){return '<button class="chip'+(S.size===i?' on':'')+'" data-act="size" data-i="'+i+'" aria-pressed="'+(S.size===i)+'">'+f+'</button>'}).join('')+'</div></section>'+
+ '<section class="block"><label for="oname">Give your ordeal a name (optional)</label><input type="text" id="oname" data-field="name" maxlength="50" placeholder="For example: The Statistics Summit" value="'+esc(S.name)+'"></section>'+
+ foot('Continue')}
+
+function foot(label){return '<div class="actions"><button class="btn" id="go" data-act="next" disabled>'+label+'</button><span class="hint" id="hint"></span></div>'}
+
+function s2(){
+ return '<h2 class="stage" tabindex="-1">Quest 2: Separate the hero from the grade</h2>'+
+ '<p class="lead">You named <b>'+esc(ordealName())+'</b>. Now watch how one disappointing grade can feel like a verdict, and what changes when the hero responds differently. Tap a path to see what happens, then tap another to compare. Try at least two.</p>'+
+ '<div class="story"><div class="grade">64%</div><p>Your hero has just opened the grade on their first paper. The feedback reads: <b>“Clear ideas. The thesis needs stronger support.”</b></p><p class="muted">How does your hero respond?</p></div>'+
+ '<div class="cards" id="g-path">'+PATHS.map(function(p,i){return '<button class="card'+(S.cur===i?' on':'')+'" data-act="path" data-i="'+i+'" aria-pressed="false"><strong>'+p.t+'</strong><span>'+p.d+'</span></button>'}).join('')+'</div>'+
+ '<div id="outcome" aria-live="polite"></div>'+
+ '<p class="hint" id="count"></p>'+foot('Continue')}
+
+function t3panel(ti){
+ var th=THOUGHTS[ti],mode=S.mode[ti],o='';
+ o+='<div class="issue"><h4>Issue '+(ti+1)+'</h4><p>'+th.issue+'</p></div><div><p class="muted">Fear says:</p><div class="bubble">'+th.fixed+'</div></div>';
+ if(!S.solved[ti]){
+  o+='<p>Turn this into a growth mindset. How do you want to do it?</p><div class="chips" role="group" aria-label="Choose how to rewrite">'+
+   '<button class="chip'+(mode==='pick'?' on':'')+'" id="m'+ti+'pick" data-act="mode" data-t="'+ti+'" data-m="pick" aria-pressed="'+(mode==='pick')+'">Select a rewrite</button>'+
+   '<button class="chip'+(mode==='write'?' on':'')+'" id="m'+ti+'write" data-act="mode" data-t="'+ti+'" data-m="write" aria-pressed="'+(mode==='write')+'">Write my own</button></div>';
+  if(mode==='pick'){
+   o+='<div class="cards">'+S.t3order[ti].map(function(oi){var ms=S.miss[ti].indexOf(oi)>-1;return '<button class="card'+(ms?' miss':'')+'"'+(ms?' disabled':'')+' data-act="rw" data-t="'+ti+'" data-o="'+oi+'"><strong>'+th.opts[oi].t+'</strong></button>'}).join('')+'</div><div id="fb'+ti+'" aria-live="polite">'+S.fbmsg[ti]+'</div>';
+  }else{
+   o+='<label for="wr'+ti+'">My growth rewrite</label><textarea id="wr'+ti+'" data-wr="'+ti+'" maxlength="300" placeholder="Rewrite the thought in your own words.">'+esc(S.wr[ti])+'</textarea>'+
+    '<p class="hint">A growth rewrite usually uses “yet” or “learning,” names one next step you control, and talks about the work instead of your worth.</p>'+
+    '<div class="actions"><button class="btn small" data-act="wsubmit" data-t="'+ti+'">Use my rewrite</button><span class="hint" id="wh'+ti+'" aria-live="polite"></span></div>';
+  }
+ }else{
+  var pk=S.how[ti]==='pick';
+  o+='<div class="fb good"><strong class="pt">Your growth rewrite</strong> '+(pk?th.opts[S.pickedOpt[ti]].t+' '+th.opts[S.pickedOpt[ti]].fb:esc(S.wr[ti].trim()))+'</div>';
+  if(!pk)o+='<div class="notice"><h4>One possible rewrite</h4><p>'+th.sample+'</p><p class="muted">Compare it with yours. Does yours say “yet” or name a step you control?</p></div>';
+  o+='<div class="block"><h4>Reflect</h4><p>How does this rewrite change what you feel or what you do next? Pick all that fit.</p><div class="chips">'+
+   REFLECTS.map(function(r,ri){var on=S.refl3[ti].indexOf(ri)>-1;return '<button class="chip'+(on?' on':'')+'" data-act="refl" data-t="'+ti+'" data-i="'+ri+'" aria-pressed="'+on+'">'+r+'</button>'}).join('')+'</div></div>';
+ }
+ return o;
+}
+
+function s3(){
+ return '<h2 class="stage" tabindex="-1">Quest 3: Turn fixed into growth</h2>'+
+ '<p class="lead">Here is how fear works. An issue happens, and a fixed thought jumps in to explain it. A growth mindset is the belief that abilities grow with effort, good strategies, and support. For each issue below, turn the fixed thought into a growth thought. You can select a rewrite or write your own, and then reflect on what changes.</p>'+
+ THOUGHTS.map(function(th,ti){return '<section class="panel" id="t'+ti+'">'+t3panel(ti)+'</section>'}).join('')+
+ '<section class="panel" id="write"'+(S.solved.every(Boolean)?'':' hidden')+'><h3>Now try one of your own</h3><p>Think of a fixed thought you have had in real life. Rewrite it so it leaves room to grow.</p>'+
+ '<label for="oldT">A thought I can rewrite</label><input type="text" id="oldT" data-field="oldT" maxlength="140" placeholder="I am terrible at writing papers." value="'+esc(S.oldT)+'">'+
+ '<label for="newT">My rewrite</label><input type="text" id="newT" data-field="newT" maxlength="160" placeholder="I am still learning how to write strong papers, and feedback shows me how." value="'+esc(S.newT)+'">'+
+ '<label for="refl">How does this rewrite change how I feel or what I do next?</label><input type="text" id="refl" data-field="refl" maxlength="200" value="'+esc(S.refl)+'"></section>'+
+ foot('Continue')}
+
+function s4(){
+ return '<h2 class="stage" tabindex="-1">Quest 4: Steward the work</h2>'+
+ '<p class="lead">Fear often says, “Everything depends on you.” A Christian view of work and vocation offers a different picture. You are a steward, a faithful caretaker of the time, abilities, and opportunities you have been given. You are not the owner of every outcome. Three ideas can shape your weekly academic habits and loosen fear’s grip.</p>'+
+ '<div class="cards">'+LESSONS.map(function(l){return '<div class="panel"><h3>'+l.k+'</h3><p>'+l.d+'</p><p class="verse">'+l.v+'<small>'+l.c+'</small></p></div>'}).join('')+'</div>'+
+ '<section class="block"><h3>Build your weekly rhythm</h3><p>Choose one habit in each area. There are no wrong answers. Pick the one you would really do.</p></section>'+
+ HABITS.map(function(hb,hi){return '<section class="panel"><h3>'+hb.area+'</h3><p>'+hb.q+'</p><div class="cards" id="hg'+hi+'">'+hb.opts.map(function(o,oi){var on=S.habits[hi]===oi;return '<button class="card'+(on?' on':'')+'" data-act="habit" data-h="'+hi+'" data-i="'+oi+'" aria-pressed="'+on+'"><strong>'+o.t+'</strong></button>'}).join('')+'</div><div id="hf'+hi+'" aria-live="polite"></div></section>'}).join('')+
+ foot('Continue')}
+
+function s5(){
+ return '<h2 class="stage" tabindex="-1">Boss level: fear meets stewardship</h2>'+
+ '<p class="lead">Fear rises with loud, confident thoughts. In each round, choose the response that answers it best. Every response helps, and the best fit hits hardest.</p>'+
+ '<div class="legend">'+Object.keys(TOOLS).map(function(k){return '<div><b>'+TOOLS[k].n+'</b>'+TOOLS[k].l+'</div>'}).join('')+'</div>'+
+ '<div class="bosshead"><div class="bossname">'+esc(ordealName())+'</div><div class="hp" role="progressbar" aria-valuemin="0" aria-valuemax="'+HPMAX+'" aria-valuenow="'+S.hp+'" aria-label="Ordeal strength"><i id="hpfill" style="width:'+(S.hp/HPMAX*100)+'%"></i></div></div>'+
+ '<div id="round" class="round"></div>'}
+
+function roundHtml(){
+ var r=ROUNDS[S.round];
+ return '<h3>Round '+(S.round+1)+' of '+ROUNDS.length+'</h3><div class="bubble">'+r.say+'</div><div class="cards" id="g-tool">'+
+ S.rorder[S.round].map(function(oi){var o=r.opts[oi];return '<button class="card" data-act="tool" data-o="'+oi+'"><span class="tool">'+TOOLS[o.tool].n+'</span><strong>'+o.t+'</strong></button>'}).join('')+
+ '</div><div id="rfb" aria-live="polite"></div>'
+}
+
+function win(){
+ var o=ORDEALS[S.ordeal];
+ var verdict=S.best>=3?"You matched the right response to the fear in almost every round.":(S.best>=1?"Solid work. Review the feedback from the rounds you missed and you will hit even harder next time.":"The ordeal shrank, and that counts. Replay the boss level to find the best fit for each fear.");
+ var hb=S.habits.map(function(v,i){return HABITS[i].area+': '+HABITS[i].opts[v].t}).join(' ');
+ return '<div class="center"><div class="badge">Victory</div><h2 class="stage" tabindex="-1">The storm clears</h2>'+
+ '<p class="lead">'+esc(ordealName())+' did not disappear. It got smaller, and you are better prepared. '+verdict+'</p></div>'+
+ '<section class="panel"><h3>Your quest log</h3><div class="log" id="log">'+
+ '<p><b>My ordeal:</b> '+esc(ordealName())+' ('+o.t.toLowerCase()+'). I am afraid of '+S.fears.map(function(i){return FEARS[i].toLowerCase()}).join(' and ')+'. It feels like '+SIZES[S.size].toLowerCase()+'.</p>'+
+ '<p><b>My paths:</b> I explored '+S.tried.length+' of 4 ways to respond to a disappointing grade'+(S.tried.indexOf(3)>-1?', including the growth path':'')+'. In every path the hero stayed the same person.</p>'+
+ '<p><b>My shift:</b> '+((S.oldT.trim()&&S.newT.trim())?'I will rewrite “'+esc(S.oldT.trim())+'” as “'+esc(S.newT.trim())+'”.'+(S.refl.trim()?' Reflection: '+esc(S.refl.trim()):''):'I can rewrite a fixed thought into a growth thought. I will keep practicing this.')+'</p>'+
+ '<p><b>My identity:</b> A grade measures one assignment at one moment in time. It does not measure who I am.</p>'+
+ '<p><b>My stewardship rhythm:</b> I am a steward of my time, abilities, and opportunities, not the owner of every outcome. '+esc(hb)+'</p>'+
+ '<p><b>My battle:</b> I chose the best response to fear in '+S.best+' of '+ROUNDS.length+' rounds.</p></div>'+
+ '<div class="actions"><button class="btn small" data-act="copy">Copy my quest log</button><span class="hint" id="copied" aria-live="polite"></span></div></section>'+
+ '<section class="panel"><p class="verse">“Not only so, but we also glory in our sufferings, because we know that suffering produces perseverance; perseverance, character; and character, hope.”<small>Romans 5:3-4 (NIV)</small></p></section>'+
+ '<section class="finalnote"><h3>Next mission</h3><p>You will use what you learned and put it into the assignment titled “Level Up Project.”</p></section>'+
+ '<div class="actions"><button class="btn small ghost" data-act="restart">Play Level 6 again</button></div>'
+}
+
+/* ---------- render ---------- */
+var VIEWS={title:title,s1:s1,s2:s2,s3:s3,s4:s4,s5:s5,win:win};
+function go(name,keepFocus){
+ S.screen=name;
+ $('#screen').innerHTML=VIEWS[name]();
+ if(name==='s5'){S.round=0;S.hp=HPMAX;S.picks=[];S.best=0;S.answered=false;$('#round').innerHTML=roundHtml()}
+ progress();scene();updateGo();
+ var top=document.getElementById('top');
+ try{top.scrollIntoView({block:'start'})}catch(e){}
+ var h=$('h2.stage');if(h&&!keepFocus)h.focus({preventScroll:true});
+}
+function updateGo(){
+ var b=$('#go'),h=$('#hint');if(!b)return;
+ var ok=true,msg='';
+ if(S.screen==='s1'){ok=S.ordeal!==null&&S.fears.length>0&&S.size!==null;msg=ok?'':'Choose an ordeal, a fear, and a size to continue.'}
+ if(S.screen==='s2'){ok=S.tried.length>=2;msg=ok?'':'Try at least two paths to continue.'}
+ if(S.screen==='s3'){ok=S.solved.every(Boolean)&&S.refl3.every(function(r){return r.length>0});msg=ok?'':'Rewrite all three issues and pick a reflection for each to continue.'}
+ if(S.screen==='s4'){ok=S.habits.every(function(v){return v!==null});msg=ok?'':'Choose one habit in each area to continue.'}
+ b.disabled=!ok;if(h)h.textContent=msg;
+ var c=$('#count');if(c)c.textContent='Paths explored: '+S.tried.length+' of 4';
+}
+function toggleGroup(sel,fn){var els=document.querySelectorAll(sel+' [data-i]');els.forEach(function(el){var on=fn(+el.getAttribute('data-i'));el.classList.toggle('on',on);el.setAttribute('aria-pressed',on)})}
+function rt(t,f){$('#t'+t).innerHTML=t3panel(t);if(f){var x=$(f);if(x)x.focus({preventScroll:true})}}
+function revealWrite(){var w=$('#write');if(w&&S.solved.every(Boolean))w.hidden=false}
+
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+ var el=e.target.closest('[data-act]');if(!el)return;
+ var a=el.getAttribute('data-act'),i=+el.getAttribute('data-i');
+ if(a==='start'){go('s1')}
+ else if(a==='ordeal'){S.ordeal=i;toggleGroup('#g-ordeal',function(k){return k===S.ordeal});updateGo()}
+ else if(a==='fear'){var p=S.fears.indexOf(i);if(p>-1)S.fears.splice(p,1);else{S.fears.push(i);if(S.fears.length>2)S.fears.shift()}
+   toggleGroup('#g-fear',function(k){return S.fears.indexOf(k)>-1});updateGo()}
+ else if(a==='size'){S.size=i;toggleGroup('#g-size',function(k){return k===S.size});updateGo()}
+ else if(a==='next'){var order=['s1','s2','s3','s4','s5','win'];go(order[order.indexOf(S.screen)+1])}
+ else if(a==='path'){
+   var pth=PATHS[i];S.cur=i;if(S.tried.indexOf(i)<0)S.tried.push(i);
+   document.querySelectorAll('#g-path .card').forEach(function(c,k){c.classList.toggle('on',k===i);c.setAttribute('aria-pressed',k===i)});
+   var extra=S.tried.length>=2?'<div class="notice"><h4>Notice</h4><p>In every path the hero is the same person. What changes is the story the hero tells and the next step they take.</p><p class="muted">Faith lens: many students ground their identity in being “fearfully and wonderfully made” (Psalm 139:14), which no grade can change.</p></div>':'';
+   $('#outcome').innerHTML='<div class="outcome'+(pth.good?' good':'')+'"><span class="tag">'+pth.tag+'</span><h3>What happens next</h3><p>'+pth.next+'</p><div class="two"><div><h4>What changes</h4><p>'+pth.change+'</p></div><div><h4>What does not change</h4><p>'+pth.same+'</p></div></div>'+extra+'</div>';
+   updateGo()}
+ else if(a==='rw'){
+   var ti=+el.getAttribute('data-t'),oi=+el.getAttribute('data-o'),opt=THOUGHTS[ti].opts[oi];
+   if(opt.best){S.solved[ti]=true;S.how[ti]='pick';S.pickedOpt[ti]=oi;rt(ti,'#t'+ti+' [data-act="refl"]');revealWrite();updateGo()}
+   else{el.classList.add('miss');el.disabled=true;S.miss[ti].push(oi);S.fbmsg[ti]='<div class="fb"><strong class="pt">Not quite</strong> '+opt.fb+'</div>';$('#fb'+ti).innerHTML=S.fbmsg[ti]}}
+ else if(a==='mode'){var t2=+el.getAttribute('data-t');S.mode[t2]=el.getAttribute('data-m');rt(t2,'#m'+t2+S.mode[t2])}
+ else if(a==='wsubmit'){var t3=+el.getAttribute('data-t');if(S.wr[t3].trim().length<12){$('#wh'+t3).textContent='Write a sentence or two so you have something to reflect on.';return}
+   S.solved[t3]=true;S.how[t3]='write';rt(t3,'#t'+t3+' [data-act="refl"]');revealWrite();updateGo()}
+ else if(a==='refl'){var t4=+el.getAttribute('data-t'),arr=S.refl3[t4],p2=arr.indexOf(i);if(p2>-1)arr.splice(p2,1);else arr.push(i);el.classList.toggle('on',p2<0);el.setAttribute('aria-pressed',p2<0);updateGo()}
+ else if(a==='habit'){var hi=+el.getAttribute('data-h');S.habits[hi]=i;document.querySelectorAll('#hg'+hi+' .card').forEach(function(c){var on=+c.getAttribute('data-i')===i;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on)});$('#hf'+hi).innerHTML='<div class="fb good"><strong class="pt">Habit chosen</strong> '+HABITS[hi].opts[i].r+'</div>';updateGo()}
+ else if(a==='tool'){
+   if(S.answered)return;S.answered=true;
+   var r=ROUNDS[S.round],oi2=+el.getAttribute('data-o'),o=r.opts[oi2],bestIdx=0;
+   r.opts.forEach(function(x,k){if(x.s===2)bestIdx=k});
+   S.hp=Math.max(0,S.hp-o.s);S.picks.push(o.tool);if(o.s===2)S.best++;
+   document.querySelectorAll('#g-tool .card').forEach(function(c){var k=+c.getAttribute('data-o');c.disabled=true;if(k===oi2)c.classList.add('on');if(k===bestIdx)c.classList.add('best')});
+   var last=S.round===ROUNDS.length-1;
+   $('#rfb').innerHTML='<div class="fb good"><strong class="pt">'+(o.s===2?'Critical hit! −2':'Hit! −1')+'</strong> '+o.fb+(o.s===1?' <b>Best fit this round: '+TOOLS[r.opts[bestIdx].tool].n+'.</b>':'')+'</div><div class="actions" style="margin-top:14px"><button class="btn" data-act="'+(last?'finish':'nextround')+'" id="nr">'+(last?'Claim victory':'Next round')+'</button></div>';
+   var f=$('#hpfill');f.style.width=(S.hp/HPMAX*100)+'%';f.parentNode.setAttribute('aria-valuenow',S.hp);
+   scene();var nr=$('#nr');if(nr)nr.focus({preventScroll:false})}
+ else if(a==='nextround'){S.round++;S.answered=false;$('#round').innerHTML=roundHtml();var rr=$('#round');try{rr.scrollIntoView({block:'start'})}catch(x){}}
+ else if(a==='finish'){go('win')}
+ else if(a==='restart'){fresh();go('s1')}
+ else if(a==='copy'){
+   var txt=Array.prototype.map.call(document.querySelectorAll('#log p'),function(p){return p.textContent}).join('\n\n');
+   var done=function(m){var c=$('#copied');if(c)c.textContent=m};
+   var fallback=function(){try{var rg=document.createRange();rg.selectNodeContents($('#log'));var sel=window.getSelection();sel.removeAllRanges();sel.addRange(rg);done('Copy is not available here. Your quest log is selected, so press Ctrl+C or Cmd+C.')}catch(x){done('Select the quest log text above and copy it.')}};
+   try{navigator.clipboard.writeText(txt).then(function(){done('Copied.')},fallback)}catch(x){fallback()}}
+});
+document.addEventListener('input',function(e){var f=e.target.getAttribute&&e.target.getAttribute('data-field');if(f){S[f]=e.target.value}var w=e.target.getAttribute&&e.target.getAttribute('data-wr');if(w!==null&&w!==undefined){S.wr[+w]=e.target.value}});
+
+go('title',true);
+})();
+</script>
+
+</body></html>
