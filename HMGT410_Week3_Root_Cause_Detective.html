@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HMGT 410 | Week 3 | Root Cause Detective</title>
+<style>
+:root{--navy:#12355b;--teal:#1b8a8f;--teal-l:#d9f0f0;--gold:#e0a526;--gold-l:#fdf3d8;--coral:#d9534f;--coral-l:#fbe4e3;--green:#2e8b57;--green-l:#def3e6;--bg:#f2f6fa;--ink:#1d2a38;--mute:#5b6b7b;--line:#d5dee8}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.45}
+.app{max-width:980px;margin:0 auto;padding:10px}
+header.hd{display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,var(--navy),#1e5a86 70%,var(--teal));color:#fff;border-radius:14px;padding:10px 16px;position:relative;overflow:hidden}
+header.hd svg.ico{flex:0 0 64px;width:64px;height:64px}
+header.hd .badge{display:inline-block;background:var(--gold);color:#3a2a00;font-weight:700;font-size:13px;letter-spacing:.04em;border-radius:20px;padding:2px 10px;margin-bottom:3px}
+header.hd h1{margin:0;font-size:22px;line-height:1.15}
+header.hd p{margin:2px 0 0;font-size:14px;opacity:.92}
+nav.tabs{display:flex;gap:6px;margin:10px 0 8px;flex-wrap:wrap}
+nav.tabs button{flex:1 1 150px;border:2px solid var(--line);background:#fff;color:var(--navy);font:inherit;font-weight:600;padding:8px 10px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center}
+nav.tabs button .n{background:var(--teal-l);color:var(--teal);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+nav.tabs button[aria-selected=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+nav.tabs button[aria-selected=true] .n{background:var(--gold);color:#3a2a00}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;height:560px;display:none}
+.panel.on{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+h2{margin:0 0 4px;font-size:19px;color:var(--navy)}
+.lead{margin:0 0 8px;color:var(--mute);font-size:15px}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.card h3{margin:0 0 3px;font-size:16px;color:var(--navy)}
+.card p{margin:0;font-size:15px}
+.btn{border:0;background:var(--teal);color:#fff;font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer}
+.btn:hover{background:#157277}.btn.alt{background:var(--navy)}.btn.ghost{background:#fff;color:var(--navy);border:2px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;border-radius:20px;padding:1px 10px;font-size:13px;font-weight:700;background:var(--teal-l);color:var(--teal)}
+.qz .dots{display:flex;gap:5px;margin-bottom:6px}
+.qz .dots i{width:26px;height:6px;border-radius:3px;background:var(--line)}
+.qz .dots i.done{background:var(--green)}.qz .dots i.cur{background:var(--gold)}
+.qz .q{font-weight:600;font-size:16px;margin:2px 0 8px}
+.qz .opts{display:grid;gap:6px}
+.qz .opts.cols{grid-template-columns:repeat(2,1fr)}
+.qz .opt{text-align:left;border:2px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer;color:var(--ink)}
+.qz .opt:hover:not([disabled]){border-color:var(--teal);background:var(--teal-l)}
+.qz .opt.ok{border-color:var(--green);background:var(--green-l);font-weight:600}
+.qz .opt.bad{border-color:var(--coral);background:var(--coral-l)}
+.qz .opt[disabled]{cursor:default}
+.qz .fb{margin-top:8px;border-radius:10px;padding:8px 12px;font-size:15px;min-height:20px}
+.qz .fb.ok{background:var(--green-l);border-left:5px solid var(--green)}
+.qz .fb.bad{background:var(--coral-l);border-left:5px solid var(--coral)}
+.qz .nav{margin-top:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.qz .score{font-size:30px;font-weight:800;color:var(--navy)}
+footer{font-size:12px;color:var(--mute);text-align:center;margin-top:6px}
+svg text{font-family:inherit}
+@media (max-width:760px){html,body{overflow-y:auto;overflow-x:hidden}.panel{height:auto;min-height:560px}.grid2{grid-template-columns:1fr!important}.qz .opts.cols{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.rung{transition:all .4s}</style></head>
+<body><div class="app">
+<header class="hd"><svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,.12)"/><circle cx="28" cy="28" r="13" fill="none" stroke="#fff" stroke-width="5"/><path d="M38 38l14 14" stroke="#e0a526" stroke-width="6" stroke-linecap="round"/><path d="M22 28h12M28 22v12" stroke="#9fe0e2" stroke-width="3" stroke-linecap="round"/></svg><div><span class="badge">HMGT 410 &bull; WEEK 3</span><h1>Root Cause Detective</h1><p>Define the problem, map the process, and ask why until you reach a cause you can fix.</p></div></header>
+<nav class="tabs" role="tablist" aria-label="Activity sections"><button role="tab" aria-selected="false"><span class="n">1</span>Define Problem</button><button role="tab" aria-selected="false"><span class="n">2</span>Map Process</button><button role="tab" aria-selected="false"><span class="n">3</span>5 Whys</button></nav>
+
+<section class="panel" id="p1"><div class="grid2" style="grid-template-columns:1fr 1.15fr">
+ <div><h2>Define the Problem</h2><p class="lead">A good problem statement describes the gap between current and desired performance.</p>
+ <svg viewBox="0 0 330 250" width="100%" role="img" aria-label="Gauge comparing 14 percent current with 40 percent target of discharges before noon">
+  <rect x="10" y="10" width="310" height="230" rx="14" fill="#f2f6fa" stroke="#d5dee8"/>
+  <text x="165" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="#12355b">5 West: discharges before noon</text>
+  <rect x="40" y="62" width="250" height="34" rx="8" fill="#e3eaf1"/><rect x="40" y="62" width="35" height="34" rx="8" fill="#d9534f"/>
+  <text x="46" y="85" font-size="14" font-weight="700" fill="#fff">14%</text><text x="40" y="112" font-size="12" fill="#5b6b7b">Current</text>
+  <rect x="40" y="130" width="250" height="34" rx="8" fill="#e3eaf1"/><rect x="40" y="130" width="100" height="34" rx="8" fill="#2e8b57"/>
+  <text x="46" y="153" font-size="14" font-weight="700" fill="#fff">40%</text><text x="40" y="180" font-size="12" fill="#5b6b7b">Target</text>
+  <path d="M75 196h65" stroke="#e0a526" stroke-width="3"/><path d="M75 190v12M140 190v12" stroke="#e0a526" stroke-width="3"/>
+  <text x="165" y="226" text-anchor="middle" font-size="13" font-weight="700" fill="#b9831a">Gap = 26 percentage points</text>
+ </svg></div>
+ <div id="q1"></div></div></section>
+
+<section class="panel" id="p2"><h2>Map the Process</h2><p class="lead">Median clock time at each step for a typical discharge on 5 West. Look for the longest wait.</p>
+ <svg viewBox="0 0 900 190" width="100%" role="img" aria-label="Discharge process map with median clock times">
+  <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5b6b7b"/></marker></defs>
+  <g id="map"></g></svg>
+ <div class="card" id="q2" style="margin-top:6px"></div></section>
+
+<section class="panel" id="p3"><div class="grid2" style="grid-template-columns:.9fr 1.3fr">
+ <div><h2>5 Whys: Go Deeper</h2><p class="lead">Problem: discharge orders are entered after 1:30 pm. Each correct answer builds the ladder.</p>
+ <svg id="lad" viewBox="0 0 300 330" width="100%" role="img" aria-label="Ladder of five whys leading to the root cause"></svg></div>
+ <div id="q3"></div></div></section>
+
+<footer>HMGT 410 Healthcare Ethics and Quality Control &bull; Week 3 Interactive &bull; Scenarios are illustrative and use hypothetical data.</footer>
+</div>
+<script>
+function $(s,r){return (r||document).querySelector(s)}
+function $$(s,r){return Array.from((r||document).querySelectorAll(s))}
+function esc(s){return String(s)}
+/* Tabs */
+function initTabs(){
+  var tabs=$$('nav.tabs button'),panels=$$('.panel');
+  function show(i){tabs.forEach(function(t,j){t.setAttribute('aria-selected',i===j)});panels.forEach(function(p,j){p.classList.toggle('on',i===j)});resize()}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(i)});
+    t.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){tabs[(i+1)%tabs.length].focus();show((i+1)%tabs.length)}if(e.key==='ArrowLeft'){tabs[(i+tabs.length-1)%tabs.length].focus();show((i+tabs.length-1)%tabs.length)}})});
+  show(0);
+}
+/* Reusable one-at-a-time quiz. items:[{q,opts:[{t,ok,fb}]}] */
+function quiz(el,items,o){
+  o=o||{};var i=0,score=0,tried=false,solved=false;
+  function render(){
+    var it=items[i];tried=false;solved=false;
+    var h='<div class="qz"><div class="dots">'+items.map(function(_,k){return '<i class="'+(k<i?'done':k===i?'cur':'')+'"></i>'}).join('')+'</div>';
+    if(it.pre)h+=it.pre;
+    h+='<div class="q">'+it.q+'</div><div class="opts'+(o.cols?' cols':'')+'">'+it.opts.map(function(p,k){return '<button class="opt" data-k="'+k+'">'+p.t+'</button>'}).join('')+'</div>';
+    h+='<div class="fb" aria-live="polite"></div><div class="nav"><span class="pill">Question '+(i+1)+' of '+items.length+'</span><button class="btn" id="nx" disabled>'+(i===items.length-1?'Finish':'Next')+'</button></div></div>';
+    el.innerHTML=h;
+    $$('.opt',el).forEach(function(b){b.addEventListener('click',function(){
+      if(solved)return;var p=it.opts[+b.dataset.k],fb=$('.fb',el);
+      if(p.ok){solved=true;if(!tried)score++;b.classList.add('ok');$$('.opt',el).forEach(function(x){x.disabled=true});fb.className='fb ok';fb.innerHTML='<b>Yes.</b> '+p.fb;$('#nx',el).disabled=false;if(o.onCorrect)o.onCorrect(i,it)}
+      else{tried=true;b.classList.add('bad');b.disabled=true;fb.className='fb bad';fb.innerHTML='<b>Not quite.</b> '+p.fb}
+      resize()})});
+    $('#nx',el).addEventListener('click',function(){i++;if(i<items.length)render();else done()});
+    resize();
+  }
+  function done(){
+    var msg=score===items.length?'Excellent. Every answer correct on the first try.':score>=items.length-1?'Strong work. Review the one you missed and try again.':'Good start. Try again and read the feedback on each choice.';
+    el.innerHTML='<div class="qz" style="text-align:center;padding:14px 0"><div class="score">'+score+' / '+items.length+'</div><p>'+msg+'</p><button class="btn" id="rt">Try again</button></div>';
+    $('#rt',el).addEventListener('click',function(){i=0;score=0;if(o.onReset)o.onReset();render()});
+    if(o.onDone)o.onDone(score);resize();
+  }
+  render();
+}
+function resize(){try{var h=document.documentElement.scrollHeight;parent.postMessage({subject:'lti.frameResize',height:h},'*')}catch(e){}}
+
+
+quiz($('#q1'),[
+ {q:'Which problem statement is strongest?',opts:[
+  {t:'Discharges are too slow because staff do not work hard enough.',ok:false,fb:'This assigns blame and contains no measurable gap.'},
+  {t:'On 5 West, 14% of patients leave before noon against a 40% target, delaying ED admissions.',ok:true,fb:'It names the place, the measure, the current and desired levels, and why it matters.'},
+  {t:'We need a new discharge lounge.',ok:false,fb:'That is a solution, not a problem. Define the problem before choosing a fix.'}]},
+ {q:'Which data source would best size the baseline?',opts:[
+  {t:'Three weeks of EHR timestamps for discharge order and departure',ok:true,fb:'Objective, time-stamped data shows how big the problem is and when it happens.'},
+  {t:'One manager\u2019s impression from last Tuesday',ok:false,fb:'A single impression is not baseline data.'},
+  {t:'A patient satisfaction survey from last year',ok:false,fb:'Too old and not specific to discharge timing.'}]}
+]);
+var steps=[['Rounds end','11:30 am',0],['Order entered','1:40 pm',130],['Med rec + teaching','2:30 pm',50],['Meds to bedside','3:15 pm',45],['Transport arrives','4:00 pm',45]];
+var m='';steps.forEach(function(s,i){var x=10+i*178,hot=i===1;
+ m+='<rect x="'+x+'" y="20" width="150" height="70" rx="12" fill="'+(hot?'#fbe4e3':'#d9f0f0')+'" stroke="'+(hot?'#d9534f':'#1b8a8f')+'" stroke-width="2.5"/><text x="'+(x+75)+'" y="50" text-anchor="middle" font-size="15" font-weight="700" fill="#12355b">'+s[0]+'</text><text x="'+(x+75)+'" y="75" text-anchor="middle" font-size="15" fill="#1d2a38">'+s[1]+'</text>';
+ if(i>0)m+='<line x1="'+(x-26)+'" y1="55" x2="'+(x-3)+'" y2="55" stroke="#5b6b7b" stroke-width="3" marker-end="url(#a2)"/>';
+ if(i>0)m+='<rect x="'+x+'" y="110" width="'+(s[2]/130*150)+'" height="22" rx="5" fill="'+(hot?'#d9534f':'#e0a526')+'"/><text x="'+(x+s[2]/130*150+6)+'" y="126" font-size="13" fill="#1d2a38">+'+s[2]+' min wait</text>';});
+$('#map').innerHTML=m;
+quiz($('#q2'),[{q:'Where should the team investigate first?',opts:[
+ {t:'Between rounds ending and the discharge order (130 min)',ok:true,fb:'This is the longest delay, and it comes before every downstream step. Fixing it moves everything after it earlier.'},
+ {t:'Transport arrival (45 min)',ok:false,fb:'Real, but shorter, and it is downstream of the biggest delay.'},
+ {t:'Meds to bedside (45 min)',ok:false,fb:'Worth a look later, but the largest gap is earlier.'}]}]);
+
+var whys=[
+ {q:'Why are discharge orders entered after 1:30 pm?',o:[['Physicians finish all rounds first, then enter orders in one batch.',1,'Matches the timeline: orders appear after rounds end.'],['Physicians do not care about throughput.',0,'This is blame, not a cause. Avoid stopping at attitudes.'],['Patients are not medically ready.',0,'No data supports this; many are ready by rounds.']]},
+ {q:'Why are orders batched at the end of rounds?',o:[['Readiness criteria are not identified during rounds, so readiness is decided afterward.',1,'This is a process cause the team can act on.'],['The EHR is slow.',0,'No evidence; timestamps show orders entered within minutes once started.'],['Nurses leave rounds early.',0,'Unsupported by the audit data.']]},
+ {q:'Why are readiness criteria not identified during rounds?',o:[['Staff are lazy about planning.',0,'Human error is a trap. Ask what in the system allows it.'],['The rounding checklist has no discharge-readiness item.',1,'A design gap in the tool, not the people.'],['Rounds run too long.',0,'A symptom, not a cause of missing criteria.']]},
+ {q:'Why does the checklist lack that item?',o:[['It was built years ago without input from nursing, pharmacy, or case management.',1,'The tool was never designed around flow.'],['Nobody reads checklists.',0,'Not supported by evidence.'],['Because the hospital is old.',0,'Too vague to act on.']]},
+ {q:'Why was the checklist never updated?',o:[['No one owns the discharge process or tracks its metrics.',1,'Root cause: discharge is treated as an ending, not a process with an owner.'],['Budget cuts.',0,'No evidence this explains it.'],['Physicians resist change.',0,'Another blame-style answer without data.']]}
+];
+function lad(n){
+ var s='';for(var i=0;i<5;i++){var y=20+i*56,on=i<n;
+  s+='<rect class="rung" x="20" y="'+y+'" width="260" height="44" rx="10" fill="'+(on?'#1b8a8f':'#e3eaf1')+'"/><text x="36" y="'+(y+28)+'" font-size="15" font-weight="700" fill="'+(on?'#fff':'#5b6b7b')+'">Why '+(i+1)+(on?'  \u2713':'')+'</text>';}
+ s+='<path d="M150 296l-10 -10h20z" fill="#e0a526"/><rect x="20" y="298" width="260" height="26" rx="8" fill="'+(n===5?'#2e8b57':'#e3eaf1')+'"/><text x="150" y="316" text-anchor="middle" font-size="13" font-weight="700" fill="'+(n===5?'#fff':'#5b6b7b')+'">'+(n===5?'ROOT CAUSE FOUND':'Root cause')+'</text>';
+ $('#lad').innerHTML=s;}
+lad(0);
+quiz($('#q3'),whys.map(function(w){return {q:w.q,opts:w.o.map(function(o){return {t:o[0],ok:!!o[1],fb:o[2]}})}}),{onCorrect:function(i){lad(i+1)},onReset:function(){lad(0)}});
+
+initTabs();
+window.addEventListener('load',resize);
+</script></body></html>
