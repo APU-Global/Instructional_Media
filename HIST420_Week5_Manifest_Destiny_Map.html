@@ -78,7 +78,7 @@ button:focus-visible,[role=button]:focus-visible,input:focus-visible{outline:3px
   <div class="art" id="art"></div>
   <div class="ctl">
    <div class="ticks" id="ticks"></div>
-   <input type="range" id="rng" min="0" max="5" step="1" value="0" aria-label="Move through time from before 1830 to the Fort Laramie treaties">
+   <input type="range" id="rng" min="0" max="6" step="1" value="0" aria-label="Move through time from before 1830 to the Fort Laramie treaties">
   </div>
  </div>
  <div class="card info" aria-live="polite">
@@ -87,7 +87,7 @@ button:focus-visible,[role=button]:focus-visible,input:focus-visible{outline:3px
   <div><span class="seg" role="group" aria-label="Choose a view"><button id="bG" aria-pressed="true">Expansion view</button><button id="bC" aria-pressed="false">Cost view</button></span></div>
   <div class="box" id="box"></div>
   <div class="chips" id="chips"></div>
-  <div class="stat"><span>Area added in this step: <b id="area"></b></span><span>1845–48 total: <b id="tot"></b></span></div>
+  <div class="stat"><span>Area added in this step: <b id="area"></b></span><span>1845–54 total: <b id="tot"></b></span></div>
  </div>
 </div>
 
@@ -113,13 +113,13 @@ const R={
  it:[[-103,37],[-94.6,37],[-94.6,33.7],[-100,34.5],[-103,36.5]],
  texas:[[-106.5,32],[-103,32],[-103,36.5],[-100,36.5],[-100,34.5],[-94.5,33.7],[-94,33.5],[-94,29.6],[-97,26],[-99,26.5],[-101,29.7],[-104.5,29.6],[-106.5,31.8]],
  oregon:[[-124.7,49],[-114,49],[-113,47],[-111,44],[-111,42],[-124.5,42]],
- cess:[[-124.5,42],[-111,42],[-106.5,41],[-106.5,32],[-108.2,31.8],[-108.2,31.3],[-111,31.3],[-114.8,32.5],[-117.1,32.5]],
+ cess:[[-124.5,42],[-111,42],[-106.5,41],[-106.5,32.4],[-108.2,32.4],[-108.2,33.2],[-109.5,33],[-111,33],[-112.3,33.3],[-113.5,32.9],[-114.7,32.7],[-114.8,32.5],[-117.1,32.5]],gads:[[-106.5,32.4],[-108.2,32.4],[-108.2,33.2],[-109.5,33],[-111,33],[-112.3,33.3],[-113.5,32.9],[-114.7,32.7],[-114.8,32.5],[-111,31.3],[-108.2,31.3],[-108.2,31.8],[-106.5,31.8]],
  sioux:[[-104,46],[-100.4,46],[-100,44.3],[-99.9,43],[-103,43],[-104,43]],
  mex:[[-117.1,32.5],[-114.8,32.5],[-111,31.3],[-108.2,31.3],[-108.2,31.8],[-106.5,31.8],[-104.5,29.6],[-101,29.7],[-99,26.5],[-97,25.9],[-97,22],[-118,22],[-118,28]]
 };
 const [tx,ty]=P(-96,36);
 const trail=[[-84.5,34.5],[-86.5,36],[-89,37],[-92,36.6],[-94.6,35.4]].map(p=>P(p[0],p[1]).join(',')).join(' ');
-const COL={orig:'#8ea9d1',louis:'#a9c2e2',fla:'#8ea9d1',it:'#b79bd0',texas:'#e2b866',oregon:'#8ec39b',cess:'#df9a86',sioux:'#f1dc86'};
+const COL={orig:'#8ea9d1',louis:'#a9c2e2',fla:'#8ea9d1',it:'#b79bd0',texas:'#e2b866',oregon:'#8ec39b',cess:'#df9a86',sioux:'#f1dc86',gads:'#7fc4c0'};
 const STEPS=[
 {y:'Before 1830',t:'The Young Republic',layers:['orig','louis','fla'],nw:[],
  txt:'By the 1820s the United States reached the Rocky Mountains. Native nations, however, already lived across the continent, in the East and the West.',
@@ -146,7 +146,7 @@ const STEPS=[
  g:'The United States reached the Pacific, adding about 529,000 square miles and the ports and resources of California.',
  c:'Mexico lost roughly half of its territory. Westward expansion intensified the national argument over whether slavery would spread to new territories.',
  m:['Economic opportunity','National security','National mission'],add:'≈ 529,000 sq mi',ar:529},
-{y:'1851 / 1868',t:'Fort Laramie Treaties',layers:['orig','louis','fla','it','trail','texas','oregon','cess','sioux'],nw:['sioux'],
+{y:'1853–54',t:'Gadsden Purchase',layers:['orig','louis','fla','it','trail','texas','oregon','cess','gads'],nw:['gads'],txt:'Mexico sold a strip of land south of the Gila River to the United States in a treaty signed in December 1853 and ratified in 1854. The sale fixed the southern border of present-day Arizona and New Mexico.',g:'The United States gained about 30,000 square miles for $10 million, including a practical route for a southern transcontinental railroad. The treaty also settled a border dispute over the Mesilla Valley.',c:'Mexico, still recovering from the war, gave up more territory, and the sale deepened a political crisis for its government. Native nations such as the Tohono O’odham and the Apache were not party to the treaty, and the new border cut across their homelands.',m:['Economic opportunity','National security'],add:'≈ 30,000 sq mi',ar:30},{y:'1851 / 1868',t:'Fort Laramie Treaties',layers:['orig','louis','fla','it','trail','texas','oregon','cess','gads','sioux'],nw:['sioux'],
  txt:'Treaties in 1851 and 1868 recognized Sioux lands in the northern Plains. Settlement, railroads, and gold then pressured the government to change those promises.',
  g:'Settlers, railroad companies, and miners gained access to Plains land as the government altered treaty terms.',
  c:'The Sioux saw agreements made and then broken. Examine this treaty to judge federal policy using principles of justice.',
@@ -158,15 +158,15 @@ function mapSvg(){
  let o='<svg viewBox="0 0 800 470" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of the United States showing territory acquired step by step"><rect width="800" height="470" fill="#cfe3ee"/>';
  o+='<rect x="0" y="0" width="800" height="26" fill="#e9e2cf"/><text x="400" y="17" text-anchor="middle" font-size="11" fill="#8a7c58" letter-spacing="2">BRITISH NORTH AMERICA</text>';
  o+='<polygon points="'+poly(R.mex)+'" fill="#e9e2cf"/><text x="'+P(-110,26.5)[0]+'" y="'+P(-110,26.5)[1]+'" text-anchor="middle" font-size="12" fill="#8a7c58" letter-spacing="2">MEXICO</text>';
- ['texas','oregon','cess'].forEach(k=>{o+='<polygon points="'+poly(R[k])+'" fill="#e9e2cf" stroke="#d6ccb0" stroke-width="1"/>'});
+ ['texas','oregon','cess','gads'].forEach(k=>{o+='<polygon points="'+poly(R[k])+'" fill="#e9e2cf" stroke="#d6ccb0" stroke-width="1"/>'});
 
  const L=(k,fill,extra,name)=>'<polygon class="reg" data-k="'+k+'" points="'+poly(R[k])+'" fill="'+fill+'" stroke="#fff" stroke-width="1.5" '+(extra||'')+'><title>'+name+'</title></polygon>';
- o+=L('orig',COL.orig,'','Original United States (1783)')+L('louis',COL.louis,'','Louisiana Purchase (1803)')+L('fla',COL.fla,'','Florida (1819)')+L('texas',COL.texas,'','Texas (annexed 1845)')+L('oregon',COL.oregon,'','Oregon Country (1846)')+L('cess',COL.cess,'','Mexican Cession (1848)');
+ o+=L('orig',COL.orig,'','Original United States (1783)')+L('louis',COL.louis,'','Louisiana Purchase (1803)')+L('fla',COL.fla,'','Florida (1819)')+L('texas',COL.texas,'','Texas (annexed 1845)')+L('oregon',COL.oregon,'','Oregon Country (1846)')+L('cess',COL.cess,'','Mexican Cession (1848)')+L('gads',COL.gads,'','Gadsden Purchase (1853–54)');
  o+=L('it',COL.it,'stroke="#6b4a8a" stroke-dasharray="5 3"','Indian Territory (removal destination)');
  o+=L('sioux',COL.sioux,'stroke="#a8353a" stroke-width="2.5" stroke-dasharray="6 3"','Sioux lands, Fort Laramie 1868');
  o+='<g class="reg" data-k="trail"><polyline points="'+trail+'" fill="none" stroke="#a8353a" stroke-width="4" stroke-dasharray="8 6" stroke-linecap="round"/><circle cx="'+trail.split(' ')[0].split(',')[0]+'" cy="'+trail.split(' ')[0].split(',')[1]+'" r="5" fill="#a8353a"/><title>Trail of Tears (Cherokee removal 1838–39)</title></g>';
  const lab=(k,lo,la,t,c)=>'<text class="reg" data-k="'+k+'" x="'+P(lo,la)[0]+'" y="'+P(lo,la)[1]+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+(c||'#1f2a44')+'">'+t+'</text>';
- o+=lab('orig',-81,40.5,'ORIGINAL U.S.')+lab('louis',-103,43,'LOUISIANA PURCHASE')+lab('texas',-99,31,'TEXAS')+lab('oregon',-119,45.5,'OREGON')+lab('cess',-116,36.5,'MEXICAN CESSION')+lab('it',-98.5,35.3,'IND. TERR.','#4a2f6a')+lab('sioux',-101.8,43.5,'SIOUX','#7a2328')+lab('fla',-82,28.4,'FL','#1f2a44');
+ o+=lab('orig',-81,40.5,'ORIGINAL U.S.')+lab('louis',-103,43,'LOUISIANA PURCHASE')+lab('texas',-99,31,'TEXAS')+lab('oregon',-119,45.5,'OREGON')+lab('cess',-116,36.5,'MEXICAN CESSION')+lab('it',-98.5,35.3,'IND. TERR.','#4a2f6a')+lab('sioux',-101.8,43.5,'SIOUX','#7a2328')+lab('fla',-82,28.4,'FL','#1f2a44')+'<text class="reg" data-k="gads" x="'+P(-110.6,32.1)[0]+'" y="'+P(-110.6,32.1)[1]+'" text-anchor="middle" font-size="9" font-weight="700" fill="#1f4f4c">GADSDEN</text>';
  // icons
  o+='<g class="reg" data-k="oregon" transform="translate('+P(-121,46.6).join(' ')+')"><rect x="-10" y="-8" width="20" height="9" rx="2" fill="#f7f2e7" stroke="#5b3a21"/><circle cx="-6" cy="3" r="4" fill="none" stroke="#5b3a21" stroke-width="2"/><circle cx="6" cy="3" r="4" fill="none" stroke="#5b3a21" stroke-width="2"/></g>';
  o+='<g class="reg" data-k="sioux" transform="translate('+P(-101.8,45.2).join(' ')+')"><path d="M0 -14 L-9 4 H9Z" fill="#f7f2e7" stroke="#5b3a21" stroke-width="1.5"/><path d="M0 -14 V-20 M-2 -17 L2 -17" stroke="#5b3a21"/></g>';
