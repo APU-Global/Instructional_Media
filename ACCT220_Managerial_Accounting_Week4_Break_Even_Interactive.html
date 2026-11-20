@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Break-Even Explorer</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+table{border-collapse:collapse;width:100%}td,th{padding:6px 8px;text-align:left;border-bottom:1px solid #e3e3e3}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}.tot td{border-top:2px solid #111;font-weight:700}
+.big{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+label{font-weight:600;display:block;margin-top:10px}
+input[type=range]{width:100%;accent-color:var(--red)}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: Break-Even Explorer" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ACCT 220 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Break-Even Explorer</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">See how price, variable cost, and fixed cost move the break-even point</text></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Break-Even Explorer</h2>
+<p class="lead"><b>Week 4 objective:</b> Use contribution margin and cost-volume-profit analysis to find break-even and target profit.</p>
+<div class="card">
+<h3>Snowboard Company</h3>
+<p class="lead">Each snowboard sells for $250 and has $150 of variable cost. Fixed costs are $50,000 a month. Move the sliders to see how each change shifts the break-even point.</p>
+<div class="grid g2">
+<div class="panel">
+<label for="p">Selling price per unit: <span id="pv"></span></label><input type="range" id="p" min="150" max="400" step="5" value="250">
+<label for="v">Variable cost per unit: <span id="vv"></span></label><input type="range" id="v" min="50" max="300" step="5" value="150">
+<label for="fx">Fixed costs per month: <span id="fv"></span></label><input type="range" id="fx" min="20000" max="100000" step="1000" value="50000">
+<label for="t">Target profit per month: <span id="tv"></span></label><input type="range" id="t" min="0" max="60000" step="1000" value="30000">
+<p style="margin:14px 0 0"><button class="btn ghost" id="reset">Reset to the textbook example</button></p>
+</div>
+<div class="panel">
+<table aria-describedby="out"><tbody>
+<tr><td>Contribution margin per unit</td><td class="n" id="cm"></td></tr>
+<tr><td>Contribution margin ratio</td><td class="n" id="cmr"></td></tr>
+<tr class="tot"><td>Break-even point (units)</td><td class="n" id="be"></td></tr>
+<tr><td>Break-even point (sales dollars)</td><td class="n" id="bes"></td></tr>
+<tr class="tot"><td>Units needed for target profit</td><td class="n" id="tu"></td></tr>
+</tbody></table>
+<p class="fb" id="out" aria-live="polite"></p>
+</div></div>
+<div class="panel" style="margin-top:14px"><svg id="chart" viewBox="0 0 760 300" role="img" aria-label="Cost-volume-profit chart" style="width:100%;height:auto"></svg></div>
+</div>
+<div class="take"><b>Takeaway:</b> Break-even units = <b>Fixed costs ÷ Contribution margin per unit</b>. Add the target profit to fixed costs to find the units needed for a profit goal. A higher price or lower variable cost raises the contribution margin and lowers break-even.</div>
+<p class="src">Examples adapted from <i>Managerial Accounting</i> v1.0 (Saylor Academy, 2012), CC BY-NC-SA 3.0.</p>
+</div>
+<script>
+
+const $=id=>document.getElementById(id),fm=n=>'$'+Math.round(n).toLocaleString(),fu=n=>Math.ceil(n).toLocaleString();
+const ids=['p','v','fx','t'];
+function draw(P,V,F,Q){const s=$('chart'),W=760,H=300,L=60,B=40,maxQ=Math.max(1000,Math.ceil((Q||500)*2/100)*100),maxY=P*maxQ;
+const x=q=>L+(W-L-20)*q/maxQ,y=d=>H-B-(H-B-20)*d/maxY;let g=`<line x1="${L}" y1="${H-B}" x2="${W-20}" y2="${H-B}" stroke="#333"/><line x1="${L}" y1="20" x2="${L}" y2="${H-B}" stroke="#333"/>`;
+g+=`<text x="${(W+L)/2}" y="${H-8}" font-size="13" text-anchor="middle">Units sold (0 to ${maxQ.toLocaleString()})</text>`;
+g+=`<line x1="${x(0)}" y1="${y(0)}" x2="${x(maxQ)}" y2="${y(P*maxQ)}" stroke="#2f7d5b" stroke-width="3"/><text x="${x(maxQ*0.62)}" y="${y(P*maxQ*0.62)-12}" font-size="13" text-anchor="end" fill="#2f7d5b" font-weight="700">Total revenue</text>`;
+g+=`<line x1="${x(0)}" y1="${y(F)}" x2="${x(maxQ)}" y2="${y(F+V*maxQ)}" stroke="#a8353a" stroke-width="3"/><text x="${x(maxQ*0.9)}" y="${y(F+V*maxQ*0.9)+22}" font-size="13" text-anchor="middle" fill="#a8353a" font-weight="700">Total cost</text>`;
+g+=`<line x1="${x(0)}" y1="${y(F)}" x2="${x(maxQ)}" y2="${y(F)}" stroke="#999" stroke-dasharray="5 4"/><text x="${x(maxQ)-4}" y="${y(F)+18}" font-size="12" text-anchor="end" fill="#555">Fixed costs</text>`;
+if(Q){g+=`<circle cx="${x(Q)}" cy="${y(P*Q)}" r="7" fill="#d34147"/><text x="${x(Q)+12}" y="${y(P*Q)+26}" font-size="13" font-weight="700">Break-even: ${fu(Q)} units</text>`;}
+s.innerHTML='<style>#chart text{paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round}</style>'+g;}
+function upd(){const P=+$('p').value,V=+$('v').value,F=+$('fx').value,T=+$('t').value;
+$('pv').textContent=fm(P);$('vv').textContent=fm(V);$('fv').textContent=fm(F);$('tv').textContent=fm(T);
+const cm=P-V;if(cm<=0){['cm','cmr','be','bes','tu'].forEach(i=>$(i).textContent='n/a');$('out').textContent='The price does not cover the variable cost, so every unit sold loses money and the company can never break even.';$('out').className='fb bad';draw(P,V,F,0);return}
+const be=F/cm,tu=(F+T)/cm;$('cm').textContent=fm(cm);$('cmr').textContent=(cm/P*100).toFixed(1)+'%';$('be').textContent=fu(be);$('bes').textContent=fm(F/(cm/P));$('tu').textContent=fu(tu);
+$('out').textContent=`Each unit contributes ${fm(cm)}. Selling ${fu(be)} units covers ${fm(F)} of fixed costs; ${fu(tu)} units earns ${fm(T)} profit.`;$('out').className='fb ok';draw(P,V,F,be);}
+ids.forEach(i=>$(i).addEventListener('input',upd));
+$('reset').onclick=()=>{$('p').value=250;$('v').value=150;$('fx').value=50000;$('t').value=30000;upd()};upd();
+</script>
+</body></html>
