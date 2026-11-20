@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find the Critical Path</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button,select,input{font:inherit}button{cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink)}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+table{border-collapse:collapse;width:100%;background:#fff}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f4f2ef}
+.tw{overflow-x:auto}
+select{padding:6px 8px;border:2px solid #bbb;border-radius:8px;background:#fff;max-width:100%}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.node rect{transition:stroke .2s}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Find the Critical Path" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 395 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Find the Critical Path</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Trace every path, find the longest, and test what a delay does</text></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Schedule, Critical Path, and Effort</h2>
+<p class="lead"><b>Week 5 objective:</b> Find a project's critical path, see why delays on it matter, and tell duration from effort.</p>
+<div class="card">
+<h3>The case: Lakeside Volunteer Fair</h3>
+<p class="lead">A fictional nonprofit asks you to plan a one-day volunteer fair. Your WBS work packages, durations, and predecessors are shown in the network diagram below. Watt's four steps: start with a network diagram, find all the paths, add up each path's durations, and the longest path is the critical path.</p>
+<div class="panel tw" tabindex="0" role="region" aria-label="Network diagram (scrolls sideways on small screens)"><svg viewBox="0 0 1030 250" role="img" aria-labelledby="netT netD" style="width:100%;min-width:640px;height:auto;font-family:Segoe UI,Arial,sans-serif"><title id="netT">Activity-on-node network for the volunteer fair</title><desc id="netD">Start leads to A, Confirm venue, 3 days. A leads to three branches: B, Recruit exhibitors, 6 days; C, Design flyers, 2 days, then D, Print and post flyers, 3 days; and E, Arrange tables and AV, 2 days. B, D, and E all lead to F, Set up hall, 1 day, then Finish.</desc><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#999"/></marker></defs><path id="eSA" d="M80 120 C110 120,70 120,94 120" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eAB" d="M280 120 C310 120,280 30,304 30" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eAC" d="M280 120 C310 120,270 120,294 120" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eCD" d="M480 120 C510 120,490 120,514 120" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eAE" d="M280 120 C310 120,280 210,304 210" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eBF" d="M490 30 L705 30 Q752 30 752 88" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eDF" d="M700 120 C730 120,710 120,734 120" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eEF" d="M490 210 L705 210 Q752 210 752 152" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><path id="eFX" d="M920 120 C950 120,920 120,944 120" fill="none" stroke="#999" stroke-width="2.5" marker-end="url(#ar)"/><g id="nS"><rect x="20" y="100" width="60" height="40" rx="20" fill="#111"/><text x="50.0" y="126" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">Start</text></g><g id="nA" class="node"><rect x="100" y="94" width="180" height="52" rx="10" fill="#fff" stroke="#888" stroke-width="2"/><text x="112" y="116" font-size="17" font-weight="800" fill="#d34147">A</text><text x="112" y="136" font-size="12.5" fill="#1f1f1f">Confirm venue · 3 d</text></g><g id="nB" class="node"><rect x="310" y="4" width="180" height="52" rx="10" fill="#fff" stroke="#888" stroke-width="2"/><text x="322" y="26" font-size="17" font-weight="800" fill="#d34147">B</text><text x="322" y="46" font-size="12.5" fill="#1f1f1f">Recruit exhibitors · 6 d</text></g><g id="nC" class="node"><rect x="300" y="94" width="180" height="52" rx="10" fill="#fff" stroke="#888" stroke-width="2"/><text x="312" y="116" font-size="17" font-weight="800" fill="#d34147">C</text><text x="312" y="136" font-size="12.5" fill="#1f1f1f">Design flyers · 2 d</text></g><g id="nD" class="node"><rect x="520" y="94" width="180" height="52" rx="10" fill="#fff" stroke="#888" stroke-width="2"/><text x="532" y="116" font-size="17" font-weight="800" fill="#d34147">D</text><text x="532" y="136" font-size="12.5" fill="#1f1f1f">Print and post flyers · 3 d</text></g><g id="nE" class="node"><rect x="310" y="184" width="180" height="52" rx="10" fill="#fff" stroke="#888" stroke-width="2"/><text x="322" y="206" font-size="17" font-weight="800" fill="#d34147">E</text><text x="322" y="226" font-size="12.5" fill="#1f1f1f">Arrange tables and AV · 2 d</text></g><g id="nF" class="node"><rect x="740" y="94" width="180" height="52" rx="10" fill="#fff" stroke="#888" stroke-width="2"/><text x="752" y="116" font-size="17" font-weight="800" fill="#d34147">F</text><text x="752" y="136" font-size="12.5" fill="#1f1f1f">Set up hall · 1 d</text></g><g id="nX"><rect x="950" y="100" width="70" height="40" rx="20" fill="#111"/><text x="985.0" y="126" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">Finish</text></g></svg></div>
+</div>
+<div class="card">
+<h3>Step 1: Add up each path</h3>
+<p class="lead">Enter the total duration in days for each path from Start to Finish.</p>
+<div class="grid" id="paths"></div>
+<p style="margin:12px 0 0"><button type="button" class="btn" id="pCheck">Check my totals</button></p>
+<p class="fb" id="pFb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Step 2: Which path is critical?</h3>
+<div role="group" aria-label="Choose the critical path" id="cp"></div>
+<p class="fb" id="cpFb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Step 3: What if a task runs late?</h3>
+<p class="lead">Choose a task and a delay. Watt explains that a delay on any critical path activity delays the whole project, while a task off the critical path may have room to slip.</p>
+<div class="grid g2">
+<div class="panel"><label for="dTask" style="font-weight:600">Task</label><br><select id="dTask"></select>
+<p style="margin:12px 0 4px"><label for="dDays" style="font-weight:600">Delay: <span id="dVal">0</span> day(s)</label></p>
+<input type="range" id="dDays" min="0" max="5" value="0" style="width:100%;accent-color:var(--red)"></div>
+<div class="panel" style="text-align:center"><div style="color:var(--muted)">Project duration</div><div id="dur" style="font-size:2.2rem;font-weight:800"></div><p class="fb" id="dFb" aria-live="polite"></p></div>
+</div>
+</div>
+<div class="card">
+<h3>Step 4: Duration or effort?</h3>
+<p class="lead">Three volunteers work side by side for 4 hours to set up the hall. Duration is how long the activity takes; effort is the total person-hours spent.</p>
+<div class="grid g2">
+<div class="panel"><label for="du" style="font-weight:600">Duration (hours)</label><br><input type="number" id="du" min="0" style="width:8em;padding:6px;border:2px solid #bbb;border-radius:8px"></div>
+<div class="panel"><label for="ef" style="font-weight:600">Effort (person-hours)</label><br><input type="number" id="ef" min="0" style="width:8em;padding:6px;border:2px solid #bbb;border-radius:8px"></div>
+</div>
+<p style="margin:12px 0 0"><button type="button" class="btn" id="eCheck">Check</button></p>
+<p class="fb" id="eFb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> The <b>critical path</b> is the longest path through the network and sets the shortest time the project can take. Watch its tasks most closely: a slip there moves the finish date, and if you need to finish sooner, adding resources to the critical path works better than adding them elsewhere. Keep <b>duration</b> (calendar time) and <b>effort</b> (person-hours) separate when you estimate.</div>
+<p class="src">Concepts from Watt, A. (2014), <i>Project Management</i> (2nd ed.), BCcampus, CC BY 4.0: Chapter 11 "Resource Planning" (Estimating Activity Durations, duration versus effort; Project Schedule and Critical Path, the four steps) and Chapter 10 "Project Schedule Planning" (network diagrams, slack and float). The Lakeside Volunteer Fair is fictional.</p>
+</div>
+<script>
+
+const T={A:['Confirm venue',3,[]],B:['Recruit exhibitors',6,['A']],C:['Design flyers',2,['A']],D:['Print and post flyers',3,['C']],E:['Arrange tables and AV',2,['A']],F:['Set up hall',1,['B','D','E']]};
+const P=[['A','B','F'],['A','C','D','F'],['A','E','F']];
+const len=(p,x)=>p.reduce((s,k)=>s+T[k][1]+(x&&x[k]||0),0);
+const box=document.getElementById('paths');
+P.forEach((p,i)=>{const d=document.createElement('div');d.className='panel';
+ d.innerHTML='<label for="pi'+i+'"><b>Path '+(i+1)+':</b> Start → '+p.join(' → ')+' → Finish</label> <input type="number" min="0" id="pi'+i+'" style="width:6em;padding:6px;border:2px solid #bbb;border-radius:8px;margin-left:6px"> days <span class="fb" id="pf'+i+'" aria-live="polite"></span>';box.appendChild(d);});
+document.getElementById('pCheck').onclick=()=>{let ok=0;P.forEach((p,i)=>{const v=document.getElementById('pi'+i).value,f=document.getElementById('pf'+i),L=len(p);
+ if(v===''){f.className='fb bad';f.textContent=' Enter a total.';return}
+ if(+v===L){ok++;f.className='fb ok';f.textContent=' Correct: '+p.map(k=>T[k][1]).join(' + ')+' = '+L+'.'}else{f.className='fb bad';f.textContent=' Not quite: '+p.map(k=>T[k][1]).join(' + ')+' = '+L+'.'}});
+ document.getElementById('pFb').innerHTML='<span class="score">'+ok+' of 3 correct</span>';};
+const cp=document.getElementById('cp');
+P.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.setAttribute('aria-pressed','false');b.textContent='Path '+(i+1)+': '+p.join('–');
+ b.onclick=()=>{cp.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=document.getElementById('cpFb');
+  if(i===0){f.className='fb ok';f.textContent='Correct. A–B–F takes 10 days, longer than A–C–D–F (9) or A–E–F (6), so it is the critical path and the project needs at least 10 days.';mark(true)}
+  else{f.className='fb bad';f.textContent='Not quite. Path '+(i+1)+' takes '+len(p)+' days. The critical path is the longest path, not the shortest.';mark(false)}};cp.appendChild(b);});
+function mark(on){['nA','nB','nF'].forEach(id=>document.querySelector('#'+id+' rect').setAttribute('stroke',on?'#d34147':'#888'));['eSA','eAB','eBF','eFX'].forEach(id=>{const e=document.getElementById(id);e.setAttribute('stroke',on?'#d34147':'#999');e.setAttribute('stroke-width',on?'4':'2.5')});}
+const sel=document.getElementById('dTask');Object.keys(T).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+': '+T[k][0]+' ('+T[k][1]+' d)';sel.appendChild(o)});
+const dd=document.getElementById('dDays');
+function sim(){const k=sel.value,n=+dd.value,x={};x[k]=n;const D=Math.max(...P.map(p=>len(p,x)));
+ document.getElementById('dVal').textContent=n;dd.setAttribute('aria-valuetext',n+' days of delay on task '+k);
+ document.getElementById('dur').textContent=D+' days';const f=document.getElementById('dFb');
+ const crit=['A','B','F'].includes(k);
+ if(n===0){f.className='fb';f.textContent='Planned duration: 10 days.'}
+ else if(D===10){f.className='fb ok';f.textContent='No change to the finish date. Task '+k+' is off the critical path and has float: it can slip '+(k==='E'?4:1)+' day(s) before it delays the project.'}
+ else{f.className='fb bad';f.textContent=crit?'The finish moves to '+D+' days. Task '+k+' is on the critical path, so every day of delay delays the whole project.':'The finish moves to '+D+' days. Task '+k+' used up its float, so its path is now the longest.'}}
+sel.onchange=sim;dd.oninput=sim;sim();
+document.getElementById('eCheck').onclick=()=>{const du=+document.getElementById('du').value,ef=+document.getElementById('ef').value,f=document.getElementById('eFb');
+ if(du===4&&ef===12){f.className='fb ok';f.textContent='Correct. The setup lasts 4 hours (duration), but 3 people × 4 hours = 12 person-hours of effort.'}
+ else{f.className='fb bad';f.textContent='Not quite. Duration is the 4 hours the activity takes; effort is 3 people × 4 hours = 12 person-hours.'}};
+
+</script>
+</body></html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Homicide Ladder</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible,label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: The Homicide Ladder" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">CRJU 320 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">The Homicide Ladder</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Grade a killing by intent, provocation, and circumstance</text>
+<g transform="translate(800,60)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M70 10V140" stroke="#fff" stroke-width="8"/><path d="M30 140H110" stroke="#fff" stroke-width="10"/>
+<path d="M0 40H140" stroke="#fff" stroke-width="7"/><circle cx="70" cy="28" r="9" fill="#d34147" stroke="none"/>
+<path d="M14 40L-6 95M14 40L34 95" stroke="#ffb3b6" stroke-width="4"/><path d="M-12 95Q14 122 40 95Z" fill="#d34147" stroke="#d34147" stroke-width="3"/>
+<path d="M126 40L106 95M126 40L146 95" stroke="#ffb3b6" stroke-width="4"/><path d="M100 95Q126 122 152 95Z" fill="#d34147" stroke="#d34147" stroke-width="3"/>
+</g></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: The Homicide Ladder</h2>
+<p class="lead"><b>Week 5 objective:</b> Distinguish murder from manslaughter and grade a criminal homicide by the defendant's intent and circumstances.</p>
+<div class="card">
+<h3>Climb the ladder</h3>
+<p class="lead">What separates murder from manslaughter is <b>criminal intent</b>. Murder requires <b>malice aforethought</b>: intent to kill, intent to cause serious bodily injury, or a depraved heart. Manslaughter is an unlawful killing without malice. Select each rung, from not criminal to most serious.</p>
+<div class="grid" id="lad" role="group" aria-label="Homicide grades" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))"></div>
+<div class="panel" id="ladd" style="margin-top:12px" aria-live="polite">Select a rung to see its definition.</div>
+</div>
+<div class="card">
+<h3>Practice: Grade the homicide</h3>
+<p class="lead">Each scenario is fictional. Choose the most likely classification in a typical jurisdiction, then select <b>Check my answers</b>.</p>
+<div id="aitems" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="acheck">Check my answers</button> <button class="btn ghost" id="areset">Start over</button></p>
+<p class="fb" id="afb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Start with intent. <b>Malice</b> (intent to kill, intent to cause serious bodily injury, or a depraved heart) makes a killing murder; <b>premeditation</b>, a specified means, or a serious felony raises it to first degree. Adequate provocation in a <b>heat of passion</b> lowers an intentional killing to voluntary manslaughter, and a killing with <b>no murder intent</b> is involuntary manslaughter.</div>
+<p class="src">Rules and terms from the assigned textbook, <i>Introduction to Criminal Law</i> (Business LibreTexts, n.d.), Chapter 9 "Criminal Homicide" (9.1 Homicide; 9.2 Murder; 9.3 First-Degree Murder; 9.5 Second-Degree Murder; 9.6 Manslaughter), CC BY-NC-SA 3.0. Scenarios are fictional.</p>
+</div>
+<script>
+
+function mkQuiz(pre,O,D){
+ const box=document.getElementById(pre+'items'),fb=document.getElementById(pre+'fb');let ans={};
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="Answer for '+pre+' scenario '+(i+1)+'">'+
+  O.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+pre+'f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(pre+'f'+i).textContent='';});
+ document.getElementById(pre+'check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(pre+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every scenario to finish.':'');};
+ document.getElementById(pre+'reset').onclick=()=>{ans={};render();fb.textContent=''};
+ render();}
+
+function mkExplore(boxId,detId,items){const box=document.getElementById(boxId),det=document.getElementById(detId);
+ items.forEach((it,i)=>{const b=document.createElement('button');b.className='panel';b.setAttribute('aria-pressed','false');
+  b.innerHTML='<div class="kicker" style="color:var(--red)">'+it[0]+'</div><b>'+it[1]+'</b>';
+  b.onclick=()=>{box.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));det.innerHTML='<b>'+it[1]+'</b><p style="margin:6px 0 0">'+it[2]+'</p>';};
+  box.appendChild(b);});}
+mkExplore('lad','ladd',[["NOT CRIMINAL", "Justifiable or excusable homicide", "Homicide is the killing of one human being by another, but it is not always criminal. A lawful execution or a killing by law enforcement to prevent great bodily injury or death is justifiable; a killing by a legally insane defendant is excusable."], ["MOST SERIOUS", "First-degree murder", "Premeditated murder (a willful, deliberate, premeditated killing; an extended time to reflect is generally not required), murder by specified means such as poison, torture, or lying in wait, and serious felony murders."], ["", "Second-degree murder", "Often any murder that is not first degree, including implied malice: intent to cause serious bodily injury, or a depraved heart that does not care whether the victim lives or dies."], ["", "Voluntary manslaughter", "An intentional killing in a heat of passion caused by adequate provocation that would goad a reasonable person. Words alone are generally not enough, and the killing must happen before the passion cools."], ["LEAST SERIOUS", "Involuntary manslaughter", "A killing with no murder intent: misdemeanor manslaughter, reckless or negligent involuntary manslaughter, and vehicular manslaughter."]]);
+mkQuiz('a',[["first", "First-degree murder"], ["second", "Second-degree murder"], ["vol", "Voluntary manslaughter"], ["invol", "Involuntary manslaughter"], ["notcrim", "Not criminal homicide"]],[["Over two weeks, Corwin buys rat poison, researches doses, and slips it into his business partner's coffee to collect the insurance on the partner's life. The partner dies.", "first", "A calm, planned killing by a specified means (poison) is classic first-degree murder."], ["Angry that a teammate beat him in tryouts, Dex attacks him with a tire iron, intending only to break his legs. One blow severs an artery and the teammate dies.", "second", "Intent to cause serious bodily injury is implied malice. Without premeditation to kill, this is typically second-degree murder."], ["During an argument, Ruth's coworker punches her hard in the face. Enraged, Ruth immediately grabs a heavy stapler and strikes him in the head, killing him.", "vol", "Being battered by the victim is a recognized example of adequate provocation, and Ruth killed in the heat of passion before it could cool. Her intent to kill is negated, so the crime drops to voluntary manslaughter."], ["A friend tells Silas that his neighbor insulted his mother. Silas waits until the next morning, then shoots the neighbor.", "first", "Words alone are generally not adequate provocation, and waiting until the next day means any passion had cooled. A planned killing points to premeditated murder."], ["Tara texts while driving well over the speed limit through a school zone, loses control, and kills a pedestrian.", "invol", "There is no intent to kill. Driving with recklessness or negligence that causes a death is vehicular or involuntary manslaughter."], ["A police officer fires at an armed man who is about to shoot a hostage, killing him.", "notcrim", "A killing by law enforcement to prevent great bodily injury or death is a justifiable homicide, not a criminal one."]]);
+</script>
+</body></html>

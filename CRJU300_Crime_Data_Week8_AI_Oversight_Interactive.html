@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Human in the Loop</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.sd{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;background:#d6d2cd;color:#333}
+.sd.on{background:var(--red);color:#fff}.sd.done{background:var(--green);color:#fff}
+select{font:inherit;margin-top:6px;padding:6px;border-radius:8px;border:2px solid #bbb;width:100%;max-width:100%}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 8 banner: Human in the Loop" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">CRJU 300 · WEEK 8</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Human in the Loop</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Decide where people must check an AI policing system before anyone acts</text></svg></div>
+<div class="wrap">
+<h2>Week 8 Interactive: AI Oversight Checkpoints</h2>
+<p class="lead"><b>Week 8 objective:</b> Evaluate the ethical and legal concerns of AI in policing and identify where human verification and accountability belong.</p>
+<div class="card">
+<h3>Why checkpoints matter</h3>
+<p class="lead" style="margin:0">AI platforms combine large datasets to find patterns quickly, but an association is not proof. The National Policing Institute calls keeping <b>a human in the loop</b> essential: AI outputs should inform, not dictate, decisions, and an officer should verify every critical detail, because current AI can be wrong or context-blind. Police data are also often incomplete or inaccurate. People, not software, are accountable for how a flag is used.</p>
+</div>
+<div class="card">
+<h3>Part 1: Walk through a flag (fictional)</h3>
+<p class="lead">Riverbend police use an analytics platform called <b>Project Beacon</b>. Make the call at each checkpoint.</p>
+<div class="steps" id="dots" aria-hidden="true"></div>
+<div class="panel" id="stage"></div>
+<p class="fb" id="fb1" aria-live="polite"></p>
+<p style="margin:10px 0 0"><button class="btn" id="next" hidden>Next checkpoint</button></p>
+</div>
+<div class="card">
+<h3>Part 2: Who owns each safeguard?</h3>
+<p class="lead">Match each safeguard to the people best placed to carry it out.</p>
+<div id="m2" class="grid g2"></div>
+<p style="margin:14px 0 0"><button class="btn" id="c2">Check Part 2</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb2" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Treat every AI output as a claim to test. Put people at the decision points: before detention, before anyone is publicly named, and before a tool keeps running after an error. Justice, truth, and human dignity mean no one should lose liberty or reputation because of an unverified data profile.</div>
+<p class="src">Based on the CRJU 300 Week 8 Overview and Discussion 8 case (Project Sentinel); human-in-the-loop and oversight guidance from the National Policing Institute, "AI in Policing Beyond the Early Adopters: What Your Agency Can and Should Do" (2026). Project Beacon, Riverbend, and all people are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const ST=[
+['Checkpoint 1: The flag','Beacon flags Dana Ortiz, 24, as possibly linked to a burglary ring because her car was read by plate cameras three times near burglary sites this month.',
+ [['Detain Dana for questioning tonight.',0,'A data association is not proof. Detaining someone on an unverified flag risks an unreasonable seizure.'],
+  ['Verify the plate reads and their context before taking any action.',1,'Right. Check each input first: are the reads full matches, and is there an innocent explanation for the car being there?'],
+  ['Ignore the flag; AI is never useful.',0,'The tool may surface a real lead. The answer is verification, not automatic rejection.']]],
+['Checkpoint 2: Verification','Two of the three reads match Dana\'s plate fully; one is a partial match. Her daily commute to work runs past two of the burglary sites.',
+ [['Treat the reads as strong evidence of involvement.',0,'Her commute explains the pattern, so the association is not evidence of guilt.'],
+  ['Record that the pattern is explained by her commute and look for independent evidence before going further.',1,'Right. The association has an innocent explanation, so it cannot carry the case. Only independent evidence would justify more.'],
+  ['Count the partial match as a full match to be safe.',0,'Upgrading a partial match inflates the evidence. Accuracy protects both the investigation and Dana.']]],
+['Checkpoint 3: The press','A reporter asks whether police have identified anyone in the burglary ring.',
+ [['Name Dana as a person of interest to reassure the public.',0,'Publicly naming someone on an unverified flag can damage a reputation that a later apology cannot repair.'],
+  ['Decline to name anyone until evidence is verified, and describe the steps being taken.',1,'Right. Transparency about process builds trust without harming someone who may be innocent.'],
+  ['Release Beacon\'s risk score for Dana.',0,'Releasing an unverified score exposes a person to suspicion based on correlations the department has not checked.']]],
+['Checkpoint 4: After the case','The ring is later traced to other people. Dana was never involved.',
+ [['Keep using Beacon exactly as before; it worked eventually.',0,'An error that nearly harmed an innocent person is a signal to review the system, not ignore it.'],
+  ['Audit Beacon\'s accuracy, require human review before any enforcement action, and report errors publicly.',1,'Right. Audits, human review, and public reporting keep people accountable for how the tool is used.'],
+  ['Blame the software and move on.',0,'Software cannot bear moral responsibility. The people who design, buy, supervise, and act on it are accountable.']]]];
+let cur=0,right=0,answered=false;
+function dots(){$('dots').innerHTML=ST.map((s,i)=>'<span class="sd '+(i<cur?'done':(i===cur?'on':''))+'">'+(i+1)+'</span>').join('');}
+function show(){answered=false;const s=ST[cur];dots();$('next').hidden=true;$('fb1').textContent='';$('fb1').className='fb';
+$('stage').innerHTML='<div class="kicker" style="color:var(--red)">'+s[0].toUpperCase()+'</div><p style="margin:6px 0 10px">'+s[1]+'</p><div role="group" aria-label="'+s[0]+' options">'+s[2].map((o,i)=>'<button class="choice" style="display:block;width:100%" data-o="'+i+'" aria-pressed="false">'+o[0]+'</button>').join('')+'</div>';}
+$('stage').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b||cur>=ST.length)return;const o=ST[cur][2][+b.dataset.o];
+$('stage').querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=$('fb1');f.className='fb '+(o[1]?'ok':'bad');f.textContent=o[2];
+if(o[1]){if(!answered)right++;answered=true;
+ if(cur<ST.length-1){$('next').hidden=false;}else{cur=ST.length;dots();f.textContent=o[2]+' You completed all four checkpoints.';}}else{answered=true;right=Math.max(0,right);}});
+$('next').onclick=()=>{cur++;show();$('stage').querySelector('.choice').focus();};
+show();
+const OW=[['dev','Software developers'],['lead','Agency leadership'],['inv','Investigators'],['board','Oversight board']];
+const SG=[['Test the model\'s accuracy and document which data sources it uses.','dev','The people who build the system can test and disclose how it works.'],
+['Adopt an AI use policy that keeps a human in the loop: outputs inform decisions but never dictate them.','lead','Leaders set the rules that govern how officers use the tool.'],
+['Verify each input, such as the full plate and the actual social media link, before detaining anyone.','inv','Investigators act on flags, so they must confirm the evidence first.'],
+['Review how the tool is used and its errors, and tell the public what tools are used and what data they draw on.','board','An oversight process and public communication support accountability and trust.']];
+let a2={};
+SG.forEach((s,i)=>{const d=document.createElement('div');d.className='panel';const id='s2_'+i;
+d.innerHTML='<label for="'+id+'"><b>'+(i+1)+'.</b> '+s[0]+'</label><br><select id="'+id+'"><option value="">Choose who owns it</option>'+OW.map(o=>'<option value="'+o[0]+'">'+o[1]+'</option>').join('')+'</select><p class="fb" id="g2_'+i+'" aria-live="polite"></p>';
+d.querySelector('select').onchange=e=>{a2[i]=e.target.value;$('g2_'+i).textContent='';};$('m2').appendChild(d);});
+$('c2').onclick=()=>{let ok=0;SG.forEach((s,i)=>{const f=$('g2_'+i);if(!a2[i]){f.className='fb bad';f.textContent='Choose an answer.';return}
+if(a2[i]===s[1]){ok++;f.className='fb ok';f.textContent='Correct. '+s[2]}else{f.className='fb bad';f.textContent='Not quite: '+OW.find(o=>o[0]===s[1])[1]+'. '+s[2]}});
+$('fb2').innerHTML='<span class="score">'+ok+' of '+SG.length+' correct</span>';};
+$('reset').onclick=()=>{cur=0;right=0;show();a2={};document.querySelectorAll('select').forEach(s=>s.value='');document.querySelectorAll('#m2 .fb,#fb2').forEach(f=>{f.textContent='';f.className='fb'});};
+</script>
+</body></html>
