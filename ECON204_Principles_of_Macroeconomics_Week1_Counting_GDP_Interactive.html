@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counting GDP</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+table.dt{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden;font-size:.95rem}
+table.dt th,table.dt td{padding:7px 10px;border-bottom:1px solid #e3e0dc;text-align:right}
+table.dt th:first-child,table.dt td:first-child{text-align:left}
+table.dt thead th{background:#111;color:#fff}
+.tw{overflow-x:auto}
+input[type=number],input[type=text],select{font:inherit;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px;max-width:100%}
+input[type=number]{width:9em}
+input[type=range]{width:100%;accent-color:var(--red)}
+.stat{background:#fff;border-radius:12px;padding:12px;text-align:center;border-top:5px solid var(--red)}
+.stat .v{font-size:1.5rem;font-weight:800}
+.stat .k{font-size:.85rem;color:var(--muted)}
+.chart{background:#fff;border:1px solid #ddd;border-radius:14px;padding:8px}
+.chart svg{display:block;width:100%;height:auto}
+label.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.order li{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid #ddd;border-radius:10px;padding:8px 10px;margin:6px 0}
+.order li span{flex:1}
+.mv{background:#fff;border:2px solid #bbb;border-radius:8px;padding:2px 9px;font-weight:700}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mv:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.choice{padding:6px 10px}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 1 banner: Counting GDP" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ECON 204 · WEEK 1</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Counting GDP</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Sort spending, calculate GDP, and ask what the number leaves out</text></svg></div>
+<div class="wrap">
+<h2>Week 1 Interactive: Counting GDP</h2>
+<p class="lead"><b>Week 1 objective:</b> Sort spending into the parts of GDP, calculate GDP from its components, and judge when GDP overstates or understates the gain in well-being.</p>
+<div class="card">
+<h3>The formula</h3>
+<p class="lead" style="margin:0">Gross domestic product (GDP) is the value of all <b>final</b> goods and services produced within a country in a given year. From the demand side, <b>GDP = C + I + G + (X &minus; M)</b>: consumption, business investment (new buildings, equipment, housing, and inventories, not stocks or bonds), government purchases of goods and services, and net exports (exports minus imports). Intermediate goods, used goods, transfer payments, and non-market or underground activity are left out.</p>
+</div>
+<div class="card">
+<h3>Practice 1: Where does it go?</h3>
+<p class="lead">All people and businesses are fictional. Choose the part of GDP each purchase counts in, or <b>Not counted</b>, then select <b>Check my answers</b>.</p>
+<div id="p1" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c1">Check my answers</button> <button class="btn ghost" id="r1">Start over</button></p>
+<p class="fb" id="fb1" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: Calculate quarterly GDP</h3>
+<p class="lead">Norvania is a fictional country. Its spending is shown in billions of dollars. Enter GDP for each quarter, then select <b>Check GDP</b>.</p>
+<div class="tw"><table class="dt" id="gdpT"><caption style="text-align:left;font-weight:700;padding:6px 0">Norvania spending by quarter ($ billions)</caption>
+<thead><tr><th scope="col">Quarter</th><th scope="col">C</th><th scope="col">I</th><th scope="col">G</th><th scope="col">X</th><th scope="col">M</th><th scope="col">Your GDP</th></tr></thead><tbody></tbody></table></div>
+<p style="margin:12px 0 0"><button class="btn" id="c2">Check GDP</button> <button class="btn ghost" id="h2">Show a hint</button></p>
+<p class="fb" id="fb2" aria-live="polite"></p>
+<div id="after2" hidden>
+<div class="chart" style="margin-top:10px;max-width:560px"><svg id="bars" viewBox="0 0 520 240" role="img" aria-labelledby="barsT"><title id="barsT">Bar chart of Norvania GDP by quarter</title></svg></div>
+<div class="panel" style="margin-top:12px"><p style="margin:0 0 8px" id="q2l"><b>GDP fell from Q2 to Q3. Which component fell the most?</b></p>
+<div role="group" aria-labelledby="q2l" id="q2"></div><p class="fb" id="fb2b" aria-live="polite"></p></div>
+</div>
+</div>
+<div class="card">
+<h3>Practice 3: Does GDP tell the whole story?</h3>
+<p class="lead">For each change, decide whether growth in GDP would <b>overstate</b> or <b>understate</b> the real gain in people's well-being.</p>
+<div id="p3" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c3">Check my answers</button> <button class="btn ghost" id="r3">Start over</button></p>
+<p class="fb" id="fb3" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Add only <b>final</b> goods and services: <b>GDP = C + I + G + (X &minus; M)</b>. Investment is the most volatile part, so it often drives a downturn. GDP is a rough but useful gauge; it leaves out leisure, health, the environment, unpaid work, and how income is shared, so read it next to other indicators.</div>
+<p class="src">Concepts from <i>Principles of Macroeconomics</i> 2e (OpenStax, 2017), Chapter 6: 6.1 "Measuring the Size of the Economy: Gross Domestic Product" and 6.5 "How Well GDP Measures the Well-Being of Society," CC BY-NC-SA 4.0. Countries, people, businesses, and data are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+// generic multiple-choice set: opts=[[val,label]], items=[[text,answer,explain]]
+function choiceSet(boxId,checkId,resetId,fbId,opts,items,name){
+ const box=$(boxId),fb=$(fbId);let ans={};
+ const lab=v=>opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+boxId+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+boxId+'q'+i+'">'+
+  opts.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(boxId+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,done=0;items.forEach((d,i)=>{const f=$(boxId+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return;}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok';}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad';}});
+  fb.innerHTML='<span class="score">'+ok+' of '+items.length+' correct</span>'+(done<items.length?' Answer every '+name+' to finish.':'');};
+ $(resetId).onclick=()=>{ans={};render();fb.textContent='';};
+ render();
+}
+const fmt=n=>n.toLocaleString('en-US');
+
+choiceSet('p1','c1','r1','fb1',[['C','Consumption (C)'],['I','Investment (I)'],['G','Government (G)'],['X','Net exports (X − M)'],['N','Not counted']],[
+['A Ridgeview family buys a new refrigerator.','C','Household spending on a new good is consumption.'],
+['Copperline Bakery buys a new delivery van for its business.','I','New equipment bought by a business is investment.'],
+['A builder finishes a brand-new house, and a family buys it.','I','New residential construction counts as investment, not consumption.'],
+['The city buys three new school buses.','G','Government purchases of goods and services count in G.'],
+['A Ridgeview farm sells wheat to buyers overseas.','X','Exports are produced at home and sold abroad, so they add to GDP through net exports.'],
+['A retiree receives a Social Security check.','N','Transfer payments are not production, so they are not counted.'],
+['A steel mill sells steel to an automaker that uses it in new cars.','N','Steel is an intermediate good. Its value is already in the price of the cars, so counting it again would be double counting.'],
+['Maya buys 100 shares of stock.','N','Buying a financial asset is not investment in the GDP sense; investment means new physical capital.'],
+['Sam buys a used pickup truck from a neighbor.','N','Used goods were counted in the year they were produced.'],
+['Ana cooks dinner at home for her family.','N','Home production that is not sold in a market is not counted.']],'purchase');
+
+const Q=[['Q1',60,18,20,12,15],['Q2',62,20,20,13,16],['Q3',61,15,21,12,16],['Q4',63,17,22,14,17]];
+const gdp=r=>r[1]+r[2]+r[3]+r[4]-r[5];
+const tb=document.querySelector('#gdpT tbody');
+Q.forEach((r,i)=>{const tr=document.createElement('tr');tr.innerHTML='<th scope="row">'+r[0]+'</th>'+r.slice(1).map(v=>'<td>'+v+'</td>').join('')+
+ '<td><label class="sr" for="g'+i+'">GDP for '+r[0]+'</label><input type="number" id="g'+i+'" inputmode="decimal" step="any"></td>';tb.appendChild(tr);});
+$('h2').onclick=()=>{$('fb2').className='fb';$('fb2').textContent='Hint: add C + I + G + X, then subtract M. For Q1 that is 60 + 18 + 20 + 12 − 15.';};
+function bars(){const s=$('bars'),max=110,w=90;let h='<line x1="40" y1="200" x2="510" y2="200" stroke="#999"/>';
+ [0,50,100].forEach(v=>{const y=200-v/max*180;h+='<text x="34" y="'+(y+4)+'" text-anchor="end" font-size="12" fill="#555">'+v+'</text><line x1="40" x2="510" y1="'+y+'" y2="'+y+'" stroke="#eee"/>';});
+ Q.forEach((r,i)=>{const v=gdp(r),bh=v/max*180,x=70+i*110;h+='<rect x="'+x+'" y="'+(200-bh)+'" width="'+w+'" height="'+bh+'" rx="6" fill="'+(r[0]==='Q3'?'#a8353a':'#2b6a99')+'"/><text x="'+(x+w/2)+'" y="'+(194-bh)+'" text-anchor="middle" font-size="14" font-weight="700">$'+v+'B</text><text x="'+(x+w/2)+'" y="222" text-anchor="middle" font-size="14">'+r[0]+'</text>';});
+ s.innerHTML='<title id="barsT">Bar chart of Norvania GDP by quarter: '+Q.map(r=>r[0]+' '+gdp(r)+' billion').join(', ')+'</title>'+h;}
+$('c2').onclick=()=>{let ok=0,miss=[];Q.forEach((r,i)=>{const el=$('g'+i),v=parseFloat(el.value);const good=Math.abs(v-gdp(r))<0.001;el.style.borderColor=isNaN(v)?'#cfcfcf':(good?'#2f7d5b':'#a8353a');el.setAttribute('aria-invalid',!good);if(good)ok++;else miss.push(r[0]);});
+ const f=$('fb2');if(ok===4){f.className='fb ok';f.textContent='All four correct: Q1 $95B, Q2 $99B, Q3 $93B, Q4 $99B. GDP grew, fell in Q3, then recovered.';$('after2').hidden=false;bars();}
+ else{f.className='fb bad';f.textContent=ok+' of 4 correct. Check '+miss.join(', ')+'. Remember that imports (M) are subtracted.';}};
+const O2=[['C','Consumption'],['I','Investment'],['G','Government'],['X','Net exports']];
+O2.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o[1];b.setAttribute('aria-pressed','false');b.onclick=()=>{
+ document.querySelectorAll('#q2 .choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=$('fb2b');
+ if(o[0]==='I'){f.className='fb ok';f.textContent='Correct. Investment dropped from $20B to $15B while consumption fell by only $1B. Business investment is smaller than consumption but far more volatile, so it often drives a downturn.';}
+ else{f.className='fb bad';f.textContent='Not quite. Compare each column from Q2 to Q3 and look for the largest drop.';}};$('q2').appendChild(b);});
+
+choiceSet('p3','c3','r3','fb3',[['over','Overstates'],['under','Understates']],[
+['Norvania’s output rises 3% while its air and rivers get dirtier.','over','A dirtier environment lowers well-being but is not subtracted from GDP.'],
+['Output rises 3% and the crime rate falls.','under','Less crime raises well-being but is not counted directly in GDP.'],
+['The average workweek falls from 45 to 40 hours while output holds steady.','under','More leisure is a real gain that GDP does not measure.'],
+['More parents pay for child care they used to provide at home.','over','Work moves from the non-market economy into GDP, so measured output rises even if families are not consuming more care.'],
+['A construction boom follows a hurricane that destroyed thousands of homes.','over','Rebuilding adds to GDP, but no one would call the storm a gain in well-being.'],
+['Life expectancy rises and fewer infants die.','under','GDP counts spending on healthcare, not the health outcomes themselves.']],'change');
+
+</script>
+</body></html>

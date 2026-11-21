@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who Had It, and When?</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px;overflow-wrap:anywhere}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,.mv:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.order{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.order li{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #ddd;border-radius:12px;padding:10px 12px}
+.order .n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.order .t{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.order .mv{flex:0 0 auto;border:2px solid #bbb;background:#fff;border-radius:8px;width:40px;height:36px;font-weight:700}
+.order li.right{border-color:var(--green);box-shadow:inset 4px 0 0 var(--green)}.order li.wrong{border-color:var(--dark);box-shadow:inset 4px 0 0 var(--dark)}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Who Had It, and When?" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">CRJU 390 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Who Had It, and When?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Build and audit a chain of custody record</text></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Chain of Custody</h2>
+<p class="lead"><b>Week 2 objective:</b> Identify what a chain of custody record must contain and spot the gaps that weaken it.</p>
+<div class="card">
+<h3>What the record shows</h3>
+<p class="lead" style="margin:0 0 10px">McKee calls <b>chain of custody</b> a legal safeguard that maintains the identity and integrity of evidence. It is a documented timeline noting <b>every person</b> who handled an item, <b>when</b> it was handled, <b>where</b> it was collected, and a <b>detailed description</b>. Evidence stays in someone's physical possession or locked away, handling is kept to a minimum, and <b>every transfer is documented</b>: who received it, when, and under what circumstances. A break in the chain can make evidence inadmissible.</p><p class="lead" style="margin:0">McKee also lists what goes on the evidence container: your initials and ID number, the date and time of collection, the case number, the evidence number, and a detailed location where the item was found. The course's chain of custody tracking form adds a line for every transfer: date/time, item number, who released it, who received it, and the reason.</p>
+</div>
+<div class="card">
+<h3>Practice 1: does it belong in the record?</h3>
+<p class="lead">Choose <b>Include</b> or <b>Leave out</b> for each piece of information, then select <b>Check my answers</b>.</p>
+<div id="a1-items" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="a1-check">Check my answers</button> <button type="button" class="btn ghost" id="a1-reset">Start over</button></p>
+<p class="fb" id="a1-fb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: audit a custody log</h3>
+<p class="lead">Fictional case 26-0412, Elm Street Pharmacy burglary. Item 3 is a pry bar found at the rear door. Decide whether each entry is complete or what it is missing.</p>
+<div id="a2-items" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="a2-check">Check my answers</button> <button type="button" class="btn ghost" id="a2-reset">Start over</button></p>
+<p class="fb" id="a2-fb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Chain of custody is a <b>chronological history</b>. Every item needs a collector, a description, and case information, and every transfer needs a <b>name</b>, a <b>date and time</b>, and a <b>reason</b>. Record each step when it happens; a missing link gives the defense a reason to question whether the evidence in court is the evidence from the scene.</div>
+<p class="src">Rules from A. J. McKee, <i>Fundamentals of Criminal Investigation</i> (2024), Section 1.2 "Evidence Law" (chain of custody) and Section 3.1 "Evidence Handling and Personal Safety" (labeling evidence containers), docmckee.com. Form fields from the CRJU 390 Chain of Custody Tracking Form (course resource). Case and names are fictional.</p>
+</div>
+<script>
+const DATA={"acts": [{"id": "a1", "type": "choice", "h": "Practice 1: does it belong in the record?", "lead": "Choose <b>Include<\/b> or <b>Leave out<\/b> for each piece of information, then select <b>Check my answers<\/b>.", "opts": [["in", "Include"], ["out", "Leave out"]], "items": [{"q": "The name or initials of the officer who collected the item.", "a": "in", "why": "McKee's container label starts with the collector's initials and ID number: the record begins with who took the item into custody."}, {"q": "Every person or agency who later held the item, such as the evidence technician and the crime lab.", "a": "in", "why": "The chain notes every person who handled the item and every transfer."}, {"q": "The date and time of collection and of each transfer.", "a": "in", "why": "The chain is a documented timeline: when the item was collected and each time it changed hands."}, {"q": "The agency name and case number.", "a": "in", "why": "The case number (and an evidence number) on the container tie the item to one investigation."}, {"q": "The officer's opinion about who committed the crime.", "a": "out", "why": "The record documents the evidence's history, not conclusions about guilt."}, {"q": "A brief description of the item, such as \"black knit cap, size L.\"", "a": "in", "why": "A description lets anyone confirm the item in court is the item that was collected."}, {"q": "An estimated time for a transfer that nobody wrote down, filled in days later from memory.", "a": "out", "why": "A guess is not documentation. Record a transfer when it happens; if a gap exists, it must be acknowledged, not papered over."}]}, {"id": "a2", "type": "choice", "h": "Practice 2: audit a custody log", "lead": "Fictional case 26-0412, Elm Street Pharmacy burglary. Item 3 is a pry bar found at the rear door. Decide whether each entry is complete or what it is missing.", "opts": [["ok", "Complete"], ["who", "Gap: who"], ["when", "Gap: date/time"], ["what", "Gap: description or case information"], ["xfer", "Gap: undocumented transfer"]], "items": [{"q": "10/04, 9:15 PM. Officer A. Ruiz collected Item 3 (pry bar) at the rear door, case 26-0412, packaged and labeled with her initials.", "a": "ok", "why": "Collector, date and time, case number, and description are all present."}, {"q": "10/04, 11:40 PM. Released by A. Ruiz; received by Evidence Technician J. Park. Reason: storage in evidence locker.", "a": "ok", "why": "Both people, the time, and the reason for the transfer are recorded."}, {"q": "Item 3 was shown at the 10/06 morning briefing. The log has no entry for who took it out of the locker or returned it.", "a": "xfer", "why": "Any time the item changes hands it needs a release and receipt entry. An unlogged trip out of the locker breaks the history."}, {"q": "Released by J. Park; received by the crime lab. Reason: tool mark comparison. (No date or time written.)", "a": "when", "why": "Without a date and time, no one can place this transfer in the chronological history."}, {"q": "10/12, 2:05 PM. Released by the crime lab; received by J. Park. Reason: returned after examination.", "a": "who", "why": "\"The crime lab\" is not a person. Name the analyst (and ID number) who released the item."}, {"q": "A second package from the same scene is labeled only \"clothing\" with the collector's initials and the date.", "a": "what", "why": "McKee's label list includes the case number, a unique evidence number, and where the item was found, and the chain needs a detailed description such as \"gray hooded sweatshirt.\""}]}]};
+const $=id=>document.getElementById(id);
+function choiceActivity(a){
+  const box=$(a.id+'-items'),fb=$(a.id+'-fb');let ans={};
+  const opts=i=>a.items[i].opts||a.opts;
+  function render(){box.innerHTML='';a.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+    p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d.q}</p><div role="group" aria-label="Answer for item ${i+1}">`+
+    opts(i).map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+    `</div><p class="fb" id="${a.id}-f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+  box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+    box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));$(a.id+'-f'+i).textContent='';});
+  $(a.id+'-check').onclick=()=>{let ok=0,done=0;a.items.forEach((d,i)=>{const f=$(a.id+'-f'+i);
+    if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+    const lab=opts(i).find(o=>o[0]===d.a)[1];
+    if(ans[i]===d.a){ok++;f.textContent='Correct. '+d.why;f.className='fb ok'}else{f.textContent='Not quite. Best answer: '+lab+'. '+d.why;f.className='fb bad'}});
+    fb.innerHTML=`<span class="score">${ok} of ${a.items.length} correct</span>`+(done<a.items.length?' Answer every item to finish.':'');};
+  $(a.id+'-reset').onclick=()=>{ans={};render();fb.textContent=''};
+  render();
+}
+function orderActivity(a){
+  const list=$(a.id+'-list'),fb=$(a.id+'-fb');let cur=[];
+  function shuffle(){cur=a.steps.map((s,i)=>i);for(let k=0;k<20;k++){cur.sort(()=>Math.random()-.5);if(cur.some((v,i)=>v!==i))break}}
+  function render(focus){list.innerHTML='';cur.forEach((s,pos)=>{const li=document.createElement('li');
+    li.innerHTML=`<span class="n" aria-hidden="true">${pos+1}</span><span class="t">${a.steps[s]}</span>`+
+    `<button type="button" class="mv" data-p="${pos}" data-d="-1" aria-label="Move up: ${a.steps[s].replace(/<[^>]+>/g,'')}" ${pos===0?'disabled':''}>&#8593;</button>`+
+    `<button type="button" class="mv" data-p="${pos}" data-d="1" aria-label="Move down: ${a.steps[s].replace(/<[^>]+>/g,'')}" ${pos===cur.length-1?'disabled':''}>&#8595;</button>`;
+    list.appendChild(li)});
+    if(focus){const b=list.querySelector(`.mv[data-p="${focus[0]}"][data-d="${focus[1]}"]`)||list.querySelector(`.mv[data-p="${focus[0]}"]:not([disabled])`);if(b)b.focus()}}
+  list.addEventListener('click',e=>{const b=e.target.closest('.mv');if(!b||b.disabled)return;const p=+b.dataset.p,d=+b.dataset.d,q=p+d;
+    [cur[p],cur[q]]=[cur[q],cur[p]];fb.textContent='Moved to position '+(q+1)+'.';render([q,d]);});
+  $(a.id+'-check').onclick=()=>{let ok=0;[...list.children].forEach((li,pos)=>{const r=cur[pos]===pos;if(r)ok++;li.className=r?'right':'wrong'});
+    fb.innerHTML=`<span class="score">${ok} of ${cur.length} in the right place</span> `+(ok===cur.length?a.done:a.hint);};
+  $(a.id+'-reset').onclick=()=>{shuffle();render();fb.textContent=''};
+  shuffle();render();
+}
+DATA.acts.forEach(a=>a.type==='order'?orderActivity(a):choiceActivity(a));
+</script>
+</body></html>

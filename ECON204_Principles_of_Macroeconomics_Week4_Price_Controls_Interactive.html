@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Price Control Simulator</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+table.dt{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden;font-size:.95rem}
+table.dt th,table.dt td{padding:7px 10px;border-bottom:1px solid #e3e0dc;text-align:right}
+table.dt th:first-child,table.dt td:first-child{text-align:left}
+table.dt thead th{background:#111;color:#fff}
+.tw{overflow-x:auto}
+input[type=number],input[type=text],select{font:inherit;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px;max-width:100%}
+input[type=number]{width:9em}
+input[type=range]{width:100%;accent-color:var(--red)}
+.stat{background:#fff;border-radius:12px;padding:12px;text-align:center;border-top:5px solid var(--red)}
+.stat .v{font-size:1.5rem;font-weight:800}
+.stat .k{font-size:.85rem;color:var(--muted)}
+.chart{background:#fff;border:1px solid #ddd;border-radius:14px;padding:8px}
+.chart svg{display:block;width:100%;height:auto}
+label.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.order li{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid #ddd;border-radius:10px;padding:8px 10px;margin:6px 0}
+.order li span{flex:1}
+.mv{background:#fff;border:2px solid #bbb;border-radius:8px;padding:2px 9px;font-weight:700}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mv:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.choice{padding:6px 10px}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: Price Control Simulator" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ECON 204 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Price Control Simulator</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Set a ceiling or a floor and watch shortages and surpluses appear</text></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Price Control Simulator</h2>
+<p class="lead"><b>Discussion 4 focus:</b> See what happens when a government sets a legal maximum price (a ceiling) or a legal minimum price (a floor), and predict shortages, surpluses, and unintended effects.</p>
+<div class="card">
+<h3>The rule</h3>
+<p class="lead" style="margin:0">A <b>price ceiling</b> is a legal maximum price; it binds only when it is set <b>below</b> the equilibrium price, and then quantity demanded exceeds quantity supplied (a <b>shortage</b>). A <b>price floor</b> is a legal minimum price; it binds only when it is set <b>above</b> equilibrium, and then quantity supplied exceeds quantity demanded (a <b>surplus</b>). Either way, some trades that buyers and sellers both wanted never happen.</p>
+</div>
+<div class="card">
+<h3>Simulator 1: Rent control (a price ceiling)</h3>
+<p class="lead">Demand for apartments in a growing city has risen. Without controls, rent would settle at $600 with 17,000 units rented. Move the slider to set a legal maximum rent.</p>
+<label for="rs"><b id="rlab">Legal maximum rent: </b></label>
+<input type="range" id="rs">
+<div class="grid g2" style="margin-top:10px">
+<div class="chart"><svg id="rc" viewBox="0 0 420 300" role="img" aria-labelledby="rt"><title id="rt"></title></svg></div>
+<div>
+<div class="grid g2">
+<div class="stat"><div class="k">Quantity demanded</div><div class="v" id="rqd"></div></div>
+<div class="stat" style="border-color:var(--blue)"><div class="k">Quantity supplied</div><div class="v" id="rqs"></div></div>
+<div class="stat" style="border-color:var(--green)"><div class="k">Units actually rented</div><div class="v" id="rq"></div></div>
+<div class="stat" style="border-color:var(--gold)"><div class="k">Gap</div><div class="v" id="rg"></div></div>
+</div>
+<p class="fb" id="rfb" aria-live="polite"></p>
+</div></div>
+</div><div class="card">
+<h3>Simulator 2: A living wage (a price floor)</h3>
+<p class="lead">A city must pay its workers at least the wage it sets. Without a floor, the wage would settle at $10 an hour with 1,200 workers hired. Move the slider to set a minimum wage.</p>
+<label for="ws"><b id="wlab">Minimum wage: </b></label>
+<input type="range" id="ws">
+<div class="grid g2" style="margin-top:10px">
+<div class="chart"><svg id="wc" viewBox="0 0 420 300" role="img" aria-labelledby="wt"><title id="wt"></title></svg></div>
+<div>
+<div class="grid g2">
+<div class="stat"><div class="k">Quantity demanded</div><div class="v" id="wqd"></div></div>
+<div class="stat" style="border-color:var(--blue)"><div class="k">Quantity supplied</div><div class="v" id="wqs"></div></div>
+<div class="stat" style="border-color:var(--green)"><div class="k">Workers actually hired</div><div class="v" id="wq"></div></div>
+<div class="stat" style="border-color:var(--gold)"><div class="k">Gap</div><div class="v" id="wg"></div></div>
+</div>
+<p class="fb" id="wfb" aria-live="polite"></p>
+</div></div>
+</div>
+<div class="card">
+<h3>Practice: Predict the result</h3>
+<p class="lead">Each policy below is fictional. Choose what it will cause, then select <b>Check my answers</b>.</p>
+<div id="p3" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c3">Check my answers</button> <button class="btn ghost" id="r3">Start over</button></p>
+<p class="fb" id="fb3" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> First compare the controlled price with equilibrium. A binding <b>ceiling</b> creates a shortage and often lower quality; a binding <b>floor</b> creates a surplus, such as unemployed workers or unsold crops the government must buy. Good intentions do not cancel the laws of demand and supply.</div>
+<p class="src">Rent and living-wage schedules are the textbook's illustrative examples in <i>Principles of Macroeconomics</i> 2e (OpenStax, 2017): 3.4 "Price Ceilings and Price Floors" and 4.1 "Demand and Supply at Work in Labor Markets"; efficiency ideas from 3.5 "Demand, Supply, and Efficiency." CC BY-NC-SA 4.0. Practice scenarios are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+// generic multiple-choice set: opts=[[val,label]], items=[[text,answer,explain]]
+function choiceSet(boxId,checkId,resetId,fbId,opts,items,name){
+ const box=$(boxId),fb=$(fbId);let ans={};
+ const lab=v=>opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+boxId+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+boxId+'q'+i+'">'+
+  opts.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(boxId+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,done=0;items.forEach((d,i)=>{const f=$(boxId+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return;}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok';}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad';}});
+  fb.innerHTML='<span class="score">'+ok+' of '+items.length+' correct</span>'+(done<items.length?' Answer every '+name+' to finish.':'');};
+ $(resetId).onclick=()=>{ans={};render();fb.textContent='';};
+ render();
+}
+const fmt=n=>n.toLocaleString('en-US');
+
+function setup(p,P,QD,QS,eq,kind,fmtP,unitWord,xmax){
+ const s=$(p+'s');s.min=0;s.max=P.length;s.step=1;s.value=P.length; // last position = no control
+ const X=q=>50+q/xmax*350,Y=pr=>260-(pr-P[0]+ (P[1]-P[0]))/((P[P.length-1]-P[0])+2*(P[1]-P[0]))*240;
+ function draw(i){const svg=$(p+'c');let h='<line x1="50" y1="260" x2="410" y2="260" stroke="#888"/><line x1="50" y1="20" x2="50" y2="260" stroke="#888"/>';
+  h+='<text x="230" y="292" text-anchor="middle" font-size="13" fill="#444">Quantity</text><text x="16" y="140" font-size="13" fill="#444" transform="rotate(-90 16 140)" text-anchor="middle">'+(kind==='ceil'?'Rent':'Wage')+'</text>';
+  P.forEach(v=>{h+='<text x="45" y="'+(Y(v)+4)+'" text-anchor="end" font-size="11" fill="#555">'+fmtP(v)+'</text>';});
+  h+='<polyline fill="none" stroke="#2b6a99" stroke-width="3" points="'+P.map((v,k)=>X(QS[k])+','+Y(v)).join(' ')+'"/><text x="'+(X(QS[QS.length-1])+4)+'" y="'+(Y(P[P.length-1])-4)+'" font-size="13" font-weight="700" fill="#2b6a99">S</text>';
+  h+='<polyline fill="none" stroke="#2f7d5b" stroke-width="3" points="'+P.map((v,k)=>X(QD[k])+','+Y(v)).join(' ')+'"/><text x="'+(X(QD[QD.length-1])-14)+'" y="'+(Y(P[P.length-1])-4)+'" font-size="13" font-weight="700" fill="#2f7d5b">D</text>';
+  h+='<circle cx="'+X(QS[eq])+'" cy="'+Y(P[eq])+'" r="6" fill="#111"/>';
+  if(i<P.length){const y=Y(P[i]);h+='<line x1="50" x2="410" y1="'+y+'" y2="'+y+'" stroke="#d34147" stroke-width="3" stroke-dasharray="8 5"/><text x="408" y="'+(y-6)+'" text-anchor="end" font-size="12" font-weight="700" fill="#a8353a">'+(kind==='ceil'?'Ceiling ':'Floor ')+fmtP(P[i])+'</text>';
+   const binding=kind==='ceil'?i<eq:i>eq;if(binding){h+='<line x1="'+X(QS[i])+'" x2="'+X(QD[i])+'" y1="'+(y+12)+'" y2="'+(y+12)+'" stroke="#c98a1b" stroke-width="6"/>';}}
+  svg.innerHTML='<title id="'+p+'t"></title>'+h;return svg;}
+ function upd(){const i=+s.value,f=$(p+'fb');let qd,qs,q,gap,msg,cls,title;
+  if(i===P.length){qd=QD[eq];qs=QS[eq];q=qs;gap='None';msg='No control: the market clears at '+fmtP(P[eq])+' with '+fmt(q)+' '+unitWord+'.';cls='fb ok';$(p+'lab').textContent=(kind==='ceil'?'Legal maximum rent: none (market)':'Minimum wage: none (market)');}
+  else{$(p+'lab').textContent=(kind==='ceil'?'Legal maximum rent: ':'Minimum wage: ')+fmtP(P[i]);const binding=kind==='ceil'?i<eq:i>eq;
+   if(!binding){qd=QD[eq];qs=QS[eq];q=qs;gap='None';cls='fb';msg='Not binding: a '+(kind==='ceil'?'ceiling at or above':'floor at or below')+' the equilibrium '+(kind==='ceil'?'rent':'wage')+' of '+fmtP(P[eq])+' has no effect. The market still clears at '+fmtP(P[eq])+'.';}
+   else{qd=QD[i];qs=QS[i];q=Math.min(qd,qs);cls='fb bad';
+    if(kind==='ceil'){gap='Shortage '+fmt(qd-qs);msg='Shortage: renters want '+fmt(qd)+' units but landlords offer only '+fmt(qs)+'. Only '+fmt(q)+' units are rented, '+fmt(QS[eq]-q)+' fewer than at the market rent. Expect waiting lists, conversions to condos, and less maintenance.';}
+    else{gap='Surplus '+fmt(qs-qd);msg='Surplus of labor: '+fmt(qs)+' people want these jobs but only '+fmt(qd)+' are hired. Those hired earn more; '+fmt(QD[eq]-qd)+' fewer people have jobs than at the market wage.';}}}
+  $(p+'qd').textContent=fmt(qd);$(p+'qs').textContent=fmt(qs);$(p+'q').textContent=fmt(q);$(p+'g').textContent=gap;f.className=cls;f.textContent=msg;
+  const svg=draw(i);svg.querySelector('title').textContent=(kind==='ceil'?'Rental housing':'Labor')+' market graph. '+msg;
+  s.setAttribute('aria-valuetext',i===P.length?'No control':fmtP(P[i]));}
+ s.addEventListener('input',upd);upd();}
+setup('r',[400,500,600,700,800],[23000,19000,17000,15000,14000],[12000,15000,17000,19000,20000],2,'ceil',v=>'$'+v,'units rented',24000);
+setup('w',[8,9,10,11,12,13,14],[1900,1500,1200,900,700,500,400],[500,900,1200,1400,1600,1800,1900],2,'floor',v=>'$'+v,'workers hired',2000);
+choiceSet('p3','c3','r3','fb3',[['short','Shortage'],['surp','Surplus'],['none','No effect (not binding)']],[
+['A city caps rent at $1,400 a month when the market rent is $1,700.','short','A ceiling below equilibrium: more people want apartments at $1,400 than landlords will offer.'],
+['A government guarantees dairy farmers $4 a gallon for milk when the market price is $3.','surp','A floor above equilibrium: farmers produce more than buyers want, and the government must buy or store the extra.'],
+['A town sets a minimum wage of $9 an hour, but local employers already pay $11.','none','A floor below the market wage does not bind; wages stay where the market sets them.'],
+['After a storm, a state caps bottled water at $2 a case when the market price would be $5.','short','The ceiling is below equilibrium, so shelves empty faster than sellers restock.'],
+['A law caps credit card interest at 30% when lenders charge about 18%.','none','The ceiling is above the market rate, so it does not change the outcome.'],
+['A city requires its contractors to pay $20 an hour when the market wage is $16.','surp','A wage floor above equilibrium means more people seek those jobs than employers will hire.']],'policy');
+
+</script>
+</body></html>

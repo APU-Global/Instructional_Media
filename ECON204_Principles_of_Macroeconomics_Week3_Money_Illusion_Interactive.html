@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Money Illusion Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+table.dt{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden;font-size:.95rem}
+table.dt th,table.dt td{padding:7px 10px;border-bottom:1px solid #e3e0dc;text-align:right}
+table.dt th:first-child,table.dt td:first-child{text-align:left}
+table.dt thead th{background:#111;color:#fff}
+.tw{overflow-x:auto}
+input[type=number],input[type=text],select{font:inherit;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px;max-width:100%}
+input[type=number]{width:9em}
+input[type=range]{width:100%;accent-color:var(--red)}
+.stat{background:#fff;border-radius:12px;padding:12px;text-align:center;border-top:5px solid var(--red)}
+.stat .v{font-size:1.5rem;font-weight:800}
+.stat .k{font-size:.85rem;color:var(--muted)}
+.chart{background:#fff;border:1px solid #ddd;border-radius:14px;padding:8px}
+.chart svg{display:block;width:100%;height:auto}
+label.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.order li{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid #ddd;border-radius:10px;padding:8px 10px;margin:6px 0}
+.order li span{flex:1}
+.mv{background:#fff;border:2px solid #bbb;border-radius:8px;padding:2px 9px;font-weight:700}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mv:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.choice{padding:6px 10px}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Money Illusion Lab" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ECON 204 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Money Illusion Lab</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Measure inflation, find your real raise, and spot the winners and losers</text></svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: Money Illusion Lab</h2>
+<p class="lead"><b>Week 3 objective:</b> Calculate an inflation rate, convert nominal pay into real buying power, and identify who gains and who loses when inflation rises unexpectedly.</p>
+<div class="card">
+<h3>Two tools</h3>
+<div class="grid g2">
+<div class="panel"><b>Inflation rate</b><p style="margin:6px 0 0">The percentage change in the cost of a fixed basket of goods:<br><b>(new cost &minus; old cost) &divide; old cost &times; 100</b></p></div>
+<div class="panel"><b>Nominal to real</b><p style="margin:6px 0 0">Divide by the price index (expressed as a decimal, so 105 becomes 1.05):<br><b>real value = nominal value &divide; (index &divide; 100)</b></p></div>
+</div>
+<p class="lead" style="margin:12px 0 0"><b>Money illusion</b> is treating a change in nominal dollars as if it were a change in real value.</p>
+</div>
+<div class="card">
+<h3>Practice 1: Price a basket</h3>
+<p class="lead">Jordan, a fictional student, buys the same things every month. Fill in what the basket costs in each year and the inflation rate, then select <b>Check</b>.</p>
+<div class="tw"><table class="dt"><caption style="text-align:left;font-weight:700;padding:6px 0">Jordan's monthly basket</caption>
+<thead><tr><th scope="col">Item</th><th scope="col">Quantity</th><th scope="col">Year 1 price</th><th scope="col">Year 2 price</th></tr></thead>
+<tbody><tr><th scope="row">Lunch out</th><td>8</td><td>$9</td><td>$10</td></tr><tr><th scope="row">Phone plan</th><td>1</td><td>$40</td><td>$40</td></tr><tr><th scope="row">Bus pass (weekly)</th><td>4</td><td>$12</td><td>$13</td></tr></tbody></table></div>
+<div class="grid g3" style="margin-top:12px">
+<label class="row" for="b1"><b>Year 1 basket cost ($)</b><input type="number" id="b1" step="any"></label>
+<label class="row" for="b2"><b>Year 2 basket cost ($)</b><input type="number" id="b2" step="any"></label>
+<label class="row" for="b3"><b>Inflation rate (%)</b><input type="number" id="b3" step="any"></label>
+</div>
+<p style="margin:8px 0 0"><button class="btn" id="cb">Check</button> <button class="btn ghost" id="hb">Show a hint</button></p>
+<p class="fb" id="fbb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: Did my raise beat inflation?</h3>
+<p class="lead">Enter a salary for two years and the price index for each year. The calculator converts this year's pay into last year's dollars. The starting numbers are fictional; try your own.</p>
+<div class="grid g2">
+<label class="row" for="s1"><b>Last year's salary ($)</b><input type="number" id="s1" value="48000" min="0" step="100"></label>
+<label class="row" for="s2"><b>This year's salary ($)</b><input type="number" id="s2" value="50000" min="0" step="100"></label>
+<label class="row" for="p1"><b>Price index last year</b><input type="number" id="p1" value="250" min="1" step="0.1"></label>
+<label class="row" for="p2"><b>Price index this year</b><input type="number" id="p2" value="262.5" min="1" step="0.1"></label>
+</div>
+<div class="grid g4" style="margin-top:12px">
+<div class="stat"><div class="k">Nominal raise</div><div class="v" id="o1"></div></div>
+<div class="stat" style="border-color:var(--gold)"><div class="k">Inflation</div><div class="v" id="o2"></div></div>
+<div class="stat" style="border-color:var(--blue)"><div class="k">This year's pay in last year's dollars</div><div class="v" id="o3"></div></div>
+<div class="stat" style="border-color:var(--green)"><div class="k">Real change</div><div class="v" id="o4"></div></div>
+</div>
+<p class="fb" id="fbs" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 3: Who wins, who loses?</h3>
+<p class="lead">Inflation unexpectedly jumps from 2% to 7%. Is each fictional person or organization <b>helped</b> or <b>hurt</b>?</p>
+<div id="p3" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c3">Check my answers</button> <button class="btn ghost" id="r3">Start over</button></p>
+<p class="fb" id="fb3" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Always ask what a number buys. Convert nominal pay, prices, and returns into <b>real</b> terms before you compare them. Unexpected inflation <b>helps</b> those who owe fixed amounts and <b>hurts</b> those who receive fixed amounts or whose pay adjusts late.</div>
+<p class="src">Concepts from <i>Principles of Macroeconomics</i> 2e (OpenStax, 2017): 9.1 "Tracking Inflation," 9.4 "The Confusion Over Inflation," and 6.2 "Adjusting Nominal Values to Real Values," CC BY-NC-SA 4.0. People, organizations, and numbers are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+// generic multiple-choice set: opts=[[val,label]], items=[[text,answer,explain]]
+function choiceSet(boxId,checkId,resetId,fbId,opts,items,name){
+ const box=$(boxId),fb=$(fbId);let ans={};
+ const lab=v=>opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+boxId+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+boxId+'q'+i+'">'+
+  opts.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(boxId+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,done=0;items.forEach((d,i)=>{const f=$(boxId+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return;}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok';}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad';}});
+  fb.innerHTML='<span class="score">'+ok+' of '+items.length+' correct</span>'+(done<items.length?' Answer every '+name+' to finish.':'');};
+ $(resetId).onclick=()=>{ans={};render();fb.textContent='';};
+ render();
+}
+const fmt=n=>n.toLocaleString('en-US');
+
+const money=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const near=(a,b,t)=>Math.abs(a-b)<=t;
+$('hb').onclick=()=>{$('fbb').className='fb';$('fbb').textContent='Hint: multiply each price by its quantity and add. Year 1 lunch costs 8 × $9 = $72.';};
+$('cb').onclick=()=>{const a=parseFloat($('b1').value),b=parseFloat($('b2').value),c=parseFloat($('b3').value),f=$('fbb');const m=[];
+ if(!near(a,160,0.01))m.push('Year 1 cost');if(!near(b,172,0.01))m.push('Year 2 cost');if(!near(c,7.5,0.05))m.push('inflation rate');
+ [['b1',160,.01],['b2',172,.01],['b3',7.5,.05]].forEach(([id,v,t])=>{const x=parseFloat($(id).value);$(id).style.borderColor=isNaN(x)?'#cfcfcf':(near(x,v,t)?'#2f7d5b':'#a8353a');});
+ if(!m.length){f.className='fb ok';f.textContent='Correct. Year 1: $72 + $40 + $48 = $160. Year 2: $80 + $40 + $52 = $172. Inflation = (172 − 160) ÷ 160 × 100 = 7.5%. Lunch and the bus pass drive it, because Jordan buys more of them.';}
+ else{f.className='fb bad';f.textContent='Check your '+m.join(' and ')+'.';}};
+function calc(){const s1=+$('s1').value,s2=+$('s2').value,p1=+$('p1').value,p2=+$('p2').value,f=$('fbs');
+ if(!(s1>0&&s2>0&&p1>0&&p2>0)){f.className='fb bad';f.textContent='Enter positive numbers in all four boxes.';['o1','o2','o3','o4'].forEach(i=>$(i).textContent='–');return;}
+ const raise=(s2-s1)/s1*100,inf=(p2-p1)/p1*100,real=s2/(p2/p1),rc=(real-s1)/s1*100;
+ $('o1').textContent=raise.toFixed(1)+'%';$('o2').textContent=inf.toFixed(1)+'%';$('o3').textContent=money(real);$('o4').textContent=(rc>0?'+':'')+rc.toFixed(1)+'%';
+ $('o4').style.color=rc<0?'var(--dark)':'var(--green)';
+ if(Math.abs(rc)<0.05){f.className='fb';f.textContent='Your raise just kept pace with prices: your buying power did not change.';}
+ else if(rc<0){f.className='fb bad';f.textContent='Money illusion alert: your paycheck grew '+raise.toFixed(1)+'%, but prices grew '+inf.toFixed(1)+'%, so you can buy about '+Math.abs(rc).toFixed(1)+'% less than last year.';}
+ else{f.className='fb ok';f.textContent='Real gain: after adjusting for '+inf.toFixed(1)+'% inflation, your buying power rose about '+rc.toFixed(1)+'%.';}}
+['s1','s2','p1','p2'].forEach(i=>$(i).addEventListener('input',calc));calc();
+choiceSet('p3','c3','r3','fb3',[['help','Helped'],['hurt','Hurt']],[
+['Lena keeps $5,000 in cash in a safe at home.','hurt','The buying power of cash shrinks as prices rise.'],
+['Omar borrowed $20,000 last year at a fixed 6% interest rate.','help','He repays in dollars that are worth less. The borrower’s gain is the lender’s loss.'],
+['Ruth, a retiree, receives a pension fixed at $2,000 a month.','hurt','A fixed nominal income buys less each year.'],
+['Lakeview Credit Union made many fixed-rate car loans last year.','hurt','As a lender receiving fixed payments, it is repaid in less valuable dollars.'],
+['A state government borrowed at a fixed rate to build a highway.','help','Like any fixed-rate borrower, it repays the loan in dollars that are worth less than expected.'],
+['Dev gets one raise a year, months after prices have already climbed.','hurt','When wages lag behind prices, real pay falls until the raise arrives.'],
+['Kim earns 3% interest on her savings account.','hurt','With 7% inflation, her real return is about 3% − 7% = −4%. She is losing buying power.']],'case');
+
+</script>
+</body></html>
