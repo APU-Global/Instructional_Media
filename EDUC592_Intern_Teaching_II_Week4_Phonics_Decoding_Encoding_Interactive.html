@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phonics Two-Way Street</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,.tile:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink)}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.word{display:flex;gap:10px;justify-content:center;margin:8px 0 14px}
+.slot{width:64px;height:72px;border-radius:12px;background:#fff;border:3px solid #111;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800}
+.slot.chg{border-color:var(--red);background:#faf5f5}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tile{width:52px;height:52px;border-radius:10px;border:2px solid #bbb;background:#fff;font-size:1.5rem;font-weight:800;color:var(--ink)}
+.tile:hover{border-color:var(--red)}
+.chain{font-weight:700;text-align:center;color:var(--muted);margin:6px 0 0}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.slot{width:54px;height:62px;font-size:1.9rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: Phonics Two-Way Street" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">EDUC 592 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Phonics Two-Way Street</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Decoding, encoding, word recognition, and decodable text</text></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Decoding and Encoding</h2>
+<p class="lead"><b>Week 4 objective:</b> Tell apart the Lesson Plan 2 emphases (phonics and letter-sound correspondences, decoding, encoding, word recognition, and connected decodable text) and practice a word chain you could use in Intern Teaching Observation Part 2.</p>
+
+<div class="card">
+<h3>Activity 1: Which emphasis is this?</h3>
+<p class="lead">Each lesson moment is fictional. Choose the emphasis it shows best.</p>
+<div id="items" class="grid g2"></div>
+<p style="margin:14px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>Activity 2: Letter-tile word chain</h3>
+<p class="lead">The Dyslexia Guidelines suggest letter tiles that change one sound at a time. Read the prompt, then select the tile that makes the new word. The tile that changes is outlined in red.</p>
+<div class="panel">
+<p id="prompt" style="font-weight:700;text-align:center;margin:0" aria-live="polite"></p>
+<div class="word" id="word" aria-hidden="true"></div>
+<p id="wordText" class="chain" style="margin:0 0 10px"></p>
+<div class="tiles" id="tiles" role="group" aria-label="Letter tiles"></div>
+<p class="fb" id="cFb" aria-live="polite" style="text-align:center"></p>
+<p class="chain" id="chain"></p>
+<p style="text-align:center;margin:8px 0 0"><button class="btn ghost" id="cReset">Restart the chain</button></p>
+</div>
+</div>
+
+<div class="take"><b>Takeaway:</b> Phonics is a two-way street. Students <b>blend</b> phonemes to decode (read) and <b>segment</b> phonemes to encode (spell), then apply the taught patterns in <b>connected, decodable text</b>. Each word change in a chain is a clear moment to timestamp: name the correspondence taught and what it adds.</div>
+<p class="src">Definitions and the letter-tile routine from the California Department of Education, <i>California Dyslexia Guidelines</i> (2017: phonics, decoding and encoding prerequisites, decodable books); standards from the <i>California Common Core State Standards for ELA/Literacy</i> (RF.K.3, RF.1.3); SB 488 phonics definition as quoted in the CTC <i>CalTPA Literacy Cycle Performance Assessment Guide</i> (2025); emphases from “Intern Teaching Observation | Part 2 - TPE 7.5.” Lesson moments are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const O=[['dec','Decoding (reading)'],['enc','Encoding (spelling)'],['corr','Letter-sound correspondence'],['wr','Word recognition'],['text','Connected, decodable text']];
+const D=[
+['Students point under each letter of “sit,” say /s/ /i/ /t/, and blend the sounds to read the word.','dec','Mapping letters to sounds and blending them to read a word is decoding; blending is its prerequisite.'],
+['The intern says “mop.” Students tap /m/ /o/ /p/ and write a letter for each sound.','enc','Segmenting a spoken word into phonemes and writing the letters is encoding (spelling).'],
+['Students learn that the letters “sh” together stand for one sound, /sh/, and practice it in ship and fish.','corr','Teaching which letters represent a sound is a letter-sound (spelling-sound) correspondence, such as a consonant digraph (RF.1.3a).'],
+['Students read “the,” “said,” and “are” from flash cards by sight, without sounding them out.','wr','Reading common high-frequency or irregular words by sight is word recognition (RF.K.3c, RF.1.3g).'],
+['Students read a short book in which nearly every word uses the short-a and consonant patterns they have been taught, then reread it smoothly.','text','A decodable book has words that can mostly be sounded out with known patterns; this is practice in connected text.'],
+['Students compare “cap” and “cup” and name the letter and sound that differ.','wr','Distinguishing similarly spelled words by the sounds of the letters that differ is a word-recognition standard (RF.K.3d).']];
+const ans={};
+function render(){$('items').innerHTML='';Object.keys(ans).forEach(k=>delete ans[k]);
+ D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p>';
+  const g=document.createElement('div');g.setAttribute('role','group');g.setAttribute('aria-label','Answer for moment '+(i+1));
+  O.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o[1];b.setAttribute('aria-pressed','false');b.onclick=()=>{ans[i]=o[0];g.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+i).textContent='';};g.appendChild(b);});
+  p.appendChild(g);const f=document.createElement('p');f.className='fb';f.id='f'+i;f.setAttribute('aria-live','polite');p.appendChild(f);$('items').appendChild(p);});$('fb').textContent='';}
+$('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$('f'+i);if(!ans[i]){f.className='fb bad';f.textContent='Choose an emphasis.';return}done++;
+ if(ans[i]===d[1]){ok++;f.className='fb ok';f.textContent='Correct. '+d[2]}else{f.className='fb bad';f.textContent='Not quite: '+O.find(o=>o[0]===d[1])[1]+'. '+d[2]}});
+ $('fb').innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every moment to finish.':'');};
+$('reset').onclick=render;render();
+// word chain: [from, to, position changed, prompt]
+const C=[['map','tap',0,'Change the first sound, /m/, to /t/.'],['tap','lap',0,'Change /t/ to /l/.'],['lap','lip',1,'Now change the middle sound, /a/, to /i/.'],['lip','lit',2,'Change the last sound, /p/, to /t/.'],['lit','sit',0,'Change /l/ to /s/.'],['sit','sat',1,'Change /i/ to /a/.']];
+const TL=['a','i','o','l','m','p','s','t'];
+let step=0;const done=['map'];
+function showWord(w,pos){$('word').innerHTML=w.split('').map((ch,k)=>'<span class="slot'+(k===pos?' chg':'')+'">'+ch+'</span>').join('');}
+function drawChain(){if(step>=C.length){$('prompt').textContent='Chain complete!';showWord(C[C.length-1][1],-1);$('wordText').textContent='Final word: '+C[C.length-1][1];
+  $('cFb').className='fb ok';$('cFb').textContent='You built six new words by changing one sound at a time: '+done.join(' → ')+'. Have students read the chain aloud, then spell two of the words from dictation.';$('tiles').innerHTML='';}
+ else{const c=C[step];$('prompt').textContent='Word '+(step+1)+' of '+C.length+': the word is “'+c[0]+'.” '+c[3];showWord(c[0],c[2]);$('wordText').textContent='Current word: '+c[0].split('').join('-')+'. Letter '+(c[2]+1)+' changes.';
+  $('tiles').innerHTML='';TL.forEach(t=>{const b=document.createElement('button');b.className='tile';b.textContent=t;b.setAttribute('aria-label','Letter '+t);
+   b.onclick=()=>{const want=c[1][c[2]];if(t===want){done.push(c[1]);step++;$('cFb').className='fb ok';$('cFb').textContent='Yes: “'+c[1]+'.”';drawChain();}
+    else{$('cFb').className='fb bad';const nw=c[0].slice(0,c[2])+t+c[0].slice(c[2]+1);$('cFb').textContent='That makes “'+nw+'.” Listen for the new sound again and try another tile.';}};$('tiles').appendChild(b);});}
+ $('chain').textContent='Chain so far: '+done.join(' → ');}
+$('cReset').onclick=()=>{step=0;done.length=0;done.push('map');$('cFb').textContent='';drawChain();};
+drawChain();
+</script>
+</body></html>

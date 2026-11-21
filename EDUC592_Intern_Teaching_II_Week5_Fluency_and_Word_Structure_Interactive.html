@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluency Coach</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g3,.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink)}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.dim{background:#fff;border-radius:12px;padding:12px;border-top:6px solid var(--red)}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.pair{font-size:1.25rem;font-weight:800}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Fluency Coach" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">EDUC 592 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Fluency Coach</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Accuracy, rate, prosody, and the structure of words</text></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Text Reading Fluency</h2>
+<p class="lead"><b>Week 5 objective:</b> Diagnose which part of fluency a reader needs to work on and use word structure (morphology) to support fluent reading, the emphases of Intern Teaching Observation Part 3.</p>
+<div class="card">
+<h3>The three parts of fluency</h3>
+<div class="grid g3">
+<div class="dim"><div class="kicker" style="color:var(--red)">ACCURACY</div>Reading the words correctly, and using context to confirm or self-correct.</div>
+<div class="dim" style="border-color:var(--blue)"><div class="kicker" style="color:var(--blue)">RATE</div>Reading at an appropriate speed, an indicator of automaticity.</div>
+<div class="dim" style="border-color:var(--green)"><div class="kicker" style="color:var(--green)">PROSODY</div>Expression: intonation and meaningful phrasing.</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Activity 1: What should this reader work on?</h3>
+<p class="lead">Each reader is fictional and reading on-level text aloud. Choose the part of fluency that most needs attention.</p>
+<div id="readers" class="grid g2"></div>
+<p style="margin:14px 0 0"><button class="btn" id="rCheck">Check my answers</button> <button class="btn ghost" id="rReset">Start over</button></p>
+<p class="fb" id="rFb" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>Activity 2: Inflectional or derivational?</h3>
+<p class="lead">Morphology is the system of meaningful word parts. An <b>inflectional</b> ending makes a grammatical change (small → smaller); a <b>derivational</b> affix makes a word that is a different part of speech (happy → happiness). Classify each pair.</p>
+<div id="morph" class="grid g3"></div>
+<p style="margin:14px 0 0"><button class="btn" id="mCheck">Check my answers</button></p>
+<p class="fb" id="mFb" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> Fluency is more than speed. Plan for <b>accuracy</b>, <b>rate</b>, and <b>prosody</b>, use repeated readings so word reading becomes automatic, and teach syllable patterns and morphemes so students can chunk long words instead of reading letter by letter. Mark a timestamp for each part in your Required Emphases chart.</div>
+<p class="src">Definitions from the California Department of Education, <i>California Dyslexia Guidelines</i> (2017: oral reading fluency, automaticity, causes of fluency difficulty, morphological processing examples, syllable types) and <i>California Common Core State Standards for ELA/Literacy</i> (RF.1–5.4 Fluency; RF.4.3 multisyllabic words); emphases from “Intern Teaching Observation | Part 3: TPE 7.5.” Readers are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const O=[['acc','Accuracy'],['rate','Rate (automaticity)'],['pros','Prosody (expression)']];
+const R=[
+['Jada reads every word correctly, but word by word in a flat voice, and she reads right through commas and question marks.','pros','Her words are accurate, but phrasing and intonation are missing. Model the sentence, point out the punctuation and phrase breaks, and have her reread.'],
+['Marco reads quickly, but he says “house” for “horse” and “then” for “there” and keeps going even when the sentence stops making sense.','acc','Speed is not the problem; accuracy is. Teach him to check that the sentence makes sense and to reread to self-correct (RF.1–5.4c).'],
+['Lin reads accurately and with expression on her third reading, but on a first reading she sounds out most two-syllable words letter by letter and finishes far behind classmates.','rate','Her word reading is not yet automatic. Teach syllable patterns so she can chunk longer words, and use repeated readings to build automaticity.'],
+['Diego reads at a good pace with lively expression, but he skips small words such as “of” and “the” and adds endings that are not there.','acc','Expression and pace are strengths, but the words must be read correctly first. Have him track the print and reread the sentence.'],
+['Amara reads smoothly, but every sentence rises like a question, and she pauses in the middle of phrases instead of at the ends.','pros','Her intonation and phrasing do not match the meaning. Teach how sentence structure and punctuation signal where phrases end, model the sentence, and have her echo-read it.'],
+['Sam reads each word correctly, but very slowly, with long pauses before familiar words he has read many times.','rate','Accurate but slow reading of familiar words points to rate and automaticity. Repeated readings of the same text build speed without losing accuracy.']];
+const ra={};
+function renderR(){$('readers').innerHTML='';Object.keys(ra).forEach(k=>delete ra[k]);
+ R.forEach((r,i)=>{const p=document.createElement('div');p.className='panel';p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+r[0]+'</p>';
+  const g=document.createElement('div');g.setAttribute('role','group');g.setAttribute('aria-label','Answer for reader '+(i+1));
+  O.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o[1];b.setAttribute('aria-pressed','false');b.onclick=()=>{ra[i]=o[0];g.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));$('r'+i).textContent='';};g.appendChild(b);});
+  p.appendChild(g);const f=document.createElement('p');f.className='fb';f.id='r'+i;f.setAttribute('aria-live','polite');p.appendChild(f);$('readers').appendChild(p);});$('rFb').textContent='';}
+$('rCheck').onclick=()=>{let ok=0,done=0;R.forEach((r,i)=>{const f=$('r'+i);if(!ra[i]){f.className='fb bad';f.textContent='Choose one.';return}done++;
+ if(ra[i]===r[1]){ok++;f.className='fb ok';f.textContent='Correct. '+r[2]}else{f.className='fb bad';f.textContent='Not quite: '+O.find(o=>o[0]===r[1])[1]+'. '+r[2]}});
+ $('rFb').innerHTML='<span class="score">'+ok+' of '+R.length+' correct</span>'+(done<R.length?' Answer every reader to finish.':'');};
+$('rReset').onclick=renderR;renderR();
+const MO=[['inf','Inflectional'],['der','Derivational']];
+const M=[['march → marched','inf','The ending -ed changes tense; the word is still a verb.'],['kind → kindness','der','The suffix -ness turns an adjective into a noun.'],['boy → boys','inf','The ending -s makes it plural; it is still a noun.'],['teach → teacher','der','The suffix -er turns a verb into a noun.'],['fast → faster','inf','The ending -er compares; it is still an adjective.'],['care → careful','der','The suffix -ful turns a noun into an adjective.']];
+const ma={};
+M.forEach((m,i)=>{const p=document.createElement('div');p.className='panel';p.innerHTML='<p class="pair" style="margin:0 0 6px">'+m[0]+'</p>';
+ const g=document.createElement('div');g.setAttribute('role','group');g.setAttribute('aria-label','Classify '+m[0].replace('→','to'));
+ MO.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o[1];b.setAttribute('aria-pressed','false');b.onclick=()=>{ma[i]=o[0];g.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));$('m'+i).textContent='';};g.appendChild(b);});
+ p.appendChild(g);const f=document.createElement('p');f.className='fb';f.id='m'+i;f.setAttribute('aria-live','polite');p.appendChild(f);$('morph').appendChild(p);});
+$('mCheck').onclick=()=>{let ok=0;M.forEach((m,i)=>{const f=$('m'+i);if(!ma[i]){f.className='fb bad';f.textContent='Choose one.';return}
+ if(ma[i]===m[1]){ok++;f.className='fb ok';f.textContent='Correct. '+m[2]}else{f.className='fb bad';f.textContent='Not quite: '+MO.find(o=>o[0]===m[1])[1]+'. '+m[2]}});
+ $('mFb').innerHTML='<span class="score">'+ok+' of '+M.length+' correct</span>';};
+</script>
+</body></html>
