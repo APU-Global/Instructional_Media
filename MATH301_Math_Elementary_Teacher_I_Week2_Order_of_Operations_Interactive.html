@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order of Operations, One Step at a Time</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink)}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+input[type=text],input[type=number],select{font:inherit;padding:6px 10px;border:2px solid #bbb;border-radius:8px;background:#fff;color:var(--ink)}
+input[type=text],input[type=number]{width:7.5em}
+.math{font-family:"Cambria Math","Times New Roman",serif;font-size:1.25rem}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Order of Operations, One Step at a Time" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">MATH 301 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Order of Operations</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Step through expressions and decide which student is right</text>
+<g transform="translate(690,80)" font-family="Segoe UI,Arial,sans-serif" font-weight="800" text-anchor="middle"><circle cx="30" cy="30" r="28" fill="#d34147"/><text x="30" y="41" font-size="30" fill="#fff">( )</text><circle cx="100" cy="30" r="28" fill="#fff"/><text x="100" y="41" font-size="30" fill="#d34147">x²</text><circle cx="170" cy="30" r="28" fill="#ffb3b6"/><text x="170" y="41" font-size="30" fill="#111">×÷</text><circle cx="240" cy="30" r="28" fill="#d34147"/><text x="240" y="41" font-size="30" fill="#fff">+−</text></g></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Order of Operations, One Step at a Time</h2>
+<p class="lead"><b>Week 2 objective:</b> Use the order of operations agreement to simplify expressions, and explain why a common shortcut gives the wrong answer.</p>
+<div class="card">
+<h3>The agreement</h3>
+<ol style="margin:0;padding-left:22px">
+<li>Work inside the innermost parentheses or other grouping symbols first.</li>
+<li>Evaluate exponents.</li>
+<li>Multiply and divide from <b>left to right</b>.</li>
+<li>Add and subtract from <b>left to right</b>.</li>
+</ol>
+<p class="lead" style="margin:10px 0 0">Multiplication and division share a rank, and so do addition and subtraction: neither of the pair goes first automatically.</p>
+</div>
+<div class="card">
+<h3>Step through it</h3>
+<p class="lead">Choose the correct next line at each step. A wrong choice explains the mistake so you can try again.</p>
+<div class="tabsel" role="group" aria-label="Choose an expression" id="exSel"></div>
+<div class="panel" style="margin-top:10px">
+<p style="margin:0 0 6px;color:var(--muted)">Work so far:</p>
+<div id="work" class="math" aria-live="polite"></div>
+<div id="opts" role="group" aria-label="Choose the next line" style="margin-top:10px"></div>
+<p class="fb" id="sfb" aria-live="polite"></p>
+</div>
+</div>
+<div class="card">
+<h3>Which student is right?</h3>
+<p class="lead">Two students simplified each expression. Choose the student whose work follows the agreement.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> The order of operations is an agreement that gives every expression one value. Watch the two places students slip most: working multiplication before division (or addition before subtraction) instead of left to right, and confusing −3² (which is −9) with (−3)² (which is 9).</div>
+<p class="src">Order of operations steps and the examples 5 − 3(4 − 3²) and −10 − 5² + (−3)⁴ from <i>Intermediate Algebra</i> v1.0 (Saylor Academy, 2012), Section 1.2 "Operations with Real Numbers," CC BY-NC-SA 3.0. This activity practices the skills in Blitzer, <i>Thinking Mathematically</i>, Section 5.2. Students named are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+// each step: [ [correct line, why], [wrong line, why wrong], ... ] ; order shuffled by fixed index
+const EX=[
+{name:'8 + 12 ÷ 4 × 3 − 2²',start:'8 + 12 ÷ 4 × 3 − 2²',steps:[
+ [['8 + 12 ÷ 4 × 3 − 4','Exponents come first: 2² = 4.'],['20 ÷ 4 × 3 − 2²','Addition does not come before division, multiplication, or exponents.'],['8 + 12 ÷ 12 − 2²','Exponents come before multiplication, and 4 × 3 should not be done before the division to its left.']],
+ [['8 + 3 × 3 − 4','Divide and multiply from left to right: 12 ÷ 4 = 3 comes first.'],['8 + 12 ÷ 12 − 4','Multiplication does not outrank division. Work them left to right, so 12 ÷ 4 comes first.'],['20 ÷ 4 × 3 − 4','Addition comes after multiplication and division.']],
+ [['8 + 9 − 4','3 × 3 = 9.'],['11 × 3 − 4','Addition comes after multiplication.'],['8 + 3 × −1','Subtraction comes after multiplication.']],
+ [['13','Add and subtract left to right: 8 + 9 = 17, and 17 − 4 = 13.'],['21','The 4 is subtracted, not added.'],['3','Left to right: 8 + 9 = 17 first, then 17 − 4.']]]},
+{name:'5 − 3(4 − 3²)',start:'5 − 3(4 − 3²)',steps:[
+ [['5 − 3(4 − 9)','Inside the parentheses, the exponent comes first: 3² = 9.'],['2(4 − 3²)','The 3 multiplies the parentheses. Subtracting 5 − 3 first ignores the grouping and the multiplication.'],['5 − 3(1²)','The exponent belongs only to the 3, not to (4 − 3).']],
+ [['5 − 3(−5)','4 − 9 = −5.'],['5 − 3(5)','4 − 9 is negative: −5.'],['2(−5)','Multiplication comes before subtraction, so 5 − 3 must wait.']],
+ [['5 + 15','3(−5) = −15, and subtracting −15 is adding 15.'],['5 − 15','3(−5) = −15, so 5 − (−15) = 5 + 15.'],['2(−5)','Multiply before subtracting.']],
+ [['20','5 + 15 = 20.'],['−10','That would be 5 − 15. Subtracting a negative adds.'],['10','5 + 15 = 20.']]]},
+{name:'−10 − 5² + (−3)⁴',start:'−10 − 5² + (−3)⁴',steps:[
+ [['−10 − 25 + 81','5² = 25, and (−3)⁴ = (−3)(−3)(−3)(−3) = 81 because the base is −3 and the exponent is even.'],['−10 − 25 − 81','(−3)⁴ has base −3 and an even exponent, so it is positive 81.'],['−10 + 25 + 81','Only 5 is squared: the expression subtracts 5² = 25.']],
+ [['−35 + 81','Left to right: −10 − 25 = −35.'],['−10 − 106','Adding 25 + 81 first would subtract the 81 too. Work left to right.'],['15 + 81','−10 − 25 is −35, not 15.']],
+ [['46','−35 + 81 = 46.'],['116','−35 + 81 = 46.'],['−46','81 is larger than 35, so the sum is positive.']]]}];
+const ORD=[[1,0,2],[2,1,0],[0,2,1],[1,2,0]];
+let cur=0,st=0,lines=[];
+EX.forEach((e,i)=>{const b=document.createElement('button');b.className='choice';b.textContent=e.name;b.setAttribute('aria-pressed',i===0);b.onclick=()=>start(i);$('exSel').appendChild(b);});
+function start(i){cur=i;st=0;lines=[EX[i].start];$('exSel').querySelectorAll('button').forEach((b,k)=>b.setAttribute('aria-pressed',k===i));$('sfb').textContent='';draw();}
+function draw(){const e=EX[cur];$('work').innerHTML=lines.map((l,k)=>'<div>'+(k?'= ':'')+l+'</div>').join('');
+ const o=$('opts');o.innerHTML='';
+ if(st>=e.steps.length){o.innerHTML='<button class="btn ghost" id="again">Try it again</button>';$('again').onclick=()=>start(cur);return;}
+ ORD[st%ORD.length].forEach(k=>{const c=e.steps[st][k],b=document.createElement('button');b.className='choice';b.textContent='= '+c[0];
+  b.onclick=()=>{const f=$('sfb');if(k===0){lines.push(c[0]);st++;f.className='fb ok';f.textContent='Correct. '+c[1]+(st>=e.steps.length?' Done: the value is '+c[0]+'.':'');draw();const n=$('opts').querySelector('button');if(n)n.focus();}else{f.className='fb bad';f.textContent='Not quite. '+c[1];}};o.appendChild(b);});}
+start(0);
+// error analysis: [expr, A work, B work, correct 'A'|'B', explanation]
+const D=[
+['6 ÷ 2 × 3','6 ÷ 2 = 3, then 3 × 3 = 9','2 × 3 = 6, then 6 ÷ 6 = 1','A','Multiplication and division are worked left to right, so 6 ÷ 2 comes first. The value is 9.'],
+['−4²','−4² = 16','−4² = −16','B','The base is 4, not −4: −4² = −(4 × 4) = −16. Only (−4)² equals 16.'],
+['10 − 4 + 2','4 + 2 = 6, then 10 − 6 = 4','10 − 4 = 6, then 6 + 2 = 8','B','Addition and subtraction are worked left to right, so 10 − 4 comes first. The value is 8.'],
+['(3 + 5)² ÷ 4','3 + 5 = 8, 8² = 64, then 64 ÷ 4 = 16','3² + 5² = 34, then 34 ÷ 4 = 8.5','A','Parentheses first: (3 + 5)² = 8² = 64. Squaring each term separately is not allowed: (3 + 5)² is not 3² + 5².'],
+['2 + 3 × 4','2 + 3 = 5, then 5 × 4 = 20','3 × 4 = 12, then 2 + 12 = 14','B','Multiplication comes before addition. To get 20 you would need to write (2 + 3) × 4.']];
+let ans={};
+function render(){$('items').innerHTML=D.map((d,i)=>'<div class="panel"><p style="margin:0 0 8px" id="q'+i+'"><b>'+(i+1)+'.</b> Simplify <span class="math">'+d[0]+'</span></p><div role="group" aria-labelledby="q'+i+'"><button class="choice" data-i="'+i+'" data-v="A" aria-pressed="false">Student A: '+d[1]+'</button><button class="choice" data-i="'+i+'" data-v="B" aria-pressed="false">Student B: '+d[2]+'</button></div><p class="fb" id="f'+i+'" aria-live="polite"></p></div>').join('');}
+render();
+$('items').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;$('items').querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+i).textContent='';});
+$('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$('f'+i);if(!ans[i]){f.className='fb bad';f.textContent='Choose a student.';return;}done++;
+ if(ans[i]===d[3]){ok++;f.className='fb ok';f.textContent='Correct. '+d[4];}else{f.className='fb bad';f.textContent='Not quite: Student '+d[3]+' is right. '+d[4];}});
+ $('fb').innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every item to finish.':'');};
+$('reset').onclick=()=>{ans={};render();$('fb').textContent='';};
+</script>
+</body></html>
