@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sleep Detective</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible,label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+input[type=number],select{font:inherit;padding:6px 8px;border:2px solid #bbb;border-radius:8px;max-width:100%}
+input[type=range]{width:100%;accent-color:var(--red)}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #e3e0dc;text-align:left;vertical-align:top}
+th{background:#111;color:#fff;font-weight:600}
+.tablewrap{overflow-x:auto}
+.big{font-size:1.6rem;font-weight:800}
+.meter{height:14px;border-radius:7px;background:#e3e0dc;overflow:hidden;margin:6px 0;position:relative}
+.meter span{display:block;height:100%;width:0;transition:width .2s}
+.band{position:absolute;top:0;bottom:0;background:rgba(47,125,91,.25);border-left:2px solid var(--green);border-right:2px solid var(--green)}
+.chk{display:flex;gap:8px;align-items:flex-start;background:#fff;border-radius:10px;padding:8px 10px;margin:6px 0;cursor:pointer;border:1px solid #ddd}
+.chk input{margin-top:5px;width:18px;height:18px;flex:none}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Sleep Detective" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">HSCI 100 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Sleep Detective</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Spot sleep disorders, audit habits, and check your sleep week</text>
+<g transform="translate(800,55)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M90 10A70 70 0 1 0 150 110A55 55 0 1 1 90 10Z" stroke="#fff" stroke-width="8"/>
+<path d="M20 30l6 12 12 6-12 6-6 12-6-12-12-6 12-6z" stroke="#ffb3b6" stroke-width="4"/>
+<text x="120" y="40" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="700" stroke="none">z</text>
+<text x="145" y="15" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" stroke="none">z</text></g></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Sleep Detective</h2>
+<p class="lead"><b>Week 2 objective:</b> Look beyond hours in bed: recognize common sleep disorders, judge everyday sleep habits, and compare your own sleep with recommendations (CLO 1, CLO 4).</p>
+<div class="card">
+<h3>Practice 1: Name that sleep problem</h3>
+<p class="lead">Sleep problems are not only about the number of hours. Read each fictional case and choose the best match.</p>
+<div id="items_d" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check_d">Check my answers</button> <button class="btn ghost" id="reset_d">Start over</button></p>
+<p class="fb" id="fb_d" aria-live="polite"></p>
+</div><div class="card">
+<h3>Practice 2: Bedtime habit audit</h3>
+<p class="lead">Decide whether each habit helps or hurts sleep.</p>
+<div id="items_h" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check_h">Check my answers</button> <button class="btn ghost" id="reset_h">Start over</button></p>
+<p class="fb" id="fb_h" aria-live="polite"></p>
+</div><div class="card">
+<h3>Practice 3: Your sleep week</h3>
+<p class="lead">Discussion 2 asks you to compare your own sleep with recommendations. Set the hours you slept each night this past week (or a typical week). Nothing you enter is saved or sent anywhere.</p>
+<div id="nights" class="grid g4"></div>
+<div class="panel" style="margin-top:12px">
+<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><span>Average per night: <span class="big" id="avg"></span></span><span>Weekly total: <b id="tot"></b> hours</span></div>
+<div class="meter" aria-hidden="true"><div class="band" style="left:58.3%;width:8.4%"></div><span id="avgBar"></span></div>
+<p style="margin:0;font-size:.85rem;color:var(--muted)">Scale 0 to 12 hours; the green band marks the 7 to 8 hours most adults say they need.</p>
+<p class="fb" id="sleepFb" aria-live="polite"></p>
+</div></div>
+<div class="take"><b>Takeaway:</b> Your body clock and sleep stages need enough time to run their course, and most adults need seven to eight hours. When good habits are in place and sleep is still poor, a disorder such as insomnia or sleep apnea may be the cause, and that is a reason to talk with a doctor.</div>
+<p class="src">Concepts from Saylor Academy. (2012). <i>Introduction to Psychology</i> (v. 1.0), Section 5.1 "Sleeping and Dreaming Revitalize Us for Action" (including the National Sleep Foundation tips it lists), Saylor Academy, CC BY-NC-SA 3.0. People and cases are fictional. This activity is for learning, not diagnosis.</p>
+</div>
+<script>
+const SETS=[{"id": "d", "group": "Identify the sleep problem", "options": [["ins", "Insomnia"], ["apn", "Sleep apnea"], ["nar", "Narcolepsy"], ["rls", "Restless legs syndrome"], ["hab", "Not a disorder: too little time in bed"]], "items": [["Maya started rotating night shifts three months ago. She now lies awake for hours and dreads going to bed because she expects not to sleep.", "ins", "Persistent difficulty falling or staying asleep is insomnia. Schedule changes such as shift work can trigger it, and anxiety about not sleeping can keep it going."], ["Jordan, 58, snores loudly. His wife says he seems to stop breathing for long pauses at night, and he is exhausted during the day.", "apn", "Pauses in breathing of at least 10 seconds point to sleep apnea, usually from the throat walls collapsing. It is most common in men and in people who are older or obese and can raise blood pressure."], ["Priya feels an itching, burning sensation in her legs that gets worse whenever she rests.", "rls", "An uncomfortable feeling in the legs that worsens at rest describes restless legs syndrome."], ["Luis has extreme daytime sleepiness, keeps nodding off at work, and once suddenly lost muscle tone and slumped to the floor.", "nar", "Extreme daytime sleepiness with episodes of nodding off, sometimes with cataplexy (sudden loss of muscle tone), describes narcolepsy."], ["Sam sleeps soundly once in bed, but he games until 2 a.m. and has an 8 a.m. class, so he gets about five hours.", "hab", "Sam's sleep is cut short by his schedule, not a disorder. Most adults say they need seven to eight hours."]]}, {"id": "h", "group": "Rate the habit", "options": [["help", "Helps sleep"], ["hurt", "Hurts sleep"]], "items": [["Using the bed for homework, TV, and scrolling during the day.", "hurt", "Sleep experts recommend using the bed and bedroom only for sleep and not spending time in bed during the day."], ["Going to bed and getting up at the same time every day.", "help", "A regular bedtime routine and sleep-wake schedule are among the first recommendations for insomnia."], ["An energy drink at 5 p.m. to get through an evening study session.", "hurt", "Consume less or no caffeine, particularly late in the day."], ["A cigarette or a drink to unwind right before bed.", "hurt", "Avoid alcohol and nicotine, especially close to bedtime."], ["Keeping the bedroom dark, cool, and comfortable, with a fan to block noise.", "help", "A dark, cool, comfortable room and blocking disturbing sounds both support sleep."], ["A hard workout at 10 p.m. right before bed.", "hurt", "Exercise helps, but not within three hours of bedtime."], ["A long nap at 6 p.m.", "hurt", "Avoid naps, particularly in the late afternoon or evening."], ["Keeping a sleep diary to share with a doctor.", "help", "A sleep diary helps identify sleep habits and patterns."]]}];
+
+const $=id=>document.getElementById(id);
+const ans={};
+function lab(s,v){return s.options.find(o=>o[0]===v)[1]}
+function renderSet(s){const box=$('items_'+s.id);box.innerHTML='';ans[s.id]={};
+ s.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="'+s.group+' '+(i+1)+'">'+
+ s.options.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+ '</div><p class="fb" id="f_'+s.id+'_'+i+'" aria-live="polite"></p>';box.appendChild(p);});
+ $('fb_'+s.id).textContent='';}
+SETS.forEach(s=>{renderSet(s);
+ $('items_'+s.id).addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[s.id][i]=b.dataset.v;
+  $('items_'+s.id).querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f_'+s.id+'_'+i).textContent='';});
+ $('check_'+s.id).onclick=()=>{let ok=0,done=0;s.items.forEach((d,i)=>{const f=$('f_'+s.id+'_'+i),a=ans[s.id][i];
+  if(!a){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(a===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(s,d[1])+'. '+d[2];f.className='fb bad'}});
+  $('fb_'+s.id).innerHTML='<span class="score">'+ok+' of '+s.items.length+' correct</span>'+(done<s.items.length?' Answer every item to finish.':'');};
+ $('reset_'+s.id).onclick=()=>renderSet(s);});
+
+
+const D=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];const H=[6,6.5,6,5.5,6,9,8.5];
+D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';p.innerHTML='<label for="n'+i+'"><b>'+d+'</b>: <span id="nv'+i+'"></span> h</label><input type="range" id="n'+i+'" min="0" max="12" step="0.5" value="'+H[i]+'">';$('nights').appendChild(p);
+ $('n'+i).oninput=e=>{H[i]=+e.target.value;sleepCalc();};});
+function sleepCalc(){D.forEach((d,i)=>{$('nv'+i).textContent=H[i];$('n'+i).setAttribute('aria-valuetext',H[i]+' hours');});
+ const t=H.reduce((a,b)=>a+b,0),a=t/7,short=Math.max(0,49-t);
+ $('avg').textContent=a.toFixed(1)+' h';$('tot').textContent=t.toFixed(1);
+ const bar=$('avgBar');bar.style.width=Math.min(100,a/12*100)+'%';bar.style.background=a<7?'var(--gold)':(a<=8?'var(--green)':'var(--blue)');
+ const low=H.filter(h=>h<6).length,swing=Math.max(...H)-Math.min(...H);let m;
+ if(a<7)m='Your average is below the 7 to 8 hours most adults say they need (the average U.S. adult reported 6.7). Compared with seven hours a night, you are about '+short.toFixed(1)+' hours short this week, and even a nightly deficit of one or two hours can affect mood and performance.';
+ else if(a<=8)m='Your average falls in the 7 to 8 hour range most adults say they need. Individual needs vary.';
+ else m='Your average is above 8 hours. Some people need nine or more; if you sleep this much and still feel tired, that is worth raising with a doctor.';
+ if(low)m+=' You had '+low+' night'+(low>1?'s':'')+' under six hours.';
+ if(swing>=3)m+=' Your nightly hours vary by '+swing+' hours; a regular sleep-wake schedule is one of the first recommendations for better sleep.';
+ $('sleepFb').className='fb '+(a>=7&&a<=8&&!low?'ok':'bad');$('sleepFb').textContent=m;}
+sleepCalc();
+
+</script>
+</body></html>

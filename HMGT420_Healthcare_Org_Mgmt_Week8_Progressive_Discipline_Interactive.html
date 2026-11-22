@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handling Misconduct Fairly</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn.sm{padding:4px 10px;font-size:.9rem}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.btn:disabled{opacity:.45;cursor:default}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+.keys{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.key{background:#fff;border-radius:14px;padding:12px 14px;border-left:6px solid var(--red)}.key b{display:block}
+ol.order{list-style:none;padding:0;margin:0}
+ol.order li{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#fff;border:1px solid #ddd;border-radius:12px;padding:10px 12px;margin:8px 0}
+ol.order li span.n{display:inline-block;min-width:1.8em;font-weight:800;color:var(--red)}
+ol.order .mv{display:flex;gap:6px;flex-shrink:0}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}ol.order li{flex-direction:column;align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 8 banner: When Rules Are Ignored" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">HMGT 420 · WEEK 8</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">When Rules Are Ignored</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Name the performance issue and apply progressive discipline fairly</text></svg></div>
+<div class="wrap">
+<h2>Week 8 Interactive: Misconduct and Progressive Discipline</h2>
+<p class="lead"><b>Week 8 objective:</b> Classify employee performance issues, put the progressive discipline steps in order, and check a disciplinary decision against the tests of just cause.</p>
+<div class="card">
+<h3>Four kinds of performance issue</h3>
+<div class="keys"><div class="key"><b>Mandated issue</b>Serious and often legal (safety, privacy, harassment). Handle swiftly by written policy.</div><div class="key"><b>Single incident</b>A one-time misstep. Coach in a private conversation.</div><div class="key"><b>Behavior pattern</b>Repeated, not yet corrected. Restate expectations.</div><div class="key"><b>Persistent pattern</b>Continues after correction. Make the seriousness clear.</div></div>
+</div>
+<div class="card">
+<h3>Practice 1: name the issue</h3>
+<p class="lead">Each scenario is fictional. Investigate before you discipline, but first decide what kind of issue you are facing.</p>
+<div id="issue-items" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="issue-check">Check my answers</button> <button type="button" class="btn ghost" id="issue-reset">Start over</button></p>
+<p class="fb" id="issue-fb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: put progressive discipline in order</h3>
+<p class="lead">The steps below are shuffled. Use the <b>Up</b> and <b>Down</b> buttons to put them in order from first offense to last, then select <b>Check the order</b>.</p>
+<ol class="order" id="steps" aria-label="Progressive discipline steps"></ol>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="ord-check">Check the order</button> <button type="button" class="btn ghost" id="ord-reset">Shuffle again</button></p>
+<p class="fb" id="ord-fb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Before you act: the seven tests of just cause</h3>
+<p class="lead" style="margin:0">Notice of the rule · a reasonable rule · a timely investigation · a fair investigation · proof · equal treatment · a fair penalty that considers length of service and prior record. Document every step, meet in private, and let the employee explain.</p>
+</div>
+<div class="take"><b>Takeaway:</b> Treat safety and privacy violations as <b>mandated issues</b> and act swiftly. For everything else, <b>investigate first</b>, coach early, and escalate through <b>progressive discipline</b> with documentation at every step. Consistent, fair treatment protects patients, staff, and the organization.</div>
+<p class="src">Issue types, progressive discipline steps, and the seven tests of just cause from <i>Human Resource Management</i> (Saylor Academy, 2012, CC BY-NC-SA 3.0), 10.1 Handling Performance. Scenarios and the hospital are fictional.</p>
+</div>
+<script>
+
+function sorter(id,O,D){const box=document.getElementById(id+'-items'),fb=document.getElementById(id+'-fb');let ans={};
+const lab=v=>O.find(o=>o[0]===v)[1];
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="Answer for item ${i+1}">`+
+O.map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+`</div><p class="fb" id="${id}-f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(id+'-f'+i).textContent='';});
+document.getElementById(id+'-check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(id+'-f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every item to finish.':'');};
+document.getElementById(id+'-reset').onclick=()=>{ans={};render();fb.textContent=''};render();}
+
+sorter('issue',[["mand", "Mandated issue"], ["single", "Single incident"], ["pattern", "Behavior pattern"], ["persist", "Persistent pattern"]],[["A unit clerk at fictional Lakeshore Community Hospital posts a photo on social media that shows a patient's name on a whiteboard.", "mand", "Violating patient privacy goes beyond company policy to the law. Mandated issues are handled swiftly under a written policy."], ["A respiratory therapist, usually careful, snaps at a coworker during a hectic shift and apologizes later.", "single", "A one-time misstep is usually best handled with a private, casual conversation and coaching."], ["A scheduler has arrived 10 to 15 minutes late several times this month. No one has mentioned it to him yet.", "pattern", "Uncorrected single incidents can become a behavior pattern. Talk with the employee and make the expectation clear."], ["A technician keeps entering a patient room without the required protective equipment, despite clear training and posted rules.", "mand", "Not following safety procedures is a mandated issue: it puts patients and coworkers at risk and may violate regulations. Act right away under the written policy."], ["After two documented conversations about late chart notes, a nurse improved for a week and then fell back into the old habit.", "persist", "Correction followed by relapse is a persistent pattern. Make clear the problem is serious, and ask whether training or skills are the barrier."]]);
+const STEPS=["Unofficial verbal warning: counseling and restating expectations", "Official written warning, documented in the employee file", "Second official warning, with an improvement plan", "Possible suspension or other penalty, documented", "Termination and/or alternative dispute resolution"];
+const ol=document.getElementById('steps'),ofb=document.getElementById('ord-fb');let cur=[];
+function shuffle(){cur=[2,0,4,1,3];draw();ofb.textContent='';}
+function draw(focusIdx,dir){ol.innerHTML='';cur.forEach((s,i)=>{const li=document.createElement('li');
+li.innerHTML=`<div><span class="n">${i+1}.</span> ${STEPS[s]}</div><div class="mv"><button type="button" class="btn ghost sm" data-a="up" data-i="${i}" aria-label="Move up: ${STEPS[s]}" ${i===0?'disabled':''}>Up</button><button type="button" class="btn ghost sm" data-a="down" data-i="${i}" aria-label="Move down: ${STEPS[s]}" ${i===cur.length-1?'disabled':''}>Down</button></div>`;ol.appendChild(li);});
+if(focusIdx!=null){const b=ol.querySelector(`button[data-i="${focusIdx}"][data-a="${dir}"]`)||ol.querySelector(`button[data-i="${focusIdx}"]:not([disabled])`);if(b)b.focus();}}
+ol.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,j=b.dataset.a==='up'?i-1:i+1;
+if(j<0||j>=cur.length)return;[cur[i],cur[j]]=[cur[j],cur[i]];draw(j,b.dataset.a);ofb.textContent='Moved: '+STEPS[cur[j]]+' is now step '+(j+1)+'.';ofb.className='fb';});
+document.getElementById('ord-check').onclick=()=>{const ok=cur.filter((s,i)=>s===i).length;
+if(ok===cur.length){ofb.textContent='Correct order. Progressive discipline escalates step by step, with documentation at each stage, and is used when the offense does not demand immediate dismissal.';ofb.className='fb ok';}
+else{ofb.textContent=ok+' of '+cur.length+' steps are in the right place. Start with the least formal step and end with termination or alternative dispute resolution.';ofb.className='fb bad';}};
+document.getElementById('ord-reset').onclick=shuffle;shuffle();
+</script>
+</body></html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Source Detective: Reconstruction</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.doc{border-left:6px solid var(--gold);background:#fff;border-radius:12px;padding:12px 16px;margin:0 0 12px;font-style:italic}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--red)}
+.q{margin:14px 0 0}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 1 banner: Source Detective, Reconstruction" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">HIST 204 · WEEK 1</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Source Detective: Reconstruction</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Sort the sources, then question the documents of 1865 to 1877</text>
+<g transform="translate(800,70)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<rect x="0" y="0" width="90" height="115" rx="8" stroke="#fff" stroke-width="6"/><path d="M18 28H72M18 48H72M18 68H55" stroke="#ffb3b6" stroke-width="5"/>
+<circle cx="95" cy="95" r="30" stroke="#d34147" stroke-width="8"/><path d="M117 117L145 145" stroke="#d34147" stroke-width="10"/></g></svg></div>
+<div class="wrap">
+<h2>Week 1 Interactive: Primary Sources from Reconstruction</h2>
+<p class="lead"><b>Week 1 objective:</b> Tell primary sources from secondary sources, then ask a document who made it, for whom, why, and what it can (and cannot) prove. You will use these skills in Discussion 1.</p>
+<div class="card">
+<h3>Primary or secondary?</h3>
+<p class="lead" style="margin:0">A <b>primary source</b> was created during the period you are studying by people who lived through it: letters, speeches, laws, posters, photographs, newspaper reports. A <b>secondary source</b> was created later to explain or interpret the past, like a textbook chapter or a historian's podcast.</p>
+</div>
+<div class="card">
+<h3>Activity 1: Sort the sources</h3>
+<p class="lead">Choose <b>Primary</b> or <b>Secondary</b> for each item, then select <b>Check my answers</b>. Items marked "fictional" are invented examples.</p>
+<div id="sortItems" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="sortCheck">Check my answers</button> <button class="btn ghost" id="sortReset">Start over</button></p>
+<p class="fb" id="sortFb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Activity 2: Question the documents</h3>
+<p class="lead">Each document below comes from the Reconstruction era. Answer the questions a historian would ask. Feedback appears as soon as you choose.</p>
+<div id="docs"></div>
+<p><span class="score" id="docScore" aria-live="polite">0 / 6</span></p>
+</div>
+<div class="take"><b>Takeaway:</b> Before you use a source in Discussion 1, <b>source the source</b>: who created it, when, for what audience, and why? A biased source can still be excellent evidence, as long as you ask the right question of it. The 1871 letter defending the Klan cannot tell you whether the violence was justified, but it shows exactly how its writer wanted readers to see it.</div>
+<p class="src">Documents and facts from Locke, J. L., &amp; Wright, B. (Eds.), <i>The American Yawp</i> (US History II edition, SUNY/Lumen Learning), "Politics of Reconstruction," "The Meaning of Black Freedom," and "Racial Violence in Reconstruction," CC BY-SA. Items marked fictional are invented for practice.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+// ---------- Activity 1
+const S=[
+['Mississippi\'s Black Code vagrant law, which required all freedmen to carry papers proving they had means of employment.','p','A law written by a Reconstruction-era legislature: one of the Black Codes.'],
+['The reply of Black residents of Edisto Island, South Carolina, when a Freedmen\'s Bureau commissioner told them the promise of land would not be honored: "we were promised Homesteads by the government."','p','The words of freedpeople themselves, spoken at the time.'],
+['"The First Vote," an Alfred R. Waud illustration in Harper\'s Weekly, November 1867.','p','A newspaper image created at the time for readers of the era.'],
+['John Giles Lawrence\'s 1867 print "Reconstruction," with a banner reading "All men are born free and equal."','p','An artist\'s image made during Reconstruction to argue for what reunion could mean.'],
+['A December 1871 letter to the New York Tribune from a South Carolina man defending "Ku Kluxing."','p','A letter written during Reconstruction by a participant in the debate.'],
+['The American Yawp section "Politics of Reconstruction," written by historians in the 2010s.','s','A textbook written long afterward to explain Reconstruction: a secondary source.'],
+['(Fictional) A 2024 podcast episode in which a historian explains why Reconstruction collapsed.','s','An interpretation created more than a century later.'],
+['Sallie Adkins\'s letter to President Grant after Klansmen murdered her husband, a Georgia state senator, in 1869.','p','A firsthand account written by a witness and victim at the time.'],
+['(Fictional) A student essay comparing Johnson\'s and Congress\'s plans for Reconstruction.','s','Written later, using other sources, to interpret the past.']];
+const sAns={};
+function renderSort(){const box=$('sortItems');box.innerHTML='';S.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="Answer for item '+(i+1)+'">'+
+ [['p','Primary'],['s','Secondary']].map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+ '</div><p class="fb" id="sf'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+$('sortItems').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;sAns[i]=b.dataset.v;
+ document.querySelectorAll('#sortItems .choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('sf'+i).textContent='';});
+$('sortCheck').onclick=()=>{let ok=0,done=0;S.forEach((d,i)=>{const f=$('sf'+i);if(!sAns[i]){f.className='fb bad';f.textContent='Choose an answer.';return;}done++;
+ if(sAns[i]===d[1]){ok++;f.className='fb ok';f.textContent='Correct. '+d[2];}else{f.className='fb bad';f.textContent='Not quite: this is a '+(d[1]==='p'?'primary':'secondary')+' source. '+d[2];}});
+ $('sortFb').innerHTML='<span class="score">'+ok+' of '+S.length+' correct</span>'+(done<S.length?' Answer every item to finish.':'');};
+$('sortReset').onclick=()=>{for(const k in sAns)delete sAns[k];renderSort();$('sortFb').textContent='';};
+renderSort();
+// ---------- Activity 2
+const DOCS=[
+{k:'DOCUMENT A · EDISTO ISLAND, SOUTH CAROLINA',t:'"We were promised Homesteads by the government . . . You ask us to forgive the land owners of our island . . . The man who tied me to a tree and gave me 39 lashes and who stripped and flogged my mother and my sister . . . that man I cannot well forgive. Does it look as if he has forgiven me, seeing how he tries to keep me in a condition of helplessness?"',
+ q:[['What was happening when these words were spoken?',['A Freedmen\'s Bureau commissioner had come to tell freedpeople that the promise of land would not be honored','Congress had just given freedpeople forty acres each','The Civil War was beginning'],0,'Freedmen\'s Bureau Commissioner Oliver O. Howard went to Edisto Island to announce the policy change; abandoned land was returned to ex-Confederates.'],
+    ['What does the source reveal about freedpeople\'s view of freedom?',['Freedom meant independence, especially land, not a return to work for former owners','Freedpeople wanted to return to the old plantations','Freedpeople did not care about land'],0,'Land was one of the freedpeople\'s major desires. Without it, many were pushed back to work for former owners as wage laborers or sharecroppers.']]},
+{k:'DOCUMENT B · LETTER TO THE NEW YORK TRIBUNE, DECEMBER 22, 1871',t:'"the same principle that prompted the white men at Boston, disguised as Indians, to board, during the darkness of night, a vessel with tea, and throw her cargo into the Bay, clothed some of our people in Ku Klux gowns . . . Under the peculiar circumstances what could the people of South Carolina do but resort to Ku Kluxing?"',
+ q:[['What is the writer trying to do?',['Justify Klan violence by comparing it to the Boston Tea Party','Report neutrally on Klan activity','Call for federal troops to stop the Klan'],0,'He frames vigilante terror as patriotic resistance, a common argument among white conservatives.'],
+    ['What is this letter good evidence for?',['How many white conservatives rationalized violence during Reconstruction','Whether Klan violence was justified','The experience of Black victims'],0,'A biased source is unreliable about its targets but very reliable about its writer\'s views. Victims such as Sallie Adkins told a very different story.']]},
+{k:'DOCUMENT C · HARPER\'S WEEKLY, NOVEMBER 1867',t:'"The First Vote," an illustration by Alfred R. Waud: Black men of various occupations wait their turn as the first voter places his ballot.',
+ q:[['What makes this image stand out among images of its time?',['It shows Black men as active citizens, while other images of the era depicted African Americans as ignorant or lazy','It is a photograph','It was drawn a century later'],0,'Comparing an image with others of its time helps you see its point of view.'],
+    ['What change made this scene possible?',['After 1867 Congress ordered Southern states to eliminate racial discrimination in voting','The Compromise of 1877','The Black Codes'],0,'Under the Reconstruction Acts, Black men voted in large numbers and soon won offices across the South.']]}];
+let dScore=0;const got={};
+DOCS.forEach((d,di)=>{const c=document.createElement('div');c.className='panel';c.style.margin='12px 0';
+ c.innerHTML='<div class="kicker">'+d.k+'</div><div class="doc">'+d.t+'</div>';
+ d.q.forEach((q,qi)=>{const id='q'+di+'_'+qi;const w=document.createElement('div');w.className='q';
+  w.innerHTML='<b id="'+id+'">'+q[0]+'</b><div role="group" aria-labelledby="'+id+'"></div><p class="fb" aria-live="polite"></p>';
+  q[1].forEach((o,oi)=>{const b=document.createElement('button');b.className='choice';b.textContent=o;b.setAttribute('aria-pressed','false');
+   b.onclick=()=>{w.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=w.querySelector('.fb');
+    if(oi===q[2]){f.className='fb ok';f.textContent='Correct. '+q[3];if(!got[id]){got[id]=1;dScore++;$('docScore').textContent=dScore+' / 6';}}
+    else{f.className='fb bad';f.textContent='Not quite. Reread the document and try again.';}};
+   w.children[1].appendChild(b);});
+  c.appendChild(w);});
+ $('docs').appendChild(c);});
+</script>
+</body></html>
