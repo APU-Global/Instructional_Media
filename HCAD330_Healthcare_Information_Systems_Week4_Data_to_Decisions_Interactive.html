@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Data to Decisions</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+input[type=number],select{font:inherit;padding:6px 8px;border:2px solid #bbb;border-radius:8px;max-width:100%}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #e3e0dc;text-align:left;vertical-align:top}
+th{background:#111;color:#fff;font-weight:600}
+.tablewrap{overflow-x:auto}
+.big{font-size:1.6rem;font-weight:800}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: From Data to Decisions" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">HCAD 330 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">From Data to Decisions</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Turn raw data into insight and test whether an analysis can be trusted</text></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: From Data to Decisions</h2>
+<p class="lead"><b>Week 4 objective:</b> Propose data-driven solutions for improving patient care and operational efficiency (CLO 3).</p>
+<div class="card">
+<h3>Three ideas to apply</h3>
+<div class="grid g3">
+<div class="panel"><b>Data</b><br>Facts and statistics in their raw form. Alone, data tells you very little.</div>
+<div class="panel"><b>Information</b><br>Data that is processed and presented so it becomes meaningful: data with relevance and purpose.</div>
+<div class="panel"><b>Knowledge</b><br>The insight people bring from experience and expertise that turns information into stronger decisions.</div>
+</div></div>
+<div class="card">
+<h3>Practice 1: data, information, or knowledge?</h3>
+<p class="lead">Each clinic is fictional. Label each item, then select <b>Check my answers</b>.</p>
+<div id="items_d" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check_d">Check my answers</button> <button class="btn ghost" id="reset_d">Start over</button></p>
+<p class="fb" id="fb_d" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>The analytics toolkit</h3>
+<div class="grid g4">
+<div class="panel"><b>Canned report</b><br>A regular summary in a fixed format.</div>
+<div class="panel"><b>Ad hoc report</b><br>A report users build on the fly, choosing fields and ranges.</div>
+<div class="panel"><b>Dashboard</b><br>A graphical, heads-up display of key performance metrics.</div>
+<div class="panel"><b>Data mining</b><br>Computers search large data sets for hidden patterns and build models.</div>
+</div></div>
+<div class="card">
+<h3>Practice 2: which tool fits the need?</h3>
+<p class="lead">Choose the business intelligence tool each leader needs.</p>
+<div id="items_t" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check_t">Check my answers</button> <button class="btn ghost" id="reset_t">Start over</button></p>
+<p class="fb" id="fb_t" aria-live="polite"></p>
+</div>
+<div class="card"><h3>Before you trust a model</h3><p class="lead" style="margin:0">Data mining works only when (1) the data is <b>clean and consistent</b> and (2) the patterns in it <b>reflect current and future trends</b>. Beware of random flukes, test a model on data it was not built from, and staff the team with information technology, statistics, and business knowledge.</p></div>
+<div class="card">
+<h3>Practice 3: use it or be cautious?</h3>
+<p class="lead">Decide whether each analysis is ready to use (with ongoing monitoring) or calls for caution.</p>
+<div id="items_m" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check_m">Check my answers</button> <button class="btn ghost" id="reset_m">Start over</button></p>
+<p class="fb" id="fb_m" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Data becomes useful only when it is turned into information and combined with knowledge. Match the tool to the question, and before acting on any analysis, including one from an AI tool, ask whether the data is clean and consistent, whether the pattern still holds, and whether it makes sense to people who know the work. Use these questions in this week’s discussion and in the Evaluating Data Analytics assignment.</div>
+<p class="src">Concepts from Lumen Learning (n.d.), <i>Information Systems</i>, “Data, Information, and Knowledge” and “The Business Intelligence Toolkit” (adapted from <i>Information Systems: A Manager’s Guide to Harnessing Technology</i>, CC BY-NC-SA); and Law, M. P., et al. (2022), <i>Driving Change in the Health Sector: An Integrated Approach</i>, Chapter 1, Section 1, eCampusOntario Pressbooks, CC BY-NC 4.0. Scenarios are fictional.</p>
+</div>
+<script>
+const SETS=[{"id": "d", "group": "Data, information, or knowledge", "options": [["data", "Data"], ["info", "Information"], ["know", "Knowledge"]], "items": [["A single blood pressure reading: 142/90.", "data", "One raw measurement with no context is data."], ["A chart showing that Riverside Clinic’s average call wait time has risen every month for six months.", "info", "The readings have been organized and presented to answer a question. That makes them information."], ["A nurse manager’s insight, from years on the unit, that wait times rise whenever two specific shifts overlap.", "know", "Insight from experience and expertise is knowledge, which helps turn information into a decision."], ["A spreadsheet column listing 3,000 patients’ ZIP codes.", "data", "A list of raw facts that has not yet been analyzed is data."], ["A dashboard comparing each unit’s readmission rate with last year’s.", "info", "Processed, compared figures with relevance and purpose are information."], ["An administrator’s judgment that follow-up calls after discharge will work here because she saw them succeed at her last hospital.", "know", "Applying experience to interpret a situation is knowledge."]]}, {"id": "t", "group": "Which tool", "options": [["canned", "Canned report"], ["adhoc", "Ad hoc report"], ["dash", "Dashboard"], ["mine", "Data mining"]], "items": [["Every Monday, the chief financial officer at Summit Valley Hospital receives the same one-page summary of last week’s admissions.", "canned", "A regular summary in a predetermined format is a canned report."], ["A quality manager builds her own report on the spot, choosing fields to compare fall rates by unit and shift.", "adhoc", "Ad hoc reporting lets users select fields and ranges and build reports on the fly."], ["The emergency department director wants a screen that shows wait times, patients waiting, and bed availability at a glance.", "dash", "A dashboard gives a graphical, heads-up view of key indicators."], ["Analysts search two years of appointment records for hidden patterns that predict missed appointments.", "mine", "Finding hidden patterns in a large data set is data mining."], ["A patient-experience team wants a simple monthly summary of satisfaction scores, in the same format each time, for the board.", "canned", "Recurring summaries in a fixed format are canned reports."]]}, {"id": "m", "group": "Use or caution", "options": [["use", "Ready to use (keep monitoring)"], ["caution", "Be cautious"]], "items": [["A model predicting missed appointments was built from records in which two clinics defined “no-show” differently.", "caution", "Data mining needs clean, consistent data. Different definitions make the pattern unreliable."], ["An analyst finds that the cafeteria’s coffee sales appear to “predict” readmissions.", "caution", "This looks like a random fluke, like the famous butter-production example. A real cause is unlikely."], ["A team built its model on half of its consistently coded data and confirmed similar results on the other half.", "use", "Testing a model on data it was not built from is a recommended check. Keep monitoring as conditions change."], ["A staffing model is based only on visit patterns from years before the clinic changed its hours and services.", "caution", "Models assume past patterns continue. If the situation has changed, the pattern may no longer hold."], ["A data team has strong IT and statistics skills but no one who understands clinic operations reviewed its recommendations.", "caution", "Analytics teams need IT, statistics, and business knowledge. Missing one invites mistakes."]]}];
+
+const $=id=>document.getElementById(id);
+const ans={};
+function lab(s,v){return s.options.find(o=>o[0]===v)[1]}
+function renderSet(s){const box=$('items_'+s.id);box.innerHTML='';ans[s.id]={};
+ s.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="'+s.group+' '+(i+1)+'">'+
+ s.options.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+ '</div><p class="fb" id="f_'+s.id+'_'+i+'" aria-live="polite"></p>';box.appendChild(p);});
+ $('fb_'+s.id).textContent='';}
+SETS.forEach(s=>{renderSet(s);
+ $('items_'+s.id).addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[s.id][i]=b.dataset.v;
+  $('items_'+s.id).querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f_'+s.id+'_'+i).textContent='';});
+ $('check_'+s.id).onclick=()=>{let ok=0,done=0;s.items.forEach((d,i)=>{const f=$('f_'+s.id+'_'+i),a=ans[s.id][i];
+  if(!a){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(a===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(s,d[1])+'. '+d[2];f.className='fb bad'}});
+  $('fb_'+s.id).innerHTML='<span class="score">'+ok+' of '+s.items.length+' correct</span>'+(done<s.items.length?' Answer every item to finish.':'');};
+ $('reset_'+s.id).onclick=()=>renderSet(s);});
+
+
+
+</script>
+</body></html>
