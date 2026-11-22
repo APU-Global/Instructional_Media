@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABCDE: Dispute the Story</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button,select,input{font:inherit}button{cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;max-width:100%;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+select{max-width:100%;padding:7px 10px;border:2px solid #bbb;border-radius:10px;background:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #ddd;vertical-align:top}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Dispute the Story" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PSYC 410 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Dispute the Story</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Sort a story into ABCDE and spot optimistic and pessimistic explanations</text></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: The ABCDE Model</h2>
+<p class="lead"><b>Week 5 objective:</b> Use the ABCDE model to identify the beliefs behind an adverse event and dispute them with evidence.</p>
+<div class="card">
+<h3>The five steps</h3>
+<div class="grid g3">
+<div class="panel"><b>A: Adversity</b><br>What happened (Discussion 5 calls this the activating event).</div>
+<div class="panel"><b>B: Beliefs</b><br>What you told yourself about it.</div>
+<div class="panel"><b>C: Consequences</b><br>How you felt and acted because of those beliefs.</div>
+<div class="panel"><b>D: Disputation</b><br>Evidence against the beliefs and other ways to see the event. Ask: What is the evidence? What else could explain this? Is it as bad as I am making it? Is dwelling on it useful?</div>
+<div class="panel"><b>E: Energization</b><br>How you feel once the beliefs have been disputed (Discussion 5 calls this the effective new approach).</div>
+</div>
+</div>
+<div class="card">
+<h3>Practice 1: label each part of Rosa's story</h3>
+<p class="lead">Rosa is fictional. Label each statement with its ABCDE step, then select <b>Check my answers</b>.</p>
+<div id="a-items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="a-check">Check my answers</button> <button class="btn ghost" id="a-reset">Start over</button></p>
+<p class="fb" id="a-fb" aria-live="polite"></p>
+</div>
+<script>
+(function(){
+const O=[["A", "A: Adversity"], ["B", "B: Belief"], ["C", "C: Consequence"], ["D", "D: Disputation"], ["E", "E: Energization"]];
+const D=[["Rosa's team lead hands back her project plan with red comments all over the budget section.", "A", "This is the adverse event itself: what happened, described without interpretation."], ["\"I always mess up numbers. I'm clearly not cut out for this job.\"", "B", "This is what Rosa tells herself about the event: an internal, stable, global belief."], ["Rosa skips lunch with her coworkers and spends the evening drafting a resignation email.", "C", "Consequences are the feelings and actions that follow from the belief."], ["\"Wait. The comments are only on the budget, and my lead praised my timeline last month. One weak section is not proof I can't do this job.\"", "D", "Disputation looks for evidence against the belief and for alternative explanations."], ["\"Maybe the budget was weak because this was the first one I have ever written, not because I am incapable.\"", "D", "Still disputation: an alternative explanation that is specific (this budget) and variable (first attempt)."], ["Rosa deletes the draft email, feels calmer, and books 20 minutes with the finance analyst.", "E", "Energization is how you feel and what you do once the belief has been disputed."], ["\"If my lead didn't think I could fix it, she wouldn't have bothered to comment so carefully.\"", "D", "Treating the thought as if someone else had said it, and arguing back with evidence, is the core of disputation."], ["Her stomach knots, and she snaps at her roommate that night.", "C", "Another consequence of the pessimistic belief: feelings and behavior."]];
+const box=document.getElementById('a-items'),fb=document.getElementById('a-fb');
+let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="Answer for item ${i+1}">`+
+O.map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+`</div><p class="fb" id="a-f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('a-f'+i).textContent='';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+document.getElementById('a-check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById('a-f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every item to finish.':'');};
+document.getElementById('a-reset').onclick=()=>{ans={};render();fb.textContent=''};
+render();
+})();
+</script><div class="card">
+<h3>Practice 2: optimistic or pessimistic explanation?</h3>
+<p class="lead">Pessimists explain bad events as internal, stable, and global; optimists explain them as external, variable, and specific. For good events the pattern reverses. Classify each explanation.</p>
+<div id="s-items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="s-check">Check my answers</button> <button class="btn ghost" id="s-reset">Start over</button></p>
+<p class="fb" id="s-fb" aria-live="polite"></p>
+</div>
+<script>
+(function(){
+const O=[["pess", "Pessimistic style"], ["opt", "Optimistic style"]];
+const D=[["After failing a statistics quiz: \"I'm just bad at math, and I always will be.\"", "pess", "Internal (\"I'm bad\"), stable (\"always\"), and global (\"at math\"): the pessimistic pattern for a bad event."], ["After failing a statistics quiz: \"That quiz covered the chapter I rushed. I'll start earlier next time.\"", "opt", "Variable and specific: tied to this chapter and this week, and open to change."], ["After a job offer: \"They must have been desperate. I got lucky.\"", "pess", "For good events the pattern reverses: the pessimist credits external, variable, specific causes such as luck."], ["After a job offer: \"My preparation and experience paid off, and I can build on them.\"", "opt", "Optimists credit good events to internal, stable, global factors."], ["After a friend cancels plans: \"Nobody ever wants to spend time with me.\"", "pess", "Stable (\"ever\") and global (\"nobody\"). A specific explanation would fit the facts better."], ["After a friend cancels plans: \"She mentioned a deadline this week. Let's reschedule.\"", "opt", "External, variable, and specific: the cause is her deadline, this week."]];
+const box=document.getElementById('s-items'),fb=document.getElementById('s-fb');
+let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="Answer for item ${i+1}">`+
+O.map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+`</div><p class="fb" id="s-f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('s-f'+i).textContent='';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+document.getElementById('s-check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById('s-f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every item to finish.':'');};
+document.getElementById('s-reset').onclick=()=>{ans={};render();fb.textContent=''};
+render();
+})();
+</script>
+<div class="take"><b>Takeaway:</b> Events do not create consequences directly; beliefs about them do. Catch the belief, treat it as if someone else had said it, and argue back with evidence and specific, changeable explanations. That is how you move from consequences to energization.</div>
+<p class="src">Model, explanatory-style definitions, and disputation questions from <i>Therapist's Guide to Positive Psychological Interventions</i> (Magyar-Moe, 2009), Chapter 4, Worksheet 4.13 "ABCDE Disputation" (Seligman, 2002), the Week 5 course reading. Scenarios are fictional.</p>
+</div>
+</body></html>

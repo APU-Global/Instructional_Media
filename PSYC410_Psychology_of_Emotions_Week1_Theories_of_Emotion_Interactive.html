@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which Theory Fits?</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button,select,input{font:inherit}button{cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;max-width:100%;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+select{max-width:100%;padding:7px 10px;border:2px solid #bbb;border-radius:10px;background:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #ddd;vertical-align:top}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 1 banner: Which Theory Fits?" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PSYC 410 · WEEK 1</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Which Theory Fits?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Match each moment to the theory of emotion it illustrates best</text></svg></div>
+<div class="wrap">
+<h2>Week 1 Interactive: Theories of Emotion</h2>
+<p class="lead"><b>Week 1 objective:</b> Distinguish the Cannon-Bard, James-Lange, and two-factor theories of emotion by the role each gives to bodily arousal.</p>
+<div class="card">
+<h3>Three ways to order the same moment</h3>
+<div class="grid g3">
+<div class="panel"><b>Cannon-Bard</b><br>Event &rarr; <b>emotion and arousal together</b>. You feel afraid as your heart starts racing.</div>
+<div class="panel"><b>James-Lange</b><br>Event &rarr; arousal &rarr; <b>emotion</b>. "We feel sorry because we cry, angry because we strike, afraid because we tremble" (William James).</div>
+<div class="panel"><b>Two-factor</b><br>Arousal + <b>cognitive appraisal</b> = emotion. Arousal sets the strength; your interpretation of the situation decides which emotion it is.</div>
+</div>
+</div>
+<div class="card">
+<h3>Practice: which theory fits best?</h3>
+<p class="lead">Each scenario is fictional except the study described in item 5. Choose the theory each one illustrates best, then select <b>Check my answers</b>.</p>
+<div id="t-items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="t-check">Check my answers</button> <button class="btn ghost" id="t-reset">Start over</button></p>
+<p class="fb" id="t-fb" aria-live="polite"></p>
+</div>
+<script>
+(function(){
+const O=[["cb", "Cannon-Bard"], ["jl", "James-Lange"], ["tf", "Two-factor (Schachter-Singer)"]];
+const D=[["Ana hears glass break downstairs at 2 a.m. The fear and her pounding heart seem to arrive at exactly the same moment; neither comes first.", "cb", "Cannon-Bard holds that the experience of emotion occurs alongside physiological arousal, not before or after it."], ["After a near-miss on the freeway, Marcus notices his shaking hands and racing heart. Only then does he think, \"Wow, I was really scared.\"", "jl", "James-Lange says the emotion results from the arousal: we are \"afraid because we tremble.\""], ["Jen has had three strong coffees and her heart is racing. A mildly curt email arrives, and she feels furious, though on a calm day it would barely bother her.", "tf", "Unexplained arousal gets labeled by the situation at hand. Jen misattributes caffeine arousal to the email and reads it as anger."], ["Two friends ride the same roller coaster with the same racing hearts. One calls the feeling thrilling; the other calls it terrifying, because each interprets the ride differently.", "tf", "Same arousal, different appraisal, different emotion: emotion = arousal + cognition."], ["A study finds that people whose spinal injuries reduce their bodily arousal also report weaker emotional experiences.", "jl", "If emotion depends on arousal, less arousal should mean weaker emotion, which is what James-Lange predicts."], ["Kai knows he is embarrassed, not angry, partly because his face turns red and hot, which does not happen when he is angry.", "jl", "James-Lange proposes that different patterns of arousal (such as blushing) produce different emotions."], ["A car swerves toward Lena. Her thalamus signals her amygdala, and her body reacts so fast that the feeling and the physical response seem simultaneous.", "cb", "The fast emotional pathway creates feelings and bodily reactions almost at once, which supports Cannon-Bard."], ["Fans leave a thrilling championship win still highly aroused. When someone bumps into them in the parking lot, a few react with unusual anger.", "tf", "Excitation transfer: arousal from one event spills over and intensifies an unrelated emotion."]];
+const box=document.getElementById('t-items'),fb=document.getElementById('t-fb');
+let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="Answer for item ${i+1}">`+
+O.map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+`</div><p class="fb" id="t-f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('t-f'+i).textContent='';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+document.getElementById('t-check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById('t-f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every item to finish.':'');};
+document.getElementById('t-reset').onclick=()=>{ans={};render();fb.textContent=''};
+render();
+})();
+</script>
+<div class="card">
+<h3>Prepare your Discussion 1 example</h3>
+<p class="lead">Think of a strong emotion you felt recently. Answer for yourself, then read the suggestion.</p>
+<div class="panel">
+<p style="margin:0 0 6px"><b>What did you notice first?</b></p>
+<div role="group" aria-label="What did you notice first">
+<button type="button" class="choice" data-r="cb" aria-pressed="false">The feeling and my body changed together</button>
+<button type="button" class="choice" data-r="jl" aria-pressed="false">My body reacted, then I named the feeling</button>
+<button type="button" class="choice" data-r="tf" aria-pressed="false">I was already keyed up, and the situation told me what I was feeling</button>
+</div>
+<p class="fb" id="reflect" aria-live="polite"></p>
+</div>
+</div>
+<div class="take"><b>Takeaway:</b> All three theories have research support. Cannon-Bard fits the speed of the fast pathway, James-Lange fits evidence that arousal shapes emotion, and the two-factor theory explains why the same arousal can become different emotions. Pick the one that best explains <b>your</b> example and say why.</div>
+<p class="src">Theories, quotation, and studies from <i>Introduction to Psychology</i> v1.0 (Saylor Academy, 2012), Section 10.1 "The Experience of Emotion," CC BY-NC-SA 3.0. Scenarios are fictional.</p>
+</div>
+<script>
+(function(){const T={cb:'That sounds like Cannon-Bard: emotion and arousal experienced together. In your post, explain why it seemed simultaneous.',jl:'That sounds like James-Lange: arousal first, then the emotion. Describe the bodily signal that told you what you felt.',tf:'That sounds like the two-factor theory: arousal labeled by the situation. Describe the cue that gave your arousal its label.'};
+const g=document.querySelectorAll('[data-r]'),out=document.getElementById('reflect');
+g.forEach(b=>b.addEventListener('click',()=>{g.forEach(x=>x.setAttribute('aria-pressed',x===b));out.textContent=T[b.dataset.r];out.className='fb ok';}));})();
+</script>
+</body></html>
