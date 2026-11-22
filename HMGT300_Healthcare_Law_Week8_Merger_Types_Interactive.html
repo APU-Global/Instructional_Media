@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Kind of Merger?</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 8 banner: What Kind of Merger?" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">HMGT 300 · WEEK 8</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">What Kind of Merger?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Classify healthcare deals the way Clayton Act Section 7 analysis begins</text></svg></div>
+<div class="wrap">
+<h2>Week 8 Interactive: Healthcare Mergers and Section 7</h2>
+<p class="lead"><b>Week 8 objective:</b> Classify healthcare mergers as horizontal, vertical, or conglomerate (including market-extension and product-extension deals) as the first step in judging their effect on competition.</p>
+<div class="card">
+<h3>Merger types under Section 7 of the Clayton Act</h3>
+<p class="lead" style="margin:0">Section 7 bars a merger whose effect "may be substantially to lessen competition" in any line of commerce in any section of the country. A <b>horizontal</b> merger joins competitors. A <b>vertical</b> merger joins a supplier and a customer (a customer buying its supplier is backward integration; a supplier buying its customer is forward integration). A <b>conglomerate</b> merger joins businesses that are not directly related, including <b>market-extension</b> deals (same business, different location) and <b>product-extension</b> deals (a related product). For horizontal deals, courts weigh market shares, concentration, and the trend toward concentration.</p>
+</div>
+<div class="card">
+<h3>Practice: classify each deal</h3>
+<p class="lead">Each organization is fictional. Choose the best type for each deal, then select <b>Check my answers</b>.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Classifying the deal tells you what to examine. Horizontal mergers raise questions about <b>market share and concentration</b>; vertical mergers about <b>foreclosing</b> rivals from suppliers or customers; conglomerate mergers about <b>entrenchment</b> or lost potential competition. Claimed savings are not a legal defense, so ask whether they reach patients.</div>
+<p class="src">Rules and terms from Saylor Academy, <i>Government Regulation and the Legal Environment of Business</i> v1.0 (2012), Chapter 16, Sections 16.1 and 16.7, CC BY-NC-SA 3.0. Scenarios are fictional.</p>
+</div>
+<script>
+const O=[["hor", "Horizontal"], ["ver", "Vertical"], ["mkt", "Conglomerate: market extension"], ["prod", "Conglomerate: product extension"], ["pure", "Conglomerate: pure"]];
+const D=[["Lakeview General and Bayside Medical Center, the two largest hospitals competing for patients in the same county, agree to merge.", "hor", "The hospitals compete in the same service and the same local market: a horizontal merger, the kind courts examine most closely."], ["Summit Health, a hospital system, buys MedLine Supply, the distributor it buys gloves, gowns, and catheters from.", "ver", "A customer acquiring its supplier is vertical (backward) integration."], ["Pine Ridge Urgent Care, which operates only in Denver, buys an urgent care chain that operates only in Phoenix.", "mkt", "Same business, different geographic market, and they did not compete before: a market-extension merger."], ["Riverbend Labs, which makes blood-testing equipment, buys the regional chain of testing centers that are its main customers.", "ver", "A supplier acquiring its customer is vertical (forward) integration."], ["Harbor Pharmacies, which sells prescription drugs but not medical equipment, buys a company that sells home medical equipment.", "prod", "The businesses sell related products to similar customers without competing directly: a product-extension merger."], ["Valley Health System buys a regional chain of fitness-equipment stores.", "pure", "The businesses are unrelated, so this is a pure conglomerate merger."], ["Two physician groups that are the only cardiology practices in a small city combine into one group.", "hor", "They are direct competitors in the same local market. With only two practices, the merger would leave one: concentration is the central concern."], ["Westfield Insurance, a health plan, buys Westfield-area clinics that its members visit for care.", "ver", "The plan buys the providers whose services it purchases for members: a customer acquiring a supplier, which is vertical."]];
+const box=document.getElementById('items'),fb=document.getElementById('fb');
+let ans={};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${esc(d[0])}</p><div role="group" aria-label="Answer for scenario ${i+1}">`+
+O.map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${esc(o[1])}</button>`).join('')+
+`</div><p class="fb" id="f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));document.getElementById('f'+i).textContent='';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+document.getElementById('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById('f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every scenario to finish.':'');};
+document.getElementById('reset').onclick=()=>{ans={};render();fb.textContent=''};
+render();
+</script>
+</body></html>
