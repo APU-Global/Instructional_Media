@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shared Resource Management</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.q{margin:10px 0 0}.ql{font-weight:700;font-size:.95rem;margin:0 0 2px}
+.tag{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700;margin-right:6px}
+select,input[type=number]{font:inherit;padding:7px 10px;border:2px solid #cfcfcf;border-radius:10px;background:#fff;max-width:100%}
+input[type=range]{width:100%;accent-color:var(--red)}
+label.row{display:flex;gap:8px;align-items:flex-start;background:#fff;border-radius:10px;padding:8px 10px;margin:6px 0;cursor:pointer}
+label.row input{margin-top:4px}
+ul.res{margin:6px 0 0;padding-left:20px}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Shared Resource Management" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ISYS 310 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Shared Resource Management</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Control who can store files, and what and how much they store</text>
+<g transform="translate(800,70)" fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round"><rect x="0" y="0" width="120" height="34" rx="6"/><rect x="0" y="46" width="120" height="34" rx="6"/><rect x="0" y="92" width="120" height="34" rx="6"/><circle cx="20" cy="17" r="5" fill="#d34147" stroke="none"/><circle cx="20" cy="63" r="5" fill="#d34147" stroke="none"/><circle cx="20" cy="109" r="5" fill="#d34147" stroke="none"/></g></svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: Account and Resource Management</h2>
+<p class="lead"><b>Week 3 objective:</b> Control who can use a shared folder with Active Directory groups, then control what and how much is stored there with File Server Resource Manager (FSRM).</p>
+<div class="card">
+<h3>Your toolkit</h3>
+<div class="grid g3">
+<div class="panel"><b>Group-based permissions</b><br>Users join global groups, global groups join domain local groups, and the share grants access to the domain local group.</div>
+<div class="panel"><b>Quota</b><br>Limits the space a volume or folder may use and notifies people as the limit nears. Auto apply quotas and templates spread the rule.</div>
+<div class="panel"><b>File screen</b><br>Controls which file types users can save and can notify you of attempts. <b>Exceptions</b> allow specific needs.</div>
+<div class="panel"><b>File management task</b><br>Finds files by location, classification, or creation, modified, or last-accessed time and acts on them, such as expiring them, on a schedule; can notify owners first.</div>
+<div class="panel"><b>Storage report</b><br>Shows disk-usage trends and can monitor attempts to save unauthorized files.</div>
+<div class="panel"><b>Note</b><br>FSRM works on NTFS volumes only.</div>
+</div></div>
+
+<div class="card">
+<h3>Build the access chain</h3>
+<p class="lead">In Practical Application 2, a student reaches StudentShare through a chain of four links. Put the links in order from the person to the folder, then select <b>Check the chain</b>.</p>
+<div class="grid g2" id="chain"></div>
+<p style="margin:12px 0 0"><button type="button" class="btn" id="chc">Check the chain</button> <button type="button" class="btn ghost" id="chr">Start over</button></p>
+<p class="fb" id="chs" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice: pick the right tool</h3>
+<p class="lead">Scenarios are fictional. For each problem, choose the tool that fits best, then select <b>Check my answers</b>.</p>
+<div id="a0" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="a0c">Check my answers</button> <button type="button" class="btn ghost" id="a0r">Start over</button></p>
+<p class="fb" id="a0s" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Fix <b>who</b> can write to a share with group-based permissions, then manage <b>what</b> and <b>how much</b> they store with quotas, file screens, file management tasks, and storage reports. Communicate the policy so people know why the share is changing.</div>
+<p class="src">Concepts from Microsoft, “File Server Resource Manager (FSRM) overview,” “Quota management,” “File screening management,” and “File management tasks” (MicrosoftDocs/windowsserverdocs on GitHub, CC BY 4.0), and the ISYS 310 Practical Application 2 instructions. Scenarios are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function quiz(boxId,D,fbId,checkId,resetId){
+ const box=$(boxId),fb=$(fbId);let ans={};
+ function render(){box.innerHTML='';ans={};D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  let h='<p style="margin:0 0 4px"><b>'+(i+1)+'.</b> '+d.t+'</p>';
+  d.q.forEach((q,j)=>{const lid=boxId+'l'+i+'_'+j;h+='<div class="q"><p class="ql" id="'+lid+'">'+q.l+'</p><div role="group" aria-labelledby="'+lid+'">'+
+   q.o.map((o,k)=>'<button type="button" class="choice" data-i="'+i+'" data-j="'+j+'" data-k="'+k+'" aria-pressed="false">'+o+'</button>').join('')+'</div></div>';});
+  h+='<p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';p.innerHTML=h;box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i,j=b.dataset.j;ans[i+'_'+j]=+b.dataset.k;
+  box.querySelectorAll('.choice[data-i="'+i+'"][data-j="'+j+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(boxId+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,tot=0,miss=0;D.forEach((d,i)=>{const f=$(boxId+'f'+i);let msg=[],all=true,un=false;
+  d.q.forEach((q,j)=>{tot++;const a=ans[i+'_'+j];if(a===undefined){un=true;all=false;miss++;return}if(a===q.a)ok++;else{all=false;msg.push(q.l.replace(/[?:]$/,'')+': '+q.o[q.a])}});
+  if(un){f.className='fb bad';f.textContent='Answer every question for this item.';return}
+  f.className='fb '+(all?'ok':'bad');f.textContent=(all?'Correct. ':'Not quite. Best answer, '+msg.join('; ')+'. ')+d.x;});
+  fb.innerHTML='<span class="score">'+ok+' of '+tot+' correct</span>'+(miss?' Answer every question to finish.':'');};
+ $(resetId).onclick=()=>{render();fb.textContent=''};
+ render();}
+
+quiz('a0',[{"t": "The design team’s share at Northgate Builders (fictional) grows by several gigabytes a month. The manager wants a warning near the limit and a firm cap.", "q": [{"l": "Best tool?", "o": ["Group-based permissions", "Quota", "File screen", "File screen exception", "File management task", "Storage report"], "a": 1}], "x": "A quota limits the space a folder may use and sends notifications as the limit nears."}, {"t": "Music and movie files keep appearing in the accounting share.", "q": [{"l": "Best tool?", "o": ["Group-based permissions", "Quota", "File screen", "File screen exception", "File management task", "Storage report"], "a": 2}], "x": "A file screen controls the types of files users can save and can notify you when someone tries."}, {"t": "After the music block, the marketing director legitimately needs to keep promotional videos in her folder.", "q": [{"l": "Best tool?", "o": ["Group-based permissions", "Quota", "File screen", "File screen exception", "File management task", "Storage report"], "a": 3}], "x": "A file screen exception gives a specific folder or person room the screen would otherwise block, like Microsoft’s vice president example."}, {"t": "Thousands of files in a project share have not been modified in three years. Owners should be warned before anything is removed.", "q": [{"l": "Best tool?", "o": ["Group-based permissions", "Quota", "File screen", "File screen exception", "File management task", "Storage report"], "a": 4}], "x": "A file management task can select files by modification or last-accessed time, notify owners, and expire the files on a schedule."}, {"t": "Guest accounts can open the accounting share at all, even though they have no business reason to.", "q": [{"l": "Best tool?", "o": ["Group-based permissions", "Quota", "File screen", "File screen exception", "File management task", "Storage report"], "a": 0}], "x": "This is an access problem. Remove the guests’ group from the share’s domain local group (or the share permission) so only the right people can write there."}, {"t": "The IT director wants a regular view of which files and folders use the most space and whether anyone tries to save blocked files.", "q": [{"l": "Best tool?", "o": ["Group-based permissions", "Quota", "File screen", "File screen exception", "File management task", "Storage report"], "a": 5}], "x": "Storage reports show usage trends and can monitor attempts to save unauthorized files."}],'a0s','a0c','a0r');
+const L=['User account (s1user)','Global group (GLStudent)','Domain local group (DLStudent)','Share permission on StudentShare (Full Control)'];
+const order=[2,0,3,1];
+function chain(){const c=$('chain');c.innerHTML='';for(let s=0;s<4;s++){const d=document.createElement('div');d.className='panel';
+ d.innerHTML='<label for="st'+s+'"><b>Link '+(s+1)+(s===0?' (the person)':s===3?' (the folder)':'')+'</b></label><br><select id="st'+s+'" style="width:100%;margin-top:6px"><option value="">Choose…</option>'+order.map(k=>'<option value="'+k+'">'+L[k]+'</option>').join('')+'</select>';c.appendChild(d);}$('chs').textContent='';}
+$('chc').onclick=()=>{const v=[0,1,2,3].map(s=>$('st'+s).value);const f=$('chs');
+ if(v.includes('')){f.className='fb bad';f.textContent='Choose a link for every step.';return}
+ const right=v.filter((x,s)=>+x===s).length;
+ if(right===4){f.className='fb ok';f.textContent='Correct. User accounts go into a global group, the global group goes into a domain local group, and the share grants access to the domain local group. To change who can write, change group membership, not each file.';}
+ else{f.className='fb bad';f.textContent=right+' of 4 links in the right place. Start from the person: user account, then global group (GLStudent), then domain local group (DLStudent), then the share permission.';}};
+$('chr').onclick=chain;chain();
+</script>
+</body></html>

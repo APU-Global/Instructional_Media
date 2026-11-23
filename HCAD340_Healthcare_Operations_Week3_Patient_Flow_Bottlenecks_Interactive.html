@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find the Bottleneck</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+input[type=number],select{font:inherit;padding:6px 8px;border:2px solid #bbb;border-radius:8px;max-width:100%}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #e3e0dc;text-align:left;vertical-align:top}
+th{background:#111;color:#fff;font-weight:600}
+.tablewrap{overflow-x:auto}
+.big{font-size:1.6rem;font-weight:800}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.calc label{display:block;font-weight:600;margin:0 0 4px}.calc input{width:100%}.bar{height:14px;border-radius:7px;background:#d9d5d0;overflow:hidden}.bar span{display:block;height:100%;background:var(--blue)}.bar span.neck{background:var(--red)}.res{font-weight:700}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Find the Bottleneck" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">HCAD 340 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Find the Bottleneck</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">See how the slowest step sets the pace of patient flow, and where to invest</text></svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: Finding the Bottleneck in Patient Flow</h2>
+<p class="lead"><b>Week 3 objective:</b> Discuss methods for improving patient flow optimization (CLO 3).</p>
+<div class="card">
+<h3>Three ideas to apply</h3>
+<div class="grid g3">
+<div class="panel"><b>The bottleneck</b><br>The slowest step in a process. Its capacity sets the capacity of the whole process.</div>
+<div class="panel"><b>Waiting and idleness</b><br>Work piles up in front of the bottleneck, and the steps after it sit idle waiting for it.</div>
+<div class="panel"><b>Invest at the constraint</b><br>Speeding up a step that is not the bottleneck adds no output. Fixing the bottleneck may reveal a new one.</div>
+</div></div>
+<div class="card calc">
+<h3>Try it: Maple Grove Clinic’s patient flow</h3>
+<p class="lead">Maple Grove Clinic (fictional) sees every patient in four steps, one after another. Change the minutes per patient or the number of staff at a step and watch the bottleneck move. Capacity per step = (minutes open × staff) ÷ minutes per patient.</p>
+<div class="panel" style="margin-bottom:14px"><label for="day">Minutes the clinic is open per day</label><input type="number" id="day" min="60" max="900" step="30" value="480"></div>
+<div class="grid g4" id="steps"></div>
+<div class="panel" style="margin-top:14px"><div class="tablewrap"><table><caption class="lead" style="text-align:left;caption-side:top">Daily capacity by step</caption><thead><tr><th scope="col">Step</th><th scope="col">Patients per day</th><th scope="col">Share of the fastest step</th></tr></thead><tbody id="tb"></tbody></table></div>
+<p class="res" id="calcout" aria-live="polite" style="margin:12px 0 0"></p></div>
+<p style="margin:14px 0 0"><button class="btn ghost" id="calcreset">Reset to starting numbers</button></p>
+</div>
+<div class="card">
+<h3>Practice: read the flow</h3>
+<p class="lead">Use the clinic’s <b>starting numbers</b> (4, 8, 15, and 5 minutes; one staff member each; 480 minutes). Try changes in the tool above, then answer.</p>
+<div id="items_q" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check_q">Check my answers</button> <button class="btn ghost" id="reset_q">Start over</button></p>
+<p class="fb" id="fb_q" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Find the slowest step before spending money: the bottleneck’s capacity is the process’s capacity, and improvements elsewhere add nothing. When you fix the bottleneck, look for the next one. In a hospital, ED crowding can start downstream, with inpatient beds and discharges. Use this thinking in Discussion 3 and in Part 1 of Designing Comprehensive Solutions.</div>
+<p class="src">Concepts and capacity method from Abbas, A., &amp; Goosheh, S. (2024), <i>Fundamentals of Operations Management</i>, 4.8 “The Sequential Processes and the Bottleneck” and 4.9 “The Bottleneck Phenomenon and Its Impact on Process Capacity,” eCampusOntario Pressbooks, CC BY-NC-SA 4.0; Urban Medical Center facts from the course case study “Designing Comprehensive Solutions for Healthcare Operations.” Maple Grove Clinic is fictional.</p>
+</div>
+<script>
+const SETS=[{"id": "q", "group": "Question", "options": [["c", "Check-in"], ["t", "Triage and vitals"], ["e", "Provider exam"], ["o", "Checkout"]], "items": [["Which step is the bottleneck?", "e", "The provider exam takes the longest (15 minutes), so it can handle only 480 ÷ 15 = 32 patients per day."], ["How many patients can the clinic see in a day?", "32", "The process can go no faster than its bottleneck: 32 patients.", [["32", "32"], ["60", "60"], ["96", "96"], ["120", "120"]]], ["The clinic buys a kiosk that cuts check-in to 2 minutes. What happens to daily output?", "same", "Check-in was not the bottleneck, so output stays at 32. The money went to a non-bottleneck step.", [["same", "It stays at 32"], ["up", "It doubles to 64"], ["down", "It falls"]]], ["Instead, the clinic adds a second provider. What is the new daily output?", "60", "Exam capacity doubles to 64, so triage (480 ÷ 8 = 60) becomes the new bottleneck. Output rises to 60.", [["32", "32"], ["60", "60"], ["64", "64"], ["96", "96"]]], ["After the second provider is added, where should the next improvement go?", "t", "Triage and vitals is now the slowest step, so it is the new constraint."], ["In the Urban Medical Center case from your assignment, where did the constraint behind long ED boarding times sit?", "beds", "The case points to delays admitting patients to inpatient beds and discharge bottlenecks with post-acute care providers.", [["reg", "The ED registration desk"], ["beds", "Inpatient beds and discharges"], ["triage", "The number of ED triage nurses"]]]]}];
+
+const $=id=>document.getElementById(id);
+const ans={};
+function opts(s,i){return s.items[i][3]||s.options}
+function lab(s,v,i){return opts(s,i).find(o=>o[0]===v)[1]}
+function renderSet(s){const box=$('items_'+s.id);box.innerHTML='';ans[s.id]={};
+ s.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="'+s.group+' '+(i+1)+'">'+
+ opts(s,i).map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+ '</div><p class="fb" id="f_'+s.id+'_'+i+'" aria-live="polite"></p>';box.appendChild(p);});
+ $('fb_'+s.id).textContent='';}
+SETS.forEach(s=>{renderSet(s);
+ $('items_'+s.id).addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[s.id][i]=b.dataset.v;
+  $('items_'+s.id).querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f_'+s.id+'_'+i).textContent='';});
+ $('check_'+s.id).onclick=()=>{let ok=0,done=0;s.items.forEach((d,i)=>{const f=$('f_'+s.id+'_'+i),a=ans[s.id][i];
+  if(!a){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(a===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(s,d[1],i)+'. '+d[2];f.className='fb bad'}});
+  $('fb_'+s.id).innerHTML='<span class="score">'+ok+' of '+s.items.length+' correct</span>'+(done<s.items.length?' Answer every item to finish.':'');};
+ $('reset_'+s.id).onclick=()=>renderSet(s);});
+
+const STEPS=[["Check-in",4,1],["Triage and vitals",8,1],["Provider exam",15,1],["Checkout",5,1]];
+function buildSteps(){const box=$('steps');box.innerHTML='';STEPS.forEach((s,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<b>'+s[0]+'</b><label for="m'+i+'" style="margin-top:8px">Minutes per patient</label><input type="number" id="m'+i+'" min="1" max="120" value="'+s[1]+'"><label for="s'+i+'" style="margin-top:8px">Staff at this step</label><input type="number" id="s'+i+'" min="1" max="6" value="'+s[2]+'">';box.appendChild(p);});
+ box.querySelectorAll('input').forEach(x=>x.addEventListener('input',calc));}
+function num(id,lo,hi){let v=parseFloat($(id).value);if(!isFinite(v)||v<lo)v=lo;return Math.min(v,hi)}
+function bad(id,lo,hi){const v=parseFloat($(id).value);return !isFinite(v)||v<lo||v>hi}
+function calc(){if(bad('day',60,900)||STEPS.some((s,i)=>bad('m'+i,1,120)||bad('s'+i,1,6))){$('calcout').textContent='Enter minutes open from 60 to 900, minutes per patient from 1 to 120, and staff from 1 to 6.';return}const day=num('day',60,900);const caps=STEPS.map((s,i)=>Math.floor(day*num('s'+i,1,6)/num('m'+i,1,120)));
+ const min=Math.min(...caps),max=Math.max(...caps);const neck=caps.indexOf(min);
+ $('tb').innerHTML=caps.map((c,i)=>'<tr><th scope="row">'+STEPS[i][0]+(i===neck?' (bottleneck)':'')+'</th><td>'+c+'</td><td><div class="bar" aria-hidden="true"><span class="'+(i===neck?'neck':'')+'" style="width:'+Math.max(4,Math.round(100*c/max))+'%"></span></div></td></tr>').join('');
+ const tied=caps.map((c,i)=>c===min?STEPS[i][0]:null).filter(x=>x);$('calcout').textContent=(tied.length>1?'Bottleneck (tie): '+tied.join(' and ')+'. The clinic can see '+min+' patients per day.':'Bottleneck: '+STEPS[neck][0]+'. The clinic can see '+min+' patients per day; every other step has spare capacity.');}
+buildSteps();$('day').addEventListener('input',calc);
+$('calcreset').onclick=()=>{$('day').value=480;buildSteps();calc();};calc();
+
+</script>
+</body></html>

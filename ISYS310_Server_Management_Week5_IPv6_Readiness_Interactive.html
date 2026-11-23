@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPv6 Readiness Inventory</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.q{margin:10px 0 0}.ql{font-weight:700;font-size:.95rem;margin:0 0 2px}
+.tag{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700;margin-right:6px}
+select,input[type=number]{font:inherit;padding:7px 10px;border:2px solid #cfcfcf;border-radius:10px;background:#fff;max-width:100%}
+input[type=range]{width:100%;accent-color:var(--red)}
+label.row{display:flex;gap:8px;align-items:flex-start;background:#fff;border-radius:10px;padding:8px 10px;margin:6px 0;cursor:pointer}
+label.row input{margin-top:4px}
+ul.res{margin:6px 0 0;padding-left:20px}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: IPv6 Readiness Inventory" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ISYS 310 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">IPv6 Readiness Inventory</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Find every part of the network that names an IPv4 address</text>
+<g transform="translate(800,70)" fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round"><rect x="0" y="0" width="120" height="34" rx="6"/><rect x="0" y="46" width="120" height="34" rx="6"/><rect x="0" y="92" width="120" height="34" rx="6"/><circle cx="20" cy="17" r="5" fill="#d34147" stroke="none"/><circle cx="20" cy="63" r="5" fill="#d34147" stroke="none"/><circle cx="20" cy="109" r="5" fill="#d34147" stroke="none"/></g></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: IPv6 Readiness Inventory</h2>
+<p class="lead"><b>Week 5 objective:</b> Identify the parts of an IPv4 network that must change before an IPv6-only move, and decide what each needs.</p>
+<div class="card">
+<h3>What changes</h3>
+<div class="grid g2">
+<div class="panel"><b>DNS</b><br>Each host reached over IPv6 needs an AAAA (IPv6 host) record, the counterpart of the A record. IPv4 reverse lookups use <code>in-addr.arpa</code>; IPv6 reverse zones use <code>ip6.arpa</code>.</div>
+<div class="panel"><b>DHCP</b><br>Windows Server DHCP can assign IPv4 and IPv6 addresses, but IPv6 service is configured separately. Plan scopes, reservations, options, and relay agents.</div>
+<div class="panel"><b>Static settings and rules</b><br>Hand-entered addresses, firewall rules, and scripts that name IPv4 addresses must be found and updated.</div>
+<div class="panel"><b>IPv6 in Windows</b><br>IPv6 is a mandatory part of Windows. Microsoft recommends the “Prefer IPv4 over IPv6” prefix policy instead of disabling IPv6. IPAM can discover your DHCP and DNS servers for the inventory.</div>
+</div></div>
+<div class="card">
+<h3>Practice: sort the inventory</h3>
+<p class="lead">The college is fictional. For each inventory item, choose its area and the action it needs, then select <b>Check my answers</b>.</p>
+<div id="a0" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="a0c">Check my answers</button> <button type="button" class="btn ghost" id="a0r">Start over</button></p>
+<p class="fb" id="a0s" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Your report outline</h3>
+<p class="lead">Check each area your Discussion 5 report covers. The list updates as you go.</p>
+<div id="ck" role="group" aria-label="Report areas"></div>
+<p class="fb" id="ckf" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> An IPv6-only move touches every service that names an address: DNS records and reverse zones, DHCP scopes and options, static settings, firewall rules, and scripts. Inventory them all, keep IPv6 enabled, and plan testing and training before the cutover.</div>
+<p class="src">Concepts from Microsoft, “Configure IPv6 for advanced users” (SupportArticles-docs), “Domain Name System (DNS) in Windows and Windows Server,” “Manage DNS resource records,” “DNS reverse lookups,” “What is DHCP Server in Windows Server?”, “Deploy DHCP using Windows PowerShell,” and “IP Address Management (IPAM)” (MicrosoftDocs on GitHub, CC BY 4.0), and the ISYS 310 Practical Application 1 instructions. Scenarios are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function quiz(boxId,D,fbId,checkId,resetId){
+ const box=$(boxId),fb=$(fbId);let ans={};
+ function render(){box.innerHTML='';ans={};D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  let h='<p style="margin:0 0 4px"><b>'+(i+1)+'.</b> '+d.t+'</p>';
+  d.q.forEach((q,j)=>{const lid=boxId+'l'+i+'_'+j;h+='<div class="q"><p class="ql" id="'+lid+'">'+q.l+'</p><div role="group" aria-labelledby="'+lid+'">'+
+   q.o.map((o,k)=>'<button type="button" class="choice" data-i="'+i+'" data-j="'+j+'" data-k="'+k+'" aria-pressed="false">'+o+'</button>').join('')+'</div></div>';});
+  h+='<p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';p.innerHTML=h;box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i,j=b.dataset.j;ans[i+'_'+j]=+b.dataset.k;
+  box.querySelectorAll('.choice[data-i="'+i+'"][data-j="'+j+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(boxId+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,tot=0,miss=0;D.forEach((d,i)=>{const f=$(boxId+'f'+i);let msg=[],all=true,un=false;
+  d.q.forEach((q,j)=>{tot++;const a=ans[i+'_'+j];if(a===undefined){un=true;all=false;miss++;return}if(a===q.a)ok++;else{all=false;msg.push(q.l.replace(/[?:]$/,'')+': '+q.o[q.a])}});
+  if(un){f.className='fb bad';f.textContent='Answer every question for this item.';return}
+  f.className='fb '+(all?'ok':'bad');f.textContent=(all?'Correct. ':'Not quite. Best answer, '+msg.join('; ')+'. ')+d.x;});
+  fb.innerHTML='<span class="score">'+ok+' of '+tot+' correct</span>'+(miss?' Answer every question to finish.':'');};
+ $(resetId).onclick=()=>{render();fb.textContent=''};
+ render();}
+
+quiz('a0',[{"t": "Host record for the registrar’s web server: <b>A record → 10.20.4.15</b>.", "q": [{"l": "Area?", "o": ["DNS", "DHCP", "Static configuration", "Firewall or security rule"], "a": 0}, {"l": "Action?", "o": ["Add an AAAA record for the server’s IPv6 address", "Delete the zone and start over", "Nothing; DNS works the same"], "a": 0}], "x": "An A record maps a name to an IPv4 address. Once IPv4 is gone, the server needs an AAAA record or it can’t be found by name."}, {"t": "Reverse lookup zone <b>4.20.10.in-addr.arpa</b>.", "q": [{"l": "Area?", "o": ["DNS", "DHCP", "Static configuration", "Firewall or security rule"], "a": 0}, {"l": "Action?", "o": ["Rename it to 4.20.10.ip6.arpa", "Create IPv6 reverse zones under ip6.arpa", "Reverse lookups are not used with IPv6"], "a": 1}], "x": "IPv6 reverse zones use a different special domain, ip6.arpa, so you create new zones rather than renaming the IPv4 ones."}, {"t": "Scope <b>10.20.8.0/24</b> with options for the router, DNS servers, and DNS domain name.", "q": [{"l": "Area?", "o": ["DNS", "DHCP", "Static configuration", "Firewall or security rule"], "a": 1}, {"l": "Action?", "o": ["Plan IPv6 address assignment and options; IPv6 DHCP is configured separately", "Keep the scope; IPv6 clients will use it automatically", "Remove DHCP; IPv6 needs no address service"], "a": 0}], "x": "DHCP can assign both IPv4 and IPv6 addresses, but the IPv6 service is set up separately, so every scope, reservation, and option needs an IPv6 plan."}, {"t": "The library’s network printer uses the hand-entered address <b>10.20.6.40</b>.", "q": [{"l": "Area?", "o": ["DNS", "DHCP", "Static configuration", "Firewall or security rule"], "a": 2}, {"l": "Action?", "o": ["Assign and record an IPv6 address, then update anything that points to it", "Leave it; printers are exempt", "Move it to DHCP without telling anyone"], "a": 0}], "x": "Static settings are easy to miss. Like the 10.0.0.1 and 10.0.0.100 addresses in Practical Application 1, each must be found, changed, and documented."}, {"t": "An inbound rule allows <b>ICMPv4 echo requests</b> so the monitoring server can ping lab machines.", "q": [{"l": "Area?", "o": ["DNS", "DHCP", "Static configuration", "Firewall or security rule"], "a": 3}, {"l": "Action?", "o": ["Review it and create an equivalent rule for IPv6 traffic", "Nothing; IPv4 rules cover IPv6", "Turn off the firewall during the move"], "a": 0}], "x": "A rule written for IPv4 doesn’t cover IPv6 traffic. Monitoring would silently fail after the cutover."}, {"t": "A technician suggests disabling IPv6 on every server “to keep things simple” until the cutover.", "q": [{"l": "Best response?", "o": ["Agree and disable IPv6 in the registry", "Keep IPv6 on; use the Prefer IPv4 over IPv6 prefix policy if needed", "Unbind IPv6 from each network adapter"], "a": 1}], "x": "IPv6 is a mandatory part of Windows, and Microsoft warns that disabling it or unbinding it can stop some Windows components from working."}],'a0s','a0c','a0r');
+const C=['DNS zones, A and AAAA records, reverse zones, dynamic updates','DHCP scopes, reservations, options, relay agents','Static addresses on servers, printers, and network devices','Firewall rules written for IPv4','Scripts and applications that name IPv4 addresses','Remote access and VPN settings','Testing and a fallback plan','Staff training and communication'];
+C.forEach((c,i)=>{const l=document.createElement('label');l.className='row';l.innerHTML='<input type="checkbox" id="c'+i+'"><span>'+c+'</span>';$('ck').appendChild(l);l.querySelector('input').onchange=upd;});
+function upd(){const n=C.filter((c,i)=>$('c'+i).checked).length,f=$('ckf');f.className='fb '+(n===C.length?'ok':'');
+ f.textContent=n===C.length?'All '+C.length+' areas covered. Your outline is complete.':n+' of '+C.length+' areas covered. Missing: '+C.filter((c,i)=>!$('c'+i).checked).map(c=>c.split(',')[0]).join('; ')+'.';}
+upd();
+</script>
+</body></html>
