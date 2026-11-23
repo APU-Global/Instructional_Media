@@ -87,10 +87,10 @@ table.cov td.comb{outline:2px solid #231f20;outline-offset:-2px}
 
 <section class="card"><div class="bar"></div>
 <h2>Part 1 · Whose data are we seeing?</h2>
-<p class="lead">Public health surveillance is the ongoing collection and analysis of health data to detect outbreaks and guide action. It now draws on varied sources, and each has strengths and blind spots. Turn data sources on and off to see which people each one reaches. (Illustrative ratings for discussion.)</p>
+<p class="lead">Public health surveillance is the ongoing collection and analysis of health data to detect outbreaks and guide action. It now draws on varied sources, and each has strengths and blind spots. Turn data sources on and off to see which people each one reaches. Each rating shows how well that source captures illness in that group, and the "Why these ratings?" box under the table explains each one. (Illustrative ratings for discussion.)</p>
 <div class="tgs" id="src" role="group" aria-label="Data sources"></div>
 <div class="tw"><table class="cov" id="tb"></table></div>
-<div class="note teal live" id="cov" aria-live="polite"></div>
+<div class="note teal live" id="cov" aria-live="polite"></div><details class="note gold" id="why" open></details>
 </section>
 
 <section class="card"><div class="bar"></div>
@@ -126,7 +126,7 @@ function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttr
 var SRC=["Electronic health records","Search trends","News reports"];
 var SEG=["People who regularly see a doctor","People who rarely seek care","People who search online when unwell","People with limited internet access","Areas with little local news"];
 var COV=[[2,0,1,1,1],[1,1,2,0,1],[0,0,1,1,0]];  // [source][segment]: 2 strong, 1 partial, 0 blind spot
-var on=[true,false,false],LAB=["Blind spot","Partial","Strong"];
+var on=[true,false,false],LAB=["Blind spot","Partial","Strong"];var WHY=[["Strong: their visits, diagnoses, and test results are recorded.","Blind spot: few visits means few records, so their illnesses mostly go unrecorded.","Partial: they often self-treat first, so records show only the cases that later reach a clinic.","Partial: records come from clinic visits, not the internet, but cost, distance, or other barriers can limit visits.","Partial: residents appear when they visit a clinic, but few nearby clinics can leave gaps."],["Partial: they may search too, but a doctor visit often replaces the search, so the signal is weaker.","Partial: they may look up symptoms instead of seeing a doctor, but not everyone does, and searches do not confirm illness.","Strong: searching online is exactly what this group does when sick.","Blind spot: without internet access, they leave no search trail.","Partial: residents can still search online, but small populations make local signals weak."],["Blind spot: news rarely describes ordinary patients, so people who get routine care almost never appear.","Blind spot: news stories usually rely on cases that hospitals or health officials already know about, so people who avoid care are rarely counted.","Partial: coverage may mention them once an outbreak is widely reported, but not their individual illnesses.","Partial: TV, radio, and print can reach people who are offline, but coverage depends on what outlets choose to report.","Blind spot: with few local reporters, local illness may never be reported."]];function why(){var w=$("why"),h="",k=0;SRC.forEach(function(s,i){if(!on[i])return;k++;h+="<p><strong>"+s+"</strong></p><ul>"+SEG.map(function(g,j){return"<li><em>"+g+":</em> "+WHY[i][j]+"</li>"}).join("")+"</ul>"});w.style.display=k?"":"none";w.innerHTML=k?"<summary><strong>Why these ratings?</strong> Each rating depends on whether that group shows up in the source's data.</summary>"+h:""}
 function cov(){
  var tg=$("src");tg.innerHTML="";SRC.forEach(function(s,i){var b=document.createElement("button");b.type="button";b.className="btn";b.textContent=s;b.setAttribute("aria-pressed",on[i]);b.onclick=function(){on[i]=!on[i];cov()};tg.appendChild(b)});
  var t=$("tb");t.innerHTML="";var h=document.createElement("tr");h.innerHTML="<th>Who is it?</th>"+SRC.map(function(s){return"<th>"+s+"</th>"}).join("")+"<th>Combined</th>";t.appendChild(h);
@@ -137,7 +137,7 @@ function cov(){
   r.innerHTML=cells;t.appendChild(r)});
  var n=on.filter(Boolean).length,m=$("cov");
  if(!any)m.innerHTML="Turn on at least one data source to see who it reaches.";
- else m.innerHTML="<strong>"+n+" source"+(n>1?"s":"")+" on: "+blind+" blind spot"+(blind===1?"":"s")+", "+part+" partial and "+strong+" strong out of 5 groups.</strong> "+(blind>0?"Some people are invisible to this combination, so the signal may miss exactly the communities that need attention. ":"")+(n<3?"Add another source to see how combining them changes the picture. ":"No group is fully invisible now, but several are only partly covered, so combine sources carefully and keep asking who is still left out.")}
+ else m.innerHTML="<strong>"+n+" source"+(n>1?"s":"")+" on: "+blind+" blind spot"+(blind===1?"":"s")+", "+part+" partial and "+strong+" strong out of 5 groups.</strong> "+(blind>0?"Some people are invisible to this combination, so the signal may miss exactly the communities that need attention. ":"")+(n<3?"Add another source to see how combining them changes the picture. ":"No group is fully invisible now, but several are only partly covered, so combine sources carefully and keep asking who is still left out.");why()}
 cov();
 // ---- simple epidemic model ----
 function sir(R){var N=100000,I=10,S=N-I,gam=1/7,b=R*gam,dt=0.25,out=[],pk=0,pd=0;
