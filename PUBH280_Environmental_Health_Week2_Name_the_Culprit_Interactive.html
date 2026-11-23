@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Name the Culprit</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{overflow-wrap:break-word;font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Name the Culprit" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 280 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Name the Culprit</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Match each historical disaster to the pollutant behind it</text></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Historical Environmental Health Disasters</h2>
+<p class="lead"><b>Week 2 objective:</b> Identify the pollutants behind major historical environmental health disasters and what each one taught public health.</p>
+<div class="card">
+<h3>Every disaster had a culprit</h3><p class="lead" style="margin:0">Xu et al. (2022) group pollution-related emergencies into three kinds: <b>notorious public health events</b> (air pollution episodes, heavy metal pollution, chemical poisoning), <b>endemic diseases</b> caused by elements in the local environment, and <b>occupational diseases</b> from exposure at work. In each case, investigators traced an illness back to a specific pollutant.</p>
+</div>
+<div class="card">
+<h3>Practice: what was the culprit?</h3>
+<p class="lead">Read each set of clues, choose the pollutant responsible, then select <b>Check my answers</b>. The feedback names the event.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check">Check my answers</button> <button type="button" class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Each disaster tied a specific pollutant to a specific illness. Air disasters struck when weather trapped emissions; metal and chemical disasters reached people through water, food, and work. Learning these lessons is how public health prevents the next crisis.</div>
+<p class="src">Facts from Xu, H., et al. (2022), "Environmental pollution, a hidden culprit for health issues," <i>Eco-Environment &amp; Health, 1</i>(1), 31–45 (PMC10702928). Clues are paraphrased from the article.</p>
+</div>
+<script>
+const O=[["so2", "Sulfur dioxide and acid mists"], ["hg", "Mercury"], ["cd", "Cadmium"], ["pcb", "PCBs (polychlorinated biphenyls)"], ["mic", "Methyl isocyanate gas"], ["as", "Arsenic"], ["si", "Silica dust"], ["i131", "Radioactive iodine (I-131)"]];
+const D=[["A December fog settles over a large city heated by coal-burning homes, power plants, and industry. Respiratory illness appears within hours, and thousands die within a week.", "so2", "The Great Smog of London (1952). Emissions high in sulfur dioxide and sulfuric acid mists were trapped by fog; an estimated 4,703 people died that week. It is widely seen as the start of air pollution epidemiology."], ["Seabirds lose the ability to fly and cats begin to twitch. Then people who eat the local fish and shellfish develop neurological disorders, and children are born with congenital disease.", "hg", "Minamata disease (Japan, 1950s). A chemical plant discharged mercury into the bay, where it became methylmercury and built up in seafood."], ["Residents of a river basin who eat locally grown rice develop severe pain all over the body, kidney damage, osteoporosis, and many fractures.", "cd", "Itai-itai disease (Japan, from 1955). Wastewater from a mining and smelting company contaminated the rice with cadmium."], ["A skin epidemic spreads across more than 20 prefectures: swollen eyelids and acne-like eruptions among people who cooked with one brand of rice-bran oil.", "pcb", "Yusho disease (Japan, 1968). The rice oil had been contaminated by a leak of PCBs."], ["At a pesticide factory, water enters a storage tank and triggers a violent reaction. A lethal gas spreads at low altitude, killing 2,000 people and injuring 100,000.", "mic", "The Bhopal disaster (India, 1984), one of the worst chemical accidents in history."], ["Communities switch their drinking water to groundwater wells. Over the years, people develop skin lesions on their palms and soles; by 2000, about 40 million have been exposed.", "as", "Endemic arsenic poisoning in the Bengal delta, Bangladesh. After the switch to groundwater in the 1980s, people drank water with high levels of arsenic; about 2 million developed symptoms of arsenic poisoning."], ["Workers drill and blast a tunnel through rock in the 1930s. Years later, more than 700 of them die of an irreversible, scarring lung disease.", "si", "The Hawk’s Nest Tunnel tragedy (West Virginia). Inhaled crystalline silica dust causes silicosis; occupational health drew growing attention afterward."], ["After a nuclear reactor accident, thyroid cancer cases in the surrounding area, mostly among children and adolescents, climb above 4,000 over the next two decades.", "i131", "The Chernobyl accident (1986). Large amounts of radioactive iodine-131 were released."]];
+const box=document.getElementById('items'),fb=document.getElementById('fb');
+let ans={};
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e;}
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=el('div','panel');const q=el('p');q.style.margin='0 0 8px';const b=el('b',null,(i+1)+'. ');q.appendChild(b);q.appendChild(document.createTextNode(d[0]));p.appendChild(q);
+const g=el('div');g.setAttribute('role','group');g.setAttribute('aria-label','Answer for item '+(i+1));
+O.forEach(o=>{const c=el('button','choice',o[1]);c.type='button';c.dataset.i=i;c.dataset.v=o[0];c.setAttribute('aria-pressed','false');g.appendChild(c);});
+p.appendChild(g);const f=el('p','fb');f.id='f'+i;f.setAttribute('aria-live','polite');p.appendChild(f);box.appendChild(p);});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=document.getElementById('f'+i);f.textContent='';f.className='fb';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+document.getElementById('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById('f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.textContent='';const s=el('span','score',ok+' of '+D.length+' correct');fb.appendChild(s);if(done<D.length)fb.appendChild(document.createTextNode(' Answer every item to finish.'));};
+document.getElementById('reset').onclick=()=>{ans={};render();fb.textContent=''};
+render();
+</script>
+</body></html>

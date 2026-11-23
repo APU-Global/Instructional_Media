@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heat Illness Check</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{overflow-wrap:break-word;font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Heat Illness Check" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 280 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Heat Illness Check</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Recognize heat-related illness and the right first step</text></svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: Heat and Health</h2>
+<p class="lead"><b>Week 3 objective:</b> Recognize the signs of heat-related illness, a growing health concern in a warming climate, and know when it becomes an emergency.</p>
+<div class="card">
+<h3>A spectrum of heat illness</h3><p class="lead">Too much heat is not safe for anyone, and it is riskier for older adults, who adjust less well to sudden temperature changes and are more likely to have chronic conditions or take medicines that affect cooling (NIA, 2022).</p><ul class="lead" style="margin:0"><li><b>Heat syncope:</b> sudden dizziness or fainting when active in the heat.</li><li><b>Heat cramps:</b> painful muscle spasms; temperature and pulse usually normal.</li><li><b>Heat edema:</b> swollen ankles and feet.</li><li><b>Heat rash:</b> red clusters of small blisters from heavy sweating.</li><li><b>Heat exhaustion:</b> thirst, dizziness, weakness, nausea, heavy sweating, cold and clammy skin; a warning sign.</li><li><b>Heat stroke:</b> body temperature above 104°F, confusion, fainting, no sweating, dry flushed skin; a medical emergency.</li></ul>
+</div>
+<div class="card">
+<h3>Practice: which heat illness is it?</h3>
+<p class="lead">Each person is fictional. Choose the best match, then select <b>Check my answers</b>.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check">Check my answers</button> <button type="button" class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Heat exhaustion is a warning; heat stroke is an emergency. Risk is highest for older adults with chronic illness, people on certain medicines, and people living without air conditioning or fans, so public health plans cooling centers and outreach before a heat wave.</div>
+<p class="src">Signs, risk factors, and first steps from the National Institute on Aging (2022), <i>Hot Weather Safety for Older Adults</i> (content reviewed September 2, 2022). Scenarios are fictional. This activity is for learning, not medical advice.</p>
+</div>
+<script>
+const O=[["syn", "Heat syncope"], ["cramp", "Heat cramps"], ["edema", "Heat edema"], ["rash", "Heat rash"], ["exh", "Heat exhaustion"], ["stroke", "Heat stroke"]];
+const D=[["Mr. Alvarez, 78, is weeding his garden on a hot afternoon when he suddenly feels dizzy and faint. He takes a beta blocker for his heart.", "syn", "Heat syncope. A beta blocker or not being used to hot weather makes fainting more likely. Rest in a cool place, put your legs up, and drink water."], ["Dana, 34, has been roofing all afternoon. Her legs tighten into painful spasms. Her temperature and pulse are normal, and her skin feels moist and cool.", "cramp", "Heat cramps. Stop the activity, rest in the shade or a cool building, and drink water or sports drinks with electrolytes; avoid alcohol and caffeine."], ["Mrs. Okafor, 81, notices that her ankles and feet are swollen at the end of a hot day.", "edema", "Heat edema. Put your legs up; if the swelling does not go down fairly quickly, check with a doctor."], ["After a day of heavy sweating, Mr. Lee, 69, has itchy red clusters of small blisters on his neck, with a prickly, tingling feeling.", "rash", "Heat rash. Keep the area dry, use powder to soothe it, and stay in cool areas."], ["Mr. Chen, 70, lives in an apartment without air conditioning. He is thirsty, dizzy, weak, and nauseated, and sweating a lot. His temperature is normal, but his skin is cold and clammy.", "exh", "Heat exhaustion: the body can no longer keep itself cool. Rest somewhere cool and drink fluids; get medical care if he does not feel better soon, because it can progress to heat stroke."], ["Mrs. Rivera, 85, is found confused in her hot apartment. She is not sweating even though it is very hot, her skin is dry and flushed, and her temperature is above 104°F.", "stroke", "Heat stroke, a medical emergency. Get medical help right away, move her somewhere cooler, and lower her temperature with cool cloths, a cool bath or shower, and fans."], ["Ruth, 66, has been doing yard work in the heat. She feels uncoordinated and thirsty, has a rapid pulse, and is sweating heavily; her skin is cool and clammy.", "exh", "Heat exhaustion. Some people with heat exhaustion have a rapid pulse. Rest in a cool place and drink fluids, and watch for signs of heat stroke."], ["Mr. Patel, 74, takes several prescription medicines. On a very hot day he faints; his skin is dry and flushed and his pulse is strong and rapid.", "stroke", "Heat stroke. Fainting, dry flushed skin, and a strong rapid pulse are warning signs; seek medical help immediately."]];
+const box=document.getElementById('items'),fb=document.getElementById('fb');
+let ans={};
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e;}
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=el('div','panel');const q=el('p');q.style.margin='0 0 8px';const b=el('b',null,(i+1)+'. ');q.appendChild(b);q.appendChild(document.createTextNode(d[0]));p.appendChild(q);
+const g=el('div');g.setAttribute('role','group');g.setAttribute('aria-label','Answer for item '+(i+1));
+O.forEach(o=>{const c=el('button','choice',o[1]);c.type='button';c.dataset.i=i;c.dataset.v=o[0];c.setAttribute('aria-pressed','false');g.appendChild(c);});
+p.appendChild(g);const f=el('p','fb');f.id='f'+i;f.setAttribute('aria-live','polite');p.appendChild(f);box.appendChild(p);});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=document.getElementById('f'+i);f.textContent='';f.className='fb';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+document.getElementById('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById('f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.textContent='';const s=el('span','score',ok+' of '+D.length+' correct');fb.appendChild(s);if(done<D.length)fb.appendChild(document.createTextNode(' Answer every item to finish.'));};
+document.getElementById('reset').onclick=()=>{ans={};render();fb.textContent=''};
+render();
+</script>
+</body></html>
