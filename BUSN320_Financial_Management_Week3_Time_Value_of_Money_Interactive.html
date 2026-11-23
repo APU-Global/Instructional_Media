@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Now or Later?</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.ctl{margin:10px 0}.ctl label{font-weight:600;display:block}
+input[type=range]{width:100%;accent-color:var(--red)}
+input[type=number],select,.num{font:inherit;padding:7px 9px;border:2px solid #cfcfcf;border-radius:8px;max-width:100%}
+.big{font-size:1.9rem;font-weight:800;line-height:1.2}
+.bars{display:flex;align-items:flex-end;gap:4px;height:150px;border-bottom:2px solid #999;padding-top:8px}
+.bars span{flex:1;background:var(--red);border-radius:4px 4px 0 0;min-width:2px}
+.bars span.base{background:#999}
+.q{background:#fff;border-radius:12px;padding:12px;margin:10px 0}
+.q .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+@media(max-width:480px){.card{padding:14px}}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Now or Later?" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 320 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Now or Later?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Explore compounding and practice FV, PV, NPV, and IRR</text>
+<g transform="translate(790,60)" fill="none" stroke-linecap="round"><circle cx="60" cy="60" r="55" stroke="#fff" stroke-width="7"/><path d="M60 60V22M60 60L88 76" stroke="#ffb3b6" stroke-width="7"/><text x="45" y="140" fill="#d34147" font-family="Segoe UI,Arial,sans-serif" font-size="40" font-weight="800">$</text></g>
+</svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: Time Value of Money</h2>
+<p class="lead"><b>Week 3 objective:</b> Use future value, present value, net present value, and internal rate of return to decide whether money is worth more now or later.</p>
+
+<div class="card">
+<h3>Explorer: watch money compound</h3>
+<p class="lead">Future value = PV × (1 + R/p)<sup>n × p</sup>, where R is the annual rate, n the years, and p the compounding periods per year. Change the inputs and watch the value grow.</p>
+<div class="grid g2">
+<div>
+ <div class="ctl"><label for="pv">Amount today (PV): <span id="pvO"></span></label><input type="range" id="pv" min="1000" max="50000" step="1000" value="10000"></div>
+ <div class="ctl"><label for="rt">Annual rate (R): <span id="rtO"></span></label><input type="range" id="rt" min="0" max="12" step="0.5" value="4"></div>
+ <div class="ctl"><label for="yr">Years (n): <span id="yrO"></span></label><input type="range" id="yr" min="1" max="30" step="1" value="5"></div>
+ <div class="ctl"><label for="cp">Compounding (p)</label><select id="cp"><option value="1">Annually (1)</option><option value="2">Semiannually (2)</option><option value="4">Quarterly (4)</option><option value="12">Monthly (12)</option></select></div>
+</div>
+<div class="panel">
+ <div style="color:var(--muted)">Future value</div>
+ <div class="big" id="fvO" aria-live="polite"></div>
+ <p style="margin:4px 0 10px" id="intO"></p>
+ <div class="bars" id="bars" aria-hidden="true"></div>
+ <p style="font-size:.85rem;color:var(--muted);margin:6px 0 0">Grey bar: today's amount. Red bars: value at the end of each year.</p>
+</div>
+</div>
+<p class="fb" id="cmd" aria-live="polite" style="font-weight:400"></p>
+</div>
+
+<div class="card">
+<h3>Practice: five decisions</h3>
+<p class="lead">Use the formulas, a calculator, or a spreadsheet. Enter dollar answers to the cent (within $1 is accepted), then select <b>Check</b>.</p>
+<div id="qs"></div>
+<p style="margin:14px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> Time discounts value. A higher rate, more years, or more frequent compounding raises future value and lowers present value. A project is worth doing when its NPV, at the return you could earn elsewhere, is above zero; equivalently, when its IRR beats that rate.</div>
+<p class="src">Formulas and concepts from Kenneth S. Bigel, <i>Introduction to Financial Analysis</i> (LibreTexts, CC BY 4.0), 10.2 "The Time Value of Money and Interest," 10.3 "Interest-on-the-Interest," and 10.5 "Simple Future and Present Values (Formulas)"; Robison, Hanson &amp; Black, <i>Financial Management for Small Businesses</i> (LibreTexts, CC BY), Chapter 8 "Present Value Models"; and <i>Individual Finance</i> (LibreTexts, CC BY-NC-SA 3.0), 4.2 "The Time Value of Money." Scenarios are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const money=v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+let last=null;
+function explore(){const pv=+$('pv').value,R=+$('rt').value/100,n=+$('yr').value,p=+$('cp').value;
+ const fv=pv*Math.pow(1+R/p,n*p);$('pvO').textContent=money(pv);$('rtO').textContent=(R*100).toFixed(1)+'%';$('yrO').textContent=n;
+ $('fvO').textContent=money(fv);$('intO').textContent='Interest earned: '+money(fv-pv)+' ('+(pv?((fv/pv-1)*100).toFixed(1):'0')+'% growth)';
+ const vals=[pv];for(let t=1;t<=n;t++)vals.push(pv*Math.pow(1+R/p,t*p));const mx=Math.max(...vals);
+ $('bars').innerHTML=vals.map((v,i)=>'<span class="'+(i?'':'base')+'" style="height:'+(v/mx*100)+'%"></span>').join('');
+ if(last){const c=[];if(R>last.R)c.push('a higher rate');if(n>last.n)c.push('more years');if(p>last.p)c.push('more frequent compounding');
+  const d=[];if(R<last.R)d.push('a lower rate');if(n<last.n)d.push('fewer years');if(p<last.p)d.push('less frequent compounding');
+  $('cmd').textContent=c.length?'With '+c.join(' and ')+', future value rises.':d.length?'With '+d.join(' and ')+', future value falls.':'';}
+ last={R,n,p};}
+['pv','rt','yr','cp'].forEach(k=>$(k).addEventListener('input',explore));explore();
+
+// [question, type, answer, explanation, options]
+const Q=[
+['1. Future value. You deposit $8,000 at 5% interest, compounded annually, for 4 years. How much will you have?','num',8000*Math.pow(1.05,4),'FV = 8,000 × (1.05)<sup>4</sup> = $9,724.05.'],
+['2. Present value. You will need $15,000 for a down payment in 6 years. If you can earn 4% a year, how much must you invest today?','num',15000/Math.pow(1.04,6),'PV = 15,000 ÷ (1.04)<sup>6</sup> = $11,854.72.'],
+['3. Compounding frequency. You invest $2,000 at 6% compounded monthly for 3 years. What is the future value?','num',2000*Math.pow(1.005,36),'R/p = 0.06 ÷ 12 = 0.005 and n × p = 36, so FV = 2,000 × (1.005)<sup>36</sup> = $2,393.36. Annual compounding would give only $2,382.03.'],
+['4. Net present value. A delivery van costs $20,000 today and saves $7,000 at the end of each of the next 3 years. Your alternative earns 8%. What is the NPV? (Enter a negative number if it is negative.)','num',-20000+7000/1.08+7000/Math.pow(1.08,2)+7000/Math.pow(1.08,3),'NPV = −20,000 + 7,000/1.08 + 7,000/1.08<sup>2</sup> + 7,000/1.08<sup>3</sup> = −$1,960.32.'],
+['5. Decide. Based on question 4, what should you do, and what does that say about the van\'s internal rate of return (IRR)?','mc','a','The NPV is negative, so the van earns less than the 8% alternative: its IRR (the rate that makes NPV zero) is only about 2.5%. Reject it, unless the savings were higher.',[['a','Reject it: its IRR is below 8%.'],['b','Accept it: total savings of $21,000 exceed the $20,000 cost.'],['c','Accept it: its IRR must be above 8%.']]]];
+const qs=$('qs');let pick={};
+Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';
+ if(q[1]==='num'){d.innerHTML='<label for="a'+i+'" style="font-weight:600">'+q[0]+'</label><div class="row"><span aria-hidden="true">$</span><input class="num" id="a'+i+'" inputmode="decimal" autocomplete="off" aria-describedby="f'+i+'"></div><p class="fb" id="f'+i+'" aria-live="polite"></p>';}
+ else{d.innerHTML='<p style="margin:0;font-weight:600" id="l'+i+'">'+q[0]+'</p><div role="group" aria-labelledby="l'+i+'">'+q[4].slice(1).concat(q[4].slice(0,1)).map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+'</div><p class="fb" id="f'+i+'" aria-live="polite"></p>';}
+ qs.appendChild(d);});
+qs.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;pick[b.dataset.i]=b.dataset.v;qs.querySelectorAll('.choice[data-i="'+b.dataset.i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+b.dataset.i).textContent='';});
+$('check').onclick=()=>{let ok=0,done=0;Q.forEach((q,i)=>{const f=$('f'+i);let right;
+ if(q[1]==='num'){const raw=$('a'+i).value.replace(/[$,\s]/g,'');if(raw===''||isNaN(+raw)){f.className='fb bad';f.textContent='Enter a number.';return}right=Math.abs(+raw-q[2])<=1;}
+ else{if(!pick[i]){f.className='fb bad';f.textContent='Choose an answer.';return}right=pick[i]===q[2];}
+ done++;if(right){ok++;f.className='fb ok';f.innerHTML='Correct. '+q[3]}else{f.className='fb bad';f.innerHTML='Not quite. '+q[3]}});
+ $('fb').innerHTML='<span class="score">'+ok+' of '+Q.length+' correct</span>'+(done<Q.length?' Answer every question to finish.':'');};
+$('reset').onclick=()=>{Q.forEach((q,i)=>{if(q[1]==='num')$('a'+i).value='';$('f'+i).textContent=''});pick={};qs.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed','false'));$('fb').textContent=''};
+</script>
+</body></html>

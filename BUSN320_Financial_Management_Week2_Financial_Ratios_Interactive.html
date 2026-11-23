@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ratio Detective</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden}
+caption{text-align:left;font-weight:700;padding:0 0 6px}
+th,td{padding:7px 10px;border-bottom:1px solid #e3e0dc;text-align:right}th:first-child,td:first-child{text-align:left}
+thead th{background:#111;color:#fff}
+.tablewrap{overflow-x:auto}
+.ratio{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:10px 12px;margin:8px 0}
+.ratio label{font-weight:600}.ratio small{display:block;color:var(--muted);font-weight:400}
+.ratio input{width:100%;font:inherit;padding:7px 9px;border:2px solid #cfcfcf;border-radius:8px}
+.ratio .fb{grid-column:1/-1;margin:0}
+.tag{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700;color:#fff;margin-right:6px}
+@media(max-width:480px){.ratio{grid-template-columns:1fr}.card{padding:14px}}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Ratio Detective" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 320 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Ratio Detective</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Calculate eight ratios, then read the story they tell</text>
+<g transform="translate(800,70)" fill="none" stroke-linecap="round"><rect x="0" y="40" width="26" height="70" rx="4" fill="#ffb3b6"/><rect x="38" y="15" width="26" height="95" rx="4" fill="#d34147"/><rect x="76" y="60" width="26" height="50" rx="4" fill="#fff"/><path d="M-6 118H112" stroke="#fff" stroke-width="5"/></g>
+</svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Financial Ratios</h2>
+<p class="lead"><b>Week 2 objective:</b> Calculate liquidity, operations, profitability, and leverage ratios from financial statements and interpret what they suggest about a company's financial health.</p>
+
+<div class="card">
+<h3>The case: Harbor Outfitters (fictional)</h3>
+<p class="lead" style="margin-bottom:10px">Harbor Outfitters sells outdoor gear on credit to retailers. Here are two years of simplified data, in thousands of dollars. Use year-end figures and a 360-day year.</p>
+<div class="tablewrap"><table>
+<caption>Harbor Outfitters, selected data ($ thousands)</caption>
+<thead><tr><th scope="col">Item</th><th scope="col">Year 1</th><th scope="col">Year 2</th></tr></thead>
+<tbody>
+<tr><th scope="row">Current assets</th><td>400</td><td>380</td></tr>
+<tr><th scope="row">Inventory</th><td>150</td><td>190</td></tr>
+<tr><th scope="row">Accounts receivable</th><td>100</td><td>128</td></tr>
+<tr><th scope="row">Total assets</th><td>1,000</td><td>1,050</td></tr>
+<tr><th scope="row">Current liabilities</th><td>250</td><td>300</td></tr>
+<tr><th scope="row">Total liabilities (debt)</th><td>500</td><td>600</td></tr>
+<tr><th scope="row">Shareholders' equity</th><td>500</td><td>450</td></tr>
+<tr><th scope="row">Sales (all on credit)</th><td>1,200</td><td>1,150</td></tr>
+<tr><th scope="row">Cost of goods sold (COGS)</th><td>720</td><td>720</td></tr>
+<tr><th scope="row">EBIT (operating earnings)</th><td>150</td><td>105</td></tr>
+<tr><th scope="row">Interest expense</th><td>30</td><td>35</td></tr>
+<tr><th scope="row">Net income</th><td>84</td><td>49</td></tr>
+</tbody></table></div>
+</div>
+
+<div class="card">
+<h3>Step 1: Calculate the Year 2 ratios</h3>
+<p class="lead">Enter each Year 2 ratio (two decimals are enough; enter percentages as numbers, such as 12.5). Select <b>Check my ratios</b> to see how you did.</p>
+<div id="ratios"></div>
+<p style="margin:14px 0 0"><button class="btn" id="checkR">Check my ratios</button> <button class="btn ghost" id="resetR">Clear</button></p>
+<p class="fb" id="fbR" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>Step 2: Compare the years</h3>
+<p class="lead">Ratios raise questions; they do not answer them by themselves. Compare Year 2 with Year 1 (a longitudinal comparison), then choose the best reading of each trend.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> Read the four areas together. Harbor's sales fell while inventory, receivables, and debt rose, so liquidity, efficiency, returns, and interest coverage all weakened at once. That pattern is the question an analyst brings to the 10-K: why is the company slipping, and what is management doing about it?</div>
+<p class="src">Ratio definitions from Kenneth S. Bigel, <i>Introduction to Financial Analysis</i> (LibreTexts, CC BY 4.0), 5.3 "Financial Ratios," 5.5 "Liquidity and Liquidity Ratios," 5.8 "Solvency Ratios," 6.2 "Profitability, Return and Asset Turnover Ratios," and 7.11 "Some Limitations of Financial Ratios." Harbor Outfitters and its figures are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const rot=(a,k)=>a.slice(k%a.length).concat(a.slice(0,k%a.length));
+// [label, formula, category, colour, answer, unit, tolerance, year1, explanation]
+const R=[
+['Current ratio','Current assets ÷ current liabilities','Liquidity','#2b6a99',380/300,'x',0.02,1.6,'380 ÷ 300 = 1.27x (Year 1: 1.60x).'],
+['Quick ratio (acid test)','(Current assets − inventory) ÷ current liabilities','Liquidity','#2b6a99',(380-190)/300,'x',0.02,1.0,'(380 − 190) ÷ 300 = 0.63x (Year 1: 1.00x).'],
+['Average collection period','(Accounts receivable ÷ credit sales) × 360, in days','Operations','#2f7d5b',128/1150*360,'days',0.5,30,'(128 ÷ 1,150) × 360 = 40.07 days (Year 1: 30 days).'],
+['Inventory turnover','COGS ÷ inventory','Operations','#2f7d5b',720/190,'x',0.02,4.8,'720 ÷ 190 = 3.79x (Year 1: 4.80x).'],
+['Return on assets (ROA)','EBIT ÷ total assets, as a %','Profitability','#c98a1b',105/1050*100,'%',0.2,15,'105 ÷ 1,050 = 10.0% (Year 1: 15.0%).'],
+['Return on equity (ROE)','Net income ÷ equity, as a %','Profitability','#c98a1b',49/450*100,'%',0.2,16.8,'49 ÷ 450 = 10.89% (Year 1: 16.8%).'],
+['Debt to total assets','Total liabilities ÷ total assets, as a %','Leverage','#d34147',600/1050*100,'%',0.2,50,'600 ÷ 1,050 = 57.14% (Year 1: 50.0%).'],
+['Times interest earned (TIE)','EBIT ÷ interest expense','Leverage','#d34147',105/35,'x',0.02,5,'105 ÷ 35 = 3.00x (Year 1: 5.00x).']];
+R.forEach((r,i)=>{const d=document.createElement('div');d.className='ratio';
+ d.innerHTML='<label for="r'+i+'"><span class="tag" style="background:'+r[3]+'">'+r[2]+'</span>'+r[0]+'<small>'+r[1]+'</small></label>'+
+ '<input id="r'+i+'" inputmode="decimal" autocomplete="off" aria-describedby="rf'+i+'" placeholder="'+r[5]+'">'+
+ '<p class="fb" id="rf'+i+'" aria-live="polite"></p>';$('ratios').appendChild(d);});
+$('checkR').onclick=()=>{let ok=0,blank=0;R.forEach((r,i)=>{const v=parseFloat($('r'+i).value.replace(/[,%x\s]/g,'')),f=$('rf'+i);
+ if(isNaN(v)){blank++;f.className='fb bad';f.textContent='Enter a value.';return}
+ if(Math.abs(v-r[4])<=Math.max(r[6],Math.abs(r[4])*0.01)){ok++;f.className='fb ok';f.textContent='Correct. '+r[8]}
+ else{f.className='fb bad';f.textContent='Not quite. Formula: '+r[1]+'. Answer: '+r[8]}});
+ $('fbR').innerHTML='<span class="score">'+ok+' of '+R.length+' correct</span>'+(blank?' Fill in every ratio to finish.':'');};
+$('resetR').onclick=()=>{R.forEach((r,i)=>{$('r'+i).value='';$('rf'+i).textContent=''});$('fbR').textContent=''};
+
+const D=[
+['Liquidity: the current ratio fell from 1.60x to 1.27x and the quick ratio from 1.00x to 0.63x. What does this suggest?',[['a','Liquidity weakened: fewer liquid assets stand behind each dollar of current liabilities, and without inventory they no longer cover them.'],['b','Liquidity improved because inventory grew.'],['c','Nothing, because a ratio above 1x is always safe.']],'a','Both ratios fell. The quick ratio below 1x means current liabilities exceed current assets other than inventory, and Bigel cautions that inventory may not be fully liquid.'],
+['Operations: customers now take about 40 days to pay instead of 30, and inventory turns 3.79 times instead of 4.80. What question should the analyst ask?',[['a','Why is the firm collecting more slowly and holding more unsold stock while sales fall?'],['b','Why did the firm pay its suppliers faster?'],['c','None; slower turnover means higher profits.']],'a','A longer collection period may signal collection problems or looser credit; slower turnover means inventory sits longer. Both tie up cash.'],
+['Profitability: ROA fell from 15.0% to 10.0% and ROE from 16.8% to 10.9%. Which reading fits?',[['a','Assets produced less operating profit, and shareholders earned less on each dollar of equity.'],['b','Profitability improved because total assets grew.'],['c','ROE fell only because the company repaid debt.']],'a','EBIT fell while assets grew, so ROA dropped; net income fell faster than equity, so ROE dropped.'],
+['Leverage: debt rose from 50% to 57.1% of assets while times interest earned fell from 5.0x to 3.0x. What does this mean?',[['a','The firm relies more on debt and has a thinner cushion of earnings over its interest payments.'],['b','Solvency risk fell because the firm borrowed more.'],['c','Debt and interest coverage are unrelated.']],'a','More debt and less EBIT per dollar of interest both raise solvency risk. If EBIT keeps falling toward the interest line, timely payment is at risk.'],
+['Putting it together, what is the best next step for an analyst?',[['a','Investigate causes in the 10-K (MD&A, notes) and compare the ratios with competitors before concluding.'],['b','Conclude from the ratios alone that the company will go bankrupt.'],['c','Ignore the ratios because accounting data are imperfect.']],'a','Ratios raise questions to be investigated. A cross-sectional comparison with competitors and the notes to the statements help explain the trends, keeping the limits of accounting data in mind.']];
+const box=$('items'),fb=$('fb');let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px" id="q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="q'+i+'">'+
+ rot(d[1],i).map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+ '</div><p class="fb" id="f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+ box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+i).textContent='';});
+$('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$('f'+i);
+ if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+ if(ans[i]===d[2]){ok++;f.textContent='Correct. '+d[3];f.className='fb ok'}else{f.textContent='Not quite. '+d[3];f.className='fb bad'}});
+ fb.innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every question to finish.':'');};
+$('reset').onclick=()=>{ans={};render();fb.textContent=''};
+render();
+</script>
+</body></html>

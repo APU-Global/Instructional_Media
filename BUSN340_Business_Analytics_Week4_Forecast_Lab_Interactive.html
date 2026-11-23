@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forecast Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+input[type=number],select{font:inherit;padding:6px 8px;border:2px solid #bbb;border-radius:8px;max-width:100%}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #e3e0dc;text-align:left;vertical-align:top}
+th{background:#111;color:#fff;font-weight:600}
+.tablewrap{overflow-x:auto}
+.big{font-size:1.6rem;font-weight:800}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.row label{font-weight:600}.row input{width:120px}
+.mini{font-size:.9rem;color:var(--muted)}textarea{width:100%;min-height:70px;font:inherit;padding:8px;border:2px solid #bbb;border-radius:8px}
+textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}.hl{background:#fbe9ea}</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: Forecast Lab" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 340 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Forecast Lab</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Choose a forecasting tool, test it, and size the market</text></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Forecast Lab</h2>
+<p class="lead"><b>Week 4 objective:</b> Evaluate analytical tools for sales and market share projections (CLOs 1 and 3).</p>
+<div class="card">
+<h3>Two families of forecasting tools</h3>
+<div class="grid g2">
+<div class="panel"><b>Qualitative</b><br>Based on judgment; useful when past data are not available, such as for a new product: executive judgment, sales force opinions, the Delphi method, and market surveys.</div>
+<div class="panel"><b>Quantitative</b><br>Based on past numerical data, when patterns are expected to continue: time series methods (naive, moving average) and causal methods such as regression.</div>
+</div></div>
+<div class="card">
+<h3>Practice 1: which tool fits?</h3>
+<p class="lead">Trailhead Outfitters, a fictional outdoor retailer, needs several forecasts. Choose the best tool for each.</p>
+<div id="items_a" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check_a">Check my answers</button> <button class="btn ghost" id="reset_a">Start over</button></p>
+<p class="fb" id="fb_a" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: Forecast lab</h3>
+<p class="lead">Enter six months of unit sales (or keep the sample). The lab forecasts month 7 two ways and back-tests both methods on months 4–6 using mean absolute deviation (MAD): the average size of the misses.</p>
+<div class="panel"><div class="row" id="f_inputs"></div></div>
+<div class="grid g2" style="margin-top:12px">
+<div class="panel" style="text-align:center"><div style="color:var(--muted)">Naive forecast for month 7<br><span class="mini">(next month = last month)</span></div><div class="big" id="f_naive" aria-live="polite"></div><div class="mini" id="f_naive_mad"></div></div>
+<div class="panel" style="text-align:center"><div style="color:var(--muted)">3-month moving average for month 7<br><span class="mini">(average of the last three months)</span></div><div class="big" id="f_ma" aria-live="polite"></div><div class="mini" id="f_ma_mad"></div></div>
+</div>
+<div class="tablewrap" style="margin-top:12px"><table aria-label="Back-test of both methods on months 4 to 6"><thead><tr><th scope="col">Month</th><th scope="col">Actual</th><th scope="col">Naive forecast</th><th scope="col">Naive miss</th><th scope="col">Moving-average forecast</th><th scope="col">Moving-average miss</th></tr></thead><tbody id="f_rows"></tbody></table></div>
+<p class="fb" id="f_msg" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 3: From market potential to sales potential</h3>
+<p class="lead">Market potential is total industry-wide sales expected for a product category. Sales potential is the most a firm hopes to sell, shown as its estimated maximum market share of that market potential.</p>
+<div class="grid g2">
+<div class="panel">
+<p style="margin:0 0 8px"><label for="m_pot"><b>Market potential</b> (units this year)</label><br><input type="number" id="m_pot" min="0" step="1000" value="250000"></p>
+<p style="margin:0"><label for="m_share"><b>Estimated maximum market share</b>: <span id="m_sv">8</span>%</label><br><input type="range" id="m_share" min="0" max="50" value="8" style="width:100%;accent-color:#d34147"></p>
+</div>
+<div class="panel" style="text-align:center"><div style="color:var(--muted)">Sales potential</div><div class="big" id="m_out" aria-live="polite"></div><p class="mini" id="m_msg"></p></div>
+</div></div>
+<div class="take"><b>Takeaway:</b> Match the tool to the data you have: judgment methods when history is thin, time series or regression when it is rich. Then check the forecast against what actually happened. Use these tools in Discussion 4 when you name two analytical tools for sales or market share projections.</div>
+<p class="src">Concepts and the forecasting vocabulary from <i>Introduction to Operations Management</i> (n.d.), Chapter 3 “Forecasting” (3.1–3.7), LibreTexts (Seneca College adaptation of Open University and Saylor texts). Trailhead Outfitters and all figures are fictional.</p>
+</div>
+<script>
+const SETS=[{"id": "a", "group": "Forecasting tool", "options": [["e", "Executive judgment"], ["s", "Sales force opinions"], ["d", "Delphi method"], ["m", "Market survey"], ["a", "Moving average"], ["r", "Regression"]], "items": [["Trailhead plans a brand-new product with no sales history and wants several experts to reach agreement anonymously over repeated questionnaires.", "d", "The Delphi method collects anonymous expert input in rounds until a forecast is agreed upon."], ["Regional sales reps each estimate next quarter's sales in their own territory, and the estimates are combined.", "s", "Sales force opinions build the forecast from the bottom up, from the people closest to customers."], ["Trailhead has three years of steady monthly sales for a staple product and wants next month's forecast.", "a", "With plenty of past numerical data and a stable pattern, a time series method such as a moving average fits."], ["Trailhead wants to estimate how rain-jacket sales change with rainfall in each region.", "r", "Regression estimates how a dependent variable changes with one or more drivers."], ["A research firm asks consumers about their plans to buy an e-bike next year.", "m", "Market surveys ask consumers about their opinions and future purchase plans."], ["Senior leaders meet, review market data and trends, and set the company forecast.", "e", "Executive judgment is a top-down forecast by high-level executives."]]}];
+const $=id=>document.getElementById(id);
+const ans={};
+function lab(s,v){return s.options.find(o=>o[0]===v)[1]}
+function renderSet(s){const box=$('items_'+s.id);box.innerHTML='';ans[s.id]={};
+ s.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="'+s.group+' '+(i+1)+'">'+
+ s.options.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+ '</div><p class="fb" id="f_'+s.id+'_'+i+'" aria-live="polite"></p>';box.appendChild(p);});
+ $('fb_'+s.id).textContent='';}
+SETS.forEach(s=>{renderSet(s);
+ $('items_'+s.id).addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[s.id][i]=b.dataset.v;
+  $('items_'+s.id).querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f_'+s.id+'_'+i).textContent='';});
+ $('check_'+s.id).onclick=()=>{let ok=0,done=0;s.items.forEach((d,i)=>{const f=$('f_'+s.id+'_'+i),a=ans[s.id][i];
+  if(!a){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(a===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(s,d[1])+'. '+d[2];f.className='fb bad'}});
+  $('fb_'+s.id).innerHTML='<span class="score">'+ok+' of '+s.items.length+' correct</span>'+(done<s.items.length?' Answer every item to finish.':'');};
+ $('reset_'+s.id).onclick=()=>renderSet(s);});
+
+
+
+
+
+const DEF=[120,132,128,140,150,146];
+DEF.forEach((v,i)=>{const d=document.createElement('p');d.style.margin='0';d.innerHTML='<label for="f'+i+'">Month '+(i+1)+'</label><br><input type="number" id="f'+i+'" min="0" step="1" value="'+v+'">';$('f_inputs').appendChild(d);$('f'+i).addEventListener('input',fc);});
+function r1(n){return Math.round(n*10)/10}
+function fc(){const D=DEF.map((_,i)=>Math.max(0,+$('f'+i).value||0));
+ const naive=D[5],ma=(D[3]+D[4]+D[5])/3;$('f_naive').textContent=r1(naive);$('f_ma').textContent=r1(ma);
+ let rows='',sn=0,sm=0;for(let t=3;t<6;t++){const fn=D[t-1],fm=(D[t-1]+D[t-2]+D[t-3])/3,en=D[t]-fn,em=D[t]-fm;sn+=Math.abs(en);sm+=Math.abs(em);
+  rows+='<tr><td>'+(t+1)+'</td><td>'+D[t]+'</td><td>'+r1(fn)+'</td><td>'+r1(Math.abs(en))+'</td><td>'+r1(fm)+'</td><td>'+r1(Math.abs(em))+'</td></tr>';}
+ const mn=sn/3,mm=sm/3;$('f_rows').innerHTML=rows;$('f_naive_mad').textContent='Back-test MAD: '+r1(mn);$('f_ma_mad').textContent='Back-test MAD: '+r1(mm);
+ $('f_msg').className='fb';$('f_msg').textContent=(mn===mm?'Both methods missed by the same average amount on months 4–6.':(mn<mm?'On this history the naive method missed by less on average (MAD '+r1(mn)+' vs. '+r1(mm)+').':'On this history the moving average missed by less on average (MAD '+r1(mm)+' vs. '+r1(mn)+').'))+' Forecasts are rarely perfect: compare methods on your own data before you trust one.';}
+fc();
+function mk(){const p=Math.max(0,+$('m_pot').value||0),s=+$('m_share').value;$('m_sv').textContent=s;$('m_share').setAttribute('aria-valuetext',s+' percent');
+ $('m_out').textContent=Math.round(p*s/100).toLocaleString('en-US')+' units';$('m_msg').textContent=s+'% of '+p.toLocaleString('en-US')+' units. Overestimating it can tie up cash in unsold product; underestimating it can hand sales to competitors.';}
+['m_pot','m_share'].forEach(k=>$(k).addEventListener('input',mk));mk();
+
+</script>
+</body></html>

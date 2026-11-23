@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count the Cost</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.q{background:#fff;border-radius:12px;padding:12px;margin:10px 0}
+.q .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.num{font:inherit;padding:7px 9px;border:2px solid #cfcfcf;border-radius:8px;max-width:100%}
+ul.facts{margin:6px 0 0;padding-left:20px}
+@media(max-width:480px){.card{padding:14px}}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 6 banner: Count the Cost" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 320 · WEEK 6</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Count the Cost</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Sort incremental cash flows, then evaluate a new product line</text>
+<g transform="translate(800,55)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 120H140" stroke="#fff" stroke-width="6"/><rect x="25" y="70" width="30" height="50" fill="#ffb3b6"/><rect x="65" y="40" width="30" height="80" fill="#d34147"/><path d="M110 120V20L135 35" stroke="#fff" stroke-width="6"/></g>
+</svg></div>
+<div class="wrap">
+<h2>Week 6 Interactive: Capital Budgeting</h2>
+<p class="lead"><b>Week 6 objective:</b> Identify the incremental cash flows of a capital project and use NPV and payback to recommend whether to go ahead.</p>
+
+<div class="card">
+<h3>The project: Trailhead Footwear's new hiking shoe (fictional)</h3>
+<p style="margin-top:0">Trailhead Footwear is considering a new line, the Ridge Runner. Managers expect it to sell <b>1.5 million pairs a year</b> for four years. Market research shows that <b>1.0 million</b> of those pairs would be bought by customers who would otherwise buy Trailhead's existing trail shoe.</p>
+<p class="lead" style="margin:0">Step 1: decide whether each item belongs in the project's cash flow analysis.</p>
+</div>
+
+<div class="card">
+<h3>Step 1: Incremental or not?</h3>
+<p class="lead">Only cash flows that exist because of the project count. Choose <b>Include</b> or <b>Exclude</b> for each item.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>Step 2: Run the numbers</h3>
+<p style="margin-top:0">Use these figures (all fictional):</p>
+<ul class="facts">
+<li>Each incremental pair brings in <b>$3.00</b> of cash after production costs.</li>
+<li>The athlete endorsement costs <b>$300,000 a year</b>.</li>
+<li>New molding equipment costs <b>$3,000,000</b> today and can be sold for <b>$200,000</b> at the end of Year 4.</li>
+<li>Trailhead's required rate of return (its next-best alternative) is <b>10%</b>. Cash flows arrive at the end of each year.</li>
+</ul>
+<div id="qs"></div>
+<p style="margin:14px 0 0"><button class="btn" id="check2">Check my answers</button> <button class="btn ghost" id="reset2">Start over</button></p>
+<p class="fb" id="fb2" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> Count only the cash a project adds. Leave out sunk costs, subtract cannibalized sales, and include new costs such as an endorsement and end-of-life value such as equipment resale. Counting all 1.5 million pairs would have overstated the yearly cash flow at $4,200,000 instead of $1,200,000. Then judge the project by NPV at the required rate, not by payback alone.</div>
+<p class="src">Concepts from Kenneth S. Bigel, <i>Introduction to Financial Analysis</i> (LibreTexts, CC BY 4.0), 8.4 "Incrementalism" and 1.5 "Capital Structure"; and Robison, Hanson &amp; Black, <i>Financial Management for Small Businesses</i> (LibreTexts, CC BY), Chapter 8 "Present Value Models" (NPV with liquidation value, IRR, and the payback model). Trailhead Footwear and all figures are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const rot=(a,k)=>a.slice(k%a.length).concat(a.slice(0,k%a.length));
+const D=[
+['Cash from the 0.5 million pairs a year that Trailhead would not have sold without the Ridge Runner','in','These are incremental revenues: they exist only because the project goes ahead.'],
+['Cash from the 1.0 million pairs a year that customers will switch over from Trailhead\'s existing trail shoe','out','This is cannibalization. Trailhead would have earned these sales anyway, so only the 0.5 million increment counts.'],
+['$400,000 already spent last year on market research for the Ridge Runner','out','A sunk cost: the money is spent whether or not the project goes ahead, so it is not counted again.'],
+['A warehouse Trailhead bought years ago and is not using, which would store the new shoes','out','The warehouse cost is sunk. Using an under-used asset does not create a new cash outflow.'],
+['The $300,000 yearly athlete endorsement fee, paid only if the line launches','in','An incremental cost: it exists only because of the project.'],
+['The $3,000,000 of new molding equipment bought for the line','in','The initial investment is a cash outflow caused by the project.'],
+['The $200,000 Trailhead expects to receive when it sells the equipment at the end of Year 4','in','The liquidation value at the end of an investment\'s life is treated as a cash inflow in NPV models.']];
+const O=[['in','Include'],['out','Exclude']];
+const box=$('items');let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px" id="q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="q'+i+'">'+
+ O.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+ '</div><p class="fb" id="f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+ box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+i).textContent='';});
+$('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$('f'+i);
+ if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+ if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+(d[1]==='in'?'Include':'Exclude')+'. '+d[2];f.className='fb bad'}});
+ $('fb').innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every item to finish.':'');};
+$('reset').onclick=()=>{ans={};render();$('fb').textContent=''};
+render();
+
+const npv=-3000000+[1,2,3,4].reduce((s,t)=>s+1200000/Math.pow(1.1,t),0)+200000/Math.pow(1.1,4);
+const Q=[
+['1. How many incremental pairs does the Ridge Runner add each year?','num',500000,'1.5 million − 1.0 million cannibalized = 500,000 pairs.',1,''],
+['2. What is the incremental cash flow each year (Years 1–4), after the endorsement fee?','num',1200000,'500,000 × $3.00 = $1,500,000, minus the $300,000 endorsement = $1,200,000.',1,'$'],
+['3. What is the project\'s NPV at 10%? (Include the $200,000 equipment sale in Year 4.)','num',npv,'NPV = −3,000,000 + 1,200,000/1.1 + 1,200,000/1.1² + 1,200,000/1.1³ + (1,200,000 + 200,000)/1.1⁴ = $940,441.23.',2,'$'],
+['4. What is the payback period, in years?','num',2.5,'Cumulative inflows: $1.2M after Year 1, $2.4M after Year 2, and the remaining $0.6M is half of Year 3\'s inflow: 2.5 years.',0.05,''],
+['5. What should Trailhead do?','mc','a','The NPV is positive at the 10% required rate, so the project earns more than the next-best alternative. Payback is a quick check, but it ignores the time value of money and cash flows after payback.',[['a','Accept: the NPV is positive at the 10% required rate.'],['b','Reject: payback takes longer than two years.'],['c','Accept only if all 1.5 million pairs are counted as new sales.']]]];
+const qs=$('qs');let pick={};
+Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';
+ if(q[1]==='num'){d.innerHTML='<label for="a'+i+'" style="font-weight:600">'+q[0]+'</label><div class="row">'+(q[5]?'<span aria-hidden="true">$</span>':'')+'<input class="num" id="a'+i+'" inputmode="decimal" autocomplete="off" aria-describedby="g'+i+'"></div><p class="fb" id="g'+i+'" aria-live="polite"></p>';}
+ else{d.innerHTML='<p style="margin:0;font-weight:600" id="l'+i+'">'+q[0]+'</p><div role="group" aria-labelledby="l'+i+'">'+rot(q[4],1).map(o=>'<button class="choice" data-k="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+'</div><p class="fb" id="g'+i+'" aria-live="polite"></p>';}
+ qs.appendChild(d);});
+qs.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;pick[b.dataset.k]=b.dataset.v;qs.querySelectorAll('.choice[data-k="'+b.dataset.k+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('g'+b.dataset.k).textContent='';});
+$('check2').onclick=()=>{let ok=0,done=0;Q.forEach((q,i)=>{const f=$('g'+i);let right;
+ if(q[1]==='num'){const raw=$('a'+i).value.replace(/[$,\s]/g,'');if(raw===''||isNaN(+raw)){f.className='fb bad';f.textContent='Enter a number.';return}right=Math.abs(+raw-q[2])<=q[4];}
+ else{if(!pick[i]){f.className='fb bad';f.textContent='Choose an answer.';return}right=pick[i]===q[2];}
+ done++;if(right){ok++;f.className='fb ok';f.textContent='Correct. '+q[3]}else{f.className='fb bad';f.textContent='Not quite. '+q[3]}});
+ $('fb2').innerHTML='<span class="score">'+ok+' of '+Q.length+' correct</span>'+(done<Q.length?' Answer every question to finish.':'');};
+$('reset2').onclick=()=>{Q.forEach((q,i)=>{if(q[1]==='num')$('a'+i).value='';$('g'+i).textContent=''});pick={};qs.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed','false'));$('fb2').textContent=''};
+</script>
+</body></html>

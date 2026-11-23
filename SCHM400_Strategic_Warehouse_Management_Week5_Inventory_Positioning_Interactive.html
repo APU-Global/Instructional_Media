@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventory Positioning</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:8px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.mini{background:#fff;border-radius:12px;padding:12px;border-left:6px solid var(--red)}
+.mini b{display:block}
+input[type=number]{font:inherit;width:9em;max-width:100%;padding:7px 10px;border:2px solid #bbb;border-radius:10px}
+label{font-weight:600}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Where Should the Stock Sit? Inventory positioning." xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<g transform="translate(790,70)" fill="none" stroke-linejoin="round"><rect x="0" y="0" width="150" height="120" stroke="#fff" stroke-width="5"/>
+<path d="M0 40H150M0 80H150" stroke="#fff" stroke-width="4"/><rect x="12" y="10" width="34" height="26" fill="#d34147"/><rect x="58" y="10" width="34" height="26" fill="#ffb3b6"/><rect x="104" y="50" width="34" height="26" fill="#d34147"/><rect x="12" y="90" width="34" height="26" fill="#ffb3b6"/><rect x="58" y="90" width="34" height="26" fill="#d34147"/></g>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">SCHM 400 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Where Should the Stock Sit?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Position inventory to balance delivery speed against cost</text></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Inventory Positioning</h2>
+<p class="lead"><b>Objective:</b> Decide where inventory should be positioned in a multi-echelon e-commerce network and explain the cost and service trade-offs.</p>
+<div class="card"><h3>Three echelons</h3><div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+<div class="mini"><b>Local warehouse</b>Serves one province or metro area. Usually under 24 hours; lowest delivery cost.</div>
+<div class="mini" style="border-color:var(--blue)"><b>Regional warehouse</b>Serves several provinces. Two to three days.</div>
+<div class="mini" style="border-color:var(--gold)"><b>Supplier warehouse</b>Can serve the whole country. Four to seven days; highest delivery cost.</div></div></div>
+<div class="card">
+<h3>Part 1: Where should the stock sit?</h3>
+<p class="lead">Northgate Goods is a fictional online seller that can rent space in an open warehouse platform. Use the study's findings to choose where each product's inventory should be positioned.</p>
+<div id="items-a" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check-a">Check my answers</button> <button type="button" class="btn ghost" id="reset-a">Start over</button></p>
+<p class="fb" id="fb-a" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Part 2: Check the trade-offs</h3>
+<p class="lead">Choose the best answer.</p>
+<div id="items-b" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check-b">Check my answers</button> <button type="button" class="btn ghost" id="reset-b">Start over</button></p>
+<p class="fb" id="fb-b" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> Inventory positioning trades <b>rent and holding cost</b> against <b>delivery time</b>. High-margin, high-demand, and time-sensitive products belong close to customers; low-margin, slow, patient-demand items can stay upstream. Improper positioning shows up as slow deliveries, lost sales, and unhappy customers.</div>
+<p class="src">Sources: Tian, Z., &amp; Zhang, G. (2021). Multi-echelon fulfillment warehouse rent and production allocation for online direct selling. <i>Annals of Operations Research, 304</i>(1–2), 427–451 (PMC8287850); LibreTexts, <i>Introduction to Operations Management</i>, 4.4 Supply Chain Design, 4.5 The Role of Inventory in the Supply Chain, 4.7 Distribution Management. Northgate Goods is fictional.</p>
+</div>
+<script>
+const SETS=[{"id": "a", "title": "Part 1: Where should the stock sit?", "lead": "Northgate Goods is a fictional online seller that can rent space in an open warehouse platform. Use the study's findings to choose where each product's inventory should be positioned.", "options": [["local", "Local warehouse"], ["regional", "Regional warehouse"], ["supplier", "Supplier warehouse only"]], "items": [["Phone accessories with a high profit margin; customers like fast delivery.", "local", "Profit margin is the critical factor: the higher the margin, the more it pays to rent space close to customers, even when demand or time sensitivity is low."], ["Fresh produce with a low margin that loses value every day it spends in the supply chain.", "local", "Time-sensitive goods such as fresh produce gain a competitive advantage from local stock and shorter delivery times, even at low margins."], ["Low-priced, small T-shirts whose demand has climbed sharply in one province.", "local", "As demand rises, lower-value, smaller-volume products such as clothing justify carrying more SKUs in local warehouses."], ["A bulky, low-margin product with low demand that customers are happy to wait a week for.", "supplier", "With a low margin and little time sensitivity, the extra rent of platform warehouses is hard to justify; shipping from the supplier warehouse (four to seven days) fits."], ["A moderate-margin product; the seller is hesitant about renting platform space at all.", "regional", "The authors suggest a hesitant seller rent regional space first as a trial before adding local warehouses."]]}, {"id": "b", "title": "Part 2: Check the trade-offs", "lead": "Choose the best answer.", "items": [["About how long does delivery usually take from a local warehouse in the study's network?", "24", "A local warehouse usually delivers in less than 24 hours; a regional one in two to three days; a supplier warehouse in four to seven days.", [["24", "Less than 24 hours"], ["23", "Two to three days"], ["47", "Four to seven days"]]], ["Which of the four cost areas was the largest in the network the study modeled?", "out", "Outbound transportation and delivery cost the most, and delivery time strongly influenced customer satisfaction.", [["out", "Outbound transportation and delivery"], ["rent", "Warehouse rent"], ["order", "Ordering"]]], ["If it pays to rent a regional warehouse for a product, should the seller also keep that product in the supplier warehouse?", "no", "Inventory in both the supplier and regional warehouse was never optimal: once a regional warehouse pays off, stop stocking that product at the supplier warehouse.", [["yes", "Yes, always keep both as backup"], ["no", "No, stocking both was never the best outcome"]]], ["A new Dallas e-commerce company promises delivery within one hour. Which positioning choice fits that promise?", "city", "Delivery time grows with distance: local stock is the fastest tier, so a one-hour promise needs the items already held inside the delivery area. Crossdocking can also cut handling time.", [["city", "Hold the ordered items in stock inside the Dallas area"], ["central", "Ship everything from one national warehouse"], ["supplier", "Ship directly from the supplier"]]], ["Why do firms hold inventory at many points along the supply chain?", "sync", "Incoming flows are hard to synchronize with schedules and promised shipments, so stock accumulates at many locations, adding cost and inefficiency.", [["sync", "It is hard to synchronize inflows with schedules and shipments"], ["free", "Storing inventory costs nothing"], ["law", "Regulations require it"]]]]}];
+function build(S){const box=document.getElementById('items-'+S.id);const ans={};
+ function opts(it){return it[3]||S.options;}
+ function render(){box.innerHTML='';S.items.forEach((it,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="q-'+S.id+'-'+i+'"><b>'+(i+1)+'.</b> '+it[0]+'</p><div role="group" aria-labelledby="q-'+S.id+'-'+i+'">'+
+  opts(it).map(o=>'<button type="button" class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="f-'+S.id+'-'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('f-'+S.id+'-'+i).textContent='';});
+ const fb=document.getElementById('fb-'+S.id);
+ document.getElementById('check-'+S.id).onclick=()=>{let ok=0,done=0;S.items.forEach((it,i)=>{const f=document.getElementById('f-'+S.id+'-'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  const lab=opts(it).find(o=>o[0]===it[1])[1];
+  if(ans[i]===it[1]){ok++;f.textContent='Correct. '+it[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab+'. '+it[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+S.items.length+' correct</span>'+(done<S.items.length?' Answer every item to finish.':(ok===S.items.length?' Well done!':' Review the feedback and try again.'));};
+ document.getElementById('reset-'+S.id).onclick=()=>{for(const k in ans)delete ans[k];render();fb.textContent='';};
+ render();}
+SETS.forEach(build);
+</script>
+</body></html>

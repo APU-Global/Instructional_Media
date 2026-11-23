@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forecast the Next Period</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.notes{background:#fff;border-left:6px solid var(--red);border-radius:10px;padding:12px 16px;margin:0;font-family:Consolas,"Courier New",monospace;font-size:.92rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.quote{background:#fff;border-radius:10px;padding:10px 14px;margin:0 0 8px;font-style:italic}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.num{font:inherit;width:9em;max-width:100%;padding:7px 10px;border:2px solid #bbb;border-radius:10px}
+.tbl{border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;margin:0 0 10px}.tbl th,.tbl td{padding:6px 12px;border-bottom:1px solid #e3e0dc;text-align:left}.tbl th{background:#111;color:#fff}
+.tw{overflow-x:auto;max-width:100%}
+figure{margin:0 0 12px}figcaption{font-size:.9rem;color:var(--muted)}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Forecast the Next Period" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 415 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Forecast the Next Period</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Calculate moving averages and exponential smoothing, measure error, and read demand patterns</text></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Forecasting Methods</h2>
+<p class="lead"><b>Week 2 objective:</b> Calculate simple and weighted moving averages, an exponential smoothing forecast, and the mean absolute deviation, then identify demand patterns and forecasting methods.</p>
+<div class="card">
+<h3>Why this matters</h3>
+<p class="lead" style="margin:0">Demand forecasts drive production scheduling, capacity, inventory, and workforce planning. Quantitative methods use past demand when patterns are expected to continue; qualitative methods rely on judgment when data are scarce, such as for a new product. Your Forecasting Method and Analysis assignment asks you to graph historical trends and use them to inform operational strategy.</p>
+</div>
+<div class="card">
+<h3>Practice 1: calculate the forecast</h3>
+<div class="tw"><table class="tbl"><caption style="text-align:left;font-weight:700;padding:0 0 6px">Harbor Bikes weekly rentals (fictional)</caption><thead><tr><th scope="col">Week</th><th scope="col">Actual demand</th><th scope="col">Forecast used</th></tr></thead><tbody><tr><td>1</td><td>120</td><td>115</td></tr><tr><td>2</td><td>132</td><td>125</td></tr><tr><td>3</td><td>126</td><td>130</td></tr><tr><td>4</td><td>138</td><td>128</td></tr><tr><td>5</td><td>?</td><td>?</td></tr></tbody></table></div>
+<p class="lead">Use the table to answer each item. Round to one decimal place where needed.</p>
+<div id="items0" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check0">Check my answers</button> <button type="button" class="btn ghost" id="reset0">Start over</button></p>
+<p class="fb" id="fb0" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: name the demand pattern</h3>
+
+<p class="lead">Each item describes what a demand history shows. Choose the pattern.</p>
+<div id="items1" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check1">Check my answers</button> <button type="button" class="btn ghost" id="reset1">Start over</button></p>
+<p class="fb" id="fb1" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 3: choose the method</h3>
+
+<p class="lead">Choose the forecasting method each situation describes.</p>
+<div id="items2" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check2">Check my answers</button> <button type="button" class="btn ghost" id="reset2">Start over</button></p>
+<p class="fb" id="fb2" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Moving averages smooth recent demand, weighted averages and exponential smoothing respond faster to change, and MAD tells you how far off a forecast runs on average. Always check the demand pattern first: trend, seasonality, and cycles call for different methods than stable, random demand.</div>
+<p class="src">Facts from Abbas, A., &amp; Goosheh, S. (2024), <i>Fundamentals of Operations Management</i>, Sections 3.4, 3.5, 3.7, and 3.8, Fanshawe College Pressbooks. Harbor Bikes is fictional.</p>
+</div>
+<script>
+const S=[{"type": "num", "items": [["Using a 3-period simple moving average, what is the forecast for week 5?", 132, 0.05, "(D4 + D3 + D2) / 3 = (138 + 126 + 132) / 3 = 396 / 3 = 132."], ["Using a weighted moving average with weights 0.5 (week 4), 0.3 (week 3), and 0.2 (week 2), what is the forecast for week 5?", 133.2, 0.05, "0.5 x 138 + 0.3 x 126 + 0.2 x 132 = 69 + 37.8 + 26.4 = 133.2. The weights sum to 1, so no division is needed."], ["Using exponential smoothing with alpha = 0.3, the week 4 forecast (128), and week 4 actual demand (138), what is the forecast for week 5?", 131, 0.05, "F5 = F4 + alpha (D4 - F4) = 128 + 0.3 x (138 - 128) = 128 + 3 = 131."], ["What is the mean absolute deviation (MAD) of the forecasts used in weeks 1 to 4?", 6.5, 0.05, "Errors (actual - forecast) are 5, 7, -4, and 10. Their absolute values sum to 26, and 26 / 4 = 6.5 rentals."]]}, {"group": "Demand pattern for item", "opts": [["trend", "Trend"], ["seasonal", "Seasonal"], ["cyclical", "Cyclical"], ["irregular", "Irregular variation"], ["random", "Random variation"]], "items": [["Sales of a newly launched product rise steadily, quarter after quarter.", "trend", "A trend is a consistent upward or downward movement; a new product might show a rising sales trend."], ["Swimwear sales peak every summer and fall every winter.", "seasonal", "Seasonal patterns are predictable changes that recur every year."], ["Demand rises and falls over periods longer than a year with interest rates and consumer confidence.", "cyclical", "Cyclical fluctuations typically span more than a year and are linked to broader conditions such as interest rates."], ["A labor strike causes a one-time dip in shipments that is not expected to repeat.", "irregular", "Irregular variations come from unforeseen events such as strikes, extreme weather, or power outages."], ["Small unexplained ups and downs remain after every other pattern is accounted for.", "random", "Random variation, or noise, cannot be attributed to any specific cause."]]}, {"group": "Forecasting method for item", "opts": [["delphi", "Delphi method"], ["sales", "Sales force opinions"], ["survey", "Market survey"], ["naive", "Naive method"], ["ma", "Moving average"]], "items": [["A panel of experts answers several rounds of anonymous surveys, refining their forecasts each round.", "delphi", "The Delphi method, developed by the Rand Corporation, uses anonymous rounds of expert opinion to reach a consensus."], ["Each sales representative estimates demand in his or her territory, and the estimates are added up for the region.", "sales", "Sales force opinions are a bottom-up method that draws on representatives' direct contact with customers."], ["A research firm asks consumers about their future purchasing intentions for a product not yet launched.", "survey", "Market surveys gauge consumer sentiment and intentions, which is useful when no sales history exists."], ["Next month's forecast is simply this month's actual demand.", "naive", "The naive method uses the previous period's actual value as the next forecast. It is a simple baseline but ignores patterns."], ["The forecast is the average of the most recent four periods of demand.", "ma", "A simple moving average averages the last n periods, giving each equal weight."]]}];
+S.forEach((sec,si)=>{
+ const box=document.getElementById('items'+si),fb=document.getElementById('fb'+si);let ans={};
+ if(sec.type==='num'){
+  function renderN(){box.innerHTML='';sec.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+   p.innerHTML=`<label for="n${si}_${i}" style="display:block;margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</label><input class="num" id="n${si}_${i}" type="text" inputmode="decimal" autocomplete="off"><p class="fb" id="f${si}_${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+  document.getElementById('check'+si).onclick=()=>{let ok=0,done=0;sec.items.forEach((d,i)=>{const f=document.getElementById(`f${si}_${i}`),raw=document.getElementById(`n${si}_${i}`).value.replace(/,/g,'').trim(),v=parseFloat(raw);
+   if(raw===''||isNaN(v)){f.textContent='Enter a number.';f.className='fb bad';return}done++;
+   if(Math.abs(v-d[1])<=d[2]){ok++;f.textContent='Correct. '+d[3];f.className='fb ok'}else{f.textContent='Not quite: the answer is '+d[1]+'. '+d[3];f.className='fb bad'}});
+   fb.innerHTML=`<span class="score">${ok} of ${sec.items.length} correct</span>`+(done<sec.items.length?' Answer every item to finish.':(ok===sec.items.length?' Excellent work.':' Review the feedback above, then try again.'));};
+  document.getElementById('reset'+si).onclick=()=>{renderN();fb.textContent=''};
+  renderN();return;}
+ const optsOf=d=>d[3]||sec.opts;
+ const lab=(d,v)=>optsOf(d).find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';sec.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="${sec.group} ${i+1}">`+
+  optsOf(d).map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+  `</div><p class="fb" id="f${si}_${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));document.getElementById(`f${si}_${i}`).textContent='';});
+ document.getElementById('check'+si).onclick=()=>{let ok=0,done=0;sec.items.forEach((d,i)=>{const f=document.getElementById(`f${si}_${i}`);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d,d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML=`<span class="score">${ok} of ${sec.items.length} correct</span>`+(done<sec.items.length?' Answer every item to finish.':(ok===sec.items.length?' Excellent work.':' Review the feedback above, then try again.'));};
+ document.getElementById('reset'+si).onclick=()=>{ans={};render();fb.textContent=''};
+ render();
+});
+</script>
+</body></html>
