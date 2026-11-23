@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forecasting Demand</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600;margin:4px 6px 4px 0}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+ul.key{margin:6px 0 0;padding-left:20px}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.choice{padding:6px 10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+label.inp{display:block;font-weight:600;margin:8px 0 2px}
+input[type=range]{width:100%;accent-color:var(--red)}
+input[type=number]{font:inherit;width:100%;max-width:220px;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px}
+input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.tbl{width:100%;overflow-x:auto}
+table.calc{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;font-size:.95rem}
+table.calc caption{text-align:left;font-weight:700;padding:4px 0}
+table.calc th,table.calc td{padding:6px 8px;border-bottom:1px solid #e3e0dc;text-align:right}
+table.calc th:first-child,table.calc td:first-child{text-align:left}
+table.calc thead th{background:#111;color:#fff}
+.big{font-size:1.6rem;font-weight:800;line-height:1.2}
+@media(max-width:520px){table.calc{font-size:.8rem}table.calc th,table.calc td{padding:5px 4px}}
+.g2{display:grid;gap:14px;grid-template-columns:1fr 1fr}@media(max-width:700px){.g2{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: Forecasting Demand" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">SCHM 300 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Forecasting Demand</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Compare four methods, measure the error, read the pattern</text>
+<g transform="translate(800,80)" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="45" r="16" stroke="#fff" stroke-width="6"/><circle cx="160" cy="45" r="16" stroke="#ffb3b6" stroke-width="6"/><rect x="64" y="22" width="52" height="46" rx="8" stroke="#fff" stroke-width="6"/><path d="M36 45H64M116 45H144" stroke="#d34147" stroke-width="6"/></g></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Forecasting the Demand Your Customers Create</h2>
+<p class="lead"><b>Week 4 objective:</b> Calculate naive, moving-average, weighted moving-average, and exponential-smoothing forecasts, compare their accuracy with the mean absolute deviation (MAD), and recognize common demand patterns. Good CRM promises depend on forecasts like these.</p>
+<div class="card">
+<h3>Key terms</h3>
+<ul class="key" style="margin-top:0">
+<li><b>Naive:</b> next period's forecast = last period's actual demand.</li>
+<li><b>3-period moving average:</b> the average of the last three periods.</li>
+<li><b>Weighted moving average:</b> 0.5 &times; last period + 0.3 &times; the one before + 0.2 &times; the one before that.</li>
+<li><b>Exponential smoothing:</b> F<sub>t</sub> = (1 &minus; &alpha;) F<sub>t&minus;1</sub> + &alpha; D<sub>t&minus;1</sub>, starting with the first forecast equal to the first period's demand.</li>
+<li><b>MAD:</b> the average of the absolute errors |actual &minus; forecast|. Lower is better.</li>
+</ul>
+</div>
+<div class="card">
+<h3>1. Forecasting lab: smart thermostats</h3>
+<p class="lead">A fictional company sold these numbers of smart thermostats over eight months. Every method is scored on months 4&ndash;8, where all four can forecast. Move the smoothing constant &alpha; and watch the forecast and its error change.</p>
+<div class="panel">
+<label class="inp" for="al">Smoothing constant &alpha;: <span id="alv"></span></label><input type="range" id="al" min="0.1" max="0.9" step="0.1" value="0.3">
+</div>
+<div class="panel tbl" style="margin-top:12px">
+<table class="calc" id="ftab"><caption>Actual demand and forecasts (* = next month)</caption>
+<thead><tr><th scope="col">Month</th><th scope="col">Actual</th><th scope="col">Naive</th><th scope="col">3-mo avg</th><th scope="col">Wtd avg</th><th scope="col">Exp. sm.</th></tr></thead>
+<tbody id="fbody"></tbody></table>
+</div>
+<div class="panel" style="margin-top:12px" id="madOut" aria-live="polite"></div>
+<div class="panel" style="margin-top:12px">
+<p style="margin:0 0 8px" id="predQ"><b>Predict:</b> Demand in this data keeps climbing. Which method has the lowest MAD at &alpha; = 0.3?</p>
+<div role="group" aria-labelledby="predQ" id="pred"></div>
+<p class="fb" id="predFb" aria-live="polite"></p>
+</div>
+</div>
+<div class="card">
+<h3>2. Practice: Name the demand pattern</h3>
+<p class="lead">Each fictional product shows one pattern. Choose the pattern that best describes it.</p>
+<div id="items0" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check0">Check my answers</button><button type="button" class="btn ghost" id="reset0">Start over</button></p>
+<p class="fb" id="fb0" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Averages smooth out noise but lag behind a trend. Compare methods with an error measure such as MAD, expect some error in every forecast, and update forecasts as conditions change.</div>
+<p class="src">Sources: <i>Introduction to Operations Management</i>, Sec. 3.1 (accuracy; over- and underestimating demand), Sec. 3.5 (forecasting assumptions and demand patterns), Sec. 3.6 (naive, moving average, weighted moving average, exponential smoothing), and Sec. 3.7 (MAD) (LibreTexts; adapted for Seneca College from The Open University and Saylor). The product, company, and demand figures are fictional.</p>
+</div>
+<script>
+const ACTS=[{"opts": [["t", "Trend"], ["s", "Seasonal"], ["c", "Cycle"], ["i", "Irregular"], ["r", "Random"]], "items": [["Sales of a phone case rise steadily every month as the phone model grows more popular.", "t", "A trend is a consistent upward or downward movement in demand."], ["Snow shovel demand peaks every winter and falls every summer, year after year.", "s", "Seasonal demand changes predictably and recurs every year."], ["Furniture sales rise and fall with consumer confidence over periods of several years.", "c", "A cycle lasts more than a year and often follows interest rates, the political climate, or consumer confidence."], ["A one-time power outage closes a store for three days, and sales drop that week only.", "i", "Irregular variations come from events not expected to repeat."], ["After every known factor is explained, weekly sales still wiggle up and down a little.", "r", "Random variation is the unexplained noise that remains."], ["Pool supplies sell strongly each June through August.", "s", "A predictable rise at the same time each year is seasonal."]]}];
+
+ACTS.forEach((A,ai)=>{const box=document.getElementById('items'+ai),fb=document.getElementById('fb'+ai);let ans={};
+ const lab=v=>A.opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';A.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="q'+ai+'_'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="q'+ai+'_'+i+'">'+
+  A.opts.map(o=>'<button type="button" class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="f'+ai+'_'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=document.getElementById('f'+ai+'_'+i);f.textContent='';f.className='fb';});
+ document.getElementById('check'+ai).onclick=()=>{let ok=0,done=0;A.items.forEach((d,i)=>{const f=document.getElementById('f'+ai+'_'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+A.items.length+' correct</span>'+(done<A.items.length?' Answer every item to finish.':(ok===A.items.length?' Well done!':' Review the feedback, then try again.'));};
+ document.getElementById('reset'+ai).onclick=()=>{ans={};render();fb.textContent='';};
+ render();});
+
+
+const $=id=>document.getElementById(id);
+const D=[120,132,128,141,150,146,158,165];
+const r1=v=>Math.round(v*10)/10;
+function fc(a){const N=[],MA=[],W=[],E=[D[0]];
+ for(let t=1;t<=8;t++){N[t]=D[t-1];if(t>=3){MA[t]=(D[t-1]+D[t-2]+D[t-3])/3;W[t]=0.5*D[t-1]+0.3*D[t-2]+0.2*D[t-3];}E[t]=(1-a)*E[t-1]+a*D[t-1];}
+ return {N,MA,W,E};}
+function mad(F){let s=0;for(let t=3;t<8;t++)s+=Math.abs(D[t]-F[t]);return s/5;}
+function draw(){const a=+$('al').value,f=fc(a);$('alv').textContent=a.toFixed(1);$('al').setAttribute('aria-valuetext','alpha '+a.toFixed(1));
+ let h='';for(let t=0;t<=8;t++){const act=t<8?D[t]:'?';const c=x=>x===undefined?'&ndash;':r1(x).toFixed(1);
+  h+='<tr><th scope="row">'+(t+1)+(t===8?'*':'')+'</th><td>'+act+'</td><td>'+(t===0?'&ndash;':c(f.N[t]))+'</td><td>'+c(f.MA[t])+'</td><td>'+c(f.W[t])+'</td><td>'+c(f.E[t])+'</td></tr>';}
+ $('fbody').innerHTML=h;
+ const M=[['Naive',mad(f.N)],['3-month moving average',mad(f.MA)],['Weighted moving average',mad(f.W)],['Exponential smoothing (&alpha; = '+a.toFixed(1)+')',mad(f.E)]];
+ const best=M.reduce((x,y)=>y[1]<x[1]?y:x);
+ $('madOut').innerHTML='<p style="margin:0"><b>MAD, months 4&ndash;8</b> (lower is better):</p><ul class="key">'+M.map(x=>'<li>'+x[0]+': <b>'+x[1].toFixed(2)+'</b></li>').join('')+'</ul><p style="margin:6px 0 0">Most accurate here: <b>'+best[0]+'</b>. Month 9 forecasts: naive '+r1(f.N[8]).toFixed(1)+', 3-month '+r1(f.MA[8]).toFixed(1)+', weighted '+r1(f.W[8]).toFixed(1)+', smoothing '+r1(f.E[8]).toFixed(1)+'.</p>';}
+$('al').addEventListener('input',draw);draw();
+const P=[['n','Naive'],['m','3-month moving average'],['w','Weighted moving average'],['e','Exponential smoothing']];
+P.forEach(p=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=p[1];b.setAttribute('aria-pressed','false');
+ b.onclick=()=>{$('pred').querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=$('predFb');
+  if(p[0]==='n'){f.className='fb ok';f.textContent='Correct. With steadily rising demand, last month is the closest guide (MAD 9.00). The averages lag behind the trend, and smoothing at α = 0.3 lags most (MAD 17.21). Raise α to see smoothing react faster.';}
+  else{f.className='fb bad';f.textContent='Not quite. Check the MAD list: averaging older months pulls a forecast below a rising trend, so the naive method (MAD 9.00) wins here at α = 0.3.';}};
+ $('pred').appendChild(b);});
+
+</script>
+</body></html>

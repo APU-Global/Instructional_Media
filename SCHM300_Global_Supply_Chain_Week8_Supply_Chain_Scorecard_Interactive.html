@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build a Supply Chain Scorecard</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600;margin:4px 6px 4px 0}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+ul.key{margin:6px 0 0;padding-left:20px}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.choice{padding:6px 10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+label.inp{display:block;font-weight:600;margin:8px 0 2px}
+input[type=range]{width:100%;accent-color:var(--red)}
+input[type=number]{font:inherit;width:100%;max-width:220px;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px}
+input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.tbl{width:100%;overflow-x:auto}
+table.calc{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;font-size:.95rem}
+table.calc caption{text-align:left;font-weight:700;padding:4px 0}
+table.calc th,table.calc td{padding:6px 8px;border-bottom:1px solid #e3e0dc;text-align:right}
+table.calc th:first-child,table.calc td:first-child{text-align:left}
+table.calc thead th{background:#111;color:#fff}
+.big{font-size:1.6rem;font-weight:800;line-height:1.2}
+@media(max-width:520px){table.calc{font-size:.8rem}table.calc th,table.calc td{padding:5px 4px}}
+.g2{display:grid;gap:14px;grid-template-columns:1fr 1fr}@media(max-width:700px){.g2{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 8 banner: Build a Supply Chain Scorecard" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">SCHM 300 · WEEK 8</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Build a Supply Chain Scorecard</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Calculate the metrics, compare the years, balance the view</text>
+<g transform="translate(800,80)" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="45" r="16" stroke="#fff" stroke-width="6"/><circle cx="160" cy="45" r="16" stroke="#ffb3b6" stroke-width="6"/><rect x="64" y="22" width="52" height="46" rx="8" stroke="#fff" stroke-width="6"/><path d="M36 45H64M116 45H144" stroke="#d34147" stroke-width="6"/></g></svg></div>
+<div class="wrap">
+<h2>Week 8 Interactive: Measuring Whether You Keep the Customer Promise</h2>
+<p class="lead"><b>Week 8 objective:</b> Calculate inventory turnover, days of supply, fill rate, and on-time delivery; judge them against a referent; and place measures in the balanced scorecard and the triple bottom line.</p>
+<div class="card">
+<h3>Key formulas</h3>
+<ul class="key" style="margin-top:0">
+<li><b>Inventory turnover</b> = cost of goods sold &divide; average aggregate inventory value (higher means inventory moves faster).</li>
+<li><b>Days of supply</b> = average aggregate inventory value &divide; annual cost of goods sold &times; 365 (lower means less inventory sitting in the building).</li>
+<li><b>Fill rate</b> = orders filled from stock on hand &divide; total orders.</li>
+<li><b>On-time delivery</b> = orders delivered on or before the due date &divide; total orders.</li>
+</ul>
+</div>
+<div class="card">
+<h3>1. Scorecard calculator: a fictional coffee roaster</h3>
+<p class="lead">A fictional roaster promises fresh coffee, delivered on time. Its figures for two years are filled in. Change any number and the scorecard updates. A measure means more next to a referent, so each metric is compared with the year before.</p>
+<div class="g2" id="inputs"></div>
+<div class="panel tbl" style="margin-top:12px">
+<table class="calc"><caption>Scorecard</caption>
+<thead><tr><th scope="col">Metric</th><th scope="col">Last year</th><th scope="col">This year</th><th scope="col">Better?</th></tr></thead>
+<tbody id="sc"></tbody></table>
+</div>
+<div class="panel" style="margin-top:12px" id="scOut" aria-live="polite"></div>
+</div>
+<div class="card">
+<h3>2. Practice: Balanced scorecard dimension</h3>
+<p class="lead">Choose the balanced scorecard dimension each fictional measure belongs to.</p>
+<div id="items0" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check0">Check my answers</button><button type="button" class="btn ghost" id="reset0">Start over</button></p>
+<p class="fb" id="fb0" aria-live="polite"></p>
+</div><div class="card">
+<h3>3. Practice: Triple bottom line</h3>
+<p class="lead">Choose the part of the triple bottom line each fictional measure tracks.</p>
+<div id="items1" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check1">Check my answers</button><button type="button" class="btn ghost" id="reset1">Start over</button></p>
+<p class="fb" id="fb1" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> A customer promise is only as good as the measures behind it. Track a small, balanced set of metrics, compare them with a referent such as last year or the industry, and include people and planet alongside profit.</div>
+<p class="src">Sources: <i>Introduction to Operations Management</i>, Sec. 4.9 (inventory turnover, days of supply, fill rate, on-time delivery) (LibreTexts; adapted for Seneca College from The Open University and Saylor); <i>Small Business Management in the 21st Century</i>, Sec. 11.3 (supply chain metrics) (LibreTexts); <i>Mastering Strategic Management</i>, Sec. 2.3 (performance referents, balanced scorecard, triple bottom line) (LibreTexts). The roaster and its figures are fictional.</p>
+</div>
+<script>
+const ACTS=[{"opts": [["f", "Financial"], ["c", "Customer"], ["p", "Internal business process"], ["l", "Learning and growth"]], "items": [["Return on assets for the year", "f", "Financial measures such as return on assets relate to profits and how the firm looks to shareholders."], ["Percentage of repeat customers", "c", "Customer measures track attracting, satisfying, and keeping customers."], ["Average time to fill an order", "p", "Speed of serving a customer is an internal business process (efficiency) measure."], ["New skills learned per employee each year", "l", "Learning and growth measures look to the future and the firm's ability to keep improving."], ["Number of new customers this quarter", "c", "New customers are a customer measure."], ["Time to bring a new product to market", "p", "The time it takes to create a new product and bring it to market is an internal process measure."]]}, {"opts": [["pe", "People"], ["pl", "Planet"], ["pr", "Profits"]], "items": [["Share of coffee bought from farms paying workers reasonable wages", "pe", "The people dimension asks whether the firm's actions are socially responsible."], ["Tons of packaging waste sent to landfill", "pl", "The planet dimension tracks environmental sustainability."], ["Operating profit margin", "pr", "Profits are the traditional economic bottom line."], ["Workplace injuries at partner warehouses", "pe", "Worker safety is a social, people-focused concern."], ["Fuel used per delivery route", "pl", "Fuel and emissions are environmental, planet-focused measures."]]}];
+
+ACTS.forEach((A,ai)=>{const box=document.getElementById('items'+ai),fb=document.getElementById('fb'+ai);let ans={};
+ const lab=v=>A.opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';A.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="q'+ai+'_'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="q'+ai+'_'+i+'">'+
+  A.opts.map(o=>'<button type="button" class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="f'+ai+'_'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=document.getElementById('f'+ai+'_'+i);f.textContent='';f.className='fb';});
+ document.getElementById('check'+ai).onclick=()=>{let ok=0,done=0;A.items.forEach((d,i)=>{const f=document.getElementById('f'+ai+'_'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+A.items.length+' correct</span>'+(done<A.items.length?' Answer every item to finish.':(ok===A.items.length?' Well done!':' Review the feedback, then try again.'));};
+ document.getElementById('reset'+ai).onclick=()=>{ans={};render();fb.textContent='';};
+ render();});
+
+
+const $=id=>document.getElementById(id),n0=v=>Math.round(v).toLocaleString('en-US');
+const F=[['cogs','Cost of goods sold ($)',4200000,4800000],['inv','Average aggregate inventory value ($)',600000,500000],['ord','Total orders',5000,5600],['fill','Orders filled from stock',4600,5320],['ontime','Orders delivered on time',4500,5180]];
+const V={};
+F.forEach(f=>{V[f[0]]=[f[2],f[3]];});
+['Last year','This year'].forEach((y,k)=>{const p=document.createElement('div');p.className='panel';p.innerHTML='<h3 style="margin-top:0">'+y+'</h3>'+F.map(f=>'<label class="inp" for="'+f[0]+k+'">'+f[1]+'</label><input type="number" min="0" id="'+f[0]+k+'" value="'+f[2+k]+'">').join('');$('inputs').appendChild(p);});
+F.forEach(f=>[0,1].forEach(k=>$(f[0]+k).addEventListener('input',e=>{V[f[0]][k]=Math.max(0,+e.target.value||0);calc();})));
+function calc(){const r=k=>{const c=V.cogs[k],i=V.inv[k],o=V.ord[k];return{turn:i?c/i:NaN,days:c?i/c*365:NaN,fill:o?V.fill[k]/o*100:NaN,ot:o?V.ontime[k]/o*100:NaN};};
+ const a=r(0),b=r(1);const M=[['Inventory turnover','turn',2,'',1],['Days of supply','days',1,' days',-1],['Fill rate','fill',1,'%',1],['On-time delivery','ot',1,'%',1]];
+ let better=0;
+ $('sc').innerHTML=M.map(m=>{const x=a[m[1]],y=b[m[1]];const f=v=>isNaN(v)?'&ndash;':v.toFixed(m[2])+m[3];let s='&ndash;';
+  if(!isNaN(x)&&!isNaN(y)){const d=(y-x)*m[4];s=d>1e-9?'<span class="ok">Yes</span>':(d<-1e-9?'<span class="bad">No</span>':'Same');if(d>1e-9)better++;}
+  return '<tr><th scope="row">'+m[0]+'</th><td>'+f(x)+'</td><td>'+f(y)+'</td><td>'+s+'</td></tr>';}).join('');
+ let note='';if(V.fill[1]>V.ord[1]||V.ontime[1]>V.ord[1]||V.fill[0]>V.ord[0]||V.ontime[0]>V.ord[0])note='<p class="bad" style="margin:6px 0 0">Orders filled or on time cannot exceed total orders; check your numbers.</p>';
+ $('scOut').innerHTML='<p style="margin:0">This year improves on last year in <b>'+better+' of 4</b> metrics.</p><p style="margin:6px 0 0">Example: turnover this year = '+n0(V.cogs[1])+' &divide; '+n0(V.inv[1])+' = <b>'+(isNaN(b.turn)?'&ndash;':b.turn.toFixed(2))+'</b> turns. Turns are best compared within an industry; the operations text cites about 23 for dairy manufacturing, 14.7 for grocery supermarkets, and 4.8 for automotive.</p>'+note;}
+calc();
+
+</script>
+</body></html>

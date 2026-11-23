@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Make, Buy, and Choose a Supplier</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600;margin:4px 6px 4px 0}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+ul.key{margin:6px 0 0;padding-left:20px}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.choice{padding:6px 10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+label.inp{display:block;font-weight:600;margin:8px 0 2px}
+input[type=range]{width:100%;accent-color:var(--red)}
+input[type=number]{font:inherit;width:100%;max-width:220px;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px}
+input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.tbl{width:100%;overflow-x:auto}
+table.calc{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;font-size:.95rem}
+table.calc caption{text-align:left;font-weight:700;padding:4px 0}
+table.calc th,table.calc td{padding:6px 8px;border-bottom:1px solid #e3e0dc;text-align:right}
+table.calc th:first-child,table.calc td:first-child{text-align:left}
+table.calc thead th{background:#111;color:#fff}
+.big{font-size:1.6rem;font-weight:800;line-height:1.2}
+@media(max-width:520px){table.calc{font-size:.8rem}table.calc th,table.calc td{padding:5px 4px}}
+.g2{display:grid;gap:14px;grid-template-columns:1fr 1fr}@media(max-width:700px){.g2{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Make, Buy, and Choose a Supplier" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">SCHM 300 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Make, Buy, and Choose a Supplier</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Run the break-even, weigh the scorecard, name the factor</text>
+<g transform="translate(800,80)" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="45" r="16" stroke="#fff" stroke-width="6"/><circle cx="160" cy="45" r="16" stroke="#ffb3b6" stroke-width="6"/><rect x="64" y="22" width="52" height="46" rx="8" stroke="#fff" stroke-width="6"/><path d="M36 45H64M116 45H144" stroke="#d34147" stroke-width="6"/></g></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Make or Buy, and Comparing Global Suppliers</h2>
+<p class="lead"><b>Week 2 objective:</b> Use break-even analysis for a make-or-buy decision, compare two global suppliers on more than price, and sort the factors that shape a sourcing choice. These are the steps Discussion 2 asks you to take.</p>
+<div class="card">
+<h3>Key terms</h3>
+<p style="margin-top:0"><b>Sourcing</b> is evaluating and hiring businesses to supply goods and services; <b>procurement</b> is actually purchasing them. The <b>make-or-buy</b> question has a strategic side (control of technology, skills, and quality) and an economic side, which is often a <b>break-even analysis</b>.</p>
+<p style="margin-bottom:0"><b>Break-even volume</b> = difference in fixed costs &divide; difference in cost per unit. Below it, the option with lower fixed costs costs less in total; above it, the option with the lower cost per unit costs less.</p>
+</div>
+<div class="card">
+<h3>1. Make-or-buy calculator</h3>
+<p class="lead">A fictional smart-home company needs a rechargeable battery pack. Making it in-house means $60,000 in fixed costs (equipment and setup) and $8.20 per unit. Choose a supplier, adjust its freight and tariff, and set the annual volume. Every figure updates as you go.</p>
+<div class="g2">
+<div class="panel">
+<div role="group" aria-label="Choose a supplier"><button type="button" class="choice" id="supA" aria-pressed="true">Supplier A (overseas)</button><button type="button" class="choice" id="supB" aria-pressed="false">Supplier B (nearshore)</button></div>
+<label class="inp" for="fr">Freight per unit: <span id="frv"></span></label><input type="range" id="fr" min="0" max="4" step="0.05">
+<label class="inp" for="ta">Tariff per unit: <span id="tav"></span></label><input type="range" id="ta" min="0" max="3" step="0.05">
+<label class="inp" for="vol">Annual volume (units)</label><input type="number" id="vol" min="0" step="5000" value="40000">
+</div>
+<div class="panel tbl">
+<table class="calc"><caption>Cost comparison</caption>
+<thead><tr><th scope="col">Cost</th><th scope="col">Make</th><th scope="col">Buy</th></tr></thead>
+<tbody>
+<tr><th scope="row">Fixed costs</th><td>$60,000</td><td id="bfix"></td></tr>
+<tr><th scope="row">Price or production cost per unit</th><td>$8.20</td><td id="bpr"></td></tr>
+<tr><th scope="row">Freight per unit</th><td>$0.00</td><td id="bfr"></td></tr>
+<tr><th scope="row">Tariff per unit</th><td>$0.00</td><td id="bta"></td></tr>
+<tr><th scope="row">Total per unit</th><td><b>$8.20</b></td><td id="btot"></td></tr>
+</tbody></table>
+</div></div>
+<div class="panel" style="margin-top:12px" id="calcOut" aria-live="polite"></div>
+</div>
+<div class="card">
+<h3>2. Supplier scorecard: more than price</h3>
+<p class="lead">Rate each criterion's importance. The scorecard multiplies each supplier's 1&ndash;5 rating by your weights. Try putting all the weight on cost, then spread it out, and watch the recommendation.</p>
+<div class="g2">
+<div class="panel" id="weights"></div>
+<div class="panel tbl">
+<table class="calc"><caption>Supplier ratings (5 = best)</caption>
+<thead><tr><th scope="col">Criterion</th><th scope="col">A</th><th scope="col">B</th></tr></thead>
+<tbody id="rateBody"></tbody></table>
+</div></div>
+<div class="panel" style="margin-top:12px" id="scoreOut" aria-live="polite"></div>
+</div>
+<div class="card">
+<h3>3. Practice: Name the factor</h3>
+<p class="lead">Each statement is about a fictional sourcing decision. Choose the kind of factor it describes.</p>
+<div id="items0" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check0">Check my answers</button><button type="button" class="btn ghost" id="reset0">Start over</button></p>
+<p class="fb" id="fb0" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> The lowest quote is not always the lowest cost. Run the break-even, add freight, tariffs, and hidden costs, and weigh reliability, quality, risk, and the relationship before you recommend a supplier.</div>
+<p class="src">Sources: <i>Small Business Management in the 21st Century</i>, Sec. 11.2 (break-even method for make-or-buy; ISO 9000; on-time delivery, delivery accuracy, handling demand fluctuations) and Sec. 11.3 (win-win supplier relationships; Deming) (LibreTexts); <i>Principles of Marketing</i>, Sec. 9.1 (sourcing and procurement; loss of control over quality and technology) (LibreTexts); Lumen Learning, <i>International Business</i>, Sec. 14.3 (hidden costs of offshoring) (LibreTexts). The company, suppliers, and all figures are fictional.</p>
+</div>
+<script>
+const ACTS=[{"opts": [["e", "Economic (cost)"], ["s", "Strategic (control)"], ["r", "Reliability"], ["l", "Relationship"]], "items": [["The supplier's quote rises once freight and a new tariff are added.", "e", "Freight and tariffs are per-unit costs, so they belong in the economic comparison."], ["Outsourcing the circuit design could let a partner learn and copy your technology.", "s", "Losing control of technology or skills is a strategic reason some firms choose to make rather than buy."], ["The supplier is ISO 9000 certified, so incoming goods may not need to be tested.", "r", "Certification is one way to judge whether a potential supplier will deliver quality reliably."], ["Both companies sign a multiyear agreement and tour each other's facilities.", "l", "Long-term agreements and regular visits build the trust a win-win relationship needs."], ["Last quarter the supplier shipped 12% of orders late.", "r", "On-time delivery is one of the capabilities buyers keep tracking after selecting a supplier."], ["Lower labor rates abroad cut the cost to make each unit.", "e", "Labor cost per unit is part of the economic side of make or buy."], ["Managers from both firms agree on shared objectives and metrics.", "l", "Top managers who share a vision and agree on objectives and metrics help trust grow."], ["Long distances and communication gaps could make quality hard to control.", "s", "Overseas outsourcing can weaken control over quality, a strategic concern beyond the price."]]}];
+
+ACTS.forEach((A,ai)=>{const box=document.getElementById('items'+ai),fb=document.getElementById('fb'+ai);let ans={};
+ const lab=v=>A.opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';A.items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="q'+ai+'_'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="q'+ai+'_'+i+'">'+
+  A.opts.map(o=>'<button type="button" class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="f'+ai+'_'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=document.getElementById('f'+ai+'_'+i);f.textContent='';f.className='fb';});
+ document.getElementById('check'+ai).onclick=()=>{let ok=0,done=0;A.items.forEach((d,i)=>{const f=document.getElementById('f'+ai+'_'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+A.items.length+' correct</span>'+(done<A.items.length?' Answer every item to finish.':(ok===A.items.length?' Well done!':' Review the feedback, then try again.'));};
+ document.getElementById('reset'+ai).onclick=()=>{ans={};render();fb.textContent='';};
+ render();});
+
+
+const $=id=>document.getElementById(id),m=v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),n0=v=>Math.round(v).toLocaleString('en-US');
+const SUP={A:{fix:5000,pr:6.40,fr:1.60,ta:0.90,name:'Supplier A (overseas)'},B:{fix:8000,pr:8.60,fr:0.70,ta:0,name:'Supplier B (nearshore)'}};
+const MK_FIX=60000,MK_U=8.20;let cur='A';
+function setSup(k){cur=k;$('supA').setAttribute('aria-pressed',k==='A');$('supB').setAttribute('aria-pressed',k==='B');$('fr').value=SUP[k].fr;$('ta').value=SUP[k].ta;calc();}
+function calc(){const s=SUP[cur],fr=+$('fr').value,ta=+$('ta').value,q=Math.max(0,+$('vol').value||0),bu=Math.round((s.pr+fr+ta)*100)/100;
+ $('frv').textContent=m(fr);$('tav').textContent=m(ta);$('fr').setAttribute('aria-valuetext',m(fr)+' per unit');$('ta').setAttribute('aria-valuetext',m(ta)+' per unit');
+ $('bfix').textContent='$'+n0(s.fix);$('bpr').textContent=m(s.pr);$('bfr').textContent=m(fr);$('bta').textContent=m(ta);$('btot').innerHTML='<b>'+m(bu)+'</b>';
+ const mT=MK_FIX+MK_U*q,bT=s.fix+bu*q;let be;
+ if(bu>MK_U){const b=(MK_FIX-s.fix)/(bu-MK_U);be='Break-even: ($60,000 &minus; $'+n0(s.fix)+') &divide; ('+m(bu)+' &minus; $8.20) = <b>'+n0(b)+' units</b>. Below that volume buying is cheaper; above it, making the part in-house is cheaper.';}
+ else be='Buying costs no more per unit <i>and</i> has lower fixed costs, so buying is cheaper at every volume (no break-even).';
+ const win=bT<mT?'Buy from '+s.name:(bT>mT?'Make in-house':'Neither (a tie)');
+ $('calcOut').innerHTML='<p style="margin:0">At <b>'+n0(q)+'</b> units: make '+m(mT)+'; buy '+m(bT)+'. Lower total cost: <b>'+win+'</b>.</p><p style="margin:6px 0 0">'+be+'</p>';}
+$('supA').onclick=()=>setSup('A');$('supB').onclick=()=>setSup('B');
+['fr','ta','vol'].forEach(id=>$(id).addEventListener('input',calc));
+setSup('A');
+
+const CR=[['Landed cost',5,4,40,'A $8.90 vs. B $9.30 per unit'],['On-time delivery',3,5,25,'A 88% vs. B 97% of orders on time'],['Quality certification',3,5,20,'A not certified; B ISO 9000 certified'],['Risk (5 = lowest)',2,4,15,'A: 35-day ocean transit and tariff exposure; B: 4-day truck delivery']];
+const wt=CR.map(c=>c[3]);
+CR.forEach((c,i)=>{const d=document.createElement('div');d.innerHTML='<label class="inp" for="w'+i+'">'+c[0]+' weight: <span id="wv'+i+'"></span></label><input type="range" id="w'+i+'" min="0" max="100" step="5" value="'+c[3]+'">';$('weights').appendChild(d);
+ $('w'+i).addEventListener('input',e=>{wt[i]=+e.target.value;score();});
+ const tr=document.createElement('tr');tr.innerHTML='<th scope="row">'+c[0]+'<br><span style="font-weight:400;font-size:.85rem;color:var(--muted)">'+c[4]+'</span></th><td>'+c[1]+'</td><td>'+c[2]+'</td>';$('rateBody').appendChild(tr);});
+function score(){const tot=wt.reduce((a,b)=>a+b,0);CR.forEach((c,i)=>{const p=tot?Math.round(wt[i]/tot*100):0;$('wv'+i).textContent=wt[i]+' ('+p+'% of total)';$('w'+i).setAttribute('aria-valuetext',wt[i]+', '+p+' percent of total weight');});
+ if(!tot){$('scoreOut').innerHTML='<p style="margin:0">Give at least one criterion some weight.</p>';return;}
+ let a=0,b=0;CR.forEach((c,i)=>{a+=c[1]*wt[i]/tot;b+=c[2]*wt[i]/tot;});a=Math.round(a*100)/100;b=Math.round(b*100)/100;
+ const w=a>b?'Supplier A':(b>a?'Supplier B':'a tie');
+ $('scoreOut').innerHTML='<p style="margin:0">Weighted score: Supplier A <b>'+a.toFixed(2)+'</b>; Supplier B <b>'+b.toFixed(2)+'</b> (out of 5). Recommendation: <b>'+w+'</b>.</p><p style="margin:6px 0 0">'+(a>b?'With this much weight on cost, the cheaper landed price wins. Ask whether late deliveries and long transit would add costs the price does not show.':'Reliability, quality, and lower risk outweigh Supplier A’s lower landed cost at these weights.')+'</p>';}
+score();
+
+</script>
+</body></html>
