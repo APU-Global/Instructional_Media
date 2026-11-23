@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serve Well, Count the Cost</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn.sm{padding:4px 10px;font-size:.9rem}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink)}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--red)}
+input[type=number]{font:inherit;width:110px;padding:6px 8px;border:2px solid #bbb;border-radius:8px}
+ol.order{list-style:none;margin:0;padding:0}
+ol.order li{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ddd;border-radius:12px;padding:10px 12px;margin:8px 0}
+ol.order li .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+ol.order li .t{flex:1;min-width:0}
+ol.order li .mv{display:flex;gap:6px;flex:none}
+@media(max-width:480px){ol.order li{flex-wrap:wrap}ol.order li .mv{width:100%;justify-content:flex-end}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.rank{display:flex;flex-wrap:wrap;gap:8px}
+.rk{border:2px solid #bbb;background:#fff;border-radius:10px;padding:8px 12px;font-weight:600;color:var(--ink);text-align:left}
+.rk[data-r]{border-color:var(--blue)}
+.rk .b{display:inline-block;min-width:24px;height:24px;border-radius:50%;background:#ddd;color:#111;text-align:center;font-weight:800;margin-right:6px;line-height:24px}
+.rk[data-r] .b{background:var(--blue);color:#fff}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:6px 10px;border-bottom:1px solid #e3e0dc;text-align:left}th{background:#111;color:#fff}
+td.n{text-align:right}
+.tw{overflow-x:auto}
+@media(max-width:480px){th,td{padding:5px 6px;font-size:.85rem}}
+label.cb{display:flex;gap:8px;align-items:flex-start;background:#fff;border-radius:10px;padding:8px 10px;margin:6px 0;cursor:pointer}
+</style></head>
+
+<style>
+.calc{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:8px 0}
+.calc label{font-weight:600}
+.data td.n,.data th.n{text-align:right}
+.mv button{min-width:38px}
+</style>
+</head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 7 banner: Serve Well, Count the Cost" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">SCHM 490 · WEEK 7</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Serve Well, Count the Cost</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Service quality at every contact point, and the cost to serve</text></svg></div>
+<div class="wrap">
+<h2>Week 7 Interactive: Service Quality and the Cost to Serve</h2>
+<p class="lead"><b>Week 7 objective:</b> Judge service contact points against the elements of service quality, and use cost-to-serve data to make a profitable customer decision.</p>
+
+<div class="card">
+<h3>Step 1: Name the service quality element</h3>
+<p class="lead">Maple Street Caf&eacute; (a fictional chain) collected these customer comments. Choose the service quality element each one is about, then select <b>Check my answers</b>.</p>
+<div id="svc" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="scheck">Check my answers</button> <button class="btn ghost" id="sreset">Start over</button></p>
+<p class="fb" id="sfb" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>Step 2: Keep or drop a customer?</h3>
+<p class="lead">Lark Wholesale Bakery (fictional) supplies three caf&eacute; chains. Its report shows the Riverside account losing money, and a manager wants to drop it. Allocated fixed costs are shared company costs that will continue even if Riverside leaves; direct fixed costs (a delivery van and driver used only for Riverside) will end.</p>
+<div class="tw"><table class="data"><caption style="text-align:left;font-weight:700;padding:4px 0">Riverside account, annual</caption>
+<thead><tr><th scope="col">Item</th><th scope="col" class="n">Amount</th></tr></thead>
+<tbody>
+<tr><th scope="row" style="background:#fff;color:#111">Sales revenue</th><td class="n">$200,000</td></tr>
+<tr><th scope="row" style="background:#fff;color:#111">Variable costs (ingredients, packaging)</th><td class="n">$140,000</td></tr>
+<tr><th scope="row" style="background:#fff;color:#111">Direct fixed costs (van and driver)</th><td class="n">$45,000</td></tr>
+<tr><th scope="row" style="background:#fff;color:#111">Allocated fixed costs (share of company overhead)</th><td class="n">$25,000</td></tr>
+<tr><th scope="row" style="background:#fff;color:#111">Reported profit (loss)</th><td class="n">($10,000)</td></tr>
+</tbody></table></div>
+<div class="panel" style="margin-top:10px">
+<div class="calc"><label for="cm">Contribution margin ($):</label><input type="number" id="cm" step="any" inputmode="decimal"><button class="btn sm" id="cmC">Check</button></div>
+<p class="fb" id="cmF" aria-live="polite"></p>
+<div class="calc"><label for="dm">Profit left after direct fixed costs ($):</label><input type="number" id="dm" step="any" inputmode="decimal"><button class="btn sm" id="dmC">Check</button></div>
+<p class="fb" id="dmF" aria-live="polite"></p>
+<p style="margin:10px 0 4px"><b>If Lark drops Riverside, what happens to total company profit?</b></p>
+<div role="group" aria-label="Effect of dropping Riverside"><button class="choice" data-d="up10" aria-pressed="false">Rises by $10,000</button><button class="choice" data-d="none" aria-pressed="false">No change</button><button class="choice" data-d="down15" aria-pressed="false">Falls by $15,000</button></div>
+<p class="fb" id="dF" aria-live="polite"></p>
+</div>
+</div>
+
+<div class="card">
+<h3>Step 3: Sort the cost-to-serve activities</h3>
+<p class="lead">Activity-based costing groups customer costs into four categories. Choose the category for each Lark activity, then select <b>Check my answers</b>.</p>
+<div id="abc" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="acheck">Check my answers</button> <button class="btn ghost" id="areset">Start over</button></p>
+<p class="fb" id="afb" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> Customers judge a service at every <b>contact point</b>, so measure tangibles, reliability, convenience, responsiveness, time, courtesy, consistency, and assurance. When a customer looks unprofitable, separate the costs that would end from the <b>allocated costs</b> that stay: a "losing" account can still add profit. Activity-based <b>cost-to-serve</b> data shows where to improve, and the decision is not only financial.</div>
+<p class="src">Service quality elements follow Drane, M., &amp; Faramarzi, H. (n.d.), <i>Introduction to Operations Management</i> (LibreTexts), Section 5.1, CC BY-NC 4.0. Keep-or-drop analysis and the four cost-to-serve categories follow Saylor Academy (n.d.), <i>Managerial Accounting</i> (v. 1.0), Section 7.4 "Customer Decisions," CC BY-NC-SA 3.0. Maple Street Caf&eacute;, Lark Wholesale Bakery, and their data are fictional.</p>
+</div>
+<script>
+
+const $=id=>document.getElementById(id);
+function numCheck(inputId,fbId,target,tol,okMsg,hint){const v=parseFloat(String($(inputId).value).replace(/[$,%\s]/g,''));const f=$(fbId);
+if(isNaN(v)){f.className='fb bad';f.textContent='Enter a number first.';return false}
+if(Math.abs(v-target)<=tol){f.className='fb ok';f.textContent='Correct. '+okMsg;return true}
+f.className='fb bad';f.textContent='Not quite. '+hint;return false}
+function orderer(listId,items,checkId,fbId,okMsg){let order=items.map((_,i)=>i);
+for(let i=order.length-1;i>0;i--){const j=(i*7+3)%(i+1);[order[i],order[j]]=[order[j],order[i]]}
+if(order.every((v,i)=>v===i)){order.reverse()}
+const ol=$(listId);
+function render(focus){ol.innerHTML='';order.forEach((it,pos)=>{const li=document.createElement('li');
+li.innerHTML=`<span class="n" aria-hidden="true">${pos+1}</span><span class="t">${items[it]}</span><span class="mv"><button class="btn ghost sm" data-d="-1" data-p="${pos}" aria-label="Move up: ${items[it]}" ${pos===0?'disabled':''}>&uarr;</button><button class="btn ghost sm" data-d="1" data-p="${pos}" aria-label="Move down: ${items[it]}" ${pos===order.length-1?'disabled':''}>&darr;</button></span>`;ol.appendChild(li)});
+if(focus){const b=ol.querySelector(`button[data-p="${focus[0]}"][data-d="${focus[1]}"]`)||ol.querySelector(`button[data-p="${focus[0]}"]:not([disabled])`);if(b)b.focus()}}
+ol.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const p=+b.dataset.p,d=+b.dataset.d,q=p+d;if(q<0||q>=order.length)return;
+[order[p],order[q]]=[order[q],order[p]];$(fbId).textContent='';render([q,d])});
+$(checkId).onclick=()=>{const f=$(fbId);const n=order.filter((v,i)=>v===i).length;
+if(n===order.length){f.className='fb ok';f.textContent='Correct order. '+okMsg}else{f.className='fb bad';f.textContent=n+' of '+order.length+' steps are in the right place. Use the arrow buttons to reorder, then check again.'}};
+render();}
+
+function classifier(box,O,D,checkBtn,resetBtn,fbId){let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="Answer for item ${i+1}">`+
+O.map(o=>`<button class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+`</div><p class="fb" id="${box.id}f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(box.id+'f'+i).textContent='';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+checkBtn.onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(box.id+'f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+document.getElementById(fbId).innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every item to finish.':'');};
+resetBtn.onclick=()=>{ans={};render();document.getElementById(fbId).textContent=''};render();}
+
+
+classifier($('svc'),[['tang','Tangibles'],['rel','Reliability'],['conv','Convenience'],['resp','Responsiveness'],['time','Time'],['court','Courtesy'],['cons','Consistency'],['assur','Assurance']],[
+['"The tables were sticky and two chairs were broken."','tang','Tangibles are the physical items used during the service.'],
+['"My mobile order was wrong again: no oat milk."','rel','Reliability means dependable service, correctly done each time.'],
+['"There is no location near my office, and the drive-through closes at 2 p.m."','conv','Convenience is how accessible the service provider is.'],
+['"I asked for a gluten-free option and nobody followed up."','resp','Responsiveness is the willingness to respond to customer requests.'],
+['"It took 18 minutes to get one coffee."','time','Time is how quickly the service is delivered.'],
+['"The cashier smiled and thanked me by name."','court','Courtesy is the politeness and friendliness of employees.'],
+['"The latte tastes different at every location."','cons','Consistency is repeated performance without fail.'],
+['"The barista explained the bean origins and roast with real expertise."','assur','Assurance is employees having a high level of expertise and earning trust.']],$('scheck'),$('sreset'),'sfb');
+$('cmC').onclick=()=>numCheck('cm','cmF',60000,1,'$200,000 - $140,000 = $60,000 of contribution margin.','Subtract variable costs from sales revenue.');
+$('dmC').onclick=()=>numCheck('dm','dmF',15000,1,'$60,000 - $45,000 = $15,000. Riverside covers its own costs and adds $15,000 toward company overhead.','Subtract the direct fixed costs ($45,000) from the contribution margin ($60,000).');
+document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-d]').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=$('dF');
+if(b.dataset.d==='down15'){f.className='fb ok';f.textContent='Correct. The $25,000 of allocated overhead stays whether or not Riverside is a customer, so dropping it removes $15,000 of profit. Look first for ways to lower the cost to serve Riverside.'}
+else if(b.dataset.d==='up10'){f.className='fb bad';f.textContent='Not quite. The reported $10,000 loss includes $25,000 of allocated overhead that Lark keeps paying after Riverside leaves.'}
+else{f.className='fb bad';f.textContent='Not quite. Riverside brings in more than the costs that would end with it. Compare its $15,000 after direct fixed costs with zero.'}});
+classifier($('abc'),[['acq','Acquire customers'],['prov','Provide goods and services'],['serve','Serve customers'],['ret','Retain customers']],[
+['Advertising in a regional restaurant trade magazine to win new caf&eacute; chains.','acq','Advertising and promotional materials are costs to acquire customers.'],
+['Processing each morning&rsquo;s orders and delivering the bread.','prov','Processing orders and delivering goods are costs to provide goods and services.'],
+['Answering a caf&eacute; manager&rsquo;s billing questions and processing payments.','serve','Support and payment processing are costs to serve customers.'],
+['A volume discount offered to keep a long-time customer from switching bakeries.','ret','Discounts and relationship building are costs to retain customers.'],
+['Free sample boxes sent to caf&eacute;s that have never ordered.','acq','Promotional materials aimed at new customers are acquisition costs.']],$('acheck'),$('areset'),'afb');
+
+</script>
+</body></html>
