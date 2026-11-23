@@ -77,14 +77,14 @@ input[type=range]{width:100%;accent-color:var(--red)}
 
 <section class="card"><div class="bar"></div>
 <h2>Part 1 · Audit a screening tool</h2>
-<p class="lead">A screening tool flags people whose marker level is above a cut-off as likely to have a condition. The tool learns its cut-off from training data. In this simulated example the two groups have different typical marker levels (shown below). Change how much of the training data comes from Group B, and watch what happens to each group.</p>
-<div class="ctl"><div><label for="sh">Group B share of the training data <span id="shv">10%</span></label><input type="range" id="sh" min="5" max="50" step="5" value="10"></div>
-<div style="display:flex;align-items:center"><label style="font-weight:600;display:flex;gap:10px;align-items:center"><input type="checkbox" id="sep"> Use a separate cut-off for each group</label></div></div>
-<div class="legend" aria-hidden="true"><span><i style="background:#8fa3b8"></i>People without the condition</span><span><i style="background:#e0a526"></i>People with the condition</span><span><i style="background:#f3c7c4"></i>Healthy people wrongly flagged</span><span><i style="background:#f7e2a8"></i>Cases missed</span><span><i style="background:#1f6f78"></i>Cut-off</span></div>
-<svg class="chart" id="ch" viewBox="0 0 700 330" role="img" aria-label="Marker level curves for Group A and Group B with the tool's cut-off"></svg>
-<div class="stats" aria-live="polite"><div><b id="o1">–</b><small>Overall accuracy (what the developer sees)</small></div><div><b id="o2">–</b><small>Group A accuracy</small></div><div id="o3box"><b id="o3">–</b><small>Group B accuracy</small></div><div class="hl"><b id="o4">–</b><small>Gap between groups</small></div></div>
+<p class="lead">Imagine a community health program that uses a fictional finger-prick test to screen adults for undiagnosed type 2 diabetes. Read the scenario below, then change who is represented in the training data and watch what happens to each group.</p><div class="note gold"><strong>Meet the variable: the GlucoScore (a made-up example).</strong> A quick finger-prick test gives each person a GlucoScore from 0 to 120. A higher score means a higher chance of undiagnosed type 2 diabetes. The screening tool flags anyone whose GlucoScore is above its <em>cut-off</em> and refers them for a confirmatory lab test.<br><br><strong>Why the groups differ:</strong> GlucoScores tend to run higher as people age, even in people who do not have diabetes. Group A is adults under 65. Group B is adults 65 and older. The tool learns its cut-off from training data, and in this program most of that data came from clinics serving younger adults.<br><br><strong>What is at stake:</strong> A false alarm sends a healthy person for an unneeded lab test, with worry, cost, and lost time. A missed case delays treatment for someone who needs it.</div><p class="lead">Now use the slider to change how much of the training data comes from Group B (adults 65 and older), and watch what happens to each group.</p>
+<div class="ctl"><div><label for="sh">Training data from Group B (adults 65+) <span id="shv">10%</span></label><input type="range" id="sh" min="5" max="50" step="5" value="10"></div>
+<div style="display:flex;align-items:center"><label style="font-weight:600;display:flex;gap:10px;align-items:center"><input type="checkbox" id="sep"> Use a separate cut-off for each age group</label></div></div>
+<div class="legend" aria-hidden="true"><span><i style="background:#8fa3b8"></i>People without diabetes</span><span><i style="background:#e0a526"></i>People with undiagnosed diabetes</span><span><i style="background:#f3c7c4"></i>False alarms (no diabetes, but flagged)</span><span><i style="background:#f7e2a8"></i>Missed cases (diabetes, but not flagged)</span><span><i style="background:#1f6f78"></i>Cut-off</span></div>
+<svg class="chart" id="ch" viewBox="0 0 700 330" role="img" aria-label="GlucoScore curves for Group A (under 65) and Group B (65 and older) with the tool's cut-off"></svg>
+<div class="stats" aria-live="polite"><div><b id="o1">–</b><small>Overall accuracy (what the developer sees)</small></div><div><b id="o2">–</b><small>Group A (under 65) accuracy</small></div><div id="o3box"><b id="o3">–</b><small>Group B (65 and older) accuracy</small></div><div class="hl"><b id="o4">–</b><small>Gap between groups</small></div></div>
 <div class="note teal live" id="ins" aria-live="polite"></div>
-<p class="lead" style="font-size:.85rem">Simulated numbers for learning. Both groups are half people with the condition and half without; the tool picks the cut-off that gives the best accuracy on its training mix.</p>
+<p class="lead" style="font-size:.85rem">Simulated numbers for learning; the GlucoScore and the screening program are made up. Accuracy means the share of people the tool classifies correctly. In each group, half of people have undiagnosed diabetes and half do not; the tool picks the cut-off that gives the best accuracy on its training mix.</p>
 </section>
 
 <section class="card"><div class="bar"></div>
@@ -122,7 +122,7 @@ function fair(){
  var tp=bestCut(s),tA=sep?bestCut(0):tp,tB=sep?bestCut(1):tp;
  var aA=acc(tA,"A"),aB=acc(tB,"B"),ov=(1-s)*aA+s*aB,gap=aA-aB;
  var c=$("ch");c.innerHTML="";el("rect",{width:700,height:330,fill:"#fcfcfc"},c);
- var rows=[["A",28,128,tA,"Group A"],["B",172,272,tB,"Group B"]],ph=88;
+ var rows=[["A",28,128,tA,"Group A: adults under 65"],["B",172,272,tB,"Group B: adults 65 and older"]],ph=88;
  rows.forEach(function(r){var g=r[0],top=r[1],base=r[2],t=r[3];
   var lab=el("text",{x:X0,y:top-6,"font-size":"13","font-weight":"800",fill:"#231f20"},c);lab.textContent=r[4];
   function Y(v){return base-v/0.0399*ph}
@@ -137,13 +137,13 @@ function fair(){
   el("path",{d:"M"+X(t)+" "+(top)+"V"+base,stroke:"#1f6f78","stroke-width":3.5},c);
   var ct=el("text",{x:X(t)+6,y:top+12,"font-size":"12","font-weight":"800",fill:"#1f6f78"},c);ct.textContent="cut-off "+t.toFixed(1)});
  [20,40,60,80,100,120].forEach(function(v){var tt=el("text",{x:X(v),y:292,"text-anchor":"middle","font-size":"11",fill:"#5b5557"},c);tt.textContent=v});
- var xl=el("text",{x:370,y:312,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#231f20"},c);xl.textContent="Marker level";
+ var xl=el("text",{x:370,y:312,"text-anchor":"middle","font-size":"12","font-weight":"700",fill:"#231f20"},c);xl.textContent="GlucoScore (0 to 120; higher = more likely diabetes)";
  $("o1").textContent=(ov*100).toFixed(1)+"%";$("o2").textContent=(aA*100).toFixed(1)+"%";$("o3").textContent=(aB*100).toFixed(1)+"%";$("o4").textContent=(gap*100).toFixed(1)+" pts";
  $("o3box").className=aB<0.85?"bad":"";
  var m=$("ins");
- if(sep)m.innerHTML="<strong>With a separate cut-off for each group, both reach "+(aA*100).toFixed(1)+"%.</strong> The marker means something different in each group, so one cut-off cannot serve both. In real tools, though, using group information raises further questions about data, consent, and fairness that people must decide. Testing across groups is what reveals the problem in the first place.";
- else if(gap<0.005)m.innerHTML="<strong>With equal representation, both groups get "+(aA*100).toFixed(1)+"%.</strong> The cut-off ("+tp.toFixed(1)+") is a compromise between the two groups’ needs, so the overall score ("+(ov*100).toFixed(1)+"%) is lower than when Group B was barely represented, but the tool treats the groups equally.";
- else m.innerHTML="<strong>The overall score ("+(ov*100).toFixed(1)+"%) looks good, but Group B gets only "+(aB*100).toFixed(1)+"%</strong>, a gap of "+(gap*100).toFixed(1)+" points. The cut-off ("+tp.toFixed(1)+") was tuned mostly to Group A, so many healthy people in Group B are wrongly flagged. Unequal data led to unequal outcomes, and only testing each group separately shows it. Increase Group B’s share to see the gap shrink, or try separate cut-offs."}
+ if(sep)m.innerHTML="<strong>With a separate cut-off for each group, both reach "+(aA*100).toFixed(1)+"%.</strong> GlucoScores run higher in older adults even without diabetes, so one cut-off cannot serve both age groups. Age-specific cut-offs are common in real medicine, but using group information still raises further questions about data, consent, and fairness that people must decide. Testing across groups is what reveals the problem in the first place.";
+ else if(gap<0.005)m.innerHTML="<strong>With equal representation, both groups get "+(aA*100).toFixed(1)+"%.</strong> The cut-off ("+tp.toFixed(1)+") is a compromise between the two groups’ needs, so the overall score ("+(ov*100).toFixed(1)+"%) is lower than when older adults were barely represented, but the tool treats the groups equally.";
+ else m.innerHTML="<strong>The overall score ("+(ov*100).toFixed(1)+"%) looks good, but Group B gets only "+(aB*100).toFixed(1)+"%</strong>, a gap of "+(gap*100).toFixed(1)+" points. The cut-off ("+tp.toFixed(1)+") was tuned mostly to younger adults (Group A), so many older adults without diabetes in Group B are wrongly flagged as possible cases (false alarms). Unequal data led to unequal outcomes, and only testing each group separately shows it. Increase Group B’s share to see the gap shrink, or try separate cut-offs."}
 $("sh").oninput=fair;$("sep").onchange=fair;fair();
 function quiz(host,list,labels,fin){var h=$(host),sc=0,dn=0;list.forEach(function(x){var d=document.createElement("div");d.className="q";d.innerHTML='<span style="flex:1;min-width:230px">'+x.t+'</span><span class="opts"></span><div class="fb live" aria-live="polite"></div>';
  var o=d.querySelector(".opts"),f=d.querySelector(".fb"),w=false;
