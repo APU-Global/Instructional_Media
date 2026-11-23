@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poll Question Fixer</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+dl.terms{margin:0}dl.terms dt{font-weight:700;margin-top:8px}dl.terms dd{margin:2px 0 0 0}
+ol.order{list-style:none;padding:0;margin:0}ol.order li{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid #ddd;border-radius:10px;padding:8px 10px;margin:6px 0}
+ol.order li span.t{flex:1}ol.order li button{border:2px solid #bbb;background:#fff;border-radius:8px;padding:2px 10px;font-weight:700}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:620px){.calc{grid-template-columns:1fr}}
+label.f{display:block;font-weight:600}input[type=number]{width:100%;font:inherit;padding:8px 10px;border:2px solid #cfcfcf;border-radius:10px;margin-top:4px}
+.out{font-size:1.15rem;font-weight:700}
+table.d{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}table.d th,table.d td{padding:8px 10px;border-bottom:1px solid #ddd;text-align:left}table.d th{background:#111;color:#fff}
+.tw{overflow-x:auto}
+
+.bars{margin:10px 0 0;padding:0;list-style:none}.bars li{display:grid;grid-template-columns:110px 1fr 48px;gap:8px;align-items:center;margin:4px 0}
+.bars .bar{height:18px;background:var(--red);border-radius:6px;min-width:2px}
+textarea,input[type=text]{width:100%;font:inherit;padding:8px 10px;border:2px solid #cfcfcf;border-radius:10px;margin-top:4px}
+textarea:focus-visible,input[type=text]:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+select{font:inherit;padding:7px 10px;border:2px solid #cfcfcf;border-radius:10px;margin-top:4px;max-width:100%;background:#fff}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.quote{background:#fff;border-left:5px solid var(--red);border-radius:8px;padding:8px 12px;margin:0 0 8px}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Poll Question Fixer" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 310 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Poll Question Fixer</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Write one clear poll question with answer options that work</text></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Poll Question Fixer</h2>
+<p class="lead"><b>Week 5 focus:</b> Writing a closed-ended poll question that produces usable data, before you poll three people for Discussion 5.</p>
+<div class="card"><h3>Key ideas</h3><p class="lead">Select each card to open it.</p><div class="grid g2" id="kc"></div></div>
+<div class="card"><h3>Activity 1: What is wrong with this poll?</h3><p class="lead">Each fictional poll question has at most one problem. Name it, or mark it ready to use.</p>
+<div id="diag"></div><div class="row"><button type="button" class="btn" id="diagCheck">Check answers</button><button type="button" class="btn ghost" id="diagReset">Start over</button></div>
+<p class="fb" id="diagFb" aria-live="polite"></p></div>
+<div class="card"><h3>Activity 2: Pick the best response options</h3><p class="lead">Choose the set of options that is both mutually exclusive and exhaustive.</p>
+<div id="opts"></div><p><span class="score" id="oScore" aria-live="polite">0 / 4</span></p></div>
+<div class="card"><h3>Activity 3: Tally your poll</h3><p class="lead">Enter how many of your respondents chose each option (fictional example: vegetable servings per day). The tally shows counts and shares as a text chart.</p>
+<div class="grid g2">
+<div><label class="f" for="o1">0 servings</label><input type="number" id="o1" min="0" step="1" value="0"></div>
+<div><label class="f" for="o2">1–2 servings</label><input type="number" id="o2" min="0" step="1" value="2"></div>
+<div><label class="f" for="o3">3–4 servings</label><input type="number" id="o3" min="0" step="1" value="1"></div>
+<div><label class="f" for="o4">5 or more servings</label><input type="number" id="o4" min="0" step="1" value="0"></div>
+</div>
+<div class="panel" style="margin-top:12px" aria-live="polite" id="tally"></div></div>
+<div class="take"><b>Takeaway:</b> Ask <b>one idea</b> per question in <b>clear, plain words</b>. Make response options <b>mutually exclusive</b> and <b>exhaustive</b>, and pretest them. A poll of three friends is a <b>pilot</b>: it can suggest a question, not describe a whole population.</div>
+<p class="src">Sources: Blackstone, A. (n.d.-a). 8.4: Designing effective questions and questionnaires; Blackstone, A. (n.d.-b). 7.3: Sampling in quantitative research. In <i>Principles of sociological inquiry: Qualitative and quantitative methods</i>. LibreTexts. Azusa Pacific University Global. (n.d.). <i>A guide to quantitative research methods</i> [Course interactive media]. Poll questions and tallies are fictional examples; shares are arithmetic.</p>
+</div>
+<script>
+function classifier(boxId,fbId,checkId,resetId,O,D,label){
+ const box=document.getElementById(boxId),fb=document.getElementById(fbId);let ans={};
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';p.style.margin='8px 0';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+boxId+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+boxId+'q'+i+'">'+
+  O.map(o=>'<button type="button" class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(boxId+'f'+i).textContent='';});
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ document.getElementById(checkId).onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(boxId+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every '+label+' to finish.':'');};
+ document.getElementById(resetId).onclick=()=>{ans={};render();fb.textContent=''};
+ render();
+}
+function reveal(id,C){const g=document.getElementById(id);C.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='panel';b.style.textAlign='left';b.setAttribute('aria-expanded','false');b.setAttribute('aria-controls',id+i);
+ b.innerHTML='<b>'+c[0]+'</b><span id="'+id+i+'" style="display:block;margin-top:6px" hidden>'+c[1]+'</span>';
+ b.onclick=()=>{const p=document.getElementById(id+i),o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',o);};g.appendChild(b);});}
+function mcq(boxId,scoreId,Q){let qs=0;const qd=Q.map(()=>false);const box=document.getElementById(boxId);
+ Q.forEach((q,qi)=>{const d=document.createElement('div');d.className='panel';d.style.margin='8px 0';d.innerHTML='<b id="'+boxId+'m'+qi+'">'+(qi+1)+'. '+q[0]+'</b><div role="group" aria-labelledby="'+boxId+'m'+qi+'"></div><p class="fb" aria-live="polite"></p>';
+ q[1].forEach((o,oi)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=o;b.setAttribute('aria-pressed','false');b.onclick=()=>{d.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const p=d.querySelector('.fb');if(oi===q[2]){p.className='fb ok';p.textContent='Correct. '+q[3];if(!qd[qi]){qd[qi]=true;qs++;document.getElementById(scoreId).textContent=qs+' / '+Q.length;}}else{p.className='fb bad';p.textContent='Not quite. '+(q[4]||'Try again.');}};d.children[1].appendChild(b);});box.appendChild(d);});}
+
+reveal('kc',[["One idea at a time", "A double-barreled question asks two things at once, such as \u201cdemanding and interesting.\u201d Respondents who feel one but not the other cannot answer."], ["No double negatives", "\u201cDid you not drink...?\u201d makes \u201cno\u201d mean \u201cyes.\u201d Avoid negative wording and regional or culturally specific terms."], ["Mutually exclusive", "Response options should not overlap. If 2 appears in \u201c0\u20132\u201d and \u201c2\u20134,\u201d a respondent who eats 2 servings has two right answers."], ["Exhaustive", "Every possible answer should have an option, from the lowest to the highest."], ["Fence-sitters and floaters", "A neutral middle option attracts fence-sitters; removing it forces floaters to pick a side. Fixing one problem can cause the other, so pretest."], ["Generalizability", "Results say something about a larger group only when everyone in the population had an equal chance of being selected (probability sampling)."]]);
+classifier('diag','diagFb','diagCheck','diagReset',[["db", "Double-barreled"], ["dn", "Double negative"], ["ov", "Options overlap"], ["ex", "Options not exhaustive"], ["ok", "Ready to use"]],[["How often do you exercise and eat breakfast? (Never / Sometimes / Always)", "db", "Exercise and breakfast are two separate behaviors. Split them into two questions."], ["Do you not disagree that flu shots are helpful? (Yes / No)", "dn", "\u201cNot disagree\u201d forces respondents to untangle two negatives. Ask \u201cHow helpful do you think flu shots are?\u201d"], ["How many hours do you sleep on a work night? (5 or fewer / 5\u20137 / 7\u20139 / 9 or more)", "ov", "A person who sleeps 5, 7, or 9 hours fits two options. Use 5 or fewer / 6\u20137 / 8\u20139 / 10 or more."], ["How many sugary drinks did you have yesterday? (1 / 2 / 3)", "ex", "There is no option for 0 or for more than 3. Add \u201c0\u201d and \u201c4 or more.\u201d"], ["On average, how many servings of vegetables do you eat per day? (0 / 1\u20132 / 3\u20134 / 5+)", "ok", "One idea, clear wording, and options that neither overlap nor leave anyone out. This is the course\u2019s example question."], ["In the past 7 days, on how many days did you get at least 30 minutes of physical activity? (0 / 1\u20132 / 3\u20134 / 5\u20137)", "ok", "A clear time frame, one behavior, and options covering 0 through 7 days without overlap."]],'question');
+mcq('opts','oScore',[["How many minutes do you spend on social media per day?", ["0\u201330 / 30\u201360 / 60\u2013120", "Less than 30 / 30\u201359 / 60\u2013119 / 120 or more", "Some / A lot / Too much"], 1, "No overlaps, and every amount from zero upward has a place.", "Check the borders: does 30 fit two options? Is anyone left out above the top value?"], ["How would you rate your stress this week?", ["Very low / Low / Moderate / High / Very high", "Low / High", "Moderate / High / Very high"], 0, "A balanced five-point scale that covers the full range.", "Two options are too coarse, and the third leaves out anyone with low stress."], ["How many glasses of water did you drink yesterday?", ["1\u20133 / 4\u20136 / 7\u20139", "0 / 1\u20133 / 4\u20136 / 7 or more", "0\u20133 / 3\u20136 / 6 or more"], 1, "Starts at zero, has no overlaps, and an open top category.", "Look for a missing zero or a value that appears in two options."], ["You polled three friends: two chose \u201c1\u20132 servings.\u201d What can you conclude?", ["Most people in your city eat 1\u20132 servings a day.", "Two of your three respondents reported 1\u20132 servings; a larger probability sample would be needed to generalize.", "Your poll proves vegetable intake is too low."], 1, "Report what you found for your sample and treat it as a pilot.", "Three friends were not selected at random, so the results cannot be generalized to a population."]]);
+
+const L=['0 servings','1–2 servings','3–4 servings','5 or more servings'];
+function tally(){const v=['o1','o2','o3','o4'].map(i=>parseInt(document.getElementById(i).value,10)),o=document.getElementById('tally');
+ if(v.some(x=>!(x>=0))){o.innerHTML='<span class="bad">Enter whole numbers of 0 or more.</span>';return;}
+ const n=v.reduce((a,b)=>a+b,0);if(n===0){o.innerHTML='<span class="lead">Enter at least one response.</span>';return;}
+ const mx=Math.max(...v);let h='<p style="margin:0"><b>'+n+' respondent'+(n===1?'':'s')+'.</b> Most common answer: '+L.filter((l,i)=>v[i]===mx).join(' and ')+'.</p><ul class="bars">';
+ v.forEach((x,i)=>{const pct=Math.round(x/n*100);h+='<li><span>'+L[i]+'</span><span class="bar" style="width:'+(x/n*100)+'%" aria-hidden="true"></span><span>'+x+' ('+pct+'%)</span></li>';});
+ h+='</ul>'+(n<10?'<p class="lead" style="margin:8px 0 0">With only '+n+' responses, report counts (for example, '+v[1]+' of '+n+') rather than percentages, and treat the result as a pilot.</p>':'');o.innerHTML=h;}
+['o1','o2','o3','o4'].forEach(i=>document.getElementById(i).addEventListener('input',tally));tally();
+
+</script>
+</body></html>

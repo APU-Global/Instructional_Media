@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Diary Analyzer</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+dl.terms{margin:0}dl.terms dt{font-weight:700;margin-top:8px}dl.terms dd{margin:2px 0 0 0}
+ol.order{list-style:none;padding:0;margin:0}ol.order li{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid #ddd;border-radius:10px;padding:8px 10px;margin:6px 0}
+ol.order li span.t{flex:1}ol.order li button{border:2px solid #bbb;background:#fff;border-radius:8px;padding:2px 10px;font-weight:700}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:620px){.calc{grid-template-columns:1fr}}
+label.f{display:block;font-weight:600}input[type=number]{width:100%;font:inherit;padding:8px 10px;border:2px solid #cfcfcf;border-radius:10px;margin-top:4px}
+.out{font-size:1.15rem;font-weight:700}
+table.d{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}table.d th,table.d td{padding:8px 10px;border-bottom:1px solid #ddd;text-align:left}table.d th{background:#111;color:#fff}
+.tw{overflow-x:auto}
+
+.bars{margin:10px 0 0;padding:0;list-style:none}.bars li{display:grid;grid-template-columns:110px 1fr 48px;gap:8px;align-items:center;margin:4px 0}
+.bars .bar{height:18px;background:var(--red);border-radius:6px;min-width:2px}
+textarea,input[type=text]{width:100%;font:inherit;padding:8px 10px;border:2px solid #cfcfcf;border-radius:10px;margin-top:4px}
+textarea:focus-visible,input[type=text]:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+select{font:inherit;padding:7px 10px;border:2px solid #cfcfcf;border-radius:10px;margin-top:4px;max-width:100%;background:#fff}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.quote{background:#fff;border-left:5px solid var(--red);border-radius:8px;padding:8px 12px;margin:0 0 8px}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 8 banner: Data Diary Analyzer" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 310 · WEEK 8</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Data Diary Analyzer</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Name your data, clean your log, and choose the right summary</text></svg></div>
+<div class="wrap">
+<h2>Week 8 Interactive: Data Diary Analyzer</h2>
+<p class="lead"><b>Week 8 focus:</b> Naming your data type, cleaning your log, and choosing the right summary before you build your Discussion 8 Data Diary visual.</p>
+<div class="card"><h3>Key ideas</h3><p class="lead">Select each card to open it.</p><div class="grid g2" id="kc"></div></div>
+<div class="card"><h3>Activity 1: What kind of data is it?</h3><p class="lead">Each item is something a student might track in a data diary. Classify it the way Kulkarni (2016) does.</p>
+<div id="type"></div><div class="row"><button type="button" class="btn" id="typeCheck">Check answers</button><button type="button" class="btn ghost" id="typeReset">Start over</button></div>
+<p class="fb" id="typeFb" aria-live="polite"></p></div>
+<div class="card"><h3>Activity 2: Clean the log</h3><p class="lead">A fictional student logged glasses of water for five days: <b>Mon 6, Tue 5, Tue 5, Wed 60, Thu 7</b>. Work through the three cleaning phases.</p>
+<div id="clean"></div><p><span class="score" id="cScore" aria-live="polite">0 / 3</span></p></div>
+<div class="card"><h3>Activity 3: Summarize your own diary</h3>
+<p class="lead">Enter one number per day, separated by commas (at least 4 days). The analyzer reports the count, mean, median, mode, and range, with a text chart.</p>
+<label class="f" for="vals">Daily values</label><input type="text" id="vals" value="4, 6, 5, 9" inputmode="decimal">
+<div class="row"><button type="button" class="btn" id="go">Analyze</button></div>
+<div class="panel" style="margin-top:12px" aria-live="polite" id="res"></div></div>
+<div class="take"><b>Takeaway:</b> Know your <b>data type</b> first. <b>Screen, diagnose, and edit</b> before you count, and report what you exclude. Use the <b>mode</b> for categories, the <b>median</b> for ordered data, and the <b>mean</b> for interval and ratio numbers, then pick a chart that fits: <b>bar or pie</b> for categories, <b>histogram or box plot</b> for numbers.</div>
+<p class="src">Sources: Kulkarni, D. K. (2016). Interpretation and display of research results. <i>Indian Journal of Anaesthesia, 60</i>(9), 657–661. Blackstone, A. (n.d.). 8.5: Analysis of survey data. In <i>Principles of sociological inquiry: Qualitative and quantitative methods</i>. LibreTexts. Diary entries are fictional; statistics are computed in your browser.</p>
+</div>
+<script>
+function classifier(boxId,fbId,checkId,resetId,O,D,label){
+ const box=document.getElementById(boxId),fb=document.getElementById(fbId);let ans={};
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';p.style.margin='8px 0';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+boxId+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+boxId+'q'+i+'">'+
+  O.map(o=>'<button type="button" class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(boxId+'f'+i).textContent='';});
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ document.getElementById(checkId).onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(boxId+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every '+label+' to finish.':'');};
+ document.getElementById(resetId).onclick=()=>{ans={};render();fb.textContent=''};
+ render();
+}
+function reveal(id,C){const g=document.getElementById(id);C.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='panel';b.style.textAlign='left';b.setAttribute('aria-expanded','false');b.setAttribute('aria-controls',id+i);
+ b.innerHTML='<b>'+c[0]+'</b><span id="'+id+i+'" style="display:block;margin-top:6px" hidden>'+c[1]+'</span>';
+ b.onclick=()=>{const p=document.getElementById(id+i),o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',o);};g.appendChild(b);});}
+function mcq(boxId,scoreId,Q){let qs=0;const qd=Q.map(()=>false);const box=document.getElementById(boxId);
+ Q.forEach((q,qi)=>{const d=document.createElement('div');d.className='panel';d.style.margin='8px 0';d.innerHTML='<b id="'+boxId+'m'+qi+'">'+(qi+1)+'. '+q[0]+'</b><div role="group" aria-labelledby="'+boxId+'m'+qi+'"></div><p class="fb" aria-live="polite"></p>';
+ q[1].forEach((o,oi)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=o;b.setAttribute('aria-pressed','false');b.onclick=()=>{d.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const p=d.querySelector('.fb');if(oi===q[2]){p.className='fb ok';p.textContent='Correct. '+q[3];if(!qd[qi]){qd[qi]=true;qs++;document.getElementById(scoreId).textContent=qs+' / '+Q.length;}}else{p.className='fb bad';p.textContent='Not quite. '+(q[4]||'Try again.');}};d.children[1].appendChild(b);});box.appendChild(d);});}
+
+reveal('kc',[["Qualitative data", "Categories. Unordered (blood groups A, B, O, AB) or ordered (pain rated mild, moderate, severe)."], ["Quantitative data", "Numbers. Discrete (separate values, such as endotracheal tube sizes) or continuous (measurements, such as blood pressure)."], ["Coding", "Assign a number to each response, such as 1/0 for yes/no or 1, 2, 3 for mild, moderate, severe, and keep a codebook of what each number means."], ["Cleaning in three phases", "Screening (spot odd values, double entries, outliers), diagnosing (true value or error?), and editing (correct, delete, or keep). Report points excluded from analysis."], ["Central tendency", "Mode: most common response (nominal data). Median: middle value (ordinal data). Mean: sum divided by the number of responses (interval and ratio data)."], ["Pick a display", "Bar or pie charts for qualitative data; histograms, frequency polygons, or box plots for quantitative data."]]);
+classifier('type','typeFb','typeCheck','typeReset',[["u", "Unordered categories"], ["o", "Ordered categories"], ["d", "Discrete count"], ["c", "Continuous measurement"]],[["Number of times you opened social media apps each day", "d", "A whole-number count."], ["Type of exercise you did (walk, bike, swim, none)", "u", "Categories with no natural order."], ["Your mood each evening (low, medium, high)", "o", "Categories with a clear order, like pain rated mild, moderate, severe."], ["Hours of sleep measured by a sleep tracker (for example, 6.7)", "c", "A measurement that can take any value in a range, like blood pressure."], ["Glasses of water you drank each day", "d", "A count of whole glasses."], ["Where you ate lunch (home, work, restaurant)", "u", "Places are categories with no order."]],'item');
+mcq('clean','cScore',[["Screening: what stands out in the log?", ["Nothing; the log is clean.", "Tuesday appears twice, and 60 glasses on Wednesday is an odd value.", "Thursday's 7 is too high."], 1, "Screening looks for double entries and outliers.", "Look for a repeated day and a value far from the others."], ["Diagnosing: the student checks her notes and finds she typed 60 instead of 6. What is it?", ["A true extreme value", "A data entry error", "A missing value"], 1, "Her notes show a typing error, not a real day of drinking 60 glasses.", "Her notes give the real value, so this is an error, not a true result."], ["Editing: what should she do?", ["Delete one Tuesday entry, correct Wednesday to 6, and note both changes.", "Keep everything so the data are untouched.", "Delete Wednesday and say nothing."], 0, "Correct true errors, remove the double entry, and record what you changed. Kulkarni notes that deleted points should be reported as excluded from analysis.", "Uncorrected errors distort results, and unreported deletions hide decisions from readers."]]);
+
+const f=n=>Number.isInteger(n)?String(n):n.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+function analyze(){const raw=document.getElementById('vals').value,o=document.getElementById('res');
+ const parts=raw.split(',').map(s=>s.trim()).filter(s=>s!=='');const v=parts.map(Number);
+ if(parts.length<4||v.some(x=>!isFinite(x))){o.innerHTML='<span class="bad">Enter at least 4 numbers separated by commas, for example 4, 6, 5, 9.</span>';return;}
+ const n=v.length,sum=v.reduce((a,b)=>a+b,0),mean=sum/n,s=[...v].sort((a,b)=>a-b);
+ const med=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;const cnt={};v.forEach(x=>cnt[x]=(cnt[x]||0)+1);const mx=Math.max(...Object.values(cnt));
+ const modes=Object.keys(cnt).filter(k=>cnt[k]===mx).map(Number).sort((a,b)=>a-b);
+ const modeTxt=mx===1?'none (every value appears once)':modes.map(f).join(', ')+' (appears '+mx+' times)';
+ const top=Math.max(...v.map(Math.abs))||1;
+ let h='<p style="margin:0 0 6px"><b>'+n+' days.</b> Sum = '+f(sum)+'. Mean = '+f(sum)+' ÷ '+n+' = <b>'+f(mean)+'</b>.</p>'+
+ '<p style="margin:0 0 6px">Sorted: '+s.map(f).join(', ')+'. Median = <b>'+f(med)+'</b>'+(n%2?' (the middle value).':' (the average of the two middle values).')+'</p>'+
+ '<p style="margin:0 0 6px">Mode = <b>'+modeTxt+'</b>. Range = '+f(s[0])+' to '+f(s[n-1])+'.</p><ul class="bars">';
+ v.forEach((x,i)=>{h+='<li><span>Day '+(i+1)+'</span><span class="bar" style="width:'+(Math.abs(x)/top*100)+'%" aria-hidden="true"></span><span>'+f(x)+'</span></li>';});
+ h+='</ul><p class="lead" style="margin:8px 0 0">'+(Math.abs(mean-med)>Math.max(1,0.25*Math.abs(med))?'The mean and median differ a lot: check for an outlier or entry error before you report.':'Four or more days can suggest a pattern, but not prove one.')+'</p>';o.innerHTML=h;}
+document.getElementById('go').onclick=analyze;document.getElementById('vals').addEventListener('keydown',e=>{if(e.key==='Enter')analyze();});analyze();
+
+</script>
+</body></html>
