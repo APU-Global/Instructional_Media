@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Butterfly Effect Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;color:var(--ink);border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Butterfly Effect Lab" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ORGS 485 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Butterfly Effect Lab</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">See how a tiny difference at the start can grow into a large one</text>
+<g transform="translate(795,55)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M75 75C40 20 5 40 20 75C5 110 40 130 75 75Z" stroke="#fff" stroke-width="7"/><path d="M75 75C110 20 145 40 130 75C145 110 110 130 75 75Z" stroke="#ffb3b6" stroke-width="7"/><path d="M75 55v45" stroke="#d34147" stroke-width="7"/></g></svg></div>
+<div class="wrap">
+
+<h2>Week 5 Interactive: Chaos Theory</h2>
+<p class="lead"><b>Week 5 objective:</b> Explain, in simple terms, how a system can follow fixed rules and still be unpredictable, and what that means for managers.</p>
+<div class="card">
+<h3>Key ideas</h3>
+<div class="grid g3">
+<div class="panel"><b>Deterministic, yet unpredictable</b><p style="margin:6px 0 0">Edward Lorenz showed in 1963 that weather, though an entirely deterministic system, cannot be reliably predicted from an earlier known state.</p></div>
+<div class="panel"><b>Sensitivity to initial conditions</b><p style="margin:6px 0 0">The “butterfly effect”: tiny differences at the start grow into large ones. Crowds, dripping taps, and sand on a dune show it too.</p></div>
+<div class="panel"><b>Patterns, not predictions</b><p style="margin:6px 0 0">We can recognize patterns and broad tendencies, but not predict any particular event. Order can emerge at the “edge of chaos.”</p></div>
+</div>
+</div>
+<div class="card">
+<h3>Try it: two runs of the same rule</h3>
+<p class="lead">This toy model is not from the readings; it only illustrates the idea. A population level <i>x</i> (between 0 and 1) changes each step by one fixed rule: <b>next&nbsp;=&nbsp;r&nbsp;×&nbsp;x&nbsp;×&nbsp;(1&nbsp;−&nbsp;x)</b>. Run A and Run B use the same rule; only their starting values differ.</p>
+<div class="grid g3">
+<div class="panel"><label for="mode"><b>Growth setting (r)</b></label><br><select id="mode" style="font:inherit;margin-top:6px;padding:6px;border-radius:8px;max-width:100%"><option value="2.8">Steady (r = 2.8)</option><option value="3.9" selected>Turbulent (r = 3.9)</option></select></div>
+<div class="panel"><label for="start"><b>Run A starts at</b></label><br><select id="start" style="font:inherit;margin-top:6px;padding:6px;border-radius:8px"><option>0.200</option><option selected>0.400</option><option>0.600</option></select></div>
+<div class="panel"><label for="gap"><b>Run B starts higher by</b></label><br><select id="gap" style="font:inherit;margin-top:6px;padding:6px;border-radius:8px"><option value="0.01">0.01</option><option value="0.001" selected>0.001</option><option value="0.0001">0.0001</option></select></div>
+</div>
+<p style="margin:14px 0 6px"><button class="btn" id="run">Run both</button></p>
+<div class="panel" style="padding:8px"><svg id="chart" viewBox="0 0 600 270" role="img" aria-labelledby="chartDesc" style="width:100%;height:auto;display:block"><desc id="chartDesc">Line chart of Run A and Run B over 40 steps.</desc></svg>
+<p style="margin:4px 8px;font-size:.9rem"><span style="display:inline-block;width:14px;height:4px;background:#d34147;vertical-align:middle"></span> Run A &nbsp; <span style="display:inline-block;width:14px;height:4px;background:#2b6a99;vertical-align:middle"></span> Run B (dashed)</p></div>
+<p class="fb" id="out" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Quick check</h3>
+<p class="lead">Choose the best answer for each, then select <b>Check my answers</b>.</p>
+<div id="p1" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c1">Check my answers</button> <button class="btn ghost" id="r1">Start over</button></p>
+<p class="fb" id="s1" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> To explain chaos to a subordinate, name one small starting difference, trace the chain it sets off, and be honest about what no one could have predicted. Then look for the small, well-placed changes (leverage) that can move the whole system.</div>
+<p class="src">Ideas from Dron, J., &amp; Anderson, T., <i>Teaching Crowds: Learning and Social Media</i> (LibreTexts), Chapter 2, “Complexity Theory and Complex Adaptive Systems”; and <i>Focusing on Organizational Change</i> (LibreTexts), 7.4, CC BY-NC-SA 3.0. The two-run model is an illustration written for this page.</p>
+
+</div>
+<script>
+// generic sorter: container id, options [[val,label]], items [[text,answer,explain]]
+function sorter(cid,O,D,scoreId,aria,order){
+ if(order)D=order.map(i=>D[i]);
+ const box=document.getElementById(cid),fb=document.getElementById(scoreId);let ans={};
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="'+aria+' '+(i+1)+'">'+
+  O.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+cid+'f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(cid+'f'+i).textContent='';});
+ return {check(){let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(cid+'f'+i);
+   if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+   if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+   fb.innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every item to finish.':'');},
+  reset(){ans={};render();fb.textContent='';},render};
+}
+// multiple choice: each item [question,[options],correctIndex,explain]
+function mcq(cid,Q,scoreId){
+ const box=document.getElementById(cid),fb=document.getElementById(scoreId);let ans={};
+ function render(){box.innerHTML='';Q.forEach((q,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+cid+'q'+i+'"><b>'+(i+1)+'.</b> '+q[0]+'</p><div role="group" aria-labelledby="'+cid+'q'+i+'">'+
+  q[1].map((o,j)=>'<button class="choice" data-i="'+i+'" data-v="'+j+'" aria-pressed="false">'+o+'</button>').join('')+
+  '</div><p class="fb" id="'+cid+'f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=+b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(cid+'f'+i).textContent='';});
+ return {render,check(){let ok=0,done=0;Q.forEach((q,i)=>{const f=document.getElementById(cid+'f'+i);
+   if(ans[i]===undefined){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+   if(ans[i]===q[2]){ok++;f.textContent='Correct. '+q[3];f.className='fb ok'}else{f.textContent='Not quite. The answer is “'+q[1][q[2]]+'.” '+q[3];f.className='fb bad'}});
+   fb.innerHTML='<span class="score">'+ok+' of '+Q.length+' correct</span>'+(done<Q.length?' Answer every question to finish.':'');},
+  reset(){ans={};render();fb.textContent='';}};
+}
+
+const $=id=>document.getElementById(id);
+function series(r,x){const s=[x];for(let i=0;i<40;i++){x=r*x*(1-x);s.push(x);}return s;}
+function run(){const r=+$('mode').value,a0=+$('start').value,g=+$('gap').value;const A=series(r,a0),B=series(r,a0+g);
+ const X=i=>40+i*13.5,Y=v=>230-v*200;
+ let svg='<desc id="chartDesc"></desc><line x1="40" y1="230" x2="580" y2="230" stroke="#999"/><line x1="40" y1="30" x2="40" y2="230" stroke="#999"/>'+
+ '<text x="8" y="34" font-size="12" fill="#555">1.0</text><text x="8" y="234" font-size="12" fill="#555">0.0</text><text x="290" y="264" font-size="12" fill="#555">step</text>';
+ [0,10,20,30,40].forEach(i=>svg+='<text x="'+(X(i)-6)+'" y="246" font-size="11" fill="#555">'+i+'</text>');
+ svg+='<polyline fill="none" stroke="#d34147" stroke-width="3" points="'+A.map((v,i)=>X(i)+','+Y(v)).join(' ')+'"/>';
+ svg+='<polyline fill="none" stroke="#2b6a99" stroke-width="3" stroke-dasharray="6 4" points="'+B.map((v,i)=>X(i)+','+Y(v)).join(' ')+'"/>';
+ $('chart').innerHTML=svg;
+ let k=A.findIndex((v,i)=>Math.abs(v-B[i])>0.1);
+ const desc=k<0?'Over 40 steps the two runs stay within 0.1 of each other; their largest gap is '+Math.max(...A.map((v,i)=>Math.abs(v-B[i]))).toFixed(4)+'.':'The runs start '+g+' apart and first differ by more than 0.1 at step '+k+'.';
+ $('chartDesc').textContent='Line chart of Run A and Run B over 40 steps with r = '+r+'. '+desc;
+ $('out').className='fb '+(k<0?'ok':'bad');
+ $('out').textContent=(r===3.9?'Turbulent setting: ':'Steady setting: ')+desc+(k<0?' Here small differences die out, and both runs settle to the same level.':' Same rule, nearly the same start, and yet the paths soon look unrelated: sensitivity to initial conditions.');}
+$('run').onclick=run;run();
+const Q=mcq('p1',[
+['A system follows fixed rules with no randomness. What does chaos theory say about predicting it?',['It can always be predicted exactly','It may still be impossible to predict reliably','It must be random after all'],1,'Lorenz showed that an entirely deterministic system, the weather, cannot be reliably predicted from an earlier known state.'],
+['What does “sensitivity to initial conditions” mean?',['Tiny differences at the start can grow into large differences later','Systems are sensitive only when they are first created','Large causes always produce large effects'],0,'This is the butterfly effect: a small starting difference can grow over time.'],
+['If a system is chaotic, what can a manager still do?',['Predict each particular event','Recognize patterns and broad tendencies','Nothing at all'],1,'In complex systems we can recognize patterns and broad tendencies even though particular events cannot be predicted.'],
+['Where does creative, self-organized behavior tend to appear?',['Where change is frozen','Where change is constant and nothing settles','Between order and chaos, at the “edge of chaos”'],2,'Too much chaos keeps a system running to stay in place; too little freezes it. Creative order emerges between the two.'],
+['Which advice for managers follows from chaos theory and systems thinking?',['Look for small, well-placed changes and anticipate ripple effects','Assume cause and effect are always close together','Plan once and never revise'],0,'Small changes can produce big results, and cause and effect are often not close in time and space, so leaders look for leverage and envision ripple effects.']],'s1');
+Q.render();$('c1').onclick=Q.check;$('r1').onclick=Q.reset;
+
+</script>
+</body></html>

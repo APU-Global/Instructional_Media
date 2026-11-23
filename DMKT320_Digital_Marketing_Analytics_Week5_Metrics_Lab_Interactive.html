@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metrics Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}th,td{padding:7px 10px;border-bottom:1px solid #ddd;text-align:left}th{background:#111;color:#fff}td.n{text-align:right;font-variant-numeric:tabular-nums}.tw{overflow-x:auto}label{font-weight:600;display:block;margin-bottom:4px}input[type=number]{font:inherit;width:9em;max-width:100%;padding:6px 8px;border:2px solid #bbb;border-radius:8px}.unit{margin-left:6px;color:var(--muted)}</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Metrics Lab" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">DMKT 320 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Metrics Lab</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Turn raw counts into ratios and KPIs, then find the leakiest step</text></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Digital Metrics</h2>
+<p class="lead"><b>Week 5 objective:</b> Calculate common web and campaign metrics from raw counts and use them to decide what to improve first.</p>
+<div class="card">
+<h3>The formulas</h3>
+<ul class="lead" style="margin:0">
+<li><b>Click-through rate</b> = clicks ÷ impressions</li>
+<li><b>Bounce rate</b> = single-page visits ÷ entry pages</li>
+<li><b>Page views per visit</b> = page views ÷ visits</li>
+<li><b>Conversion rate</b> = conversions ÷ visitors who started</li>
+<li><b>Cost per acquisition (CPA)</b> = ad cost ÷ acquisitions it produced</li></ul>
+</div>
+<div class="card">
+<h3>Trailhead Tea Co.: one month of data</h3>
+<p class="lead">Trailhead Tea is a fictional online tea shop. Its goal is more online orders at a reasonable cost.</p>
+<div class="tw"><table><caption class="lead" style="text-align:left">Monthly counts for Trailhead Tea Co.</caption>
+<thead><tr><th scope="col">Count</th><th scope="col">Value</th></tr></thead><tbody>
+<tr><td>Search ad impressions</td><td class="n">40,000</td></tr>
+<tr><td>Search ad clicks</td><td class="n">1,200</td></tr>
+<tr><td>Search ad cost</td><td class="n">$1,800</td></tr>
+<tr><td>Orders that came from the search ad</td><td class="n">45</td></tr>
+<tr><td>Visits (sessions), each with one entry page</td><td class="n">2,000</td></tr>
+<tr><td>Page views</td><td class="n">5,000</td></tr>
+<tr><td>Single-page visits (bounces)</td><td class="n">900</td></tr>
+<tr><td>Funnel: landed on site</td><td class="n">2,000</td></tr>
+<tr><td>Funnel: viewed a product page</td><td class="n">600</td></tr>
+<tr><td>Funnel: added to cart</td><td class="n">150</td></tr>
+<tr><td>Funnel: completed an order</td><td class="n">60</td></tr>
+</tbody></table></div>
+</div>
+<div class="card">
+<h3>Practice 1: calculate</h3>
+<p class="lead">Enter each answer (percentages as a number, for example 12.5), then select <b>Check my answers</b>.</p>
+<div id="calc" class="grid g2"></div>
+<p style="margin:16px 0 0"><button class="btn" id="checkC">Check my answers</button> <button class="btn ghost" id="resetC">Start over</button></p>
+<p class="fb" id="fbC" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: follow the funnel</h3>
+<p class="lead">Overall, 60 of 2,000 visitors ordered (3 percent). Which step has the lowest step-to-step conversion rate and should be improved first?</p>
+<div class="panel"><div role="group" aria-label="Funnel step" id="steps"></div>
+<p class="fb" id="fbS" aria-live="polite"></p></div>
+</div>
+<div class="card">
+<h3>Practice 3: which payment model?</h3>
+<p class="lead">Match each description to the paid-media payment model.</p>
+<div id="items0" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check0">Check my answers</button> <button class="btn ghost" id="reset0">Start over</button></p>
+<p class="fb" id="fb0" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Counts become useful when you turn them into <b>ratios</b> and tie them to a <b>goal</b>. Read each step of the funnel, not just the overall rate: the step that leaks most is where a better landing page, clearer copy, or a test will pay off first.</div>
+<p class="src">Metric definitions from <i>eMarketing: The Essential Guide to Online Marketing</i> v1.0 (Saylor Academy, 2012), 15.2 How It Works, 15.3 Tracking and Collecting Data, 15.4 Analyzing Data, and 3.4 How to Pay, CC BY-NC-SA 3.0. Trailhead Tea Co. and its figures are fictional.</p>
+</div>
+<script>
+const Q=[['ctr','Click-through rate of the search ad','%',3,'1,200 ÷ 40,000 = 0.03 = 3%.'],
+['bounce','Bounce rate','%',45,'900 single-page visits ÷ 2,000 entry pages = 45%.'],
+['ppv','Page views per visit','',2.5,'5,000 ÷ 2,000 = 2.5 page views per visit.'],
+['conv','Overall conversion rate (landed to ordered)','%',3,'60 ÷ 2,000 = 0.03 = 3%.'],
+['cpa','Cost per acquisition for the search ad (dollars)','$',40,'$1,800 ÷ 45 orders = $40 per order.']];
+const calc=document.getElementById('calc');
+function renderC(){calc.innerHTML=Q.map(q=>`<div class="panel"><label for="in_${q[0]}">${q[1]}</label>${q[2]==='$'?'<span class="unit" aria-hidden="true">$</span>':''}<input type="number" step="any" id="in_${q[0]}" inputmode="decimal">${q[2]==='%'?'<span class="unit">percent</span>':''}<p class="fb" id="f_${q[0]}" aria-live="polite"></p></div>`).join('');}
+document.getElementById('checkC').onclick=()=>{let ok=0,done=0;Q.forEach(q=>{const v=document.getElementById('in_'+q[0]).value.trim(),f=document.getElementById('f_'+q[0]);
+if(v===''){f.textContent='Enter a number.';f.className='fb bad';return}done++;const n=parseFloat(v.replace(/[,$%]/g,''));
+if(Math.abs(n-q[3])<=0.05){ok++;f.textContent='Correct. '+q[4];f.className='fb ok'}else{f.textContent='Not quite. '+q[4];f.className='fb bad'}});
+document.getElementById('fbC').innerHTML=`<span class="score">${ok} of ${Q.length} correct</span>`+(done<Q.length?' Answer every item to finish.':'');};
+document.getElementById('resetC').onclick=()=>{renderC();document.getElementById('fbC').textContent=''};
+const S=[['a','Landed → viewed a product (600 ÷ 2,000)',false],['b','Viewed a product → added to cart (150 ÷ 600)',true],['c','Added to cart → ordered (60 ÷ 150)',false]];
+const steps=document.getElementById('steps'),fbS=document.getElementById('fbS');
+steps.innerHTML=S.map(s=>`<button class="choice" data-v="${s[0]}" aria-pressed="false">${s[1]}</button>`).join('');
+steps.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;steps.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));
+const s=S.find(x=>x[0]===b.dataset.v);const r='The step rates are 30%, 25%, and 40%. ';
+if(s[2]){fbS.textContent='Correct. '+r+'Only one in four product viewers adds tea to the cart, so the product page is the place to test first.';fbS.className='fb ok'}
+else{fbS.textContent='Not quite. '+r+'The product-page-to-cart step (25%) leaks the most.';fbS.className='fb bad'}});
+const A={O:[['cpm','Cost per mille (CPM)'],['cpc','Cost per click (CPC)'],['cpa','Cost per acquisition (CPA)']],label:'Payment model for item',D:[
+['The advertiser pays for every thousand times the ad is shown; common when brand awareness is the goal.','cpm','CPM prices impressions, which suits awareness and exposure. It favors the publisher.'],
+['The advertiser pays only when someone clicks the ad and arrives at the site.','cpc','CPC is the usual model for paid search (pay-per-click) advertising.'],
+['The advertiser pays only when the ad produces the desired action, such as a purchase or sign-up.','cpa','CPA favors the advertiser, who pays only when the advertising meets its goal; it is generally associated with affiliate marketing.']]};
+const box=document.getElementById('items0'),fb0=document.getElementById('fb0');let ans={};const lab=v=>A.O.find(o=>o[0]===v)[1];
+function render(){box.innerHTML='';A.D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="${A.label} ${i+1}">`+A.O.map(o=>`<button class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+`</div><p class="fb" id="f0_${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('f0_'+i).textContent='';});
+document.getElementById('check0').onclick=()=>{let ok=0,done=0;A.D.forEach((d,i)=>{const f=document.getElementById('f0_'+i);if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb0.innerHTML=`<span class="score">${ok} of ${A.D.length} correct</span>`+(done<A.D.length?' Answer every item to finish.':'');};
+document.getElementById('reset0').onclick=()=>{ans={};render();fb0.textContent=''};
+renderC();render();
+</script>
+</body></html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design an Honest Chatbot</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.builder label{display:block;font-weight:600;margin:10px 0 4px}.builder select{font:inherit;width:100%;max-width:100%;padding:8px;border-radius:8px;border:2px solid #bbb;background:#fff}
+.builder select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.stmt{background:#fff;border-left:6px solid var(--red);border-radius:10px;padding:14px 16px;margin-top:14px;font-size:1.05rem}
+.chat{background:#fff;border:1px solid #ddd;border-radius:14px;padding:12px 14px;margin:0 0 10px}.chat .who{font-size:.8rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.choice{text-align:left;white-space:normal;max-width:100%}
+.order{list-style:none}.order li{margin:8px 0}.order select{font:inherit;width:100%;max-width:100%;padding:8px;border-radius:8px;border:2px solid #bbb;background:#fff}.order select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 6 banner: Design an Honest Chatbot" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">DMKT 360 · WEEK 6</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Design an Honest Chatbot</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Disclose, help with simple questions, and hand off to people</text></svg></div>
+<div class="wrap">
+<h2>Week 6 Interactive: Chatbots in Consumer Messaging</h2>
+<p class="lead"><b>Week 6 objective:</b> Design chatbot responses that are honest about being automated and know when to hand a conversation to a person.</p>
+<div class="card">
+<h3>What a chatbot is for</h3>
+<p class="lead" style="margin:0">Website chat answers quick questions right away, at the moment a visitor is deciding, at a much lower cost per contact than a call center. Chatbots can deliver information after hours, when no one is available, using a simple flowchart or machine learning. But customers dislike robotic responses and want to feel heard by a real person, and marketing messages should always be clearly labelled for what they are. A good bot <b>says it is a bot</b>, <b>handles simple questions</b>, and <b>hands off to a person</b> when needed.</p>
+</div>
+<div class="card">
+<h3>Practice 1: write the bot's next line</h3>
+<p class="lead">Maple &amp; Main Home Goods (fictional) has five stores and a website chatbot. For each moment, choose the best reply.</p>
+<div id="items0" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check0">Check my answers</button> <button class="btn ghost" id="reset0">Start over</button></p>
+<p class="fb" id="fb0" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: bot or person?</h3>
+<p class="lead">Decide whether each request is a good job for the chatbot or should go to a person.</p>
+<div id="items1" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check1">Check my answers</button> <button class="btn ghost" id="reset1">Start over</button></p>
+<p class="fb" id="fb1" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Chatbots are tools, not people. Let them <b>say what they are</b>, <b>answer the simple questions fast</b>, and <b>hand off to a person</b> when the conversation needs one.</div>
+<p class="src">Concepts from Stokes, <i>eMarketing: The Essential Guide to Marketing in a Digital World</i> (LibreTexts), Sections 14.6 and 16.11, CC BY-NC-SA 3.0; <i>eMarketing: The Essential Guide to Online Marketing</i> (Saylor Academy, 2012), Sections 17.2 and 17.5, CC BY-NC-SA 3.0; and the DMKT 360 Discussion 6 prompt. Maple &amp; Main Home Goods and all messages are fictional.</p>
+</div>
+<script>
+const ACTS=[{"label": "Reply option for moment", "D": [{"q": "A visitor opens the chat window at 9 p.m. What should the first message say?", "opts": [["a", "\"Hi! I'm Jamie from the store team. How can I help?\""], ["b", "\"Hi, I'm Maple & Main's automated assistant. I can help with store hours and locations, or connect you with our team.\""], ["c", "\"Type your question.\""]], "a": "b", "why": "The bot identifies itself and says what it can do. A bot that presents itself as a person is what angered the CEO in Discussion 6."}, {"q": "The visitor asks, 'Which store is closest to me?'", "opts": [["a", "\"We have five stores. Please check our website.\""], ["b", "\"Enter your ZIP code and I'll show the nearest store and today's hours.\""], ["c", "\"Great question! Let me tell you about this week's sale first.\""]], "a": "b", "why": "Chat is valuable because it answers a quick question immediately. Store locations and hours are a simple, well-defined job for a bot."}, {"q": "The visitor types, 'Wait, am I talking to a real person?'", "opts": [["a", "\"Of course! How else can I help?\""], ["b", "\"Why do you ask?\""], ["c", "\"No, I'm an automated assistant. Would you like a team member to contact you?\""]], "a": "c", "why": "Answer honestly and offer a person. Hiding what a message really is decreases authenticity."}, {"q": "The visitor says a delivered sofa arrived damaged and they are upset.", "opts": [["a", "\"Here is a link to our return policy.\""], ["b", "\"I'm sorry. This needs our team. It's after hours, so leave your phone or email and a team member will contact you tomorrow.\""], ["c", "\"As a fellow shopper, I totally understand how you feel.\""]], "a": "b", "why": "An upset customer wants to be heard by a real person. The bot's job is to route the problem honestly, not to pretend to be human."}, {"q": "The team notices that many visitors ask the bot about weekend hours.", "opts": [["a", "\"Add weekend hours to the homepage and store pages.\""], ["b", "\"Make the bot sound more human.\""], ["c", "\"Nothing; the bot is answering.\""]], "a": "a", "why": "Questions customers ask again and again can be used to update the website, sharing what one channel learns with the rest of the business."}]}, {"label": "Who should handle request", "O": [["bot", "Good job for the bot"], ["human", "Hand to a person"]], "D": [{"q": "What time does the downtown store close today?", "a": "bot", "why": "A quick factual question with one right answer is a simple job a bot can handle at any hour."}, {"q": "A shopper is comparing two expensive sofas and is ready to decide.", "a": "human", "why": "Chat with a person is especially effective for complicated or expensive purchases: at the point of decision, the business can offer personal support and reassurance."}, {"q": "A customer complains that a delivery driver was rude.", "a": "human", "why": "Customers want to feel heard and acknowledged by a real person, especially when they are unhappy."}, {"q": "Where is my order? (The customer enters an order number.)", "a": "bot", "why": "Order progress updates can be automated, just as automated emails and texts keep customers informed of a transaction."}, {"q": "At 2 a.m., a visitor asks how many days they have to return an item.", "a": "bot", "why": "Bots can provide information after hours, when live agents are unavailable."}, {"q": "A customer types, 'I want to talk to someone.'", "a": "human", "why": "A bot is a tool for delivering messages, never a replacement for real human interaction. Honor the request."}]}];
+
+ACTS.forEach((A,k)=>{if(A.order)return;const box=document.getElementById('items'+k),fb=document.getElementById('fb'+k);let ans={};
+const opts=d=>d.opts||A.O;const lab=(d,v)=>opts(d).find(o=>o[0]===v)[1];
+function render(){box.innerHTML='';A.D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d.q}</p><div role="group" aria-label="${A.label} ${i+1}">`+
+opts(d).map(o=>`<button class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+`</div><p class="fb" id="f${k}_${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('f'+k+'_'+i).textContent='';});
+document.getElementById('check'+k).onclick=()=>{let ok=0,done=0;A.D.forEach((d,i)=>{const f=document.getElementById('f'+k+'_'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d.a){ok++;f.textContent='Correct. '+d.why;f.className='fb ok'}else{f.textContent='Not quite. Best answer: '+lab(d,d.a)+'. '+d.why;f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${A.D.length} correct</span>`+(done<A.D.length?' Answer every item to finish.':'');};
+document.getElementById('reset'+k).onclick=()=>{ans={};render();fb.textContent=''};
+render();});
+ACTS.forEach((A,k)=>{if(!A.order)return;const box=document.getElementById('items'+k),fb=document.getElementById('fb'+k);
+const shuffled=A.order.map((s,i)=>[i,s]).sort((a,b)=>A.shuffle.indexOf(a[0])-A.shuffle.indexOf(b[0]));
+function render(){box.innerHTML='<ol class="order" style="padding-left:22px;margin:0">'+A.order.map((s,i)=>`<li><label for="o${k}_${i}"><b>Step ${i+1}</b></label><select id="o${k}_${i}"><option value="">Choose a message</option>`+
+shuffled.map(x=>`<option value="${x[0]}">${x[1][0]}</option>`).join('')+`</select><p class="fb" id="f${k}_${i}" aria-live="polite"></p></li>`).join('')+'</ol>';}
+document.getElementById('check'+k).onclick=()=>{let ok=0,done=0;A.order.forEach((s,i)=>{const v=document.getElementById(`o${k}_${i}`).value,f=document.getElementById('f'+k+'_'+i);
+if(v===''){f.textContent='Choose a message for this step.';f.className='fb bad';return}done++;
+if(+v===i){ok++;f.textContent='Correct. '+s[1];f.className='fb ok'}else{f.textContent='Not quite. Step '+(i+1)+' should be: '+s[0]+' '+s[1];f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${A.order.length} in the right place</span>`+(done<A.order.length?' Fill every step to finish.':'');};
+document.getElementById('reset'+k).onclick=()=>{render();fb.textContent=''};
+render();});
+
+</script>
+</body></html>

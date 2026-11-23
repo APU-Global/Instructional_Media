@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serial Position Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600;margin:4px 6px 4px 0}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+textarea{width:100%;min-height:110px;font:inherit;padding:10px;border:2px solid #cfcfcf;border-radius:10px;resize:vertical}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Serial Position Lab. See the primacy and recency effects in your own memory." xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PSYC 330 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Serial Position Lab</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">See the primacy and recency effects in your own memory</text><g transform="translate(770,60)" aria-hidden="true"><rect x="0" y="100" width="18" height="40" rx="3" fill="#d34147"/><rect x="26" y="112" width="18" height="28" rx="3" fill="#ffb3b6"/><rect x="52" y="124" width="18" height="16" rx="3" fill="#ffb3b6"/><rect x="78" y="126" width="18" height="14" rx="3" fill="#ffb3b6"/><rect x="104" y="118" width="18" height="22" rx="3" fill="#ffb3b6"/><rect x="130" y="92" width="18" height="48" rx="3" fill="#d34147"/><path d="M9 92 Q70 150 139 84" stroke="#fff" stroke-width="4" fill="none"/></g></svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: The Serial Position Effect</h2>
+<p class="lead"><b>Week 3 objective:</b> Explain why we remember the first and last items in a series best, and choose strategies that protect the middle.</p>
+<div class="card">
+<h3>Step 1: Study a list</h3>
+<p class="lead">You will see 12 words, one at a time. Read each word once, then select <b>Next word</b>. Do not go back or write anything down.</p>
+<div class="panel" style="text-align:center">
+<p id="pos" style="margin:0;color:var(--muted);font-weight:600">Ready when you are.</p>
+<p id="word" aria-live="polite" style="font-size:2.2rem;font-weight:800;margin:8px 0;min-height:1.4em"></p>
+<button class="btn" id="next" type="button">Start the list</button>
+</div>
+</div>
+<div class="card" id="recallCard" hidden>
+<h3>Step 2: Recall</h3>
+<p class="lead">Type every word you remember, in any order, separated by spaces or commas. Then select <b>Score my recall</b>.</p>
+<label for="recall" style="font-weight:600">Words I remember</label>
+<textarea id="recall"></textarea>
+<p><button class="btn" id="score" type="button">Score my recall</button> <button class="btn ghost" id="again" type="button">Try again with a new order</button></p>
+<p class="fb" id="rfb" aria-live="polite"></p>
+<div id="chart"></div>
+</div>
+<div class="card">
+<h3>Step 3: Apply it</h3>
+<p class="lead">Each situation is fictional. Choose the best answer, then select <b>Check my answers</b>.</p>
+<div id="quiz"></div>
+<p><button class="btn" id="check" type="button">Check my answers</button> <button class="btn ghost" id="reset" type="button">Start over</button> <span class="score" id="qScore" aria-live="polite"></span></p>
+</div>
+<div class="take"><b>Takeaway:</b> The first items in a list get extra rehearsal and move into long-term memory (<b>primacy</b>); the last items are still in short-term memory when you recall (<b>recency</b>). The middle gets the least rehearsal, so give it extra attention: space your study, overlearn, vary the order, organize items into categories, and relate them to yourself.</div>
+<p class="src">Concepts from <i>Introduction to Psychology</i> v1.0 (Saylor Academy), Sections 8.1 "Memories as Types and Stages" and 8.2 "How We Remember: Cues to Improving Memory." Word list and scenarios are fictional. Your own recall results vary from trial to trial; the curve is clearest when many people's results are averaged.</p>
+</div>
+<script>
+const BASE=['lamp','river','pencil','garden','ticket','candle','mirror','basket','ladder','jacket','kettle','button','window','carrot','saddle','violin'];
+let list=[],i=-1;const $=id=>document.getElementById(id);
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]];}return a;}
+function start(){list=shuffle(BASE).slice(0,12);i=-1;$('word').textContent='';$('pos').textContent='Ready when you are.';$('next').textContent='Start the list';$('next').hidden=false;$('recallCard').hidden=true;$('recall').value='';$('rfb').textContent='';$('chart').innerHTML='';}
+$('next').onclick=()=>{i++;if(i<list.length){$('word').textContent=list[i];$('pos').textContent='Word '+(i+1)+' of '+list.length;$('next').textContent=i===list.length-1?'Finish':'Next word';}
+ else{$('word').textContent='';$('pos').textContent='List finished. Go to Step 2.';$('next').hidden=true;$('recallCard').hidden=false;$('recall').focus();}};
+$('score').onclick=()=>{const said=new Set(($('recall').value.toLowerCase().match(/[a-z]+/g)||[]));
+ if(!said.size){$('rfb').className='fb bad';$('rfb').textContent='Type at least one word first.';return;}
+ const hit=list.map(w=>said.has(w));const g=[hit.slice(0,4),hit.slice(4,8),hit.slice(8)].map(x=>x.filter(Boolean).length);
+ const tot=hit.filter(Boolean).length;
+ let msg='You recalled '+tot+' of 12 words: '+g[0]+' of the first 4, '+g[1]+' of the middle 4, and '+g[2]+' of the last 4. ';
+ msg+=(g[1]<g[0]&&g[1]<g[2])?'That is the serial position curve: the middle words were the hardest to recall.':(g[1]<Math.max(g[0],g[2])?'Your middle words trailed at least one end of the list, as the serial position effect predicts.':'This time your middle words held up well. Individual trials vary; the curve appears most clearly when results are averaged over many people or trials.');
+ $('rfb').className='fb ok';$('rfb').textContent=msg;
+ $('chart').innerHTML='<table style="border-collapse:collapse;width:100%;margin-top:10px;background:#fff;border-radius:10px"><caption style="text-align:left;font-weight:700;padding:4px 0">Your recall by list position</caption><thead><tr><th scope="col" style="text-align:left;padding:4px 8px">Position</th><th scope="col" style="text-align:left;padding:4px 8px">Word</th><th scope="col" style="text-align:left;padding:4px 8px">Recalled?</th></tr></thead><tbody>'+
+ list.map((w,k)=>'<tr style="border-top:1px solid #eee"><td style="padding:4px 8px">'+(k+1)+(k<4?' (first)':k<8?' (middle)':' (last)')+'</td><td style="padding:4px 8px">'+w+'</td><td style="padding:4px 8px;font-weight:700;color:'+(hit[k]?'var(--green)':'var(--dark)')+'">'+(hit[k]?'Yes':'No')+'</td></tr>').join('')+'</tbody></table>';};
+$('again').onclick=()=>{start();$('next').focus();};
+start();
+
+function shuf(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]];}return a;}
+function buildQuiz(Q,boxId,scoreId,checkId,resetId){
+ const box=document.getElementById(boxId),sc=document.getElementById(scoreId);let ans={};
+ function render(){box.innerHTML='';ans={};Q.forEach((q,i)=>{const p=document.createElement('div');p.className='panel';p.style.margin='10px 0';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+boxId+'q'+i+'"><b>'+(i+1)+'.</b> '+q[0]+'</p><div role="group" aria-labelledby="'+boxId+'q'+i+'">'+
+  shuf(q[1].map((o,j)=>[o,j])).map(([o,j])=>'<button type="button" class="choice" data-i="'+i+'" data-j="'+j+'" aria-pressed="false">'+o+'</button>').join('')+
+  '</div><p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});sc.textContent='0 of '+Q.length+' checked';}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=+b.dataset.j;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(boxId+'f'+i).textContent='';});
+ document.getElementById(checkId).onclick=()=>{let ok=0,done=0;Q.forEach((q,i)=>{const f=document.getElementById(boxId+'f'+i);
+  if(ans[i]===undefined){f.className='fb bad';f.textContent='Choose an answer.';return;}done++;
+  if(ans[i]===q[2]){ok++;f.className='fb ok';f.textContent='Correct. '+q[3];}else{f.className='fb bad';f.textContent='Not quite. The best answer is "'+q[1][q[2]]+'". '+q[3];}});
+  sc.textContent=ok+' of '+Q.length+' correct'+(done<Q.length?' (answer every item to finish)':'');};
+ document.getElementById(resetId).onclick=render;render();}
+
+const Q=[
+['A radio station plays five commercials in a row. Listeners later remember the first and last commercials best. What explains this pattern?',['Primacy and recency effects','Retroactive interference only','Functional fixedness'],0,'Items at the start and end of a series are recalled better than items in the middle.'],
+['Why are the <i>last</i> items on a list often remembered when you are tested right away?',['They are still in short-term memory, kept active by rehearsal','They were rehearsed the longest','They are always the most interesting'],0,'The recency effect is explained by maintenance rehearsal in short-term memory.'],
+['Why are the <i>first</i> items on a list remembered well?',['We start rehearsing them right away, which helps move them into long-term memory','They stay in sensory memory longer','They are never interfered with'],0,'The primacy effect reflects extra rehearsal that helps early items reach long-term memory.'],
+['Jordan always studies chapters 1 to 10 in the same order in one late-night session, and the middle chapters keep slipping. What change does research support?',['Spread study over several days and start with a different chapter each time','Study all ten chapters twice in one night','Only reread chapter 1'],0,'The spacing effect favors distributed practice, and varying the order gives middle material a turn at the start.'],
+['A counselor in training hears a client list six concerns at intake and worries about missing the middle ones. Which strategy fits the memory research best?',['Group the concerns into categories and read them back to the client','Rely on remembering the first and last concerns','Ask the client to repeat only the last concern'],0,'Organizing items into categories helps recall through spreading activation, and reading them back is extra rehearsal.'],
+['Tess feels sure she has mastered her flashcards, so she stops reviewing. What does Ebbinghaus’s work on overlearning suggest?',['Keep reviewing even after you think you know the material','Stop as soon as you get every card right once','Wait until the night before the exam to review'],0,'Overlearning, continuing to practice after apparent mastery, helps encoding.'],
+['Which study habit uses the self-reference effect?',['Relating each new term to an experience from your own life','Copying definitions word for word','Reading the list in alphabetical order'],0,'Information processed in relation to the self is recalled better.']];
+buildQuiz(Q,'quiz','qScore','check','reset');
+</script>
+</body></html>
