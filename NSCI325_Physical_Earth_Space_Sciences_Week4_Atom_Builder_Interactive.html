@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build an Atom</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.step{display:flex;align-items:center;gap:8px;margin:6px 0}
+.step .lbl{flex:1;font-weight:700}
+.step .v{min-width:2.2em;text-align:center;font-size:1.3rem;font-weight:800}
+.pm{width:40px;height:40px;border-radius:10px;border:2px solid #bbb;background:#fff;font-size:1.3rem;font-weight:800;line-height:1}
+.big{font-size:2rem;font-weight:800;line-height:1.1}
+.facts{margin:8px 0 0;padding-left:18px}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: Build an Atom" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">NSCI 325 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Build an Atom</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Protons, neutrons, electrons, and the evidence for the nucleus</text>
+<g aria-hidden="true" fill="none" stroke="#ffb3b6" stroke-width="4"><ellipse cx="850" cy="125" rx="80" ry="28"/><ellipse cx="850" cy="125" rx="80" ry="28" transform="rotate(60 850 125)"/><ellipse cx="850" cy="125" rx="80" ry="28" transform="rotate(-60 850 125)"/><circle cx="850" cy="125" r="10" fill="#d34147" stroke="none"/></g></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Build an Atom</h2>
+<p class="lead"><b>Week 4 objective (Discussion 4):</b> Describe the parts of an atom, how they determine an element, its mass number, and its charge, and the experiments that showed atoms are real.</p>
+
+<div class="card">
+<h3>1. Atom builder</h3>
+<p class="lead">Add or remove particles. The number of <b>protons</b> decides the element (its atomic number). Protons plus neutrons give the <b>mass number</b>. If electrons do not equal protons, the atom is an <b>ion</b>.</p>
+<div class="grid g2">
+ <div class="panel">
+  <div class="step"><span class="lbl" style="color:var(--red)">Protons (+)</span><button class="pm" data-k="p" data-d="-1" aria-label="Remove a proton">−</button><span class="v" id="vp">1</span><button class="pm" data-k="p" data-d="1" aria-label="Add a proton">+</button></div>
+  <div class="step"><span class="lbl" style="color:#555">Neutrons (0)</span><button class="pm" data-k="n" data-d="-1" aria-label="Remove a neutron">−</button><span class="v" id="vn">0</span><button class="pm" data-k="n" data-d="1" aria-label="Add a neutron">+</button></div>
+  <div class="step"><span class="lbl" style="color:var(--blue)">Electrons (−)</span><button class="pm" data-k="e" data-d="-1" aria-label="Remove an electron">−</button><span class="v" id="ve">1</span><button class="pm" data-k="e" data-d="1" aria-label="Add an electron">+</button></div>
+  <svg id="pic" viewBox="0 0 200 200" role="img" aria-label="Diagram of the atom" style="width:100%;max-width:220px;display:block;margin:8px auto 0"></svg>
+ </div>
+ <div class="panel" aria-live="polite" id="readout"></div>
+</div>
+</div>
+
+<div class="card">
+<h3>2. Build-it challenges</h3>
+<p class="lead">Build each atom or ion above, then select <b>Check</b>.</p>
+<div id="chal" class="grid"></div>
+<p class="fb" id="fbChal" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>3. Reading the evidence</h3>
+<p class="lead">Choose the answer the experiments support, then select <b>Check my answers</b>.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> No one sees an atom with the naked eye, yet many independent lines of evidence (whole-number combining ratios, Thomson's charged cathode rays, and Rutherford's bouncing alpha particles) all point to the same model: a tiny, dense, positive nucleus of protons and neutrons with electrons outside it.</div>
+<p class="src">Facts from Ball, <i>Introductory Chemistry</i> v1.0 (Saylor Academy, 2012), Section 3.1 "Atomic Theory"; Averill &amp; Eldredge, <i>General Chemistry: Principles, Patterns, and Applications</i> v1.0 (Saylor Academy, 2012), Section 1.5 "The Atom"; and Lumen Learning, <i>Earth Science</i>, "Atoms to Molecules." Element names and symbols from Ball, Table 3.2 and Figure 3.2.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const EL=['','Hydrogen (H)','Helium (He)','Lithium (Li)','Beryllium (Be)','Boron (B)','Carbon (C)','Nitrogen (N)','Oxygen (O)','Fluorine (F)','Neon (Ne)'];
+const st={p:1,n:0,e:1},MAX={p:10,n:12,e:12};
+document.querySelectorAll('.pm').forEach(b=>b.onclick=()=>{const k=b.dataset.k,d=+b.dataset.d;const lo=k==='p'?1:0;st[k]=Math.max(lo,Math.min(MAX[k],st[k]+d));draw();});
+function draw(){$('vp').textContent=st.p;$('vn').textContent=st.n;$('ve').textContent=st.e;
+ const ch=st.p-st.e,mass=st.p+st.n,name=EL[st.p];
+ const kind=ch===0?'Neutral atom (protons = electrons)':(ch>0?'Positive ion (cation): it has lost '+ch+' electron'+(ch>1?'s':''):'Negative ion (anion): it has gained '+(-ch)+' electron'+(ch<-1?'s':''));
+ $('readout').innerHTML='<div style="color:var(--muted)">Element</div><div class="big">'+name+'</div>'+
+ '<ul class="facts"><li><b>Atomic number:</b> '+st.p+' (number of protons)</li><li><b>Mass number:</b> '+mass+' ('+st.p+' protons + '+st.n+' neutrons)</li><li><b>Charge:</b> '+(ch>0?'+'+ch:(ch<0?'−'+(-ch):'0'))+'</li><li>'+kind+'</li></ul>';
+ const s=$('pic');let h='<circle cx="100" cy="100" r="70" fill="none" stroke="#bbb" stroke-dasharray="4 4"/><circle cx="100" cy="100" r="90" fill="none" stroke="#ddd" stroke-dasharray="4 4"/>';
+ const nuc=[];for(let i=0;i<st.p;i++)nuc.push('#d34147');for(let i=0;i<st.n;i++)nuc.push('#777');
+ nuc.forEach((c,i)=>{const a=i*2.4,r=3.2*Math.sqrt(i);h+='<circle cx="'+(100+r*Math.cos(a)).toFixed(1)+'" cy="'+(100+r*Math.sin(a)).toFixed(1)+'" r="5" fill="'+c+'"/>';});
+ for(let i=0;i<st.e;i++){const ring=i<2?70:90,cnt=i<2?Math.min(st.e,2):st.e-2,j=i<2?i:i-2,a=2*Math.PI*j/cnt-Math.PI/2;h+='<circle cx="'+(100+ring*Math.cos(a)).toFixed(1)+'" cy="'+(100+ring*Math.sin(a)).toFixed(1)+'" r="5" fill="#2b6a99"/>';}
+ s.innerHTML=h;s.setAttribute('aria-label','Diagram: '+st.p+' protons and '+st.n+' neutrons in the nucleus, '+st.e+' electrons outside it.');}
+draw();
+
+const C=[
+['Carbon-12: the most common carbon atom (6 protons, 6 neutrons), neutral.',s=>s.p===6&&s.n===6&&s.e===6,'Carbon has atomic number 6. Mass number 6 + 6 = 12, and a neutral atom has as many electrons as protons.'],
+['Deuterium: the rare hydrogen isotope with one proton and one neutron, neutral.',s=>s.p===1&&s.n===1&&s.e===1,'Isotopes of an element have the same number of protons but different numbers of neutrons. Deuterium has mass number 2.'],
+['A lithium ion with a +1 charge (lithium has 3 protons; use 4 neutrons).',s=>s.p===3&&s.n===4&&s.e===2,'Losing one electron leaves 3 protons and 2 electrons: a cation with a +1 charge.'],
+['An oxygen ion that has gained two electrons (8 protons, 8 neutrons).',s=>s.p===8&&s.n===8&&s.e===10,'Gaining two electrons gives 10 electrons and 8 protons: an anion with a −2 charge.']];
+C.forEach((c,i)=>{const p=document.createElement('div');p.className='panel';p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+c[0]+'</p><button class="btn" data-c="'+i+'">Check</button><p class="fb" id="c'+i+'" aria-live="polite"></p>';$('chal').appendChild(p);});
+const cdone=C.map(()=>false);
+$('chal').addEventListener('click',e=>{const b=e.target.closest('button[data-c]');if(!b)return;const i=+b.dataset.c,f=$('c'+i);
+ if(C[i][1](st)){f.className='fb ok';f.textContent='Correct. '+C[i][2];cdone[i]=true;}else{f.className='fb bad';f.textContent='Not yet. Your build has '+st.p+' protons, '+st.n+' neutrons, and '+st.e+' electrons. Adjust it and check again.';}
+ const n=cdone.filter(Boolean).length;$('fbChal').innerHTML='<span class="score">'+n+' of '+C.length+' built</span>';});
+
+const D=[
+['Thomson found that cathode rays bent toward the positive plate in an electric field. What did that show?',['The rays were negatively charged particles.','The rays had no charge.','The rays were made of protons.'],0,'Opposite charges attract, so particles bending toward the positive plate carry a negative charge. These particles are electrons.'],
+['Thomson\'s mass-to-charge ratio was the same no matter which metal or gas he used. Why did this matter?',['It proved atoms cannot be divided.','It suggested electrons are parts of all atoms.','It showed electrons are heavier than protons.'],1,'The same particles came from every material, which suggested electrons are fundamental components of all atoms, so atoms are not the ultimate form of matter.'],
+['If Thomson\'s "plum pudding" model were correct, what should Rutherford\'s alpha particles have done at the gold foil?',['Passed essentially straight through.','Bounced straight back every time.','Turned into gold atoms.'],0,'With mass and positive charge spread evenly, the alpha particles should have crashed through like cannonballs through a wooden house.'],
+['A small fraction of the alpha particles bounced off at large angles, and some came straight back. What did Rutherford conclude?',['Electrons are spread throughout a positive sphere.','An atom\'s mass and positive charge are packed into a tiny, dense nucleus.','Gold atoms are hollow and empty of charge.'],1,'Only a tiny, massive, positive nucleus could deflect some alpha particles so sharply while letting most pass through.'],
+['Which statement best answers "Does it make a difference to science whether atoms are real?"',['No, because atoms cannot be seen.','Yes: the modern atomic theory is the basis of chemistry and explains how elements combine in whole-number ratios.','Only for physics, not chemistry.'],1,'Dalton\'s atomic theory (1808) underlies chemistry. It explains why atoms combine in whole-number ratios to form compounds such as water (two hydrogen atoms and one oxygen atom).']];
+const box=$('items');let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px" id="q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="q'+i+'">'+
+ d[1].map((o,k)=>'<button class="choice" data-i="'+i+'" data-v="'+k+'" aria-pressed="false">'+o+'</button>').join('<br>')+'</div><p class="fb" id="f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=+b.dataset.v;box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+i).textContent='';});
+$('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$('f'+i);if(ans[i]===undefined){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+ if(ans[i]===d[2]){ok++;f.textContent='Correct. '+d[3];f.className='fb ok'}else{f.textContent='Not quite. '+d[3];f.className='fb bad'}});
+ $('fb').innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every question to finish.':'');};
+$('reset').onclick=()=>{ans={};render();$('fb').textContent=''};render();
+</script>
+</body></html>

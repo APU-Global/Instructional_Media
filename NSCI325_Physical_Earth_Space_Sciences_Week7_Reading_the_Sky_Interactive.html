@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading the Sky</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true]{border-color:var(--red);background:#faf5f5}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 7 banner: Reading the Sky" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">NSCI 325 · WEEK 7</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Reading the Sky</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Air masses, fronts, the westerlies, and the tools of a forecast</text>
+<g aria-hidden="true" fill="none" stroke="#ffb3b6" stroke-width="5" stroke-linecap="round"><path d="M760 120 h150 M760 145 h120 M790 95 h100"/><path d="M905 110 l14 10 l-14 10" /></g></svg></div>
+<div class="wrap">
+<h2>Week 7 Interactive: Weather Patterns</h2>
+<p class="lead"><b>Week 7 objective (Discussion 7):</b> Explain why the weather to your west can help predict your weather, recognize the signs of an approaching front, and describe how forecasting has improved.</p>
+
+<div class="card">
+<h3>1. Know your air masses</h3>
+<p class="lead">An air mass takes on the temperature and humidity of its source region. Select a card.</p>
+<div class="grid g4" id="am"></div>
+<div class="panel" id="amDetail" style="margin-top:12px" aria-live="polite">Select an air mass card.</div>
+</div>
+
+<div class="card">
+<h3>2. Which front is coming?</h3>
+<p class="lead">Each forecast diary is fictional. Read the observations and choose the front, then select <b>Check my answers</b>.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>3. Will the weather to the west reach you?</h3>
+<p class="lead">Choose the best answer, then select <b>Check</b> under each question.</p>
+<div id="west" class="grid"></div>
+<p class="fb" id="fbW" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> In the middle latitudes the westerlies carry air masses and fronts from west to east, so the weather to your west is a useful clue. Fronts can stall, and weather is chaotic, which is why forecasters combine satellites, radar, radiosondes, weather stations, and computer models.</div>
+<p class="src">Facts from Lumen Learning, <i>Physical Geography</i> (R. Adam Dastrup, Open Geography Education): "Global Atmospheric Circulations," "The Polar Front and Jet Streams," "Air Masses," "Weather Front," and "Collecting Weather Data." Diaries and places are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const AM=[['mT','Maritime tropical','#c98a1b','Moist and warm. "Maritime" means it formed over water; "tropical" means a warm source region.'],['cT','Continental tropical','#a8353a','Dry and warm. "Continental" means it formed over land.'],['mP','Maritime polar','#2b6a99','Moist and cold.'],['cP','Continental polar','#5b4b8a','Dry and cold.']];
+AM.forEach(a=>{const b=document.createElement('button');b.className='panel';b.style.borderTop='6px solid '+a[2];b.setAttribute('aria-pressed','false');b.innerHTML='<div class="kicker" style="color:'+a[2]+'">'+a[0]+'</div><b>'+a[1]+'</b>';
+ b.onclick=()=>{document.querySelectorAll('#am button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('amDetail').innerHTML='<b style="color:'+a[2]+'">'+a[1]+' ('+a[0]+')</b><p style="margin:6px 0 0">'+a[3]+' When an air mass moves over a new region, it shares its temperature and humidity with that region. Storms arise when the air mass and the ground below differ, for example cold air over warm ground.</p>';};$('am').appendChild(b);});
+
+const O=[['cold','Cold front'],['warm','Warm front'],['stat','Stationary front'],['occl','Occluded front']];
+const D=[
+['Monday in Cedar Falls: warm, humid air. Tuesday afternoon: a line of thunderstorms with gusty winds passes through. Wednesday: cooler, drier, and mostly clear.','cold','At a cold front, denser cold air pushes the warm air up, bringing a line of showers or thunderstorms. Behind it the drier cold air mass ends the rain.'],
+['A winter day in Millbrook: high, thin cirrus clouds appear. Over the next day the clouds thicken and lower, the sky turns gray, snow begins, and later turns to sleet and freezing rain as temperatures rise.','warm','A warm air mass slides over cold air. The change shows up long before the front arrives, starting with high cirrus clouds and ending with rising temperatures.'],
+['A front reaches the mountains near Ridgeview and stops moving. Days of rain, drizzle, and fog follow, and winds blow along the front in opposite directions.','stat','A front can become stationary when a barrier such as a mountain range stops the air masses. It may bring days of rain, drizzle, and fog.'],
+['Near a strong low-pressure system, a fast cold front catches up to a warm front. Observers report fierce precipitation and shifting winds.','occl','An occluded front forms when a cold front catches up to a warm front, usually around a low. Weather is especially fierce at the occlusion.']];
+const box=$('items');let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px" id="d'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="d'+i+'">'+O.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+'</div><p class="fb" id="f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+i).textContent='';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+$('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$('f'+i);if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+ if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+ $('fb').innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every diary to finish.':'');};
+$('reset').onclick=()=>{ans={};render();$('fb').textContent=''};render();
+
+const W=[
+['In most of the United States, from which direction do weather systems usually arrive?',['From the west, carried by the westerlies','From the east, carried by the trade winds','Straight down from the North Pole'],0,'In the middle latitudes the Ferrel cell produces the westerlies, which blow from the west. Wind belts are named for the direction they come from.'],
+['Why does a flight from San Francisco to New York take less time than the return trip?',['The westerlies give the eastbound plane a tailwind.','New York is closer to the equator.','Planes fly higher going east.'],0,'The same west-to-east flow that moves weather systems also pushes eastbound flights along.'],
+['Your barometer has been falling all morning. What should you expect?',['A low-pressure system and likely storm clouds','A high-pressure system and clear skies','No change'],0,'Falling pressure signals an approaching low and likely storms; rising pressure signals a high and clearer skies.'],
+['When might the weather to your west be a poor predictor of yours?',['When a front stalls against a mountain range','Never; western weather always arrives unchanged','Only in summer'],0,'Fronts can become stationary at a barrier, and air masses change as they cross new ground. Weather is also a complex, chaotic system.'],
+['According to the World Meteorological Organization, how has forecasting improved?',['A 5-day forecast today is as reliable as a 2-day forecast was 20 years ago.','Forecasts are now always correct.','Forecasts no longer use computers.'],0,'Better data (satellites, buoys, aircraft, ships, land stations, radiosondes, radar) and powerful computer models have improved forecasts, though they can still be wrong.']];
+const wans={};let wscore=0;const wdone=W.map(()=>false);
+W.forEach((q,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px" id="w'+i+'"><b>'+(i+1)+'.</b> '+q[0]+'</p><div role="group" aria-labelledby="w'+i+'">'+q[1].map((o,k)=>'<button class="choice" data-w="'+i+'" data-v="'+k+'" aria-pressed="false">'+o+'</button>').join('<br>')+'</div><button class="btn" data-cw="'+i+'" style="margin-top:8px">Check</button><p class="fb" id="wf'+i+'" aria-live="polite"></p>';$('west').appendChild(p);});
+$('west').addEventListener('click',e=>{const b=e.target.closest('.choice');if(b){const i=b.dataset.w;wans[i]=+b.dataset.v;$('west').querySelectorAll('.choice[data-w="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('wf'+i).textContent='';return;}
+ const c=e.target.closest('button[data-cw]');if(!c)return;const i=+c.dataset.cw,f=$('wf'+i);
+ if(wans[i]===undefined){f.className='fb bad';f.textContent='Choose an answer.';return;}
+ if(wans[i]===W[i][2]){f.className='fb ok';f.textContent='Correct. '+W[i][3];if(!wdone[i]){wdone[i]=true;wscore++;}}else{f.className='fb bad';f.textContent='Not quite. Try again.';}
+ $('fbW').innerHTML='<span class="score">'+wscore+' of '+W.length+' correct</span>';});
+</script>
+</body></html>

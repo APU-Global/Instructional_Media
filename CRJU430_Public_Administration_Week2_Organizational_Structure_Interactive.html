@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnose the Org Chart</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+label{font-weight:600;display:block;margin-bottom:4px}
+input[type=number]{font:inherit;width:100%;max-width:220px;padding:7px 10px;border:2px solid #bbb;border-radius:10px}
+.calc{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));align-items:end}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Diagnose the Org Chart" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">CRJU 430 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Diagnose the Org Chart</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Sort the work and read the structure behind it</text>
+<g transform="translate(790,45)" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="50" y="10" width="60" height="38" rx="6" stroke="#fff" stroke-width="7"/><rect x="0" y="110" width="60" height="38" rx="6" stroke="#fff" stroke-width="7"/><rect x="100" y="110" width="60" height="38" rx="6" stroke="#fff" stroke-width="7"/><path d="M80 48V80M30 80H130M30 80V110M130 80V110" stroke="#d34147" stroke-width="8"/></g></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Diagnose the Org Chart</h2>
+<p class="lead"><b>Week 2 objective:</b> Classify criminal justice work into line, support, and auxiliary functions, and recognize the structural choices (centralization, formalization, levels, departmentalization) that shape how an agency communicates.</p>
+<div class="card">
+<h3>Four building blocks of structure</h3>
+<p class="lead">Structure specifies who reports to whom and sets formal communication channels. Select each building block.</p>
+<div class="grid" id="ex" role="group" aria-label="Building blocks of organizational structure" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))"></div>
+<div class="panel" id="exd" style="margin-top:12px" aria-live="polite">Select a card to see the details.</div>
+</div><div class="card">
+<h3>Practice 1: Line, support, or auxiliary?</h3>
+<p class="lead">McKee groups police work into three categories. Choose the category for each task, then select <b>Check my answers</b>.</p>
+<div id="aitems" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="acheck">Check my answers</button> <button type="button" class="btn ghost" id="areset">Start over</button></p>
+<p class="fb" id="afb" aria-live="polite"></p>
+</div><div class="card">
+<h3>Practice 2: Read the structure</h3>
+<p class="lead">Each agency is fictional. Choose the structural feature each description shows most clearly.</p>
+<div id="bitems" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="bcheck">Check my answers</button> <button type="button" class="btn ghost" id="breset">Start over</button></p>
+<p class="fb" id="bfb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Before redrawing a chart, name the work: <b>line operations</b> serve the public, <b>administrative support</b> keeps the agency running, and <b>auxiliary services</b> support the line. Then look at <b>centralization, formalization, levels, and departmentalization</b>: these choices decide who talks to whom, and where communication gaps are likely to appear.</div>
+<p class="src">Content from McKee, A. J. (2023), <i>Fundamentals of Policing</i>, Section 5.2: Police Administration (docmckee.com); and Saylor Academy (2012), <i>Principles of Management</i> v1.1, Section 7.2: Organizational Structure. Agencies and scenarios are fictional.</p>
+</div>
+<script>
+
+function mkQuiz(pre,O,D){
+ const box=document.getElementById(pre+'items'),fb=document.getElementById(pre+'fb');let ans={};
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-label="Answer for item '+(i+1)+'">'+
+  O.map(o=>'<button type="button" class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+pre+'f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(pre+'f'+i).textContent='';});
+ document.getElementById(pre+'check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(pre+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.innerHTML='Correct. '+d[2];f.className='fb ok'}else{f.innerHTML='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every item to finish.':'');};
+ document.getElementById(pre+'reset').onclick=()=>{ans={};render();fb.textContent=''};
+ render();}
+function mkExplore(boxId,detId,items){const box=document.getElementById(boxId),det=document.getElementById(detId);
+ items.forEach((it,i)=>{const b=document.createElement('button');b.type='button';b.className='panel';b.setAttribute('aria-pressed','false');
+  b.innerHTML='<div class="kicker" style="color:var(--red)">'+it[0]+'</div><b>'+it[1]+'</b>';
+  b.onclick=()=>{box.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));det.innerHTML='<b>'+it[1]+'</b><p style="margin:6px 0 0">'+it[2]+'</p>';};
+  box.appendChild(b);});}
+
+mkExplore('ex','exd',[["CENTRALIZATION", "Where decisions are made", "The degree to which decision-making authority is concentrated at higher levels. Decentralized organizations let employees closer to the problem decide, which can speed decisions and feel fairer; centralized ones place more weight on top managers' judgment and can be efficient in stable settings."], ["FORMALIZATION", "How much is written down", "The extent to which policies, procedures, job descriptions, and rules are written and explicit. It makes behavior predictable and consistent, but too much can slow decisions and reduce innovation, motivation, and satisfaction."], ["HIERARCHICAL LEVELS", "Tall or flat", "Tall structures have many layers between frontline staff and the top, so each manager supervises fewer people. Flat structures have few layers and wider spans of control, giving more freedom but sometimes more role ambiguity and fewer chances for promotion."], ["DEPARTMENTALIZATION", "Function or division", "Functional structures group jobs by similar function. Divisional structures group work by product, service, customer, or geography, with functions repeated in each division. Many organizations mix the two."]]);
+mkQuiz('a',[["line", "Line operations"], ["admin", "Administrative support"], ["aux", "Auxiliary services"]],[["A unit of officers responds to calls for service and patrols assigned neighborhoods.", "line", "Patrol is the core of line operations: sworn officers serving the public directly."], ["A sergeant reviews complaints against officers and investigates whether policy was followed.", "admin", "Internal affairs is part of administrative support, the behind-the-scenes work that keeps the department accountable."], ["A clerk logs, stores, and tracks seized items so they are ready for court.", "aux", "Property and evidence management is an auxiliary service that supports line operations."], ["Detectives follow up on a burglary to identify who committed it.", "line", "Criminal investigations are line operations."], ["A team plans next year's spending on equipment and community programs.", "admin", "Budgeting is an administrative support task."], ["Staff maintain the department's police reports and records system.", "aux", "Records maintenance is an auxiliary service."]]);
+mkQuiz('b',[["cent", "Centralized"], ["decent", "Decentralized"], ["formal", "Highly formalized"], ["func", "Functional"], ["div", "Divisional"]],[["In a fictional department, every case reassignment, however small, must be approved by the deputy chief, and investigators are not consulted.", "cent", "Decision authority sits high in the hierarchy: a highly centralized design. Saylor notes centralization can cause delays when headquarters lacks timely information from the people closest to the work."], ["A fictional sheriff's office lets each patrol sergeant decide how to handle neighborhood problems without checking with headquarters.", "decent", "Decisions are pushed down to employees closer to the problem: decentralization."], ["A fictional agency has a detailed written procedure for nearly every task, and staff rarely act outside it.", "formal", "Many written rules that control behavior describe high formalization: predictable and consistent, but slower to adapt."], ["A fictional department splits into North, Central, and South districts, each with its own patrol, investigations, and community units.", "div", "Grouping by geography, with functions repeated in each district, is a divisional structure."], ["A fictional agency has a single investigations bureau, a single patrol bureau, and a single records unit serving the whole city.", "func", "Grouping jobs by similar function across the whole organization is a functional structure."]]);
+</script>
+</body></html>
