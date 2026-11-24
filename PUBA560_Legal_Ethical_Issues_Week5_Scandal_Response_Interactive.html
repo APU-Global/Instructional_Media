@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scandal Response Simulator</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:0 0 10px;font-size:1.1rem}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true],button.panel[aria-expanded=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tab{background:#fff;border:2px solid #cfcfcf;border-radius:999px;padding:7px 16px;font-weight:600;color:var(--ink)}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.chip{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 11px;margin:4px 6px 4px 0;font-size:.95rem;font-weight:600;text-align:left}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.icon{font-size:1.7rem;line-height:1}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+input[type=range]{width:100%;accent-color:var(--red)}
+section[hidden]{display:none}
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;position:relative}
+.road:before{content:"";position:absolute;left:6%;right:6%;top:34px;height:6px;border-radius:3px;background:#d6d2cd}
+.wk{position:relative;background:none;border:0;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px}
+.wk .dot{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;border:4px solid #fcfcfc;transition:transform .2s}
+.wk[aria-pressed=true] .dot{transform:scale(1.2);box-shadow:0 0 0 3px #111}
+.wk .lbl{font-size:.78rem;font-weight:600;color:#444;text-align:center}
+.wk .part{font-size:.7rem;font-weight:700;min-height:1.1em;text-align:center}
+.tag{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700;color:#fff;margin:2px 4px 2px 0}
+@media(max-width:620px){.road{grid-template-columns:repeat(4,1fr);row-gap:14px}.road:before{display:none}}
+ul.clean{margin:6px 0 0;padding-left:20px}
+/* grades */
+.bar{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:8px 0 12px}
+.bar span{display:block;height:100%}
+.leg{display:grid;gap:8px}
+.leg button{display:flex;gap:10px;align-items:center}
+.sw{width:18px;height:18px;border-radius:5px;flex:none}
+.big{font-size:2rem;font-weight:800;line-height:1.2}
+textarea{width:100%;min-height:120px;font:inherit;padding:10px;border:2px solid #cfcfcf;border-radius:10px;resize:vertical}
+.meter{height:12px;border-radius:6px;background:#e3e0dc;overflow:hidden;margin:6px 0}
+.meter span{display:block;height:100%;width:0;transition:width .2s}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:620px){.steps{grid-template-columns:1fr}}
+.step{background:#fff;border-radius:12px;padding:12px;border-left:6px solid var(--red)}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.tab{padding:6px 12px;font-size:.92rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.wk{min-width:0}.wk .lbl{overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto;max-width:100%}@media(max-width:420px){.wk .lbl{font-size:.7rem}}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.g4{grid-template-columns:repeat(4,1fr)}@media(max-width:760px){.g4{grid-template-columns:1fr}}
+input[type=number]{font:inherit;width:7.5em;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px}
+table.data{border-collapse:collapse;width:100%;background:#fff}table.data th,table.data td{border:1px solid #ddd;padding:6px 8px;text-align:left}table.data th{background:#f4f2ef}
+.tablewrap{overflow-x:auto}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Scandal Response Simulator" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBA 560 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Scandal Response Simulator</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Be transparent, protect privacy, and rebuild trust</text>
+<g transform="translate(820,60)" fill="none" stroke-linecap="round"><circle cx="60" cy="60" r="34" stroke="#fff" stroke-width="7"/><path d="M60 6v14M60 100v14M6 60h14M100 60h14M22 22l10 10M88 88l10 10M22 98l10-10M88 32l10-10" stroke="#ffb3b6" stroke-width="6"/></g></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Managing the Fallout</h2>
+<p class="lead"><b>Week 5 objective:</b> Address a public scandal quickly and honestly, balancing transparency with the privacy rights of those involved, and design reforms people will follow.</p>
+
+<div class="card">
+<h3>The situation (fictional)</h3>
+<p style="margin:0">You have just been appointed Chief of the <b>Harbor City Police Department</b>. A records audit shows that a watch commander changed or discarded use-of-force reports for two years, and that several officers knew. A local reporter has the story. The district attorney has opened a criminal investigation into two officers. You must decide what to do in the first weeks.</p>
+</div>
+
+<div class="card">
+<h3>Part 1: Five decisions</h3>
+<p class="lead">Choose the best response at each step. You can try again after feedback.</p>
+<div id="steps"></div>
+<p><span class="score" id="sScore" aria-live="polite">0 / 5 best choices</span></p>
+</div>
+
+<div class="card">
+<h3>Part 2: Disclose or protect?</h3>
+<p class="lead">For each item, decide whether to <b>disclose</b> it publicly or <b>protect</b> it (withhold or redact under a legal exemption or privacy duty), then select <b>Check Part 2</b>.</p>
+<div id="p2" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c2">Check Part 2</button> <button class="btn ghost" id="r2">Start over</button></p>
+<p class="fb" id="f2" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> “Sunlight is the best of disinfectants,” but transparency is <b>robust, not absolute</b>. Disclose the maximum the law permits, use exemptions sparingly and record why, protect victims and the due-process rights of the accused, investigate independently, and build reforms on <b>training, clear communication, reporting channels, consistent enforcement, and leaders who go first</b>.</div>
+<p class="src">Principles from Raber, T. (2026), <i>Governing with Integrity: Ethical Reasoning for Public Service</i> (LibreTexts, CC BY 4.0), Sections 5.3, 7.3, 7.5, 8.3, 8.4, and 9.2. Harbor City and every event in it are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const S=[
+['Day 1: The reporter calls. What do you say?',[
+ ['Decline to comment until every investigation is finished, which may take a year.',0,'Silence looks like concealment. Raber notes that transparency deters wrongdoing because officials know their choices are open to scrutiny, and that citizens who see dishonesty lose faith in government.'],
+ ['Confirm what the audit found and what you are doing about it, without naming victims or the officers under criminal investigation.',1,'Best choice. Tell the public what the agency did and how you will respond, while protecting people from privacy harms and respecting due process for those under investigation.'],
+ ['Release the full audit, including the names, addresses, and medical details of the people force was used on.',0,'That exposes the victims a second time. Raber warns that privacy failures can leave people stigmatized, discriminated against, defrauded, or put at physical risk.']]],
+['Week 1: Who investigates the department’s own failures?',[
+ ['The watch commander’s own unit, because it knows the records best.',0,'People reviewing their own unit have a conflict of interest, and the public will not trust the result.'],
+ ['An independent body, such as the city’s inspector general or an outside agency, with full access to records.',1,'Best choice. Raber stresses independent, competent investigations by inspectors general, auditors, or ethics commissions to avoid conflicts of interest.'],
+ ['You investigate personally and announce the conclusions yourself.',0,'You lead the department being investigated. Arm’s-length scrutiny is what makes findings credible.']]],
+['Week 3: The findings confirm the cover-up. How do you handle discipline?',[
+ ['Fire one officer as an example, with no hearing, and close the matter.',0,'Severity without due process is neither fair nor a strong deterrent. Raber says deterrence rests on certainty, not severity alone, and that the rights of all parties must be protected.'],
+ ['Let everyone involved resign quietly with clean records.',0,'Quiet exits remove the certainty of consequences, and they hide the outcome from the public the department serves.'],
+ ['Apply a graduated, predictable sanction policy to everyone involved, with notice and a chance to respond, and report the aggregate outcome publicly.',1,'Best choice. Deterrence depends on “the certainty and swiftness of proportionate punishment under the rule of law,” with due process and public reporting of aggregate outcomes.']]],
+['Week 4: You need officers and supervisors to buy in to new use-of-force reporting rules. What is your plan?',[
+ ['Email the new policy to all staff and require a signed acknowledgment.',0,'A policy on paper is only a start. Raber lists lack of awareness, inadequate training, and inconsistent enforcement among the reasons codes fail.'],
+ ['Train every shift, explain why each rule exists, open a reporting channel, enforce the rules the same way for every rank, and follow them yourself.',1,'Best choice. Raber’s strategy for making codes work is regular training, clear communication, reporting mechanisms, consistent enforcement, and leaders who lead by example.'],
+ ['Offer a bonus to any unit with zero use-of-force reports next year.',0,'That incentive rewards not reporting. External pressures such as performance targets can push people to put outcomes ahead of ethics.']]],
+['Week 6: Several officers say they saw the cover-up but feared retaliation. What do you build?',[
+ ['A suggestion box in the watch commander’s office.',0,'A single channel inside the chain of command is exactly where people fear retaliation.'],
+ ['Multiple confidential channels (supervisor, internal affairs, inspector general, an anonymous hotline), strong anti-retaliation protection, feedback to reporters, and published aggregate results.',1,'Best choice. These are the elements of an effective public-sector whistleblowing program in Raber’s Chapter 8.'],
+ ['A rule that every report must be signed so false claims can be punished.',0,'Requiring names discourages good-faith reports. Raber recommends allowing anonymous and confidential reporting while protecting the rights of those accused.']]]];
+let best=S.map(()=>false);
+S.forEach((s,si)=>{const d=document.createElement('div');d.className='panel';d.style.margin='10px 0';
+ d.innerHTML='<p style="margin:0 0 8px" id="sq'+si+'"><b>'+(si+1)+'. '+s[0]+'</b></p><div role="group" aria-labelledby="sq'+si+'"></div><p class="fb" aria-live="polite"></p>';
+ s[1].forEach((o,oi)=>{const b=document.createElement('button');b.className='choice';b.style.display='block';b.style.width='100%';b.textContent=o[0];b.setAttribute('aria-pressed','false');
+  b.onclick=()=>{d.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=d.querySelector('.fb');
+   if(o[1]){f.className='fb ok';f.textContent=o[2];if(!best[si]){best[si]=true;}}else{f.className='fb bad';f.textContent='Not the best choice. '+o[2]+' Try another option.';}
+   $('sScore').textContent=best.filter(Boolean).length+' / '+S.length+' best choices';};
+  d.children[1].appendChild(b);});
+ $('steps').appendChild(d);});
+const O=[['disc','Disclose'],['prot','Protect']];
+const D=[
+['The department’s revised use-of-force reporting policy.','disc','The public should be able to see how the department will prevent a repeat. Policies are exactly what transparency is for.'],
+['The names of the two officers while the criminal investigation is active.','prot','Active law-enforcement investigations are a common, narrow exemption, and the accused keep due-process rights. Record the reason and revisit it when the case ends.'],
+['The number of complaints received, substantiated, and acted on this year.','disc','Raber recommends publishing aggregate statistics: they show the system works without exposing individuals.'],
+['The identity of an officer who reported the cover-up to the hotline.','prot','Confidentiality and anti-retaliation protection are what make people willing to report.'],
+['The city council meeting where members vote on the inspector general’s budget.','disc','Open-meeting laws, like the federal Sunshine Act, keep public business conducted in public.'],
+['Medical records of a resident injured in one of the incidents.','prot','Privacy protects people from harm. Disclosing health information would stigmatize the victim a second time.']];
+(function(){const box=$('p2');let ans={};const lab=v=>O.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="dq'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="dq'+i+'">'+O.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+'</div><p class="fb" id="df'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('df'+i).textContent='';});
+ $('c2').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$('df'+i);if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  $('f2').innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every item to finish.':'');};
+ $('r2').onclick=()=>{ans={};render();$('f2').textContent='';};render();})();
+</script>
+</body></html>
