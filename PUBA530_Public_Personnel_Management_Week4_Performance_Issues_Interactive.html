@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Performance Issue Triage</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px;font-size:1.1rem}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600;margin:4px 6px 4px 0}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--dark)}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #e3e0dc;text-align:left;vertical-align:top}
+th{background:#111;color:#fff;font-weight:600}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl{overflow-x:auto}
+input[type=number],input[type=text]{font:inherit;padding:7px 10px;border:2px solid #bbb;border-radius:10px;width:9em;max-width:100%}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+.order li{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid #ddd;border-radius:10px;padding:8px 10px;margin:6px 0}
+.order li span{flex:1 1 200px}
+.mini{border:2px solid #bbb;background:#fff;border-radius:8px;padding:2px 10px;font-weight:700}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="PUBA 530 · Week 4 banner: Performance Issue Triage" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBA 530 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Performance Issue Triage</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Fair, consistent responses when requirements are not met</text>
+<g transform="translate(800,45)" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="110" height="140" rx="10" stroke="#fff" stroke-width="7"/><path d="M30 45l10 10 18-20M30 85l10 10 18-20" stroke="#ffb3b6" stroke-width="7"/><path d="M70 50h32M70 90h32M30 125h72" stroke="#fff" stroke-width="7"/></g></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Performance Issue Triage</h2>
+<p class="lead"><b>Week 4 objective:</b> Respond to performance problems consistently and fairly: classify the issue, check for just cause, and choose an appraisal method.</p>
+<div class="card">
+<h3>The performance issue model</h3>
+<div class="grid g2">
+<div class="panel"><div class="kicker">MANDATED ISSUE</div><p style="margin:6px 0 0">Serious, often a legal requirement (privacy, safety, harassment). Handle at once under a written policy.</p></div>
+<div class="panel"><div class="kicker">SINGLE INCIDENT</div><p style="margin:6px 0 0">A one-time misstep. A coaching conversation is usually enough.</p></div>
+<div class="panel"><div class="kicker">BEHAVIOR PATTERN</div><p style="margin:6px 0 0">An uncorrected incident that has become a habit. Talk clearly about expectations.</p></div>
+<div class="panel"><div class="kicker">PERSISTENT PATTERN</div><p style="margin:6px 0 0">The pattern continues after correction. Investigate, then consider an improvement plan or progressive discipline.</p></div>
+</div></div>
+<div class="card">
+<h3>Part 1: Classify the issue</h3>
+<p class="lead">Employees of the fictional Pine Ridge Public Works Department. Choose the type of issue.</p>
+<div id="p1" class="grid"></div>
+<p><button class="btn" id="c1">Check my answers</button><button class="btn ghost" id="r1">Start over</button></p>
+<p class="fb" id="fb1" aria-live="polite"></p>
+</div><div class="card">
+<h3>Part 2: Which test of just cause is at risk?</h3>
+<p class="lead">The University of Iowa’s seven tests of just cause help decide whether discipline is fairly grounded. Choose the test each supervisor’s plan fails.</p>
+<div id="p2" class="grid"></div>
+<p><button class="btn" id="c2">Check my answers</button><button class="btn ghost" id="r2">Start over</button></p>
+<p class="fb" id="fb2" aria-live="polite"></p>
+</div><div class="card">
+<h3>Part 3: Name the appraisal method</h3>
+<p class="lead">Choose the category of performance appraisal each Pine Ridge form uses.</p>
+<div id="p3" class="grid"></div>
+<p><button class="btn" id="c3">Check my answers</button><button class="btn ghost" id="r3">Start over</button></p>
+<p class="fb" id="fb3" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Discipline exists to correct behavior, not to punish. Coach single incidents early, document every step, investigate before acting, and apply rules evenly. Tie every evaluation to the job description, and choose methods that measure what the job actually requires.</div>
+<p class="src">Performance issue model, documentation, the seven tests of just cause (reprinted from the University of Iowa), and appraisal method categories from Saylor Academy (2012), <i>Human Resource Management</i>, Section 10.1 "Handling Performance" and Chapter 11 "Employee Assessment" (CC BY-NC-SA). Pine Ridge and its employees are fictional.</p>
+</div>
+<script>
+function mcq(boxId, items, opts, checkId, resetId, fbId, scoreLabel){
+ const box=document.getElementById(boxId),fb=document.getElementById(fbId);let ans={};
+ function render(){box.innerHTML='';ans={};items.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  const o=d.opts||opts;
+  p.innerHTML='<p style="margin:0 0 8px" id="'+boxId+'q'+i+'"><b>'+(i+1)+'.</b> '+d.q+'</p><div role="group" aria-labelledby="'+boxId+'q'+i+'">'+
+  o.map(x=>'<button class="choice" data-i="'+i+'" data-v="'+x[0]+'" aria-pressed="false">'+x[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+boxId+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});fb.textContent='';fb.className='fb';}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(boxId+'f'+i).textContent='';});
+ document.getElementById(checkId).onclick=()=>{let ok=0,done=0;items.forEach((d,i)=>{const f=document.getElementById(boxId+'f'+i);const o=d.opts||opts;
+  if(!ans[i]){f.className='fb bad';f.textContent='Choose an answer.';return;}done++;
+  const lab=o.find(x=>x[0]===d.a)[1];
+  if(ans[i]===d.a){ok++;f.className='fb ok';f.textContent='Correct. '+d.why;}else{f.className='fb bad';f.textContent='Not quite. The best answer is "'+lab+'." '+d.why;}});
+  fb.className='fb '+(ok===items.length?'ok':'');fb.innerHTML='<span class="score">'+ok+' / '+items.length+'</span> '+(done<items.length?'Answer every item, then check again.':ok===items.length?scoreLabel:'Review the feedback, adjust, and check again.');};
+ document.getElementById(resetId).onclick=render;render();}
+
+function orderer(listId,items,checkId,resetId,fbId){
+ const ol=document.getElementById(listId),fb=document.getElementById(fbId);let cur=[];
+ function draw(focusIdx,dir){ol.innerHTML='';cur.forEach((it,k)=>{const li=document.createElement('li');
+  li.innerHTML='<span><b>'+(k+1)+'.</b> '+it.t+'</span><button class="mini" data-k="'+k+'" data-d="-1" aria-label="Move up: '+it.t+'">&#8593;</button><button class="mini" data-k="'+k+'" data-d="1" aria-label="Move down: '+it.t+'">&#8595;</button>';ol.appendChild(li);});
+  if(focusIdx!=null){const b=ol.querySelector('button[data-k="'+focusIdx+'"][data-d="'+dir+'"]')||ol.querySelector('button[data-k="'+focusIdx+'"]');if(b)b.focus();}}
+ function reset(){cur=items.map((t,i)=>({t:t,i:i}));for(let k=cur.length-1;k>0;k--){const j=(k*7+3)%(k+1);[cur[k],cur[j]]=[cur[j],cur[k]];}
+  if(cur.every((c,k)=>c.i===k))cur.reverse();fb.textContent='';fb.className='fb';draw();}
+ ol.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=+b.dataset.k,d=+b.dataset.d,n=k+d;if(n<0||n>=cur.length)return;[cur[k],cur[n]]=[cur[n],cur[k]];fb.textContent='';draw(n,d);});
+ document.getElementById(checkId).onclick=()=>{const ok=cur.filter((c,k)=>c.i===k).length;fb.className='fb '+(ok===cur.length?'ok':'bad');
+  fb.innerHTML='<span class="score">'+ok+' / '+cur.length+'</span> '+(ok===cur.length?'Correct order.':'Some steps are out of place. Items in the right position: '+ok+'. Move the others and check again.');};
+ document.getElementById(resetId).onclick=reset;reset();}
+
+
+const I=[['m','Mandated issue'],['s','Single incident'],['b','Behavior pattern'],['p','Persistent pattern']];
+mcq('p1',[
+{q:'A crew lead posts a resident’s home address and complaint details on social media.',a:'m',why:'Violating privacy rules goes beyond office policy; handle it immediately under the written policy.'},
+{q:'A usually reliable clerk sends a sharp email to a colleague after a stressful day.',a:'s',why:'A one-time misstep is best handled with a brief coaching conversation.'},
+{q:'An engineer has turned in the last four project reports late, and no one has mentioned it.',a:'b',why:'An uncorrected incident has become a habit; talk with the employee about expectations.'},
+{q:'After two documented conversations, a technician still skips the required equipment checks.',a:'p',why:'The pattern continues after correction: investigate, then consider an improvement plan or progressive discipline.'},
+{q:'An operator removes a safety guard from a machine to work faster.',a:'m',why:'Not following safety procedures is a mandated issue.'}
+],I,'c1','r1','fb1','You classified every issue correctly.');
+const J=[['notice','Notice'],['inv','Investigation'],['eq','Equal treatment'],['pen','Penalty']];
+mcq('p2',[
+{q:'A supervisor wants to discipline an employee for breaking a new cell-phone rule that was never announced.',a:'notice',why:'Employees must know the rules and expectations before discipline is imposed.'},
+{q:'A supervisor plans to suspend an employee tomorrow without asking for the employee’s side of the story.',a:'inv',why:'The investigation must come before discipline and give the employee a chance to respond (a Loudermill hearing).'},
+{q:'Two employees are late equally often; only the one who complained about overtime is written up.',a:'eq',why:'Rules must be applied even-handedly and without discrimination.'},
+{q:'A 20-year employee with a clean record is fired for a first, minor paperwork error.',a:'pen',why:'The penalty must be fair, not arbitrary, and should weigh length of service and prior record.'}
+],J,'c2','r2','fb2','You spotted every just-cause problem.');
+const A=[['t','Trait'],['bh','Behavioral'],['c','Comparative'],['r','Results']];
+mcq('p3',[
+{q:'Rates “friendliness” and “dependability” on a 1–5 scale.',a:'t',why:'Trait methods rate characteristics related to the job.'},
+{q:'Records specific actions, such as “answers resident calls within one business day.”',a:'bh',why:'Behavioral methods look at the individual’s actions in the job.'},
+{q:'Ranks every inspector in the division from strongest to weakest.',a:'c',why:'Comparative methods compare one employee with others.'},
+{q:'Asks whether the employee met the objectives agreed on with the manager (management by objectives).',a:'r',why:'Results methods, including MBO, focus on accomplishments.'}
+],A,'c3','r3','fb3','You named every appraisal method.');
+
+</script></body></html>
