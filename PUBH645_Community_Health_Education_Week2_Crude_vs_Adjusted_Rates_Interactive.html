@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crude vs. Adjusted Rates</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,.mv:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:8px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;max-width:100%;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.terms{margin:0;padding-left:20px}.terms li{margin:4px 0}
+.order{list-style:none;margin:0;padding:0}.order li{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #ddd;border-radius:12px;padding:10px 12px;margin:8px 0}
+.order .n{font-weight:700;min-width:1.6em}.order .t{flex:1}
+.mv{border:2px solid #bbb;background:#fff;border-radius:8px;padding:4px 10px;font-weight:700}
+.order li.right{border-color:var(--green)}.order li.wrong{border-color:var(--dark)}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.num{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.num label{font-weight:600;min-width:220px}
+.num input{font:inherit;width:120px;padding:6px 8px;border:2px solid #bbb;border-radius:8px}
+.num input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;font-size:.95rem}
+.tbl th,.tbl td{padding:8px 10px;border-bottom:1px solid #ddd;text-align:left}
+.tbl th{background:#111;color:#fff}
+.tw{overflow-x:auto}
+body{overflow-wrap:break-word}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: Crude vs. Adjusted Rates" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 645 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Crude vs. Adjusted Rates</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Calculate both, then decide which comparison is fair</text><g transform="translate(790,50)"><rect x="0" y="90" width="34" height="60" rx="5" fill="#ffb3b6"/><rect x="48" y="40" width="34" height="110" rx="5" fill="#fff"/><rect x="110" y="70" width="34" height="80" rx="5" fill="#ffb3b6"/><rect x="158" y="55" width="34" height="95" rx="5" fill="#fff"/></g></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: Comparing Prevalence Rates</h2>
+<p class="lead"><b>Week objective:</b> Calculate and interpret crude and age-adjusted prevalence before comparing two populations.</p>
+<div class="card"><h3>Crude rates describe; adjusted rates compare</h3><ul class="terms"><li><b>Crude prevalence</b> counts every case in the whole population. It shows the real local burden but carries the population's makeup with it.</li><li><b>Age adjustment</b> applies each population's age-specific rates to one standard age distribution, removing differences that come only from age.</li><li><b>Read the indicator</b>: data source, year, crude or age-adjusted, and the confidence limits.</li></ul></div><div class="card"><h3>Practice 1: calculate the rates</h3><p class="lead">Enter each answer as a percentage to one decimal place.</p><div class="tw"><table class="tbl"><caption class="lead" style="text-align:left;caption-side:top">Fictional data: residents with a chronic condition in two cities of 100,000 people each</caption>
+<thead><tr><th scope="col">Age group</th><th scope="col">City A population</th><th scope="col">City A cases</th><th scope="col">City B population</th><th scope="col">City B cases</th><th scope="col">Standard weight</th></tr></thead>
+<tbody><tr><th scope="row" style="background:#fff;color:inherit">18&#8211;44</th><td>20,000</td><td>400</td><td>60,000</td><td>1,800</td><td>0.5</td></tr>
+<tr><th scope="row" style="background:#fff;color:inherit">45&#8211;64</th><td>30,000</td><td>1,800</td><td>30,000</td><td>2,400</td><td>0.3</td></tr>
+<tr><th scope="row" style="background:#fff;color:inherit">65 and older</th><td>50,000</td><td>7,500</td><td>10,000</td><td>1,800</td><td>0.2</td></tr>
+<tr><th scope="row" style="background:#fff;color:inherit">Total</th><td>100,000</td><td>9,700</td><td>100,000</td><td>6,000</td><td>1.0</td></tr></tbody></table></div>
+<p class="lead" style="margin:10px 0 0"><b>Crude prevalence</b> = total cases &#247; total population &#215; 100. <b>Age-adjusted (direct method)</b> = the sum of each age-specific rate &#215; its standard weight. The weights here are a simple practice standard; NCHS uses the projected year 2000 U.S. population.</p><div class="panel"><div class="num"><label for="n-n0">City A crude prevalence</label><input id="n-n0" inputmode="decimal" aria-describedby="n-o0"> <span aria-hidden="true">%</span></div><p class="fb" id="n-o0" aria-live="polite"></p><div class="num"><label for="n-n1">City B crude prevalence</label><input id="n-n1" inputmode="decimal" aria-describedby="n-o1"> <span aria-hidden="true">%</span></div><p class="fb" id="n-o1" aria-live="polite"></p><div class="num"><label for="n-n2">City A age-adjusted prevalence</label><input id="n-n2" inputmode="decimal" aria-describedby="n-o2"> <span aria-hidden="true">%</span></div><p class="fb" id="n-o2" aria-live="polite"></p><div class="num"><label for="n-n3">City B age-adjusted prevalence</label><input id="n-n3" inputmode="decimal" aria-describedby="n-o3"> <span aria-hidden="true">%</span></div><p class="fb" id="n-o3" aria-live="polite"></p></div><p style="margin:16px 0 0"><button class="btn" id="n-check">Check my answers</button> <button class="btn ghost" id="n-reset">Clear</button></p><p class="fb" id="n-fb" aria-live="polite"></p></div><div class="card"><h3>Practice 2: interpret the comparison</h3><p class="lead">Use your results and the course dataset.</p><div id="q-items" class="grid"></div><p style="margin:16px 0 0"><button class="btn" id="q-check">Check my answers</button> <button class="btn ghost" id="q-reset">Start over</button></p><p class="fb" id="q-fb" aria-live="polite"></p></div>
+<div class="take"><b>Takeaway:</b> A higher crude rate does not prove higher risk. Ask who lives in each population, adjust or stratify (by age, sex, or other factors), and check each estimate's confidence limits before you design a program around the difference.</div>
+<p class="src">Methods from National Center for Health Statistics, <i>Age Adjustment</i> (Health, United States, 2026); CDC <i>Chronic Disease Indicators</i> (2026); CDC <i>About Underage Drinking</i> (2025); state values from the course U.S. Chronic Disease Dataset (YRBSS 2015). City data are fictional.</p>
+</div>
+<script>
+
+function mcq(id,D){const box=document.getElementById(id+'-items'),fb=document.getElementById(id+'-fb');let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+const q=document.createElement('p');q.style.margin='0 0 8px';q.innerHTML='<b>'+(i+1)+'.</b> ';q.appendChild(document.createTextNode(d[0]));p.appendChild(q);
+const g=document.createElement('div');g.setAttribute('role','group');g.setAttribute('aria-label','Answer for question '+(i+1));
+d[1].forEach((o,k)=>{const b=document.createElement('button');b.className='choice';b.dataset.i=i;b.dataset.v=k;b.setAttribute('aria-pressed','false');b.textContent=o;g.appendChild(b)});
+p.appendChild(g);const f=document.createElement('p');f.className='fb';f.id=id+'-f'+i;f.setAttribute('aria-live','polite');p.appendChild(f);box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=+b.dataset.v;
+box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));document.getElementById(id+'-f'+i).textContent='';});
+document.getElementById(id+'-check').addEventListener('click',()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(id+'-f'+i);
+if(ans[i]===undefined){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[2]){ok++;f.textContent='Correct. '+d[3];f.className='fb ok'}else{f.textContent='Not quite: '+d[1][d[2]]+'. '+d[3];f.className='fb bad'}});
+fb.innerHTML='<span class="score">'+ok+' of '+D.length+' correct</span>'+(done<D.length?' Answer every item to finish.':'');});
+document.getElementById(id+'-reset').addEventListener('click',()=>{ans={};render();fb.textContent=''});
+render();}
+
+function nums(id,F){const fb=document.getElementById(id+'-fb');
+document.getElementById(id+'-check').addEventListener('click',()=>{let ok=0;F.forEach((f,i)=>{const el=document.getElementById(id+'-n'+i),o=document.getElementById(id+'-o'+i);
+const v=parseFloat(String(el.value).replace('%','').replace(',','.'));
+if(isNaN(v)){o.textContent='Enter a number.';o.className='fb bad';return}
+if(Math.abs(v-f[1])<=f[2]){ok++;o.textContent='Correct. '+f[3];o.className='fb ok'}else{o.textContent='Not quite. '+f[4];o.className='fb bad'}});
+fb.innerHTML='<span class="score">'+ok+' of '+F.length+' correct</span>';});
+document.getElementById(id+'-reset').addEventListener('click',()=>{F.forEach((f,i)=>{document.getElementById(id+'-n'+i).value='';document.getElementById(id+'-o'+i).textContent=''});fb.textContent=''});}
+nums("n",[["City A crude prevalence", 9.7, 0.06, "9,700 ÷ 100,000 = 9.7%.", "Divide all City A cases (9,700) by its whole population (100,000)."], ["City B crude prevalence", 6.0, 0.06, "6,000 ÷ 100,000 = 6.0%.", "Divide all City B cases (6,000) by its whole population (100,000)."], ["City A age-adjusted prevalence", 5.8, 0.06, "Rates 2%, 6%, 15%: 0.5×2 + 0.3×6 + 0.2×15 = 5.8%.", "First find each age-specific rate (400 ÷ 20,000 = 2%, and so on), then weight them 0.5, 0.3, 0.2 and add."], ["City B age-adjusted prevalence", 7.5, 0.06, "Rates 3%, 8%, 18%: 0.5×3 + 0.3×8 + 0.2×18 = 7.5%.", "Age-specific rates are 3%, 8%, and 18%; weight them 0.5, 0.3, 0.2 and add."]]);mcq("q",[["City A's crude prevalence (9.7%) is higher than City B's (6.0%). Does that show City A's residents are at greater risk?", ["No, City A's population is much older, and older groups have higher rates in both cities", "Yes, the higher crude rate settles it"], 0, "Half of City A is 65 or older. A crude rate carries the population's age makeup with it."], ["After age adjustment, which city has the higher prevalence?", ["City B", "City A"], 0, "City B (7.5% vs. 5.8%): its rate is higher in every age group, which the crude rates hid."], ["NCHS says age-adjusted rates should be viewed as...", ["The same as crude rates", "Actual measures of each person's risk", "Relative indexes for comparing populations"], 2, "Age adjustment removes differences due to age composition; the result is a relative index, not an actual measure of risk."], ["In the course's U.S. Chronic Disease Dataset (YRBSS 2015, alcohol use among youth), Maryland is 26.1% (25.3 to 27.0) and Arizona is 34.8% (29.7 to 40.2). Which estimate is less precise?", ["Arizona", "Maryland"], 0, "Arizona's interval is more than 10 points wide; Maryland's is under 2. Check the range before calling one state riskier."], ["You want youth alcohol estimates for one state broken down by sex. Where does CDC offer that?", ["CDC's Chronic Disease Indicators (CDI) tool", "The Leading Causes of Death list", "A national total only"], 0, "CDI gives national and state estimates broken down by sex, race and ethnicity, and age group where applicable."], ["Which detail from CDC's underage drinking page would you gather before comparing two states?", ["The number of hospitals", "Whether parents and other adults drink or binge drink", "The states' populations of older adults"], 1, "Adolescents are more likely to drink when adults around them drink or binge drink; sex also matters, since more high school girls than boys now drink."]]);
+</script>
+</body></html>
