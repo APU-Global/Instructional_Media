@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is It a Security?</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true],button.panel[aria-expanded=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--red)}
+input[type=number],input[type=text],select{font:inherit;padding:7px 10px;border:2px solid #cfcfcf;border-radius:10px;max-width:100%;background:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;font-size:.95rem}th{background:#f3f1ee}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 8 banner: Is It a Security?" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 540 · WEEK 8</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Is It a Security?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Apply the Howey test and the short-swing profit rule</text></svg></div>
+<div class="wrap">
+<h2>Week 8 Interactive: Securities Regulation in Practice</h2>
+<p class="lead"><b>Week 8 objective:</b> Explain why securities are regulated, decide whether an investment is a security under the <i>Howey</i> test, and apply the Section 16(b) short-swing profit rule.</p>
+<div class="card">
+<h3>Why regulate pieces of paper?</h3>
+<p class="lead">A security’s value lies in the interest it represents, not the paper. Select each reason the textbook gives for regulation.</p>
+<div class="grid g3" id="why"></div>
+<div class="panel" id="whyDetail" style="margin-top:12px" aria-live="polite">Select a reason.</div>
+</div>
+<div class="card">
+<h3>Practice 1: the Howey test</h3>
+<p class="lead">An investment contract is a security when a person <b>invests money</b> in a <b>common enterprise</b> and expects <b>profits solely from the efforts of a promoter or third party</b>. Labels do not control. All offerings are fictional.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check">Check my answers</button> <button type="button" class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: short-swing profits under Section 16(b)</h3>
+<p class="lead">Section 16(b) lets the corporation (or a shareholder suing for it) recover any profit an <b>insider</b> (director, officer, or owner of 10% or more) makes from a purchase and sale, or a sale and purchase, within <b>six months</b>, even without inside information. Enter the amount the corporation can recover (enter 0 if none).</p>
+<div id="calc" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check2">Check my answers</button> <button type="button" class="btn ghost" id="reset2">Start over</button></p>
+<p class="fb" id="fb2" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Securities law looks at <b>substance, not labels</b>: if investors put money into a common enterprise and rely on others to make it profitable, the disclosure and anti-fraud rules apply. Insiders face a bright-line six-month rule because fair markets depend on everyone trading with the same information.</div>
+<p class="src">Rules from <i>Business Law and the Legal Environment</i> v1.0 (Saylor Academy, 2012), Sections 46.1 The Nature of Securities Regulation and 46.2 Liability under Securities Law. CC BY-NC-SA 3.0. Offerings, companies, and people are fictional.</p>
+</div>
+<script>
+
+function scenarioSet(boxId,checkId,resetId,fbId,O,D,prefix){
+ const box=document.getElementById(boxId),fb=document.getElementById(fbId);let ans={};
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML=`<p style="margin:0 0 8px" id="${prefix}q${i}"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-labelledby="${prefix}q${i}">`+
+  O.map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+  `</div><p class="fb" id="${prefix}f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(prefix+'f'+i).textContent='';});
+ document.getElementById(checkId).onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(prefix+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every scenario to finish.':(ok===D.length?' Excellent work.':' Review the explanations and try again.'));};
+ document.getElementById(resetId).onclick=()=>{ans={};render();fb.textContent=''};
+ render();}
+// reveal cards: buttons with aria-expanded toggling a detail panel
+function revealCards(gridId,detailId,C){const g=document.getElementById(gridId),d=document.getElementById(detailId);
+ C.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='panel';b.setAttribute('aria-pressed','false');
+  b.innerHTML='<div class="kicker">'+c[0]+'</div><b>'+c[1]+'</b>';
+  b.onclick=()=>{g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));d.innerHTML='<b>'+c[1]+'</b><p style="margin:6px 0 0">'+c[2]+'</p>';};
+  g.appendChild(b);});}
+
+revealCards('why','whyDetail',[
+['REASON 1','Information','Buyers need an accurate way to learn what they are buying, because the certificate itself shows almost nothing about the enterprise behind it.'],
+['REASON 2','Fraud and manipulation','The law must prevent, and give remedies for, deceptive and manipulative acts designed to defraud buyers and sellers.'],
+['REASON 3','Professionals','Massive trading created brokers, dealers, and other specialists. The public can be at a severe disadvantage with them, so the law works to keep them from taking unfair advantage.']]);
+const O=[['sec','Security (investment contract)'],['not','Not a security']];
+const D=[
+['Sunvale Groves sells investors individual rows in an avocado orchard together with a service contract: Sunvale cultivates, harvests, and markets the crop and sends each investor a share of the profits.','sec','This mirrors Howey itself (rows in an orange grove with a cultivation contract): money in a common enterprise, with profits expected from the promoter’s efforts.'],
+['A family buys a house in which to live.','not','There is no investment in a common enterprise with profits expected from others’ efforts; it is a home purchase.'],
+['High Plains Cattle sells “ranch units.” The company raises and sells the herd and divides the proceeds among unit holders, who do no work.','sec','Courts have read “investment contract” liberally to cover interests in farm animals when investors rely on the promoter’s efforts for profit.'],
+['Two friends form a landscaping partnership. Both work in the business every day and split the profits.','not','Their profits come from their own efforts, not solely from the efforts of a promoter or third party.'],
+['A developer sells condominium units together with a mandatory rental pool: its manager rents out all units and distributes the rental income to owners.','sec','The textbook notes that interests in real estate condominiums have been treated as securities when they work as investment contracts.'],
+['Brightline Motors issues shares of common stock to the public.','sec','“Stock” is named in the 1933 Act’s definition of a security.'],
+['A customer buys a delivery van from a dealer to use in his bakery.','not','A purchase of goods for use is not an investment in a common enterprise.']];
+scenarioSet('items','check','reset','fb',O,D,'a');
+const C=[
+['Rosa Mendez, an officer of Clearwater Corp., buys 200 shares on February 1 at $40 and sells all 200 on May 15 at $55.',3000,'An officer bought and sold within six months: 200 × ($55 − $40) = $3,000 is recoverable.'],
+['Ian Brooks, a director, buys 100 shares on January 10 at $50 and sells them on September 20 at $80.',0,'More than six months passed between the purchase and the sale, so Section 16(b) does not apply.'],
+['A shareholder who owns 12% of Delta Parts sells 300 shares on August 1 at $90 and buys 300 shares back on October 15 at $60.',9000,'A sale followed by a purchase within six months also counts: 300 × ($90 − $60) = $9,000, as in the textbook’s BCT Bookstore example.'],
+['Sam Patel, a warehouse employee of Delta Parts who is not an officer, director, or 10% owner, buys 500 shares on March 1 at $20 and sells on April 1 at $30.',0,'Section 16(b) covers only directors, officers, and 10% owners, so nothing is recoverable under it. (If Sam traded on inside information, Section 10(b) and Rule 10b-5 could still apply.)']];
+const cb=document.getElementById('calc');
+function renderC(){cb.innerHTML='';C.forEach((c,i)=>{const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<p style="margin:0 0 8px" id="cq'+i+'"><b>'+(i+1)+'.</b> '+c[0]+'</p><label for="ci'+i+'" style="font-weight:600">Recoverable profit ($): </label><input type="number" inputmode="numeric" min="0" step="1" id="ci'+i+'" aria-describedby="cf'+i+'" style="width:9rem"><p class="fb" id="cf'+i+'" aria-live="polite"></p>';cb.appendChild(p);});}
+document.getElementById('check2').onclick=()=>{let ok=0,done=0;C.forEach((c,i)=>{const v=document.getElementById('ci'+i).value.replace(/[$,\s]/g,''),f=document.getElementById('cf'+i);
+ if(v===''){f.className='fb bad';f.textContent='Enter an amount (0 if none).';return}done++;
+ if(Number(v)===c[1]){ok++;f.className='fb ok';f.textContent='Correct. '+c[2]}else{f.className='fb bad';f.textContent='Not quite: the answer is $'+c[1].toLocaleString('en-US')+'. '+c[2]}});
+ document.getElementById('fb2').innerHTML='<span class="score">'+ok+' of '+C.length+' correct</span>'+(done<C.length?' Answer every case to finish.':'');};
+document.getElementById('reset2').onclick=()=>{renderC();document.getElementById('fb2').textContent=''};
+renderC();
+
+</script>
+</body></html>

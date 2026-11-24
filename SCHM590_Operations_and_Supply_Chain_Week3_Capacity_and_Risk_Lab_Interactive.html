@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacity and Risk Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+label.f{display:block;font-weight:600;margin:8px 0 4px}
+input[type=number]{font:inherit;width:100%;padding:8px 10px;border:2px solid #cfcfcf;border-radius:10px}
+.big{font-size:1.6rem;font-weight:800;line-height:1.2}
+.meter{height:14px;border-radius:7px;background:#e3e0dc;overflow:hidden;margin:6px 0}.meter span{display:block;height:100%;width:0;transition:width .2s}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Capacity and Risk Lab" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">SCHM 590 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Capacity and Risk Lab</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Measure capacity, name the risk, choose the mitigation</text>
+<g transform="translate(770,70)" fill="none" stroke-width="7" stroke-linejoin="round"><rect x="0" y="40" width="54" height="44" rx="6" stroke="#fff"/><rect x="82" y="40" width="54" height="44" rx="6" stroke="#ffb3b6"/><rect x="164" y="40" width="54" height="44" rx="6" stroke="#fff"/><path d="M54 62H82M136 62H164" stroke="#ffb3b6"/></g></svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: Capacity and Risk Lab</h2>
+<p class="lead"><b>Week 3 objective:</b> Measure capacity, tell everyday variability from disruption, and match mitigation strategies to when they are used.</p>
+<div class="card">
+<h3>Part 1: Capacity calculator</h3>
+<p class="lead">Design capacity is the maximum designed output rate. Effective capacity is design capacity minus allowances. <b>Utilization</b> = actual output ÷ design capacity. <b>Efficiency</b> = actual output ÷ effective capacity.</p>
+<div class="grid g2">
+<div class="panel">
+<label class="f" for="rate">Design rate (units per hour)</label><input type="number" id="rate" min="0" value="200">
+<label class="f" for="hrs">Hours per shift</label><input type="number" id="hrs" min="0" max="24" value="8">
+<label class="f" for="shifts">Shifts per day</label><input type="number" id="shifts" min="0" max="3" value="2">
+<label class="f" for="days">Days per week</label><input type="number" id="days" min="0" max="7" value="5">
+<label class="f" for="eff">Effective capacity (units per week)</label><input type="number" id="eff" min="0" value="14000">
+<label class="f" for="act">Actual output (units per week)</label><input type="number" id="act" min="0" value="12600">
+</div>
+<div class="panel" aria-live="polite">
+<div style="color:var(--muted)">Design capacity per week</div><div class="big" id="dc"></div>
+<div style="margin-top:10px"><b>Utilization:</b> <span id="ut"></span></div><div class="meter" aria-hidden="true"><span id="utBar" style="background:var(--blue)"></span></div>
+<div><b>Efficiency:</b> <span id="ef"></span></div><div class="meter" aria-hidden="true"><span id="efBar" style="background:var(--green)"></span></div>
+<p class="fb" id="capNote"></p>
+</div>
+</div>
+</div>
+<div class="card">
+<h3>Part 2: Operational or disruption risk?</h3>
+<p class="lead">Operational risks are day-to-day disturbances such as lead-time and demand fluctuations. Disruption risks are low-frequency, high-impact events that make facilities or links temporarily unavailable. All firms are fictional.</p>
+<div id="risk" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="riskCheck">Check my answers</button> <button class="btn ghost" id="riskReset">Start over</button></p>
+<p class="fb" id="riskFb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Part 3: Proactive or reactive?</h3>
+<p class="lead">Proactive strategies are put in place before a disruption, such as how the network is configured. Reactive strategies respond once it hits.</p>
+<div id="mit" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="mitCheck">Check my answers</button> <button class="btn ghost" id="mitReset">Start over</button></p>
+<p class="fb" id="mitFb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Capacity commits resources for the long term, so check what your suppliers and distributors can absorb. Name the type of risk first, then combine <b>proactive</b> structure (multiple, geographically spread partners; mitigation inventory; backup suppliers) with <b>reactive</b> options, and plan how partners will recover together.</div>
+<p class="src">Sources: LibreTexts, <i>Operations Management (NWTC)</i>, Section 7.1 “Introduction to Strategic Capacity Planning” (CC BY-NC 4.0); Ivanov, D. (2020), <i>Transportation Research Part E, 136</i>, 101922; Cagri Gurbuz, M., et al. (2023), <i>Journal of Business Research, 155</i>, 113407. Companies and figures are fictional.</p>
+</div>
+<script>
+function buildSet(cfg){const box=document.getElementById(cfg.box),fb=document.getElementById(cfg.fb);let ans={};
+function render(){box.innerHTML='';cfg.D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML='<p style="margin:0 0 8px" id="'+cfg.box+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+cfg.box+'q'+i+'">'+
+cfg.O.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+'</div><p class="fb" id="'+cfg.box+'f'+i+'" aria-live="polite"></p>';box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(cfg.box+'f'+i).textContent='';});
+const lab=v=>cfg.O.find(o=>o[0]===v)[1];
+document.getElementById(cfg.check).onclick=()=>{let ok=0,done=0;cfg.D.forEach((d,i)=>{const f=document.getElementById(cfg.box+'f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.innerHTML='<span class="score">'+ok+' of '+cfg.D.length+' correct</span>'+(done<cfg.D.length?' Answer every item to finish.':'');};
+document.getElementById(cfg.reset).onclick=()=>{ans={};render();fb.textContent=''};render();}
+buildSet({box:'risk',check:'riskCheck',reset:'riskReset',fb:'riskFb',O:[["op", "Operational risk"], ["dis", "Disruption risk"]],D:[["Weekly demand for Tallis Outdoor’s tents swings 15% above or below forecast.", "op", "Day-to-day demand fluctuations are operational risks."], ["An earthquake closes the only plant that makes a key chip for Vantor Audio for two months.", "dis", "A natural disaster that takes a facility out of the network is a low-frequency, high-impact disruption risk."], ["A supplier’s lead time drifts from 10 to 13 days during a busy quarter.", "op", "Lead-time fluctuations are part of everyday operational risk."], ["An explosion at a chemical plant creates a raw-material shortage across an industry.", "dis", "A man-made catastrophe that cuts supply is a disruption risk; the shortage can ripple downstream."], ["A port strike halts container traffic for three weeks.", "dis", "Strikes are disruption risks that can make transportation links temporarily unavailable."]]});
+buildSet({box:'mit',check:'mitCheck',reset:'mitReset',fb:'mitFb',O:[["pro", "Proactive"], ["re", "Reactive"]],D:[["Before any crisis, Selwyn Textiles qualifies a second fabric supplier in another region.", "pro", "Building a dispersed, multi-sourced network ahead of time is a proactive strategy."], ["When a retailer asks to cancel an order mid-disruption, Selwyn offers a discount to keep the order.", "re", "A financial offer made in response to a cancellation request is a reactive strategy."], ["Ahead of peak season, Vantor Audio holds extra risk mitigation inventory of its key chip.", "pro", "Risk mitigation inventory is built in advance, so it is proactive preparation."], ["After a port closes, a firm ships some orders direct to customers as a temporary solution.", "re", "A temporary workaround after a disruption begins is a reactive response."]]});
+const $=id=>document.getElementById(id);
+function cap(){const d=(+$('rate').value)*(+$('hrs').value)*(+$('shifts').value)*(+$('days').value),e=+$('eff').value,a=+$('act').value;
+$('dc').textContent=d.toLocaleString('en-US')+' units';
+if(!(d>0)||!(e>0)){$('ut').textContent='—';$('ef').textContent='—';$('capNote').className='fb bad';$('capNote').textContent='Enter positive values for every field.';$('utBar').style.width='0';$('efBar').style.width='0';return}
+const u=a/d*100,f=a/e*100;$('ut').textContent=u.toFixed(1)+'%';$('ef').textContent=f.toFixed(1)+'%';
+$('utBar').style.width=Math.min(100,u)+'%';$('efBar').style.width=Math.min(100,f)+'%';
+let n='';if(e>d){n='Effective capacity cannot exceed design capacity; check your allowances.';$('capNote').className='fb bad'}
+else{$('capNote').className='fb';n='Allowances take '+(d-e).toLocaleString('en-US')+' units of design capacity per week.'}$('capNote').textContent=n;}
+['rate','hrs','shifts','days','eff','act'].forEach(k=>$(k).addEventListener('input',cap));cap();
+</script>
+</body></html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading the Yield Curve</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.ctl{margin:10px 0}.ctl label{font-weight:600;display:block}
+input[type=range]{width:100%;accent-color:var(--red)}
+input[type=number],select,.num{font:inherit;padding:7px 9px;border:2px solid #cfcfcf;border-radius:8px;max-width:100%}
+.big{font-size:1.9rem;font-weight:800;line-height:1.2}
+.bars{display:flex;align-items:flex-end;gap:4px;height:150px;border-bottom:2px solid #999;padding-top:8px}
+.bars span{flex:1;background:var(--red);border-radius:4px 4px 0 0;min-width:2px}
+.bars span.base{background:#999}
+.q{background:#fff;border-radius:12px;padding:12px;margin:10px 0}
+.q .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+@media(max-width:480px){.card{padding:14px}}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.kicker{font-size:.78rem;font-weight:800;letter-spacing:.08em}
+table.t{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}table.t th,table.t td{padding:6px 8px;border-bottom:1px solid #e3e0dc;text-align:right}table.t th:first-child,table.t td:first-child{text-align:left}
+.scroll{overflow-x:auto}
+.grid>*{min-width:0}
+.chart{width:100%;height:auto;background:#fff;border-radius:12px;border:1px solid #ddd}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 1 banner: Reading the Yield Curve" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 520 · WEEK 1</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Reading the Yield Curve</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Build a curve from expectations and read what it signals</text>
+<g transform="translate(770,60)" fill="none" stroke-linecap="round"><path d="M10 130H190M10 130V10" stroke="#fff" stroke-width="6"/><path d="M20 115C60 70 110 52 180 40" stroke="#ffb3b6" stroke-width="7"/><path d="M20 55C70 80 120 92 180 100" stroke="#d34147" stroke-width="7" stroke-dasharray="14 10"/></g>
+</svg></div>
+<div class="wrap">
+<h2>Week 1 Interactive: Reading the Yield Curve</h2>
+<p class="lead"><b>Week 1 focus:</b> Discussion 1 asks you to compare the yield curve before the 2008 crisis with today's curve and explain what it means for a firm's access to capital. Build a curve from market expectations, then practice reading curves and the financial system around them.</p>
+
+<div class="card">
+<h3>1. Build a curve from expectations</h3>
+<p class="lead">In the expectations-plus-premium view, an n-year yield = the average of the expected 1-year rates over the n years + a term premium that grows with maturity. Set the 1-year rate the market expects in each future year and the 5-year term premium (here the premium rises evenly from 0 for 1 year to the full amount at 5 years).</p>
+<div class="grid g2">
+<div id="sl"></div>
+<div class="panel">
+ <svg id="ch" class="chart" viewBox="0 0 420 260" role="img" aria-labelledby="chT chD"><title id="chT">Yield curve built from your inputs</title><desc id="chD"></desc></svg>
+ <div class="scroll"><table class="t" style="margin-top:8px"><caption style="text-align:left;font-weight:700;padding:4px 0">Yields by maturity</caption><thead><tr><th scope="col">Maturity</th><th scope="col">1 yr</th><th scope="col">2 yr</th><th scope="col">3 yr</th><th scope="col">4 yr</th><th scope="col">5 yr</th></tr></thead><tbody><tr><th scope="row">Yield (%)</th><td id="y1"></td><td id="y2"></td><td id="y3"></td><td id="y4"></td><td id="y5"></td></tr></tbody></table></div>
+ <p class="fb" id="shape" aria-live="polite"></p>
+</div></div>
+<p style="margin:10px 0 0"><button class="btn ghost" data-p="normal">Preset: rates expected steady</button> <button class="btn ghost" data-p="rise">Preset: rates expected to rise</button> <button class="btn ghost" data-p="fall">Preset: Fed tightening, rates expected to fall</button></p>
+</div>
+
+<div class="card">
+<h3>2. Read four curves</h3>
+<p class="lead">Each fictional snapshot shows Treasury yields. Choose the shape and what it signals, then select <b>Check</b>.</p>
+<div id="cq"></div>
+<p style="margin:14px 0 0"><button class="btn" id="cchk">Check my answers</button> <button class="btn ghost" id="crst">Start over</button></p>
+<p class="fb" id="cfb" aria-live="polite"></p>
+</div>
+
+<div class="card">
+<h3>3. The system behind the curve</h3>
+<div id="sq"></div>
+<p style="margin:14px 0 0"><button class="btn" id="schk">Check my answers</button> <button class="btn ghost" id="srst">Start over</button></p>
+<p class="fb" id="sfb" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> A yield curve is the market's forecast of short-term rates plus a premium for tying money up longer. Normal curves slope upward; a flat or inverted curve points to falling rates and is consistent with recession. In 2008 the bigger problem was trust: credit markets froze and investors fled to Treasuries. As you write Discussion 1, use current Treasury or Federal Reserve data for today's curve.</div>
+<p class="src">Concepts and formula from <i>Finance, Banking, and Money</i> (LibreTexts, CC BY-NC-SA 3.0), 2.5 "Financial Markets," 2.6 "Financial Intermediaries," 6.2 "The Determinants of Interest Rates II: The Term Structure," and 13.6 "The Crisis of 2007-2009"; Kenneth S. Bigel, <i>Introduction to Financial Analysis</i> (LibreTexts, CC BY 4.0), 13.7 "The Yield Curve" and 13.8 "Four Yield Curve Theories." Yield snapshots are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const money=v=>(v<0?'−$':'$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function buildQuiz(Q,box,chk,rst,fbId){const qs=$(box);let pick={};
+Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';const id=box+i;
+ if(q[1]==='num'){d.innerHTML='<label for="'+id+'" style="font-weight:600">'+q[0]+'</label><div class="row">'+(q[6]||'')+'<input class="num" id="'+id+'" inputmode="decimal" autocomplete="off" aria-describedby="f'+id+'">'+(q[7]||'')+'</div><p class="fb" id="f'+id+'" aria-live="polite"></p>';}
+ else{d.innerHTML='<p style="margin:0;font-weight:600" id="l'+id+'">'+q[0]+'</p><div role="group" aria-labelledby="l'+id+'">'+q[4].map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+'</div><p class="fb" id="f'+id+'" aria-live="polite"></p>';}
+ qs.appendChild(d);});
+qs.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;pick[b.dataset.i]=b.dataset.v;qs.querySelectorAll('.choice[data-i="'+b.dataset.i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+box+b.dataset.i).textContent='';});
+$(chk).onclick=()=>{let ok=0,done=0;Q.forEach((q,i)=>{const f=$('f'+box+i);let right;
+ if(q[1]==='num'){const raw=$(box+i).value.replace(/[$,%\s]/g,'').replace('−','-');if(raw===''||isNaN(+raw)){f.className='fb bad';f.textContent='Enter a number.';return}right=Math.abs(+raw-q[2])<=(q[5]||1);}
+ else{if(!pick[i]){f.className='fb bad';f.textContent='Choose an answer.';return}right=pick[i]===q[2];}
+ done++;if(right){ok++;f.className='fb ok';f.innerHTML='Correct. '+q[3]}else{f.className='fb bad';f.innerHTML='Not quite. '+q[3]}});
+ $(fbId).innerHTML='<span class="score">'+ok+' of '+Q.length+' correct</span>'+(done<Q.length?' Answer every question to finish.':(ok===Q.length?' Well done.':' Review the explanations and try again.'));};
+$(rst).onclick=()=>{Q.forEach((q,i)=>{if(q[1]==='num')$(box+i).value='';$('f'+box+i).textContent=''});pick={};qs.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed','false'));$(fbId).textContent=''};}
+
+const E=[4,4,4,4,4];let prem=0.5;
+const sl=$('sl');
+for(let k=0;k<5;k++){const d=document.createElement('div');d.className='ctl';d.innerHTML='<label for="e'+k+'">Expected 1-year rate in year '+(k+1)+': <span id="eo'+k+'"></span></label><input type="range" id="e'+k+'" min="0" max="12" step="0.25" value="4">';sl.appendChild(d);}
+const dp=document.createElement('div');dp.className='ctl';dp.innerHTML='<label for="pr">5-year term premium: <span id="pro"></span></label><input type="range" id="pr" min="0" max="2" step="0.25" value="0.5">';sl.appendChild(dp);
+function yields(){const y=[];let s=0;for(let n=1;n<=5;n++){s+=E[n-1];y.push(s/n+prem*(n-1)/4);}return y;}
+function draw(){for(let k=0;k<5;k++){E[k]=+$('e'+k).value;$('eo'+k).textContent=E[k].toFixed(2)+'%';$('e'+k).setAttribute('aria-valuetext',E[k].toFixed(2)+' percent');}
+ prem=+$('pr').value;$('pro').textContent=prem.toFixed(2)+' points';$('pr').setAttribute('aria-valuetext',prem.toFixed(2)+' percentage points');
+ const y=yields();y.forEach((v,i)=>$('y'+(i+1)).textContent=v.toFixed(2));
+ const X=i=>60+i*80,Y=v=>220-v/14*190;
+ let g='<line x1="50" y1="220" x2="400" y2="220" stroke="#999" stroke-width="2"/><line x1="50" y1="20" x2="50" y2="220" stroke="#999" stroke-width="2"/>';
+ for(let t=0;t<=14;t+=2)g+='<text x="44" y="'+(Y(t)+4)+'" font-size="11" text-anchor="end" fill="#555">'+t+'%</text><line x1="50" x2="400" y1="'+Y(t)+'" y2="'+Y(t)+'" stroke="#eee"/>';
+ for(let i=0;i<5;i++)g+='<text x="'+X(i)+'" y="238" font-size="12" text-anchor="middle" fill="#555">'+(i+1)+' yr</text>';
+ g+='<polyline fill="none" stroke="#d34147" stroke-width="4" points="'+y.map((v,i)=>X(i)+','+Y(v)).join(' ')+'"/>'+y.map((v,i)=>'<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="5" fill="#111"/>').join('');
+ g+='<text x="225" y="256" font-size="12" text-anchor="middle" fill="#333">Maturity</text>';
+ $('ch').innerHTML='<title id="chT">Yield curve built from your inputs</title><desc id="chD">Yields from 1 to 5 years: '+y.map(v=>v.toFixed(2)+'%').join(', ')+'.</desc>'+g;
+ const d=y[4]-y[0];let msg;
+ if(d>0.25)msg='Upward-sloping (normal) curve: the 5-year yield is '+d.toFixed(2)+' points above the 1-year. The market expects steady or rising short-term rates, plus a premium for illiquidity.';
+ else if(d<-0.25)msg='Inverted curve: the 5-year yield is '+Math.abs(d).toFixed(2)+' points below the 1-year. The market expects short-term rates to fall, a pattern consistent with a coming recession.';
+ else msg='Flat curve: yields are within a quarter point across maturities. Expected declines in short-term rates are roughly offsetting the term premium.';
+ $('shape').className='fb';$('shape').textContent=msg;}
+for(let k=0;k<5;k++)$('e'+k).addEventListener('input',draw);$('pr').addEventListener('input',draw);
+const PRE={normal:[4,4,4,4,4],rise:[3,4,5,6,7],fall:[8,6,4.5,4,4]};
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{PRE[b.dataset.p].forEach((v,k)=>$('e'+k).value=v);draw();});
+draw();
+const tbl=(a)=>'<div class="scroll"><table class="t" style="margin:6px 0"><thead><tr><th scope="col">Maturity</th><th scope="col">3 mo</th><th scope="col">1 yr</th><th scope="col">2 yr</th><th scope="col">5 yr</th><th scope="col">10 yr</th><th scope="col">30 yr</th></tr></thead><tbody><tr><th scope="row">Yield (%)</th>'+a.map(v=>'<td>'+v.toFixed(2)+'</td>').join('')+'</tr></tbody></table></div>';
+const SH=[['n','Normal: rates expected steady or rising'],['f','Flat: rates expected to fall moderately'],['i','Inverted: rates expected to fall sharply']];
+const CQ=[
+['Snapshot A'+tbl([1.20,1.45,1.90,2.60,3.10,3.50]),'mc','n','Yields rise steadily with maturity: a normal, upward-sloping curve.',SH],
+['Snapshot B'+tbl([5.40,5.30,4.90,4.40,4.20,4.30]),'mc','i','Short-term yields sit well above the 5- and 10-year yields: an inverted curve, the shape that often follows Federal Reserve tightening.',SH],
+['Snapshot C'+tbl([4.30,4.35,4.32,4.31,4.36,4.45]),'mc','f','Yields are nearly identical across maturities: a flat curve.',SH],
+['Snapshot B shows short rates above long rates. Which explanation from the readings fits?','mc','b','When the Fed tightens, short-term rates are driven up, while the long end declines because markets expect tight money to bring inflation and rates down later.',[['a','Investors suddenly prefer illiquidity and pay more for long bonds forever.'],['b','Tight Federal Reserve policy pushed short rates up while the market expects rates to fall later.'],['c','Long-term Treasuries became riskier than corporate bonds.']]]];
+buildQuiz(CQ,'cq','cchk','crst','cfb');
+const SQ=[
+['1. A company sells newly issued shares to investors for the first time through an investment bank. Where does this happen?','mc','a','Newly issued securities are sold in the primary market; later trades between investors happen in secondary markets.',[['b','In the secondary market'],['a','In the primary market'],['c','In the money market']]],
+['2. What makes a bank a financial intermediary rather than a broker?','mc','c','Intermediaries transform assets: a bank issues safe, liquid deposits and buys riskier, longer-term loans and bonds. Brokers only link buyers and sellers of the same security.',[['a','It charges a commission on each trade.'],['c','It issues liabilities with different risk, return, and liquidity than the assets it buys.'],['b','It only trades stocks on an exchange.']]],
+['3. Using the formula, the market expects 1-year rates of 4, 5, 6, 7, and 8 percent over the next five years, and the 5-year premium is 0.5 points. What is the 5-year yield (in %)?','num',6.5,'(4 + 5 + 6 + 7 + 8) ÷ 5 + 0.5 = 6.5 percent, well above today\'s 4 percent: a steep upward slope.',null,0.01,'','<span aria-hidden="true">%</span>'],
+['4. In September and October 2008, what happened in the credit markets?','mc','b','Panic spread through credit and stock markets; investors fled to Treasury bonds as the only clear safe haven, and the asset-backed commercial paper market shut down.',[['a','Corporate borrowing became cheaper than ever as lenders competed for loans.'],['b','Investors fled to Treasuries and the asset-backed commercial paper market shut down.'],['c','Nothing changed for companies with good credit ratings.']]]];
+buildQuiz(SQ,'sq','schk','srst','sfb');
+
+</script>
+</body></html>

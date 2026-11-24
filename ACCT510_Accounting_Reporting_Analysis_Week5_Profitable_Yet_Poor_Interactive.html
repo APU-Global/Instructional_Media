@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profitable Yet Poor? A Cash Flow Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%}td,th{padding:6px 8px;text-align:left;border-bottom:1px solid #e3e3e3}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}.tot td{border-top:2px solid #111;font-weight:700}
+caption{text-align:left;font-weight:700;padding-bottom:6px}
+label.q{font-weight:600;display:block;margin:4px 0}
+input.num{font:inherit;width:9em;max-width:100%;padding:6px 8px;border:2px solid #bbb;border-radius:8px}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Profitable Yet Poor? Classify cash flows and find out where the profit went." xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ACCT 510 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Profitable Yet Poor?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Classify cash flows and find out where the profit went</text></svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Reading the Statement of Cash Flows</h2>
+<p class="lead"><b>Week 5 objective:</b> Classify cash flows by activity, compute operating cash flow with the indirect method, and judge whether profit is turning into cash.</p>
+<div class="card"><h3>Three sections</h3><div class="grid g3">
+<div class="panel"><b>Operating</b><br>The central activity of the business: customers, suppliers, employees.</div>
+<div class="panel"><b>Investing</b><br>Nonoperating flows involving an asset: buying or selling equipment, land, buildings.</div>
+<div class="panel"><b>Financing</b><br>Nonoperating flows involving a liability or equity: loans, stock, dividends.</div></div></div>
+<div class="card">
+<h3>Practice 1: classify each cash flow</h3>
+<p class="lead">Choose the section where each cash flow belongs, then select <b>Check my answers</b>.</p>
+<div id="w5a-items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="w5a-check">Check my answers</button> <button class="btn ghost" id="w5a-reset">Start over</button></p>
+<p class="fb" id="w5a-fb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: compute operating cash flow</h3>
+<p class="lead">Use the data below. Under the indirect method, start with net income, add back noncash expenses, subtract increases in receivables and inventory, and add increases in payables. Enter whole dollars or a percentage.</p>
+<div class="panel tw"><table><caption>Tidewater Goods (fictional): this year</caption>
+<thead><tr><th scope="col">Item</th><th scope="col" class="n">Amount</th></tr></thead><tbody>
+<tr><td>Net income</td><td class="n">$120,000</td></tr>
+<tr><td>Depreciation expense (noncash)</td><td class="n">$30,000</td></tr>
+<tr><td>Increase in accounts receivable</td><td class="n">$90,000</td></tr>
+<tr><td>Increase in inventory</td><td class="n">$70,000</td></tr>
+<tr><td>Increase in accounts payable</td><td class="n">$25,000</td></tr>
+<tr><td>Cash received from issuing new shares</td><td class="n">$60,000</td></tr>
+<tr><td>Cash paid for new equipment</td><td class="n">$40,000</td></tr>
+</tbody></table></div>
+<div id="w5b-items" class="grid" style="margin-top:14px"></div>
+<p style="margin:16px 0 0"><button class="btn" id="w5b-check">Check my answers</button> <button class="btn ghost" id="w5b-reset">Start over</button></p>
+<p class="fb" id="w5b-fb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 3: read the warning signs</h3>
+<p class="lead">Decide whether each statement about Tidewater is a warning sign.</p>
+<div id="w5c-items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="w5c-check">Check my answers</button> <button class="btn ghost" id="w5c-reset">Start over</button></p>
+<p class="fb" id="w5c-fb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Profit is not cash. Growth in receivables and inventory can drain a profitable company, and cash raised by issuing shares, borrowing, or selling assets cannot replace operating cash flow for long. Always ask where the cash came from and whether that source will repeat.</div>
+<p class="src">Sections and the indirect method from <i>Financial Accounting</i> (Saylor Academy, 2012), Sections 3.4, 17.1 and 17.3, CC BY-NC-SA 3.0; interpretation modeled on the Watson Ltd. analysis in <i>Intermediate Financial Accounting 1</i> (Arnold &amp; Kyle, Lyryx; LibreTexts), Section 4.3.3, CC BY 4.0. Tidewater Goods and its figures are fictional.</p>
+</div>
+<script>
+
+const $=id=>document.getElementById(id);
+function mcq(k,O,D){const box=$(k+'-items'),fb=$(k+'-fb');let ans={};
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  const q=document.createElement('p');q.style.margin='0 0 8px';q.id=k+'-q'+i;const b=document.createElement('b');b.textContent=(i+1)+'. ';q.appendChild(b);q.appendChild(document.createTextNode(d[0]));p.appendChild(q);
+  const g=document.createElement('div');g.setAttribute('role','group');g.setAttribute('aria-labelledby',k+'-q'+i);
+  O.forEach(o=>{const c=document.createElement('button');c.className='choice';c.dataset.i=i;c.dataset.v=o[0];c.setAttribute('aria-pressed','false');c.textContent=o[1];g.appendChild(c);});
+  p.appendChild(g);const f=document.createElement('p');f.className='fb';f.id=k+'-f'+i;f.setAttribute('aria-live','polite');p.appendChild(f);box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(k+'-f'+i).textContent='';});
+ $(k+'-check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=$(k+'-f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML='';const s=document.createElement('span');s.className='score';s.textContent=ok+' of '+D.length+' correct';fb.appendChild(s);
+  if(done<D.length)fb.appendChild(document.createTextNode(' Answer every item to finish.'));};
+ $(k+'-reset').onclick=()=>{ans={};render();fb.textContent=''};render();}
+function num(k,Q){const box=$(k+'-items'),fb=$(k+'-fb');
+ function render(){box.innerHTML='';Q.forEach((q,i)=>{const p=document.createElement('div');p.className='panel';
+  const l=document.createElement('label');l.className='q';l.htmlFor=k+'-in'+i;l.textContent=(i+1)+'. '+q[0];p.appendChild(l);
+  const inp=document.createElement('input');inp.className='num';inp.id=k+'-in'+i;inp.type='text';inp.inputMode='decimal';inp.autocomplete='off';inp.setAttribute('aria-describedby',k+'-h'+i+' '+k+'-f'+i);p.appendChild(inp);
+  const h=document.createElement('span');h.id=k+'-h'+i;h.style.cssText='margin-left:8px;color:var(--muted)';h.textContent=q[3];p.appendChild(h);
+  const f=document.createElement('p');f.className='fb';f.id=k+'-f'+i;f.setAttribute('aria-live','polite');p.appendChild(f);box.appendChild(p);});}
+ $(k+'-check').onclick=()=>{let ok=0,done=0;Q.forEach((q,i)=>{const f=$(k+'-f'+i),raw=$(k+'-in'+i).value.replace(/[$,%\s]/g,'').replace(/[−–]/g,'-');
+  if(raw===''){f.textContent='Enter a number.';f.className='fb bad';return}const v=parseFloat(raw);
+  if(isNaN(v)){f.textContent='Enter a number, for example 2.5.';f.className='fb bad';return}done++;
+  if(Math.abs(v-q[1])<=q[2]){ok++;f.textContent='Correct. '+q[4];f.className='fb ok'}else{f.textContent='Not quite. '+q[4];f.className='fb bad'}});
+  fb.innerHTML='';const s=document.createElement('span');s.className='score';s.textContent=ok+' of '+Q.length+' correct';fb.appendChild(s);
+  if(done<Q.length)fb.appendChild(document.createTextNode(' Answer every item to finish.'));};
+ $(k+'-reset').onclick=()=>{render();fb.textContent=''};render();}
+mcq("w5a",[["o", "Operating"], ["i", "Investing"], ["f", "Financing"]],[["Cash collected from customers for merchandise sold.", "o", "Collections from the central activity of the business are operating cash flows."], ["Cash paid to buy a delivery truck.", "i", "A nonoperating flow that involves an asset is investing."], ["Cash received from a bank loan.", "f", "Borrowing involves a liability, so it is financing."], ["Cash paid to employees for salaries.", "o", "Paying employees is part of daily operations."], ["Cash dividends paid to shareholders.", "f", "Dividends involve stockholders' equity: financing."], ["Cash received from selling an old warehouse.", "i", "Selling a building is a nonoperating asset transaction: investing."], ["Cash received from issuing new shares of stock.", "f", "Issuing stock involves equity: financing."], ["Cash paid to suppliers for inventory.", "o", "Buying merchandise for resale is an operating activity."]]);
+num("w5b",[["Cash flow from operating activities (indirect method), in dollars", 15000, 0.5, "e.g. 15000 (use a minus sign for an outflow)", "Start with net income $120,000, add back depreciation $30,000, subtract the $90,000 receivables increase and the $70,000 inventory increase, and add the $25,000 payables increase: $15,000."], ["Net change in cash for the year, in dollars", 35000, 0.5, "e.g. -5000", "Operating $15,000 + financing $60,000 − investing $40,000 = a $35,000 increase."], ["Operating cash flow as a percentage of net income", 12.5, 0.15, "percent, e.g. 80", "$15,000 / $120,000 = 12.5%. Almost all of the reported profit is tied up in receivables and inventory."]]);
+mcq("w5c",[["y", "Yes, a warning sign"], ["n", "No, not a concern"]],[["Tidewater's cash went up this year, so its cash position is healthy.", "y", "Not on its own. Cash rose mainly because of $60,000 from new shares, which may be a one-time source; operations produced only $15,000."], ["Receivables grew faster than the business collected cash.", "y", "Sales are being made, but collections are not keeping pace; profit has not turned into cash."], ["Depreciation was added back to net income.", "n", "Depreciation is a noncash expense, so adding it back is simply how the indirect method works."]]);
+</script>
+</body></html>

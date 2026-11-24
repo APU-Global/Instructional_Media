@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Negotiable or Not?</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true],button.panel[aria-expanded=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 12px;margin:4px 6px 4px 0;font-weight:600;text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--red)}
+input[type=number],input[type=text],select{font:inherit;padding:7px 10px;border:2px solid #cfcfcf;border-radius:10px;max-width:100%;background:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;font-size:.95rem}th{background:#f3f1ee}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 6 banner: Negotiable or Not?" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 540 · WEEK 6</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Negotiable or Not?</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Test instruments against the UCC and match each cash need to its source</text></svg></div>
+<div class="wrap">
+<h2>Week 6 Interactive: Commercial Paper and the Cash Cycle</h2>
+<p class="lead"><b>Week 6 objective:</b> Apply the UCC requirements for negotiability and match a company’s short-term and long-term cash needs to the right source of funds.</p>
+<div class="card">
+<h3>The six requirements</h3>
+<p class="lead">An instrument is negotiable only if a holder can learn every essential term from its face. Select each requirement to review it.</p>
+<div class="grid g3" id="reqs"></div>
+<div class="panel" id="reqDetail" style="margin-top:12px" aria-live="polite">Select a requirement.</div>
+</div>
+<div class="card">
+<h3>Practice 1: is the instrument negotiable?</h3>
+<p class="lead">All parties are fictional. Choose <b>Negotiable</b> or the requirement the instrument fails.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check">Check my answers</button> <button type="button" class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Practice 2: match the need to the source</h3>
+<p class="lead">Pick the source of funds that best fits each company’s need.</p>
+<div id="items2" class="grid"></div>
+<p style="margin:16px 0 0"><button type="button" class="btn" id="check2">Check my answers</button> <button type="button" class="btn ghost" id="reset2">Start over</button></p>
+<p class="fb" id="fb2" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Negotiability is what lets paper move like cash: a good-faith purchaser can collect even when the original buyer has a defense. In finance, “commercial paper” usually means short-term corporate notes (three days to nine months). Match <b>short-term</b> needs to short-term paper and <b>long-term</b> investment to bonds, stock, or reinvested earnings.</div>
+<p class="src">Rules from <i>Business Law and the Legal Environment</i> v1.0 (Saylor Academy, 2012), Sections 22.1 Introduction to Commercial Paper; 22.2 Scope of Article 3 and Types of Commercial Paper; 22.3 Requirements for Negotiability; 44.1 General Sources of Corporate Funds; 44.2 Bonds. CC BY-NC-SA 3.0. Parties are fictional.</p>
+</div>
+<script>
+
+function scenarioSet(boxId,checkId,resetId,fbId,O,D,prefix){
+ const box=document.getElementById(boxId),fb=document.getElementById(fbId);let ans={};
+ const lab=v=>O.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML=`<p style="margin:0 0 8px" id="${prefix}q${i}"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-labelledby="${prefix}q${i}">`+
+  O.map(o=>`<button type="button" class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+  `</div><p class="fb" id="${prefix}f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById(prefix+'f'+i).textContent='';});
+ document.getElementById(checkId).onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById(prefix+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every scenario to finish.':(ok===D.length?' Excellent work.':' Review the explanations and try again.'));};
+ document.getElementById(resetId).onclick=()=>{ans={};render();fb.textContent=''};
+ render();}
+// reveal cards: buttons with aria-expanded toggling a detail panel
+function revealCards(gridId,detailId,C){const g=document.getElementById(gridId),d=document.getElementById(detailId);
+ C.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='panel';b.setAttribute('aria-pressed','false');
+  b.innerHTML='<div class="kicker">'+c[0]+'</div><b>'+c[1]+'</b>';
+  b.onclick=()=>{g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));d.innerHTML='<b>'+c[1]+'</b><p style="margin:6px 0 0">'+c[2]+'</p>';};
+  g.appendChild(b);});}
+
+revealCards('reqs','reqDetail',[
+['1','In writing','Any intentional reduction to tangible form counts: ink, pencil, print, even unusual materials. An erasable writing invites alteration.'],
+['2','Signed by the maker or drawer','Any symbol adopted with intent to authenticate the writing: a handwritten name, a stamp, an X, a trade name. The signature can appear in the body of the note.'],
+['3','Unconditional promise or order','The instrument fails if it states an express condition or says the promise is subject to or governed by another writing. A bare reference to another writing does not make it conditional.'],
+['4','Fixed amount in money','The holder must be able to calculate the amount due. Stated interest and installments are allowed. A promise to deliver goods or services is not a promise to pay money.'],
+['5','On demand or at a definite time','Payable on sight, with no time stated, on or before a date, or a fixed period after a date. A time fixed only by an uncertain event is not definite.'],
+['6','To order or to bearer','“Pay to the order of …” or “pay to bearer” (including “cash”). Checks are excepted: a check is negotiable even without the words “to the order of.”']]);
+const O=[['neg','Negotiable'],['sign','Fails: not signed'],['cond','Fails: conditional'],['money','Fails: not a fixed amount in money'],['time','Fails: no definite time'],['order','Fails: not to order or bearer']];
+const D=[
+['A handwritten note reads: “Ninety days from today, I, Dana Ortiz, promise to pay $5,000 to the order of Coastline Supply.” There is no signature line at the bottom.','neg','Her name written in the body, with intent to authenticate, is a signature. Every other requirement is met.'],
+['“I promise to pay $8,000 to the order of Elm Street Bank on May 1, subject to the terms of our supply agreement dated March 3.” Signed, Ken Abel.','cond','A promise stated to be subject to another writing is conditional. A holder would have to read the other agreement to know whether payment is owed.'],
+['“On June 30, I promise to deliver forty cases of olive oil to the order of Bayside Market.” Signed, Lina Haddad.','money','The only promise a negotiable instrument may contain is to pay a sum certain in money. Goods are not money.'],
+['“I promise to pay $12,000 to the order of Ridge Builders thirty days after our warehouse sale closes.” Signed, Omar Price.','time','The only time fixed is an uncertain future event, so the time is not definite.'],
+['A signed note reads: “I promise to pay Alicia Ruiz $2,000 on June 1.” It is not a check.','order','A note must be payable to order or to bearer. “Pay Alicia Ruiz” is neither.'],
+['“On or before December 31, I promise to pay to bearer $10,000 with interest at 7% per year.” Signed, Harbor Tech, Inc., by its treasurer.','neg','“On or before” a date is a definite time, “bearer” satisfies the order-or-bearer rule, and stated interest still lets the holder calculate a fixed amount.'],
+['A personal check drawn on First Valley Bank reads “Pay Jordan Lee $400.00” and is signed by the drawer. The words “to the order of” were left off.','neg','Checks are excepted from the order-or-bearer requirement, so this check is still negotiable.'],
+['A typed note says “Promise to pay $3,000 to the order of Pine Supply on demand.” No name, mark, stamp, or letterhead of the maker appears anywhere on it.','sign','There is no symbol adopted by a maker to authenticate the writing, so the note is not signed.']];
+scenarioSet('items','check','reset','fb',O,D,'a');
+const O2=[['cp','Commercial paper (short-term notes)'],['ta','Trade acceptance sold at a discount'],['bond','Bonds'],['plow','Plowback (reinvested earnings)'],['stock','Equity (stock)']];
+const D2=[
+['Kestrel Foods, a large, highly rated company, needs cash for about 90 days to build holiday inventory and wants to raise it quickly at a fixed rate.','cp','In finance, commercial paper is short-term promissory notes (three days to nine months) that large corporations sell at a fixed rate to raise money quickly.'],
+['Granite Tile shipped an order to a customer who cannot pay for 60 days, but Granite needs the money now.','ta','Granite draws a time draft on the customer, who accepts it by signing; Granite indorses it and sells it at a discount to its bank, which collects on the due date.'],
+['Northwind Energy will build a plant that will take decades to pay off. Its owners do not want to give up any ownership, and it wants interest that may be tax deductible.','bond','Bonds raise long-term money without changing ownership, can be callable or convertible, and their interest may be deductible. The risk: missed payments can force bankruptcy.'],
+['Orchard Analytics is profitable and wants to fund new equipment without paying interest, issuing securities, or seeking any government approval.','plow','Plowback (reinvesting earnings) is under managerial control, needs no government approval, and avoids the costs of stocks and bonds.'],
+['Two founders are launching Summit Robotics and need ownership capital to start operations.','stock','Stock is the smallest source of new capital overall but is of critical importance in launching a business and its initial operations.']];
+scenarioSet('items2','check2','reset2','fb2',O2,D2,'b');
+
+</script>
+</body></html>

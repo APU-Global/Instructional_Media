@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluating Global Health</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:0 0 10px;font-size:1.1rem}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true],button.panel[aria-expanded=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tab{background:#fff;border:2px solid #cfcfcf;border-radius:999px;padding:7px 16px;font-weight:600;color:var(--ink)}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.chip{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 11px;margin:4px 6px 4px 0;font-size:.95rem;font-weight:600;text-align:left}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.icon{font-size:1.7rem;line-height:1}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+input[type=range]{width:100%;accent-color:var(--red)}
+section[hidden]{display:none}
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;position:relative}
+.road:before{content:"";position:absolute;left:6%;right:6%;top:34px;height:6px;border-radius:3px;background:#d6d2cd}
+.wk{position:relative;background:none;border:0;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px}
+.wk .dot{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;border:4px solid #fcfcfc;transition:transform .2s}
+.wk[aria-pressed=true] .dot{transform:scale(1.2);box-shadow:0 0 0 3px #111}
+.wk .lbl{font-size:.78rem;font-weight:600;color:#444;text-align:center}
+.wk .part{font-size:.7rem;font-weight:700;min-height:1.1em;text-align:center}
+.tag{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700;color:#fff;margin:2px 4px 2px 0}
+@media(max-width:620px){.road{grid-template-columns:repeat(4,1fr);row-gap:14px}.road:before{display:none}}
+ul.clean{margin:6px 0 0;padding-left:20px}
+/* grades */
+.bar{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:8px 0 12px}
+.bar span{display:block;height:100%}
+.leg{display:grid;gap:8px}
+.leg button{display:flex;gap:10px;align-items:center}
+.sw{width:18px;height:18px;border-radius:5px;flex:none}
+.big{font-size:2rem;font-weight:800;line-height:1.2}
+textarea{width:100%;min-height:120px;font:inherit;padding:10px;border:2px solid #cfcfcf;border-radius:10px;resize:vertical}
+.meter{height:12px;border-radius:6px;background:#e3e0dc;overflow:hidden;margin:6px 0}
+.meter span{display:block;height:100%;width:0;transition:width .2s}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:620px){.steps{grid-template-columns:1fr}}
+.step{background:#fff;border-radius:12px;padding:12px;border-left:6px solid var(--red)}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.tab{padding:6px 12px;font-size:.92rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.wk{min-width:0}.wk .lbl{overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto;max-width:100%}@media(max-width:420px){.wk .lbl{font-size:.7rem}}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.g4{grid-template-columns:repeat(4,1fr)}@media(max-width:760px){.g4{grid-template-columns:1fr}}
+input[type=number]{font:inherit;width:7.5em;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px}
+table.data{border-collapse:collapse;width:100%;background:#fff}table.data th,table.data td{border:1px solid #ddd;padding:6px 8px;text-align:left}table.data th{background:#f4f2ef}
+.tablewrap{overflow-x:auto}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 8 banner: Evaluating Global Health" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 660 · WEEK 8</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Evaluating Global Health</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Six steps and five standards from CDC’s framework</text>
+<g transform="translate(790,50)" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M0 130h40v-35h40v-35h40v-35h40" stroke="#fff"/><path d="M130 10l30 15-30 15" stroke="#ffb3b6"/></g></svg></div>
+<div class="wrap">
+<h2>Week 8 Interactive: Plan an Evaluation</h2>
+<p class="lead"><b>Week 8 objective:</b> Apply CDC’s Program Evaluation Framework (six steps and five standards) to a global health program, as you will in Part 4: Evaluation and Dissemination Plan.</p>
+<div class="card">
+<h3>CDC Program Evaluation Framework</h3>
+<p class="lead">CDC calls the framework “a practical, nonprescriptive tool.” Three cross-cutting actions run through every step: <b>engage collaboratively</b>, <b>promote fair and just evaluation practices and outcomes</b>, and <b>learn from and use insights</b>. CDC calls the people with a stake in an evaluation “interest holders.” The steps are often shown in order, but evaluation is iterative.</p>
+</div>
+<div class="card">
+<h3>Part 1: Which step is it?</h3>
+<p class="lead">A fictional NGO is evaluating its bed-net education program in Kanto District. Choose the framework step for each task, then select <b>Check Part 1</b>.</p>
+<div id="p1" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c1">Check Part 1</button> <button class="btn ghost" id="r1">Start over</button></p>
+<p class="fb" id="f1" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Part 2: Which standard does it meet?</h3>
+<p class="lead">Choose the evaluation standard each decision best reflects, then select <b>Check Part 2</b>.</p>
+<div id="p2" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c2">Check Part 2</button> <button class="btn ghost" id="r2">Start over</button></p>
+<p class="fb" id="f2" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> A good evaluation plan names its <b>questions</b> (Step 3), its <b>indicators and data</b> (Step 4), and how findings will <b>reach each interest holder</b> (Step 6), and it meets the five standards throughout. That is the core of your Part 4 plan.</div>
+<p class="src">Sources read: Centers for Disease Control and Prevention, <i>CDC Program Evaluation Framework</i> (2024), <i>About Evaluation Standards</i> (2024), and the <i>Program Evaluation Framework Action Guide</i> step pages 1–6 (2024). The Kanto District program is fictional.</p>
+</div>
+<script>
+
+const $=id=>document.getElementById(id);
+function quiz(boxId,opts,data,checkId,resetId,fbId,pre){
+ const box=$(boxId);let ans={};
+ const lab=v=>opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';data.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+pre+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+pre+'q'+i+'">'+
+  opts.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+pre+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(pre+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,done=0;data.forEach((d,i)=>{const f=$(pre+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  $(fbId).innerHTML='<span class="score">'+ok+' of '+data.length+' correct</span>'+(done<data.length?' Answer every item to finish.':'');};
+ $(resetId).onclick=()=>{ans={};render();$(fbId).textContent='';};
+ render();}
+
+
+quiz('p1',[["s1", "1. Assess the context"], ["s2", "2. Describe the program"], ["s3", "3. Focus questions and design"], ["s4", "4. Gather credible evidence"], ["s5", "5. Generate and support conclusions"], ["s6", "6. Act on findings"]],[["Decide which indicators to measure, what data to collect, how, when, and from whom.", "s4", "Step 4’s key product is a data collection strategy with indicators, methods, and data sources."], ["Map the interest holders and check whether the program is ready to be evaluated.", "s1", "Step 1 includes an evaluability assessment and relevant interest holder mapping."], ["Plan reports for each interest holder and help them turn findings into decisions.", "s6", "Step 6 covers the communication, reporting, and dissemination strategy, the step your Stakeholder Table supports."], ["Draw a one-page logic model connecting the program’s activities to its intended outcomes.", "s2", "Step 2 uses a logic model or program roadmap plus a narrative description."], ["Analyze the data and answer each evaluation question, with recommendations.", "s5", "Step 5 produces a data analysis and interpretation plan and recommendations."], ["Write the purpose statement, list the evaluation questions, and choose the overall design.", "s3", "Step 3 produces the purpose statement, questions, intended users and uses, and the design."]],'c1','r1','f1','a');
+quiz('p2',[["ru", "Relevance and utility"], ["rig", "Rigor"], ["io", "Independence and objectivity"], ["tr", "Transparency"], ["eth", "Ethics"]],[["The program’s funder is kept from editing the evaluators’ conclusions.", "io", "Evaluation should be insulated from undue influences on objectivity and professional judgement."], ["The team considers how the evaluation could treat communities unfairly and adjusts its plan.", "eth", "Evaluations should be fair and just, maintaining trust in the process and products."], ["The ministry needs results before its budget meeting, so findings are timed and written for that use.", "ru", "Findings should be actionable, available in time for use, and understandable."], ["The purpose, design, and plan for releasing findings are documented before data collection begins.", "tr", "Transparency requires these decisions to be documented before the evaluation, so it is not tailored to specific findings."], ["The report states clearly what the data cannot show, alongside findings people can rely on.", "rig", "Rigor means findings interest holders can confidently rely on, with clear explanations of limitations."]],'c2','r2','f2','b');
+</script>
+</body></html>

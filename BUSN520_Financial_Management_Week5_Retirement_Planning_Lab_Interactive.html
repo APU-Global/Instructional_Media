@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retirement Planning Lab</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;text-align:left}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.ctl{margin:10px 0}.ctl label{font-weight:600;display:block}
+input[type=range]{width:100%;accent-color:var(--red)}
+input[type=number],select,.num{font:inherit;padding:7px 9px;border:2px solid #cfcfcf;border-radius:8px;max-width:100%}
+.big{font-size:1.9rem;font-weight:800;line-height:1.2}
+.bars{display:flex;align-items:flex-end;gap:4px;height:150px;border-bottom:2px solid #999;padding-top:8px}
+.bars span{flex:1;background:var(--red);border-radius:4px 4px 0 0;min-width:2px}
+.bars span.base{background:#999}
+.q{background:#fff;border-radius:12px;padding:12px;margin:10px 0}
+.q .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+@media(max-width:480px){.card{padding:14px}}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.kicker{font-size:.78rem;font-weight:800;letter-spacing:.08em}
+table.t{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;overflow:hidden}table.t th,table.t td{padding:6px 8px;border-bottom:1px solid #e3e0dc;text-align:right}table.t th:first-child,table.t td:first-child{text-align:left}
+.scroll{overflow-x:auto}
+.grid>*{min-width:0}
+.chart{width:100%;height:auto;background:#fff;border-radius:12px;border:1px solid #ddd}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 5 banner: Retirement Planning Lab" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">BUSN 520 · WEEK 5</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Retirement Planning Lab</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Discount the income gap, then solve for the monthly deposit</text>
+<g transform="translate(790,55)" fill="none" stroke-linecap="round"><circle cx="70" cy="70" r="62" stroke="#fff" stroke-width="7"/><path d="M70 70V28M70 70l30 18" stroke="#ffb3b6" stroke-width="7"/><path d="M150 150l30-30" stroke="#d34147" stroke-width="8"/><text x="140" y="110" fill="#d34147" font-family="Segoe UI,Arial,sans-serif" font-size="40" font-weight="800" stroke="none">$</text></g>
+</svg></div>
+<div class="wrap">
+<h2>Week 5 Interactive: Retirement Planning Lab</h2>
+<p class="lead"><b>Week 5 focus:</b> Discussion 5 asks how large a retirement nest egg you need and how much you must save each month to build it. This lab uses a fictional saver so you can practice the two-step method, see the cost of waiting, and then apply it to your own assumptions in the discussion.</p>
+
+<div class="card">
+<h3>1. The two-step method</h3>
+<div class="grid g2">
+<div class="panel"><div class="kicker" style="color:var(--red)">STEP 1 · PRESENT VALUE</div><p style="margin:6px 0 0">Find the <b>lump sum</b> needed on the day retirement starts: the present value of the monthly income gap (what you need minus other income such as Social Security) over the years you expect to draw on it.</p><p style="margin:6px 0 0"><b>Lump sum = gap × [1 − (1 + i)^(−N)] ÷ i</b>, with i = annual rate ÷ 12 and N = months in retirement.</p></div>
+<div class="panel"><div class="kicker" style="color:var(--blue)">STEP 2 · FUTURE VALUE → PAYMENT</div><p style="margin:6px 0 0">Treat the lump sum as a <b>future value</b> and solve for the equal monthly deposit that grows to it by retirement.</p><p style="margin:6px 0 0"><b>Deposit = lump sum × i ÷ [(1 + i)^M − 1]</b>, with M = months of saving.</p></div>
+</div>
+<p class="lead" style="margin-top:10px">Both formulas treat payments as an ordinary annuity (at the end of each month). If your timing differs, such as deposits at the start of each month, adjust and state the assumption, as Discussion 5 asks.</p>
+</div>
+
+<div class="card">
+<h3>2. Planner: Dana (fictional, age 40)</h3>
+<div class="grid g2">
+<div id="ctl"></div>
+<div class="panel">
+ <div style="color:var(--muted)">Lump sum needed at retirement</div><div class="big" id="lump" aria-live="polite"></div>
+ <div class="scroll"><table class="t" style="margin-top:10px"><caption style="text-align:left;font-weight:700;padding:4px 0">Monthly deposit needed, by start date</caption><thead><tr><th scope="col">Start saving</th><th scope="col">Months of saving</th><th scope="col">Monthly deposit</th></tr></thead><tbody id="dep"></tbody></table></div>
+ <div class="bars" id="bars" aria-hidden="true" style="height:110px;margin-top:10px"></div>
+ <p class="fb" id="msg" aria-live="polite" style="font-weight:400"></p>
+</div></div>
+</div>
+
+<div class="card">
+<h3>3. Practice</h3>
+<p class="lead">Use the formulas, a financial calculator, or spreadsheet functions (PV, PMT). Dollar answers within $1.</p>
+<div id="pq"></div>
+<p style="margin:14px 0 0"><button class="btn" id="pchk">Check my answers</button> <button class="btn ghost" id="prst">Start over</button></p>
+<p class="fb" id="pfb" aria-live="polite"></p>
+</div>
+
+<div class="take"><b>Takeaway:</b> Draw the timeline, discount the retirement income gap back to the start of retirement, then solve for the deposit that grows to that amount. Every year of delay removes compounding periods and raises the deposit. As Psalm 90:12 puts it, "teach us to number our days."</div>
+<p class="src">Formulas and method from Kenneth S. Bigel, <i>Introduction to Financial Analysis</i> (LibreTexts, CC BY 4.0), 10.2 "The Time Value of Money and Interest," 11.2 "Annuities," 11.6 "Future and Present Annuity Factors: Mathematical Formulas," 11.9 "Annuities Due," and 11.25 "Personal Financial Planning Problem." Scripture: Psalm 90:12 (ESV). Dana and all numbers are fictional; this is a learning tool, not financial advice.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const money=v=>(v<0?'−$':'$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function buildQuiz(Q,box,chk,rst,fbId){const qs=$(box);let pick={};
+Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';const id=box+i;
+ if(q[1]==='num'){d.innerHTML='<label for="'+id+'" style="font-weight:600">'+q[0]+'</label><div class="row">'+(q[6]||'')+'<input class="num" id="'+id+'" inputmode="decimal" autocomplete="off" aria-describedby="f'+id+'">'+(q[7]||'')+'</div><p class="fb" id="f'+id+'" aria-live="polite"></p>';}
+ else{d.innerHTML='<p style="margin:0;font-weight:600" id="l'+id+'">'+q[0]+'</p><div role="group" aria-labelledby="l'+id+'">'+q[4].map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+'</div><p class="fb" id="f'+id+'" aria-live="polite"></p>';}
+ qs.appendChild(d);});
+qs.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;pick[b.dataset.i]=b.dataset.v;qs.querySelectorAll('.choice[data-i="'+b.dataset.i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('f'+box+b.dataset.i).textContent='';});
+$(chk).onclick=()=>{let ok=0,done=0;Q.forEach((q,i)=>{const f=$('f'+box+i);let right;
+ if(q[1]==='num'){const raw=$(box+i).value.replace(/[$,%\s]/g,'').replace('−','-');if(raw===''||isNaN(+raw)){f.className='fb bad';f.textContent='Enter a number.';return}right=Math.abs(+raw-q[2])<=(q[5]||1);}
+ else{if(!pick[i]){f.className='fb bad';f.textContent='Choose an answer.';return}right=pick[i]===q[2];}
+ done++;if(right){ok++;f.className='fb ok';f.innerHTML='Correct. '+q[3]}else{f.className='fb bad';f.innerHTML='Not quite. '+q[3]}});
+ $(fbId).innerHTML='<span class="score">'+ok+' of '+Q.length+' correct</span>'+(done<Q.length?' Answer every question to finish.':(ok===Q.length?' Well done.':' Review the explanations and try again.'));};
+$(rst).onclick=()=>{Q.forEach((q,i)=>{if(q[1]==='num')$(box+i).value='';$('f'+box+i).textContent=''});pick={};qs.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed','false'));$(fbId).textContent=''};}
+
+const C=[['need','Monthly income needed in retirement',2000,12000,250,6000,'$'],['ss','Monthly Social Security / pension',0,5000,250,2000,'$'],['yr','Years in retirement',10,35,1,25,''],['rt','Annual rate earned',1,10,0.25,5,'%'],['ret','Retirement age',55,75,1,67,'']];
+C.forEach(c=>{const d=document.createElement('div');d.className='ctl';d.innerHTML='<label for="'+c[0]+'">'+c[1]+': <span id="'+c[0]+'o"></span></label><input type="range" id="'+c[0]+'" min="'+c[2]+'" max="'+c[3]+'" step="'+c[4]+'" value="'+c[5]+'">';$('ctl').appendChild(d);$(c[0]).addEventListener('input',calc);});
+const fmt=(c,v)=>c[6]==='$'?'$'+v.toLocaleString('en-US'):c[6]==='%'?v.toFixed(2)+'%':String(v);
+function calc(){const v={};C.forEach(c=>{v[c[0]]=+$(c[0]).value;$(c[0]+'o').textContent=fmt(c,v[c[0]]);$(c[0]).setAttribute('aria-valuetext',fmt(c,v[c[0]]));});
+ const gap=Math.max(0,v.need-v.ss),i=v.rt/1200,N=v.yr*12;const L=gap*(1-Math.pow(1+i,-N))/i;$('lump').textContent=money(L);
+ const rows=[[0,'Today (age 40)'],[5,'In 5 years (age 45)'],[10,'In 10 years (age 50)']];let out='',vals=[];
+ rows.forEach(r=>{const M=(v.ret-40-r[0])*12;let d=M>0?L*i/(Math.pow(1+i,M)-1):NaN;vals.push(d);out+='<tr><th scope="row">'+r[1]+'</th><td>'+(M>0?M:'n/a')+'</td><td>'+(M>0?money(d):'n/a')+'</td></tr>';});
+ $('dep').innerHTML=out;const mx=Math.max(...vals.filter(x=>!isNaN(x)));$('bars').innerHTML=vals.map(x=>'<span style="height:'+(isNaN(x)?0:x/mx*100)+'%"></span>').join('');
+ $('msg').textContent=isNaN(vals[2])?'':'Waiting 10 years raises Dana\'s monthly deposit from '+money(vals[0])+' to '+money(vals[2])+', about '+(vals[2]/vals[0]).toFixed(1)+' times as much.';}
+calc();
+const PQ=[
+['1. Lump sum. A retiree needs $3,000 a month beyond Social Security for 20 years and earns 6% a year (0.5% a month). What lump sum is needed at retirement?','num',418742.32,'Lump sum = 3,000 × [1 − 1.005^(−240)] ÷ 0.005 = $418,742.32.',null,1,'<span aria-hidden="true">$</span>'],
+['2. Monthly deposit. To build that lump sum over 30 years at the same 6% (0.5% a month), what must be deposited at the end of each month?','num',416.86,'Deposit = 418,742.32 × 0.005 ÷ (1.005^360 − 1) = $416.86.',null,1,'<span aria-hidden="true">$</span>'],
+['3. The cost of waiting. If saving starts 5 years later (25 years of deposits), what is the monthly deposit?','num',604.25,'Deposit = 418,742.32 × 0.005 ÷ (1.005^300 − 1) = $604.25, about 45% more each month.',null,1,'<span aria-hidden="true">$</span>'],
+['4. Which change lowers the lump sum needed at retirement, all else equal?','mc','c','A higher rate discounts the income stream more heavily, so the present value (lump sum) falls. A longer retirement or a bigger income gap raises it.',[['a','Expecting a longer retirement'],['b','A larger monthly income gap'],['c','A higher rate earned during retirement']]],
+['5. Deposits are made at the start of each month instead of the end. Compared with the end-of-month deposit, the start-of-month deposit is:','mc','a','An annuity due earns one extra period of interest on every payment, so the future value factor is larger and each required deposit is smaller.',[['a','Smaller, because each deposit earns one more month of interest'],['b','Larger, because deposits begin sooner'],['c','The same; timing does not matter']]]];
+buildQuiz(PQ,'pq','pchk','prst','pfb');
+
+</script>
+</body></html>
