@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unfreeze, Change, Refreeze</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:6px 0 10px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.btn:focus-visible,.choice:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 4 banner: Unfreeze, Change, Refreeze" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">ORGS 590 · WEEK 4</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Unfreeze, Change, Refreeze</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Place each leader action in the right stage of Lewin&#x27;s model</text></svg></div>
+<div class="wrap">
+<h2>Week 4 Interactive: Lewin&#x27;s Three-Stage Model</h2>
+<p class="lead"><b>Week 4 objective:</b> Apply Lewin's three-stage model of planned change to an entrepreneurial change effort.</p>
+<div class="card">
+<h3>The three stages</h3>
+<p class="lead" style="margin:0">Kurt Lewin's model assumes change will meet resistance, so preparation comes first. <b>Unfreezing</b> makes people ready for change: communicate a plan and a vision, create a sense of urgency, win over opinion leaders, provide support, and let employees participate. <b>Changing</b> executes the plan: keep supporting people, create small wins, and remove obstacles. <b>Refreezing</b> makes the change permanent: publicize success and reward the people who adopt it.</p>
+</div>
+<div class="card">
+<h3>Practice</h3>
+<p class="lead">Brightway Market is a fictional regional grocer moving from walk-in shopping to a subscription delivery model. Choose the stage each action belongs to, then select <b>Check my answers</b>.</p>
+<div id="items" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="check">Check my answers</button> <button class="btn ghost" id="reset">Start over</button></p>
+<p class="fb" id="fb" aria-live="polite"></p>
+</div>
+<div class="take"><b>Takeaway:</b> Lewin's stages remind entrepreneurial leaders to <b>prepare</b> people before acting, <b>support</b> them during the change, and <b>reinforce</b> the new way afterward. Some experts add that change can also be continuous, as in a learning organization.</div>
+<p class="src">Terms from <i>Principles of Management</i> v1.1 (Saylor Academy, 2012), Section 7.5 "Planning and Executing Change Effectively," CC BY-NC-SA 3.0. Company and events are fictional.</p>
+</div>
+<script>
+const O=[["unfreeze", "Unfreezing"], ["change", "Changing"], ["refreeze", "Refreezing"]];
+const D=[["Before any announcement, the CEO shares data showing walk-in sales falling for three straight years and explains what will happen if the company does nothing.", "unfreeze", "Making the case that there is a threat creates a sense of urgency, which prepares people before change."], ["The CEO explains the plan, the timeline, and a picture of the future business at every all-staff meeting.", "unfreeze", "Communicating a plan and an overall vision before the change helps people commit to it."], ["Leaders first win over three respected store managers, who then talk with their own teams.", "unfreeze", "Convincing opinion leaders builds a coalition that helps ready the rest of the organization."], ["Drivers and stock clerks help design the delivery routes and packing process before launch.", "unfreeze", "Participation early, while the change is being planned, gives employees a voice and a sense of ownership."], ["Delivery launches in one neighborhood first, and the team celebrates its first 100 subscribers.", "change", "Breaking a large change into phases creates small wins that keep people motivated while the change is under way."], ["Midway through the rollout, a manager removes an old approval step that was slowing every order.", "change", "Identifying and removing obstacles that appear during the change is part of executing it."], ["During the rollout, staff who struggle with the new ordering app get extra coaching and patience.", "change", "People feel stress and make more mistakes while change is under way, so support continues during execution."], ["Six months later, the company newsletter reports subscriber growth and cost savings from the new model.", "refreeze", "Sharing concrete results shows the change was the right decision and helps make it permanent."], ["Employees who mastered the new system are recognized in front of their peers and in performance reviews.", "refreeze", "Rewarding those who adopt the change makes the new behaviors part of how things are done."]];
+const box=document.getElementById('items'),fb=document.getElementById('fb');
+let ans={};
+function render(){box.innerHTML='';D.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+p.innerHTML=`<p style="margin:0 0 8px"><b>${i+1}.</b> ${d[0]}</p><div role="group" aria-label="Answer for action ${i+1}">`+
+O.map(o=>`<button class="choice" data-i="${i}" data-v="${o[0]}" aria-pressed="false">${o[1]}</button>`).join('')+
+`</div><p class="fb" id="f${i}" aria-live="polite"></p>`;box.appendChild(p)});}
+box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+box.querySelectorAll(`.choice[data-i="${i}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('f'+i).textContent='';});
+const lab=v=>O.find(o=>o[0]===v)[1];
+document.getElementById('check').onclick=()=>{let ok=0,done=0;D.forEach((d,i)=>{const f=document.getElementById('f'+i);
+if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+fb.innerHTML=`<span class="score">${ok} of ${D.length} correct</span>`+(done<D.length?' Answer every item to finish.':'');};
+document.getElementById('reset').onclick=()=>{ans={};render();fb.textContent='';const c=box.querySelector('.choice');if(c)c.focus();};
+render();
+</script>
+</body></html>
