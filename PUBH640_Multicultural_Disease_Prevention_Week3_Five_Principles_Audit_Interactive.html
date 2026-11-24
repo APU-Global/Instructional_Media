@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Five Principles Audit</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:0 0 10px;font-size:1.1rem}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true],button.panel[aria-expanded=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tab{background:#fff;border:2px solid #cfcfcf;border-radius:999px;padding:7px 16px;font-weight:600;color:var(--ink)}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.chip{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 11px;margin:4px 6px 4px 0;font-size:.95rem;font-weight:600;text-align:left}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.icon{font-size:1.7rem;line-height:1}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+input[type=range]{width:100%;accent-color:var(--red)}
+section[hidden]{display:none}
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;position:relative}
+.road:before{content:"";position:absolute;left:6%;right:6%;top:34px;height:6px;border-radius:3px;background:#d6d2cd}
+.wk{position:relative;background:none;border:0;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px}
+.wk .dot{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;border:4px solid #fcfcfc;transition:transform .2s}
+.wk[aria-pressed=true] .dot{transform:scale(1.2);box-shadow:0 0 0 3px #111}
+.wk .lbl{font-size:.78rem;font-weight:600;color:#444;text-align:center}
+.wk .part{font-size:.7rem;font-weight:700;min-height:1.1em;text-align:center}
+.tag{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700;color:#fff;margin:2px 4px 2px 0}
+@media(max-width:620px){.road{grid-template-columns:repeat(4,1fr);row-gap:14px}.road:before{display:none}}
+ul.clean{margin:6px 0 0;padding-left:20px}
+/* grades */
+.bar{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:8px 0 12px}
+.bar span{display:block;height:100%}
+.leg{display:grid;gap:8px}
+.leg button{display:flex;gap:10px;align-items:center}
+.sw{width:18px;height:18px;border-radius:5px;flex:none}
+.big{font-size:2rem;font-weight:800;line-height:1.2}
+textarea{width:100%;min-height:120px;font:inherit;padding:10px;border:2px solid #cfcfcf;border-radius:10px;resize:vertical}
+.meter{height:12px;border-radius:6px;background:#e3e0dc;overflow:hidden;margin:6px 0}
+.meter span{display:block;height:100%;width:0;transition:width .2s}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:620px){.steps{grid-template-columns:1fr}}
+.step{background:#fff;border-radius:12px;padding:12px;border-left:6px solid var(--red)}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.tab{padding:6px 12px;font-size:.92rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.wk{min-width:0}.wk .lbl{overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto;max-width:100%}@media(max-width:420px){.wk .lbl{font-size:.7rem}}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.g4{grid-template-columns:repeat(4,1fr)}@media(max-width:760px){.g4{grid-template-columns:1fr}}
+input[type=number]{font:inherit;width:7.5em;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px}
+table.data{border-collapse:collapse;width:100%;background:#fff}table.data th,table.data td{border:1px solid #ddd;padding:6px 8px;text-align:left}table.data th{background:#f4f2ef}
+.tablewrap{overflow-x:auto}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 3 banner: Five Principles Audit" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 640 · WEEK 3</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">Five Principles Audit</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">Best practices for a culturally competent organization</text>
+<g transform="translate(780,55)" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="120" height="130" rx="12" stroke="#fff"/><path d="M32 45l10 10 18-20M32 85l10 10 18-20" stroke="#ffb3b6"/><path d="M75 50h35M75 90h35M32 122h78" stroke="#fff"/></g></svg></div>
+<div class="wrap">
+<h2>Week 3 Interactive: Auditing an Organization Against the Five Principles</h2>
+<p class="lead"><b>Week 3 objective:</b> Use the Community Tool Box’s five essential principles as a practical standard to assess a health organization, and separate the four terms that are often confused.</p>
+<div class="card">
+<h3>The five essential principles</h3>
+<div class="grid g2">
+ <div class="panel"><b style="color:var(--red)">1. Valuing diversity</b><br>Recognizing and respecting differences between and within communities.</div>
+ <div class="panel"><b style="color:var(--blue)">2. Conducting cultural self-assessment</b><br>Regularly examining the organization’s own policies, norms, communication, staffing, and decisions.</div>
+ <div class="panel"><b style="color:var(--green)">3. Understanding the dynamics of difference</b><br>Recognizing how past and present discrimination and experiences with institutions shape trust.</div>
+ <div class="panel"><b style="color:#8a5a12">4. Institutionalizing cultural knowledge</b><br>Building competence into policies, services, budgets, and decisions, not occasional training.</div>
+ <div class="panel"><b style="color:#5b4b8a">5. Adapting to diversity</b><br>Changing practices when existing approaches create barriers or fail to meet needs.</div>
+</div>
+</div>
+<div class="card">
+<h3>Part 1: Which principle is this?</h3>
+<p class="lead">Harbor View Community Health Center is fictional. Each action below puts one principle into practice. Choose it, then select <b>Check Part 1</b>.</p>
+<div id="p1" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c1">Check Part 1</button> <button class="btn ghost" id="r1">Start over</button></p>
+<p class="fb" id="f1" aria-live="polite"></p>
+</div><div class="card">
+<h3>Part 2: Four terms, not a ladder</h3>
+<p class="lead">Match each fictional statement to the term it describes, then select <b>Check Part 2</b>.</p>
+<div id="p2" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c2">Check Part 2</button> <button class="btn ghost" id="r2">Start over</button></p>
+<p class="fb" id="f2" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Part 3: Bring it to your discussion</h3>
+<p class="lead">Discussion 3 asks you to choose two perspectives. Select one to see a question that links it to the principles.</p>
+<div class="grid g2" id="ex"></div>
+<div class="panel" id="exd" style="margin-top:12px" aria-live="polite">Select a perspective.</div>
+</div>
+<div class="take"><b>Takeaway:</b> Knowledge, awareness, and sensitivity support competence but do not equal it. Competence is <b>organizational</b>: valuing diversity, assessing yourself, understanding the dynamics of difference, institutionalizing knowledge, and adapting practice. Use the five principles as your checklist when you assess a campaign in the multi-part assignment.</div>
+<p class="src">Principles, terms, and practices from Brownlee, T., &amp; Lee, K. (n.d.), Section 7. Building Culturally Competent Organizations, <i>Community Tool Box</i>, Chapter 27, University of Kansas. Scripture from the ESV. The health center and the statements in Parts 1 and 2 are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function quiz(boxId,opts,data,checkId,resetId,fbId,pre){
+ const box=$(boxId);let ans={};
+ const lab=v=>opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';data.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+pre+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+pre+'q'+i+'">'+
+  opts.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+pre+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(pre+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,done=0;data.forEach((d,i)=>{const f=$(pre+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  $(fbId).innerHTML='<span class="score">'+ok+' of '+data.length+' correct</span>'+(done<data.length?' Answer every item to finish.':'');};
+ $(resetId).onclick=()=>{ans={};render();$(fbId).textContent='';};
+ render();}
+
+quiz('p1',[["v", "Valuing diversity"], ["s", "Self-assessment"], ["d", "Dynamics of difference"], ["i", "Institutionalizing knowledge"], ["a", "Adapting to diversity"]],[["The center surveys patients, reviews service-use data, and walks its buildings with disability advocates to find where its own practices create barriers.", "s", "Surveys, service-use data, accessibility reviews, and community feedback are the tools of organizational self-assessment."], ["Staff are reminded that two patients who share an ethnicity may hold very different beliefs, priorities, and family practices.", "v", "Valuing diversity includes recognizing differences within communities, not only between them."], ["Leaders expect that a neighborhood harmed by past research may not trust the center’s new outreach right away, so they commit to transparent, consistent follow-through.", "d", "Understanding the dynamics of difference means recognizing that history shapes trust, and that trust takes time and accountability."], ["Language access and accommodations get their own line in the annual budget, and community members sit on the board that sets priorities.", "i", "Putting competence into budgets and decision-making institutionalizes it throughout the organization."], ["After learning that many patients work evening shifts, the center moves its diabetes classes to Saturdays and adds an interpreter.", "a", "Changing schedules and services when they create barriers is adapting to diversity."], ["The center replaces a single annual diversity workshop with competence goals in every department’s plan and performance review.", "i", "The Tool Box says competence should be reflected throughout the organization rather than limited to occasional training."]],'c1','r1','f1','a');
+quiz('p2',[["k", "Cultural knowledge"], ["aw", "Cultural awareness"], ["se", "Cultural sensitivity"], ["c", "Cultural competence"]],[["A receptionist accepts that families may make decisions together without judging that style as inferior to individual decisions.", "se", "Respecting differences without judging one way as superior is cultural sensitivity."], ["A nurse reads the history of the Hmong community before starting work at a clinic that serves many Hmong families.", "k", "Learning histories, communities, and traditions relevant to the people served is cultural knowledge."], ["The health system’s policies, staffing, interpreters, and feedback loops let it work effectively with patients from many backgrounds.", "c", "Competence is the organization’s ability to use knowledge, reflection, relationships, policies, resources, and practices together."], ["A physician realizes that her habit of expecting direct eye contact is shaped by her own culture, not a universal rule.", "aw", "Recognizing that your own assumptions are culturally influenced is cultural awareness."]],'c2','r2','f2','b');
+const EX=[["Christian worldview", "Galatians 3:28 (ESV): “There is neither Jew nor Greek, there is neither slave nor free, there is no male and female, for you are all one in Christ Jesus.” Which principle most directly expresses equal belonging, and what would it change in a clinic?"], ["Ethical", "Which principle protects people from being treated as a category rather than as individuals?"], ["Access / disparity", "Which principle would reveal that some groups use services less often, and which would change the practice causing it?"], ["Demographic change", "The Tool Box lists changing communities as a signal that cultural competence work is needed. Which principles respond first?"], ["Personal professional advancement", "Which of the five principles could you lead in your own workplace this year?"]];EX.forEach((p,i)=>{const b=document.createElement('button');b.className='panel';b.setAttribute('aria-pressed','false');b.innerHTML='<b>'+p[0]+'</b>';b.onclick=()=>{document.querySelectorAll('#ex button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');$('exd').innerHTML='<b>'+p[0]+'</b><p style="margin:6px 0 0">'+p[1]+'</p>';};$('ex').appendChild(b);});
+</script>
+</body></html>

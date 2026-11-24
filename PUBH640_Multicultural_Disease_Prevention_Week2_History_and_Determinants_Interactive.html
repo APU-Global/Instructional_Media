@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>History and Determinants</title>
+<style>
+:root{--red:#d34147;--dark:#a8353a;--sand:#edebe8;--ink:#1f1f1f;--muted:#5b5b5b;--card:#ffffff;--blue:#2b6a99;--green:#2f7d5b;--gold:#c98a1b;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;background:#fcfcfc;color:var(--ink);line-height:1.5;overflow-wrap:break-word}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{border-radius:0 0 22px 22px;overflow:hidden;background:#111}.hero svg{display:block;width:100%;height:auto}
+h2{margin:28px 0 6px;font-size:1.35rem}h2:before{content:"";display:block;width:90px;height:6px;border-radius:5px;background:var(--red);margin-bottom:10px}
+h3{margin:0 0 10px;font-size:1.1rem}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--sand);border-radius:20px;padding:20px;margin:14px 0}
+.panel{background:var(--card);border:1px solid #ddd;border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:inherit}
+button.panel{width:100%;text-align:left}
+button.panel[aria-pressed=true],button.panel[aria-expanded=true]{background:#faf5f5;border-color:var(--red)}
+.btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}.btn:hover{background:var(--dark)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tab{background:#fff;border:2px solid #cfcfcf;border-radius:999px;padding:7px 16px;font-weight:600;color:var(--ink)}
+.tab[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}.ok{color:var(--green)}.bad{color:var(--dark)}
+.score{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:3px 14px;font-weight:700}
+.take{background:#111;color:#fff;border-radius:16px;padding:16px 20px;margin-top:22px}.take b{color:#ffb3b6}
+.chip{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 11px;margin:4px 6px 4px 0;font-size:.95rem;font-weight:600;text-align:left}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.icon{font-size:1.7rem;line-height:1}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.04em}
+input[type=range]{width:100%;accent-color:var(--red)}
+section[hidden]{display:none}
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;position:relative}
+.road:before{content:"";position:absolute;left:6%;right:6%;top:34px;height:6px;border-radius:3px;background:#d6d2cd}
+.wk{position:relative;background:none;border:0;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px}
+.wk .dot{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;border:4px solid #fcfcfc;transition:transform .2s}
+.wk[aria-pressed=true] .dot{transform:scale(1.2);box-shadow:0 0 0 3px #111}
+.wk .lbl{font-size:.78rem;font-weight:600;color:#444;text-align:center}
+.wk .part{font-size:.7rem;font-weight:700;min-height:1.1em;text-align:center}
+.tag{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700;color:#fff;margin:2px 4px 2px 0}
+@media(max-width:620px){.road{grid-template-columns:repeat(4,1fr);row-gap:14px}.road:before{display:none}}
+ul.clean{margin:6px 0 0;padding-left:20px}
+/* grades */
+.bar{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:8px 0 12px}
+.bar span{display:block;height:100%}
+.leg{display:grid;gap:8px}
+.leg button{display:flex;gap:10px;align-items:center}
+.sw{width:18px;height:18px;border-radius:5px;flex:none}
+.big{font-size:2rem;font-weight:800;line-height:1.2}
+textarea{width:100%;min-height:120px;font:inherit;padding:10px;border:2px solid #cfcfcf;border-radius:10px;resize:vertical}
+.meter{height:12px;border-radius:6px;background:#e3e0dc;overflow:hidden;margin:6px 0}
+.meter span{display:block;height:100%;width:0;transition:width .2s}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:620px){.steps{grid-template-columns:1fr}}
+.step{background:#fff;border-radius:12px;padding:12px;border-left:6px solid var(--red)}
+.src{font-size:.85rem;color:var(--muted);margin-top:18px}
+@media(max-width:520px){.card{padding:14px}.panel{padding:12px}.tab{padding:6px 12px;font-size:.92rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.wk{min-width:0}.wk .lbl{overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto;max-width:100%}@media(max-width:420px){.wk .lbl{font-size:.7rem}}
+.btn.ghost{background:#fff;color:var(--dark);border:2px solid var(--red)}
+.choice{border:2px solid #bbb;background:#fff;border-radius:10px;padding:7px 14px;margin:4px 6px 4px 0;font-weight:600;color:var(--ink);text-align:left;max-width:100%}
+.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.g4{grid-template-columns:repeat(4,1fr)}@media(max-width:760px){.g4{grid-template-columns:1fr}}
+input[type=number]{font:inherit;width:7.5em;padding:6px 8px;border:2px solid #cfcfcf;border-radius:8px}
+table.data{border-collapse:collapse;width:100%;background:#fff}table.data th,table.data td{border:1px solid #ddd;padding:6px 8px;text-align:left}table.data th{background:#f4f2ef}
+.tablewrap{overflow-x:auto}
+</style></head>
+<body>
+<div class="hero"><svg viewBox="0 0 1000 250" role="img" aria-label="Week 2 banner: History and Determinants" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#1a1a1a"/><stop offset="1" stop-color="#3a1315"/></linearGradient></defs>
+<rect width="1000" height="250" fill="url(#hg)"/>
+<circle cx="900" cy="40" r="170" fill="#d34147" opacity=".22"/><circle cx="640" cy="260" r="120" fill="#d34147" opacity=".15"/>
+<rect x="40" y="62" width="90" height="7" rx="3.5" fill="#d34147"/>
+<text x="40" y="112" fill="#ffb3b6" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="3">PUBH 640 · WEEK 2</text>
+<text x="40" y="160" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="700">History and Determinants</text>
+<text x="40" y="198" fill="#e8e8e8" font-family="Segoe UI,Arial,sans-serif" font-size="19">How past exclusion shapes today’s health conditions</text>
+<g transform="translate(790,60)" fill="none" stroke-width="7" stroke-linecap="round"><path d="M10 120h130" stroke="#fff"/><rect x="18" y="70" width="22" height="50" stroke="#ffb3b6"/><rect x="62" y="40" width="22" height="80" stroke="#fff"/><rect x="106" y="10" width="22" height="110" stroke="#ffb3b6"/></g></svg></div>
+<div class="wrap">
+<h2>Week 2 Interactive: From History to the Social Determinants of Health</h2>
+<p class="lead"><b>Week 2 objective:</b> Connect documented episodes of exclusion in U.S. public health to the concepts and social determinants that explain today’s disparities.</p>
+<div class="card">
+<h3>The five SDOH domains (Healthy People 2030)</h3>
+<p class="lead">Social determinants of health are the conditions in the environments where people are born, live, learn, work, play, worship, and age.</p>
+<div class="grid g2">
+ <div class="panel"><b style="color:var(--red)">Economic Stability</b><br>Income, jobs, and the resources to meet basic needs.</div>
+ <div class="panel"><b style="color:var(--blue)">Education Access and Quality</b><br>Schools, education, and the opportunities they open.</div>
+ <div class="panel"><b style="color:var(--green)">Health Care Access and Quality</b><br>Whether people can get the care they need, when they need it.</div>
+ <div class="panel"><b style="color:#8a5a12">Neighborhood and Built Environment</b><br>Housing, transportation, safety, and the air and water around people.</div>
+ <div class="panel"><b style="color:#5b4b8a">Social and Community Context</b><br>Relationships, community ties, and experiences such as discrimination.</div>
+</div>
+</div>
+<div class="card">
+<h3>Part 1: Which domain is at work?</h3>
+<p class="lead">Each situation is fictional. Choose the SDOH domain it mainly illustrates, then select <b>Check Part 1</b>.</p>
+<div id="p1" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c1">Check Part 1</button> <button class="btn ghost" id="r1">Start over</button></p>
+<p class="fb" id="f1" aria-live="polite"></p>
+</div><div class="card">
+<h3>Part 2: Name the concept</h3>
+<p class="lead">These definitions come from this week’s course presentation, <i>Theories and Concepts in Cultural Competency</i>. Choose the concept each fictional example shows, then select <b>Check Part 2</b>.</p>
+<div id="p2" class="grid"></div>
+<p style="margin:16px 0 0"><button class="btn" id="c2">Check Part 2</button> <button class="btn ghost" id="r2">Start over</button></p>
+<p class="fb" id="f2" aria-live="polite"></p>
+</div>
+<div class="card">
+<h3>Part 3: A timeline of exclusion</h3>
+<p class="lead">Select a year to see what happened. These are documented events, not fictional ones.</p>
+<div class="grid g2" id="ex"></div>
+<div class="panel" id="exd" style="margin-top:12px" aria-live="polite">Select a year.</div>
+</div>
+<div class="take"><b>Takeaway:</b> Disparities have a history. Policies carried out under legal and public health authority, such as <b>Buck v. Bell</b> and the <b>Tuskegee</b> study, help explain present-day mistrust, and concepts such as <b>institutional racism</b> explain how harm can continue without explicit intent. Equity work acts <b>upstream</b> on the conditions in all five SDOH domains.</div>
+<p class="src">Sources read: Healthy People 2030, <i>Social Determinants of Health</i> (ODPHP); CDC, <i>The Untreated Syphilis Study at Tuskegee Timeline</i> (2024); <i>Buck v. Bell</i>, 274 U.S. 200 (1927), Cornell LII; APU Global, <i>Theories and Concepts in Cultural Competency</i> (PUBH 640 Week 2 presentation). The places and situations in Parts 1 and 2 are fictional.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function quiz(boxId,opts,data,checkId,resetId,fbId,pre){
+ const box=$(boxId);let ans={};
+ const lab=v=>opts.find(o=>o[0]===v)[1];
+ function render(){box.innerHTML='';data.forEach((d,i)=>{const p=document.createElement('div');p.className='panel';
+  p.innerHTML='<p style="margin:0 0 8px" id="'+pre+'q'+i+'"><b>'+(i+1)+'.</b> '+d[0]+'</p><div role="group" aria-labelledby="'+pre+'q'+i+'">'+
+  opts.map(o=>'<button class="choice" data-i="'+i+'" data-v="'+o[0]+'" aria-pressed="false">'+o[1]+'</button>').join('')+
+  '</div><p class="fb" id="'+pre+'f'+i+'" aria-live="polite"></p>';box.appendChild(p);});}
+ box.addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const i=b.dataset.i;ans[i]=b.dataset.v;
+  box.querySelectorAll('.choice[data-i="'+i+'"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$(pre+'f'+i).textContent='';});
+ $(checkId).onclick=()=>{let ok=0,done=0;data.forEach((d,i)=>{const f=$(pre+'f'+i);
+  if(!ans[i]){f.textContent='Choose an answer.';f.className='fb bad';return}done++;
+  if(ans[i]===d[1]){ok++;f.textContent='Correct. '+d[2];f.className='fb ok'}else{f.textContent='Not quite: '+lab(d[1])+'. '+d[2];f.className='fb bad'}});
+  $(fbId).innerHTML='<span class="score">'+ok+' of '+data.length+' correct</span>'+(done<data.length?' Answer every item to finish.':'');};
+ $(resetId).onclick=()=>{ans={};render();$(fbId).textContent='';};
+ render();}
+
+quiz('p1',[["eco", "Economic Stability"], ["edu", "Education Access and Quality"], ["hc", "Health Care Access and Quality"], ["nbe", "Neighborhood and Built Environment"], ["scc", "Social and Community Context"]],[["When the only factory in Millbrook closes, a family must choose between paying rent and refilling a parent’s blood pressure medication.", "eco", "Lost income and the trade-off between basic needs are matters of economic stability."], ["Apartments in the Eastside district sit beside a freight highway, and residents breathe diesel exhaust every day.", "nbe", "Polluted air and housing location belong to the neighborhood and built environment."], ["The nearest clinic that accepts uninsured patients is 60 miles away and has no appointments after 5 p.m.", "hc", "Distance, insurance, and appointment availability determine access to health care."], ["A rural district has lost its only high school science teacher, and few graduates go on to college.", "edu", "The quality of schooling and the opportunities it opens are education access and quality."], ["Newly arrived families say staff at local offices treat them with suspicion, and many feel isolated from their neighbors.", "scc", "Discrimination and weak community ties are part of the social and community context."]],'c1','r1','f1','a');
+quiz('p2',[["ir", "Institutional racism"], ["eth", "Ethnocentrism"], ["eq", "Equity"], ["as", "Cultural assimilation"]],[["A county places a third waste transfer station in the same neighborhood of color. The siting rules never mention race, yet the burden keeps landing there.", "ir", "Institutional racism is the way policies and practices create different outcomes for different racial groups, even when they never mention race."], ["A health educator calls a family’s traditional diet “wrong” only because it differs from the foods of her own ethnic group.", "eth", "Ethnocentrism uses one ethnic group as the standard from which to judge others."], ["A clinic adds evening hours and bus passes because some patients face barriers to getting there that others do not.", "eq", "Equity means fair access and opportunity, working to remove barriers that have kept some groups from full participation."], ["An immigrant family stops speaking its home language with the children so the children will fit in with the dominant culture.", "as", "Assimilation is giving up aspects of one’s culture to adapt to the dominant culture."], ["A program designer assumes her own culture’s way of making family health decisions is the normal one and builds the whole program around it.", "eth", "Treating one’s own cultural norms as the frame of reference for everyone is ethnocentrism."]],'c2','r2','f2','b');
+const EX=[["1927: Buck v. Bell", "The Supreme Court upheld a 1924 Virginia law under which the superintendent of a state institution was ordered to sterilize Carrie Buck. Justice Holmes wrote that “the principle that sustains compulsory vaccination is broad enough to cover cutting the Fallopian tubes.” Justice Butler dissented."], ["1932: The Tuskegee study begins", "The U.S. Public Health Service, working with the Tuskegee Institute, began studying 600 Black men, 399 with syphilis and 201 without. Informed consent was not collected; the men were told they were being treated for “bad blood.”"], ["1943: Treatment withheld", "By 1943 penicillin was the treatment of choice for syphilis and becoming widely available, but the men in the study were not offered it."], ["1972: The study ends", "After an Associated Press story, an advisory panel called the study “ethically unjustified,” and it ended that year."], ["1974: Settlement", "A class-action lawsuit filed in 1973 led to a $10 million out-of-court settlement. In 1973 the advisory panel had also advised that survivors receive all necessary medical care, which the Tuskegee Health Benefit Program provided."], ["1997: Presidential apology", "On May 16, 1997, President Clinton issued a formal apology for the study."]];EX.forEach((p,i)=>{const b=document.createElement('button');b.className='panel';b.setAttribute('aria-pressed','false');b.innerHTML='<b>'+p[0]+'</b>';b.onclick=()=>{document.querySelectorAll('#ex button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');$('exd').innerHTML='<b>'+p[0]+'</b><p style="margin:6px 0 0">'+p[1]+'</p>';};$('ex').appendChild(b);});
+</script>
+</body></html>
