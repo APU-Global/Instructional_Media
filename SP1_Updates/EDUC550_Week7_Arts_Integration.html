@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 7 | Afterthought or Integrated?</title>
+<style>
+:root{--ink:#22303c;--ok:#2b8a3e;--bad:#c92a2a;--ct:#0b7285;--bg:#e3fafc}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:780px;margin:0 auto}
+h1{margin:0;font-size:1.7rem}.sub{margin:2px 0 12px;color:#4a6572}
+.bar{height:10px;background:#c5eef3;border-radius:99px;overflow:hidden}
+#fill{height:100%;width:0;background:linear-gradient(90deg,#f76707,#0b7285);transition:width .4s}
+.card{background:#fff;border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 4px 14px #0b3a4418}
+.tag{display:inline-block;background:#d0f4f8;border-radius:99px;padding:2px 12px;font-size:.8rem;font-weight:700}
+h2{margin:10px 0 6px;font-size:1.2rem}h3{margin:14px 0 6px;font-size:1rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
+.opt{padding:14px;border-radius:12px;border:2px solid #b6dde3;background:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--ct)}
+.opt.right{border-color:var(--ok);background:#ebfbee}.opt.wrong{border-color:var(--bad);background:#fff0f0}
+.chip{margin:4px;padding:9px 14px;border-radius:99px;border:2px solid #9ccfd8;background:#fff;font-size:.95rem;cursor:pointer;font-family:inherit;color:var(--ink)}
+.chip.on{background:var(--ct);color:#fff;border-color:var(--ct)}
+.btn{background:var(--ct);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px}
+.btn:disabled{opacity:.45;cursor:default}
+.fb{margin-top:10px;font-weight:600}.big{font-size:3rem;text-align:center}
+.out{background:#f1fcfd;border-left:6px solid var(--ct);border-radius:10px;padding:10px 14px;margin:10px 0}
+.out b{color:var(--ct)}
+.crit{background:#fff4e6;border-radius:10px;padding:10px 14px;font-size:.95rem}
+label.ck{display:block;margin:6px 0;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎭 Afterthought or Integrated?</h1>
+<p class="sub">Week 7 · The Power of Arts Integration</p>
+<div class="bar"><div id="fill"></div></div>
+<div id="stage" aria-live="polite"></div>
+</div>
+<script>
+const IDEAS=[
+["After the unit test, students color a map of California as a reward.",0,"The art is a treat after the learning. There is no arts goal and no link to the content."],
+["Students create frozen scenes of a key moment in the Gold Rush, then explain what each pose and expression shows about that person's perspective. The teacher assesses the history understanding and the theater skills.",1,"Both a content goal and an arts goal are taught and assessed, and the art form is how students show understanding."],
+["The teacher plays quiet background music while students complete a worksheet on community helpers.",0,"Music is decoration here. Students do not learn or use any music concepts."],
+["Students write and perform a rhythmic chant about trade routes, choosing beat and tempo on purpose and checking facts for accuracy. Both are assessed.",1,"Students use music concepts to express and deepen content understanding."],
+["Students who finish early may draw a picture of their favorite part of the unit.",0,"It is optional filler with no learning target and no feedback."],
+["Students analyze a historical photograph and a poster using line, color, and composition, then argue how those choices shaped the viewer's opinion.",1,"Arts concepts become the tool for analyzing historical content."],
+["The class builds a diorama of a mission. Grading looks only at factual accuracy, with no art criteria.",0,"Without an arts learning goal or criteria, the art is only a way to decorate a content task."],
+["Students choreograph a short movement piece showing how supply and demand push and pull prices, using levels, direction, and energy, then reflect on how movement communicated the idea.",1,"A dance concept and an economics concept are taught together and reflected on together."]
+];
+const THEMES={
+"Community & Local History":"how and why their local community has changed over time",
+"Geography & Migration":"why people move and how geography shapes where they settle",
+"Government & Civic Life":"how rules and laws protect people and solve community problems",
+"Economics & Trade":"how people trade goods and make choices when resources are limited"};
+const ARTS={
+"Visual Art":{i:"🎨",act:t=>`Students create a layered “then and now” collage that shows ${t}.`,obj:"I can choose color, line, and composition on purpose to communicate an idea.",assess:"A rubric with one row for accurate content and one row for intentional use of color, line, and composition.",ask:"Which art choice in your collage tells the most about the idea, and why?"},
+"Music":{i:"🎵",act:t=>`Students compose and perform a short rhythmic chant that explains ${t}.`,obj:"I can use beat, tempo, and dynamics to express meaning.",assess:"A rubric with one row for accurate facts in the lyrics and one row for purposeful use of beat, tempo, and dynamics.",ask:"How did your tempo or dynamics help listeners feel the idea?"},
+"Theater":{i:"🎭",act:t=>`Students prepare frozen scenes and short role-plays that show ${t} from different perspectives.`,obj:"I can use voice, gesture, and character choices to show a point of view.",assess:"A checklist for accurate historical or civic details plus a checklist for voice, gesture, and character choices.",ask:"What did your character's choices reveal that a textbook sentence could not?"},
+"Dance":{i:"💃",act:t=>`Students choreograph a short movement sequence that represents ${t}.`,obj:"I can use space, time, and energy to show an idea through movement.",assess:"A rubric with one row for accurate content and one row for purposeful use of space, time, and energy.",ask:"Which movement best shows the key idea, and what does it communicate?"}};
+let score=0,step=0,built=false;
+const stage=document.getElementById('stage'),steps=[];
+function next(){step++;document.getElementById('fill').style.width=(step/(steps.length-1)*100)+'%';steps[step]();window.scrollTo({top:0,behavior:'smooth'})}
+function sortStep(i){return()=>{
+const [txt,ans,why]=IDEAS[i];
+stage.innerHTML=`<div class="card"><span class="tag">Round 1 · Sort the Lesson Idea (${i+1}/${IDEAS.length})</span>
+<h2>“${txt}”</h2><p>Is the arts component an <b>afterthought</b> or <b>truly integrated</b>?</p>
+<div class="two"><button class="opt" data-v="0">🎀 Afterthought</button><button class="opt" data-v="1">🔗 Integrated</button></div>
+<div class="fb" id="fb"></div><button class="btn" id="nx" hidden>Next →</button></div>`;
+const btns=[...stage.querySelectorAll('.opt')];
+btns.forEach(b=>b.onclick=()=>{
+btns.forEach(x=>x.disabled=true);
+const ok=+b.dataset.v===ans;if(ok)score++;
+b.classList.add(ok?'right':'wrong');if(!ok)btns[ans].classList.add('right');
+document.getElementById('fb').textContent=(ok?'✅ ':'❌ ')+why;
+const nx=document.getElementById('nx');nx.hidden=false;nx.onclick=next;nx.focus();
+});
+}}
+function studio(){
+let th=null,ar=null;
+stage.innerHTML=`<div class="card"><span class="tag">Round 2 · Dual-Objective Studio</span>
+<h2>Design an integrated lesson idea</h2>
+<p>Integrated lessons teach and assess an arts objective and a content objective together. Pick a theme and an art form, and the studio will draft a lesson idea you can adapt.</p>
+<h3>1. Social science theme</h3><div id="th"></div><h3>2. Art form</h3><div id="ar"></div></div><div id="out"></div>`;
+const out=document.getElementById('out');
+function chips(id,items,cb){
+const box=document.getElementById(id);
+Object.keys(items).forEach(k=>{
+const b=document.createElement('button');b.className='chip';b.textContent=(items[k].i?items[k].i+' ':'')+k;
+b.onclick=()=>{[...box.children].forEach(c=>c.classList.remove('on'));b.classList.add('on');cb(k);gen()};
+box.appendChild(b);
+});
+}
+chips('th',THEMES,k=>th=k);chips('ar',ARTS,k=>ar=k);
+function gen(){
+if(!th||!ar)return;
+const A=ARTS[ar],t=THEMES[th];
+const text=`Content objective: I can explain ${t}, using at least two accurate facts.\nArts objective (${ar}): ${A.obj}\nLearning experience: ${A.act(t)}\nAssessment: ${A.assess}\nReflection question: ${A.ask}`;
+out.innerHTML=`<div class="card"><h2>${A.i} Your lesson idea</h2>
+<div class="out"><b>Content objective:</b> I can explain ${t}, using at least two accurate facts.</div>
+<div class="out"><b>Arts objective (${ar}):</b> ${A.obj}</div>
+<div class="out"><b>Learning experience:</b> ${A.act(t)}</div>
+<div class="out"><b>Assessment:</b> ${A.assess}</div>
+<div class="out"><b>Reflection question:</b> ${A.ask}</div>
+<div class="crit"><b>Integration check</b> (tick each one to confirm your idea is not an afterthought):
+<label class="ck"><input type="checkbox" class="c"> Both a content objective and an arts objective are named.</label>
+<label class="ck"><input type="checkbox" class="c"> Both objectives are taught and assessed.</label>
+<label class="ck"><input type="checkbox" class="c"> The art form is how students build and show their understanding of the content.</label></div>
+<button class="btn" id="cp">Copy lesson idea</button> <button class="btn" id="fin" disabled>Finish ▶</button><div class="fb" id="fb"></div></div>`;
+const cs=[...out.querySelectorAll('.c')],fin=document.getElementById('fin');
+cs.forEach(c=>c.onchange=()=>{fin.disabled=!cs.every(x=>x.checked)});
+fin.onclick=()=>{built=true;next()};
+document.getElementById('cp').onclick=()=>{
+const fb=document.getElementById('fb');
+(navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>fb.textContent='Copied!').catch(()=>fb.textContent='Copy is blocked here. Select the text above and copy it manually.');
+};
+}
+}
+steps.push(()=>{stage.innerHTML=`<div class="card"><div class="big">🎨🎭🎵</div><h2>Is the arts an afterthought in your classroom?</h2>
+<p>When the arts are added after the “real” learning, they become decoration. Arts integration is different: students meet <b>both</b> an arts objective and a content objective, and the art form helps them learn the content. In <b>Round 1</b> you will sort eight lesson ideas. In <b>Round 2</b> you will build your own integrated lesson idea.</p>
+<button class="btn" onclick="next()">Let's go</button></div>`});
+IDEAS.forEach((_,i)=>steps.push(sortStep(i)));
+steps.push(studio);
+steps.push(()=>{stage.innerHTML=`<div class="card"><div class="big">${score>=7?'🏆':score>=5?'⭐':'🌱'}</div>
+<h2>Sorting score: ${score} / ${IDEAS.length}${built?' · Lesson idea designed ✅':''}</h2>
+<p>A quick test for any lesson: could you remove the art and still teach the same objectives? If yes, it is probably an afterthought. If no, the arts are doing real instructional work.</p>
+<p>Bring this to Discussion 7: describe one place in your lesson plan where the arts could move from decoration to integration.</p>
+<button class="btn" onclick="location.reload()">Play again</button></div>`});
+steps[0]();
+</script>
+</body>
+</html>
