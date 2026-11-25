@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 2 | Standards Unpacker Lab</title>
+<style>
+:root{--ink:#1f2a44;--sk:#e8590c;--ct:#1c7ed6;--ok:#2b8a3e;--bad:#c92a2a;--bg:#eef2fb}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:760px;margin:0 auto}
+h1{margin:0;font-size:1.7rem}
+.sub{margin:2px 0 12px;color:#56607a}
+.bar{height:10px;background:#dde3f3;border-radius:99px;overflow:hidden}
+#fill{height:100%;width:0;background:linear-gradient(90deg,var(--sk),var(--ct));transition:width .4s}
+.card{background:#fff;border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 4px 14px #1f2a4418}
+.tag{display:inline-block;background:#e7ecfb;border-radius:99px;padding:2px 12px;font-size:.8rem;font-weight:700}
+h2{margin:10px 0 6px;font-size:1.2rem}
+.btn{background:var(--ct);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px}
+.btn:hover{filter:brightness(1.1)}
+.chunk{margin:5px;padding:10px 14px;border-radius:10px;border:2px dashed #9aa5c4;background:#fff;font-size:1.05rem;cursor:pointer;color:var(--ink);font-family:inherit}
+.chunk small{display:block;font-size:.7rem;font-weight:800;letter-spacing:.06em}
+.chunk.s1{border:2px solid var(--sk);background:#fff1e7}.chunk.s1 small{color:var(--sk)}
+.chunk.s2{border:2px solid var(--ct);background:#e8f2ff}.chunk.s2 small{color:var(--ct)}
+.chunk.right{box-shadow:0 0 0 3px var(--ok)}.chunk.wrong{box-shadow:0 0 0 3px var(--bad)}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border-radius:10px;border:2px solid #cfd6ea;background:#fff;font-size:1rem;cursor:pointer;font-family:inherit;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--ct)}
+.opt.right{border-color:var(--ok);background:#ebfbee}.opt.wrong{border-color:var(--bad);background:#fff0f0}
+.fb{margin-top:10px;font-weight:600}
+.big{font-size:3rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🔍 Standards Unpacker Lab</h1>
+<p class="sub">Week 2 · Social Constructivism, Collaboration, and Unpacking Standards</p>
+<div class="bar"><div id="fill"></div></div>
+<div id="stage" aria-live="polite"></div>
+</div>
+<script>
+const KEY={f:0,s:1,c:2};
+const stds=[
+{g:"Grade 3 History–Social Science (adapted)",
+c:[["Students will","f"],["compare","s"],["life in rural, urban, and suburban communities","c"]],
+t:[["I can compare life in rural, urban, and suburban communities and explain one way they are alike and different.",1,"It names a skill and the content, uses student-friendly language, and can be assessed."],
+["I can learn about communities.",0,"Too vague. What will students do, and how will you know they got it?"],
+["I will finish the community worksheet.",0,"That is an activity, not a learning goal."]]},
+{g:"Grade 4 History–Social Science (adapted)",
+c:[["Students will","f"],["analyze","s"],["how geography shaped where California Native peoples lived","c"],["and","f"],["explain","s"],["their thinking with map evidence","c"]],
+t:[["I can use a map to explain how land, water, and climate influenced where California Native peoples lived.",1,"Skill (use evidence, explain) plus specific content, and it is measurable."],
+["I can color the California map.",0,"Coloring is a task. It does not show the thinking the standard asks for."],
+["I can learn about California geography.",0,"Too broad to guide instruction or assessment."]]},
+{g:"Grade 2 Visual Arts + Civics (adapted)",
+c:[["Students will","f"],["design","s"],["a poster that shows how rules protect people in a community","c"]],
+t:[["I can design a poster that uses color and symbols to show how one rule keeps our community safe.",1,"It connects the arts skill to the civic content and tells students what success looks like."],
+["I can make a poster.",0,"No content target and no criteria for quality."],
+["I will hang my poster in the hallway.",0,"That is a product location, not a learning target."]]}
+];
+const fourCs=[
+["Students present their group mural to the class and answer questions from classmates.","Communication","Sharing ideas clearly with an audience is communication."],
+["Each student has a role (reporter, materials manager, timekeeper) and the group builds one shared product.","Collaboration","Defined roles plus a shared product build collaboration with individual accountability."],
+["Students weigh two sources that disagree and decide which one is more reliable.","Critical thinking","Evaluating evidence and justifying a decision is critical thinking."],
+["Students invent a board game that teaches how trade worked in early California.","Creativity","Producing something original is creativity."]
+];
+let score=0,total=0,step=0;
+const stage=document.getElementById('stage'),steps=[];
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+function next(){step++;render()}
+function render(){document.getElementById('fill').style.width=(step/(steps.length-1)*100)+'%';steps[step]();window.scrollTo({top:0,behavior:'smooth'})}
+function mc(tag,title,prompt,opts){return()=>{
+stage.innerHTML=`<div class="card"><span class="tag">${tag}</span><h2>${title}</h2><p>${prompt}</p><div id="o"></div><div class="fb" id="fb"></div><button class="btn" id="nx" hidden>Next →</button></div>`;
+const o=document.getElementById('o');
+shuffle(opts).forEach(([txt,ok,why])=>{
+const b=document.createElement('button');b.className='opt';b.textContent=txt;b._ok=ok;
+b.onclick=()=>{
+[...o.children].forEach(x=>{x.disabled=true;if(x._ok)x.classList.add('right')});
+total++;if(ok)score++;else b.classList.add('wrong');
+document.getElementById('fb').textContent=(ok?'✅ ':'❌ ')+why+(ok?'':' (The best answer is highlighted.)');
+const nx=document.getElementById('nx');nx.hidden=false;nx.onclick=next;nx.focus();
+};
+o.appendChild(b);
+});
+}}
+function tagStep(s,i){return()=>{
+const st=s.c.map(()=>0);let counted=false;
+stage.innerHTML=`<div class="card"><span class="tag">Round 1 · Skill or Content? (${i+1}/${stds.length})</span><h2>${s.g}</h2>
+<p>Tap a phrase to mark it. <b style="color:var(--sk)">1 tap = SKILL</b> (what students DO), <b style="color:var(--ct)">2 taps = CONTENT</b> (what students KNOW), 3 taps = clear. Leave connecting words unmarked.</p>
+<div id="ch"></div><button class="btn" id="ck">Check my unpacking</button><div class="fb" id="fb"></div><button class="btn" id="nx" hidden>Next →</button></div>`;
+const ch=document.getElementById('ch');
+const draw=()=>{ch.innerHTML='';s.c.forEach(([t],k)=>{const b=document.createElement('button');b.className='chunk'+(st[k]?' s'+st[k]:'');b.innerHTML=t+(st[k]?`<small>${st[k]==1?'SKILL':'CONTENT'}</small>`:'');b.onclick=()=>{st[k]=(st[k]+1)%3;draw()};ch.appendChild(b)})};
+draw();
+document.getElementById('ck').onclick=()=>{
+let bad=0;
+[...ch.children].forEach((b,k)=>{const r=st[k]===KEY[s.c[k][1]];b.classList.add(r?'right':'wrong');if(!r)bad++});
+if(!counted){counted=true;total++;if(!bad)score++}
+document.getElementById('fb').textContent=bad?`❌ ${bad} phrase(s) need another look (red outline). Adjust and check again.`:'✅ Perfect unpacking! Skills tell you what to assess; content tells you what to teach.';
+const nx=document.getElementById('nx');nx.hidden=false;nx.onclick=next;
+};
+}}
+steps.push(()=>{stage.innerHTML=`<div class="card"><div class="big">📜➡️🎯</div><h2>Welcome, future teacher!</h2>
+<p>Standards describe what students should <b>know</b> and <b>be able to do</b>. Before you plan activities, you unpack each standard into a lesson-sized <b>learning target</b>. In this lab you will:</p>
+<p>① tag the skill and content in real-style standards, ② choose the strongest learning target, and ③ match collaborative moments to the 4Cs.</p>
+<button class="btn" onclick="next()">Start unpacking</button></div>`});
+stds.forEach((s,i)=>steps.push(tagStep(s,i)));
+stds.forEach((s,i)=>steps.push(mc(`Round 2 · Pick the Learning Target (${i+1}/${stds.length})`,s.g,'Which learning target best turns this standard into a lesson-sized goal?',s.t)));
+fourCs.forEach(([sc,ans,why],i)=>steps.push(mc(`Round 3 · Name the 4C (${i+1}/${fourCs.length})`,'Which “C” is on display?',sc,
+["Communication","Collaboration","Critical thinking","Creativity"].map(c=>[c,c===ans,c===ans?why:'Not the best fit. '+why]))));
+steps.push(()=>{const p=Math.round(score/total*100);
+stage.innerHTML=`<div class="card"><div class="big">${p>=80?'🏆':p>=50?'⭐':'🌱'}</div><h2>You scored ${score} / ${total}</h2>
+<p>${p>=80?'Standards unpacked like a pro. Unpack before you plan.':p>=50?'Solid start. Revisit the skill vs. content split and try again.':'Keep going. Rereading the Week 2 Deep Dive on unpacking standards will help.'}</p>
+<p>Remember: collaboration works best when roles, purpose, and products are clear, and when it is tied to a learning target.</p>
+<button class="btn" onclick="location.reload()">Play again</button></div>`});
+render();
+</script>
+</body>
+</html>
