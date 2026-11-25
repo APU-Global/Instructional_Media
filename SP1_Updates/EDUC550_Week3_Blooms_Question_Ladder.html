@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 3 | Bloom's Question Ladder</title>
+<style>
+:root{--ink:#1f2a44;--ok:#2b8a3e;--bad:#c92a2a;--ct:#5f3dc4;--bg:#f3f0ff}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:900px;margin:0 auto}
+h1{margin:0;font-size:1.7rem}.sub{margin:2px 0 14px;color:#56607a}
+.layout{display:grid;grid-template-columns:210px 1fr;gap:16px}
+@media(max-width:640px){.layout{grid-template-columns:1fr}}
+.rung{background:#fff;border-left:10px solid var(--c);border-radius:10px;padding:8px 10px;margin:6px 0;opacity:.6;position:relative;transition:.3s}
+.rung.on{opacity:1;background:var(--c);color:#fff}
+.rung small{display:block;font-size:.7rem}
+.cl{position:absolute;right:6px;top:6px;font-size:1.5rem;animation:b .7s infinite alternate}
+@keyframes b{to{transform:translateY(-5px)}}
+.ground{text-align:center;font-size:.9rem;color:#56607a}
+.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 4px 14px #1f2a4418}
+.tag{display:inline-block;background:#e9e3ff;border-radius:99px;padding:2px 12px;font-size:.8rem;font-weight:700}
+h2{margin:10px 0 6px;font-size:1.2rem}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:10px;border:2px solid #d5cdf3;background:#fff;font-size:1rem;cursor:pointer;font-family:inherit;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--ct)}
+.opt.right{border-color:var(--ok);background:#ebfbee}.opt.wrong{border-color:var(--bad);background:#fff0f0}
+.list .opt{margin:8px 0}
+.btn{background:var(--ct);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px}
+.fb{margin-top:10px;font-weight:600}.big{font-size:3rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🪜 Bloom's Question Ladder</h1>
+<p class="sub">Week 3 · Project-Based Learning and Critical Thinking</p>
+<div class="layout">
+<div id="ladder" aria-label="Bloom's ladder"></div>
+<div id="stage" aria-live="polite"></div>
+</div>
+</div>
+<script>
+const L=[["Remember","recall, list, name"],["Understand","explain, summarize, describe"],["Apply","use, solve, demonstrate"],["Analyze","compare, sort, find causes"],["Evaluate","judge, defend, critique"],["Create","design, compose, invent"]];
+const COL=["#868e96","#1c7ed6","#2b8a3e","#f08c00","#e8590c","#862e9c"];
+const Q=[
+["Name the three branches of the U.S. government.",0,"Recalling facts is the Remember level."],
+["In your own words, explain why people built missions along the California coast.",1,"Putting an idea in your own words is Understand."],
+["Use the map scale to figure out how far a wagon train traveled in one week.",2,"Using a procedure in a new situation is Apply."],
+["Compare two accounts of the same event. What is different about each point of view?",3,"Breaking ideas apart to compare them is Analyze."],
+["Which solution to our playground-rules problem is the fairest? Defend your choice with evidence.",4,"Making and defending a judgment is Evaluate."],
+["Compose a short play that shows how a community solved a conflict.",5,"Producing something new is Create."],
+["Describe in your own words what the mural is trying to say.",1,"Interpreting meaning in your own words is Understand."],
+["Use cool colors to paint a landscape that shows a calm mood.",2,"Using an art technique to meet a goal is Apply."]
+];
+const U=[
+{base:"What year did the Gold Rush begin?",to:3,opts:[
+["Which factors drew different groups to the Gold Rush, and how did each group's experience differ?",1,"Examining causes and differences is Analyze."],
+["Write down the year the Gold Rush ended.",0,"Still Remember. It is a recall question."],
+["Summarize the Gold Rush in your own words.",0,"That is Understand, one rung below Analyze."]]},
+{base:"What is a mural?",to:5,opts:[
+["Design a mural for our school that tells the story of our community's history.",1,"Designing something new is Create."],
+["List three famous murals.",0,"That is Remember."],
+["Explain why artists paint murals.",0,"That is Understand."]]},
+{base:"Who is a community helper?",to:4,opts:[
+["Which community helper's job matters most during a storm? Defend your choice with reasons.",1,"Judging and defending is Evaluate."],
+["List five community helpers.",0,"That is Remember."],
+["Draw a community helper at work.",0,"That is closer to Apply or Understand."]]},
+{base:"What is a primary source?",to:2,opts:[
+["Use a photograph from 1900 to figure out how people in your town traveled.",1,"Using a source to solve a problem is Apply."],
+["Define primary source in your own words.",0,"That is Understand."],
+["Judge whether a letter or a textbook is more reliable and defend your view.",0,"That jumps up to Evaluate."]]}
+];
+const earned=new Set();let score=0,total=0,step=0;
+const stage=document.getElementById('stage'),ladder=document.getElementById('ladder'),steps=[];
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+function drawLadder(){
+const hi=Math.max(-1,...earned);ladder.innerHTML='';
+for(let i=5;i>=0;i--){const r=document.createElement('div');r.className='rung'+(earned.has(i)?' on':'');r.style.setProperty('--c',COL[i]);
+r.innerHTML=`<b>${L[i][0]}</b><small>${L[i][1]}</small>`+(i===hi?'<span class="cl">🧗</span>':'');ladder.appendChild(r)}
+if(hi<0)ladder.insertAdjacentHTML('beforeend','<div class="ground">🧗 Start at the bottom and climb!</div>');
+}
+function next(){step++;steps[step]();window.scrollTo({top:0,behavior:'smooth'})}
+function finish(b,ok,why,lvl){
+total++;if(ok){score++;earned.add(lvl)}else b.classList.add('wrong');
+document.getElementById('fb').textContent=(ok?'✅ ':'❌ ')+why;drawLadder();
+const nx=document.getElementById('nx');nx.hidden=false;nx.onclick=next;nx.focus();
+}
+function qStep(i){return()=>{
+const [q,lv,why]=Q[i];
+stage.innerHTML=`<div class="card"><span class="tag">Round 1 · Name the Level (${i+1}/${Q.length})</span><h2>“${q}”</h2><p>Which level of Bloom's Taxonomy does this question ask students to reach?</p><div class="grid" id="o"></div><div class="fb" id="fb"></div><button class="btn" id="nx" hidden>Next →</button></div>`;
+const o=document.getElementById('o');
+L.forEach(([n],k)=>{const b=document.createElement('button');b.className='opt';b.textContent=n;
+b.onclick=()=>{[...o.children].forEach(x=>x.disabled=true);o.children[lv].classList.add('right');finish(b,k===lv,why,lv)};o.appendChild(b)});
+}}
+function uStep(i){return()=>{
+const u=U[i];
+stage.innerHTML=`<div class="card"><span class="tag">Round 2 · Level Up! (${i+1}/${U.length})</span><h2>Starting question: “${u.base}”</h2><p>Raise this question to the <b style="color:${COL[u.to]}">${L[u.to][0]}</b> level. Which rewrite gets there?</p><div class="list" id="o"></div><div class="fb" id="fb"></div><button class="btn" id="nx" hidden>Next →</button></div>`;
+const o=document.getElementById('o');
+shuffle(u.opts).forEach(([t,ok,why])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b._ok=ok;
+b.onclick=()=>{[...o.children].forEach(x=>{x.disabled=true;if(x._ok)x.classList.add('right')});finish(b,ok,why,u.to)};o.appendChild(b)});
+}}
+steps.push(()=>{stage.innerHTML=`<div class="card"><div class="big">🧗</div><h2>Climb the ladder!</h2>
+<p>Strong questions move students from recall toward analysis, evaluation, and creation. In <b>Round 1</b> you will name the level of each question. In <b>Round 2</b> you will rewrite recall questions so they reach a higher rung. Light up all six rungs to reach the top.</p>
+<button class="btn" onclick="next()">Start climbing</button></div>`});
+Q.forEach((_,i)=>steps.push(qStep(i)));U.forEach((_,i)=>steps.push(uStep(i)));
+steps.push(()=>{const top=Math.max(-1,...earned);
+stage.innerHTML=`<div class="card"><div class="big">${earned.size===6?'🏆':'⛰️'}</div><h2>${score} / ${total} correct · Highest rung: ${top>=0?L[top][0]:'none yet'}</h2>
+<p>${earned.size===6?'You reached every rung!':'You lit '+earned.size+' of 6 rungs. Play again to reach the top.'} Tip: keep the topic and change the verb to change the level of thinking.</p>
+<p>Try it: take one question from your lesson plan and write a version at each rung.</p>
+<button class="btn" onclick="location.reload()">Play again</button></div>`});
+drawLadder();steps[0]();
+</script>
+</body>
+</html>
