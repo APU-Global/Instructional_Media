@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 4 | Lesson Architect</title>
+<style>
+:root{--ink:#2b2a33;--ok:#2b8a3e;--bad:#c92a2a;--ct:#d9480f;--bg:#fff4e6}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:780px;margin:0 auto}
+h1{margin:0;font-size:1.7rem}.sub{margin:2px 0 12px;color:#6b5b4b}
+.card{background:#fff;border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 4px 14px #3b240a18}
+.tag{display:inline-block;background:#ffe8cc;border-radius:99px;padding:2px 12px;font-size:.8rem;font-weight:700}
+h2{margin:10px 0 6px;font-size:1.2rem}h3{margin:8px 0 4px;font-size:1rem}
+.tray{min-height:60px;border-radius:12px;background:#fff9f0;padding:6px}
+.act{background:#fff7e6;border:2px solid #f0b84b;border-radius:10px;padding:10px;margin:6px 0;cursor:grab;font-size:.95rem}
+.act.sel{outline:3px solid #1c7ed6}
+.slot{border:2px dashed #b8a590;border-radius:12px;padding:8px;margin:8px 0;min-height:70px;background:#fff}
+.slot h4{margin:0;font-size:.95rem}.slot small{color:#6b5b4b}
+.slot.right{border:2px solid var(--ok);background:#ebfbee}.slot.wrong{border:2px solid var(--bad);background:#fff0f0}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border-radius:10px;border:2px solid #e6d5c0;background:#fff;font-size:1rem;cursor:pointer;font-family:inherit;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--ct)}
+.opt.right{border-color:var(--ok);background:#ebfbee}.opt.wrong{border-color:var(--bad);background:#fff0f0}
+.btn{background:var(--ct);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px}
+.btn:disabled{opacity:.45;cursor:default}
+.fb{margin-top:10px;font-weight:600}.big{font-size:3rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🏗️ Lesson Architect</h1>
+<p class="sub">Week 4 · Concrete Instructional Resources and Lesson Planning</p>
+<div id="stage" aria-live="polite"></div>
+</div>
+<script>
+const STEPS=[["1. Review","Reconnect to prior learning"],["2. Anticipatory Set","Hook student interest"],["3. Objective","Share the learning target"],["4. Modeling","Show and think aloud"],["5. Checking for Understanding","Quick check before release"],["6. Guided Practice","Practice with teacher support"],["7. Independent Practice","Students apply on their own"]];
+const ACT=[
+"Students turn and talk: “What is a primary source, and how did we use one yesterday?”",
+"The teacher passes around a mystery artifact box holding a replica 1900s lunch pail and asks, “What could this tell us about its owner?”",
+"The teacher posts and reads aloud: “I can use an artifact to make a claim about the past and support it with evidence.”",
+"The teacher thinks aloud while examining a replica butter churn: “I notice… I wonder… I infer…”",
+"Students hold up whiteboards to show whether each statement about the churn is an observation or an inference.",
+"Small groups examine a new artifact together while the teacher circulates, prompts, and gives feedback.",
+"Each student picks an artifact photo and writes a claim with two pieces of evidence."
+];
+const MATCH=[
+{t:"I can explain how California Native peoples used natural resources for tools and shelter.",o:[
+["Rotate through stations where you handle replica tools and examine photos of shelters.",1,"Direct contact with artifacts fits the target and gives students something to investigate."],
+["Hold a costume day where everyone dresses up for the unit.",0,"That adds novelty but does not help students reach the target."],
+["Read the chapter silently and answer the questions.",0,"That is abstract, not a concrete experience."]]},
+{t:"I can explain how the three branches of government work together to make a decision.",o:[
+["Run a mock legislature where the class proposes, passes, and reviews a classroom rule.",1,"A simulation lets students experience the process the target describes."],
+["Take a field trip to a zoo.",0,"A real experience, but it does not match the target."],
+["Copy the definition of each branch into a notebook.",0,"Copying definitions does not show how the branches work together."]]},
+{t:"I can describe how tempo and rhythm change the mood of a piece of music.",o:[
+["Play percussion instruments, perform one pattern fast and then slow, and describe how the mood changes.",1,"Creating and comparing the sounds gives students direct evidence."],
+["Display a poster of music vocabulary words.",0,"Vocabulary alone does not let students experience mood."],
+["Watch a silent video about instruments.",0,"Silent video removes the sound the target is about."]]}
+];
+let sel=null,placed=Array(7).fill(null),attempts=0,checked=false,stars=0,match=0,step=0;
+const stage=document.getElementById('stage');
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const order=shuffle([0,1,2,3,4,5,6]);
+const steps=[];
+function next(){step++;steps[step]();window.scrollTo({top:0,behavior:'smooth'})}
+function builder(){
+stage.innerHTML=`<div class="card"><span class="tag">Part 1 · Build the Lesson</span>
+<h2>Theme: How can artifacts help us investigate the past?</h2>
+<p>Drag each classroom move into the correct step of Hunter's seven-step lesson, or tap a card and then tap a slot. Press <b>Check</b> when all seven are placed.</p>
+<h3>Activity cards (tap here to send a card back)</h3><div id="tray" class="tray"></div></div>
+<div class="card"><div id="slots"></div><button class="btn" id="ck">Check my lesson</button><div class="fb" id="fb"></div><button class="btn" id="nx" hidden>Continue to Part 2 →</button></div>`;
+const tray=document.getElementById('tray'),slotsEl=document.getElementById('slots'),ck=document.getElementById('ck'),fb=document.getElementById('fb'),nx=document.getElementById('nx');
+const slots=STEPS.map(([n,d],k)=>{
+const el=document.createElement('div');el.className='slot';el.innerHTML=`<h4>${n}</h4><small>${d}</small>`;
+const area=document.createElement('div');el.appendChild(area);
+el.onclick=()=>{if(sel!=null)place(k,sel)};
+el.ondragover=e=>e.preventDefault();
+el.ondrop=e=>{e.preventDefault();place(k,+e.dataTransfer.getData('text/plain'))};
+slotsEl.appendChild(el);return{el,area};
+});
+function mk(i){
+const d=document.createElement('div');d.className='act'+(sel===i?' sel':'');d.textContent=ACT[i];d.draggable=true;d.tabIndex=0;
+d.ondragstart=e=>e.dataTransfer.setData('text/plain',i);
+d.onclick=e=>{e.stopPropagation();sel=(sel===i?null:i);draw()};
+d.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();d.click()}};
+return d;
+}
+function draw(){
+tray.innerHTML='';
+order.filter(i=>!placed.includes(i)).forEach(i=>tray.appendChild(mk(i)));
+slots.forEach((s,k)=>{
+s.area.innerHTML='';if(placed[k]!=null)s.area.appendChild(mk(placed[k]));
+s.el.className='slot'+(checked&&placed[k]!=null?(placed[k]===k?' right':' wrong'):'');
+});
+ck.disabled=placed.some(x=>x==null);
+}
+function place(k,i){const f=placed.indexOf(i);if(f>-1)placed[f]=null;placed[k]=i;sel=null;checked=false;draw()}
+function toTray(i){const f=placed.indexOf(i);if(f>-1)placed[f]=null;sel=null;checked=false;draw()}
+tray.onclick=()=>{if(sel!=null)toTray(sel)};
+tray.ondragover=e=>e.preventDefault();
+tray.ondrop=e=>{e.preventDefault();toTray(+e.dataTransfer.getData('text/plain'))};
+ck.onclick=()=>{
+attempts++;checked=true;draw();
+const n=placed.filter((x,k)=>x===k).length;
+if(n===7){
+stars=attempts===1?3:attempts===2?2:1;
+fb.innerHTML=`✅ Lesson built! ${'⭐'.repeat(stars)}<br><span style="font-weight:400">Notice where the concrete experiences live: the mystery artifact box hooks students in step 2, the replica supports the think-aloud in step 4, and hands-on stations power guided practice in step 6.</span>`;
+nx.hidden=false;nx.onclick=next;
+}else fb.textContent=`❌ ${n} of 7 are in the right place. Red steps need another look. Think about what the teacher and students are doing at each stage.`;
+};
+draw();
+}
+function mcStep(i){return()=>{
+const m=MATCH[i];
+stage.innerHTML=`<div class="card"><span class="tag">Part 2 · Match the Resource (${i+1}/${MATCH.length})</span>
+<h2>Learning target</h2><p><b>${m.t}</b></p><p>Which concrete resource is best aligned to this target?</p>
+<div id="o"></div><div class="fb" id="fb"></div><button class="btn" id="nx" hidden>Next →</button></div>`;
+const o=document.getElementById('o');
+shuffle(m.o).forEach(([t,ok,why])=>{
+const b=document.createElement('button');b.className='opt';b.textContent=t;b._ok=ok;
+b.onclick=()=>{
+[...o.children].forEach(x=>{x.disabled=true;if(x._ok)x.classList.add('right')});
+if(ok)match++;else b.classList.add('wrong');
+document.getElementById('fb').textContent=(ok?'✅ ':'❌ ')+why;
+const nx=document.getElementById('nx');nx.hidden=false;nx.onclick=next;nx.focus();
+};
+o.appendChild(b);
+});
+}}
+steps.push(()=>{stage.innerHTML=`<div class="card"><div class="big">🏗️</div><h2>Become a lesson architect</h2>
+<p>A well-sequenced lesson helps both teacher and students stay on track, and concrete resources do the most good when they match the learning target. In <b>Part 1</b> you will assemble Madeline Hunter's seven steps. In <b>Part 2</b> you will choose resources that fit the target instead of adding novelty for its own sake.</p>
+<button class="btn" onclick="next()">Start building</button></div>`});
+steps.push(builder);
+MATCH.forEach((_,i)=>steps.push(mcStep(i)));
+steps.push(()=>{stage.innerHTML=`<div class="card"><div class="big">${stars===3&&match===3?'🏆':'🏅'}</div>
+<h2>Lesson stars: ${stars} / 3 · Resource matches: ${match} / ${MATCH.length}</h2>
+<p>For Lesson Plan Part 1, ask yourself: Does my concrete resource serve my unpacked standard and learning target? Where in the seven steps will students actually touch, create, or experience the content?</p>
+<button class="btn" onclick="location.reload()">Play again</button></div>`});
+steps[0]();
+</script>
+</body>
+</html>
