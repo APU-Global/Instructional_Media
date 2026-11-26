@@ -245,7 +245,7 @@ textarea:focus-visible{border-color:#000;outline:none;box-shadow:none}
   </aside>
 
   <main class="stage">
-    <div class="tabs" role="tablist" aria-label="Planner sections">
+    <div class="row" style="margin-bottom:10px"><span class="fl" id="pl" style="margin:0">I am completing the:</span><div class="seg" role="group" aria-labelledby="pl"><button data-pp="prac" aria-pressed="true">Practicum</button><button data-pp="psy" aria-pressed="false">Psychoeducation project</button></div></div><div class="tabs" role="tablist" aria-label="Planner sections">
       <button class="tab" role="tab" id="t0" aria-controls="panel" aria-selected="true" data-t="0">Supervisor check</button>
       <button class="tab" role="tab" id="t1" aria-controls="panel" aria-selected="false" data-t="1">Hours planner</button>
       <button class="tab" role="tab" id="t2" aria-controls="panel" aria-selected="false" data-t="2">Conference prep</button>
@@ -424,14 +424,14 @@ function renderPrep(){
   </svg>
   <div class="ck2" id="items">${items.map((t,i)=>`<button class="choice multi ${set.has(i)?'on':''}" data-i="${i}" aria-pressed="${set.has(i)}"><span class="mark">${set.has(i)?CHECK:''}</span><span class="txt">${t}</span></button>`).join('')}</div>
   <div class="fb ${set.size===items.length?'good':''}" id="pm">${set.size===items.length?`<b>You are ready.</b> Bring your questions, and confirm your ${form} is submitted.`:`<b>Form to submit:</b> ${form}, due at least 24 hours before your conference.`}</div>`;
-  $$('[data-p]').forEach(b=>b.addEventListener('click',()=>{S.path=b.dataset.p;renderPrep();paintArt()}));
+  $$('[data-p]').forEach(b=>b.addEventListener('click',()=>applyPath(b.dataset.p)));
   $('#items').addEventListener('click',e=>{
     const b=e.target.closest('.choice');if(!b)return;const i=+b.dataset.i;
     set.has(i)?set.delete(i):set.add(i);renderPrep();paintArt();
     const nb=$(`#items [data-i="${i}"]`);if(nb)nb.focus();
   });
 }
-function render(){[renderSup,renderPlan,renderPrep][S.tab]();paintArt()}
+function applyPath(p){S.path=p;$$('[data-pp]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pp===p)));$('#t0').hidden=p!=='prac';$('#t1').hidden=p!=='prac';setTab(p==='prac'?S.tab:2)}function render(){[renderSup,renderPlan,renderPrep][S.tab]();paintArt()}$$('[data-pp]').forEach(b=>b.addEventListener('click',()=>applyPath(b.dataset.pp)));
 render();
 </script>
 </body>
